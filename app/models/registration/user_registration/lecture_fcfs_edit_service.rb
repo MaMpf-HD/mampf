@@ -9,9 +9,7 @@ module Registration
 
           # hard delete all registrations of current user in current campaign
           registrations_current_campaign = @campaign.user_registrations.where(user_id: @user.id)
-
           registrations_current_campaign.destroy_all
-
           Registration::UserRegistration.create!(
             registration_campaign: @campaign,
             registration_item: @item,

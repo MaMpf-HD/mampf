@@ -2,34 +2,41 @@
   <div>
     <div class="h4 mb-1 d-flex align-items-center gap-2">
       <%= campaignable_host.title %> - <%= campaign.title %> 
-      <span class="badge text-bg-primary fs-6"><%= campaign.status&.humanize %></span>
+      <span class="badge text-bg-primary fs-6">
+        <%= campaign.status&.humanize %>
+      </span>
       <% if campaign.planning_only %>
-        <span class="badge text-bg-primary fs-6"><%= t('registration.planning') %></span>
+        <span class="badge text-bg-primary fs-6">
+          <%= t('registration.planning') %>
+        </span>
       <% end %>
     </div>
 
     <div class="text-muted small">
-      <%= campaignable_host.term_to_label %> - <%= t('registration.course_code') %>: <%= campaignable_host.course.compact_title %>
+      <%= campaignable_host.term_to_label %> -
+      <%= t('registration.course_code') %>: <%= campaignable_host.course.compact_title %>
     </div>
   </div>
 
   <div class="text-end">
-    <div class="text-muted small mb-1"><%= t('registration.campaign_main') %></div>
-    <%if campaign.open_for_registrations?%>
+    <div class="text-muted small mb-1">
+      <%= t('registration.campaign_main') %>
+    </div>
+
+    <% if campaign.open_for_registrations? %>
       <span class="badge text-bg-info">
         <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
       </span>
-    <% elsif campaign.completed?%>
-      <%if assigned%>
+    <% elsif campaign.completed? %>
+      <% if assigned %>
         <span class="badge text-bg-success">
           <%= t('basics.assigned') %>
         </span>
-      <%else%>
+      <% else %>
         <span class="badge text-bg-danger">
           <%= t('basics.dismissed') %>
         </span>
-      <%end%>
-    <%end%>
-
+      <% end %>
+    <% end %>
   </div>
 </div>

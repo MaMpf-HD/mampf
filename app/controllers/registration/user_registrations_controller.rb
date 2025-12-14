@@ -28,7 +28,6 @@ module Registration
       @campaign = Registration::Campaign.find(params[:campaign_id])
 
       target = resolve_render_target(@campaign)
-
       case target
       when :lecture_index, :exam_index
         redirect_to user_registrations_path,
@@ -59,10 +58,6 @@ module Registration
 
     def init_result
       # TODO: in future: get roster result from rosterable.roster_entries -> tutorial_memberships
-      # TODO: I think all registerable should be rosterable
-      # Manual Roster Maintenance should also update the user registration
-      #
-      # at completed stage, roster result should also available
       # TODO; retrieve item succeed from roster
       @item_succeed = @campaign.registration_items
                                .includes(:user_registrations)
@@ -85,7 +80,8 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         case @campaign.allocation_mode.to_sym
         when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user, @item).register!
+          result = Registration::UserRegistration::LectureFcfsEditService
+                   .new(@campaign, current_user, @item).register!
 
           if result.success?
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
@@ -112,7 +108,8 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         case @campaign.allocation_mode.to_sym
         when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user, @item).withdraw!
+          result = Registration::UserRegistration::LectureFcfsEditService
+                   .new(@campaign, current_user, @item).withdraw!
 
           if result.success?
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),

@@ -1,23 +1,22 @@
 <div data-test="single-item-fcfs">
   <div class="h5"><%= t('registration.title') %></div>
+
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div class="small text-muted">
-      <%= t('registration.seats_remaining') %>: 
-      <span id="seatsRemaining">
-        <%= item.capacity_remained %>
-      </span>
+      <%= t('registration.seats_remaining') %>:
+      <span id="seatsRemaining"><%= item.capacity_remained %></span>
     </div>
-    <%last_updated = campaign.user_registrations_last_updated(current_user)%>
-    <% if last_updated%>
+
+    <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+    <% if last_updated %>
       <div class="small text-success">
-        Saved <%= format_date(last_updated) %>
+        <%= t('basics.saved_at', time: format_date(last_updated)) %>
       </div>
-    <%end%>
+    <% end %>
   </div>
-  
+
   <% registered = item.user_registered?(current_user) %>
-  
-  
+
   <div class="d-flex gap-2 justify-content-between flex-wrap">
     <div class="mb-3">
       <% if registered %>
@@ -27,25 +26,22 @@
       <% else %>
         <span class="badge rounded-pill text-bg-secondary">
           <%= t('registration.not_registered') %>
-          </span>
+        </span>
       <% end %>
-      
     </div>
 
-    <%if registered %>
+    <% if registered %>
       <%= button_to t('registration.withdraw'),
-              withdraw_item_path(campaign.id, item.id),
-              method: :delete,
-              disabled: !campaign.open_for_withdrawals?,
-              class: "btn btn-outline-danger btn-sm" %>
-    <%else%>
+                    withdraw_item_path(campaign.id, item.id),
+                    method: :delete,
+                    disabled: !campaign.open_for_withdrawals?,
+                    class: "btn btn-outline-danger btn-sm" %>
+    <% else %>
       <%= button_to t('registration.register_now'),
-              register_item_path(campaign.id, item.id),
-              method: :post,
-              disabled: !campaign.open_for_registrations? || item.capacity_remained == 0,
-              class: "btn btn-primary btn-sm" %>
-    <%end%>
-    
-    
+                    register_item_path(campaign.id, item.id),
+                    method: :post,
+                    disabled: !campaign.open_for_registrations? || item.capacity_remained.zero?,
+                    class: "btn btn-primary btn-sm" %>
+    <% end %>
   </div>
 </div>

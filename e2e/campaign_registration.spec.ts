@@ -2,40 +2,36 @@ import { test, expect } from "./_support/fixtures";
 import { CampaignRegistrationPage } from "./page-objects/campaign_registrations_page";
 
 test.describe("draft campaign", () => {
-  test("redirect and raise error if campaign is draft", async ({ factory, student }) => {
+  test("given draft campaign, when user visits, then access error is shown", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
     await expect(student.page.getByText("This campaign is not accessible right now.")).toBeVisible();
   });
 });
 
 test.describe("planning campaign", () => {
-  test("redirect and raise error if campaign is draft", async ({ factory, student }) => {
+  test("given planning campaign, when user visits, then planning badge is shown", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "open", "planning_only"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
     await expect(student.page.getByText("Planning")).toBeVisible();
   });
 });
 
-test.describe("processing campaign", () => {
-  test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
+test.describe("given processing lecture campaign", () => {
+  test("when user visits, then register button is disabled, lecture campaign", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "processing"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
     await expect(student.page.getByText("Processing")).toBeVisible();
     await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
 
-  test("should render campaign but not allow to interact, tutorial campaign", async ({ factory, student }) => {
+  test("when user visits, then register button is disabled, tutorial campaign", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["processing", "for_tutorial_enrollment"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
     await expect(student.page.getByText("Processing")).toBeVisible();
     const buttons = student.page.locator('button:has-text("Register now")');
     await expect(buttons.nth(0)).toBeDisabled();
@@ -43,25 +39,23 @@ test.describe("processing campaign", () => {
   });
 });
 
-test.describe("completed campaign", () => {
-  test("should render campaign with result page, lecture campaign", async ({ factory, student }) => {
+// TODO: when rosterization logic being implemented -> logic checking completed will be replaced -> need to change logic here
+test.describe("given completed campaign", () => {
+  test("with user registration, when user visits, then assigned status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "completed", "with_first_item_registered"], { user_id: student["user"]["id"] });
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Assigned")).toBeVisible();
+  });
+
+  test("without user registration, when user visits, then dismissed status is shown", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "completed"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
-    // await expect(student.page.getByText("Processing")).toBeVisible();
-    // await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
-  });
-
-  test("should render campaign but not allow to interact, tutorial campaign", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed", "for_tutorial_enrollment"]);
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
-
-    //await expect(student.page.getByText("Processing")).toBeVisible();
-    //const buttons = student.page.locator('button:has-text("Register now")');
-    //await expect(buttons.nth(0)).toBeDisabled();
-    //await expect(buttons.nth(1)).toBeDisabled();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Dismissed")).toBeVisible();
+    await expect(student.page.getByText("none of")).toBeVisible();
   });
 });
 
@@ -70,7 +64,6 @@ test.describe("closed campaign", () => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "closed"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
-
     await expect(student.page.getByText("Closed")).toBeVisible();
     await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
@@ -87,7 +80,7 @@ test.describe("closed campaign", () => {
   });
 });
 
-test.describe("open lecture campaign", () => {
+test.describe("given open campaign, lecture campaign", () => {
   test.describe("register open lecture campaign", () => {
     test("creates a confirmed registration when validations pass, case no user registration", async ({ factory, student }) => {
       const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
@@ -99,7 +92,7 @@ test.describe("open lecture campaign", () => {
       await expect(student.page.getByText("Open")).toBeVisible();
     });
 
-    test("cannot click register button if item has no capacity", async ({ factory, student }) => {
+    test("with full item, when user visits, then register button is disabled", async ({ factory, student }) => {
       const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment", "no_capacity_remained_first_item"]);
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
@@ -108,7 +101,7 @@ test.describe("open lecture campaign", () => {
   });
 
   test.describe("withdraw open lecture campaign", () => {
-    test("updates to rejected registration when validations pass", async ({ factory, student }) => {
+    test("with registration, when user withdraws, then status updates to rejected", async ({ factory, student }) => {
       const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
@@ -145,7 +138,7 @@ test.describe("open tutorial campaign", () => {
       await expect(student.page.getByText(/\/200 filled/)).toContainText("1/200");
     });
 
-    test("cannot click register button if item has no capacity", async ({ factory, student }) => {
+    test("with full item, when user visits, then register button is disabled", async ({ factory, student }) => {
       const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "no_capacity_remained_first_item"]);
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
@@ -156,7 +149,7 @@ test.describe("open tutorial campaign", () => {
   });
 
   test.describe("withdraw open tutorial campaign", () => {
-    test("updates to rejected registration when validations pass", async ({ factory, student }) => {
+    test("when user withdraws, then status updates to rejected", async ({ factory, student }) => {
       const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
@@ -169,7 +162,7 @@ test.describe("open tutorial campaign", () => {
 });
 
 test.describe("integration between child and parent campaign", () => {
-  test("expect page of child campaign to have link to parent campaign", async ({ factory, student }) => {
+  test("given child campaign with prerequisite, when user visits, then link to parent is shown", async ({ factory, student }) => {
     const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
     const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
     const page = new CampaignRegistrationPage(student.page, child.id);
@@ -178,7 +171,7 @@ test.describe("integration between child and parent campaign", () => {
     await expect(link).toHaveAttribute("href", `/campaign_registrations/${parent.id}`);
   });
 
-  test("cannot register child if parent has not been registered", async ({ factory, student }) => {
+  test("given child campaign with prerequisite, when parent not registered, then registration is blocked", async ({ factory, student }) => {
     const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
     const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
     const page = new CampaignRegistrationPage(student.page, child.id);
@@ -187,7 +180,7 @@ test.describe("integration between child and parent campaign", () => {
     await expect(student.page.getByText("You do not meet the requirements.")).toBeVisible();
   });
 
-  test("cannot withdraw parent if child has been registered", async ({ factory, student }) => {
+  test("given parent campaign with registered child, when user withdraws parent, then withdrawal is blocked", async ({ factory, student }) => {
     const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
     const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
 

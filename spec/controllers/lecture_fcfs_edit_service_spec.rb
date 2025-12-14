@@ -20,7 +20,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    it "creates a confirmed registration when validations pass, case has rejected user registration" do
+    it "creates a confirmed registration when validations pass when rejected registration existed" do
       Registration::UserRegistration.create!(
         registration_campaign: campaign,
         registration_item: item,

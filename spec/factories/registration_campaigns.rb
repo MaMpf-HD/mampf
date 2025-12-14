@@ -143,5 +143,20 @@ FactoryBot.define do
                config: { "prerequisite_campaign_id" => id })
       end
     end
+
+    trait :with_first_item_registered do
+      transient do
+        user_id { nil }
+      end
+      after(:create) do |campaign, evaluator|
+        item = campaign.registration_items.first
+        user = User.find(evaluator.user_id) if evaluator.user_id
+        create(:registration_user_registration,
+               :fcfs,
+               registration_item: item,
+               registration_campaign: campaign,
+               user: user)
+      end
+    end
   end
 end

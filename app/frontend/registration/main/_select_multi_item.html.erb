@@ -1,13 +1,15 @@
 <div data-test="multi-item-fcfs">
-  <div class="h5"><%= t("basics.select_type", type: campaign.registerable_type) %></div>
-  
+  <div class="h5">
+    <%= t("basics.select_type", type: campaign.registerable_type) %>
+  </div>
+
   <div data-controller="registration-item-search">
     <div class="row mb-2 align-items-center">
       <!-- search form -->
       <div class="col-8">
         <%= render partial: "registration/item_search_form/search_form",
-               locals: { controller: "registration-item-search",
-                         placeholder: t("registration.filter_placeholder") } %>
+                   locals: { controller: "registration-item-search",
+                             placeholder: t("registration.filter_placeholder") } %>
       </div>
 
       <!-- saved time -->
@@ -19,7 +21,7 @@
       <% end %>
     </div>
 
-    <!-- noti banner if registered -->
+    <!-- notification banner if registered -->
     <% if campaign.user_registered?(current_user) %>
       <div class="alert alert-info py-1 px-2">
         <%= t("registration.currently_registered") %>:
@@ -46,57 +48,56 @@
         </thead>
 
         <tbody>
-        <% items.each do |item| %>
-          <tr data-registration-item-search-target="row">
-            <!-- attribute data columns -->
-            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-              <td><%= col[:field].call(item) %></td>
-            <% end %>
-
-            <!-- seats column -->
-            <td>
-              <% if !item.user_registered?(current_user) %>
-                <% if item.still_have_capacity? %>
-                  <span class="badge rounded-pill text-bg-info"><%= t("basics.available") %></span>
-                <% else %>
-                  <span class="badge rounded-pill text-bg-light text-dark"><%= t("basics.full") %></span>
-                <% end %>
-              <% else %>
-                <span class="badge rounded-pill text-bg-success"><%= t("registration.registered") %></span>
+          <% items.each do |item| %>
+            <tr data-registration-item-search-target="row">
+              <!-- attribute data columns -->
+              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+                <td><%= col[:field].call(item) %></td>
               <% end %>
-            </td>
 
-            <!-- action column -->
-            <td class="d-flex justify-content-end">
-              <% if !campaign.user_registered?(current_user) %>
-                <% if item.user_registered?(current_user) %>
-                  <%= button_to t("registration.withdraw"),
-                    withdraw_item_path(campaign.id, item.id),
-                    method: :delete,
-                    disabled: !campaign.open_for_withdrawals?,
-                    class: "btn btn-outline-danger btn-sm" %>
+              <!-- seats column -->
+              <td>
+                <% if !item.user_registered?(current_user) %>
+                  <% if item.still_have_capacity? %>
+                    <span class="badge rounded-pill text-bg-info"><%= t("basics.available") %></span>
+                  <% else %>
+                    <span class="badge rounded-pill text-bg-light text-dark"><%= t("basics.full") %></span>
+                  <% end %>
                 <% else %>
-                  <%= button_to t("registration.register_now"),
-                    register_item_path(campaign.id, item.id),
-                    method: :post,
-                    disabled: !campaign.open_for_registrations? || item.capacity_remained == 0,
-                    class: "btn btn-primary btn-sm" %>
+                  <span class="badge rounded-pill text-bg-success"><%= t("registration.registered") %></span>
                 <% end %>
-              <% else %>
-                <% if item.user_registered?(current_user) %>
-                  <%= button_to t("registration.withdraw"),
-                    withdraw_item_path(campaign.id, item.id),
-                    method: :delete,
-                    disabled: !campaign.open_for_withdrawals?,
-                    class: "btn btn-outline-danger btn-sm" %>
-                <% else %>
-                  <span class="text-muted small"><%= t("registration.withdraw_first") %></span>
-                <% end %>
-              <% end %>
-            </td>
+              </td>
 
-          </tr>
-        <% end %>
+              <!-- action column -->
+              <td class="d-flex justify-content-end">
+                <% if !campaign.user_registered?(current_user) %>
+                  <% if item.user_registered?(current_user) %>
+                    <%= button_to t("registration.withdraw"),
+                                  withdraw_item_path(campaign.id, item.id),
+                                  method: :delete,
+                                  disabled: !campaign.open_for_withdrawals?,
+                                  class: "btn btn-outline-danger btn-sm" %>
+                  <% else %>
+                    <%= button_to t("registration.register_now"),
+                                  register_item_path(campaign.id, item.id),
+                                  method: :post,
+                                  disabled: !campaign.open_for_registrations? || item.capacity_remained.zero?,
+                                  class: "btn btn-primary btn-sm" %>
+                  <% end %>
+                <% else %>
+                  <% if item.user_registered?(current_user) %>
+                    <%= button_to t("registration.withdraw"),
+                                  withdraw_item_path(campaign.id, item.id),
+                                  method: :delete,
+                                  disabled: !campaign.open_for_withdrawals?,
+                                  class: "btn btn-outline-danger btn-sm" %>
+                  <% else %>
+                    <span class="text-muted small"><%= t("registration.withdraw_first") %></span>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
         </tbody>
       </table>
     </div>

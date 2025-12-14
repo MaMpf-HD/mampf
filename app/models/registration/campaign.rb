@@ -45,11 +45,11 @@ module Registration
     end
 
     def open_for_registrations?
-      open?
+      open? && registration_deadline > Time.current
     end
 
     def open_for_withdrawals?
-      open?
+      open? && registration_deadline > Time.current
     end
 
     # TODO: remove this

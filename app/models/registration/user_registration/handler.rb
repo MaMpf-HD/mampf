@@ -48,9 +48,11 @@ module Registration
         )
 
         dependent_campaigns_confirmed = Campaign
-                                        .where(id: prereq_policies.map(&:registration_campaign_id))
+                                        .where(id: prereq_policies
+                                        .map(&:registration_campaign_id))
                                         .joins(:user_registrations)
-                                        .where(user_registrations: { status: UserRegistration.statuses[:confirmed] })
+                                        .where(user_registrations:
+                                        { status: UserRegistration.statuses[:confirmed] })
                                         .distinct
         return unless dependent_campaigns_confirmed.size.positive?
 

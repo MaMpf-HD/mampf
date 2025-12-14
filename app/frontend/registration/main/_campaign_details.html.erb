@@ -1,6 +1,6 @@
 <div class="card-body">
   <div class="h5"><%= t('basics.details') %></div>
-  
+
   <ul class="list-group">
 
     <!-- Allocation mode detail -->
@@ -10,18 +10,22 @@
         <div class="fw-semibold"><%= t('basics.mode') %></div>
         <small class="text-muted"><%= mode_info[:mode_name] %></small>
       </div>
-      <span class="<%= mode_info[:badge_class] %>"><%= mode_info[:abbr] %></span>
+      <span class="<%= mode_info[:badge_class] %>">
+        <%= mode_info[:abbr] %>
+      </span>
     </li>
 
     <!-- Capacity detail -->
-    <% total_capacity = items.sum { |item| item.capacity }%>
-    <% total_capacity_used = items.sum { |item| item.capacity_used }%>
-    <% multi_items = items.size > 1%>
+    <% total_capacity      = items.sum(&:capacity) %>
+    <% total_capacity_used = items.sum(&:capacity_used) %>
+    <% multi_items         = items.size > 1 %>
 
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
         <div class="fw-semibold"><%= t('basics.capacity') %></div>
-        <small class="text-muted"><%= total_capacity %> <%= t('basics.seats') %></small>
+        <small class="text-muted">
+          <%= total_capacity %> <%= t('basics.seats') %>
+        </small>
       </div>
       <span class="badge rounded-pill text-bg-info" id="capacityInfo">
         <%= total_capacity_used %>/<%= total_capacity %> <%= t('basics.filled') %>

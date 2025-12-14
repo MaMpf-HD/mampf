@@ -1,4 +1,5 @@
 <div class="container my-4" data-test="result">
+  <!-- Breadcrumb navigation -->
   <nav aria-label="breadcrumb" class="mb-2">
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item">
@@ -10,16 +11,16 @@
     </ol>
   </nav>
 
-  <%= render partial:'registration/main/campaign_info', 
-            locals: { campaignable_host: @campaignable_host,
-                      assigned: !!@item_succeed,
-                      campaign: @campaign }%>
-    
-  <%= render partial:'registration/main/result',
-            locals: { campaign: @campaign, 
-                      item_succeed: @item_succeed, 
-                      status_items_selected: @status_items_selected,
-                      items_selected: @items_selected } %>
-    
-  
-  
+  <!-- Campaign info card -->
+  <%= render partial: 'registration/main/campaign_info',
+             locals: { campaignable_host: @campaignable_host,
+                       assigned: !!@item_succeed,
+                       campaign: @campaign } %>
+
+  <!-- Result card -->
+  <%= render partial: 'registration/main/result',
+             locals: { campaign: @campaign,
+                       item_succeed: @item_succeed,
+                       status_items_selected: @status_items_selected,
+                       items_selected: @items_selected } %>
+</div>
