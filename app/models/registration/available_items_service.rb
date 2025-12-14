@@ -1,4 +1,8 @@
 module Registration
+  # Identifies registerable items (Tutorials, Talks, or the Lecture itself)
+  # from the parent lecture that are not yet part of the campaign and enforces
+  # type homogeneity by restricting results to the type of existing items,
+  # ensuring a campaign contains only one category of registerables.
   class AvailableItemsService
     def initialize(campaign)
       @campaign = campaign
@@ -8,31 +12,42 @@ module Registration
     def items
       return {} unless @lecture.is_a?(Lecture)
 
-      existing_type = @campaign.registration_items.first&.registerable_type
+      prepare_registered_data
+
       groups = {}
-
-      if existing_type.nil? || existing_type == "Tutorial"
-        tutorials = @lecture.tutorials.where.not(id: existing_ids("Tutorial"))
-        groups[:tutorials] = tutorials if tutorials.any?
-      end
-
-      if existing_type.nil? || existing_type == "Talk"
-        talks = @lecture.talks.where.not(id: existing_ids("Talk"))
-        groups[:talks] = talks if talks.any?
-      end
-
-      if (existing_type.nil? || existing_type == "Lecture") &&
-         existing_ids("Lecture").exclude?(@lecture.id)
-        groups[:lecture] = [@lecture]
-      end
-
+      add_tutorials(groups) if type_allowed?("Tutorial")
+      add_talks(groups) if type_allowed?("Talk")
+      add_lecture(groups) if type_allowed?("Lecture")
       groups
     end
 
     private
 
-      def existing_ids(type)
-        @campaign.registration_items.where(registerable_type: type).pluck(:registerable_id)
+      def prepare_registered_data
+        pairs = @campaign.registration_items.pluck(:registerable_type, :registerable_id)
+        @existing_type = pairs.first&.first
+        @registered_ids = pairs.group_by(&:first).transform_values { |list| list.map(&:last) }
+      end
+
+      def type_allowed?(type)
+        @existing_type.nil? || @existing_type == type
+      end
+
+      def add_tutorials(groups)
+        ids = @registered_ids["Tutorial"] || []
+        tutorials = @lecture.tutorials.where.not(id: ids)
+        groups[:tutorials] = tutorials if tutorials.any?
+      end
+
+      def add_talks(groups)
+        ids = @registered_ids["Talk"] || []
+        talks = @lecture.talks.where.not(id: ids)
+        groups[:talks] = talks if talks.any?
+      end
+
+      def add_lecture(groups)
+        ids = @registered_ids["Lecture"] || []
+        groups[:lecture] = [@lecture] unless ids.include?(@lecture.id)
       end
   end
 end
