@@ -70,29 +70,31 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
     was added 6 years ago, that's why I think it's safe to delete it. The sidebar
     renders correctly without it.)
 
+4 ./app/frontend/js/file_upload.coffee -> ./app/frontend/js/file_upload.js
+4 ./app/views/assignments/cancel_new.coffee -> ./app/views/assignments/cancel_new.js.erb
+4 ./app/views/divisions/edit.coffee -> ./app/views/divisions/edit.js.erb
+4 ./app/views/divisions/new.coffee -> ./app/views/divisions/new.js.erb
+4 ./app/views/media/remove_screenshot.coffee -> ./app/views/media/remove_screenshot.js.erb
+4 ./app/views/media/update_tags.coffee -> ./app/views/media/update_tags.js.erb
+4 ./app/views/programs/edit.coffee -> ./app/views/programs/edit.js.erb
+4 ./app/views/programs/new.coffee -> ./app/views/programs/new.js.erb
+4 ./app/views/quiz_certificates/claim.coffee -> ./app/views/quiz_certificates/claim.js.erb
+4 ./app/views/readers/update_all.coffee -> ./app/views/readers/update_all.js.erb
+
+4 ./app/views/subjects/edit.coffee -> ./app/views/subjects/edit.js.erb
+4 ./app/views/subjects/new.coffee -> ./app/views/subjects/new.js.erb
+4 ./app/views/tutorials/cancel_new.coffee -> ./app/views/tutorials/cancel_new.js.erb
+4 ./app/views/users/elevate.coffee -> ./app/views/users/elevate.js.erb
+
+5 ./app/views/answers/destroy.coffee -> ./app/views/answers/destroy.js.erb
+5 ./app/views/answers/new.coffee -> ./app/views/answers/new.js.erb
+5 ./app/views/media/destination_warning.coffee -> ./app/views/media/destination_warning.js.erb
+5 ./app/views/submissions/enter_code.coffee -> ./app/views/submissions/enter_code.js.erb
+5 ./app/views/tutorials/edit.coffee -> ./app/views/tutorials/edit.js.erb
+5 ./app/views/tutorials/new.coffee -> ./app/views/tutorials/new.js.erb
+
 
 ### 😐 TODO
-4 ./app/assets/javascripts/file_upload.coffee
-4 ./app/views/assignments/cancel_new.coffee
-4 ./app/views/divisions/edit.coffee
-4 ./app/views/divisions/new.coffee
-4 ./app/views/media/remove_screenshot.coffee
-4 ./app/views/media/update_tags.coffee
-4 ./app/views/programs/edit.coffee
-4 ./app/views/programs/new.coffee
-4 ./app/views/quiz_certificates/claim.coffee
-4 ./app/views/readers/update_all.coffee
-4 ./app/views/subjects/edit.coffee
-4 ./app/views/subjects/new.coffee
-4 ./app/views/tutorials/cancel_new.coffee
-4 ./app/views/users/elevate.coffee
-
-5 ./app/views/answers/destroy.coffee
-5 ./app/views/answers/new.coffee
-5 ./app/views/media/destination_warning.coffee
-5 ./app/views/submissions/enter_code.coffee
-5 ./app/views/tutorials/edit.coffee
-5 ./app/views/tutorials/new.coffee
 5 ./app/views/watchlists/new.coffee
 
 6 ./app/views/announcements/create.coffee
