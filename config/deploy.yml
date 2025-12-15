@@ -165,6 +165,5 @@ accessories:
       - docker/production/nginx-media-server.conf:/etc/nginx/nginx.conf
     directories:
       - /mnt/media:/media:ro
-    options:
-      proxy:
-        host: vignettes-media.mampf.media
+    proxy:
+      host: vignettes-media.mampf.media
