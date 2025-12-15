@@ -18,6 +18,12 @@ module Rosters
       end
     end
 
+    # Returns the IDs of users currently in the roster.
+    # Required by the Registration::Registerable concern.
+    def allocated_user_ids
+      roster_entries.pluck(roster_user_id_column)
+    end
+
     # Adds a single user to the roster.
     # Can be overridden by the model if custom logic/callbacks are needed.
     def add_user_to_roster!(user, source_campaign = nil)

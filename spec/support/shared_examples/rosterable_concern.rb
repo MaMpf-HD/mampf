@@ -17,6 +17,15 @@ RSpec.shared_examples("a rosterable model") do
     it { is_expected.to respond_to(:add_user_to_roster!) }
     it { is_expected.to respond_to(:remove_user_from_roster!) }
     it { is_expected.to respond_to(:materialize_allocation!) }
+    it { is_expected.to respond_to(:allocated_user_ids) }
+  end
+
+  describe "#allocated_user_ids" do
+    before { rosterable.add_user_to_roster!(user) }
+
+    it "returns the ids of users in the roster" do
+      expect(rosterable.allocated_user_ids).to include(user.id)
+    end
   end
 
   describe "#add_user_to_roster!" do
