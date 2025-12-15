@@ -68,8 +68,12 @@ registry:
 
 builder:
   arch: amd64
+  remote: ssh://kamal@91.98.178.89
   dockerfile:
     docker/production/Dockerfile-vignettes
+  cache:
+    type: registry
+    options: mode=max,image-manifest=true,oci-mediatypes=true
 
 env:
   clear:
