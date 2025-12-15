@@ -34,6 +34,8 @@ gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
 gem "mini_magick", "~> 4.13"
+# JavaScript runtime for Rails (used for CoffeeScript that uses ExecJS)
+gem "mini_racer", "~> 0.19.1"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "pagy", "~> 9.4"
