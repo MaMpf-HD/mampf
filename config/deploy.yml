@@ -78,7 +78,6 @@ env:
     # Media served by nginx accessory on subdomain (with referer protection)
     MEDIA_SERVER: https://vignettes-media.mampf.media
     DOWNLOAD_LOCATION: https://vignettes-media.mampf.media
-    INSTANCE_NAME: ""
     MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
     MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50

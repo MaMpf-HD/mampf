@@ -16,6 +16,8 @@ module ApplicationHelper
   # Returns the complete url for the media upload folder if in production
   def host
     if Rails.env.production?
+      return ENV.fetch("MEDIA_SERVER") if ENV.fetch("PRODUCTION_NAME") == "mampf-vignettes"
+
       # rubocop:disable Style/StringConcatenation
       ENV.fetch("MEDIA_SERVER") + "/" + ENV.fetch("INSTANCE_NAME")
       # rubocop:enable Style/StringConcatenation
