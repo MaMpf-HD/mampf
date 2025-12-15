@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -327,6 +327,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
     t.index ["section_id"], name: "index_items_on_section_id"
   end
 
+  create_table "lecture_memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.bigint "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"
+    t.index ["source_campaign_id"], name: "index_lecture_memberships_on_source_campaign_id"
+    t.index ["user_id", "lecture_id"], name: "index_lecture_memberships_on_user_id_and_lecture_id", unique: true
+    t.index ["user_id"], name: "index_lecture_memberships_on_user_id"
+  end
+
   create_table "lecture_user_joins", force: :cascade do |t|
     t.bigint "lecture_id"
     t.bigint "user_id"
@@ -637,6 +649,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
     t.bigint "speaker_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "source_campaign_id"
+    t.index ["source_campaign_id"], name: "index_speaker_talk_joins_on_source_campaign_id"
     t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
@@ -952,6 +966,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
     t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
   end
 
+  create_table "tutorial_memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "tutorial_id", null: false
+    t.bigint "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"
+    t.index ["tutorial_id"], name: "index_tutorial_memberships_on_tutorial_id"
+    t.index ["user_id", "tutorial_id"], name: "index_tutorial_memberships_on_user_id_and_tutorial_id", unique: true
+    t.index ["user_id"], name: "index_tutorial_memberships_on_user_id"
+  end
+
   create_table "tutorials", force: :cascade do |t|
     t.text "title"
     t.bigint "lecture_id", null: false
@@ -1218,6 +1244,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "lecture_memberships", "lectures"
+  add_foreign_key "lecture_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "lecture_memberships", "users"
   add_foreign_key "lecture_user_joins", "lectures"
   add_foreign_key "lecture_user_joins", "users"
   add_foreign_key "links", "media"
@@ -1236,6 +1265,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
   add_foreign_key "registration_user_registrations", "registration_campaigns"
   add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "users"
+  add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
   add_foreign_key "submissions", "assignments"
@@ -1249,6 +1279,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
+  add_foreign_key "tutorial_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "tutorial_memberships", "tutorials"
+  add_foreign_key "tutorial_memberships", "users"
   add_foreign_key "tutorials", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
