@@ -1,5 +1,4 @@
 <ul class="nav nav-tabs my-3"
-    id="edited-media-tab"
     role="tablist">
   <% media_sorts.each do |s| %>
     <li class="nav-item">
@@ -9,15 +8,15 @@
          href="#<%= s %>-media"
          role="tab"
          aria-controls="<%= s%>-media" aria-selected="true"
-         data-sort="<%= media_types[s].first %>">
+         data-sort="<%= media_types[s].first %>"
+         data-action="show.bs.tab->media-button-sort#changeNewMediumSort">
         <%= media_names[s] %>
         (<%= media.where(sort: media_types[s]).count %>)
       </a>
     </li>
   <% end %>
 </ul>
-<div class="tab-content"
-     id="edited-media-tabContent">
+<div class="tab-content">
   <% media_sorts.each do |s| %>
     <div class="tab-pane fade <%= show_tab(s == 'lesson_material') %>"
          id="<%= s %>-media"

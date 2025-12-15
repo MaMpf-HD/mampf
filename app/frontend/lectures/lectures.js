@@ -51,15 +51,6 @@ $(document).on("turbo:load", function () {
 
   const trixElement = document.querySelector("#lecture-concept-trix");
   if (trixElement) {
-    const { content } = trixElement.dataset;
-    const { editor } = trixElement;
-    if (!editor) {
-      return;
-    }
-    editor.setSelectedRange([0, 65535]);
-    editor.deleteInDirection("forward");
-    editor.insertHTML(content);
-    document.activeElement.blur();
     trixElement.addEventListener("trix-change", function () {
       disableExceptOrganizational();
     });
@@ -180,17 +171,6 @@ $(document).on("turbo:load", function () {
     for (const l of lessons) {
       $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-info")
         .addClass("bg-secondary");
-    }
-  });
-
-  $('#edited-media-tab a[data-bs-toggle="tab"]').on("shown.bs.tab", function (e) {
-    const {
-      sort,
-    } = e.target.dataset; // newly activated tab
-    const path = $("#create-new-medium").prop("href");
-    if (path) {
-      const new_path = path.replace(/\?sort=.+?&/, "?sort=" + sort + "&");
-      $("#create-new-medium").prop("href", new_path);
     }
   });
 

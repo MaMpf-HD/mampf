@@ -23,6 +23,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get "/altcha", to: "altcha#new"
+
   # mount commontator engine
 
   mount Commontator::Engine => "/commontator"

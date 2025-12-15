@@ -5,36 +5,15 @@ require "json"
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
 
-  def verify_captcha
-    return true unless ENV["USE_CAPTCHA_SERVICE"]
-
-    begin
-      uri = URI.parse(ENV.fetch("CAPTCHA_VERIFY_URL"))
-      data = { message: params["frc-captcha-solution"],
-               application_token: ENV.fetch("CAPTCHA_APPLICATION_TOKEN") }
-      header = { "Content-Type": "text/json" }
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true if ENV.fetch("CAPTCHA_VERIFY_URL").include?("https")
-      request = Net::HTTP::Post.new(uri.request_uri, header)
-      request.body = data.to_json
-
-      # Send the request
-      response = http.request(request)
-      answer = JSON.parse(response.body)
-      return true if answer["message"] == "verified"
-    rescue StandardError # rubocop:todo Lint/SuppressedException
-    end
-    false
-  end
-
   def create
-    if verify_captcha
+    altcha_param = params.permit(:altcha)[:altcha]
+    if altcha_param.present? && AltchaSolution.verify_and_save(altcha_param)
       super
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
-      set_flash_message(:alert, :captcha_error)
-      render :new
+      flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
+      render_flash
     end
   end
 
