@@ -28,9 +28,9 @@
 
 # 🎈 Folders
 # see config/initializers/shrine.rb
-# Create some storage folders on the server & make the `kamal` user the owner:
-# sudo mkdir -p /mnt/caches/medien_uploads /mnt/media/vignettes /mnt/submissions/cache /mnt/submissions/store
-# sudo chown -R kamal:kamal /mnt/caches/medien_uploads /mnt/media/vignettes /mnt/submissions/cache /mnt/submissions/store
+# Create some storage folders on the server & make the `rails` user (1000) the owner:
+# sudo mkdir -p /mnt/caches/medien_uploads /mnt/media /mnt/submissions/cache /mnt/submissions/store
+# sudo chown -R 1000:1000 /mnt/caches/medien_uploads /mnt/media /mnt/submissions/cache /mnt/submissions/store
 
 # 🎈 Only allow users to login via ssh keys, not passwords
 # https://itsfoss.gitlab.io/post/disable-ssh-password-authentication-for-specific-user-or-group/
@@ -122,9 +122,9 @@ ssh:
   user: kamal
 
 volumes:
-  - /home/kamal/files/media:/private/media
-  - /home/kamal/files/submissions:/private/submissions
-  - /home/kamal/files/caches:/caches
+  - /mnt/media:/private/media
+  - /mnt/submissions:/private/submissions
+  - /mnt/caches:/caches
 
 # for asset bridging across deploys
 asset_path: /rails/public/assets
