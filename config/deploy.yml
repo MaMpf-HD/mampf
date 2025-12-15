@@ -157,7 +157,7 @@ accessories:
     image: memcached:alpine
     host: 91.98.178.89
 
-  media:
+  media-nginx:
     image: nginx:alpine
     host: 91.98.178.89
     # https://github.com/basecamp/kamal/discussions/1216#discussioncomment-14907075
