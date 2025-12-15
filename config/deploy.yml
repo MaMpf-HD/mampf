@@ -96,8 +96,8 @@ env:
     ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
     FEEDBACK_EMAIL: mampf-feedback-email
     REWRITE_ENABLED: 0  # disable URL rewriting since we have the nginx media server
-    MEDIA_PATH: /private/media
-    SUBMISSION_PATH: /private/submissions
+    MEDIA_PATH: /private/media  # if changed, update nginx config too
+    SUBMISSION_PATH: /private/submissions  # if changed, update nginx config too
     PRODUCTION_DATABASE_ADAPTER: postgresql
     PRODUCTION_DATABASE_DATABASE: mampf
     PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
@@ -168,12 +168,12 @@ accessories:
     files:
       - docker/production/nginx-media-server.conf:/etc/nginx/nginx.conf
     directories:
-      - /mnt/media:/media:ro
+      - /mnt/media:/private-nginx/media:ro
+      - /mnt/submissions:/private-nginx/submissions:ro
     proxy:
       ssl: true
       app_port: 80
       host: vignettes-media.mampf.media
     options:
-      # https://github.com/docker/for-linux/issues/264#issuecomment-964620100
       add-host:
         - host.docker.internal:host-gateway
