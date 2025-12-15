@@ -127,7 +127,7 @@ volumes:
   - /home/kamal/files/caches:/caches
 
 # for asset bridging across deploys
-asset_path: /usr/src/app/public/assets
+asset_path: /rails/public/assets
 
 accessories:
   # https://railsboilerplate.com/articles/how-to-configure-postgres-accessory-kamal-2-rails-8
