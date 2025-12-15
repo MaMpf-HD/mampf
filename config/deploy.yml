@@ -87,7 +87,6 @@ env:
     PROJECT_EMAIL: info@vignettes.mampf.media
     MAILID_DOMAIN: vignettes.mampf.media
     ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
-    PROJECT_EMAIL_MAILBOX: "Other Users/mampf"
     FEEDBACK_EMAIL: mampf-feedback-email
     DOWNLOAD_LOCATION: https://mampf.mathi.uni-heidelberg.de/mediaforward
     REWRITE_ENABLED: 1
@@ -106,8 +105,6 @@ env:
     - RAILS_MASTER_KEY
     - SECRET_KEY_BASE
     - PROJECT_NOTIFICATION_EMAIL
-    - PROJECT_EMAIL_USERNAME
-    - PROJECT_EMAIL_PASSWORD
     - MAMPF_EMAIL_USERNAME
     - MAMPF_EMAIL_PASSWORD
     - CAPTCHA_HMAC_KEY
