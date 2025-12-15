@@ -4,6 +4,8 @@
 # see also the Rails template for best practices:
 # https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/Dockerfile.tt
 
+
+
 ################################################################################
 # ✨ PDF compressor build stage
 ################################################################################
@@ -132,6 +134,8 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /rails/public/sidekiq && \
     bundle exec rails assets:precompile
 
 RUN rm -rf ~/.cache/yarn
+
+
 
 ################################################################################
 # ✨ Final stage for app image
