@@ -60,14 +60,6 @@ class Tutorial < ApplicationRecord
     tutorial_memberships
   end
 
-  def add_user_to_roster!(user, source_campaign)
-    TutorialMembership.create!(user: user, tutorial: self, source_campaign: source_campaign)
-  end
-
-  def remove_user_from_roster!(user)
-    tutorial_memberships.where(user: user).destroy_all
-  end
-
   private
 
     def check_destructibility

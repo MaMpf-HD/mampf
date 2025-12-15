@@ -12,23 +12,25 @@ module Rosters
         raise(NotImplementedError, "#{self.class} must implement #roster_entries")
       end
 
-      # Abstract method to add a user to the roster
-      # @param user [User] the user to add
-      # @param source_campaign [RegistrationCampaign] the campaign triggering the addition
-      def add_user_to_roster!(user, source_campaign)
-        raise(NotImplementedError, "#{self.class} must implement #add_user_to_roster!")
-      end
-
-      # Abstract method to remove a user from the roster
-      # @param user [User] the user to remove
-      def remove_user_from_roster!(user)
-        raise(NotImplementedError, "#{self.class} must implement #remove_user_from_roster!")
-      end
-
       # Override this method if the foreign key for the user in the roster entry is not :user_id
       def roster_user_id_column
         :user_id
       end
+    end
+
+    # Adds a single user to the roster.
+    # Can be overridden by the model if custom logic/callbacks are needed.
+    def add_user_to_roster!(user, source_campaign = nil)
+      roster_entries.create!(
+        roster_user_id_column => user.id,
+        :source_campaign => source_campaign
+      )
+    end
+
+    # Removes a single user from the roster.
+    # Can be overridden by the model if custom logic/callbacks are needed.
+    def remove_user_from_roster!(user)
+      roster_entries.find_by(roster_user_id_column => user.id)&.destroy
     end
 
     # Updates the roster based on the target list of users and the source campaign.
@@ -37,22 +39,32 @@ module Rosters
     # - Leaves manual entries (source_campaign_id: nil) or entries from other campaigns untouched.
     def materialize_allocation!(users, source_campaign)
       current_roster_user_ids = roster_entries.pluck(roster_user_id_column)
-      target_user_ids = users.map(&:id)
+      target_user_ids = users.map(&:id).uniq
 
-      # Add users who are not in the roster at all
+      # Bulk Insert
+      # We use insert_all to avoid N+1 inserts. This skips callbacks, which is acceptable
+      # for bulk allocations where we just want to sync the state.
       users_to_add_ids = target_user_ids - current_roster_user_ids
       if users_to_add_ids.any?
-        User.where(id: users_to_add_ids).find_each do |user|
-          add_user_to_roster!(user, source_campaign)
+        attributes = users_to_add_ids.map do |uid|
+          {
+            roster_user_id_column => uid,
+            :source_campaign_id => source_campaign.id,
+            :created_at => Time.current,
+            :updated_at => Time.current
+          }
         end
+        # insert_all on the association automatically scopes to the parent (e.g. tutorial_id)
+        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
       end
 
+      # Bulk Delete
       # Remove users who are in the roster via THIS campaign but not in the target list
-      # We only touch entries that belong to this source_campaign.
+      # We use delete_all to avoid instantiating objects.
       entries_to_remove = roster_entries.where(source_campaign: source_campaign)
                                         .where.not(roster_user_id_column => target_user_ids)
 
-      entries_to_remove.destroy_all
+      entries_to_remove.delete_all
     end
   end
 end

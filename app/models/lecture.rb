@@ -846,14 +846,6 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
-  def add_user_to_roster!(user, source_campaign)
-    LectureMembership.create!(user: user, lecture: self, source_campaign: source_campaign)
-  end
-
-  def remove_user_from_roster!(user)
-    lecture_memberships.where(user: user).destroy_all
-  end
-
   private
 
     # used for after save callback

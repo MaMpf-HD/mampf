@@ -123,14 +123,6 @@ class Talk < ApplicationRecord
     speaker_talk_joins
   end
 
-  def add_user_to_roster!(user, source_campaign)
-    SpeakerTalkJoin.create!(speaker: user, talk: self, source_campaign: source_campaign)
-  end
-
-  def remove_user_from_roster!(user)
-    speaker_talk_joins.where(speaker: user).destroy_all
-  end
-
   def roster_user_id_column
     :speaker_id
   end
