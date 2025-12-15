@@ -38,9 +38,8 @@ Rails.application.configure do
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
   # Specifies the header that your server uses for sending files.
-  if ENV.fetch("PRODUCTION_NAME") != "mampf-vignettes"
-    config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
-  end
+  # X-Accel-Redirect is used for nginx-based setups (both old and new Kamal)
+  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect"
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :production
