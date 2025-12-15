@@ -68,6 +68,7 @@ registry:
 
 builder:
   arch: amd64
+  local: false
   remote: ssh://kamal@91.98.178.89
   dockerfile:
     docker/production/Dockerfile-vignettes
