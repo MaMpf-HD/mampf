@@ -171,5 +171,5 @@ accessories:
       host: vignettes-media.mampf.media
     options:
       # https://github.com/docker/for-linux/issues/264#issuecomment-964620100
-      extra_hosts:
+      add-host:
         - host.docker.internal:host-gateway
