@@ -3,5 +3,5 @@
 class LectureMembership < ApplicationRecord
   belongs_to :user
   belongs_to :lecture
-  belongs_to :source_campaign, class_name: "RegistrationCampaign", optional: true
+  belongs_to :source_campaign, class_name: "Registration::Campaign", optional: true
 end

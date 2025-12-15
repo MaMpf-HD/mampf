@@ -37,9 +37,9 @@ module Rosters
     # - Adds users from the list who are not currently in the roster.
     # - Removes users who are in the roster *via this campaign* but not in the list.
     # - Leaves manual entries (source_campaign_id: nil) or entries from other campaigns untouched.
-    def materialize_allocation!(users, source_campaign)
+    def materialize_allocation!(user_ids:, campaign:)
       current_roster_user_ids = roster_entries.pluck(roster_user_id_column)
-      target_user_ids = users.map(&:id).uniq
+      target_user_ids = user_ids.uniq
 
       # Bulk Insert
       # We use insert_all to avoid N+1 inserts. This skips callbacks, which is acceptable
@@ -49,7 +49,7 @@ module Rosters
         attributes = users_to_add_ids.map do |uid|
           {
             roster_user_id_column => uid,
-            :source_campaign_id => source_campaign.id,
+            :source_campaign_id => campaign.id,
             :created_at => Time.current,
             :updated_at => Time.current
           }
@@ -61,7 +61,7 @@ module Rosters
       # Bulk Delete
       # Remove users who are in the roster via THIS campaign but not in the target list
       # We use delete_all to avoid instantiating objects.
-      entries_to_remove = roster_entries.where(source_campaign: source_campaign)
+      entries_to_remove = roster_entries.where(source_campaign: campaign)
                                         .where.not(roster_user_id_column => target_user_ids)
 
       entries_to_remove.delete_all

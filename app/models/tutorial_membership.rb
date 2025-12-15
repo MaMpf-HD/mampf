@@ -3,5 +3,5 @@
 class TutorialMembership < ApplicationRecord
   belongs_to :user
   belongs_to :tutorial
-  belongs_to :source_campaign, class_name: "RegistrationCampaign", optional: true
+  belongs_to :source_campaign, class_name: "Registration::Campaign", optional: true
 end
