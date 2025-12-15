@@ -169,3 +169,6 @@ accessories:
       ssl: true
       app_port: 80
       host: vignettes-media.mampf.media
+    options:
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
