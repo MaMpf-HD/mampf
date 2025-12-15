@@ -161,7 +161,7 @@ accessories:
     image: nginx:alpine
     host: 91.98.178.89
     # https://github.com/basecamp/kamal/discussions/1216#discussioncomment-14907075
-    port: "127.0.0.1.81:80"
+    port: "127.0.0.1:81:80"
     files:
       - docker/production/nginx-media-server.conf:/etc/nginx/nginx.conf
     directories:
