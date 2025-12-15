@@ -3,7 +3,7 @@ require "csv"
 module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
-               "created at",
+               "Created At",
                "Codename",
                "Slide position",
                "Slide title",
