@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
   has_many :tutorial_memberships, dependent: :destroy
-  has_many :tutorials, through: :tutorial_memberships
+  has_many :enrolled_tutorials, through: :tutorial_memberships, source: :tutorial
 
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
