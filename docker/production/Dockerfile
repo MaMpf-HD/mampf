@@ -12,6 +12,11 @@ FROM ruby:3.4.7-bookworm
 
 ENV RAILS_ENV=production
 
+EXPOSE 3000
+EXPOSE 9394
+
+ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
+
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-c"]
 
@@ -113,5 +118,3 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
     RAILS_ENV=production DATABASE_ADAPTER=nulldb \
     bundle exec rails assets:precompile
-
-ENTRYPOINT [ "/usr/src/app/docker/production/start-mampf.sh" ]
