@@ -75,7 +75,10 @@ env:
   clear:
     PRODUCTION_NAME: mampf-vignettes
     BLOG: https://mampf.blog
-    MEDIA_SERVER: https://media.mathi.uni-heidelberg.de
+    # Media served by nginx accessory on subdomain (with referer protection)
+    MEDIA_SERVER: https://vignettes-media.mampf.media
+    DOWNLOAD_LOCATION: https://vignettes-media.mampf.media
+    INSTANCE_NAME: ""
     MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
     MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50
@@ -88,8 +91,7 @@ env:
     MAILID_DOMAIN: vignettes.mampf.media
     ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
     FEEDBACK_EMAIL: mampf-feedback-email
-    DOWNLOAD_LOCATION: https://mampf.mathi.uni-heidelberg.de/mediaforward
-    REWRITE_ENABLED: 1
+    REWRITE_ENABLED: 0  # disable URL rewriting since we have the nginx media server
     MEDIA_PATH: /private/media
     SUBMISSION_PATH: /private/submissions
     PRODUCTION_DATABASE_ADAPTER: postgresql
@@ -154,3 +156,15 @@ accessories:
   cache:
     image: memcached:alpine
     host: 91.98.178.89
+
+  media:
+    image: nginx:alpine
+    host: 91.98.178.89
+    port: 8080:80
+    files:
+      - docker/production/nginx-media-server.conf:/etc/nginx/nginx.conf
+    directories:
+      - /mnt/media:/media:ro
+    options:
+      proxy:
+        host: vignettes-media.mampf.media
