@@ -115,7 +115,6 @@ env:
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
-  logs: app logs -f
 
 ssh:
   user: kamal
