@@ -10,6 +10,13 @@ class User < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, -> { distinct }, through: :lecture_user_joins
 
+  # Roster memberships
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
+
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :tutorials, through: :tutorial_memberships
+
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :favorite_lectures, -> { distinct },
