@@ -81,7 +81,7 @@
                     <%= button_to t("registration.register_now"),
                                   register_item_path(campaign.id, item.id),
                                   method: :post,
-                                  disabled: !campaign.open_for_registrations? || item.capacity_remained.zero?,
+                                  disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
                                   class: "btn btn-primary btn-sm" %>
                   <% end %>
                 <% else %>

@@ -20,7 +20,7 @@ class LecturesController < ApplicationController
   def show
     if @lecture.sort == "vignettes"
       if @lecture.organizational
-        redirect_to organizational_path(@lecture)
+        redirect_to lecture_organizational_path(@lecture)
         return
       end
       redirect_to lecture_questionnaires_path(@lecture)
@@ -73,12 +73,8 @@ class LecturesController < ApplicationController
   end
 
   def edit
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
-      eager_load_stuff
-      render template: "lectures/edit/edit"
-    end
+    eager_load_stuff
+    render template: "lectures/edit/edit"
   end
 
   def create
@@ -214,7 +210,9 @@ class LecturesController < ApplicationController
 
   def organizational
     if @lecture.sort == "vignettes"
-      render layout: "vignettes/layouts/vignettes_navbar"
+      render template: "lectures/organizational/_organizational",
+             layout: "vignettes/layouts/vignettes_navbar",
+             locals: { lecture: @lecture }
     else
       I18n.locale = @lecture.locale_with_inheritance
       render template: "lectures/organizational/_organizational",

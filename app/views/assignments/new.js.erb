@@ -3,6 +3,11 @@ $("#newAssignmentButton").hide();
 $("#assignmentListHeader").show()
   .after("<%= j render partial: "assignments/form", locals: { assignment: @assignment } %>");
 
+if (window.initializeDatetimePickers) {
+  // TODO decaffinate: import this function
+  window.initializeDatetimePickers();
+}
+
 new TomSelect("#assignment_medium_id_", {
   sortField: {
     field: "text",

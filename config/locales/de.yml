@@ -3503,6 +3503,8 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
+    seats: 'Plätze'
+    add: 'Hinzufügen'
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3607,6 +3609,8 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    details: 'Details'
+    settings: 'Einstellungen'
     status: 'Status'
     sponsors: 'Gefördert durch'
     since: 'seit'
@@ -3695,6 +3699,7 @@ de:
     pending: Pending
     assigned: "Zugewiesen"
     dismissed: "Abgelehnt"
+    unlimited: unbegrenzt
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3711,6 +3716,8 @@ de:
     discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    move_up: 'Nach oben'
+    move_down: 'Nach unten'
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Veranstaltung'

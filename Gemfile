@@ -11,12 +11,14 @@ gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"
 gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
+gem "altcha-rails", "~> 0.0.6"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
 gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
+gem "connection_pool", "< 3.0" # ActiveSupport currently breaks with connection_pool 3.x
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
@@ -27,6 +29,8 @@ gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
 gem "faraday", "~> 1.8", "~> 1.10"
 gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
+gem "flipper"
+gem "flipper-active_record"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"

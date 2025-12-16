@@ -8,6 +8,9 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
+import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
+window.Stimulus.register("media-button-sort", MediaButtonSortController);
+
 import SearchFormController from "~/_components/search_form/search_form.controller.js";
 window.Stimulus.register("search-form", SearchFormController);
 
@@ -31,6 +34,15 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 
 import RegistrationItemController from "~/registration/item_search_form/_search_form.controller.js";
 window.Stimulus.register("registration-item-search", RegistrationItemController);
+
+import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
+window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
+
+import BsPopoverController from "~/controllers/bs_popover_controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

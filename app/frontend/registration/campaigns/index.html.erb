@@ -1,0 +1,6 @@
+<div class="container">
+  <%= render partial: "registration/campaigns/index", locals: { lecture: @lecture } %>
+  <div class="mt-3">
+    <%= link_to t("back"), edit_lecture_path(@lecture, tab: "campaigns"), class: "btn btn-secondary" %>
+  </div>
+</div>

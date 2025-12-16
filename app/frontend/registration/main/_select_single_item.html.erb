@@ -4,7 +4,7 @@
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div class="small text-muted">
       <%= t('registration.seats_remaining') %>:
-      <span id="seatsRemaining"><%= item.capacity_remained %></span>
+      <span id="seatsRemaining"><%= nullable_capacity_display(item.capacity_remained) %></span>
     </div>
 
     <% last_updated = campaign.user_registrations_last_updated(current_user) %>
@@ -40,7 +40,7 @@
       <%= button_to t('registration.register_now'),
                     register_item_path(campaign.id, item.id),
                     method: :post,
-                    disabled: !campaign.open_for_registrations? || item.capacity_remained.zero?,
+                    disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
                     class: "btn btn-primary btn-sm" %>
     <% end %>
   </div>

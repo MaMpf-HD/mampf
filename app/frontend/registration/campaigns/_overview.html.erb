@@ -1,0 +1,80 @@
+<% campaign ||= @campaign %>
+<% show_stats = !campaign.draft? %>
+<div id="campaign_overview">
+  <% if campaign.registration_items.empty? %>
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+      <div>
+        <%= t("registration.campaign.warnings.no_items") %>
+      </div>
+    </div>
+  <% end %>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 <%= show_stats ? 'col-lg-8' : '' %>">
+    <div class="card h-100">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-3 text-muted"><%= t("basics.details") %></h6>
+        <dl class="row mb-0">
+          <dt class="col-sm-4"><%= t("registration.campaign.form.title") %></dt>
+          <dd class="col-sm-8"><%= campaign.title %></dd>
+
+          <dt class="col-sm-4"><%= t("registration.campaign.form.allocation_mode") %></dt>
+          <dd class="col-sm-8"><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></dd>
+
+          <dt class="col-sm-4"><%= t("registration.campaign.form.registration_deadline") %></dt>
+          <dd class="col-sm-8"><%= l(campaign.registration_deadline, format: :long) if campaign.registration_deadline %></dd>
+
+          <dt class="col-sm-4"><%= t("basics.status") %></dt>
+          <dd class="col-sm-8">
+            <span class="badge bg-<%= campaign_badge_color(campaign) %>">
+              <%= t("registration.campaign.status.#{campaign.status}") %>
+            </span>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <% if show_stats %>
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.campaign.overview.registrations") %></h6>
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold"><%= t("registration.campaign.overview.total") %></div>
+            <span class="fw-bold"><%= campaign.total_registrations_count %></span>
+          </div>
+
+          <div class="mb-1">
+            <span class="badge rounded-pill text-bg-success"><%= t("registration.campaign.overview.confirmed_count", count: campaign.confirmed_count) %></span>
+          </div>
+          <div class="small text-muted mb-2">
+            <%= t("registration.campaign.overview.pending_count", count: campaign.pending_count) %> ·
+            <%= t("registration.campaign.overview.rejected_count", count: campaign.rejected_count) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.campaign.overview.items") %></h6>
+        <div class="fw-semibold"><%= campaign.registration_items.count %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.policy.index.title") %></h6>
+        <div class="fw-semibold"><%= campaign.registration_policies.count %></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
