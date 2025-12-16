@@ -53,7 +53,7 @@ namespace :maintenance do
           end
         else
           Rails.logger
-               .warn("Warning: Could not find blob for #{filename} in RichText #{rich_text.id}")
+               .warn("Could not find blob for #{filename} in RichText #{rich_text.id}")
         end
       end
 
