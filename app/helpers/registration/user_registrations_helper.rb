@@ -61,7 +61,7 @@ module Registration
         { header: I18n.t("basics.tutor"),
           field: ->(item) { item.registerable.tutor_names } },
         { header: I18n.t("basics.seats"),
-          field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
+          field: ->(item) { "#{item.capacity_used}/#{item.capacity}" } }
       ],
       "Talk" => [
         { header: I18n.t("basics.talk"),
@@ -75,7 +75,7 @@ module Registration
             end&.join(", ")
           } },
         { header: I18n.t("basics.seats"),
-          field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
+          field: ->(item) { "#{item.capacity_used}/#{item.capacity}" } }
       ]
     }.freeze
 
