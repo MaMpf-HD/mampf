@@ -16,7 +16,7 @@
     </li>
 
     <!-- Capacity detail -->
-    <% total_capacity      = items.sum(&:capacity) %>
+    <% total_capacity      = sum_of_nullable(items.map(&:capacity)) %>
     <% total_capacity_used = items.sum(&:capacity_used) %>
     <% multi_items         = items.size > 1 %>
 
@@ -28,7 +28,7 @@
         </small>
       </div>
       <span class="badge rounded-pill text-bg-info" id="capacityInfo">
-        <%= total_capacity_used %>/<%= total_capacity %> <%= t('basics.filled') %>
+        <%= total_capacity_used %>/<%= nullable_capacity_display(total_capacity) %> <%= t('basics.filled') %>
         <%= t('basics.across_group') if multi_items %>
       </span>
     </li>

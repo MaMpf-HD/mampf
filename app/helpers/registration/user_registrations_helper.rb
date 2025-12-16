@@ -61,7 +61,7 @@ module Registration
         { header: I18n.t("basics.tutor"),
           field: ->(item) { item.registerable.tutor_names } },
         { header: I18n.t("basics.seats"),
-          field: ->(item) { "#{item.capacity_used}/#{item.capacity}" } }
+          field: ->(item) { "#{item.capacity_used}/#{nullable_capacity_display(item.capacity)}" } }
       ],
       "Talk" => [
         { header: I18n.t("basics.talk"),
@@ -75,7 +75,7 @@ module Registration
             end&.join(", ")
           } },
         { header: I18n.t("basics.seats"),
-          field: ->(item) { "#{item.capacity_used}/#{item.capacity}" } }
+          field: ->(item) { "#{item.capacity_used}/#{nullable_capacity_display(item.capacity)}" } }
       ]
     }.freeze
 
@@ -122,5 +122,20 @@ module Registration
         content_tag(:span, "")
       end
     end
+
+    def sum_of_nullable(values)
+      return nil if values.any?(&:nil?)
+
+      values.sum
+    end
+
+    def nil_or_positive_integer?(value)
+      value.nil? || (value.is_a?(Integer) && value.positive?)
+    end
+
+    def nullable_capacity_display(capacity)
+      capacity.nil? ? "\u221E" : capacity.to_s
+    end
+    module_function :nullable_capacity_display
   end
 end

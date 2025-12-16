@@ -39,12 +39,16 @@ module Registration
       user_registrations.where(status: :confirmed).count
     end
 
-    def capacity_remained
-      capacity - capacity_used
+    def still_have_capacity?
+      return true if capacity.nil?
+
+      capacity_remained.positive?
     end
 
-    def still_have_capacity?
-      capacity_remained.positive?
+    def capacity_remained
+      return nil if capacity.nil?
+
+      capacity - capacity_used
     end
 
     def user_registered?(user)
