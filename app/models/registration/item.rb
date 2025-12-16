@@ -36,7 +36,8 @@ module Registration
     # end
 
     def capacity_used
-      user_registrations.where(status: :confirmed).count
+      # user_registrations.where(status: :confirmed).count
+      confirmed_registrations_count
     end
 
     def still_have_capacity?
