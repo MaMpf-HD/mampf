@@ -60,7 +60,7 @@ namespace :maintenance do
         # Update the body column directly to avoid callbacks/validations
         rich_text.update_column(:body, doc.to_html) # rubocop:disable Rails/SkipsModelValidations
         count += 1
-        Rails.logger.debug(".")
+        Rails.logger.debug("Updated #{count} records...") if (count % 100).zero?
       end
     end
 
