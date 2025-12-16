@@ -10,7 +10,7 @@ namespace :maintenance do
     protocol = Rails.env.production? ? "https" : "http"
     url_options = { host: host, protocol: protocol }
 
-    ActionText::RichText.find_each do |rich_text|
+    ActionText::RichText.with_attached_embeds.find_each do |rich_text|
       next if rich_text.body.blank?
 
       # Parse the raw HTML body
