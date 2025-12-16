@@ -1,0 +1,182 @@
+en:
+  registration:
+    campaign:
+      created: "Campaign created successfully."
+      create_failed: "Campaign could not be created."
+      updated: "Campaign updated successfully."
+      update_failed: "Campaign could not be updated."
+      destroyed: "Campaign deleted successfully."
+      cannot_delete: "Campaign cannot be deleted."
+      confirm_delete: "Are you sure you want to delete this campaign?"
+      opened: "Campaign opened."
+      closed: "Campaign closed."
+      reopened: "Campaign reopened."
+      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      helpdesk:
+        campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
+        registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
+        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
+        allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
+        first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
+      index:
+        title: "Registrations"
+        card_title: "Registration Campaigns"
+        new_campaign: "New Campaign"
+        none: "No campaigns found."
+        columns:
+          title_column: "Title"
+          type: "Type"
+          mode: "Allocation Mode"
+          opens_at: "Opens At"
+          deadline: "Deadline"
+          status: "Status"
+          registrations: "Registrations"
+      new:
+        title: "New Campaign"
+      edit:
+        title: "Edit Campaign"
+      form:
+        new_title: "New Campaign"
+        edit_title: "Edit Campaign"
+        title: "Title"
+        allocation_mode: "Allocation Mode"
+        registration_opens_at: "Registration Opens At"
+        registration_deadline: "Registration Deadline"
+        planning_only: "Planning Only"
+        submit: "Save"
+      allocation_mode:
+        first_come_first_served: "First-Come-First-Served"
+        preference_based: "Preference-Based"
+      status:
+        draft: "Draft"
+        open: "Open"
+        processing: "Processing"
+        completed: "Completed"
+        closed: "Closed"
+        planning: "Planning"
+      actions:
+        open: "Start Registration"
+        close: "End Registration"
+        reopen: "Reopen Registration"
+      confirmations:
+        open: "Are you sure you want to open registration? Students will be able to register immediately."
+        close: "Are you sure you want to end registration? No new registrations will be accepted."
+        reopen: "Are you sure you want to reopen registration?"
+      overview:
+        registrations: "Registrations"
+        total: "Total"
+        confirmed_count:
+          one: "Confirmed %{count}"
+          other: "Confirmed %{count}"
+        pending_count:
+          one: "Pending %{count}"
+          other: "Pending %{count}"
+        rejected_count:
+          one: "Rejected %{count}"
+          other: "Rejected %{count}"
+        items: "Items"
+      warnings:
+        no_items: "This campaign has no items yet. Students won't be able to register for anything."
+        unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+    policy:
+      helpdesk:
+        policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
+        policies_frozen: "Policies cannot be modified once the campaign has been opened or is no longer a draft."
+        kind: "The type of rule to enforce. For example, 'Institutional Email' requires users to have an email address from a specific domain."
+        phase: "When the rule is checked. 'Registration': Checked when the student tries to register. 'Finalization': Checked when the final assignment is calculated (after the registration deadline has passed). 'Both': Checked at both times."
+      index:
+        title: "Policies"
+        add: "Add Policy"
+        none: "No policies configured."
+      new:
+        title: "New Policy"
+      edit:
+        title: "Edit Policy"
+      kind: "Type"
+      phase: "Phase"
+      config: "Configuration"
+      position: "Position"
+      created: "Policy created successfully."
+      updated: "Policy updated successfully."
+      destroyed: "Policy deleted successfully."
+      errors:
+        missing_domains: "At least one allowed domain must be specified."
+        missing_prerequisite_campaign: "A prerequisite campaign must be selected."
+        prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
+      configs:
+        allowed_domains: "Allowed Domains (comma separated)"
+        prerequisite_campaign_id: "Prerequisite Campaign"
+        lecture_id: "Lecture"
+      hints:
+        allowed_domains: "e.g. uni-heidelberg.de, mathi.uni-heidelberg.de"
+      kinds:
+        institutional_email: "Institutional Email"
+        prerequisite_campaign: "Prerequisite Campaign"
+        student_performance: "Student Performance"
+      phases:
+        registration: "Registration"
+        finalization: "Finalization"
+        both: "Both"
+    item:
+      index:
+        title: "Items"
+        none: "No items added yet."
+      add:
+        title: "Add Items"
+        existing: "Add Existing"
+        new: "Create New"
+        none_available: "No items available to add."
+        lecture_unique: "This campaign already has a lecture item. You cannot add more items."
+      columns:
+        title: "Title"
+        capacity: "Capacity"
+        registrations: "Registrations"
+        first_choice: "1st Choice"
+      groups:
+        tutorials: "Tutorials"
+        talks: "Talks"
+        general: "General"
+      types:
+        tutorial: "Tutorial"
+        talk: "Talk"
+        lecture: "Lecture"
+        lecture_signup: "General Signup"
+      actions:
+        remove_from_campaign: "Remove from campaign"
+        delete_registerable: "Delete %{type}"
+      created: "Item added successfully."
+      destroyed: "Item removed successfully."
+      registerable_destroyed: "%{type} deleted successfully."
+      updated: "Item updated successfully."
+      invalid_type: "Invalid type."
+      cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
+      confirm_delete: "Are you sure you want to remove this item?"
+      confirm_remove: "Are you sure you want to remove this item from the campaign?"
+      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
+  activerecord:
+    errors:
+      models:
+        registration/campaign:
+          attributes:
+            base:
+              frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
+              cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{titles}."
+              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{title}' is still in draft mode."
+              no_items: "Cannot open campaign because no items have been added."
+            registration_deadline:
+              must_be_in_future: "must be in the future when campaign is open"
+            allocation_mode:
+              frozen: "cannot be changed after campaign is opened"
+        registration/policy:
+          attributes:
+            base:
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+        registration/item:
+          attributes:
+            base:
+              mixed_types: "All items must be of the same type."
+              lecture_unique: "A campaign can only have one lecture item."
+              capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."

@@ -32,8 +32,18 @@ window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceCon
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
+
 import RegistrationItemController from "~/registration/item_search_form/_search_form.controller.js";
 window.Stimulus.register("registration-item-search", RegistrationItemController);
+
+import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
+window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
+
+import BsPopoverController from "~/controllers/bs_popover_controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

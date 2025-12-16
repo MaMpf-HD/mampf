@@ -64,6 +64,9 @@ Manage registration campaigns for lectures.
 | edit    | Edit campaign settings (before allocation) |
 | update  | Update campaign |
 | destroy | Delete campaign (if no registrations exist) |
+| open    | Open campaign for registration |
+| close   | Close campaign (stop registration) |
+| reopen  | Reopen a closed campaign |
 
 ```admonish example "Responsibilities"
 - CRUD operations for campaigns

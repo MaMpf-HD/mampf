@@ -17,7 +17,10 @@ module Registration
 
     validates :kind, :phase, presence: true
     validates :active, inclusion: { in: [true, false] }
-    validates :position, uniqueness: { scope: :registration_campaign_id }
+    validate :campaign_is_draft, on: [:create, :update]
+    validate :validate_config
+
+    before_destroy :ensure_campaign_is_draft
 
     acts_as_list scope: :registration_campaign
 
@@ -27,14 +30,50 @@ module Registration
       where(phase: [phases[:both], phases[phase]])
     }
 
-    def evaluate(user)
-      case kind.to_sym
-      when :institutional_email
-        evaluate_institutional_email(user)
-      when :prerequisite_campaign
-        evaluate_prerequisite_campaign(user)
-      else
-        raise(ArgumentError, "Unknown policy kind: #{kind}")
+    scope :referencing_campaign, lambda { |campaign_id|
+      where("config->>'prerequisite_campaign_id' = ?", campaign_id.to_s)
+    }
+
+    # Virtual attributes for form handling and validation
+    def allowed_domains
+      val = config&.fetch("allowed_domains", nil)
+      return val if val.is_a?(String)
+
+      Array(val).join(", ")
+    end
+
+    def allowed_domains=(value)
+      self.config ||= {}
+      self.config["allowed_domains"] = value
+    end
+
+    def prerequisite_campaign_id
+      config&.fetch("prerequisite_campaign_id", nil)
+    end
+
+    def prerequisite_campaign_id=(value)
+      self.config ||= {}
+      self.config["prerequisite_campaign_id"] = value
+    end
+
+    def config_summary
+      handler.summary || "-"
+    end
+
+    delegate :evaluate, to: :handler
+
+    def handler
+      return Registration::Policy::Handler.new(self) if kind.blank?
+
+      @handler ||= case kind.to_sym
+                   when :institutional_email
+                     Registration::Policy::InstitutionalEmailHandler.new(self)
+                   when :prerequisite_campaign
+                     Registration::Policy::PrerequisiteCampaignHandler.new(self)
+                   when :student_performance
+                     Registration::Policy::Handler.new(self)
+                   else
+                     raise(ArgumentError, "Unknown policy kind: #{kind}")
       end
     end
 
@@ -44,55 +83,21 @@ module Registration
 
     private
 
-      def pass_result(code = :ok, details = {})
-        { pass: true, code: code, details: details }
+      def campaign_is_draft
+        return unless registration_campaign && !registration_campaign.draft?
+
+        errors.add(:base, :frozen)
       end
 
-      def fail_result(code, message, details = {})
-        { pass: false, code: code, message: message, details: details }
+      def validate_config
+        handler.validate
       end
 
-      def evaluate_institutional_email(user)
-        domains = Array(config&.fetch("allowed_domains", nil)).map do |domain|
-          (domain || "").strip.downcase
-        end.reject(&:empty?)
+      def ensure_campaign_is_draft
+        return unless registration_campaign && !registration_campaign.draft?
 
-        return fail_result(:configuration_error, "No allowed domains configured") if domains.empty?
-
-        email = user.email.to_s.downcase
-        allowed = domains.any? do |domain|
-          email.end_with?("@#{domain}")
-        end
-
-        if allowed
-          pass_result(:domain_ok)
-        else
-          fail_result(:institutional_email_mismatch, "Email domain not allowed",
-                      allowed_domains: domains)
-        end
-      end
-
-      def evaluate_prerequisite_campaign(user)
-        campaign_id = config&.fetch("prerequisite_campaign_id", nil)
-
-        if campaign_id.blank?
-          return fail_result(:configuration_error,
-                             "Prerequisite campaign not configured")
-        end
-
-        prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
-
-        unless prereq_campaign
-          return fail_result(:prerequisite_campaign_not_found,
-                             "Prerequisite campaign missing")
-        end
-
-        if prereq_campaign.user_registration_confirmed?(user)
-          pass_result(:prerequisite_met)
-        else
-          fail_result(:prerequisite_not_met,
-                      "Prerequisite campaign not completed")
-        end
+        errors.add(:base, :frozen)
+        throw(:abort)
       end
   end
 end

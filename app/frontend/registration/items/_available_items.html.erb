@@ -1,0 +1,136 @@
+<% service = Registration::AvailableItemsService.new(campaign) %>
+<% available_items = service.items %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" id="add-items-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="existing-tab" data-bs-toggle="tab" data-bs-target="#existing" type="button" role="tab" aria-controls="existing" aria-selected="true">
+          <%= t("registration.item.add.existing") %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button" role="tab" aria-controls="new" aria-selected="false">
+          <%= t("registration.item.add.new") %>
+        </button>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="tab-content" id="add-items-content">
+      <div class="tab-pane fade show active" id="existing" role="tabpanel" aria-labelledby="existing-tab">
+        <% if available_items.empty? %>
+          <div class="alert alert-secondary mb-0">
+            <%= t("registration.item.add.none_available") %>
+          </div>
+        <% else %>
+          <div class="row g-4">
+            <% if available_items[:tutorials].present? %>
+              <div class="col-12">
+                <h6><%= t("registration.item.groups.tutorials") %></h6>
+                <div class="list-group">
+                  <% available_items[:tutorials].each do |tutorial| %>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <%= tutorial.title_with_tutors %>
+                        <span class="badge bg-secondary ms-2">
+                          <%= format_capacity(tutorial.capacity) %>
+                        </span>
+                      </div>
+                      <%= button_to t("basics.add"),
+                                    registration_campaign_items_path(campaign),
+                                    params: { registration_item: { registerable_id: tutorial.id, registerable_type: "Tutorial" } },
+                                    class: "btn btn-sm btn-primary",
+                                    data: { turbo: true } %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if available_items[:talks].present? %>
+              <div class="col-12">
+                <h6><%= t("registration.item.groups.talks") %></h6>
+                <div class="list-group">
+                  <% available_items[:talks].each do |talk| %>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <%= talk.to_label %>
+                        <% if talk.speakers.any? %>
+                          <span class="text-muted ms-2">(<%= speaker_list(talk) %>)</span>
+                        <% end %>
+                      </div>
+                      <%= button_to t("basics.add"),
+                                    registration_campaign_items_path(campaign),
+                                    params: { registration_item: { registerable_id: talk.id, registerable_type: "Talk" } },
+                                    class: "btn btn-sm btn-primary",
+                                    data: { turbo: true } %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if available_items[:lecture].present? %>
+              <div class="col-12">
+                <h6><%= t("registration.item.groups.general") %></h6>
+                <div class="list-group">
+                  <% available_items[:lecture].each do |lecture| %>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <%= t("registration.item.types.lecture_signup") %>
+                      </div>
+                      <%= button_to t("basics.add"),
+                                    registration_campaign_items_path(campaign),
+                                    params: { registration_item: { registerable_id: lecture.id, registerable_type: "Lecture" } },
+                                    class: "btn btn-sm btn-primary",
+                                    data: { turbo: true } %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+        <% existing_type = campaign.registration_items.first&.registerable_type %>
+        <% if existing_type == "Lecture" %>
+          <div class="alert alert-info mt-3">
+            <%= t("registration.item.add.lecture_unique") %>
+          </div>
+        <% else %>
+          <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
+            <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
+
+            <div class="col-md-3">
+              <%= f.label "registration_item[registerable_type]", t("basics.type"), class: "form-label" %>
+              <%
+                 options = if existing_type
+                             [[t("registration.item.types.#{existing_type.underscore}"), existing_type]]
+                           else
+                             [[t("registration.item.types.tutorial"), "Tutorial"], [t("registration.item.types.talk"), "Talk"]]
+                           end
+              %>
+              <%= f.select "registration_item[registerable_type]", options, {}, class: "form-select" %>
+            </div>
+
+            <div class="col-md-5">
+              <%= f.label "registration_item[title]", t("basics.title"), class: "form-label" %>
+              <%= f.text_field "registration_item[title]", class: "form-control", required: true %>
+            </div>
+
+            <div class="col-md-2">
+              <%= f.label "registration_item[capacity]", t("registration.item.columns.capacity"), class: "form-label" %>
+              <%= f.number_field "registration_item[capacity]", class: "form-control", min: 1, placeholder: "∞" %>
+            </div>
+
+            <div class="col-md-2">
+              <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
