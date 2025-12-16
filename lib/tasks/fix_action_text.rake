@@ -6,7 +6,7 @@ namespace :maintenance do
     Rails.logger.debug("Starting ActionText SGID repair...")
     count = 0
 
-    host = ENV.fetch("URL_HOST", "localhost")
+    host = Rails.env.production? ? ENV.fetch("URL_HOST", "localhost") : "localhost:3000"
     protocol = Rails.env.production? ? "https" : "http"
     url_options = { host: host, protocol: protocol }
 
