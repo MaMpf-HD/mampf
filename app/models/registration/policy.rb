@@ -77,10 +77,6 @@ module Registration
       end
     end
 
-    scope :referencing_campaign, lambda { |campaign_id|
-      where("config->>'prerequisite_campaign_id' = ?", campaign_id.to_s)
-    }
-
     private
 
       def campaign_is_draft
