@@ -1,4 +1,8 @@
 namespace :maintenance do
+  # related:
+  # https://github.com/rails/rails/pull/39623
+  # https://github.com/rails/rails/issues/40435#issuecomment-903398832
+  # https://discuss.rubyonrails.org/t/how-to-rotate-secrek-key-base-without-breaking-activestorage-actiontext-attachments/80865
   desc "Regenerate ActionText SGIDs for ActiveStorage attachments after secret_key_base change"
   task fix_action_text_sgids: :environment do
     require "nokogiri"
