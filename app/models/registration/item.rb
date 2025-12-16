@@ -31,7 +31,7 @@ module Registration
     validate :validate_capacity_reduction, on: :update
     before_destroy :ensure_campaign_is_draft
 
-    def capacity_used
+    def item_capacity_used
       # user_registrations.where(status: :confirmed).count
       confirmed_registrations_count
     end

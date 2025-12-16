@@ -51,7 +51,7 @@
                 <div class="col-6 col-md-3">
                   <div class="small text-muted"><%= t("basics.capacity") %></div>
                   <div class="fw-semibold">
-                    <%= item_succeed.capacity_used %> / <%= nullable_capacity_display(item_succeed.capacity) %>
+                    <%= item_succeed.item_capacity_used %> / <%= nullable_capacity_display(item_succeed.capacity) %>
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@
                     <div>
                       &nbsp;&nbsp;<%= item.registerable_type %>: <%= item.title %>
                       &nbsp;&nbsp;<%= item.try(:time) || item.try(:title) %>
-                      &nbsp;&nbsp;<%= t("basics.capacity") %>: <%= item.capacity_used %> / <%= nullable_capacity_display(item.capacity) %>
+                      &nbsp;&nbsp;<%= t("basics.capacity") %>: <%= item.item_capacity_used %> / <%= nullable_capacity_display(item.capacity) %>
                     </div>
                     <%= confirm_status_badge(status_items_selected[item]) %>
                   </div>
@@ -107,7 +107,7 @@
                 <tr>
                   <td><%= item.title %></td>
                   <td><%= item.try(:time) || item.try(:title) %></td>
-                  <td><%= item.capacity_used %> / <%= item.capacity %></td>
+                  <td><%= item.item_capacity_used %> / <%= item.capacity %></td>
                   <td><%= confirm_status_badge(status_items_selected[item]) %></td>
                 </tr>
               <% end %>
