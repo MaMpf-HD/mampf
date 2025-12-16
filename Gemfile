@@ -35,6 +35,7 @@ gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
 gem "mini_magick", "~> 4.13"
 # JavaScript runtime for Rails (used for CoffeeScript that uses ExecJS)
+gem "kamal", "~> 2.9"
 gem "mini_racer", "~> 0.19.1"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
@@ -97,5 +98,3 @@ group :development, :test do
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
   gem "simplecov-cobertura", "~> 3.1"
 end
-
-gem "kamal", "~> 2.9"
