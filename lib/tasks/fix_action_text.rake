@@ -13,7 +13,6 @@ namespace :maintenance do
     ActionText::RichText.with_attached_embeds.find_each do |rich_text|
       next if rich_text.body.blank?
 
-      # Parse the raw HTML body
       doc = Nokogiri::HTML::DocumentFragment.parse(rich_text.body.to_s)
       changed = false
 
@@ -31,28 +30,28 @@ namespace :maintenance do
           (b.filename.to_s == filename) && (b.byte_size.to_s == filesize)
         end
 
-        if blob
-          # Generate a new SGID with the current secret_key_base
-          new_sgid = blob.attachable_sgid
-
-          if node["sgid"] != new_sgid
-            node["sgid"] = new_sgid
-            changed = true
-          end
-
-          # Update the URL as well, as it contains a signed_id that is now invalid
-          if node["url"]
-
-            new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
-
-            if node["url"] != new_url
-              node["url"] = new_url
-              changed = true
-            end
-          end
-        else
+        unless blob
           Rails.logger
-               .warn("Could not find blob for #{filename} in RichText #{rich_text.id}")
+               .warn("Could not find attachment for #{filename} in RichText #{rich_text.id}")
+          next
+        end
+
+        # Generate a new SGID with the current secret_key_base
+        new_sgid = blob.attachable_sgid
+
+        if node["sgid"] != new_sgid
+          node["sgid"] = new_sgid
+          changed = true
+        end
+
+        # Update the URL as well, as it contains a signed_id that is now invalid
+        next unless node["url"]
+
+        new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
+
+        if node["url"] != new_url
+          node["url"] = new_url
+          changed = true
         end
       end
 
@@ -60,7 +59,7 @@ namespace :maintenance do
         # Update the body column directly to avoid callbacks/validations
         rich_text.update_column(:body, doc.to_html) # rubocop:disable Rails/SkipsModelValidations
         count += 1
-        Rails.logger.debug("Updated #{count} records...") if (count % 100).zero?
+        Rails.logger.debug { "Updated #{count} records..." } if (count % 100).zero?
       end
     end
 
