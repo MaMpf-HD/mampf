@@ -15,22 +15,14 @@ namespace :maintenance do
   desc "Regenerate ActionText SGIDs for ActiveStorage attachments after secret_key_base change"
   task :fix_action_text_sgids, [:old_secret_key_base] => :environment do |_, args|
     require "nokogiri"
-
     Rails.logger.debug("Starting ActionText SGID repair...")
-    count = 0
 
     host = ENV.fetch("URL_HOST")
     protocol = Rails.env.production? ? "https" : "http"
     url_options = { host: host, protocol: protocol }
 
-    # Setup Old Verifier (if key is provided)
-    old_verifier = nil
-    if args[:old_secret_key_base].present?
-      # Replicate Rails key derivation logic
-      keygen = ActiveSupport::KeyGenerator.new(args[:old_secret_key_base], iterations: 1000)
-      secret = keygen.generate_key("signed_global_ids")
-      old_verifier = ActiveSupport::MessageVerifier.new(secret, serializer: JSON)
-    end
+    count = 0
+    old_verifier = setup_old_verifier(args[:old_secret_key_base])
 
     ActionText::RichText.with_attached_embeds.find_each do |rich_text|
       next if rich_text.body.blank?
@@ -96,6 +88,16 @@ namespace :maintenance do
     end
 
     Rails.logger.debug { "\nDone. Fixed #{count} RichText records." }
+  end
+
+  # Sets up an old MessageVerifier based on the provided old_secret_key_base
+  # (replicates ActionText's logic for SGID generation)
+  def setup_old_verifier(old_secret_key_base)
+    return nil if old_secret_key_base.blank?
+
+    keygen = ActiveSupport::KeyGenerator.new(old_secret_key_base, iterations: 1000)
+    secret = keygen.generate_key("signed_global_ids")
+    ActiveSupport::MessageVerifier.new(secret, serializer: JSON)
   end
 
   def find_blob_by_sgid(node, filename, old_verifier, rich_text)
