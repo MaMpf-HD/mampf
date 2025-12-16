@@ -42,11 +42,10 @@ namespace :maintenance do
 
           # Update the URL as well, as it contains a signed_id that is now invalid
           if node["url"]
-            current_url = node["url"]
 
             new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
 
-            if current_url != new_url
+            if node["url"] != new_url
               node["url"] = new_url
               changed = true
             end
