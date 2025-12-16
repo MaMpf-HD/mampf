@@ -10,42 +10,79 @@
       </li>
     </ol>
   </nav>
-
   <!-- Campaign info card -->
   <%= render partial: 'registration/main/campaign_info',
-             locals: { campaignable_host: @campaignable_host,
-                       campaign: @campaign } %>
+    locals: { campaignable_host: @campaignable_host,
+              campaign: @campaign } %>
 
+  <% is_single_mode = single_mode?(@campaign.registerable_type)%>
+
+  <% if is_single_mode %>
   <div class="row g-3">
     <!-- Eligibility card -->
     <div class="col-12 col-lg-4">
       <div class="card h-100" data-test="eligibility-card">
         <%= render partial: 'registration/main/eligibility',
-                   locals: { eligibility: @eligibility } %>
+          locals: { eligibility: @eligibility } %>
       </div>
     </div>
-
     <!-- Selection card -->
     <div class="col-12 col-lg-8">
       <div class="card h-100">
         <% if @campaign.first_come_first_served? %>
-          <%= render partial: 'registration/main/select_fcfs',
-                     locals: { campaign: @campaign,
-                               campaignable_host: @campaignable_host,
-                               items: @items } %>
+        <%= render partial: 'registration/main/select_fcfs',
+          locals: { campaign: @campaign,
+                    campaignable_host: @campaignable_host,
+                    items: @items } %>
         <% else %>
-          <%= render partial: 'registration/main/select_preference',
-                     locals: { campaign: @campaign,
-                               campaignable_host: @campaignable_host,
-                               items: @items } %>
+        <%= render partial: 'registration/main/select_preference',
+          locals: { campaign: @campaign,
+                    campaignable_host: @campaignable_host,
+                    items: @items } %>
         <% end %>
       </div>
     </div>
   </div>
-
   <!-- Campaign details card -->
   <div class="card mt-3">
     <%= render partial: 'registration/main/campaign_details',
-               locals: { campaign: @campaign, items: @items } %>
+      locals: { campaign: @campaign, items: @items } %>
   </div>
+
+
+  <% else %>
+
+  <div class="row g-3">
+    <!-- Eligibility card -->
+    <div class="col-12 col-lg-6">
+      <div class="card h-100" data-test="eligibility-card">
+        <%= render partial: 'registration/main/eligibility',
+          locals: { eligibility: @eligibility } %>
+      </div>
+    </div>
+    <!-- Campaign details card -->
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <%= render partial: 'registration/main/campaign_details',
+          locals: { campaign: @campaign, items: @items } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selection card -->
+  <div class="card mt-3">
+    <% if @campaign.first_come_first_served? %>
+    <%= render partial: 'registration/main/select_fcfs',
+      locals: { campaign: @campaign,
+                campaignable_host: @campaignable_host,
+                items: @items } %>
+    <% else %>
+    <%= render partial: 'registration/main/select_preference',
+      locals: { campaign: @campaign,
+                campaignable_host: @campaignable_host,
+                items: @items } %>
+    <% end %>
+  </div>
+  
+  <% end %>
 </div>
