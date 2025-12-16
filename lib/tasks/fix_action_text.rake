@@ -41,62 +41,32 @@ namespace :maintenance do
       doc.css("action-text-attachment").each do |node|
         filename = node["filename"]
         filesize = node["filesize"]
-        blob = nil
 
-        # Strategy A: Try to decode old SGID (Deterministic)
-        if old_verifier && node["sgid"].present?
-          begin
-            payload = old_verifier.verify(node["sgid"], purpose: "attachable")
-            # Payload is usually a hash: {"gid"=>"...", "purpose"=>"attachable"}
-            gid_string = payload.is_a?(Hash) ? payload["gid"] : payload
+        blob = find_blob_by_sgid(node, filename, old_verifier, rich_text) ||
+               find_blob_by_heuristic(filename, filesize, rich_text)
 
-            if gid_string
-              gid = GlobalID.parse(gid_string)
-              blob = rich_text.embeds.blobs.find { |b| b.id == gid.model_id.to_i } if gid
-              if blob
-                Rails.logger.debug do
-                  "Strategy A: Decoded SGID for #{filename} -> Blob #{blob&.id}"
-                end
-              end
-            end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageVerifier::InvalidMessage
-            Rails.logger.warn("Old secret key provided but failed to verify SGID " \
-                              "for #{filename}. Falling back to heuristic.")
-          end
-        end
-
-        # Strategy B: Fallback to Filename/Size Heuristic
         unless blob
-          blob = rich_text.embeds.blobs.find do |b|
-            (b.filename.to_s == filename) && (b.byte_size.to_s == filesize)
-          end
-          if blob
-            Rails.logger.debug { "Strategy B: Heuristic match for #{filename} -> Blob #{blob&.id}" }
-          end
-        end
-
-        if blob
-          # Fix SGID
-          new_sgid = blob.attachable_sgid
-          if node["sgid"] != new_sgid
-            node["sgid"] = new_sgid
-            changed = true
-          end
-
-          # Fix URL (Always absolute based on config)
-          if node["url"]
-            current_url = node["url"]
-            new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
-
-            if current_url != new_url
-              node["url"] = new_url
-              changed = true
-            end
-          end
-        else
           Rails.logger
                .warn("Could not find attachment for #{filename} in RichText #{rich_text.id}")
           next
+        end
+
+        # Fix SGID
+        new_sgid = blob.attachable_sgid
+        if node["sgid"] != new_sgid
+          node["sgid"] = new_sgid
+          changed = true
+        end
+
+        # Fix URL (Always absolute based on config)
+        if node["url"]
+          current_url = node["url"]
+          new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
+
+          if current_url != new_url
+            node["url"] = new_url
+            changed = true
+          end
         end
 
         # Generate a new SGID with the current secret_key_base
@@ -126,5 +96,37 @@ namespace :maintenance do
     end
 
     Rails.logger.debug { "\nDone. Fixed #{count} RichText records." }
+  end
+
+  def find_blob_by_sgid(node, filename, old_verifier, rich_text)
+    return nil unless old_verifier && node["sgid"].present?
+
+    payload = old_verifier.verify(node["sgid"], purpose: "attachable")
+    # Payload is usually a hash: {"gid"=>"...", "purpose"=>"attachable"}
+    gid_string = payload.is_a?(Hash) ? payload["gid"] : payload
+    return nil unless gid_string
+
+    gid = GlobalID.parse(gid_string)
+    blob = rich_text.embeds.blobs.find { |b| b.id == gid.model_id.to_i } if gid
+
+    if blob
+      Rails.logger.debug do
+        "Strategy A: Decoded SGID for #{filename} -> Blob #{blob&.id}"
+      end
+    end
+    blob
+  rescue ActiveSupport::MessageVerifier::InvalidSignature,
+         ActiveSupport::MessageVerifier::InvalidMessage
+    Rails.logger.warn("Old secret key provided but failed to verify SGID for #{filename}.")
+    nil
+  end
+
+  def find_blob_by_heuristic(filename, filesize, rich_text)
+    Rails.logger.warn("Falling back to heuristic matching for #{filename}.")
+    blob = rich_text.embeds.blobs.find do |b|
+      (b.filename.to_s == filename) && (b.byte_size.to_s == filesize)
+    end
+    Rails.logger.debug { "Strategy B: Heuristic match for #{filename} -> Blob #{blob&.id}" } if blob
+    blob
   end
 end
