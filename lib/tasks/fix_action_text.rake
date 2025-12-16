@@ -6,7 +6,6 @@ namespace :maintenance do
     Rails.logger.debug("Starting ActionText SGID repair...")
     count = 0
 
-    # Prepare options for absolute URLs (used only if the existing URL is absolute)
     host = ENV.fetch("URL_HOST", "localhost")
     protocol = Rails.env.production? ? "https" : "http"
     url_options = { host: host, protocol: protocol }
@@ -18,7 +17,6 @@ namespace :maintenance do
       doc = Nokogiri::HTML::DocumentFragment.parse(rich_text.body.to_s)
       changed = false
 
-      # Iterate over all attachment tags
       doc.css("action-text-attachment").each do |node|
         # We try to recover ActiveStorage attachments which are linked via the 'embeds' association.
         # Note: This script does not fix 'Mentions' (e.g. User references) as they are not stored
@@ -46,12 +44,7 @@ namespace :maintenance do
           if node["url"]
             current_url = node["url"]
 
-            # Preserve relative vs absolute nature of the URL
-            new_url = if current_url.start_with?("/")
-              Rails.application.routes.url_helpers.rails_blob_path(blob, only_path: true)
-            else
-              Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
-            end
+            new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
 
             if current_url != new_url
               node["url"] = new_url
