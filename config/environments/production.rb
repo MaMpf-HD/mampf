@@ -39,7 +39,9 @@ Rails.application.configure do
 
   # Specifies the header that your server uses for sending files.
   # X-Accel-Redirect is used for nginx-based setups (both old and new Kamal)
-  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect"
+  if ENV.fetch("PRODUCTION_NAME") != "mampf-vignettes"
+    config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :production

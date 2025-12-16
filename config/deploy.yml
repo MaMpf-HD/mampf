@@ -159,21 +159,3 @@ accessories:
   cache:
     image: memcached:alpine
     host: 91.98.178.89
-
-  media:
-    image: nginx:alpine
-    host: 91.98.178.89
-    # https://github.com/basecamp/kamal/discussions/1216#discussioncomment-14907075
-    port: 127.0.0.1:81:80
-    files:
-      - docker/production/nginx-media-server.conf:/etc/nginx/nginx.conf
-    directories:
-      - /mnt/media:/private-nginx/media:ro
-      - /mnt/submissions:/private-nginx/submissions:ro
-    proxy:
-      ssl: true
-      app_port: 80
-      host: vignettes-media.mampf.media
-    options:
-      add-host:
-        - host.docker.internal:host-gateway
