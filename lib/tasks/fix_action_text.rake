@@ -6,7 +6,14 @@ namespace :maintenance do
     Rails.logger.debug("Starting ActionText SGID repair...")
     count = 0
 
+    # Prepare options for absolute URLs (used only if the existing URL is absolute)
+    host = ENV.fetch("URL_HOST", "localhost")
+    protocol = Rails.env.production? ? "https" : "http"
+    url_options = { host: host, protocol: protocol }
+
     ActionText::RichText.find_each do |rich_text|
+      next if rich_text.body.blank?
+
       # Parse the raw HTML body
       doc = Nokogiri::HTML::DocumentFragment.parse(rich_text.body.to_s)
       changed = false
@@ -37,15 +44,21 @@ namespace :maintenance do
 
           # Update the URL as well, as it contains a signed_id that is now invalid
           if node["url"]
-            # We use the relative path to be safe and avoid host configuration issues
-            new_url = Rails.application.routes.url_helpers.rails_blob_path(blob, only_path: true)
-            if node["url"] != new_url
+            current_url = node["url"]
+
+            # Preserve relative vs absolute nature of the URL
+            new_url = if current_url.start_with?("/")
+              Rails.application.routes.url_helpers.rails_blob_path(blob, only_path: true)
+            else
+              Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
+            end
+
+            if current_url != new_url
               node["url"] = new_url
               changed = true
             end
           end
         else
-          # Optional: Log missing blobs if needed
           Rails.logger
                .warn("Warning: Could not find blob for #{filename} in RichText #{rich_text.id}")
         end
