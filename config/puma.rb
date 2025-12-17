@@ -27,6 +27,11 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
+# Enable clustered mode for testing with multipel workers
+# workers ENV.fetch("WEB_CONCURRENCY") { 0 }
+#
+# preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i > 0
+#
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("MAMPF_PORT")
 
@@ -39,3 +44,39 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+# # Prometheus Exporter Instrumentation for testing with clustered mode
+# require "prometheus_exporter/instrumentation"
+#
+# # Runs in each worker process
+# on_worker_boot do
+#   PrometheusExporter::Instrumentation::Process.start(type: "puma_worker")
+# end
+#
+# # Runs in the master process (or single process) after boot
+# on_booted do
+#   require "prometheus_exporter/instrumentation/puma"
+#
+#   # Monitor the master process
+#   PrometheusExporter::Instrumentation::Process.start(
+#     type: "puma_master",
+#     frequency: 15
+#   )
+#
+#   # Collect Puma internal stats (threads, workers, etc.)
+#   PrometheusExporter::Instrumentation::Puma.start
+#
+#   # Manually start the debugger in the master process only
+#   if ENV["RUBY_DEBUG_PORT"]
+#     begin
+#       require "debug"
+#       puts "🔌 Starting Debugger in Puma Master on port #{ENV["RUBY_DEBUG_PORT"]}"
+#       DEBUGGER__.start(server: true, host: ENV.fetch("RUBY_DEBUG_HOST", "0.0.0.0"),
+#                        port: ENV["RUBY_DEBUG_PORT"].to_i, nonstop: true)
+#     rescue LoadError
+#       puts "⚠️  Debugger gem not available (LoadError)."
+#     rescue StandardError => e
+#       puts "⚠️  Debugger failed to start: #{e.message}"
+#     end
+#   end
+# end

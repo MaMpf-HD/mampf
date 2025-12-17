@@ -27,6 +27,7 @@ services:
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3000
+ #     - WEB_CONCURRENCY=3   # adjust number of Puma workers if needed, also changes in puma.rb and run.sh needes to be done
     ports:
       - 3036:3036 # Vite server
       - 9394:9394 # Prometheus server
