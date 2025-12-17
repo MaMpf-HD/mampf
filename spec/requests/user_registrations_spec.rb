@@ -3,9 +3,11 @@ require "nokogiri"
 
 RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:user) { create(:confirmed_user) }
-  let(:lecture) { FactoryBot.create(:lecture) }
+  let(:lecture) { create(:lecture) }
+  let(:seminar) { create(:lecture, :is_seminar) }
 
   before do
+    Flipper.enable(:registration_campaigns)
     sign_in user
   end
 
@@ -21,7 +23,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     context "with open + fcfs lecture campaign" do
       let(:campaign) do
         FactoryBot.create(:registration_campaign, :first_come_first_served, :open,
-                          :with_policies, :for_lecture_enrollment)
+                          :with_policies, self_registerable: true)
       end
       it "return success response" do
         get campaign_registrations_for_campaign_path(campaign_id: campaign.id)
@@ -35,7 +37,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     context "should display multi select mode with open + fcfs tutorial campaign" do
       let(:campaign) do
         FactoryBot.create(:registration_campaign, :first_come_first_served, :open,
-                          :with_policies, :for_tutorial_enrollment)
+                          :with_policies)
       end
       it "return success response" do
         get campaign_registrations_for_campaign_path(campaign_id: campaign.id)
@@ -48,8 +50,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     context "should display multi select mode with open + fcfs talks campaign" do
       let(:campaign) do
-        FactoryBot.create(:registration_campaign, :first_come_first_served, :open,
-                          :with_policies, :for_talk_enrollment)
+        FactoryBot.create(:registration_campaign, :first_come_first_served, :open, :with_policies,
+                          campaignable: seminar)
       end
       it "return success response" do
         get campaign_registrations_for_campaign_path(campaign_id: campaign.id)
@@ -62,8 +64,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     context "should display result with completed campaign" do
       let(:campaign) do
-        FactoryBot.create(:registration_campaign, :first_come_first_served, :completed,
-                          :with_policies, :for_talk_enrollment)
+        FactoryBot.create(:registration_campaign, :first_come_first_served,
+                          :completed_after_policies, campaignable: seminar)
       end
       it "return success response" do
         get campaign_registrations_for_campaign_path(campaign_id: campaign.id)

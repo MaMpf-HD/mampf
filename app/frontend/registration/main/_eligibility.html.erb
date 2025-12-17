@@ -1,9 +1,9 @@
 <div class="card-body">
-  <div class="h5"><%= t('registration.eligibility_title') %></div>
+  <div class="h5 mb-3"><%= t('registration.eligibility_title') %></div>
 
-  <p class="mb-2 small text-muted">
+  <p class="mb-2">
     <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
-    <%= t('basics.status') %>: <%= eligibility_badge(pass) %>
+    <span class="small text-muted"><%= t('basics.status') %></span>: <%= eligibility_badge(pass) %>
   </p>
 
   <ul class="list-group list-group-flush">

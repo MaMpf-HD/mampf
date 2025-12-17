@@ -2,11 +2,11 @@ module Registration
   module UserRegistrationsHelper
     MODE_MAP = {
       -1 => { mode_name: "Unknown", abbr: "UNK",
-              badge_class: "badge rounded-pill w-auto text-bg-secondary" },
+              badge_class: "bg-grey-lighten-4 text-grey" },
       0 => { mode_name: "First-come, first-served", abbr: "FCFS",
-             badge_class: "badge rounded-pill w-auto text-bg-info" },
+             badge_class: "bg-light-blue-lighten-4 text-darkblue" },
       1 => { mode_name: "Preference Based", abbr: "PB",
-             badge_class: "badge rounded-pill w-auto text-bg-primary" }
+             badge_class: "bg-mdb-color-lighten-3 text-white" }
     }.freeze
     def get_mode_info(mode)
       MODE_MAP.fetch(mode, MODE_MAP[-1])
@@ -53,32 +53,26 @@ module Registration
     TABLE_CONFIG = {
       "Tutorial" => [
         { header: I18n.t("basics.tutorial"),
+          cell_class: "text-start fw-medium",
           field: ->(item) { item.title } },
-        { header: I18n.t("basics.time"),
-          field: lambda { |item|
-            item.try(:time) || item.title
-          } }, # in old implementation, title is time
+        # { header: I18n.t("basics.time"),
+        #   field: lambda { item.time } },
         { header: I18n.t("basics.tutor"),
-          field: ->(item) { item.registerable.tutor_names } },
-        { header: I18n.t("basics.seats"),
-          field: lambda { |item|
-            "#{item.item_capacity_used}/#{nullable_capacity_display(item.capacity)}"
-          } }
+          cell_class: "text-start fw-semibold",
+          field: ->(item) { item.registerable.tutor_names } }
       ],
       "Talk" => [
         { header: I18n.t("basics.talk"),
+          cell_class: "text-start fw-medium",
           field: ->(item) { item.title } },
         { header: I18n.t("basics.position"),
+          cell_class: "text-center",
           field: ->(item) { item.registerable.position } },
         { header: I18n.t("basics.date"),
           field: lambda { |item|
             item.registerable.dates&.map do |d|
               format_date(d)
             end&.join(", ")
-          } },
-        { header: I18n.t("basics.seats"),
-          field: lambda { |item|
-            "#{item.item_capacity_used}/#{nullable_capacity_display(item.capacity)}"
           } }
       ]
     }.freeze
@@ -140,6 +134,16 @@ module Registration
     def nullable_capacity_display(capacity)
       capacity.nil? ? "\u221E" : capacity.to_s
     end
-    module_function :nullable_capacity_display
+
+    def status_campaign_style(status)
+      case status
+      when "open"
+        "bg-success-subtle text-success"
+      when "closed", "completed", "processing"
+        "bg-secondary-subtle text-secondary"
+      else
+        "bg-info-subtle text-info"
+      end
+    end
   end
 end

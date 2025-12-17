@@ -5,7 +5,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
   let(:lecture) { FactoryBot.create(:lecture, teacher: teacher) }
 
   describe "register lecture campaign" do
-    let(:campaign) { FactoryBot.create(:registration_campaign, :open, :for_lecture_enrollment) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open, self_registerable: true) }
     let(:item) { campaign.registration_items.first }
 
     it "creates a confirmed registration when validations pass, " \
@@ -73,7 +73,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
   end
 
   describe "widthdraw lecture campaign" do
-    let(:campaign) { FactoryBot.create(:registration_campaign, :open, :for_lecture_enrollment) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open, self_registerable: true) }
     let(:item) { campaign.registration_items.first }
     before do
       # Create a confirmed registration
@@ -103,7 +103,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
   end
 
   describe "register tutorial campaign" do
-    let(:campaign) { FactoryBot.create(:registration_campaign, :open, :for_tutorial_enrollment) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
     let(:item) { campaign.registration_items.first }
     let(:item2) { campaign.registration_items.second }
 
@@ -175,7 +175,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
   end
 
   describe "withdraw tutorial campaign" do
-    let(:campaign) { FactoryBot.create(:registration_campaign, :open, :for_tutorial_enrollment) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
     let(:item) { campaign.registration_items.first }
     let(:item2) { campaign.registration_items.second }
 
@@ -227,11 +227,11 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
   describe "take action on the campaign with predecessor and successor" do
     let(:campaign_parent) do
-      FactoryBot.create(:registration_campaign, :open, :for_lecture_enrollment)
+      FactoryBot.create(:registration_campaign, :open, self_registerable: true)
     end
     let(:campaign_child) do
-      FactoryBot.create(:registration_campaign, :open, :for_lecture_enrollment,
-                        :with_prerequisite_policy, parent_campaign: campaign_parent)
+      FactoryBot.create(:registration_campaign, :open, :with_prerequisite_policy,
+                        self_registerable: true, parent_campaign: campaign_parent)
     end
     let(:item_child) { campaign_child.registration_items.first }
     let(:item_parent) { campaign_parent.registration_items.first }

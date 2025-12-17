@@ -11,14 +11,18 @@
     </ol>
   </nav>
   <!-- Campaign info card -->
+  <div class="mt-3 mb-4">
   <%= render partial: 'registration/main/campaign_info',
     locals: { campaignable_host: @campaignable_host,
               campaign: @campaign } %>
 
+  </div>
+
   <% is_single_mode = single_mode?(@campaign.registerable_type)%>
 
   <% if is_single_mode %>
-  <div class="row g-3">
+
+  <div class="row g-4">
     <!-- Eligibility card -->
     <div class="col-12 col-lg-4">
       <div class="card h-100" data-test="eligibility-card">
@@ -44,7 +48,7 @@
     </div>
   </div>
   <!-- Campaign details card -->
-  <div class="card mt-3">
+  <div class="card mt-4">
     <%= render partial: 'registration/main/campaign_details',
       locals: { campaign: @campaign, items: @items } %>
   </div>

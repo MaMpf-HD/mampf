@@ -1,12 +1,12 @@
 <div data-test="multi-item-fcfs">
-  <div class="h5">
+  <div class="h5 mb-3">
     <%= t("basics.select_type", type: campaign.registerable_type) %>
   </div>
 
   <div data-controller="registration-item-search">
-    <div class="row mb-2 align-items-center">
+    <div class="row m-2 align-items-center">
       <!-- search form -->
-      <div class="col-8">
+      <div class="col-8 mb-2 mt-2">
         <%= render partial: "registration/item_search_form/search_form",
                    locals: { controller: "registration-item-search",
                              placeholder: t("registration.filter_placeholder") } %>
@@ -15,7 +15,7 @@
       <!-- saved time -->
       <% last_updated = campaign.user_registrations_last_updated(current_user) %>
       <% if last_updated %>
-        <div class="col-4 small text-success text-end">
+        <div class="col-4 small text-success text-end fw-semibold">
           <%= t("basics.saved_at", time: format_date(last_updated)) %>
         </div>
       <% end %>
@@ -23,27 +23,27 @@
 
     <!-- notification banner if registered -->
     <% if campaign.user_registered?(current_user) %>
-      <div class="alert alert-info py-1 px-2">
-        <%= t("registration.currently_registered") %>:
+      <div class="alert alert-info py-1 px-2 m-3">
         <span>
-          <%= campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title %>
+        <%= t("registration.currently_registered", 
+            name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
         </span>
-        . <%= t("registration.withdraw_to_switch") %>
       </div>
     <% end %>
 
-    <div class="table-responsive">
-      <table class="table align-middle mb-2" id="itemsTable">
-        <thead>
+    <div class="table-responsive m-3">
+      <table class="table table-sm align-middle mb-2" id="itemsTable">
+        <thead class="bg-grey-lighten-5 text-dark small">
           <tr>
             <!-- attribute data columns -->
             <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
               <th class="fw-semibold"><%= col[:header] %></th>
             <% end %>
 
-            <!-- seats + action columns -->
-            <th class="fw-semibold"><%= t("basics.status") %></th>
-            <th class="text-end fw-semibold"><%= t("basics.action") %></th>
+            <!-- seats + stattus + action columns -->
+            <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
+            <th class="fw-semibold text-center"><%= t("basics.status") %></th>
+            <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
           </tr>
         </thead>
 
@@ -52,24 +52,32 @@
             <tr data-registration-item-search-target="row">
               <!-- attribute data columns -->
               <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                <td><%= col[:field].call(item) %></td>
+                <td class="<%= col[:cell_class] %>"><%= col[:field].call(item) %></td>
               <% end %>
 
               <!-- seats column -->
-              <td>
+              <td class="text-center small fw-semibold text-dark">
+                <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+              </td>
+
+              <!-- status column -->
+              <td class="text-center">
                 <% if !item.user_registered?(current_user) %>
                   <% if item.still_have_capacity? %>
-                    <span class="badge rounded-pill text-bg-info"><%= t("basics.available") %></span>
+                    <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark"  style="min-width: 80px;">
+                                <%= t("basics.available") %></span>
                   <% else %>
-                    <span class="badge rounded-pill text-bg-light text-dark"><%= t("basics.full") %></span>
+                    <span class="badge rounded-pill fw-medium small text-dark bg-grey-lighten-4 text-dark"  style="min-width: 80px;">
+                                <%= t("basics.full") %></span>
                   <% end %>
                 <% else %>
-                  <span class="badge rounded-pill text-bg-success"><%= t("registration.registered") %></span>
+                  <span class="badge rounded-pill fw-medium small text-bg-success"  style="min-width: 80px;">
+                                <%= t("registration.registered") %></span>
                 <% end %>
               </td>
 
               <!-- action column -->
-              <td class="d-flex justify-content-end">
+              <td class="d-flex justify-content-end py-2">
                 <% if !campaign.user_registered?(current_user) %>
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.withdraw"),
@@ -82,7 +90,7 @@
                                   register_item_path(campaign.id, item.id),
                                   method: :post,
                                   disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
-                                  class: "btn btn-primary btn-sm" %>
+                                  class: "btn btn-sm btn-primary" %>
                   <% end %>
                 <% else %>
                   <% if item.user_registered?(current_user) %>
