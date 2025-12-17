@@ -55,6 +55,7 @@ async function testCreateNewLecture(
   await page.getByTestId("new-lecture-submit").click();
 
   const alert = page.locator("div.alert");
+  await expect(alert).toBeVisible();
   await expect(alert).toContainText(course.title);
   await expect(alert).toContainText(term.season);
   await expect(alert).toContainText(user.name);
