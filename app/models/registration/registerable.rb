@@ -13,16 +13,6 @@ module Registration
     # - Implement #allocated_user_ids (returns array of user IDs)
     # - Implement #materialize_allocation!(user_ids:, campaign:)
 
-    def registerable_total_capacity_used
-      registration_items&.sum(&:confirmed_registrations_count) || 0
-    end
-
-    def capacity_remained
-      return nil if capacity.nil?
-
-      capacity - registerable_total_capacity_used
-    end
-
     def allocated_user_ids
       raise(NotImplementedError, "Registerable must implement #allocated_user_ids")
     end
