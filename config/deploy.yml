@@ -49,7 +49,7 @@
 # bundle exec dotenv kamal deploy
 
 service: mampf
-image: splines/mampf
+image: mampf-hd/mampf
 
 servers:
   web:
@@ -62,7 +62,7 @@ proxy:
 
 registry:
   server: ghcr.io
-  username: splines
+  username: mampf-hd
   password:
     - KAMAL_REGISTRY_PASSWORD
 
