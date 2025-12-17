@@ -146,7 +146,8 @@ module Registration
       end
 
       def set_locale
-        I18n.locale = current_user.locale ||
+
+        I18n.locale = current_user&.locale_with_inheritance ||
                       @campaign&.locale_with_inheritance ||
                       @lecture&.locale_with_inheritance ||
                       I18n.locale
