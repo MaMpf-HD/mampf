@@ -43,27 +43,8 @@ namespace :maintenance do
           next
         end
 
-        # Fix SGID
-        new_sgid = blob.attachable_sgid
-        if node["sgid"] != new_sgid
-          node["sgid"] = new_sgid
-          changed = true
-        end
-
-        # Fix URL (Always absolute based on config)
-        if node["url"]
-          current_url = node["url"]
-          new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
-
-          if current_url != new_url
-            node["url"] = new_url
-            changed = true
-          end
-        end
-
         # Generate a new SGID with the current secret_key_base
         new_sgid = blob.attachable_sgid
-
         if node["sgid"] != new_sgid
           node["sgid"] = new_sgid
           changed = true
@@ -72,9 +53,10 @@ namespace :maintenance do
         # Update the URL as well, as it contains a signed_id that is now invalid
         next unless node["url"]
 
+        current_url = node["url"]
         new_url = Rails.application.routes.url_helpers.rails_blob_url(blob, url_options)
 
-        if node["url"] != new_url
+        if current_url != new_url
           node["url"] = new_url
           changed = true
         end
