@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
   let(:user) { create(:confirmed_user) }
-  let(:lecture) { FactoryBot.create(:lecture) }
+  let(:lecture) { create(:lecture) }
+  let(:seminar) { create(:lecture, :is_seminar) }
 
   let(:item) { campaign.registration_items.first }
 
@@ -15,8 +16,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       FactoryBot.create(
         :registration_campaign,
         :open,
-        :for_lecture_enrollment,
-        :first_come_first_served
+        :first_come_first_served, self_registerable: true
       )
     end
     let(:item) { campaign.registration_items.first }
@@ -58,7 +58,6 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       FactoryBot.create(
         :registration_campaign,
         :open,
-        :for_tutorial_enrollment,
         :first_come_first_served
       )
     end
@@ -101,8 +100,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       FactoryBot.create(
         :registration_campaign,
         :open,
-        :for_talk_enrollment,
-        :first_come_first_served
+        :first_come_first_served,
+        campaignable: seminar
       )
     end
     let(:item) { campaign.registration_items.first }

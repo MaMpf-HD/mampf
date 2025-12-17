@@ -15,7 +15,7 @@
       <!-- saved time -->
       <% last_updated = campaign.user_registrations_last_updated(current_user) %>
       <% if last_updated %>
-        <div class="col-4 small text-success text-end">
+        <div class="col-4 small text-success text-end fw-semibold">
           <%= t("basics.saved_at", time: format_date(last_updated)) %>
         </div>
       <% end %>
@@ -64,20 +64,20 @@
               <td class="text-center">
                 <% if !item.user_registered?(current_user) %>
                   <% if item.still_have_capacity? %>
-                    <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark">
+                    <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark"  style="min-width: 80px;">
                                 <%= t("basics.available") %></span>
                   <% else %>
-                    <span class="badge rounded-pill fw-medium small text-dark bg-grey-lighten-4 text-dark">
+                    <span class="badge rounded-pill fw-medium small text-dark bg-grey-lighten-4 text-dark"  style="min-width: 80px;">
                                 <%= t("basics.full") %></span>
                   <% end %>
                 <% else %>
-                  <span class="badge rounded-pill fw-medium small text-bg-success">
+                  <span class="badge rounded-pill fw-medium small text-bg-success"  style="min-width: 80px;">
                                 <%= t("registration.registered") %></span>
                 <% end %>
               </td>
 
               <!-- action column -->
-              <td class="d-flex justify-content-end py-3">
+              <td class="d-flex justify-content-end py-2">
                 <% if !campaign.user_registered?(current_user) %>
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.withdraw"),

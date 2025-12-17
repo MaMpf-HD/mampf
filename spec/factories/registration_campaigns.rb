@@ -15,6 +15,13 @@ FactoryBot.define do
       allocation_mode { :preference_based }
     end
 
+    trait :open_only do
+      status { :draft }
+      after(:create) do |campaign|
+        campaign.update!(status: :open)
+      end
+    end
+
     trait :open do
       status { :draft }
       with_items
@@ -29,10 +36,20 @@ FactoryBot.define do
       with_items
     end
 
+    trait :closed_only do
+      status { :closed }
+      registration_deadline { 1.day.ago }
+    end
+
     trait :processing do
       status { :processing }
       registration_deadline { 1.day.ago }
       with_items
+    end
+
+    trait :processing_only do
+      status { :processing }
+      registration_deadline { 1.day.ago }
     end
 
     trait :completed do
@@ -41,14 +58,36 @@ FactoryBot.define do
       with_items
     end
 
+    trait :completed_after_policies do
+      status { :draft }
+      registration_deadline { 2.weeks.ago }
+      with_items
+      with_policies
+      after(:create) do |campaign|
+        campaign.update!(status: :completed)
+      end
+    end
+
     trait :planning_only do
       planning_only { true }
     end
 
     trait :with_items do
-      after(:create) do |campaign|
+      transient do
+        self_registerable { false }
+        capacity { nil }
+      end
+      after(:create) do |campaign, evaluator|
         lecture = campaign.campaignable
-        if lecture.seminar?
+
+        self_registerable = evaluator.self_registerable
+
+        if self_registerable
+          create(:registration_item,
+                 registration_campaign: campaign,
+                 registerable: lecture)
+
+        elsif lecture.seminar?
           talks = create_list(:talk, 3, lecture: lecture)
           talks.each do |talk|
             create(:registration_item,
@@ -56,7 +95,8 @@ FactoryBot.define do
                    registerable: talk)
           end
         else
-          tutorials = create_list(:tutorial, 3, lecture: lecture)
+          capacity = evaluator.capacity if evaluator.capacity
+          tutorials = create_list(:tutorial, 3, lecture: lecture, capacity: capacity)
           tutorials.each do |tutorial|
             create(:registration_item,
                    registration_campaign: campaign,
@@ -90,44 +130,8 @@ FactoryBot.define do
       end
     end
 
-    trait :for_tutorial_enrollment do
-      title { "Tutorial Enrollment" }
-
-      after(:create) do |campaign|
-        lecture = campaign.campaignable
-
-        tutorial1 = create(:tutorial, lecture: lecture, capacity: 100)
-        tutorial2 = create(:tutorial, lecture: lecture, capacity: 100)
-
-        create(:registration_item,
-               registration_campaign: campaign,
-               registerable: tutorial1)
-        create(:registration_item,
-               registration_campaign: campaign,
-               registerable: tutorial2)
-      end
-    end
-
-    trait :for_talk_enrollment do
-      title { "Talk Enrollment" }
-
-      after(:create) do |campaign|
-        lecture = campaign.campaignable
-
-        talk1 = create(:talk, lecture: lecture, capacity: 2)
-        talk2 = create(:talk, lecture: lecture, capacity: 2)
-
-        create(:registration_item,
-               registration_campaign: campaign,
-               registerable: talk1)
-        create(:registration_item,
-               registration_campaign: campaign,
-               registerable: talk2)
-      end
-    end
-
     trait :with_policies do
-      after(:create) do |campaign|
+      after(:build) do |campaign|
         create(:registration_policy, :institutional_email,
                registration_campaign: campaign)
       end
@@ -139,7 +143,7 @@ FactoryBot.define do
         parent_campaign_id { nil }
       end
 
-      after(:create) do |child_campaign, evaluator|
+      after(:build) do |child_campaign, evaluator|
         # parent_campaign&.id is for BE test and parent_campaign_id is for FE test
         id = evaluator.parent_campaign&.id || evaluator.parent_campaign_id
         raise ArgumentError, "parent_campaign must be provided" unless id

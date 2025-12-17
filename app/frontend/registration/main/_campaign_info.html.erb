@@ -12,7 +12,10 @@
         <%= campaign.status&.humanize %>
       </span>
       <% if campaign.planning_only %>
-        <span class="badge text-bg-primary fs-6">
+        <span class="d-inline-flex align-items-center
+             px-3 py-1 rounded-pill
+             small fw-semibold
+             me-2 bg-info-subtle text-info">
           <%= t('registration.planning') %>
         </span>
       <% end %>
