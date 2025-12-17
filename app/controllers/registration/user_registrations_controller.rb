@@ -4,7 +4,6 @@ module Registration
     #
     # In FCFS mode, students register per item
     # -> create action per item registration + destroy action for deregistration
-    #
     # In preference-based mode, students register by batch of selected items
     # -> update action for batch registration + deregistration
     #
@@ -13,6 +12,7 @@ module Registration
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
+    before_action :set_locale
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -143,6 +143,13 @@ module Registration
         else
           :lecture_index
         end
+      end
+
+      def set_locale
+        I18n.locale = current_user.locale ||
+                      @campaign&.locale_with_inheritance ||
+                      @lecture&.locale_with_inheritance ||
+                      I18n.locale
       end
   end
 end
