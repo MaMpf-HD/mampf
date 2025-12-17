@@ -1,5 +1,12 @@
-<input type="search"
-       class="form-control form-control-sm"
+<div class="input-group"> 
+  <span class="input-group-text bg-white border-end-0 pb-0 pt-0"> 
+    <i class="bi bi-search"></i>
+  </span> 
+  <input type="search"
+       class="form-control border-start-0"
+       style="font-size:75%; box-shadow:none !important; outline:none !important; 
+              border: var(--bs-border-width) solid var(--bs-border-color);"
        data-registration-item-search-target="input"
        placeholder="<%= placeholder %>"
        data-action="input-><%= controller %>#filter" />
+</div>

@@ -1,5 +1,5 @@
 <div class="card-body">
-  <div class="h5"><%= t('basics.details') %></div>
+  <div class="h5 mb-3"><%= t('basics.details') %></div>
 
   <ul class="list-group">
 
@@ -10,7 +10,7 @@
         <div class="fw-semibold"><%= t('basics.mode') %></div>
         <small class="text-muted"><%= mode_info[:mode_name] %></small>
       </div>
-      <span class="<%= mode_info[:badge_class] %>">
+      <span class="d-inline-flex align-items-center px-3 py-1 rounded-pill small fw-medium <%= mode_info[:badge_class] %>">
         <%= mode_info[:abbr] %>
       </span>
     </li>
@@ -27,7 +27,11 @@
           <%= total_capacity %> <%= t('basics.seats') %>
         </small>
       </div>
-      <span class="badge rounded-pill text-bg-info" id="capacityInfo">
+      <span class="d-inline-flex align-items-center
+             px-3 py-1 rounded-pill
+             border border-secondary-subtle
+             text-dark
+             small fw-semibold">
         <%= total_capacity_used %>/<%= nullable_capacity_display(total_capacity) %> <%= t('basics.filled') %>
         <%= t('basics.across_group') if multi_items %>
       </span>
