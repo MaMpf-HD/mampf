@@ -13,6 +13,7 @@ module Registration
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
+    before_action :set_locale
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -143,6 +144,13 @@ module Registration
         else
           :lecture_index
         end
+      end
+
+      def set_locale
+        I18n.locale = current_user&.locale_with_inheritance ||
+                      @campaign&.locale_with_inheritance ||
+                      @lecture&.locale_with_inheritance ||
+                      I18n.locale
       end
   end
 end

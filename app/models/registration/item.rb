@@ -36,8 +36,11 @@ module Registration
       confirmed_registrations_count
     end
 
-    delegate :registerable_total_capacity_used, to: :registerable
-    delegate :capacity_remained, to: :registerable
+    def capacity_remained
+      return nil if capacity.nil?
+
+      capacity - item_capacity_used
+    end
 
     def still_have_capacity?
       return true if capacity.nil?
