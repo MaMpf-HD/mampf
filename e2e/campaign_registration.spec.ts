@@ -3,7 +3,7 @@ import { CampaignRegistrationPage } from "./page-objects/campaign_registrations_
 
 test.describe("draft campaign", () => {
   test("given draft campaign, when user visits, then access error is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", [], { self_registerable: true });
+    const campaign = await factory.create("registration_campaign", ["first_come_first_served"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
     await expect(student.page.getByText("This campaign is not accessible right now.")).toBeVisible();
@@ -188,12 +188,11 @@ test.describe("integration between child and parent campaign", () => {
     const parentPage = new CampaignRegistrationPage(student.page, parent.id);
     await parentPage.goto();
     await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
-    let childPage = new CampaignRegistrationPage(student.page, child.id);
+    const childPage = new CampaignRegistrationPage(student.page, child.id);
     await childPage.goto();
     await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
 
-    // Try to withdraw child
-    childPage = new CampaignRegistrationPage(student.page, child.id);
+    // Try to withdraw parent
     await parentPage.goto();
     await parentPage.withdraw();
     await expect(student.page.getByText(/Withdrawal is blocked because the following campaigns are confirmed/i)).toBeVisible();

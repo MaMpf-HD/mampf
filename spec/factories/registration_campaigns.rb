@@ -15,13 +15,6 @@ FactoryBot.define do
       allocation_mode { :preference_based }
     end
 
-    trait :open_only do
-      status { :draft }
-      after(:create) do |campaign|
-        campaign.update!(status: :open)
-      end
-    end
-
     trait :open do
       status { :draft }
       with_items

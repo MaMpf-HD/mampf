@@ -20,23 +20,8 @@ FactoryBot.define do
     end
 
     trait :fcfs do
-      # transient do
-      #   registration_campaign_override { nil }
-      #   registration_item_override { nil }
-      # end
-
       association :registration_campaign,
                   factory: [:registration_campaign, :first_come_first_served]
-
-      # after(:build) do |registration, evaluator|
-      #   if evaluator.registration_campaign_override
-      #     registration.registration_campaign = evaluator.registration_campaign_override
-      #   end
-      #   if evaluator.registration_item_override
-      #     registration.registration_item = evaluator.registration_item_override
-      #   end
-      # end
-
       preference_rank { nil }
       status { :confirmed }
     end
