@@ -4,10 +4,10 @@
               locals: {campaign: campaign,
                       campaignable_host: campaignable_host,
                       item: items[0] } %>
-  <%else%>
+  <% else %>
   <%= render partial: 'registration/main/select_multi_item',
               locals: {campaign: campaign,
                       campaignable_host: campaignable_host,
                       items: items } %>
-  <%end%>
+  <% end %>
 </div>
