@@ -1,9 +1,13 @@
 import { Page } from "../_support/fixtures";
+
+/**
+ * Missing top-level docstring, please formulate one yourself 😁
+ */
 export class CampaignRegistrationPage {
   readonly page: Page;
   readonly link: string;
 
-  constructor(page: Page, campaignId: any) {
+  constructor(page: Page, campaignId: string | number) {
     this.page = page;
     this.link = `/campaign_registrations/${campaignId}`;
   }
