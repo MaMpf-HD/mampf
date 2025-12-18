@@ -50,7 +50,7 @@ module Registration
           ].compact
         end
 
-        # Validation for widthdrawing registration in lecture based registration
+        # Validation for withdrawing registration in lecture based registration
         # 0. Check open to withdraw
         # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
         def validate_withdraw
