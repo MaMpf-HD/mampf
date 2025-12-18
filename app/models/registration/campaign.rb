@@ -64,11 +64,6 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
-    # TODO: remove this
-    def user_registered?(user)
-      user_registrations.exists?(user_id: user.id, status: :confirmed)
-    end
-
     def user_registrations_confirmed(user)
       user_registrations.where(user_id: user.id, status: :confirmed)
     end

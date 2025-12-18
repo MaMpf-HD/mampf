@@ -1,7 +1,7 @@
 import { Page } from "../_support/fixtures";
 
 /**
- * Missing top-level docstring, please formulate one yourself 😁
+ * Page object for campaign registration page (student view). Used in Playwright tests.
  */
 export class CampaignRegistrationPage {
   readonly page: Page;
