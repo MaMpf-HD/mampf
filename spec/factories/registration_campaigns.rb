@@ -15,13 +15,6 @@ FactoryBot.define do
       allocation_mode { :preference_based }
     end
 
-    trait :open_only do
-      status { :draft }
-      after(:create) do |campaign|
-        campaign.update!(status: :open)
-      end
-    end
-
     trait :open do
       status { :draft }
       with_items
@@ -144,7 +137,8 @@ FactoryBot.define do
       end
 
       after(:build) do |child_campaign, evaluator|
-        # parent_campaign&.id is for BE test and parent_campaign_id is for FE test
+        # parent_campaign&.id is for backend test and parent_campaign_id is for
+        # frontend test
         id = evaluator.parent_campaign&.id || evaluator.parent_campaign_id
         raise ArgumentError, "parent_campaign must be provided" unless id
 

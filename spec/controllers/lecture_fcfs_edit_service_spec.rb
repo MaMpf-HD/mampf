@@ -72,7 +72,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
   end
 
-  describe "widthdraw lecture campaign" do
+  describe "withdraw lecture campaign" do
     let(:campaign) { FactoryBot.create(:registration_campaign, :open, self_registerable: true) }
     let(:item) { campaign.registration_items.first }
     before do

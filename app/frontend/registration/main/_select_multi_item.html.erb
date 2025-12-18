@@ -22,7 +22,7 @@
     </div>
 
     <!-- notification banner if registered -->
-    <% if campaign.user_registered?(current_user) %>
+    <% if campaign.user_registration_confirmed?(current_user) %>
       <div class="alert alert-info py-1 px-2 m-3">
         <span>
         <%= t("registration.currently_registered", 
@@ -40,7 +40,7 @@
               <th class="fw-semibold"><%= col[:header] %></th>
             <% end %>
 
-            <!-- seats + stattus + action columns -->
+            <!-- seats + status + action columns -->
             <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
             <th class="fw-semibold text-center"><%= t("basics.status") %></th>
             <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
@@ -78,7 +78,7 @@
 
               <!-- action column -->
               <td class="d-flex justify-content-end py-2">
-                <% if !campaign.user_registered?(current_user) %>
+                <% if !campaign.user_registration_confirmed?(current_user) %>
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
