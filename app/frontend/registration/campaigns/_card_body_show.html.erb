@@ -16,7 +16,7 @@
         <%= button_to t("registration.campaign.actions.close"),
                       close_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.close") },
+                      data: { confirm: campaign_close_confirmation(campaign) },
                       class: "btn btn-warning" %>
       <% elsif campaign.closed? %>
         <%= button_to t("registration.campaign.actions.reopen"),

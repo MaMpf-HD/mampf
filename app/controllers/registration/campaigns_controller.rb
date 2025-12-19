@@ -92,7 +92,16 @@ module Registration
     end
 
     def close
-      update_status(:closed, t("registration.campaign.closed"))
+      attributes = { status: :closed }
+      if @campaign.registration_deadline > Time.current
+        attributes[:registration_deadline] = Time.current
+      end
+
+      if @campaign.update(attributes)
+        respond_with_success(t("registration.campaign.closed"))
+      else
+        respond_with_error(@campaign.errors.full_messages.join(", "))
+      end
     end
 
     def reopen
