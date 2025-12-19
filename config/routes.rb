@@ -922,11 +922,15 @@ Rails.application.routes.draw do
 
       post "user_registrations/:item_id/up",
            to: "user_registrations#up",
-           as: :move_user_registration_up
+           as: :move_preference_up
 
       post "user_registrations/:item_id/down",
            to: "user_registrations#down",
-           as: :move_user_registration_down
+           as: :move_preference_down
+
+      post "user_registrations/:item_id/add",
+           to: "user_registrations#add",
+           as: :add_preference
     end
   end
 

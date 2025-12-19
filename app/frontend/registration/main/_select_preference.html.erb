@@ -15,13 +15,12 @@
               <div class="small" id="saveStatus"></div>
             </div>
           </div>
-          
+
           
             <%= render partial: "registration/main/preferences_table",
               locals: {
-                items: @items,
-                campaign: @campaign,
-                item_preferences: @item_preferences
+                campaign: campaign,
+                item_preferences: item_preferences
               } 
             %>
           
@@ -72,6 +71,11 @@
                     </td>
                     <!-- action column -->
                     <td class="d-flex justify-content-end py-2">
+                      <%= button_to "Add",
+              add_preference_path(item.id),
+              method: :post,
+              form: { data: { turbo_frame: "preferences_table" } } %>
+                      
                       <i class="material-icons clickable displaylist_add w-auto" data-bs-toggle="tooltip"
                         data-placement="right" title="<%= t('admin.item.take_time') %>">
                       displaylist_add

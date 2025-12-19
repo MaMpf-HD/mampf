@@ -1,3 +1,4 @@
+<%= turbo_frame_tag "preferences_table" do %>
 <table class="table table-sm align-middle mb-2">
   <thead class="bg-grey-lighten-5 text-dark small">
     <tr>
@@ -22,14 +23,14 @@
       </td>
       <!-- action column -->
       <td>
-        <a href="<%= move_user_registration_up_path(item.id) %>">
+        <a href="<%= move_preference_up_path(item.id) %>">
         <i class="material-icons clickable keyboard_arrow_up w-auto"
           data-bs-toggle="tooltip"
           data-placement="right" title="<%= t('admin.item.take_time') %>">
         keyboard_arrow_up
         </i>
         </a>
-        <a href="<%= move_user_registration_down_path(item.id) %>">
+        <a href="<%= move_preference_down_path(item.id) %>">
         <i class="material-icons clickable keyboard_arrow_down w-auto"
           data-bs-toggle="tooltip"
           data-placement="right" title="<%= t('admin.item.take_time') %>">
@@ -41,3 +42,4 @@
     <% end %>
   </tbody>
 </table>
+<% end %>
