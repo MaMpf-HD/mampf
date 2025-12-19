@@ -29,7 +29,26 @@
   <div class="mb-3">
     <%= f.label :registration_deadline, t("registration.campaign.form.registration_deadline"), class: "form-label" %>
     <%= helpdesk(t("registration.campaign.helpdesk.registration_deadline"), false) %>
-    <%= f.datetime_field :registration_deadline, class: "form-control" %>
+    <div class="input-group td-picker"
+         id="registration-deadline-picker"
+         data-controller="datetimepicker"
+         data-td-target-input="nearest"
+         data-td-target-toggle="nearest">
+      <%= f.text_field :registration_deadline,
+                       class: "form-control td-input",
+                       data: { td_target: "#registration-deadline-picker" },
+                       value: campaign.registration_deadline&.strftime("%Y-%m-%d %H:%M"),
+                       autocomplete: "off" %>
+      <span class="input-group-text td-picker-button"
+            role="button"
+            data-td-target="#registration-deadline-picker"
+            data-td-toggle="datetimepicker">
+        <i class="bi bi-calendar-fill"></i>
+      </span>
+      <div class="invalid-feedback td-error"
+           data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
+      </div>
+    </div>
   </div>
 
   <div class="mb-3 form-check">
