@@ -76,3 +76,7 @@ Damit die Network Verbindung funktioniert muss der Monitoring Container Stack na
 Standard Grafana Login
   Username: admin
   Password: admin
+
+Standard MaMpf Login
+  Username: admin@mampf.edu
+  Password: dockermampf
