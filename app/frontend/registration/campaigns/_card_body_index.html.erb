@@ -2,8 +2,8 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th><%= t("registration.campaign.index.columns.description_column") %></th>
           <th><%= t("registration.campaign.index.columns.type") %></th>
+          <th><%= t("registration.campaign.index.columns.description_column") %></th>
           <th><%= t("registration.campaign.index.columns.mode") %></th>
           <th><%= t("registration.campaign.index.columns.registrations") %></th>
           <th><%= t("registration.campaign.index.columns.deadline") %></th>
@@ -13,6 +13,7 @@
       <tbody>
         <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
           <tr data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;">
+            <td><%= campaign_item_type_label(campaign) %></td>
             <td>
               <%= link_to registration_campaign_path(campaign),
                           class: "text-decoration-none text-reset",
@@ -24,7 +25,6 @@
                 <% end %>
               <% end %>
             </td>
-            <td><%= campaign_item_type_label(campaign) %></td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
             <td>
               <% if campaign.draft? %>
