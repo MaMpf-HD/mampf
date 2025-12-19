@@ -113,7 +113,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       campaign.status = :open
       expect(campaign).not_to be_valid
-      expect(campaign.errors.added?(:base, :prerequisite_is_draft, description: prereq.description)).to be(true)
+      expect(campaign.errors.added?(:base, :prerequisite_is_draft,
+                                    description: prereq.description)).to be(true)
     end
   end
 

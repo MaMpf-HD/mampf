@@ -167,7 +167,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end
 
         it "does not update registration_deadline if it is in the past" do
+          # rubocop: disable Rails/SkipsModelValidations
           campaign.update_columns(registration_deadline: 1.day.ago)
+          # rubocop: enable Rails/SkipsModelValidations
           original_deadline = campaign.registration_deadline
 
           patch close_registration_campaign_path(campaign)

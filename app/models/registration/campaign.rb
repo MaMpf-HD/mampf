@@ -86,7 +86,7 @@ module Registration
         return unless referencing_policies.any?
 
         descriptions = referencing_policies.filter_map { |p| p.registration_campaign&.description }
-                                     .uniq.join(", ")
+                                           .uniq.join(", ")
         errors.add(:base, :referenced_as_prerequisite, descriptions: descriptions)
         throw(:abort)
       end
