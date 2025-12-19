@@ -1,6 +1,7 @@
 de:
   registration:
     campaign:
+      planning_only: "Nur Planung"
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       updated: "Anmeldeverfahren erfolgreich aktualisiert."

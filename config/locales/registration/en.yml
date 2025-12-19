@@ -1,6 +1,7 @@
 en:
   registration:
     campaign:
+      planning_only: "Planning only"
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
       updated: "Campaign updated successfully."

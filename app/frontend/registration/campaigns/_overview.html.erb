@@ -30,6 +30,11 @@
             <span class="badge bg-<%= campaign_badge_color(campaign) %>">
               <%= t("registration.campaign.status.#{campaign.status}") %>
             </span>
+            <% if campaign.planning_only? %>
+              <span class="badge bg-info text-dark ms-1">
+                <%= t("registration.campaign.planning_only") %>
+              </span>
+            <% end %>
           </dd>
         </dl>
       </div>
