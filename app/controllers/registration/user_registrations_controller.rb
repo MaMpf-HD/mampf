@@ -15,6 +15,8 @@ module Registration
     before_action :set_locale
     PreferenceItem = Struct.new(:id, :preference_rank)
 
+    TempItemPreference = Struct.new(:item, :temp_preference_rank)
+
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
       @eligibilities = @courses_seminars_campaigns.index_with do |c|
@@ -76,13 +78,17 @@ module Registration
     end
 
     def init_preferences
+      reset_preferences
       @user_registrations = @campaign.user_registrations
                                      .where(user_id: current_user.id)
                                      .where(status: [:confirmed, :pending])
 
-      @item_preferences = @user_registrations.includes(:registration_items)
-                                             .map(&:registration_items)
-                                             .flatten
+      item_preferences = @user_registrations.includes(:registration_items)
+                                            .map(&:registration_items)
+                                            .flatten
+      @item_preferences = item_preferences.map do |item|
+        TempItemPreference.new(item, item.preference_rank(current_user))
+      end
     end
 
     def create
@@ -143,45 +149,70 @@ module Registration
     end
 
     def up
-      index = params[:item_id]
-      pref_item = session[:preferences].map do |item_hash|
+      item_id = params[:item_id].to_i
+      item = Registration::Item.find(item_id)
+      preferences_store = JSON.parse(params[:preferences_json]) || []
+      preferences_store = preferences_store.map do |item_hash|
+        { "id" => item_hash["item"]["id"].to_i,
+          "preference_rank" => item_hash["temp_preference_rank"].to_i }
+      end
+      pref_item = preferences_store.map do |item_hash|
         PreferenceItem.new(item_hash["id"], item_hash["preference_rank"])
       end
-      item = pref_item.find { |i| i.preference_rank == index.to_i }
-      item_above = pref_item.find { |i| i.preference_rank == index.to_i - 1 }
-      if item && item_above
-        item.preference_rank -= 1
-        item_above.preference_rank += 1
+
+      temp_item = pref_item.find { |i| i.id == item_id }
+      temp_item_above = pref_item.find { |i| i.preference_rank == temp_item.preference_rank - 1 }
+      if temp_item && temp_item_above
+        temp_item.preference_rank -= 1
+        temp_item_above.preference_rank += 1
       end
-      session[:preferences] = pref_item.map(&:to_h)
-      
-      # update by turbo frame
+      data = pref_item.map { |i| i.to_h.stringify_keys }
+      compute_preferences_from_preferences_store(data)
+      @campaign = item.registration_campaign
+
+      render partial: "registration/main/preferences_table",
+             locals: { item_preferences: @item_preferences, campaign: @campaign }
     end
 
     def down
-      index = params[:item_id]
-      pref_item = session[:preferences].map do |item_hash|
+      item_id = params[:item_id].to_i
+      item = Registration::Item.find(item_id)
+      preferences_store = JSON.parse(params[:preferences_json]) || []
+      preferences_store = preferences_store.map do |item_hash|
+        { "id" => item_hash["item"]["id"].to_i,
+          "preference_rank" => item_hash["temp_preference_rank"].to_i }
+      end
+      pref_item = preferences_store.map do |item_hash|
         PreferenceItem.new(item_hash["id"], item_hash["preference_rank"])
       end
-      item = pref_item.find { |i| i.preference_rank == index.to_i }
-      item_below = pref_item.find { |i| i.preference_rank == index.to_i + 1 }
-      if item && item_below
-        item.preference_rank += 1
-        item_below.preference_rank -= 1
+      temp_item = pref_item.find { |i| i.id == item_id }
+      temp_item_below = pref_item.find { |i| i.preference_rank == temp_item.preference_rank + 1 }
+      if temp_item && temp_item_below
+        temp_item.preference_rank += 1
+        temp_item_below.preference_rank -= 1
       end
-      session[:preferences] = pref_item.map(&:to_h)
-      # update by turbo frame
+      data = pref_item.map { |i| i.to_h.stringify_keys }
+      compute_preferences_from_preferences_store(data)
+      @campaign = item.registration_campaign
+
+      render partial: "registration/main/preferences_table",
+             locals: { item_preferences: @item_preferences, campaign: @campaign }
     end
 
     def add
+      t = params
       item_id = params[:item_id]
       item = Registration::Item.find(item_id)
-      preferences = session[:preferences] || []
-      unless preferences.any? { |i| i["id"].to_i == item_id.to_i }
-        preferences << { "id" => item_id.to_i, "preference_rank" => preferences.size + 1 }
+      preferences_store = JSON.parse(params[:preferences_json]) || []
+      preferences_store = preferences_store.map do |item_hash|
+        { "id" => item_hash["item"]["id"].to_i,
+          "preference_rank" => item_hash["temp_preference_rank"].to_i }
       end
-      session[:preferences] = preferences
-      compute_preferences_from_session
+      unless preferences_store.any? { |i| i["id"].to_i == item_id.to_i }
+        preferences_store << { "id" => item_id.to_i,
+                               "preference_rank" => preferences_store.size + 1 }
+      end
+      compute_preferences_from_preferences_store(preferences_store)
       @campaign = item.registration_campaign
 
       render partial: "registration/main/preferences_table",
@@ -189,15 +220,24 @@ module Registration
     end
 
     def compute_preferences_from_session
-      preferences_hash = session[:preferences] || []
-      preferences = preferences_hash.map{ |item_hash| Registration::Item.find(item_hash["id"])}
+      @preferences_short = data
+      preferences = preferences_hash.sort_by { |h| h["preference_rank"] }
+                                    .map { |item_hash| Registration::Item.find(item_hash["id"].to_i) }
       @item_preferences = preferences.filter { |item| item.nil? == false }
     end
 
-    def reset_preferences
-      session[:preferences] = []
+    def compute_preferences_from_preferences_store(preferences_store)
+      preferences_store_sorted = preferences_store.sort_by { |h| h["preference_rank"] }
+      @item_preferences = preferences_store_sorted.map do |item_hash|
+        item = Registration::Item.find(item_hash["id"].to_i)
+        TempItemPreference.new(item, item_hash["preference_rank"])
+      end
+    end
 
-      # update by turbo frame
+    def reset_preferences
+      # session[:preferences] = []
+
+      # # update by turbo frame
     end
 
     # def save_preferences

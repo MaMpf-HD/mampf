@@ -1,3 +1,5 @@
+<%= form_with method: :post,
+              data: { turbo_frame: "preferences_table" } do %>
 <div class="card-body">
   <div data-test="multi-item-preference">
     <div class="h5">
@@ -17,12 +19,12 @@
           </div>
 
           
-            <%= render partial: "registration/main/preferences_table",
-              locals: {
-                campaign: campaign,
-                item_preferences: item_preferences
-              } 
-            %>
+            
+
+
+  <%= render partial: "registration/main/preferences_table",
+        locals: { campaign: campaign, item_preferences: item_preferences } %>
+
           
 
           <div class="d-flex justify-content-end gap-2">
@@ -71,15 +73,10 @@
                     </td>
                     <!-- action column -->
                     <td class="d-flex justify-content-end py-2">
-                      <%= button_to "Add",
-              add_preference_path(item.id),
-              method: :post,
-              form: { data: { turbo_frame: "preferences_table" } } %>
-                      
-                      <i class="material-icons clickable displaylist_add w-auto" data-bs-toggle="tooltip"
-                        data-placement="right" title="<%= t('admin.item.take_time') %>">
-                      displaylist_add
-                      </i>
+                      <button type="submit"
+        formaction="<%= add_preference_path(item.id) %>">
+  Add
+</button>
                     </td>
                   </tr>
                   <% end %>
@@ -101,3 +98,4 @@
     </div>
   </div>
 </div>
+<% end %>

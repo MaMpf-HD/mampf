@@ -1,4 +1,9 @@
 <%= turbo_frame_tag "preferences_table" do %>
+  <input type="hidden"
+         name="preferences_json"
+         id="preferences-json"
+         value="<%= item_preferences.to_json %>">
+
 <table class="table table-sm align-middle mb-2">
   <thead class="bg-grey-lighten-5 text-dark small">
     <tr>
@@ -11,7 +16,8 @@
     </tr>
   </thead>
   <tbody>
-    <% item_preferences.each do |item| %>
+    <% item_preferences.each do |pref| %>
+    <% item = pref.item %>
     <tr data-registration-item-search-target="row">
       <!-- attribute data columns -->
       <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
@@ -23,20 +29,14 @@
       </td>
       <!-- action column -->
       <td>
-        <a href="<%= move_preference_up_path(item.id) %>">
-        <i class="material-icons clickable keyboard_arrow_up w-auto"
-          data-bs-toggle="tooltip"
-          data-placement="right" title="<%= t('admin.item.take_time') %>">
-        keyboard_arrow_up
-        </i>
-        </a>
-        <a href="<%= move_preference_down_path(item.id) %>">
-        <i class="material-icons clickable keyboard_arrow_down w-auto"
-          data-bs-toggle="tooltip"
-          data-placement="right" title="<%= t('admin.item.take_time') %>">
-        keyboard_arrow_down
-        </i>
-        </a>
+        <button type="submit"
+        formaction="<%= move_preference_up_path(item.id) %>">
+  Up
+</button>
+<button type="submit"
+        formaction="<%= move_preference_down_path(item.id) %>">
+  Down
+</button>
       </td>
     </tr>
     <% end %>
