@@ -37,6 +37,7 @@ module Registration
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
+    validate :planning_only_constraints, if: :planning_only
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -96,6 +97,11 @@ module Registration
                         .count(:user_id)
     end
 
+    def can_be_planning_only?
+      registration_items.empty? ||
+        (registration_items.size == 1 && registration_items.first.registerable == campaignable)
+    end
+
     private
 
       def prerequisites_not_draft
@@ -150,6 +156,12 @@ module Registration
         return unless registration_items.empty?
 
         errors.add(:base, :no_items)
+      end
+
+      def planning_only_constraints
+        return if can_be_planning_only?
+
+        errors.add(:planning_only, :incompatible_items)
       end
 
       def policy_engine

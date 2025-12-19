@@ -30,6 +30,8 @@ module Registration
       end
 
       def type_allowed?(type)
+        return false if @campaign.planning_only? && type != "Lecture"
+
         @existing_type.nil? || @existing_type == type
       end
 

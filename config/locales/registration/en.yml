@@ -13,12 +13,13 @@ en:
       closed: "Campaign closed."
       reopened: "Campaign reopened."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
         allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
-        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
+        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed. This option is only available for campaigns that contain only the lecture itself as an item."
         allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
         first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
       index:
@@ -131,6 +132,7 @@ en:
         new: "Create New"
         none_available: "No items available to add."
         lecture_unique: "This campaign already has a lecture item. You cannot add more items."
+        planning_only_restriction: "In planning mode, you can only add the lecture itself as an item. Creating new tutorials or talks is disabled."
       columns:
         title: "Title"
         capacity: "Capacity"
@@ -172,6 +174,8 @@ en:
               must_be_in_future: "must be in the future when campaign is open"
             allocation_mode:
               frozen: "cannot be changed after campaign is opened"
+            planning_only:
+              incompatible_items: "cannot be enabled because the campaign already contains items that are not the lecture itself."
         registration/policy:
           attributes:
             base:
@@ -183,3 +187,5 @@ en:
               lecture_unique: "A campaign can only have one lecture item."
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+              planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
+              planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."

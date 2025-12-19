@@ -121,6 +121,25 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when enabling planning_only with incompatible items" do
+      let!(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      end
+
+      before { sign_in editor }
+
+      it "fails validation and shows error" do
+        patch registration_campaign_path(campaign),
+              params: { registration_campaign: { planning_only: true } }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body)
+          .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
+                             ".planning_only.incompatible_items"))
+      end
+    end
   end
 
   describe "Lifecycle Actions" do

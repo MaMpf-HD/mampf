@@ -163,6 +163,7 @@ module Registration
       end
 
       def respond_with_success(message)
+        @campaign.reload
         respond_to do |format|
           format.html do
             redirect_to after_action_path, notice: message
@@ -174,6 +175,9 @@ module Registration
                                    partial: "registration/campaigns/card_body_items",
                                    locals: { campaign: @campaign }),
               turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+              turbo_stream.update("settings",
+                                  partial: "registration/campaigns/form",
+                                  locals: { campaign: @campaign, lecture: @campaign.campaignable }),
               stream_flash
             ]
           end

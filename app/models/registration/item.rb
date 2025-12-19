@@ -30,6 +30,7 @@ module Registration
     validate :registerable_type_consistency, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
+    validate :validate_planning_only_compliance
     before_destroy :ensure_campaign_is_draft
 
     def title
@@ -115,6 +116,18 @@ module Registration
 
         errors.add(:base, :frozen)
         throw(:abort)
+      end
+
+      def validate_planning_only_compliance
+        return unless registration_campaign&.planning_only?
+
+        if registerable != registration_campaign.campaignable
+          errors.add(:base, :planning_only_allows_only_lecture)
+        end
+
+        return unless registration_campaign.registration_items.where.not(id: id).any?
+
+        errors.add(:base, :planning_only_allows_single_item)
       end
   end
 end

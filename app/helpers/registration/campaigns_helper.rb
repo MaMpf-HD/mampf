@@ -60,5 +60,11 @@ module Registration
       key = campaign.registration_deadline > Time.current ? "close_early" : "close"
       t("registration.campaign.confirmations.#{key}")
     end
+
+    def planning_only_disabled_reason(campaign)
+      return if campaign.can_be_planning_only?
+
+      t("registration.campaign.planning_only_disabled")
+    end
   end
 end

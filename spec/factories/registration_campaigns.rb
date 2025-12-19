@@ -68,12 +68,12 @@ FactoryBot.define do
 
     trait :for_seminar do
       association :campaignable, factory: [:lecture, :is_seminar]
-      title { "Seminar Talk Registration" }
+      description { "Seminar Talk Registration" }
       allocation_mode { :first_come_first_served }
     end
 
     trait :for_lecture_enrollment do
-      title { "Lecture Enrollment" }
+      description { "Lecture Enrollment" }
       allocation_mode { :first_come_first_served }
 
       after(:create) do |campaign|
