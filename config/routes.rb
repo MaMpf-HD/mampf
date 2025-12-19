@@ -919,6 +919,14 @@ Rails.application.routes.draw do
       delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
              to: "user_registrations#destroy",
              as: :withdraw_item
+
+      post "user_registrations/:item_id/up",
+           to: "user_registrations#up",
+           as: :move_user_registration_up
+
+      post "user_registrations/:item_id/down",
+           to: "user_registrations#down",
+           as: :move_user_registration_down
     end
   end
 

@@ -35,6 +35,9 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import RegistrationItemController from "~/registration/item_search_form/_search_form.controller.js";
 window.Stimulus.register("registration-item-search", RegistrationItemController);
 
+import ReorderableTableController from "~/registration/reorderable_table/_reorderable_table.controller.js";
+window.Stimulus.register("reorderable-table", ReorderableTableController);
+
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 

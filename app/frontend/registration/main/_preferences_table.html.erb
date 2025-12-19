@@ -1,0 +1,43 @@
+<table class="table table-sm align-middle mb-2">
+  <thead class="bg-grey-lighten-5 text-dark small">
+    <tr>
+      <!-- attribute data columns -->
+      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+      <th class="fw-semibold"><%= col[:header] %></th>
+      <% end %>
+      <!-- action columns -->
+      <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% item_preferences.each do |item| %>
+    <tr data-registration-item-search-target="row">
+      <!-- attribute data columns -->
+      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+      <td class="<%= col[:cell_class] %>"><%= col[:field].call(item) %></td>
+      <% end %>
+      <!-- seats column -->
+      <td class="text-center small fw-semibold text-dark">
+        <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+      </td>
+      <!-- action column -->
+      <td>
+        <a href="<%= move_user_registration_up_path(item.id) %>">
+        <i class="material-icons clickable keyboard_arrow_up w-auto"
+          data-bs-toggle="tooltip"
+          data-placement="right" title="<%= t('admin.item.take_time') %>">
+        keyboard_arrow_up
+        </i>
+        </a>
+        <a href="<%= move_user_registration_down_path(item.id) %>">
+        <i class="material-icons clickable keyboard_arrow_down w-auto"
+          data-bs-toggle="tooltip"
+          data-placement="right" title="<%= t('admin.item.take_time') %>">
+        keyboard_arrow_down
+        </i>
+        </a>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

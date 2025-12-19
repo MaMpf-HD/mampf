@@ -145,5 +145,11 @@ module Registration
         "bg-info-subtle text-info"
       end
     end
+
+    def item_json(items)
+      items.map do |item|
+        { id: item.id, preference_rank: item.preference_rank(current_user) }
+      end
+    end
   end
 end

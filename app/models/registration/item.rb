@@ -59,6 +59,11 @@ module Registration
       registerable&.registration_title || registerable&.title
     end
 
+    def preference_rank(user)
+      registration = user_registrations.find_by(user_id: user.id)
+      registration&.preference_rank
+    end
+
     def capacity_editable?
       return true if registration_campaign.draft?
 

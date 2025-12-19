@@ -13,6 +13,7 @@ module Registration
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
     before_action :set_locale
+    PreferenceItem = Struct.new(:id, :preference_rank)
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -34,6 +35,7 @@ module Registration
                     notice: I18n.t("registration.messages.campaign_unavailable")
       when :lecture_details
         init_details
+        init_preferences if @campaign.preference_based?
         render template: "registration/main/show_main_campaign", layout: "application_no_sidebar"
       when :exam_details
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
@@ -71,6 +73,16 @@ module Registration
                                registration_item_id: i.id).first&.status
       end
       @campaignable_host = @campaign.campaignable
+    end
+
+    def init_preferences
+      @user_registrations = @campaign.user_registrations
+                                     .where(user_id: current_user.id)
+                                     .where(status: [:confirmed, :pending])
+
+      @item_preferences = @user_registrations.includes(:registration_items)
+                                             .map(&:registration_items)
+                                             .flatten
     end
 
     def create
@@ -130,6 +142,66 @@ module Registration
       render json: { error: exception.message }, status: :unprocessable_content
     end
 
+    def up
+      index = params[:item_id]
+      pref_item = session[:preferences].map do |item_hash|
+        PreferenceItem.new(item_hash["id"], item_hash["preference_rank"])
+      end
+      item = pref_item.find { |i| i.preference_rank == index.to_i }
+      item_above = pref_item.find { |i| i.preference_rank == index.to_i - 1 }
+      if item && item_above
+        item.preference_rank -= 1
+        item_above.preference_rank += 1
+      end
+      session[:preferences] = pref_item.map(&:to_h)
+      head :ok
+      # update by turbo frame
+    end
+
+    def down
+      index = params[:item_id]
+      pref_item = session[:preferences].map do |item_hash|
+        PreferenceItem.new(item_hash["id"], item_hash["preference_rank"])
+      end
+      item = pref_item.find { |i| i.preference_rank == index.to_i }
+      item_below = pref_item.find { |i| i.preference_rank == index.to_i + 1 }
+      if item && item_below
+        item.preference_rank += 1
+        item_below.preference_rank -= 1
+      end
+      session[:preferences] = pref_item.map(&:to_h)
+      head :ok
+      # update by turbo frame
+    end
+
+    def add
+      item_id = params[:item_id]
+      preferences = session[:preferences] || []
+      unless preferences.any? { |i| i["id"].to_i == item_id.to_i }
+        preferences << { "id" => item_id.to_i, "preference_rank" => preferences.size + 1 }
+      end
+      session[:preferences] = preferences
+      head :ok
+      # update by turbo frame
+    end
+
+    def reset_preferences
+      session[:preferences] = []
+      head :ok
+      # update by turbo frame
+    end
+
+    # def save_preferences
+    #   preferences_hash = session[:preferences]
+    #   preferences = preferences_hash.map do |item_hash|
+    #     PreferenceItem.new(item_hash["id"], item_hash["preference_rank"])
+    #   end
+    #   @campaign = Registration::Campaign.find(params[:campaign_id])
+    #   if @campaign.campaignable_type == "Lecture"
+    #     result = Registration::UserRegistration::LecturePreferenceEditService
+    #              .new(@campaign, current_user, preferences).update_preferences!
+    #     if result.success?
+
     private
 
       def resolve_render_target(campaign)
@@ -146,7 +218,6 @@ module Registration
       end
 
       def set_locale
-
         I18n.locale = current_user.locale ||
                       @campaign&.locale_with_inheritance ||
                       @lecture&.locale_with_inheritance ||
