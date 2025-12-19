@@ -53,9 +53,10 @@ module Registration
 
         unless @campaign.planning_only?
           is_used_in_real = Registration::Item.joins(:registration_campaign)
-                                              .where(registerable_type: "Lecture", registerable_id: @lecture.id)
-                                              .where(registration_campaigns: { planning_only: false })
-                                              .exists?
+                                              .where(registerable_type: "Lecture",
+                                                     registerable_id: @lecture.id)
+                                              .exists?(registration_campaigns:
+                                              { planning_only: false })
           return if is_used_in_real
         end
 

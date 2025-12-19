@@ -397,7 +397,9 @@ RSpec.describe(Registration::Item, type: :model) do
         it "is invalid if already in another standard campaign" do
           item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
           expect(item).not_to be_valid
-          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+          expect(item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".already_in_other_campaign"))
         end
       end
 
@@ -424,7 +426,9 @@ RSpec.describe(Registration::Item, type: :model) do
 
           item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
           expect(item).not_to be_valid
-          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+          expect(item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".already_in_other_campaign"))
         end
       end
     end
