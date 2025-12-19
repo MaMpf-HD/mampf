@@ -171,13 +171,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message
             render turbo_stream: [
-              turbo_stream.replace("registration_items_container",
-                                   partial: "registration/campaigns/card_body_items",
-                                   locals: { campaign: @campaign }),
-              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
-              turbo_stream.update("settings",
-                                  partial: "registration/campaigns/form",
-                                  locals: { campaign: @campaign, lecture: @campaign.campaignable }),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_show",
+                                  locals: { campaign: @campaign, tab: "items" }),
               stream_flash
             ]
           end
