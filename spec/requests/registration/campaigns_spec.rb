@@ -37,7 +37,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
   describe "POST /lectures/:lecture_id/campaigns" do
     let(:valid_attributes) do
-      { title: "Tutorial Registration",
+      { description: "Tutorial Registration",
         allocation_mode: "first_come_first_served",
         registration_deadline: 1.week.from_now }
     end

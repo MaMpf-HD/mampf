@@ -122,7 +122,7 @@ module Registration
 
       def campaign_params
         params.expect(
-          registration_campaign: [:title, :allocation_mode,
+          registration_campaign: [:description, :allocation_mode,
                                   :registration_deadline, :planning_only]
         )
       end

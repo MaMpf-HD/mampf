@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_11_000002) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_11_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -542,7 +542,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_11_000002) do
   create_table "registration_campaigns", force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
-    t.string "title", null: false
+    t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.boolean "planning_only", default: false, null: false

@@ -9,8 +9,9 @@
   <% end %>
 
   <div class="mb-3">
-    <%= f.label :title, t("registration.campaign.form.title"), class: "form-label" %>
-    <%= f.text_field :title, class: "form-control" %>
+    <%= f.label :description, t("registration.campaign.form.description"), class: "form-label" %>
+    <%= helpdesk(t("registration.campaign.helpdesk.description"), false) %>
+    <%= f.text_field :description, class: "form-control" %>
   </div>
 
   <div class="mb-3">
