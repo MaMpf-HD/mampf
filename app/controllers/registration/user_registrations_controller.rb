@@ -154,7 +154,7 @@ module Registration
         item_above.preference_rank += 1
       end
       session[:preferences] = pref_item.map(&:to_h)
-      head :ok
+      
       # update by turbo frame
     end
 
@@ -175,18 +175,23 @@ module Registration
 
     def add
       item_id = params[:item_id]
-      # preferences = session[:preferences] || []
-      # unless preferences.any? { |i| i["id"].to_i == item_id.to_i }
-      #   preferences << { "id" => item_id.to_i, "preference_rank" => preferences.size + 1 }
-      # end
-      # session[:preferences] = preferences
-      # update by turbo frame
       item = Registration::Item.find(item_id)
-      @item_preferences = [item]
+      preferences = session[:preferences] || []
+      unless preferences.any? { |i| i["id"].to_i == item_id.to_i }
+        preferences << { "id" => item_id.to_i, "preference_rank" => preferences.size + 1 }
+      end
+      session[:preferences] = preferences
+      compute_preferences_from_session
       @campaign = item.registration_campaign
 
       render partial: "registration/main/preferences_table",
              locals: { item_preferences: @item_preferences, campaign: @campaign }
+    end
+
+    def compute_preferences_from_session
+      preferences_hash = session[:preferences] || []
+      preferences = preferences_hash.map{ |item_hash| Registration::Item.find(item_hash["id"])}
+      @item_preferences = preferences.filter { |item| item.nil? == false }
     end
 
     def reset_preferences
