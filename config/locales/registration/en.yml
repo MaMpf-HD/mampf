@@ -26,7 +26,7 @@ en:
         new_campaign: "New Campaign"
         none: "No campaigns found."
         columns:
-          description_column: "Short description"
+          description: "Short description"
           type: "Type"
           mode: "Allocation Mode"
           opens_at: "Opens At"

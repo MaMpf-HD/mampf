@@ -26,7 +26,7 @@ de:
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."
         columns:
-          description_column: "Kurzbeschreibung"
+          description: "Kurzbeschreibung"
           type: "Typ"
           mode: "Zuteilungsmodus"
           opens_at: "Registrierungsbeginn"
