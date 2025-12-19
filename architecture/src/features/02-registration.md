@@ -397,13 +397,19 @@ module Registration
 end
 ```
 
+### Uniqueness Constraints
+
+To ensure data integrity and prevent double-booking, the following constraints apply:
+
+1.  **Planning-Only Campaigns:**
+    -   There are campaigns designated as `planning_only` (e.g., for interest polls).
+    -   Currently, only `Lecture`s qualify for these campaigns.
+
+2.  **Global Uniqueness:**
+    -   Any registerable (e.g., `Tutorial`, `Talk`, or `Lecture`) can be in **at most one** `Registration::Campaign`.
+    -   `planning_only` campaigns do not count towards this limit.
+
 ### Usage Scenarios
-
-Each scenario below is the item-side view of the campaign types listed
-earlier. The `Registration::Item` belongs to the associated campaign and
-wraps the concrete `registerable` record that users ultimately get
-assigned to.
-
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :registration_campaign, class: "Registration::Campaign" do
     association :campaignable, factory: :lecture
-    title { "#{Faker::Company.buzzword} Registration" }
+    description { "#{Faker::Company.buzzword} Registration" }
     allocation_mode { :first_come_first_served }
     registration_deadline { 2.weeks.from_now }
     status { :draft }
@@ -68,12 +68,12 @@ FactoryBot.define do
 
     trait :for_seminar do
       association :campaignable, factory: [:lecture, :is_seminar]
-      title { "Seminar Talk Registration" }
+      description { "Seminar Talk Registration" }
       allocation_mode { :first_come_first_served }
     end
 
     trait :for_lecture_enrollment do
-      title { "Lecture Enrollment" }
+      description { "Lecture Enrollment" }
       allocation_mode { :first_come_first_served }
 
       after(:create) do |campaign|

@@ -30,6 +30,8 @@ module Registration
     validate :registerable_type_consistency, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
+    validate :validate_planning_only_compliance
+    validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
 
     def title
@@ -115,6 +117,37 @@ module Registration
 
         errors.add(:base, :frozen)
         throw(:abort)
+      end
+
+      def validate_planning_only_compliance
+        return unless registration_campaign&.planning_only?
+
+        if registerable != registration_campaign.campaignable
+          errors.add(:base, :planning_only_allows_only_lecture)
+        end
+
+        return unless registration_campaign.registration_items.where.not(id: id).any?
+
+        errors.add(:base, :planning_only_allows_single_item)
+      end
+
+      def validate_uniqueness_constraints
+        return unless registerable
+
+        # If this is a planning campaign, we don't enforce uniqueness against other campaigns.
+        # (Multiple planning campaigns for the same registerable are allowed).
+        return if registration_campaign&.planning_only?
+
+        # If this is a real campaign, ensure the registerable is not in any OTHER real campaign.
+        scope = Registration::Item.joins(:registration_campaign)
+                                  .where(registerable: registerable)
+                                  .where(registration_campaigns: { planning_only: false })
+
+        scope = scope.where.not(id: id) if persisted?
+
+        return unless scope.exists?
+
+        errors.add(:base, :already_in_other_campaign)
       end
   end
 end

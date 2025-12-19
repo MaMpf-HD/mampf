@@ -178,130 +178,115 @@ RSpec.describe(Registration::Item, type: :model) do
         end
       end
     end
-  end
 
-  describe "#validate_capacity_change_from_registerable!" do
-    let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
-    let(:item) { create(:registration_item, registration_campaign: campaign) }
+    describe "#validate_capacity_change_from_registerable!" do
+      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
+      let(:item) { create(:registration_item, registration_campaign: campaign) }
 
-    context "when capacity is editable" do
-      it "returns nil" do
-        expect(item.validate_capacity_change_from_registerable!(10)).to be_nil
+      context "when capacity is editable" do
+        it "returns nil" do
+          expect(item.validate_capacity_change_from_registerable!(10)).to be_nil
+        end
+      end
+
+      context "when capacity is frozen" do
+        before do
+          item # ensure item exists
+          campaign.update!(status: :completed)
+        end
+
+        it "returns frozen error" do
+          expect(item.validate_capacity_change_from_registerable!(10)).to eq([:base, :frozen])
+        end
+      end
+
+      context "when capacity reduction is invalid" do
+        before do
+          item # ensure item exists
+          campaign.update!(status: :open)
+          create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+          item.capacity = 5
+          item.save
+        end
+
+        it "returns capacity_too_low error" do
+          expect(item.validate_capacity_change_from_registerable!(2))
+            .to eq([:base, :capacity_too_low, { count: 3 }])
+        end
       end
     end
 
-    context "when capacity is frozen" do
-      before do
-        item # ensure item exists
-        campaign.update!(status: :completed)
-      end
+    describe "callbacks" do
+      describe "#ensure_campaign_is_draft" do
+        let(:item) { create(:registration_item, registration_campaign: campaign) }
 
-      it "returns frozen error" do
-        expect(item.validate_capacity_change_from_registerable!(10)).to eq([:base, :frozen])
+        context "when campaign is draft" do
+          let(:campaign) { create(:registration_campaign, :draft) }
+
+          it "allows destruction" do
+            item # ensure item exists
+            expect { item.destroy }.to change(described_class, :count).by(-1)
+          end
+        end
+
+        context "when campaign is open" do
+          let(:campaign) { create(:registration_campaign, :draft) }
+
+          before do
+            item # ensure item exists
+            campaign.update!(status: :open)
+          end
+
+          it "prevents destruction" do
+            expect { item.destroy }.not_to change(described_class, :count)
+            expect(item.errors[:base])
+              .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                                 ".frozen"))
+          end
+        end
       end
     end
 
-    context "when capacity reduction is invalid" do
-      before do
-        item # ensure item exists
-        campaign.update!(status: :open)
-        create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
-        item.capacity = 5
-        item.save
+    describe "#title" do
+      let(:item) { create(:registration_item) }
+
+      it "delegates to registerable registration_title if present" do
+        allow(item.registerable).to receive(:registration_title).and_return("Registration Title")
+        expect(item.title).to eq("Registration Title")
       end
 
-      it "returns capacity_too_low error" do
-        expect(item.validate_capacity_change_from_registerable!(2))
-          .to eq([:base, :capacity_too_low, { count: 3 }])
+      it "falls back to registerable title" do
+        allow(item.registerable).to receive(:registration_title).and_return(nil)
+        allow(item.registerable).to receive(:title).and_return("Original Title")
+        expect(item.title).to eq("Original Title")
       end
     end
-  end
 
-  describe "callbacks" do
-    describe "#ensure_campaign_is_draft" do
+    describe "#capacity_editable?" do
+      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
 
       context "when campaign is draft" do
-        let(:campaign) { create(:registration_campaign, :draft) }
-
-        it "allows destruction" do
-          item # ensure item exists
-          expect { item.destroy }.to change(described_class, :count).by(-1)
+        it "returns true" do
+          expect(item.capacity_editable?).to be(true)
         end
       end
 
       context "when campaign is open" do
-        let(:campaign) { create(:registration_campaign, :draft) }
-
         before do
           item # ensure item exists
           campaign.update!(status: :open)
         end
 
-        it "prevents destruction" do
-          expect { item.destroy }.not_to change(described_class, :count)
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".frozen"))
+        it "returns true" do
+          expect(item.capacity_editable?).to be(true)
         end
       end
-    end
-  end
 
-  describe "#title" do
-    let(:item) { create(:registration_item) }
-
-    it "delegates to registerable registration_title if present" do
-      allow(item.registerable).to receive(:registration_title).and_return("Registration Title")
-      expect(item.title).to eq("Registration Title")
-    end
-
-    it "falls back to registerable title" do
-      allow(item.registerable).to receive(:registration_title).and_return(nil)
-      allow(item.registerable).to receive(:title).and_return("Original Title")
-      expect(item.title).to eq("Original Title")
-    end
-  end
-
-  describe "#capacity_editable?" do
-    let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
-    let(:item) { create(:registration_item, registration_campaign: campaign) }
-
-    context "when campaign is draft" do
-      it "returns true" do
-        expect(item.capacity_editable?).to be(true)
-      end
-    end
-
-    context "when campaign is open" do
-      before do
-        item # ensure item exists
-        campaign.update!(status: :open)
-      end
-
-      it "returns true" do
-        expect(item.capacity_editable?).to be(true)
-      end
-    end
-
-    context "when campaign is completed" do
-      before do
-        item # ensure item exists
-        campaign.update!(status: :completed)
-      end
-
-      it "returns false" do
-        expect(item.capacity_editable?).to be(false)
-      end
-    end
-
-    context "when campaign is processing" do
-      context "and preference based" do
-        let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
-
+      context "when campaign is completed" do
         before do
           item # ensure item exists
-          campaign.update!(status: :processing)
+          campaign.update!(status: :completed)
         end
 
         it "returns false" do
@@ -309,34 +294,139 @@ RSpec.describe(Registration::Item, type: :model) do
         end
       end
 
-      context "and FCFS" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :processing)
+      context "when campaign is processing" do
+        context "and preference based" do
+          let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
+
+          before do
+            item # ensure item exists
+            campaign.update!(status: :processing)
+          end
+
+          it "returns false" do
+            expect(item.capacity_editable?).to be(false)
+          end
         end
 
-        it "returns true" do
-          expect(item.capacity_editable?).to be(true)
+        context "and FCFS" do
+          before do
+            item # ensure item exists
+            campaign.update!(status: :processing)
+          end
+
+          it "returns true" do
+            expect(item.capacity_editable?).to be(true)
+          end
         end
       end
     end
-  end
 
-  describe "#first_choice_count" do
-    let(:campaign) { create(:registration_campaign, :preference_based) }
-    let(:item) { create(:registration_item, registration_campaign: campaign) }
+    describe "#first_choice_count" do
+      let(:campaign) { create(:registration_campaign, :preference_based) }
+      let(:item) { create(:registration_item, registration_campaign: campaign) }
 
-    before do
-      # Create 2 first choices
-      create_list(:registration_user_registration, 2, registration_item: item, preference_rank: 1,
-                                                      registration_campaign: campaign)
-      # Create 1 second choice
-      create(:registration_user_registration, registration_item: item, preference_rank: 2,
-                                              registration_campaign: campaign)
+      before do
+        # Create 2 first choices
+        create_list(:registration_user_registration, 2, registration_item: item, preference_rank: 1,
+                                                        registration_campaign: campaign)
+        # Create 1 second choice
+        create(:registration_user_registration, registration_item: item, preference_rank: 2,
+                                                registration_campaign: campaign)
+      end
+
+      it "counts only registrations with preference rank 1" do
+        expect(item.first_choice_count).to eq(2)
+      end
     end
 
-    it "counts only registrations with preference rank 1" do
-      expect(item.first_choice_count).to eq(2)
+    describe "#validate_planning_only_compliance" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
+
+      context "when campaign is planning only" do
+        it "allows adding lecture item" do
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).to be_valid
+        end
+
+        it "does not allow adding tutorial item" do
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: create(:tutorial, lecture: lecture))
+          expect(item).not_to be_valid
+          expect(item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".planning_only_allows_only_lecture"))
+        end
+
+        it "does not allow adding multiple items" do
+          create(:registration_item, registration_campaign: campaign, registerable: lecture)
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).not_to be_valid
+          expect(item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".planning_only_allows_single_item"))
+        end
+      end
+
+      context "when campaign is not planning only" do
+        let(:campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: false)
+        end
+
+        it "allows adding tutorial item" do
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: create(:tutorial, lecture: lecture))
+          expect(item).to be_valid
+        end
+      end
+    end
+
+    describe "#validate_uniqueness_constraints" do
+      let(:lecture) { create(:lecture) }
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+
+      context "with a tutorial (strict global uniqueness)" do
+        let(:other_lecture) { create(:lecture) }
+        let(:other_campaign) { create(:registration_campaign, campaignable: other_lecture) }
+
+        before do
+          create(:registration_item, registration_campaign: other_campaign, registerable: tutorial)
+        end
+
+        it "is invalid if already in another standard campaign" do
+          item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+        end
+      end
+
+      context "with a lecture (planning_only exception)" do
+        let(:planning_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: true)
+        end
+
+        before do
+          create(:registration_item, registration_campaign: planning_campaign,
+                                     registerable: lecture)
+        end
+
+        it "allows adding to a standard campaign if currently only in planning_only" do
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).to be_valid
+        end
+
+        it "is invalid if already in another standard campaign" do
+          # Create another standard campaign (needs different campaignable to exist)
+          other_lecture = create(:lecture)
+          other_campaign = create(:registration_campaign, campaignable: other_lecture)
+          create(:registration_item, registration_campaign: other_campaign, registerable: lecture)
+
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+        end
+      end
     end
   end
 end
