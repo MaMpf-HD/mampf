@@ -14,6 +14,7 @@ en:
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
         allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
         planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
@@ -25,7 +26,7 @@ en:
         new_campaign: "New Campaign"
         none: "No campaigns found."
         columns:
-          title_column: "Title"
+          description_column: "Short description"
           type: "Type"
           mode: "Allocation Mode"
           opens_at: "Opens At"
@@ -39,7 +40,7 @@ en:
       form:
         new_title: "New Campaign"
         edit_title: "Edit Campaign"
-        title: "Title"
+        description: "Short description"
         allocation_mode: "Allocation Mode"
         registration_opens_at: "Registration Opens At"
         registration_deadline: "Registration Deadline"
@@ -62,6 +63,7 @@ en:
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
+        close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
       overview:
         registrations: "Registrations"
@@ -162,8 +164,8 @@ en:
             base:
               frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
               cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
-              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{titles}."
-              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{title}' is still in draft mode."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
+              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
               no_items: "Cannot open campaign because no items have been added."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"

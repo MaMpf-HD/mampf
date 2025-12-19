@@ -16,8 +16,8 @@
       <div class="card-body">
         <h6 class="card-subtitle mb-3 text-muted"><%= t("basics.details") %></h6>
         <dl class="row mb-0">
-          <dt class="col-sm-4"><%= t("registration.campaign.form.title") %></dt>
-          <dd class="col-sm-8"><%= campaign.title %></dd>
+          <dt class="col-sm-4"><%= t("registration.campaign.form.description") %></dt>
+          <dd class="col-sm-8"><%= campaign.description.presence || "-" %></dd>
 
           <dt class="col-sm-4"><%= t("registration.campaign.form.allocation_mode") %></dt>
           <dd class="col-sm-8"><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></dd>

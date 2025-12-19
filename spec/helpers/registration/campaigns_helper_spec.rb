@@ -155,4 +155,16 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.show_item_capacity_progress?(item)).to be(false)
     end
   end
+
+  describe "#campaign_close_confirmation" do
+    it "returns the correct confirmation message" do
+      campaign = build(:registration_campaign, registration_deadline: 1.day.from_now)
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close_early"))
+
+      campaign.registration_deadline = 1.day.ago
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close"))
+    end
+  end
 end

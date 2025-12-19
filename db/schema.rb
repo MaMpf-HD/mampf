@@ -542,7 +542,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_000000) do
   create_table "registration_campaigns", force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
-    t.string "title", null: false
+    t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.boolean "planning_only", default: false, null: false

@@ -2,7 +2,7 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th><%= t("registration.campaign.index.columns.title_column") %></th>
+          <th><%= t("registration.campaign.index.columns.description_column") %></th>
           <th><%= t("registration.campaign.index.columns.type") %></th>
           <th><%= t("registration.campaign.index.columns.mode") %></th>
           <th><%= t("registration.campaign.index.columns.registrations") %></th>
@@ -14,10 +14,15 @@
         <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
           <tr data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;">
             <td>
-              <%= link_to campaign.title,
-                          registration_campaign_path(campaign),
+              <%= link_to registration_campaign_path(campaign),
                           class: "text-decoration-none text-reset",
-                          data: { turbo_stream: true, row_link: true } %>
+                          data: { turbo_stream: true, row_link: true } do %>
+                <% if campaign.description.present? %>
+                  <%= campaign.description %>
+                <% else %>
+                  <span class="text-muted">&mdash;</span>
+                <% end %>
+              <% end %>
             </td>
             <td><%= campaign_item_type_label(campaign) %></td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>

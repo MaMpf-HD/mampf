@@ -55,5 +55,10 @@ module Registration
     def show_item_capacity_progress?(item)
       item.registration_campaign.first_come_first_served? && item.capacity.to_i.positive?
     end
+
+    def campaign_close_confirmation(campaign)
+      key = campaign.registration_deadline > Time.current ? "close_early" : "close"
+      t("registration.campaign.confirmations.#{key}")
+    end
   end
 end

@@ -29,8 +29,9 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    validates :title, :registration_deadline, :allocation_mode, :status, presence: true
+    validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }
+    validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
     validate :registration_deadline_future_if_open
@@ -104,7 +105,7 @@ module Registration
         return if prereq_ids.empty?
 
         Registration::Campaign.where(id: prereq_ids, status: :draft).find_each do |prereq|
-          errors.add(:base, :prerequisite_is_draft, title: prereq.title)
+          errors.add(:base, :prerequisite_is_draft, description: prereq.description)
         end
       end
 
@@ -116,9 +117,9 @@ module Registration
 
         return unless referencing_policies.any?
 
-        titles = referencing_policies.filter_map { |p| p.registration_campaign&.title }
-                                     .uniq.join(", ")
-        errors.add(:base, :referenced_as_prerequisite, titles: titles)
+        descriptions = referencing_policies.filter_map { |p| p.registration_campaign&.description }
+                                           .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, descriptions: descriptions)
         throw(:abort)
       end
 

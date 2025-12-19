@@ -37,7 +37,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
   describe "POST /lectures/:lecture_id/campaigns" do
     let(:valid_attributes) do
-      { title: "Tutorial Registration",
+      { description: "Tutorial Registration",
         allocation_mode: "first_come_first_served",
         registration_deadline: 1.week.from_now }
     end
@@ -68,7 +68,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
   end
 
   describe "PATCH /campaigns/:id" do
-    let(:new_attributes) { { title: "Updated Title" } }
+    let(:new_attributes) { { description: "Updated Description" } }
 
     context "when campaign is draft" do
       before { sign_in editor }
@@ -77,7 +77,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         patch registration_campaign_path(campaign),
               params: { registration_campaign: new_attributes }
         campaign.reload
-        expect(campaign.title).to eq("Updated Title")
+        expect(campaign.description).to eq("Updated Description")
         expect(response).to redirect_to(registration_campaign_path(campaign))
       end
     end
@@ -101,14 +101,14 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(campaign.allocation_mode).not_to eq("preference_based")
       end
 
-      it "allows updating non-frozen attributes (title)" do
+      it "allows updating non-frozen attributes (description)" do
         patch registration_campaign_path(campaign),
-              params: { registration_campaign: { title: "New Title" } }
+              params: { registration_campaign: { description: "New Description" } }
 
         expect(response).to redirect_to(registration_campaign_path(campaign))
 
         campaign.reload
-        expect(campaign.title).to eq("New Title")
+        expect(campaign.description).to eq("New Description")
       end
     end
 
@@ -162,6 +162,24 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           campaign.reload
           expect(campaign).to be_closed
           expect(response).to redirect_to(registration_campaign_path(campaign))
+        end
+
+        it "updates registration_deadline if it is in the future" do
+          expect(campaign.registration_deadline).to be > Time.current
+          patch close_registration_campaign_path(campaign)
+          campaign.reload
+          expect(campaign.registration_deadline).to be_within(1.minute).of(Time.current)
+        end
+
+        it "does not update registration_deadline if it is in the past" do
+          # rubocop: disable Rails/SkipsModelValidations
+          campaign.update_columns(registration_deadline: 1.day.ago)
+          # rubocop: enable Rails/SkipsModelValidations
+          original_deadline = campaign.registration_deadline
+
+          patch close_registration_campaign_path(campaign)
+          campaign.reload
+          expect(campaign.registration_deadline).to eq(original_deadline)
         end
       end
 
