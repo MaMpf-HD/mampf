@@ -170,6 +170,7 @@ de:
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
               no_items: "Das Anmeldeverfahren kann nicht geöffnet werden, da keine Einträge hinzugefügt wurden."
+              already_has_real_campaign: "Es existiert bereits ein reguläres Anmeldeverfahren für diesen Kontext. Es ist nur ein reguläres Verfahren erlaubt."
             registration_deadline:
               must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
             allocation_mode:
@@ -182,6 +183,9 @@ de:
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
         registration/item:
           attributes:
+            registerable_id:
+              taken: "ist bereits Teil eines anderen Anmeldeverfahrens."
+              taken_by_real_campaign: "ist bereits Teil eines anderen aktiven Anmeldeverfahrens."
             base:
               mixed_types: "Alle Elemente müssen vom gleichen Typ sein."
               lecture_unique: "Ein Anmeldeverfahren kann nur eine Vorlesung enthalten."
@@ -189,3 +193,4 @@ de:
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
               planning_only_allows_only_lecture: "Im Planungsmodus kann nur die Vorlesung selbst hinzugefügt werden."
               planning_only_allows_single_item: "Im Planungsmodus kann nur ein einziges Element (die Vorlesung) hinzugefügt werden."
+              already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."

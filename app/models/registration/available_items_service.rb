@@ -36,20 +36,30 @@ module Registration
       end
 
       def add_tutorials(groups)
-        ids = @registered_ids["Tutorial"] || []
-        tutorials = @lecture.tutorials.where.not(id: ids)
+        used_ids = Registration::Item.where(registerable_type: "Tutorial").pluck(:registerable_id)
+        tutorials = @lecture.tutorials.where.not(id: used_ids)
         groups[:tutorials] = tutorials if tutorials.any?
       end
 
       def add_talks(groups)
-        ids = @registered_ids["Talk"] || []
-        talks = @lecture.talks.where.not(id: ids)
+        used_ids = Registration::Item.where(registerable_type: "Talk").pluck(:registerable_id)
+        talks = @lecture.talks.where.not(id: used_ids)
         groups[:talks] = talks if talks.any?
       end
 
       def add_lecture(groups)
         ids = @registered_ids["Lecture"] || []
-        groups[:lecture] = [@lecture] unless ids.include?(@lecture.id)
+        return if ids.include?(@lecture.id)
+
+        unless @campaign.planning_only?
+          is_used_in_real = Registration::Item.joins(:registration_campaign)
+                                              .where(registerable_type: "Lecture", registerable_id: @lecture.id)
+                                              .where(registration_campaigns: { planning_only: false })
+                                              .exists?
+          return if is_used_in_real
+        end
+
+        groups[:lecture] = [@lecture]
       end
   end
 end

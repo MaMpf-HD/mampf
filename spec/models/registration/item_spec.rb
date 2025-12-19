@@ -380,5 +380,53 @@ RSpec.describe(Registration::Item, type: :model) do
         end
       end
     end
+
+    describe "#validate_uniqueness_constraints" do
+      let(:lecture) { create(:lecture) }
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+
+      context "with a tutorial (strict global uniqueness)" do
+        let(:other_lecture) { create(:lecture) }
+        let(:other_campaign) { create(:registration_campaign, campaignable: other_lecture) }
+
+        before do
+          create(:registration_item, registration_campaign: other_campaign, registerable: tutorial)
+        end
+
+        it "is invalid if already in another standard campaign" do
+          item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+        end
+      end
+
+      context "with a lecture (planning_only exception)" do
+        let(:planning_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: true)
+        end
+
+        before do
+          create(:registration_item, registration_campaign: planning_campaign,
+                                     registerable: lecture)
+        end
+
+        it "allows adding to a standard campaign if currently only in planning_only" do
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).to be_valid
+        end
+
+        it "is invalid if already in another standard campaign" do
+          # Create another standard campaign (needs different campaignable to exist)
+          other_lecture = create(:lecture)
+          other_campaign = create(:registration_campaign, campaignable: other_lecture)
+          create(:registration_item, registration_campaign: other_campaign, registerable: lecture)
+
+          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.already_in_other_campaign"))
+        end
+      end
+    end
   end
 end

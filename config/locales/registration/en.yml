@@ -170,6 +170,7 @@ en:
               referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
               prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
               no_items: "Cannot open campaign because no items have been added."
+              already_has_real_campaign: "A standard registration campaign already exists for this context. Only one standard campaign is allowed."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"
             allocation_mode:
@@ -182,6 +183,9 @@ en:
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
         registration/item:
           attributes:
+            registerable_id:
+              taken: "is already part of another campaign."
+              taken_by_real_campaign: "is already part of another active campaign."
             base:
               mixed_types: "All items must be of the same type."
               lecture_unique: "A campaign can only have one lecture item."
@@ -189,3 +193,4 @@ en:
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
               planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
               planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."
+              already_in_other_campaign: "This item is already part of another standard registration campaign."

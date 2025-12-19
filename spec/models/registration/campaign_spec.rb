@@ -172,6 +172,43 @@ RSpec.describe(Registration::Campaign, type: :model) do
         end
       end
     end
+
+    describe "#validate_real_campaign_uniqueness" do
+      let(:lecture) { create(:lecture) }
+
+      context "when a standard campaign already exists" do
+        let!(:existing_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: false)
+        end
+
+        it "prevents creating another standard campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
+          expect(new_campaign).not_to be_valid
+          expect(new_campaign.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/campaign.attributes.base.already_has_real_campaign"))
+        end
+
+        it "allows creating a planning_only campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
+          expect(new_campaign).to be_valid
+        end
+      end
+
+      context "when a planning_only campaign already exists" do
+        let!(:existing_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: true)
+        end
+
+        it "allows creating a standard campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
+          expect(new_campaign).to be_valid
+        end
+
+        it "allows creating another planning_only campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
+          expect(new_campaign).to be_valid
+        end
+      end
+    end
   end
 
   describe "deletion protection" do
