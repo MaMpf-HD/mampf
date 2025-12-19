@@ -27,12 +27,15 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
+# =======================================================================================
 # Enable clustered mode for testing with multipel workers
+# =======================================================================================
 # workers ENV.fetch("WEB_CONCURRENCY") { 0 }
 #
 # preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i > 0
 #
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
+# ======================================================================================
 port ENV.fetch("MAMPF_PORT")
 
 # Allow puma to be restarted by `bin/rails restart` command.
@@ -45,6 +48,7 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
+# =======================================================================================
 # # Prometheus Exporter Instrumentation for testing with clustered mode
 # require "prometheus_exporter/instrumentation"
 #
@@ -80,3 +84,4 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 #     end
 #   end
 # end
+# # =======================================================================================

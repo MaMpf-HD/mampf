@@ -50,7 +50,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     consumptions_count_gauge.observe(Consumption.count)
 
     # =================================================================
-    # TEIL 2: WORKER METRIKEN (CPU / RAM pro Worker)
+    # WORKER METRIKEN (CPU / RAM pro Worker)
     # =================================================================
 
     puma_cpu_gauge = PrometheusExporter::Metric::Gauge.new("puma_process_cpu_percent",
@@ -70,9 +70,6 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
       puma_ram_gauge.observe(stat[:ram], labels)
     end
 
-    # =================================================================
-    # RÜCKGABE: Wir kombinieren beide Listen
-    # =================================================================
     [
       user_count_gauge,
       medium_count_gauge,
@@ -80,8 +77,8 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
       submissions_count_gauge,
       lectures_count_gauge,
       consumptions_count_gauge,
-      puma_cpu_gauge,  # Enthält jetzt Daten für ALLE Worker (mit Labels)
-      puma_ram_gauge   # Enthält jetzt Daten für ALLE Worker (mit Labels)
+      puma_cpu_gauge,
+      puma_ram_gauge
     ]
   end
 
@@ -125,7 +122,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
           end
         end
       rescue StandardError => e
-        # Fehler ignorieren (z.B. Prozess stirbt während Abfrage)
+        # Fehler ignorieren
       end
 
       stats
