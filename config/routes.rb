@@ -931,6 +931,10 @@ Rails.application.routes.draw do
       post "user_registrations/:item_id/add",
            to: "user_registrations#add",
            as: :add_preference
+
+      post "user_registrations/reset",
+           to: "user_registrations#reset_preferences",
+           as: :reset_preferences
     end
   end
 
