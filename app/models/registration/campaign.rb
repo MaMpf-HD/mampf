@@ -38,7 +38,6 @@ module Registration
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
     validate :planning_only_constraints, if: :planning_only
-    validate :validate_real_campaign_uniqueness
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -163,17 +162,6 @@ module Registration
         return if can_be_planning_only?
 
         errors.add(:planning_only, :incompatible_items)
-      end
-
-      def validate_real_campaign_uniqueness
-        return if planning_only?
-
-        scope = Registration::Campaign.where(campaignable: campaignable, planning_only: false)
-        scope = scope.where.not(id: id) if persisted?
-
-        return unless scope.exists?
-
-        errors.add(:base, :already_has_real_campaign)
       end
 
       def policy_engine

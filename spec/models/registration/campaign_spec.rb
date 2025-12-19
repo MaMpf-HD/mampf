@@ -181,14 +181,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
           create(:registration_campaign, campaignable: lecture, planning_only: false)
         end
 
-        it "prevents creating another standard campaign" do
+        it "allows creating another standard campaign (uniqueness is enforced by items)" do
           new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
-          expect(new_campaign).not_to be_valid
-          expect(new_campaign.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/campaign.attributes.base.already_has_real_campaign"))
-        end
-
-        it "allows creating a planning_only campaign" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
           expect(new_campaign).to be_valid
         end
       end
