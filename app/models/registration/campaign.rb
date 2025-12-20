@@ -64,6 +64,14 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    def lecture_based?
+      campaignable_type == "Lecture"
+    end
+
+    def exam_based?
+      campaignable_type == "Exam"
+    end
+
     def user_registrations_confirmed(user)
       user_registrations.where(user_id: user.id, status: :confirmed)
     end

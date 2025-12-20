@@ -1,19 +1,21 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    # This class handles student registrations for registration campaigns.
+    # Manages student registrations within a registration campaign.
     #
-    # In FCFS mode, students register per item
-    # -> create action per item registration + destroy action for deregistration
+    # Registration behavior varies by allocation mode:
+    # - First‑come, first‑served (FCFS): students register for individual items.
+    #   Uses `create` for registration and `destroy` for withdrawal.
     #
-    # In preference-based mode, students register by batch of selected items
-    # -> update action for batch registration + deregistration
+    # - Preference‑based: students submit a ranked batch of items.
+    #   Uses `update` to submit or modify preferences, including deregistration.
     #
-    # In Exam registration
-    # -> likely the same as FCFS single mode
+    # - Exam registrations: expected to follow the FCFS single‑item model.
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
     before_action :set_locale
+    before_action :set_campaign, only: [:registrations_for_campaign, :create]
+    before_action :set_item, only: [:create, :destroy]
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -24,10 +26,7 @@ module Registration
       render template: "registration/index", layout: "application_no_sidebar"
     end
 
-    # Get campaigns info + registrations info for current user
     def registrations_for_campaign
-      @campaign = Registration::Campaign.find(params[:campaign_id])
-
       target = resolve_render_target(@campaign)
       case target
       when :lecture_index, :exam_index
@@ -50,79 +49,38 @@ module Registration
       end
     end
 
-    def init_details
-      @eligibility = Registration::EligibilityService.new(@campaign, current_user,
-                                                          phase_scope: :registration).call
-      @items = @campaign.registration_items.includes(:user_registrations)
-      @campaignable_host = @campaign.campaignable
-    end
-
-    def init_result
-      # TODO: in future: get roster result from rosterable.roster_entries -> tutorial_memberships
-      # TODO; retrieve item succeed from roster
-      @item_succeed = @campaign.registration_items
-                               .includes(:user_registrations)
-                               .where(user_registrations: { status: :confirmed })
-                               .first
-      @items_selected = @campaign.registration_items
-                                 .includes(:user_registrations)
-                                 .where.not(user_registrations: { id: nil })
-      @status_items_selected = @items_selected.index_with do |i|
-        UserRegistration.where(registration_campaign_id: @campaign.id, user_id: current_user.id,
-                               registration_item_id: i.id).first&.status
-      end
-      @campaignable_host = @campaign.campaignable
-    end
-
     def create
-      @item = Registration::Item.find(params[:item_id])
-      @campaign = Registration::Campaign.find(params[:campaign_id])
-
-      if @campaign.campaignable_type == "Lecture"
-        case @campaign.allocation_mode.to_sym
-        when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService
-                   .new(@campaign, current_user, @item).register!
-
-          if result.success?
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        success: I18n.t("registration.messages.registration_success")
-          else
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        alert: result.errors.join(", ")
-          end
+      if @campaign.lecture_based?
+        result = Registration::UserRegistration::LectureFcfsEditService
+                 .new(@campaign, current_user, @item).register!
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      success: I18n.t("registration.messages.registration_success")
         else
-          raise(NotImplementedError)
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      alert: result.errors.join(", ")
         end
-
-      elsif @campaign.campaignable_type == "Exam"
+      elsif @campaign.exam_based?
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
     end
 
     def destroy
-      @item = Registration::Item.find(params[:item_id])
       @user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
                                                              status: :confirmed)
       @campaign = @user_registration.registration_campaign
 
-      if @campaign.campaignable_type == "Lecture"
-        case @campaign.allocation_mode.to_sym
-        when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService
-                   .new(@campaign, current_user, @item).withdraw!
-
-          if result.success?
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        success: I18n.t("registration.messages.withdrawn")
-          else
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        alert: result.errors.join(", ")
-          end
+      if @campaign.lecture_based?
+        result = Registration::UserRegistration::LectureFcfsEditService
+                 .new(@campaign, current_user, @item).withdraw!
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      success: I18n.t("registration.messages.withdrawn")
         else
-          raise(NotImplementedError)
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      alert: result.errors.join(", ")
         end
-      elsif @campaign.campaignable_type == "Exam"
+      elsif @campaign.exam_based?
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
     end
@@ -133,14 +91,22 @@ module Registration
 
     private
 
+      def set_item
+        @item = Registration::Item.find(params[:item_id])
+      end
+
+      def set_campaign
+        @campaign = Registration::Campaign.find(params[:campaign_id])
+      end
+
       def resolve_render_target(campaign)
         case campaign.status.to_sym
         when :draft
-          @campaign.campaignable_type == "Lecture" ? :lecture_index : :exam_index
+          @campaign.lecture_based? ? :lecture_index : :exam_index
         when :open, :closed, :processing
-          @campaign.campaignable_type == "Lecture" ? :lecture_details : :exam_details
+          @campaign.lecture_based? ? :lecture_details : :exam_details
         when :completed
-          @campaign.campaignable_type == "Lecture" ? :lecture_result : :exam_result
+          @campaign.lecture_based? ? :lecture_result : :exam_result
         else
           :lecture_index
         end
@@ -151,6 +117,30 @@ module Registration
                       @campaign&.locale_with_inheritance ||
                       @lecture&.locale_with_inheritance ||
                       I18n.locale
+      end
+
+      def init_details
+        @eligibility = Registration::EligibilityService.new(@campaign, current_user,
+                                                            phase_scope: :registration).call
+        @items = @campaign.registration_items.includes(:user_registrations)
+        @campaignable_host = @campaign.campaignable
+      end
+
+      def init_result
+        # TODO: Pull final allocation results from rosterable.roster_entries (tutorial_memberships).
+        # TODO: Determine the successful item using roster data instead of confirmed registrations.
+        @item_succeed = @campaign.registration_items
+                                 .includes(:user_registrations)
+                                 .where(user_registrations: { status: :confirmed })
+                                 .first
+        @items_selected = @campaign.registration_items
+                                   .includes(:user_registrations)
+                                   .where.not(user_registrations: { id: nil })
+        @status_items_selected = @items_selected.index_with do |i|
+          UserRegistration.where(registration_campaign_id: @campaign.id, user_id: current_user.id,
+                                 registration_item_id: i.id).first&.status
+        end
+        @campaignable_host = @campaign.campaignable
       end
   end
 end
