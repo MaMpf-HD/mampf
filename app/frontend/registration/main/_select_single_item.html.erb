@@ -9,7 +9,7 @@
 
     <% last_updated = campaign.user_registrations_last_updated(current_user) %>
     <% if last_updated %>
-      <div class="small text-success">
+      <div class="col-4 small text-success text-end fw-semibold">
         <%= t('basics.saved_at', time: format_date(last_updated)) %>
       </div>
     <% end %>
