@@ -6,7 +6,7 @@
         <%= link_to t('registration.registrations'), user_registrations_path %>
       </li>
       <li class="breadcrumb-item active" aria-current="page">
-        <%= @campaign.title %> (<%= @campaign.campaignable_type %>)
+        <%= @campaignable_host.title %> - <%= @campaign.description %> (<%= @campaign.campaignable_type %>)
       </li>
     </ol>
   </nav>
