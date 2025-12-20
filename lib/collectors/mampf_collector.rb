@@ -59,7 +59,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
                                                            "RAM usage per Puma process in MB")
 
     # 1. Hole Liste aller Prozesse (Master + Worker)
-    process_stats = get_detailed_puma_stats
+    process_stats = collect_detailed_puma_stats
 
     # 2. Schleife durch JEDEN Worker einzeln
     process_stats.each do |stat|
@@ -85,7 +85,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
   private
 
     # Die Logik, um Master und Worker PIDs zu finden und auszulesen
-    def get_detailed_puma_stats
+    def collect_detailed_puma_stats
       stats = []
       pid_file = Rails.root.join("tmp/pids/server.pid")
 
@@ -109,7 +109,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
         unless output.empty?
           output.each_line do |line|
             parts = line.split(" ")
-            next unless parts.length == 3 
+            next unless parts.length == 3
 
             current_pid = parts[0].to_i
             cpu = parts[1].to_f
@@ -121,8 +121,6 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
             stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb }
           end
         end
-      rescue StandardError => e
-        # Fehler ignorieren
       end
 
       stats

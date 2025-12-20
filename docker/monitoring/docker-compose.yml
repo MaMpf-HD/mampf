@@ -15,15 +15,18 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "2345:2345"
-    networks:
-      - mampf_development
-    environment:
-      - GF_SERVER_HTTP_PORT=2345
-    restart: unless-stopped
+      image: grafana/grafana
+      volumes:
+        - ./grafana/provisioning:/etc/grafana/provisioning
+        - ./grafana/dashboards:/var/lib/grafana/dashboards
+      container_name: grafana
+      ports:
+        - "2345:2345"
+      networks:
+        - mampf_development
+      environment:
+        - GF_SERVER_HTTP_PORT=2345
+      restart: unless-stopped
 
 networks:
   mampf_development:
