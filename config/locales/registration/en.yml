@@ -1,6 +1,7 @@
 en:
   registration:
     campaign:
+      planning_only: "Planning only"
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
       updated: "Campaign updated successfully."
@@ -12,11 +13,13 @@ en:
       closed: "Campaign closed."
       reopened: "Campaign reopened."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
         allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
-        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
+        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed. This option is only available for campaigns that contain only the lecture itself as an item."
         allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
         first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
       index:
@@ -25,7 +28,7 @@ en:
         new_campaign: "New Campaign"
         none: "No campaigns found."
         columns:
-          title_column: "Title"
+          description: "Short description"
           type: "Type"
           mode: "Allocation Mode"
           opens_at: "Opens At"
@@ -39,7 +42,7 @@ en:
       form:
         new_title: "New Campaign"
         edit_title: "Edit Campaign"
-        title: "Title"
+        description: "Short description"
         allocation_mode: "Allocation Mode"
         registration_opens_at: "Registration Opens At"
         registration_deadline: "Registration Deadline"
@@ -62,6 +65,7 @@ en:
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
+        close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
       overview:
         registrations: "Registrations"
@@ -128,6 +132,7 @@ en:
         new: "Create New"
         none_available: "No items available to add."
         lecture_unique: "This campaign already has a lecture item. You cannot add more items."
+        planning_only_restriction: "In planning mode, you can only add the lecture itself as an item. Creating new tutorials or talks is disabled."
       columns:
         title: "Title"
         capacity: "Capacity"
@@ -162,21 +167,30 @@ en:
             base:
               frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
               cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
-              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{titles}."
-              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{title}' is still in draft mode."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
+              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
               no_items: "Cannot open campaign because no items have been added."
+              already_has_real_campaign: "A standard registration campaign already exists for this context. Only one standard campaign is allowed."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"
             allocation_mode:
               frozen: "cannot be changed after campaign is opened"
+            planning_only:
+              incompatible_items: "cannot be enabled because the campaign already contains items that are not the lecture itself."
         registration/policy:
           attributes:
             base:
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
         registration/item:
           attributes:
+            registerable_id:
+              taken: "is already part of another campaign."
+              taken_by_real_campaign: "is already part of another active campaign."
             base:
               mixed_types: "All items must be of the same type."
               lecture_unique: "A campaign can only have one lecture item."
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+              planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
+              planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."
+              already_in_other_campaign: "This item is already part of another standard registration campaign."

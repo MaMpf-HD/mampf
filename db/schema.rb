@@ -554,7 +554,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_000000) do
   create_table "registration_campaigns", force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
-    t.string "title", null: false
+    t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.boolean "planning_only", default: false, null: false
@@ -574,6 +574,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_000000) do
     t.datetime "updated_at", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
+    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY ((ARRAY['Tutorial'::character varying, 'Talk'::character varying])::text[]))"
     t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
