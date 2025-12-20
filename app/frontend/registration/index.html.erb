@@ -13,7 +13,7 @@
     <tbody>
       <% @courses_seminars_campaigns.each do |campaign| %>
         <tr>
-          <td><%= campaign.title %></td>
+          <td><%= campaign.description %></td>
           <td><%= campaign.campaignable.title %></td>
           <td>
             <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>

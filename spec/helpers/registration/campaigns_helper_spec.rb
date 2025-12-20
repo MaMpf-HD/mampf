@@ -155,4 +155,39 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.show_item_capacity_progress?(item)).to be(false)
     end
   end
+
+  describe "#campaign_close_confirmation" do
+    it "returns the correct confirmation message" do
+      campaign = build(:registration_campaign, registration_deadline: 1.day.from_now)
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close_early"))
+
+      campaign.registration_deadline = 1.day.ago
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close"))
+    end
+  end
+
+  describe "#planning_only_disabled_reason" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+
+    context "when campaign can be planning only" do
+      it "returns nil" do
+        expect(helper.planning_only_disabled_reason(campaign)).to be_nil
+      end
+    end
+
+    context "when campaign cannot be planning only" do
+      before do
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: create(:tutorial, lecture: lecture))
+      end
+
+      it "returns the translated reason" do
+        expect(helper.planning_only_disabled_reason(campaign))
+          .to eq(I18n.t("registration.campaign.planning_only_disabled"))
+      end
+    end
+  end
 end

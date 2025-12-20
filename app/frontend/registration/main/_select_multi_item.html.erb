@@ -23,7 +23,7 @@
 
     <!-- notification banner if registered -->
     <% if campaign.user_registration_confirmed?(current_user) %>
-      <div class="alert alert-info py-1 px-2 m-3">
+      <div class="alert alert-info py-2 px-2 m-3">
         <span>
         <%= t("registration.currently_registered", 
             name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>

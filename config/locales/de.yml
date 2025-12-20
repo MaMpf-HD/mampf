@@ -3228,6 +3228,7 @@ de:
     register_now: "Jetzt registrieren"
     currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe zurückziehen."
     withdraw: "Zurückziehen"
+    closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Sie Fragen zu dieser Änderung haben, wenden Sie sich bitte an die Kursverwaltung.
     withdraw_first: "Zuerst zurückziehen"
     filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
     status_for_registration: "Aktueller Status Ihrer eingereichten Präferenzen"

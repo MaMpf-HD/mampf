@@ -189,6 +189,13 @@ RSpec.describe("Registration::Items", type: :request) do
                                                   ".attributes.base.frozen"))
         end
       end
+
+      context "with turbo stream" do
+        it "updates the settings tab" do
+          delete registration_campaign_item_path(campaign, item), as: :turbo_stream
+          expect(response.body).to include('turbo-stream action="update" target="settings"')
+        end
+      end
     end
 
     context "as a student" do

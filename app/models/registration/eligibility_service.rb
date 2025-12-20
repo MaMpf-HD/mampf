@@ -7,7 +7,7 @@ module Registration
     end
 
     def call
-      return lecture_based_eligibility if @campaign.campaignable_type == "Lecture"
+      return lecture_based_eligibility if @campaign.lecture_based?
 
       raise(NotImplementedError)
     end

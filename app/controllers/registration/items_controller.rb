@@ -163,6 +163,7 @@ module Registration
       end
 
       def respond_with_success(message)
+        @campaign.reload
         respond_to do |format|
           format.html do
             redirect_to after_action_path, notice: message
@@ -170,10 +171,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message
             render turbo_stream: [
-              turbo_stream.replace("registration_items_container",
-                                   partial: "registration/campaigns/card_body_items",
-                                   locals: { campaign: @campaign }),
-              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_show",
+                                  locals: { campaign: @campaign, tab: "items" }),
               stream_flash
             ]
           end

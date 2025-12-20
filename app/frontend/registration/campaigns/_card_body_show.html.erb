@@ -7,14 +7,16 @@
     <% end %>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><%= campaign.title %></h3>
+  <div class="d-flex <%= campaign.description.present? ? 'justify-content-between' : 'justify-content-end' %> align-items-center mb-4">
+    <% if campaign.description.present? %>
+      <h3><%= campaign.description %></h3>
+    <% end %>
     <div class="d-flex gap-2">
       <% if campaign.open? %>
         <%= button_to t("registration.campaign.actions.close"),
                       close_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.close") },
+                      data: { confirm: campaign_close_confirmation(campaign) },
                       class: "btn btn-warning" %>
       <% elsif campaign.closed? %>
         <%= button_to t("registration.campaign.actions.reopen"),
