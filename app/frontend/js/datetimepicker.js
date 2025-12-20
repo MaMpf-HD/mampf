@@ -1,33 +1,32 @@
-/* global tempusDominus */
+import { TempusDominus, Namespace } from "@eonasdan/tempus-dominus";
+import "@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css";
 
-// Initialize on page load (when js file is dynamically loaded)
-$(document).ready(startInitialization);
-
-// On page change (e.g. go back and forth in browser)
-$(document).on("turbo:before-cache", () => {
-  // Remove stale datetimepickers
-  $(".tempus-dominus-widget").remove();
-});
-
-function startInitialization() {
-  const pickerElements = $(".td-picker");
-  if (pickerElements.length == 0) {
-    console.error("No datetimepicker element found on page, although requested.");
+export function initializeDatetimePickers(container = document) {
+  const pickerElements = $(container).find(".td-picker");
+  if (pickerElements.length === 0) {
     return;
   }
 
   pickerElements.each((i, element) => {
     element = $(element);
+    if (element.data("td-initialized")) {
+      return;
+    }
+    element.data("td-initialized", true);
+
     const datetimePicker = initDatetimePicker(element);
     registerErrorHandlers(datetimePicker, element);
     registerFocusHandlers(datetimePicker, element);
   });
 }
 
+// for coffee script compatibility
+window.initializeDatetimePickers = initializeDatetimePickers;
+$(document).ready(initializeDatetimePickers);
+
 function getDateTimePickerIcons() {
   // At the moment: continue to use FontAwesome 5 icons
   // see https://getdatepicker.com/6/plugins/fa5.html
-  // see https://github.com/Eonasdan/tempus-dominus/blob/master/dist/plugins/fa-five.js
   return {
     type: "icons",
     time: "fas fa-clock",
@@ -44,7 +43,7 @@ function getDateTimePickerIcons() {
 
 function initDatetimePicker(element) {
   // see https://getdatepicker.com
-  return new tempusDominus.TempusDominus(
+  return new TempusDominus(
     element.get(0),
     {
       display: {
@@ -62,22 +61,12 @@ function initDatetimePicker(element) {
 }
 
 function registerErrorHandlers(datetimePicker, element) {
-  // Catch Tempus Dominus error when user types in invalid date
-  // this is rather hacky at the moment, see this discussion:
-  // https://github.com/Eonasdan/tempus-dominus/discussions/2656
-  datetimePicker.dates.oldParseInput = datetimePicker.dates.parseInput;
-  datetimePicker.dates.parseInput = (input) => {
-    try {
-      return datetimePicker.dates.oldParseInput(input);
-    }
-    catch {
-      const errorMsg = element.find(".td-error").data("td-invalid-date");
-      element.find(".td-error").text(errorMsg).show();
-      datetimePicker.dates.clear();
-    }
-  };
+  datetimePicker.subscribe(Namespace.events.error, () => {
+    const errorMsg = element.find(".td-error").data("td-invalid-date");
+    element.find(".td-error").text(errorMsg).show();
+  });
 
-  datetimePicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
+  datetimePicker.subscribe(Namespace.events.change, (e) => {
     // see https://getdatepicker.com/6/namespace/events.html#change
 
     // Clear error message
@@ -99,31 +88,7 @@ function hasUserChangedDate(oldDate, newDate) {
 }
 
 function registerFocusHandlers(datetimePicker, element) {
-  // Show datetimepicker when user clicks in text field next to button
-  // or when input field receives focus
-  let isButtonInvokingFocus = false;
-
   element.find(".td-input").on("click focusin", (_e) => {
-    try {
-      if (!isButtonInvokingFocus) {
-        datetimePicker.show();
-      }
-    }
-    finally {
-      isButtonInvokingFocus = false;
-    }
-  });
-
-  element.find(".td-picker-button").on("click", () => {
-    isButtonInvokingFocus = true;
-    element.find(".td-input").focus();
-  });
-
-  // Hide datetimepicker when input field loses focus
-  element.find(".td-input").blur((e) => {
-    if (!e.relatedTarget) {
-      return;
-    }
-    datetimePicker.hide();
+    datetimePicker.show();
   });
 }

@@ -6,11 +6,15 @@ export class LecturePage {
 
   constructor(page: Page, lectureId: number) {
     this.page = page;
-    this.link = `/lectures/${lectureId}/`;
+    this.link = `/lectures/${lectureId}`;
   }
 
   async goto() {
     await this.page.goto(this.link);
+  }
+
+  async gotoEdit() {
+    await this.page.goto(`${this.link}/edit`);
   }
 
   async subscribe() {
