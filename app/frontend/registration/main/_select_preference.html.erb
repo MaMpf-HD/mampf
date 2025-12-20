@@ -1,101 +1,122 @@
 <%= form_with method: :post,
               data: { turbo_frame: "preferences_table" } do %>
-<div class="card-body">
-  <div data-test="multi-item-preference">
-    <div class="h5">
-      <%= t("basics.select_type", type: campaign.registerable_type) %>
-    </div>
-    <div class="row g-3">
 
+  <div class="card-body">
+    <div data-test="multi-item-preference">
 
-      <div class="col-12 col-xl-6">
-        <div class="border rounded p-2 h-100">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="fw-semibold">Your ranked choices (1–6)</div>
-            <div class="d-flex align-items-center gap-3">
-              <div class="small text-muted" id="rankProgress">0/6</div>
-              <div class="small" id="saveStatus"></div>
-            </div>
-          </div>
-
-          
-            
-
-
-  <%= render partial: "registration/main/preferences_table",
-        locals: { campaign: campaign, item_preferences: item_preferences } %>
-
-          
-
-          <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-outline-primary btn-sm" id="resetBtn">Reset</button>
-            <button type="submit" class="btn btn-primary btn-sm" id="saveBtn" disabled>Save Preferences</button>
-          </div>
-          <div id="saveAlert" class="alert alert-success py-1 px-2 d-none mt-2" role="alert">Preferences saved</div>
-        </div>
+      <div class="h5">
+        <%= t("basics.select_type", type: campaign.registerable_type) %>
       </div>
 
+      <div class="row g-3">
 
-      <div class="col-12 col-xl-6">
-        <div class="border rounded p-2 h-100">
-          <div class="col align-items-center gap-2 mb-2 flex-wrap">
+        <!-- Left column: preferences -->
+        <div class="col-12 col-xl-6">
+          <div class="border rounded p-2 h-100">
 
-            <div data-controller="registration-item-search">
-              <%= render partial: "registration/item_search_form/search_form",
-                locals: { controller: "registration-item-search",
-                          placeholder: t("registration.filter_placeholder") } %>
-              
-
-              <div class="table-responsive">
-              <table class="table table-sm align-middle mb-2">
-                <thead class="bg-grey-lighten-5 text-dark small">
-                  <tr>
-                    <!-- attribute data columns -->
-                    <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                    <th class="fw-semibold"><%= col[:header] %></th>
-                    <% end %>
-                    <!-- seats + action columns -->
-                    <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
-                    <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <% items.each do |item| %>
-                  <tr data-registration-item-search-target="row">
-                    <!-- attribute data columns -->
-                    <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                    <td class="<%= col[:cell_class] %>"><%= col[:field].call(item) %></td>
-                    <% end %>
-                    <!-- seats column -->
-                    <td class="text-center small fw-semibold text-dark">
-                      <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
-                    </td>
-                    <!-- action column -->
-                    <td class="d-flex justify-content-end py-2">
-                      <button type="submit"
-        formaction="<%= add_preference_path(item.id) %>">
-  Add
-</button>
-                    </td>
-                  </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-semibold">Your ranked choices</div>
+              <div class="d-flex align-items-center gap-3">
+                <div class="small" id="saveStatus"></div>
+              </div>
             </div>
 
-            
-            <span class="text-muted small" id="catalogCount">0 items</span>
-            <div class="ms-auto d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-outline-secondary" id="prevPage">«</button>
-              <span class="small text-muted" id="pageInfo">1/1</span>
-              <button type="button" class="btn btn-sm btn-outline-secondary" id="nextPage">»</button>
+            <%= render partial: "registration/main/preferences_table",
+                       locals: { campaign: campaign, item_preferences: item_preferences } %>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="submit"
+                      class="btn btn-outline-primary btn-sm"
+                      formaction="<%= reset_preferences_path(campaign.id) %>">
+                      Reset
+              </button>
+              <button type="submit"
+                      class="btn btn-primary btn-sm"
+                      formaction="<%= save_preferences_path(campaign.id) %>">
+                      Save Preferences
+              </button>
             </div>
+
+            <div id="saveAlert"
+                 class="alert alert-success py-1 px-2 d-none mt-2"
+                 role="alert">
+              Preferences saved
+            </div>
+
           </div>
         </div>
+
+        <!-- Right column: catalog -->
+        <div class="col-12 col-xl-6">
+          <div class="border rounded p-2 h-100">
+
+            <div class="col align-items-center gap-2 mb-2 flex-wrap">
+              <div data-controller="registration-item-search">
+
+                <%= render partial: "registration/item_search_form/search_form",
+                           locals: {
+                             controller: "registration-item-search",
+                             placeholder: t("registration.filter_placeholder")
+                           } %>
+
+                <div class="table-responsive">
+                  <table class="table table-sm align-middle mb-2">
+                    <thead class="bg-grey-lighten-5 text-dark small">
+                      <tr>
+                        <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+                          <th class="fw-semibold"><%= col[:header] %></th>
+                        <% end %>
+
+                        <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
+                        <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <% items.each do |item| %>
+                        <tr data-registration-item-search-target="row">
+
+                          <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+                            <td class="<%= col[:cell_class] %>">
+                              <%= col[:field].call(item) %>
+                            </td>
+                          <% end %>
+
+                          <td class="text-center small fw-semibold text-dark">
+                            <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+                          </td>
+
+                          <td class="d-flex justify-content-end py-2">
+                            <button type="submit"
+                                    class="material-icons clickable playlist_add w-auto"
+                                    formaction="<%= add_preference_path(item.id) %>">
+                              playlist_add
+                            </button>
+                          </td>
+
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+              <span class="text-muted small" id="catalogCount">0 items</span>
+
+              <div class="ms-auto d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="prevPage">«</button>
+                <span class="small text-muted" id="pageInfo">1/1</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="nextPage">»</button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-</div>
+
 <% end %>

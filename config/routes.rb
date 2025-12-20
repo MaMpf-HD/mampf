@@ -932,9 +932,13 @@ Rails.application.routes.draw do
            to: "user_registrations#add",
            as: :add_preference
 
-      post "user_registrations/reset",
+      post "user_registrations/:campaign_id/reset",
            to: "user_registrations#reset_preferences",
            as: :reset_preferences
+
+      post "user_registrations/:campaign_id/save",
+           to: "user_registrations#update",
+           as: :save_preferences
     end
   end
 
