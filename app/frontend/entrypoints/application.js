@@ -62,32 +62,4 @@ import "~/js/watchlists.coffee";
 Rails.start();
 ActiveStorage.start();
 
-import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
-
-document.addEventListener("turbo:load", function () {
-  const doneCallback = function (solution) {
-    console.log(solution);
-    document.querySelector("#register-user").disabled = false;
-  };
-
-  const errorCallback = (err) => {
-    console.log("There was an error when trying to solve the Captcha.");
-    console.log(err);
-  };
-
-  const element = document.querySelector("#captcha-widget");
-  if (element != null) {
-    const options = {
-      doneCallback: doneCallback,
-      errorCallback,
-      puzzleEndpoint: $("#captcha-widget").data("captcha-url"),
-      startMode: "auto",
-      language: $("#captcha-widget").data("lang"),
-    };
-    console.log(options);
-    new WidgetInstance(element, options);
-    // DO not uncomment, evil
-    //    widget.reset();
-  }
-});
