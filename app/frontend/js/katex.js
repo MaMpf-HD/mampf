@@ -1,5 +1,10 @@
+import { default as katexRenderMathInElement } from "katex/dist/contrib/auto-render";
+
+// TODO: import CSS properly once we completely removed Katex from _head.html.erb
+// import "katex/dist/katex.min.css";
+
 $(document).on("turbo:load", function () {
-  renderMathInElement(document.body, {
+  katexRenderMathInElement(document.body, {
     delimiters: [
       {
         left: "$$",
