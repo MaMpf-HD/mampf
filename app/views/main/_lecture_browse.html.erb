@@ -1,0 +1,61 @@
+<div class="lecture-browse-section py-5">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-12 col-md-10 col-lg-8">
+        <h2 class="text-center mb-4"><%= t('profile.lecture_search') %></h2>
+        
+        <div class="search-bar-container mb-4">
+          <div class="input-group input-group-lg">
+            <input type="text"
+                   class="form-control"
+                   id="lecture-fulltext-search"
+                   placeholder="<%= t('search.placeholder.lecture_title') %>"
+                   aria-label="<%= t('search.placeholder.lecture_title') %>">
+            <button class="btn btn-primary" type="button" id="lecture-search-button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-center mb-4">
+          <button class="btn btn-link"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#advancedFilters"
+                  aria-expanded="false"
+                  aria-controls="advancedFilters">
+            <%= t('search.advanced_filters') %>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </div>
+
+        <div class="collapse" id="advancedFilters">
+          <div class="card card-body">
+            <%= render(SearchForm::SearchForm.new(url: search_lectures_path, context: "lectures")) do |c| %>
+              <% c.add_lecture_type_field %>
+              <% c.add_term_field %>
+              <% c.add_program_field %>
+              <% c.add_teacher_field %>
+              <% c.add_per_page_field(
+                   id: "hitsPerPage",
+                   per_options: hits_per_page(false),
+                   default: default_hits_per_page(false)
+                 ) %>
+              <% c.add_hidden_field(name: :results_as_list, value: false) %>
+              <% c.add_submit_field %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div id="lecture-browse-results">
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

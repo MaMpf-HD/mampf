@@ -1,5 +1,8 @@
 en:
   search:
+    advanced_filters: 'Advanced Filters'
+    placeholder:
+      lecture_title: 'Search for title...'
     results: 'Search results for the tag %{search_string}'
     info: >
       Your search for the tag %{search_string} has returned %{count} results.

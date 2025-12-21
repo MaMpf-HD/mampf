@@ -1,5 +1,8 @@
 de:
   search:
+    advanced_filters: 'Erweiterte Filter'
+    placeholder:
+      lecture_title: 'Suche nach Titel...'
     results: 'Suchergebnisse für den Begriff %{search_string}'
     info: >
       Deine Suche nach dem Begriff %{search_string} hat %{count} Treffer

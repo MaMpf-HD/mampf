@@ -1,10 +1,11 @@
-<% if @announcements.present? %>
-  <div class="alert alert-secondary"
-       role="alert">
-    <%= @announcements.html_safe %>
-  </div>
-<% end %>
-<div class="accordion" id="subscriptionsAccordion">
+<div class="start-page-section" style="min-height: 100vh; display: flex; flex-direction: column;">
+  <% if @announcements.present? %>
+    <div class="alert alert-secondary"
+         role="alert">
+      <%= @announcements.html_safe %>
+    </div>
+  <% end %>
+  <div class="accordion" id="subscriptionsAccordion">
   <% if Term.active %>
     <div class="accordion-item">
       <div class="accordion-header">
@@ -137,31 +138,6 @@
       </div>
     </div>
   </div>
-  <div class="accordion-item">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseLectureSearch"
-              aria-expanded="false"
-              aria-controls="collapseLectureSearch">
-        <h4 class="text-dark"
-            id="lectureSearchLink">
-          <%= t('profile.lecture_search') %>
-        </h4>
-      </button>
-    </div>
-    <div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
-         data-bs-parent="#subscriptionsAccordion"
-         data-link="#lectureSearchLink">
-      <div class="accordion-body">
-        <%= render partial: 'search/lecture_search_form',
-                   locals: { results_as_list: false } %>
-        <div id="lecture-search-results">
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="accordion-item mb-3">
     <div class="accordion-header">
       <button class="accordion-button collapsed"
@@ -188,5 +164,8 @@
       </div>
     </div>
   </div>
+  </div>
+  <%= render partial: 'profile/subscription_modal' %>
 </div>
-<%= render partial: 'profile/subscription_modal' %>
+
+<%= render partial: 'main/lecture_browse' %>
