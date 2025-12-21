@@ -18,7 +18,7 @@ module LocaleSetter
     end
 
     def set_pagy_locale
-      @pagy_locale = I18n.locale.to_s
+      Pagy::I18n = I18n.locale.to_s
     end
 
     def locale_param
