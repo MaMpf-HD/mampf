@@ -106,7 +106,7 @@ services:
       - 10993:993
     environment:
       - MAILNAME=localhost
-      - MAIL_ADDRESS=mampf@localhost
+      - MAIL_SERVER=mampf@localhost
       - MAIL_PASS=mampf
 
   dockergen:

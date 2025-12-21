@@ -34,6 +34,9 @@ gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
 gem "mini_magick", "~> 4.13"
+# JavaScript runtime for Rails (used for CoffeeScript that uses ExecJS)
+gem "kamal", "~> 2.9"
+gem "mini_racer", "~> 0.19.1"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "pagy", "~> 9.4"
@@ -41,7 +44,6 @@ gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
 gem "pg_search", "~> 2.3"
 gem "progress_bar", "~> 1.3"
-gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
 gem "rack", "~> 3.1"
 gem "rails", "~> 8.0.2"
