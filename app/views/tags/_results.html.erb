@@ -7,7 +7,7 @@
       <%= pagy.count %>
     </div>
     <div class="col-10">
-      <%== pagy_bootstrap_nav(pagy, anchor_string: 'data-remote="true"') %>
+      <%== pagy.series_nav(:bootstrap, anchor_string: 'data-remote="true"') %>
     </div>
   </div>
   <div class="row bg-mdb-color-lighten-5 mx-2 px-4 py-3">

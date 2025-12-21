@@ -11,7 +11,7 @@
   </div>
   <% unless params[:all] %>
     <div class="col-12 mt-3">
-      <%== pagy_bootstrap_nav(@pagy) %>
+      <%== @pagy.series_nav(:bootstrap) %>
     </div>
   <% end %>
 </div>
@@ -52,7 +52,7 @@
   <% unless params[:all] %>
     <div class="row my-2">
       <div class="col-12">
-        <%== pagy_bootstrap_nav(@pagy) %>
+        <%== @pagy.series_nav(:bootstrap) %>
       </div>
     </div>
   <% end %>
