@@ -1,0 +1,8 @@
+de:
+  activerecord:
+    errors:
+      models:
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "muss zum selben Anmeldeverfahren gehören"

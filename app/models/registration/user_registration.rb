@@ -10,12 +10,13 @@ module Registration
                inverse_of: :user_registrations
 
     belongs_to :registration_item,
-               class_name: "Registration::Item",
-               optional: true
+               class_name: "Registration::Item"
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
 
     validates :status, presence: true
+
+    validate :ensure_item_belongs_to_campaign, if: :registration_item
 
     # preference-based campaigns: rank required and unique per user+campaign
     # For the uniqueness validation, there is also a DB index to enforce it at the
@@ -39,5 +40,13 @@ module Registration
                 scope: :registration_campaign_id
               },
               if: -> { registration_campaign.first_come_first_served? }
+
+    private
+
+      def ensure_item_belongs_to_campaign
+        return if registration_item.registration_campaign_id == registration_campaign_id
+
+        errors.add(:registration_item, :must_belong_to_same_campaign)
+      end
   end
 end
