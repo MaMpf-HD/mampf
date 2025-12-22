@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   append_view_path "app/frontend/"
 
   include Turbo::Redirection
-  include Pagy::Backend
+  include Pagy::Method
   include Flash
 
   before_action :store_user_location!, if: :storable_location?
