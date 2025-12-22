@@ -112,17 +112,60 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
         expect(allocation[user.id]).to eq(item_open.id)
       end
 
-      it "returns empty hash if assignment is infeasible (total capacity < users)" do
+      it "assigns as many as possible if assignment is infeasible (total capacity < users)" do
         # 2 Users, 1 Spot. Forced assignment means everyone MUST be assigned.
         item = create(:registration_item, registration_campaign: campaign, capacity: 1)
-        create(:registration_user_registration, user: create(:user),
+        user1 = create(:user)
+        user2 = create(:user)
+        create(:registration_user_registration, user: user1,
                                                 registration_campaign: campaign,
                                                 registration_item: item, preference_rank: 1)
-        create(:registration_user_registration, user: create(:user),
+        create(:registration_user_registration, user: user2,
                                                 registration_campaign: campaign,
                                                 registration_item: item, preference_rank: 1)
 
-        expect(solver.run).to eq({})
+        allocation = solver.run
+        expect(allocation.size).to eq(1)
+        expect([user1.id, user2.id]).to include(allocation.keys.first)
+      end
+
+      it "fills all available capacity even if it requires forced assignments, " \
+         "leaving excess users unassigned" do
+        # Total Capacity: 3 (1+1+1)
+        item1 = create(:registration_item, registration_campaign: campaign, capacity: 1)
+        item2 = create(:registration_item, registration_campaign: campaign, capacity: 1)
+        item3 = create(:registration_item, registration_campaign: campaign, capacity: 1)
+
+        # 5 Users
+        users = create_list(:user, 5)
+
+        # Users 0, 1, 2 want Item 1
+        users[0..2].each do |u|
+          create(:registration_user_registration, user: u, registration_campaign: campaign,
+                                                  registration_item: item1, preference_rank: 1)
+        end
+
+        # Users 3, 4 want Item 2
+        users[3..4].each do |u|
+          create(:registration_user_registration, user: u, registration_campaign: campaign,
+                                                  registration_item: item2, preference_rank: 1)
+        end
+
+        # Item 3 is unwanted.
+
+        allocation = solver.run
+
+        # Expect 3 users to be assigned (filling all items)
+        expect(allocation.size).to eq(3)
+
+        # Verify Item 1 is taken (by one of 0,1,2)
+        expect(allocation.values).to include(item1.id)
+
+        # Verify Item 2 is taken (by one of 3,4)
+        expect(allocation.values).to include(item2.id)
+
+        # Verify Item 3 is taken (Forced assignment)
+        expect(allocation.values).to include(item3.id)
       end
     end
 

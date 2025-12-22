@@ -91,11 +91,12 @@ namespace :solver do
     small_room = items[0]   # Cap 5
     medium_room = items[1]  # Cap 10
 
-    puts "Creating 45 users (Total Cap 50). Scenario: Picky Eaters..."
+    puts "Creating 55 users (Total Cap 50). Scenario: Picky Eaters..."
     puts "Most users will ONLY pick the small/medium rooms, "
     puts "forcing the solver to assign them to large rooms against their will."
+    puts "Since there are more users than spots, 5 users will remain unassigned."
 
-    45.times do |i|
+    55.times do |i|
       email = "solver_user_#{i}@example.com"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user, email: email, name: "Solver User #{i}")

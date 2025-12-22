@@ -46,7 +46,7 @@ module Registration
           item_offset = user_offset + @user_ids.size
           sink_real = item_offset + @items.size
           dummy_node = sink_real + 1
-          sink_final = @force_assignments ? sink_real : dummy_node + 1
+          sink_final = dummy_node + 1
 
           # Supply / Demand
           # Source produces flow equal to number of users
@@ -96,47 +96,42 @@ module Registration
             # nil capacity means unlimited (total supply)
             cap = item.capacity.nil? ? @user_ids.size : [item.capacity.to_i, 0].max
 
-            # Items flow into the final sink (or real sink if we had one)
-            # Here we connect directly to sink_final for simplicity unless we need
-            # the dummy structure
-            target = @force_assignments ? sink_final : sink_real
-
+            # Items flow into the real sink
             mcf.add_arc_with_capacity_and_unit_cost(
               item_offset + i,
-              target,
+              sink_real,
               cap,
               0
             )
           end
 
           # Edges: Dummy Node (Unassigned)
-          unless @force_assignments
-            # Users -> Dummy (High Cost)
-            @user_ids.each_with_index do |_, i|
-              mcf.add_arc_with_capacity_and_unit_cost(
-                user_offset + i,
-                dummy_node,
-                1,
-                BIG_PENALTY
-              )
-            end
-
-            # Dummy -> SinkFinal
+          # Always allow unassigned path as a fallback (with high penalty)
+          # Users -> Dummy (High Cost)
+          @user_ids.each_with_index do |_, i|
             mcf.add_arc_with_capacity_and_unit_cost(
+              user_offset + i,
               dummy_node,
-              sink_final,
-              @user_ids.size,
-              0
-            )
-
-            # SinkReal -> SinkFinal (Pass-through for assigned flow)
-            mcf.add_arc_with_capacity_and_unit_cost(
-              sink_real,
-              sink_final,
-              @user_ids.size,
-              0
+              1,
+              BIG_PENALTY
             )
           end
+
+          # Dummy -> SinkFinal
+          mcf.add_arc_with_capacity_and_unit_cost(
+            dummy_node,
+            sink_final,
+            @user_ids.size,
+            0
+          )
+
+          # SinkReal -> SinkFinal (Pass-through for assigned flow)
+          mcf.add_arc_with_capacity_and_unit_cost(
+            sink_real,
+            sink_final,
+            @user_ids.size,
+            0
+          )
 
           status = mcf.solve
 
