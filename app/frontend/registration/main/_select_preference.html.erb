@@ -64,7 +64,7 @@
                     <thead class="bg-grey-lighten-5 text-dark small">
                       <tr>
                         <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                          <th class="fw-semibold"><%= col[:header] %></th>
+                          <th class="fw-semibold <%= col[:cell_class] %>"><%= col[:header] %></th>
                         <% end %>
 
                         <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
@@ -88,7 +88,8 @@
 
                           <td class="d-flex justify-content-end py-2">
                             <button type="submit"
-                                    class="material-icons clickable playlist_add w-auto"
+                                    class="material-icons clickable playlist_add w-auto 
+                                    border-0 bg-transparent p-0 m-0"
                                     formaction="<%= add_preference_path(item.id) %>">
                               playlist_add
                             </button>
@@ -103,12 +104,6 @@
               </div>
 
               <span class="text-muted small" id="catalogCount">0 items</span>
-
-              <div class="ms-auto d-flex align-items-center gap-1">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="prevPage">«</button>
-                <span class="small text-muted" id="pageInfo">1/1</span>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="nextPage">»</button>
-              </div>
 
             </div>
 

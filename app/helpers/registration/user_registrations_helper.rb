@@ -66,7 +66,7 @@ module Registration
           cell_class: "text-start fw-medium",
           field: ->(item) { item.title } },
         { header: I18n.t("basics.position"),
-          cell_class: "text-center",
+          cell_class: "text-end",
           field: ->(item) { item.registerable.position } },
         { header: I18n.t("basics.date"),
           field: lambda { |item|
