@@ -3,8 +3,8 @@ require "or-tools"
 module Registration
   module Solvers
     class MinCostFlow
-      # Penalty for unassigned users (must be higher than any possible preference cost)
-      BIG_PENALTY = 1_000_000
+      # Cost for leaving a user unassigned (must be higher than any possible preference cost)
+      UNASSIGNED_COST = 1_000_000
       # Cost for assigning a user to a group they didn't select (when allow_unassigned: false)
       FORCED_COST = 5_000
 
@@ -113,7 +113,7 @@ module Registration
               user_offset + i,
               dummy_node,
               1,
-              BIG_PENALTY
+              UNASSIGNED_COST
             )
           end
 
