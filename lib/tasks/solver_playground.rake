@@ -80,27 +80,37 @@ namespace :solver do
       exit
     end
 
-    items = campaign.registration_items.to_a
+    puts "Cleaning up old registrations..."
+    campaign.user_registrations.destroy_all
 
-    puts "Creating 45 users and registrations..."
+    # Sort items by capacity: [5, 10, 15, 20]
+    items = campaign.registration_items.includes(:registerable).to_a.sort_by do |i|
+      i.registerable.capacity
+    end
+
+    small_room = items[0]   # Cap 5
+    medium_room = items[1]  # Cap 10
+
+    puts "Creating 45 users (Total Cap 50). Scenario: Picky Eaters..."
+    puts "Most users will ONLY pick the small/medium rooms, "
+    puts "forcing the solver to assign them to large rooms against their will."
 
     45.times do |i|
       email = "solver_user_#{i}@example.com"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user, email: email, name: "Solver User #{i}")
 
-      # Check if user already has registrations for this campaign
-      if campaign.user_registrations.exists?(user: user)
-        # puts "User #{i} already registered, skipping."
-        next
+      # 90% of users are "Picky" - they only want the popular (small) rooms
+      is_picky = rand < 0.9
+
+      selected_items = if is_picky
+        # They only select from the 15 popular spots
+        # They do NOT include large rooms in their preferences
+        [small_room, medium_room].shuffle.take(rand(1..2))
+      else
+        # The nice 10% who are flexible
+        items.shuffle.take(3)
       end
-
-      # Random preferences
-      # Shuffle items and pick 1 to 4 of them
-      shuffled_items = items.shuffle
-      num_preferences = rand(1..items.size)
-
-      selected_items = shuffled_items.take(num_preferences)
 
       selected_items.each_with_index do |item, rank|
         FactoryBot.create(:registration_user_registration,

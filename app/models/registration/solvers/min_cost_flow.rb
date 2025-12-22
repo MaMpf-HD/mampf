@@ -5,6 +5,8 @@ module Registration
     class MinCostFlow
       # Penalty for unassigned users (must be higher than any possible preference cost)
       BIG_PENALTY = 1_000_000
+      # Cost for assigning a user to a group they didn't select (when allow_unassigned: false)
+      FORCED_COST = 5_000
 
       # @param campaign [Registration::Campaign]
       # @param allow_unassigned [Boolean] If true, adds a dummy node to absorb overflow
@@ -55,31 +57,35 @@ module Registration
             mcf.add_arc_with_capacity_and_unit_cost(source, user_offset + i, 1, 0)
           end
 
-          # Edges: Users -> Items (Preferences)
-          # Group registrations by user to process their choices
-          regs_by_user = @registrations.group_by(&:user_id)
+          # Edges: Users -> Items (Preferences & Forced)
+          # Pre-load preferences: user_id -> { item_id -> rank }
+          user_prefs = @registrations.group_by(&:user_id).transform_values do |regs|
+            regs.to_h { |r| [r.registration_item_id, r.preference_rank] }
+          end
 
-          regs_by_user.each do |user_id, user_regs|
-            u_idx = @user_to_idx[user_id]
-            next unless u_idx
+          @user_ids.each_with_index do |user_id, u_idx|
+            prefs = user_prefs[user_id] || {}
 
-            user_regs.each do |reg|
-              i_idx = @item_to_idx[reg.registration_item_id]
-              next unless i_idx # Skip if item not found in current set
+            @items.each_with_index do |item, i_idx|
+              rank = prefs[item.id]
 
-              # Cost is based on preference_rank.
-              # We assume rank 1 is best.
-              # Using rank directly as cost (Linear).
-              # If geometric priority is needed, use 10**(rank-1).
-              rank = reg.preference_rank || 999
-              cost = rank
-
-              mcf.add_arc_with_capacity_and_unit_cost(
-                user_offset + u_idx,
-                item_offset + i_idx,
-                1,
-                cost
-              )
+              if rank
+                # Preference edge
+                mcf.add_arc_with_capacity_and_unit_cost(
+                  user_offset + u_idx,
+                  item_offset + i_idx,
+                  1,
+                  rank
+                )
+              elsif !@allow_unassigned
+                # Forced assignment edge (only if unassigned is NOT allowed)
+                mcf.add_arc_with_capacity_and_unit_cost(
+                  user_offset + u_idx,
+                  item_offset + i_idx,
+                  1,
+                  FORCED_COST
+                )
+              end
             end
           end
 
