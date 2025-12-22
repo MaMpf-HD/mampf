@@ -35,7 +35,8 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     allow(controller).to receive(:params).and_return(top_level_params)
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
     allow(controller).to receive(:send).with(:cookies).and_return(cookies)
-    allow(controller).to receive(:pagy).and_return([pagy_object, paginated_results])
+    allow(controller).to receive(:send).with(:pagy, :countish, anything, anything)
+                                       .and_return([pagy_object, paginated_results])
 
     allow(configurator_class).to receive(:configure).and_return(config)
     allow(Search::Searchers::ModelSearcher).to receive(:search).and_return(search_results)
@@ -62,7 +63,8 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
     it "calls pagy with the search results and correct options" do
       search
-      expect(controller).to have_received(:pagy).with(
+      expect(controller).to have_received(:send).with(
+        :pagy,
         :countish,
         search_results,
         limit: 15,
@@ -110,7 +112,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       end
     end
 
-    context "when all param is present" do
+    context "when 'all' param is present" do
       let(:config) do
         instance_double(Search::Configurators::Configuration,
                         params: { all: "1" })
@@ -126,7 +128,8 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
       it "calculates the correct count and uses it as limit" do
         search
-        expect(controller).to have_received(:pagy).with(
+        expect(controller).to have_received(:send).with(
+          :pagy,
           :countish,
           search_results,
           limit: total_count,
@@ -139,7 +142,8 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
         it "uses 1 as minimum limit to avoid Pagy errors" do
           search
-          expect(controller).to have_received(:pagy).with(
+          expect(controller).to have_received(:send).with(
+            :pagy,
             :countish,
             search_results,
             limit: 1,
