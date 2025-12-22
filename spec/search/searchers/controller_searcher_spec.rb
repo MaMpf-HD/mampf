@@ -12,20 +12,15 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:top_level_params) { ActionController::Parameters.new(page: 2) }
   let(:expected_merged_params) { { fulltext: "Ruby", per: 15, page: 2 } }
 
-  let(:configurator_result) do
-    instance_double(Search::Configurators::Configuration)
+  let(:config) do
+    instance_double(Search::Configurators::Configuration,
+                    params: { page: 2, per: 15 })
   end
 
+  let(:search_results) { instance_spy(ActiveRecord::Relation, "SearchResults") }
   let(:pagy_object) { instance_double(Pagy) }
-  let(:paginated_search_result) do
-    instance_double(
-      Search::Searchers::SearchResult,
-      results: [double("Result1")],
-      pagy: pagy_object
-    )
-  end
+  let(:paginated_results) { [double("Result1")] }
 
-  # The subject now calls the .search method and no longer needs instance_variable_name
   subject(:search) do
     described_class.search(
       controller: controller,
@@ -40,14 +35,12 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     allow(controller).to receive(:params).and_return(top_level_params)
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
     allow(controller).to receive(:send).with(:cookies).and_return(cookies)
+    allow(controller).to receive(:send).with(:pagy, :countish, anything, anything)
+                                       .and_return([pagy_object, paginated_results])
 
-    # Stub collaborator class methods
-    allow(configurator_class).to receive(:configure).and_return(configurator_result)
-    allow(Search::Searchers::PaginatedSearcher).to receive(:search)
-      .and_return(paginated_search_result)
+    allow(configurator_class).to receive(:configure).and_return(config)
+    allow(Search::Searchers::ModelSearcher).to receive(:search).and_return(search_results)
   end
-
-  # --- Tests ---
 
   describe ".search" do
     it "calls the configurator with correctly merged params and cookies" do
@@ -59,39 +52,59 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       )
     end
 
-    it "calls the PaginatedSearcher with the config from the configurator" do
+    it "calls ModelSearcher with the config from the configurator" do
       search
-      expect(Search::Searchers::PaginatedSearcher).to have_received(:search).with(
+      expect(Search::Searchers::ModelSearcher).to have_received(:search).with(
         model_class: model_class,
         user: user,
-        config: configurator_result,
-        default_per_page: 15
+        config: config
       )
     end
 
-    it "returns the result from the PaginatedSearcher" do
-      expect(search).to eq(paginated_search_result)
+    it "calls pagy with the search results and correct options" do
+      search
+      expect(controller).to have_received(:send).with(
+        :pagy,
+        :countish,
+        search_results,
+        limit: 15,
+        page: 2
+      )
+    end
+
+    it "returns a tuple of pagy and results" do
+      pagy, results = search
+      expect(pagy).to eq(pagy_object)
+      expect(results).to eq(paginated_results)
     end
 
     context "when the configurator returns nil" do
       let(:empty_scope) { double("EmptyScope") }
       let(:empty_pagy) { instance_double(Pagy) }
+      let(:empty_results) { double("EmptyResults") }
       before do
         allow(configurator_class).to receive(:configure).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
-        allow(Pagy).to receive(:new).and_return(empty_pagy)
+        allow(controller).to receive(:send).with(:pagy, :countish, empty_scope,
+                                                 limit: 1, page: 1)
+                                           .and_return([empty_pagy, empty_results])
       end
 
-      it "does not call the PaginatedSearcher" do
+      it "does not call ModelSearcher" do
         search
-        expect(Search::Searchers::PaginatedSearcher).not_to have_received(:search)
+        expect(Search::Searchers::ModelSearcher).not_to have_received(:search)
       end
 
-      it "returns an empty search result object" do
-        result = search
-        expect(result).to be_a(Search::Searchers::SearchResult)
-        expect(result.results).to eq(empty_scope)
-        expect(result.pagy).to eq(empty_pagy)
+      it "calls pagy with empty scope" do
+        search
+        expect(controller).to have_received(:send).with(:pagy, :countish, empty_scope,
+                                                        limit: 1, page: 1)
+      end
+
+      it "returns a tuple with empty pagy and results" do
+        pagy, results = search
+        expect(pagy).to eq(empty_pagy)
+        expect(results).to eq(empty_results)
       end
     end
 
@@ -105,6 +118,65 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       it "calls the custom method to get params" do
         search
         expect(controller).to have_received(:send).with(:custom_search_params)
+      end
+    end
+
+    context "when 'per' is not in params" do
+      let(:config) do
+        instance_double(Search::Configurators::Configuration,
+                        params: { page: 2 })
+      end
+
+      it "uses the default_per_page value for limit" do
+        search
+        expect(controller).to have_received(:send).with(
+          :pagy,
+          :countish,
+          search_results,
+          limit: 15,
+          page: 2
+        )
+      end
+    end
+
+    context "when 'all' param is present" do
+      let(:config) do
+        instance_double(Search::Configurators::Configuration,
+                        params: { all: "1" })
+      end
+      let(:subquery_scope) { double("SubqueryScope") }
+      let(:total_count) { 42 }
+
+      before do
+        allow(model_class).to receive(:from).with(search_results,
+                                                  :subquery_for_count).and_return(subquery_scope)
+        allow(subquery_scope).to receive(:count).and_return(total_count)
+      end
+
+      it "calculates the correct count and uses it as limit" do
+        search
+        expect(controller).to have_received(:send).with(
+          :pagy,
+          :countish,
+          search_results,
+          limit: total_count,
+          page: nil
+        )
+      end
+
+      context "when count is zero" do
+        let(:total_count) { 0 }
+
+        it "uses 1 as minimum limit to avoid Pagy errors" do
+          search
+          expect(controller).to have_received(:send).with(
+            :pagy,
+            :countish,
+            search_results,
+            limit: 1,
+            page: nil
+          )
+        end
       end
     end
   end

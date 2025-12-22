@@ -11,8 +11,7 @@ The search system is composed of several types of service objects, each with a s
 
 Searchers are the orchestrators that manage the overall search lifecycle.
 
-- `ControllerSearcher`: The main entry point called from a controller. It coordinates with the configurator and paginator.
-- `PaginatedSearcher`: Handles pagination logic. It calculates total counts and builds the paginated result set.
+- `ControllerSearcher`: The main entry point called from a controller. It coordinates with the configurator and uses Pagy for pagination.
 - `ModelSearcher`: The core query engine. It applies all filters and sorters to build the final `ActiveRecord::Relation`.
 
 ### Configurators (`app/search/configurators/`)
@@ -55,17 +54,16 @@ A typical search request flows through the system as follows:
        |
        |--- calls ---> [Search::Configurators::*] (Gets the "recipe": filters, sorter)
        |
-       v
-[Search::Searchers::PaginatedSearcher]
-       |
        |--- calls ---> [Search::Searchers::ModelSearcher] (The query engine)
        |                  |
        |                  |--- applies ---> [Search::Filters::*] (Builds WHERE clauses)
        |                  |
        |                  '--- applies ---> [Search::Sorters::*] (Builds ORDER BY clause)
        |
+       |--- calls ---> [controller.pagy(:countish, ...)] (Pagy 43 pagination)
+       |
        v
-[Paginated ActiveRecord::Relation] (Returns results to controller)
+[Tuple: @pagy, @records] (Returns paginated results to controller)
 ```
 
 ## How-To Guides
@@ -87,13 +85,11 @@ A typical search request flows through the system as follows:
 3. **Call the Searcher.** In your controller action (e.g., `UsersController#index`), call the `ControllerSearcher`.
 
     ```ruby
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @users = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: User,
       configurator_class: Search::Configurators::UserSearchConfigurator
     )
-    @users = search_result.results
-    @total_count = search_result.total_count
     ```
 
 4. **Permit Parameters.** Ensure your controller has a `private` method (usually `search_params`) that permits all the parameters your filters will use.

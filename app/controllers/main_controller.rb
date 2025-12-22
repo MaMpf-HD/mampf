@@ -31,7 +31,7 @@ class MainController < ApplicationController
             &.updated_at || 1000.years.ago) < m[:latest_comment].created_at &&
         m[:medium].visible_for_user?(current_user)
     end
-    @pagy, @media_array = pagy_array(@media_comments, limit: 10)
+    @pagy, @media_array = pagy(:offset, @media_comments, limit: 10)
   end
 
   def start

@@ -70,15 +70,12 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @courses = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Course,
       configurator_class: Search::Configurators::CourseSearchConfigurator,
       options: { default_per_page: 20 }
     )
-
-    @pagy = search_result.pagy
-    @courses = search_result.results
 
     respond_to do |format|
       format.js
