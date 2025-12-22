@@ -8,6 +8,7 @@ module Registration
     def calculate
       user_preferences = @campaign.user_registrations
                                   .includes(:registration_item)
+                                  .order(:preference_rank)
                                   .group_by(&:user_id)
                                   .transform_values do |regs|
         regs.map(&:registration_item_id)
