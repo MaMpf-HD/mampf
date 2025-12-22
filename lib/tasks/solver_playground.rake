@@ -4,15 +4,14 @@ namespace :solver do
     puts "Creating solver campaign..."
 
     lecture = Lecture.find_by(id: 1)
-    unless lecture
-      puts "Lecture with ID 1 not found. Please run 'just seed' first."
-      return
-    end
-
     teacher = User.find_by(email: "teacher@mampf.edu")
-    unless teacher
-      puts "User 'teacher@mampf.edu' not found. Please run 'just seed' first."
-      return
+
+    unless lecture && teacher
+      puts "Error: Required seed data missing."
+      puts "Lecture ID 1: #{lecture ? "Found" : "Missing"}"
+      puts "User 'teacher@mampf.edu': #{teacher ? "Found" : "Missing"}"
+      puts "Please run 'just seed' first."
+      exit 1
     end
 
     if lecture.teacher != teacher
