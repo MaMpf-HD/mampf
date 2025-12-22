@@ -32,8 +32,8 @@ window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceCon
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
-import LectureBrowseController from "~/main/lecture_browse.controller.js";
-window.Stimulus.register("lecture-browse", LectureBrowseController);
+import EventsBrowseController from "~/main/events_browse.controller.js";
+window.Stimulus.register("events-browse", EventsBrowseController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
