@@ -3,6 +3,20 @@ module Registration
   # Acts as a wrapper around a domain object (Registerable, e.g. a Tutorial or Talk),
   # making it available for registration within a specific campaign context.
   # Think of it as a line item on a menu, distinct from the dish itself.
+  #
+  # Why is this indirection implemented?
+  # - One major reason is to enforce referential integrity via foreign keys.
+  # It ensures that users can only register for items explicitly listed for the
+  # campaign, providing a database-level safety net that a simple list of allowed
+  # IDs with application-level validation would lack.
+  # - We separate the registration model (the item) from the domain model (the
+  # registerable) to maintain clear boundaries between registration logic and
+  # the core business logic of the registerable entities.
+  # - It allows us to attach campaign-specific metadata to the item in the
+  # future (e.g., special instructions) without modifying the underlying domain object.
+  # Also, splitting up a registerable entity into multiple registration items
+  # with different capacities or properties within the same campaign or
+  # across different campaigns is possible, if needed, in the future
   class Item < ApplicationRecord
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
