@@ -45,6 +45,9 @@ module Search
         )
 
         items_per_page = if config.params[:all]
+          # To get an accurate count from a query that might contain DISTINCT or
+          # GROUP BY clauses, we wrap the original query in a subquery and
+          # count the results of that.
           correct_count = model_class.from(search_results, :subquery_for_count).count
           # Use a minimum of 1 to avoid Pagy errors if the count is 0
           [correct_count, 1].max
