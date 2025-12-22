@@ -41,16 +41,7 @@ module Search
           config: config
         )
 
-        items_per_page = if config.params[:all]
-          # To get an accurate count from a query that might contain DISTINCT or
-          # GROUP BY clauses, we wrap the original query in a subquery and
-          # count the results of that.
-          correct_count = model_class.from(search_results, :subquery_for_count).count
-          # Use a minimum of 1 to avoid Pagy errors if the count is 0
-          [correct_count, 1].max
-        else
-          config.params[:per] || default_per_page
-        end
+        items_per_page = calculate_items_per_page(config, default_per_page)
 
         controller.send(:pagy, :countish, search_results,
                         limit: items_per_page,
@@ -67,6 +58,19 @@ module Search
             permitted_hash = search_specific_params.to_h
             permitted_hash[:page] = controller.params[:page] if controller.params.key?(:page)
             permitted_hash
+          end
+
+          def calculate_items_per_page(config, default_per_page)
+            if config.params[:all]
+              # To get an accurate count from a query that might contain DISTINCT or
+              # GROUP BY clauses, we wrap the original query in a subquery and
+              # count the results of that.
+              correct_count = model_class.from(search_results, :subquery_for_count).count
+              # Use a minimum of 1 to avoid Pagy errors if the count is 0
+              [correct_count, 1].max
+            else
+              config.params[:per] || default_per_page
+            end
           end
       end
     end
