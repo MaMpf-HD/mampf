@@ -36,16 +36,23 @@
 
           <td class="d-flex gap-1 justify-content-end">
             <button type="submit"
-                    class="material-icons clickable arrow_up w-auto"
-                    formaction="<%= move_preference_up_path(item.id) %>">
-              arrow_up
+                    class="material-icons clickable arrow_upward w-auto"
+                    formaction="<%= preference_up_path(item.id) %>">
+              arrow_upward
             </button>
 
             <button type="submit"
-                    class="material-icons clickable arrow_down w-auto"
-                    formaction="<%= move_preference_down_path(item.id) %>">
-              arrow_down
+                    class="material-icons clickable arrow_downward w-auto"
+                    formaction="<%= preference_down_path(item.id) %>">
+              arrow_downward
             </button>
+
+
+            <button type="submit"
+                                    class="material-icons clickable playlist_add w-auto"
+                                    formaction="<%= remove_preference_path(item.id) %>">
+                              playlist_add
+                            </button>
           </td>
 
         </tr>

@@ -27,12 +27,12 @@
             <div class="d-flex justify-content-end gap-2">
               <button type="submit"
                       class="btn btn-outline-primary btn-sm"
-                      formaction="<%= reset_preferences_path(campaign.id) %>">
+                      formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
                       Reset
               </button>
               <button type="submit"
                       class="btn btn-primary btn-sm"
-                      formaction="<%= save_preferences_path(campaign.id) %>">
+                      formaction="<%= save_campaign_preferences_path(campaign.id) %>">
                       Save Preferences
               </button>
             </div>

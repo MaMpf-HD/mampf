@@ -14,10 +14,10 @@ module Registration
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
     before_action :set_locale
-    before_action :set_campaign, only: [:registrations_for_campaign, :create]
-    before_action :set_item, only: [:create, :destroy]
-
-    TempItemPreference = Struct.new(:item, :temp_preference_rank)
+    before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
+                                        :update]
+    before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
+    ItemPreference = Struct.new(:item, :rank)
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -67,6 +67,23 @@ module Registration
       end
     end
 
+    def update
+      if @campaign.lecture_based?
+        pref_items = UserRegistration::PreferencesHandler.new
+                                                         .pref_item_build_for_save(
+                                                           params[:preferences_json]
+                                                         )
+        result = Registration::UserRegistration::LecturePreferenceEditService
+                 .new(@campaign, current_user).update!(pref_items)
+        return reset_preferences if result.success?
+
+        respond_with_flash(:alert, t("vignettes.slide_not_created"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
+      elsif @campaign.exam_based?
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
+
     def destroy
       @user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
                                                              status: :confirmed)
@@ -92,41 +109,24 @@ module Registration
     end
 
     def up
-      item_id = params[:item_id].to_i
-      item = Registration::Item.find(item_id)
-      @campaign = item.registration_campaign
-      @item_preferences = Registration::UserRegistrations::PreferencesHandler
-                          .new.up(item_id, params[:preferences_json])
-      render partial: "registration/main/preferences_table",
-             locals: { item_preferences: @item_preferences, campaign: @campaign }
+      handle_preference_action(:up)
     end
 
     def down
-      item_id = params[:item_id].to_i
-      item = Registration::Item.find(item_id)
-      @campaign = item.registration_campaign
-      @item_preferences = Registration::UserRegistrations::PreferencesHandler
-                          .new.down(item_id, params[:preferences_json])
-
-      render partial: "registration/main/preferences_table",
-             locals: { item_preferences: @item_preferences, campaign: @campaign }
+      handle_preference_action(:down)
     end
 
     def add
-      item_id = params[:item_id]
-      item = Registration::Item.find(item_id)
-      @campaign = item.registration_campaign
-      @item_preferences = Registration::UserRegistrations::PreferencesHandler
-                          .new.add(item_id, params[:preferences_json])
+      handle_preference_action(:add)
+    end
 
-      render partial: "registration/main/preferences_table",
-             locals: { item_preferences: @item_preferences, campaign: @campaign }
+    def remove
+      handle_preference_action(:remove)
     end
 
     def reset_preferences
       init_preferences
-      render partial: "registration/main/preferences_table",
-             locals: { item_preferences: @item_preferences, campaign: @campaign }
+      rerender_preferences
     end
 
     private
@@ -164,6 +164,7 @@ module Registration
                                                             phase_scope: :registration).call
         @items = @campaign.registration_items.includes(:user_registrations)
         @campaignable_host = @campaign.campaignable
+        init_preferences if @campaign.preference_based?
       end
 
       def init_result
@@ -181,19 +182,35 @@ module Registration
                                  registration_item_id: i.id).first&.status
         end
         @campaignable_host = @campaign.campaignable
+        init_preferences if @campaign.preference_based?
       end
 
       def init_preferences
         @user_registrations = @campaign.user_registrations
                                        .where(user_id: current_user.id)
                                        .where(status: [:confirmed, :pending])
-        @item_preferences = @user_registrations.includes(:registration_items)
-                                               .map(&:registration_items)
-                                               .flatten
-                                               .map do |item|
-          TempItemPreference.new(item,
-                                 item.preference_rank(current_user))
-        end
+        @item_preferences =
+          @user_registrations.includes(:registration_item)
+                             .map(&:registration_item)
+                             .flatten
+                             .sort_by { |i| i.preference_rank(current_user) }
+                             .map do |item|
+            ItemPreference.new(item,
+                               item.preference_rank(current_user))
+          end
+      end
+
+      def handle_preference_action(action)
+        @campaign = @item.registration_campaign
+        handler = UserRegistration::PreferencesHandler.new
+        @item_preferences = handler.public_send(action, params[:item_id].to_i,
+                                                params[:preferences_json])
+        rerender_preferences
+      end
+
+      def rerender_preferences
+        render partial: "registration/main/preferences_table",
+               locals: { item_preferences: @item_preferences, campaign: @campaign }
       end
   end
 end

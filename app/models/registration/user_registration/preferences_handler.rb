@@ -1,0 +1,76 @@
+module Registration
+  class UserRegistration
+    class PreferencesHandler
+      SimpleItemPreference = Struct.new(:id, :rank)
+      ItemPreference       = Struct.new(:item, :rank)
+
+      def pref_item_from_json(json)
+        Array(JSON.parse(json)).map do |h|
+          SimpleItemPreference.new(
+            h.dig("item", "id").to_i,
+            h["rank"].to_i
+          )
+        end
+      end
+
+      def pref_item_build_for_save(json)
+        normalize_ranks(pref_item_from_json(json))
+      end
+
+      def up(item_id, json)
+        pref_items = pref_item_from_json(json)
+        swap(pref_items, item_id, -1)
+        build_preferences(pref_items)
+      end
+
+      def down(item_id, json)
+        pref_items = pref_item_from_json(json)
+        swap(pref_items, item_id, +1)
+        build_preferences(pref_items)
+      end
+
+      def add(item_id, json)
+        pref_items = pref_item_from_json(json)
+        unless pref_items.any? { |i| i.id == item_id }
+          pref_items << SimpleItemPreference.new(item_id, pref_items.size + 1)
+        end
+        build_preferences(pref_items)
+      end
+
+      def remove(item_id, json)
+        pref_items = pref_item_from_json(json)
+        remaining  = pref_items.reject { |i| i.id == item_id }
+        normalize_ranks(remaining)
+        build_preferences(remaining)
+      end
+
+      private
+
+        def swap(pref_items, item_id, delta)
+          item = pref_items.find { |i| i.id == item_id }
+          return unless item
+
+          target_rank = item.rank + delta
+          other = pref_items.find { |i| i.rank == target_rank }
+          return unless other
+
+          item.rank, other.rank = other.rank, item.rank
+        end
+
+        def normalize_ranks(pref_items)
+          pref_items.sort_by!(&:rank)
+          pref_items.each_with_index { |i, idx| i.rank = idx + 1 }
+          pref_items
+        end
+
+        def build_preferences(pref_items)
+          normalize_ranks(pref_items)
+          items = Registration::Item.where(id: pref_items.map(&:id)).index_by(&:id)
+
+          pref_items.map do |pref|
+            ItemPreference.new(items[pref.id], pref.rank)
+          end
+        end
+    end
+  end
+end

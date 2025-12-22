@@ -922,23 +922,27 @@ Rails.application.routes.draw do
 
       post "user_registrations/:item_id/up",
            to: "user_registrations#up",
-           as: :move_preference_up
+           as: :preference_up
 
       post "user_registrations/:item_id/down",
            to: "user_registrations#down",
-           as: :move_preference_down
+           as: :preference_down
 
       post "user_registrations/:item_id/add",
            to: "user_registrations#add",
            as: :add_preference
 
+      post "user_registrations/:item_id/remove",
+           to: "user_registrations#remove",
+           as: :remove_preference
+
       post "user_registrations/:campaign_id/reset",
            to: "user_registrations#reset_preferences",
-           as: :reset_preferences
+           as: :reset_campaign_preferences
 
       post "user_registrations/:campaign_id/save",
            to: "user_registrations#update",
-           as: :save_preferences
+           as: :save_campaign_preferences
     end
   end
 
