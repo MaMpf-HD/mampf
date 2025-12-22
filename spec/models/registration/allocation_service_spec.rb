@@ -9,7 +9,7 @@ RSpec.describe(Registration::AllocationService) do
       it "initializes and runs the MinCostFlow solver" do
         solver_double = instance_double(Registration::Solvers::MinCostFlow)
         allow(Registration::Solvers::MinCostFlow).to receive(:new)
-          .with(campaign, {})
+          .with(campaign)
           .and_return(solver_double)
 
         expect(solver_double).to receive(:run)

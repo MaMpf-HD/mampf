@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Registration::Solvers::MinCostFlow) do
-  let(:campaign) { create(:registration_campaign) }
+  let(:campaign) { create(:registration_campaign, :preference_based) }
   let(:solver) { described_class.new(campaign) }
 
   describe "#run" do
@@ -20,13 +20,13 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
 
       before do
         # User 1 prefers Item 1 (Rank 1)
-        create(:user_registration, user: user1, registration_campaign: campaign,
-                                   registration_item: item1, preference_rank: 1)
+        create(:registration_user_registration, user: user1, registration_campaign: campaign,
+                                                registration_item: item1, preference_rank: 1)
         # User 2 prefers Item 1 (Rank 1) and Item 2 (Rank 2)
-        create(:user_registration, user: user2, registration_campaign: campaign,
-                                   registration_item: item1, preference_rank: 1)
-        create(:user_registration, user: user2, registration_campaign: campaign,
-                                   registration_item: item2, preference_rank: 2)
+        create(:registration_user_registration, user: user2, registration_campaign: campaign,
+                                                registration_item: item1, preference_rank: 1)
+        create(:registration_user_registration, user: user2, registration_campaign: campaign,
+                                                registration_item: item2, preference_rank: 2)
       end
 
       it "allocates optimally" do
@@ -47,10 +47,10 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
       let!(:user2) { create(:user) }
 
       before do
-        create(:user_registration, user: user1, registration_campaign: campaign,
-                                   registration_item: item1, preference_rank: 1)
-        create(:user_registration, user: user2, registration_campaign: campaign,
-                                   registration_item: item1, preference_rank: 1)
+        create(:registration_user_registration, user: user1, registration_campaign: campaign,
+                                                registration_item: item1, preference_rank: 1)
+        create(:registration_user_registration, user: user2, registration_campaign: campaign,
+                                                registration_item: item1, preference_rank: 1)
       end
 
       it "allocates to one and leaves other unassigned (or assigned to dummy)" do
