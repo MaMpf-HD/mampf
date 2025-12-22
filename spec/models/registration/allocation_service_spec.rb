@@ -27,6 +27,17 @@ RSpec.describe(Registration::AllocationService) do
 
         described_class.new(campaign, allow_unassigned: false).allocate!
       end
+
+      it "returns the allocation result from the solver" do
+        solver_double = instance_double(Registration::Solvers::MinCostFlow)
+        expected_result = { 1 => 101 }
+
+        allow(Registration::Solvers::MinCostFlow).to receive(:new)
+          .and_return(solver_double)
+        allow(solver_double).to receive(:run).and_return(expected_result)
+
+        expect(service.allocate!).to eq(expected_result)
+      end
     end
 
     context "with unknown strategy" do
