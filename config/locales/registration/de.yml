@@ -194,3 +194,7 @@ de:
               planning_only_allows_only_lecture: "Im Planungsmodus kann nur die Vorlesung selbst hinzugefügt werden."
               planning_only_allows_single_item: "Im Planungsmodus kann nur ein einziges Element (die Vorlesung) hinzugefügt werden."
               already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "muss zum selben Anmeldeverfahren gehören"
