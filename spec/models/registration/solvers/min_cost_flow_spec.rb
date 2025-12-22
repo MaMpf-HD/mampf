@@ -41,7 +41,7 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
       end
     end
 
-    context "optimization logic (The Greater Good)" do
+    context "when solver performs social optimization" do
       let!(:item1) { create(:registration_item, registration_campaign: campaign, capacity: 1) }
       let!(:item2) { create(:registration_item, registration_campaign: campaign, capacity: 1) }
       let!(:user_flexible) { create(:user) }
