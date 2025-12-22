@@ -9,9 +9,10 @@ module Registration
       FORCED_COST = 5_000
 
       # @param campaign [Registration::Campaign]
-      # @param force_assignments [Boolean] If true, forces every user to be assigned
-      # (adds high-cost edges to non-selected items).
-      # If false, allows users to remain unassigned (adds dummy node).
+      # @param force_assignments [Boolean] If true, adds high-cost edges to non-selected items,
+      #   allowing users to be assigned to items they didn't choose if necessary.
+      #   If false, users can only be assigned to their preferences or remain unassigned.
+      #   Note: The unassigned path (dummy node) is always available as a last resort.
       def initialize(campaign, force_assignments: true)
         @campaign = campaign
         @force_assignments = force_assignments
