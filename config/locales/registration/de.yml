@@ -132,3 +132,7 @@ de:
           attributes:
             base:
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "muss zum selben Anmeldeverfahren gehören"

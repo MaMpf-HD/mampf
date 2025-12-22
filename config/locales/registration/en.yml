@@ -132,3 +132,7 @@ en:
           attributes:
             base:
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "must belong to the same campaign"
