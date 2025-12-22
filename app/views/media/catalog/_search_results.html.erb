@@ -7,7 +7,7 @@
       <%= pagy.count %>
     </div>
     <div class="<%= purpose == 'media' ? 'col-10' : 'col-7' %>">
-      <%== pagy.series_nav(:bootstrap, anchor_string: 'data-remote="true"') %>
+      <%== pagy_series_nav(pagy, anchor_string: 'data-remote="true"') %>
     </div>
   </div>
   <div class="row">
