@@ -81,10 +81,13 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     context "when the configurator returns nil" do
       let(:empty_scope) { double("EmptyScope") }
       let(:empty_pagy) { instance_double(Pagy) }
+      let(:empty_results) { double("EmptyResults") }
       before do
         allow(configurator_class).to receive(:configure).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
-        allow(Pagy).to receive(:new).and_return(empty_pagy)
+        allow(controller).to receive(:send).with(:pagy, :countish, empty_scope,
+                                                 limit: 1, page: 1)
+                                           .and_return([empty_pagy, empty_results])
       end
 
       it "does not call ModelSearcher" do
@@ -92,10 +95,16 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
         expect(Search::Searchers::ModelSearcher).not_to have_received(:search)
       end
 
-      it "returns a tuple with empty pagy and empty scope" do
+      it "calls pagy with empty scope" do
+        search
+        expect(controller).to have_received(:send).with(:pagy, :countish, empty_scope,
+                                                        limit: 1, page: 1)
+      end
+
+      it "returns a tuple with empty pagy and results" do
         pagy, results = search
         expect(pagy).to eq(empty_pagy)
-        expect(results).to eq(empty_scope)
+        expect(results).to eq(empty_results)
       end
     end
 

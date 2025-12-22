@@ -33,10 +33,7 @@ module Search
           cookies: controller.send(:cookies)
         )
 
-        unless config
-          empty_pagy = Pagy.new(count: 0, limit: 1, page: 1)
-          return [empty_pagy, model_class.none]
-        end
+        return controller.send(:pagy, :countish, model_class.none, limit: 1, page: 1) unless config
 
         search_results = ModelSearcher.search(
           model_class: model_class,
