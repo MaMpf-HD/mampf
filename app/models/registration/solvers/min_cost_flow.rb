@@ -1,4 +1,4 @@
-require "or_tools"
+require "or-tools"
 
 module Registration
   module Solvers
@@ -132,7 +132,7 @@ module Registration
 
           status = mcf.solve
 
-          if status == ORTools::SimpleMinCostFlow::OPTIMAL
+          if status == :optimal
             extract_solution(mcf, user_offset, item_offset)
           else
             Rails.logger.error("MinCostFlow solver failed with status: #{status}")
