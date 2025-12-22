@@ -5,7 +5,7 @@ module Registration
       @assignment = assignment
     end
 
-    def call
+    def calculate
       user_preferences = @campaign.user_registrations
                                   .includes(:registration_item)
                                   .group_by(&:user_id)
