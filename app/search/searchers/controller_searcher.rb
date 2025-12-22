@@ -52,9 +52,9 @@ module Search
           config.params[:per] || default_per_page
         end
 
-        pagy(:countish, search_results,
-             limit: items_per_page,
-             page: config.params[:page])
+        controller.send(:pagy, :countish, search_results,
+                        limit: items_per_page,
+                        page: config.params[:page])
       end
 
       class << self
