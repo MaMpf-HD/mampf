@@ -20,12 +20,12 @@ RSpec.describe(Registration::AllocationService) do
       it "passes options to the solver" do
         solver_double = instance_double(Registration::Solvers::MinCostFlow)
         allow(Registration::Solvers::MinCostFlow).to receive(:new)
-          .with(campaign, allow_unassigned: false)
+          .with(campaign, force_assignments: true)
           .and_return(solver_double)
 
         expect(solver_double).to receive(:run)
 
-        described_class.new(campaign, allow_unassigned: false).allocate!
+        described_class.new(campaign, force_assignments: true).allocate!
       end
 
       it "returns the allocation result from the solver" do

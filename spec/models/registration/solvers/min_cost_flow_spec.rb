@@ -75,6 +75,7 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
     end
 
     context "with capacity constraints" do
+      let(:solver) { described_class.new(campaign, force_assignments: false) }
       let!(:item1) { create(:registration_item, registration_campaign: campaign, capacity: 1) }
       let!(:user1) { create(:user) }
       let!(:user2) { create(:user) }
@@ -95,8 +96,8 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
       end
     end
 
-    context "with allow_unassigned: false (Forced Assignment)" do
-      let(:solver) { described_class.new(campaign, allow_unassigned: false) }
+    context "with force_assignments: true (Forced Assignment)" do
+      let(:solver) { described_class.new(campaign, force_assignments: true) }
       let!(:user) { create(:user) }
 
       it "assigns user to non-preferred item if preferred is full" do

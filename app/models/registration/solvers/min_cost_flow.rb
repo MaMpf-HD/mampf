@@ -9,10 +9,12 @@ module Registration
       FORCED_COST = 5_000
 
       # @param campaign [Registration::Campaign]
-      # @param allow_unassigned [Boolean] If true, adds a dummy node to absorb overflow
-      def initialize(campaign, allow_unassigned: true)
+      # @param force_assignments [Boolean] If true, forces every user to be assigned
+      # (adds high-cost edges to non-selected items).
+      # If false, allows users to remain unassigned (adds dummy node).
+      def initialize(campaign, force_assignments: true)
         @campaign = campaign
-        @allow_unassigned = allow_unassigned
+        @force_assignments = force_assignments
 
         # Load data
         # Fetch all registrations (preferences) for this campaign
@@ -44,7 +46,7 @@ module Registration
           item_offset = user_offset + @user_ids.size
           sink_real = item_offset + @items.size
           dummy_node = sink_real + 1
-          sink_final = @allow_unassigned ? dummy_node + 1 : sink_real
+          sink_final = @force_assignments ? sink_real : dummy_node + 1
 
           # Supply / Demand
           # Source produces flow equal to number of users
@@ -77,7 +79,7 @@ module Registration
                   1,
                   rank
                 )
-              elsif !@allow_unassigned
+              elsif @force_assignments
                 # Forced assignment edge (only if unassigned is NOT allowed)
                 mcf.add_arc_with_capacity_and_unit_cost(
                   user_offset + u_idx,
@@ -97,7 +99,7 @@ module Registration
             # Items flow into the final sink (or real sink if we had one)
             # Here we connect directly to sink_final for simplicity unless we need
             # the dummy structure
-            target = @allow_unassigned ? sink_real : sink_final
+            target = @force_assignments ? sink_final : sink_real
 
             mcf.add_arc_with_capacity_and_unit_cost(
               item_offset + i,
@@ -108,7 +110,7 @@ module Registration
           end
 
           # Edges: Dummy Node (Unassigned)
-          if @allow_unassigned
+          unless @force_assignments
             # Users -> Dummy (High Cost)
             @user_ids.each_with_index do |_, i|
               mcf.add_arc_with_capacity_and_unit_cost(
