@@ -44,18 +44,18 @@ module Registration
           dummy_node = sink_real + 1
           sink_final = @allow_unassigned ? dummy_node + 1 : sink_real
 
-          # 1. Supply / Demand
+          # Supply / Demand
           # Source produces flow equal to number of users
           mcf.set_node_supply(source, @user_ids.size)
           # Sink consumes flow equal to number of users
           mcf.set_node_supply(sink_final, -@user_ids.size)
 
-          # 2. Edges: Source -> Users
+          # Edges: Source -> Users
           @user_ids.each_with_index do |_, i|
             mcf.add_arc_with_capacity_and_unit_cost(source, user_offset + i, 1, 0)
           end
 
-          # 3. Edges: Users -> Items (Preferences)
+          # Edges: Users -> Items (Preferences)
           # Group registrations by user to process their choices
           regs_by_user = @registrations.group_by(&:user_id)
 
@@ -83,7 +83,7 @@ module Registration
             end
           end
 
-          # 4. Edges: Items -> Sink
+          # Edges: Items -> Sink
           @items.each_with_index do |item, i|
             # nil capacity means unlimited (total supply)
             cap = item.capacity.nil? ? @user_ids.size : [item.capacity.to_i, 0].max
@@ -101,7 +101,7 @@ module Registration
             )
           end
 
-          # 5. Edges: Dummy Node (Unassigned)
+          # Edges: Dummy Node (Unassigned)
           if @allow_unassigned
             # Users -> Dummy (High Cost)
             @user_ids.each_with_index do |_, i|
