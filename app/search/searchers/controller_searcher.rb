@@ -41,7 +41,8 @@ module Search
           config: config
         )
 
-        items_per_page = calculate_items_per_page(config, default_per_page)
+        items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                  default_per_page)
 
         controller.send(:pagy, :countish, search_results,
                         limit: items_per_page,
@@ -60,7 +61,7 @@ module Search
             permitted_hash
           end
 
-          def calculate_items_per_page(config, default_per_page)
+          def calculate_items_per_page(config, model_class, search_results, default_per_page)
             if config.params[:all]
               # To get an accurate count from a query that might contain DISTINCT or
               # GROUP BY clauses, we wrap the original query in a subquery and
