@@ -121,6 +121,24 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       end
     end
 
+    context "when 'per' is not in params" do
+      let(:config) do
+        instance_double(Search::Configurators::Configuration,
+                        params: { page: 2 })
+      end
+
+      it "uses the default_per_page value for limit" do
+        search
+        expect(controller).to have_received(:send).with(
+          :pagy,
+          :countish,
+          search_results,
+          limit: 15,
+          page: 2
+        )
+      end
+    end
+
     context "when 'all' param is present" do
       let(:config) do
         instance_double(Search::Configurators::Configuration,
