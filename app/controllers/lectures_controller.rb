@@ -276,14 +276,11 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator
     )
-
-    @pagy = search_result.pagy
-    @lectures = search_result.results
 
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 
