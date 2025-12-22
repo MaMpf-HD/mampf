@@ -5,7 +5,7 @@ module Registration
     class MinCostFlow
       # Cost for leaving a user unassigned (must be higher than any possible preference cost)
       UNASSIGNED_COST = 1_000_000
-      # Cost for assigning a user to a group they didn't select (when allow_unassigned: false)
+      # Cost for assigning a user to an item they didn't select (when allow_unassigned: false)
       FORCED_COST = 5_000
 
       # @param campaign [Registration::Campaign]
