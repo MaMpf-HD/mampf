@@ -1,4 +1,7 @@
 module Registration
+  # Enables domain models (like Lecture) to host or own registration campaigns.
+  # Provides the association to manage multiple campaigns (e.g., for tutorials or talks)
+  # grouped under that specific domain object.
   module Campaignable
     extend ActiveSupport::Concern
 
