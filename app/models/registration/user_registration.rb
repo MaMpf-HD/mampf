@@ -18,6 +18,8 @@ module Registration
     validates :status, presence: true
 
     # preference-based campaigns: rank required and unique per user+campaign
+    # For the uniqueness validation, there is also a DB index to enforce it at the
+    # database level (see the schema).
     validates :preference_rank,
               presence: true,
               uniqueness: {
@@ -30,6 +32,8 @@ module Registration
               absence: true,
               if: -> { registration_campaign.first_come_first_served? }
 
+    # FCFS campaigns: one row per user+campaign
+    # There is also a DB index to enforce it at the database level (see the schema).
     validates :user_id,
               uniqueness: {
                 scope: :registration_campaign_id
