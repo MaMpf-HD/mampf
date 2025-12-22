@@ -12,7 +12,7 @@ module Registration
         when :min_cost_flow
           Registration::Solvers::MinCostFlow.new(@campaign, **@opts)
         else
-          raise(ArgumentError, "Unknown strategy #{@strategy}")
+          raise(ArgumentError, "Unknown strategy '#{@strategy}'")
         end
       solver.run
     end
