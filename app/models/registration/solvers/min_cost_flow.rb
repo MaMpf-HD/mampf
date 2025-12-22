@@ -94,7 +94,7 @@ module Registration
 
           # Edges: Items -> Sink
           @items.each_with_index do |item, i|
-            # nil capacity means unlimited (total supply)
+            # nil capacity means unlimited (modeled as total user count, since flow cannot exceed supply)
             cap = item.capacity.nil? ? @user_ids.size : [item.capacity.to_i, 0].max
 
             # Items flow into the real sink
