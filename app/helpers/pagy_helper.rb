@@ -1,9 +1,9 @@
 module PagyHelper
-  # Wrapper for series_nav to prevent it from rendering when there is only
-  # one page.
-  def pagy_series_nav(pagy, style = :bootstrap, **vars)
+  # Overrides the default pagy_bootstrap_nav to prevent it from rendering
+  # when there is only one page.
+  def pagy_bootstrap_nav(pagy, **vars)
     return if pagy.nil? || pagy.pages <= 1
 
-    pagy.series_nav(style, **vars)
+    super
   end
 end
