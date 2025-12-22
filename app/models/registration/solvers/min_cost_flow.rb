@@ -52,7 +52,7 @@ module Registration
           # Supply / Demand
           # Source produces flow equal to number of users
           mcf.set_node_supply(source, @user_ids.size)
-          # Sink consumes flow equal to number of users
+          # Sink has demand equal to number of users
           mcf.set_node_supply(sink_final, -@user_ids.size)
 
           # Edges: Source -> Users
