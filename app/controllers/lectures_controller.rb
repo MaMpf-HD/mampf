@@ -284,9 +284,9 @@ class LecturesController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.append("lecture-search-results",
-                                                 partial: "main/events_list",
-                                                 locals: { lectures: lectures })
+        render turbo_stream: turbo_stream.replace("lecture-search-results",
+                                                  partial: "main/events_list",
+                                                  locals: { lectures: lectures })
       end
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")
