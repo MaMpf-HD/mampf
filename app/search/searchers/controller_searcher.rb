@@ -46,7 +46,7 @@ module Search
                                                   default_per_page)
 
         if use_keynav
-          # keyset/keynav_js require simple column-based ordering
+          # keyset/keynav_js requires simple column-based ordering
           # Override the complex search order with a simple id-based order
           # TODO: think of better ordering
           search_results = search_results.reorder(id: :asc)

@@ -20,7 +20,7 @@ export default class extends Controller {
       entries.forEach((entry) => {
         if (!this.initiallyLoaded && entry.isIntersecting) {
           this.search();
-          this.loainitiallyLoadedded = true;
+          this.initiallyLoaded = true;
         }
       });
     }, { root: null, threshold: 0.1 });
@@ -61,6 +61,10 @@ export default class extends Controller {
   search() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
+      // Indicate to controller that we want the initial page for a new search.
+      // This is especially important when the user has already scrolled down
+      // and we were on a later page.
+      addDataToForm(this.formTarget, { page: "" });
       this.formTarget.requestSubmit();
     }, 200);
   }
