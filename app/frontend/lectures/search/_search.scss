@@ -1,5 +1,7 @@
 @import "~/styles/branding";
-@import "bootstrap/scss/bootstrap";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 #lecture-search {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
