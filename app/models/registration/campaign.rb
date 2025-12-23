@@ -73,6 +73,16 @@ module Registration
       draft?
     end
 
+    def finalize!
+      transaction do
+        registration_items.find_each do |item|
+          item.registerable.materialize_allocation!(user_ids: item.confirmed_user_ids,
+                                                    campaign: self)
+        end
+        update!(status: :completed)
+      end
+    end
+
     def total_registrations_count
       user_registrations.distinct.count(:user_id)
     end
