@@ -27,6 +27,9 @@ export default class extends Controller {
       });
     }, { root: null, threshold: 0.1 });
     this.observer.observe(this.formTarget);
+
+    this.handleScroll = this.handleScroll.bind(this);
+    window.addEventListener("scroll", this.handleScroll);
   }
 
   scrollObserverTargetConnected() {
@@ -51,6 +54,19 @@ export default class extends Controller {
     }
     if (this.scrollObserver) {
       this.scrollObserver.disconnect();
+    }
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+
+  handleScroll() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 100) {
+      // also load next page when user has scrolled to the bottom
+      // of the whole page
+      this.retrieveNextPage();
     }
   }
 
