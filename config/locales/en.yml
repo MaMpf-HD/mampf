@@ -1904,7 +1904,6 @@ en:
     inactive_lectures: Further subscribed event series
     active_nonsubscribed_lectures_html: >
       Current event series &ndash; %{term}
-    lecture_search: Lecture search
     no_current_stuff: >
       You have not yet subscribed any event series of the current term.
     no_inactive_stuff: >
