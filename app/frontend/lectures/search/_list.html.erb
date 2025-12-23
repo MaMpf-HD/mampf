@@ -1,3 +1,5 @@
-<% lectures.each do |lecture| %>
-  <%= render "lectures/search/result", lecture: lecture %>
-<% end %>
+<div id="lecture-search-results">
+  <% lectures.each do |lecture| %>
+    <%= render "lectures/search/result", lecture: lecture %>
+  <% end %>
+</div>
