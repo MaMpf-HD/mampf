@@ -1,8 +1,4 @@
 #go-to-lecture-search {
-    position: absolute;
-    bottom: 2em;
-    left: 50%;
-    transform: translateX(-50%);
     text-decoration: none;
     display: flex;
     flex-direction: column;
@@ -10,7 +6,8 @@
     gap: 0.5em;
     color: #666;
     transition: color 0.3s ease;
-    z-index: 10;
+    padding-bottom: 2em;
+    padding-top: 2em;
 
     &:hover {
         color: #333;

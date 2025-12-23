@@ -1,13 +1,13 @@
 <%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
 
-<div style="min-height: 100vh;">
+<div style="min-height: 100vh; display: flex; flex-direction: column; padding-left: 1em; padding-right: 1em;">
   <% if @announcements.present? %>
     <div class="alert alert-secondary"
          role="alert">
       <%= @announcements.html_safe %>
     </div>
   <% end %>
-  <div class="accordion" id="subscriptionsAccordion">
+  <div class="accordion" id="subscriptionsAccordion" style="flex: 1;">
   <% if Term.active %>
     <div class="accordion-item">
       <div class="accordion-header">
