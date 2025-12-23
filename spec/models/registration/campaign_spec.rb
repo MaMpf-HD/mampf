@@ -134,7 +134,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       expect { prereq.destroy }.not_to change(Registration::Campaign, :count)
       expect(prereq.errors.added?(:base, :referenced_as_prerequisite,
-                                  titles: dependent.title)).to be(true)
+                                  descriptions: dependent.description)).to be(true)
     end
   end
 
