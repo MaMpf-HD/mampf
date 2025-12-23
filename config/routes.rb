@@ -294,6 +294,10 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
+      end
+      resource :allocation,
+               controller: "registration/allocations",
+               only: [:create] do
         patch :finalize
       end
       resources :policies,

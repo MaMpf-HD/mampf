@@ -24,8 +24,22 @@
                       method: :patch,
                       data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
+        
+        <% if campaign.preference_based? %>
+          <%= button_to t("registration.campaign.actions.allocate"),
+                        registration_campaign_allocation_path(campaign),
+                        method: :post,
+                        class: "btn btn-primary" %>
+        <% else %>
+          <%= button_to t("registration.campaign.actions.finalize"),
+                        finalize_registration_campaign_allocation_path(campaign),
+                        method: :patch,
+                        data: { confirm: t("registration.campaign.confirmations.finalize") },
+                        class: "btn btn-primary" %>
+        <% end %>
+      <% elsif campaign.processing? %>
         <%= button_to t("registration.campaign.actions.finalize"),
-                      finalize_registration_campaign_path(campaign),
+                      finalize_registration_campaign_allocation_path(campaign),
                       method: :patch,
                       data: { confirm: t("registration.campaign.confirmations.finalize") },
                       class: "btn btn-primary" %>

@@ -14,7 +14,30 @@ module Registration
         else
           raise(ArgumentError, "Unknown strategy '#{@strategy}'")
         end
-      solver.run
+
+      result = solver.run
+      save_allocation(result)
     end
+
+    private
+
+      def save_allocation(allocation)
+        Registration::Campaign.transaction do
+          # 1. Reset all registrations to pending to clear previous runs
+          # This ensures idempotency if we run the solver multiple times.
+          @campaign.user_registrations.update_all(status: :pending) # rubocop:disable Rails/SkipsModelValidations
+
+          # 2. Mark selected registrations as confirmed
+          # allocation is a Hash: { user_id => registration_item_id }
+          allocation.each do |user_id, item_id|
+            @campaign.user_registrations
+                     .where(user_id: user_id, registration_item_id: item_id)
+                     .update_all(status: :confirmed) # rubocop:disable Rails/SkipsModelValidations
+          end
+
+          # 3. Ensure campaign is in processing state (Allocation Run)
+          @campaign.update!(status: :processing) unless @campaign.processing?
+        end
+      end
   end
 end

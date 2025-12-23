@@ -64,6 +64,7 @@ de:
         close: "Anmeldung beenden"
         reopen: "Anmeldung wiedereröffnen"
         finalize: "Zuteilung durchführen"
+        allocate: "Zuteilung berechnen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
@@ -86,6 +87,13 @@ de:
       warnings:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
+    allocation:
+      started: "Zuteilungsprozess gestartet."
+      errors:
+        already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
+        wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        policy_violation: "Richtlinienverstoß: %{errors}"
+        failed: "Zuteilung fehlgeschlagen: %{error}"
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
