@@ -81,6 +81,7 @@ en:
         policies_frozen: "Policies cannot be modified once the campaign has been opened or is no longer a draft."
         kind: "The type of rule to enforce. For example, 'Institutional Email' requires users to have an email address from a specific domain."
         phase: "When the rule is checked. 'Registration': Checked when the student tries to register. 'Finalization': Checked when the final assignment is calculated (after the registration deadline has passed). 'Both': Checked at both times."
+        allowed_domains: "Enter the main domains (e.g. 'uni-heidelberg.de'). Subdomains (like 'stud.uni-heidelberg.de') are automatically included. Separate multiple domains with commas."
       index:
         title: "Policies"
         add: "Add Policy"
@@ -101,11 +102,11 @@ en:
         missing_prerequisite_campaign: "A prerequisite campaign must be selected."
         prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
       configs:
-        allowed_domains: "Allowed Domains (comma separated)"
+        allowed_domains: "Allowed Domains"
         prerequisite_campaign_id: "Prerequisite Campaign"
         lecture_id: "Lecture"
       hints:
-        allowed_domains: "e.g. uni-heidelberg.de, mathi.uni-heidelberg.de"
+        allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
       kinds:
         institutional_email: "Institutional Email"
         prerequisite_campaign: "Prerequisite Campaign"
