@@ -2058,7 +2058,7 @@ de:
     inactive_lectures: Weitere abonnierte Veranstaltungen
     active_nonsubscribed_lectures_html: >
       Aktuelle Veranstaltungen &ndash; %{term}
-    lecture_search: Veranstaltungssuche
+    lecture_search: Vorlesungssuche
     no_current_stuff: >
       Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
     no_inactive_stuff: >
