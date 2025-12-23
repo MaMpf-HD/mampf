@@ -22,7 +22,7 @@ test.describe("Registration Campaigns CRUD", () => {
     await page.getByRole("button", { name: "New Campaign" }).click();
     await expect(page.getByRole("heading", { name: "New Campaign" })).toBeVisible();
 
-    await page.getByLabel("Title").fill("Exam Registration 2025");
+    await page.getByLabel("Description").fill("Exam Registration 2025");
     await page.getByLabel("Registration Deadline").fill("2025-12-31T23:59");
     await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
     await page.getByRole("button", { name: "Save" }).click();
@@ -40,7 +40,7 @@ test.describe("Registration Campaigns CRUD", () => {
     await factory.create("registration_campaign", [], {
       campaignable_id: lecture.id,
       campaignable_type: "Lecture",
-      title: "Old Title",
+      description: "Old Description",
     });
 
     const lectureEditPage = new LectureEditPage(page, lecture.id);
@@ -48,17 +48,17 @@ test.describe("Registration Campaigns CRUD", () => {
     await expect(lectureEditPage.campaignsTab).toBeVisible();
     await lectureEditPage.campaignsTab.click();
 
-    await expect(page.getByText("Old Title")).toBeVisible();
-    await page.getByText("Old Title").click();
+    await expect(page.getByText("Old Description")).toBeVisible();
+    await page.getByText("Old Description").click();
 
     await expect(page.getByRole("tab", { name: "Settings" })).toBeVisible();
     await page.getByRole("tab", { name: "Settings" }).click();
 
-    await expect(page.getByLabel("Title")).toBeVisible();
-    await page.getByLabel("Title").fill("Updated Title");
+    await expect(page.getByLabel("Description")).toBeVisible();
+    await page.getByLabel("Description").fill("Updated Description");
     await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(page.getByRole("heading", { name: "Updated Title" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Updated Description" })).toBeVisible();
   });
 });
