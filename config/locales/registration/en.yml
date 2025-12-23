@@ -123,6 +123,11 @@ en:
         registration: "Registration"
         finalization: "Finalization"
         both: "Both"
+    allocation:
+      errors:
+        already_completed: "Campaign is already completed."
+        wrong_status: "Campaign must be in processing state."
+        policy_violation: "Some users no longer meet the requirements."
     item:
       index:
         title: "Items"
