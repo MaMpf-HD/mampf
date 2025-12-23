@@ -1,5 +1,12 @@
 <%= form_with method: :post,
-              data: { turbo_frame: "preferences_table" } do %>
+              data: { turbo_frame: "preferences_table",
+                      controller: "touched-check" } do %>
+  
+  <div class="alert alert-info py-2 px-2 m-3 d-none" data-requires-touch-display>
+    <span>
+      <%= t("registration.need_save") %>
+    </span>
+  </div>
 
   <div class="card-body">
     <div data-test="multi-item-preference">
@@ -15,10 +22,15 @@
           <div class="border rounded p-2 h-100">
 
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="fw-semibold">Your ranked choices</div>
-              <div class="d-flex align-items-center gap-3">
-                <div class="small" id="saveStatus"></div>
-              </div>
+              <div class="fw-semibold"><%= t('registration.preferences_title')%></div>
+
+              <!-- saved time -->
+              <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+              <% if last_updated %>
+                <div class="col-4 small text-success text-end fw-semibold">
+                  <%= t("basics.saved_at", time: format_date(last_updated)) %>
+                </div>
+              <% end %>
             </div>
 
             <%= render partial: "registration/main/preferences_table",
@@ -27,20 +39,17 @@
             <div class="d-flex justify-content-end gap-2">
               <button type="submit"
                       class="btn btn-outline-primary btn-sm"
+                      data-action="touched-check#reset"
                       formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
-                      Reset
+                      <%= t('buttons.reset')%>
               </button>
               <button type="submit"
                       class="btn btn-primary btn-sm"
+                      data-requires-touch-enable disabled
+                      data-action="touched-check#reset"
                       formaction="<%= save_campaign_preferences_path(campaign.id) %>">
-                      Save Preferences
+                      <%= t('buttons.save')%>
               </button>
-            </div>
-
-            <div id="saveAlert"
-                 class="alert alert-success py-1 px-2 d-none mt-2"
-                 role="alert">
-              Preferences saved
             </div>
 
           </div>
@@ -83,13 +92,16 @@
                           <% end %>
 
                           <td class="text-center small fw-semibold text-dark">
-                            <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+                            <%= "#{nullable_capacity_display(item.capacity)}" %>
                           </td>
 
                           <td class="d-flex justify-content-end py-2">
                             <button type="submit"
                                     class="material-icons clickable playlist_add w-auto 
                                     border-0 bg-transparent p-0 m-0"
+                                    data-action="touched-check#mark"
+                                    data-bs-toggle="tooltip"
+                                    title="<%= t('buttons.add_to_list') %>"
                                     formaction="<%= add_preference_path(item.id) %>">
                               playlist_add
                             </button>
@@ -103,7 +115,9 @@
 
               </div>
 
-              <span class="text-muted small" id="catalogCount">0 items</span>
+              <span class="text-muted small" id="catalogCount">
+                <%= t('basics.item_count', count: items.count )%>
+              </span>
 
             </div>
 

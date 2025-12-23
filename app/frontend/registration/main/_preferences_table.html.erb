@@ -48,6 +48,10 @@
             <button type="submit"
                     class="material-icons clickable arrow_upward w-auto
                     border-0 bg-transparent p-0 m-0"
+                    <%= "disabled" if pref.rank == 1%>
+                    data-action="touched-check#mark"
+                    data-bs-toggle="tooltip"
+                    title="<%= t('buttons.move_up') %>"
                     formaction="<%= preference_up_path(item.id) %>">
               arrow_upward
             </button>
@@ -55,6 +59,10 @@
             <button type="submit"
                     class="material-icons clickable arrow_downward w-auto
                     border-0 bg-transparent p-0 m-0"
+                    <%= "disabled" if pref.rank == item_preferences.size %>
+                    data-action="touched-check#mark"
+                    data-bs-toggle="tooltip"
+                    title="<%= t('buttons.move_down') %>"
                     formaction="<%= preference_down_path(item.id) %>">
               arrow_downward
             </button>
@@ -63,6 +71,9 @@
             <button type="submit"
                     class="material-icons clickable playlist_remove w-auto
                             border-0 bg-transparent p-0 m-0"
+                    data-action="touched-check#mark"
+                    data-bs-toggle="tooltip"
+                    title="<%= t('buttons.remove_from_list') %>"
                     formaction="<%= remove_preference_path(item.id) %>">
               playlist_remove
             </button>

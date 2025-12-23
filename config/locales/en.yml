@@ -3012,6 +3012,7 @@ en:
     course_code: "Course code"
     campaign_main: "Campaign: Main registration"
     eligibility_title: "Your Eligibility"
+    preferences_title: Your selected preferences
     eligible: "Eligible"
     not_eligible: "Not eligible"
     prerequisite_campaign: "Prerequisite Campaign"
@@ -3019,6 +3020,7 @@ en:
     registered: "Registered"
     not_registered: "Not registered"
     register_now: "Register now"
+    need_save: You have unsaved changes. Click “Save” to update your preferences
     currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."
     withdraw: "Withdraw"
     closed_before_deadline: The registration campaign has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
@@ -3388,6 +3390,7 @@ en:
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
     answer_count: 'Number of answers'
+    item_count: '%{count} items'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3600,6 +3603,8 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    add_to_list: 'Add to List'
+    remove_from_list: 'Remove from List'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
