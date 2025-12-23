@@ -1,4 +1,4 @@
-<%= vite_stylesheet_tag "lectures/search/_browse.scss" %>
+<%= vite_stylesheet_tag "lectures/search/_search.scss" %>
 
 <div id="lecture-search">
   <div id="lecture-search-container">
@@ -10,7 +10,7 @@
                     method: :get,
                     data: { remote: false,
                             turbo_stream: true,
-                            controller: "lecture-browse" } do |f| %>
+                            controller: "lecture-search" } do |f| %>
 
         <div class="input-group input-group-lg">
           <%= f.text_field "search[fulltext]",
@@ -18,7 +18,7 @@
                             id: "lecture-fulltext-search",
                             placeholder: t('search.placeholder.lecture_title'),
                             "aria-label": t('search.placeholder.lecture_title'),
-                            data: { action: "input->lecture-browse#search" } %>
+                            data: { action: "input->lecture-search#search" } %>
           <%= f.button nil, class: "btn btn-primary" do %>
             <i class="bi bi-search"></i>
           <% end %>
