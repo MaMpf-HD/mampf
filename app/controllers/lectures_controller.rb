@@ -276,7 +276,7 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    _pagy, lectures = Search::Searchers::ControllerSearcher.search(
+    @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator
@@ -285,8 +285,7 @@ class LecturesController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("lecture-search-results",
-                                                  partial: "lectures/search/list",
-                                                  locals: { lectures: lectures })
+                                                  partial: "lectures/search/list")
       end
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")

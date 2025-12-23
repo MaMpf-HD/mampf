@@ -1,5 +1,3 @@
 <div id="lecture-search-results">
-  <% lectures.each do |lecture| %>
-    <%= render "lectures/search/result", lecture: lecture %>
-  <% end %>
+  <%= render partial: "lectures/search/lecture", collection: @lectures %>
 </div>
