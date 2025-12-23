@@ -15,8 +15,22 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       expect(result[:code]).to eq(:domain_ok)
     end
 
+    it "passes if email matches a subdomain of an allowed domain" do
+      user.email = "student@math.uni.example"
+      result = handler.evaluate(user)
+      expect(result[:pass]).to be(true)
+      expect(result[:code]).to eq(:domain_ok)
+    end
+
     it "fails if email does not match" do
       user.email = "student@other.example"
+      result = handler.evaluate(user)
+      expect(result[:pass]).to be(false)
+      expect(result[:code]).to eq(:institutional_email_mismatch)
+    end
+
+    it "fails if email matches a partial domain suffix but not a subdomain" do
+      user.email = "student@fake-uni.example"
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:institutional_email_mismatch)

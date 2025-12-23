@@ -89,6 +89,7 @@ de:
         policies_frozen: "Richtlinien können nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
         kind: "Die Art der Regel. Zum Beispiel verlangt 'Institutionelle E-Mail', dass Nutzer eine E-Mail-Adresse einer bestimmten Domain haben."
         phase: "Wann die Regel geprüft wird. 'Registrierung': Prüfung bei der Anmeldung. 'Finalisierung': Prüfung bei der endgültigen Zuteilung (nachdem die Registrierungsfrist abgelaufen ist). 'Beide': Prüfung zu beiden Zeitpunkten."
+        allowed_domains: "Geben Sie die Hauptdomains an (z.B. 'uni-heidelberg.de'). Subdomains (wie 'stud.uni-heidelberg.de') sind automatisch eingeschlossen. Trennen Sie mehrere Domains durch Kommas."
       index:
         title: "Richtlinien"
         add: "Richtlinie hinzufügen"
@@ -109,11 +110,11 @@ de:
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
       configs:
-        allowed_domains: "Erlaubte Domains (kommagetrennt)"
+        allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
         lecture_id: "Veranstaltung"
       hints:
-        allowed_domains: "z.B. uni-heidelberg.de, mathi.uni-heidelberg.de"
+        allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
       kinds:
         institutional_email: "Institutionelle E-Mail"
         prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"

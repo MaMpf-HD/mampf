@@ -133,15 +133,12 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @tags = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Tag,
       configurator_class: Search::Configurators::TagSearchConfigurator,
       options: { default_per_page: 10 }
     )
-
-    @pagy = search_result.pagy
-    @tags = search_result.results
 
     respond_to do |format|
       format.js
