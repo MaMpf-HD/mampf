@@ -26,7 +26,7 @@ module Search
       def self.search(controller:, model_class:, configurator_class:, options: {})
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
-        use_keynav = options.fetch(:use_keynav, false)
+        use_keyset_navigation = options.fetch(:infinite_scroll, false)
 
         config = configurator_class.configure(
           user: controller.current_user,
@@ -45,8 +45,8 @@ module Search
         items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                   default_per_page)
 
-        if use_keynav
-          # keyset/keynav_js requires simple column-based ordering
+        if use_keyset_navigation
+          # keyset requires simple column-based ordering
           # Override the complex search order with a simple id-based order
           # TODO: think of better ordering
           search_results = search_results.reorder(id: :asc)

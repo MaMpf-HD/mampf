@@ -280,10 +280,11 @@ class LecturesController < ApplicationController
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator,
-      options: { use_keynav: true, default_per_page: 2 }
+      options: { infinite_scroll: params[:infinite_scroll], default_per_page: 2 }
     )
 
     respond_to do |format|
+      format.js { render template: "lectures/search/old/search" }
       format.turbo_stream do
         if @pagy.page.nil?
           # initial rendering of first search results

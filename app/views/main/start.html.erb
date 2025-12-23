@@ -140,6 +140,31 @@
       </div>
     </div>
   </div>
+  <div class="accordion-item">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseLectureSearch"
+              aria-expanded="false"
+              aria-controls="collapseLectureSearch">
+        <h4 class="text-dark"
+            id="lectureSearchLink">
+          <%= t('basics.lecture_search') %>
+        </h4>
+      </button>
+    </div>
+    <div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
+         data-bs-parent="#subscriptionsAccordion"
+         data-link="#lectureSearchLink">
+      <div class="accordion-body">
+        <%= render partial: 'search/lecture_search_form',
+                   locals: { results_as_list: false } %>
+        <div id="lecture-search-results-old">
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="accordion-item mb-3">
     <div class="accordion-header">
       <button class="accordion-button collapsed"

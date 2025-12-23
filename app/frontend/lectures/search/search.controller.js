@@ -15,6 +15,7 @@ export default class extends Controller {
   static targets = ["form", "scrollObserver"];
 
   connect() {
+    addDataToForm(this.formTarget, { infinite_scroll: true });
     this.isSubmitting = false;
 
     this.observer = new IntersectionObserver((entries) => {
