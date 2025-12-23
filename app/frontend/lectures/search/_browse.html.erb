@@ -1,21 +1,26 @@
-<div class="container py-5" data-controller="events-browse">
+<div class="container py-5">
 
   <div class="row justify-content-center mb-5">
     <h2 class="text-center mb-4"><%= t('profile.lecture_search') %></h2>
     
     <%= form_with url: search_lectures_path,
                   method: :get,
-                  data: { remote: false, turbo_stream: true } do |f| %>
+                  data: { remote: false,
+                          turbo_stream: true,
+                          controller: "lecture-browse" } do |f| %>
+
       <div class="input-group input-group-lg">
         <%= f.text_field "search[fulltext]",
                           class: "form-control",
                           id: "lecture-fulltext-search",
                           placeholder: t('search.placeholder.lecture_title'),
-                          "aria-label": t('search.placeholder.lecture_title') %>
+                          "aria-label": t('search.placeholder.lecture_title'),
+                          data: { action: "input->lecture-browse#search" } %>
         <%= f.button nil, class: "btn btn-primary" do %>
           <i class="bi bi-search"></i>
         <% end %>
       </div>
+
     <% end %>
     
   </div>

@@ -33,7 +33,7 @@ import VignettesNumberController from "~/vignettes/slides/form/question/types/_n
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
 import LectureBrowseController from "~/lectures/search/browse.controller.js";
-window.Stimulus.register("events-browse", LectureBrowseController);
+window.Stimulus.register("lecture-browse", LectureBrowseController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

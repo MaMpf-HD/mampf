@@ -34,6 +34,18 @@ export default class extends Controller {
     }
   }
 
+  /**
+   * Triggers a search when the user types in the search field.
+   *
+   * We use a small delay to avoid too many requests.
+   */
+  search() {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.element.requestSubmit();
+    }, 200);
+  }
+
   loadAllLectures() {
     console.log("Loading all lectures");
 
