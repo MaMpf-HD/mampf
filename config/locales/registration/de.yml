@@ -12,6 +12,7 @@ de:
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
+      finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       planning_only_disabled: "Diese Option ist deaktiviert, da das Anmeldeverfahren bereits Elemente enthält, die keine Vorlesung sind."
       helpdesk:
@@ -62,11 +63,13 @@ de:
         open: "Anmeldung starten"
         close: "Anmeldung beenden"
         reopen: "Anmeldung wiedereröffnen"
+        finalize: "Zuteilung durchführen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
         reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
+        finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"

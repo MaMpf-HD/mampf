@@ -12,6 +12,7 @@ en:
       opened: "Campaign opened."
       closed: "Campaign closed."
       reopened: "Campaign reopened."
+      finalized: "Campaign finalized successfully."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       helpdesk:
@@ -62,11 +63,13 @@ en:
         open: "Start Registration"
         close: "End Registration"
         reopen: "Reopen Registration"
+        finalize: "Finalize Allocation"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
+        finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
       overview:
         registrations: "Registrations"
         total: "Total"

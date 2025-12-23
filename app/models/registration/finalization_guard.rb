@@ -12,7 +12,7 @@ module Registration
                        I18n.t("registration.allocation.errors.already_completed"))
       end
 
-      unless @campaign.processing?
+      unless @campaign.processing? || @campaign.closed?
         return failure(:wrong_status,
                        I18n.t("registration.allocation.errors.wrong_status"))
       end

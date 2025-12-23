@@ -24,6 +24,11 @@
                       method: :patch,
                       data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
+        <%= button_to t("registration.campaign.actions.finalize"),
+                      finalize_registration_campaign_path(campaign),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.finalize") },
+                      class: "btn btn-primary" %>
       <% elsif campaign.draft? %>
         <% 
            confirm_msg = t("registration.campaign.confirmations.open")

@@ -35,10 +35,9 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
     context "when campaign is closed" do
       let(:campaign) { build(:registration_campaign, status: :closed) }
 
-      it "returns failure" do
+      it "returns success" do
         result = guard.check
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:wrong_status)
+        expect(result.success?).to be(true)
       end
     end
 

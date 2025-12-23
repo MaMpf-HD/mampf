@@ -74,7 +74,10 @@ module Registration
     end
 
     def finalize!
-      transaction do
+      # Protect against concurrent finalization attempts via locking
+      with_lock do
+        return if completed?
+
         registration_items.find_each do |item|
           item.registerable.materialize_allocation!(user_ids: item.confirmed_user_ids,
                                                     campaign: self)

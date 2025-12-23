@@ -122,6 +122,22 @@ module Registration
       update_status(:open, t("registration.campaign.reopened"))
     end
 
+    def finalize
+      guard = Registration::FinalizationGuard.new(@campaign)
+      result = guard.check
+
+      unless result.success?
+        respond_with_error(result.error_message)
+        return
+      end
+
+      if @campaign.finalize!
+        respond_with_success(t("registration.campaign.finalized"))
+      else
+        respond_with_error(@campaign.errors.full_messages.join(", "))
+      end
+    end
+
     private
 
       def set_lecture

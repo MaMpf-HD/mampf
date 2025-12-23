@@ -449,5 +449,26 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       expect(campaign.reload.status).to eq("completed")
     end
+
+    context "concurrency protection" do
+      it "executes within a database lock" do
+        expect(campaign).to receive(:with_lock).and_yield
+        campaign.finalize!
+      end
+
+      it "aborts if campaign becomes completed while waiting for the lock" do
+        # 1. Simulate acquiring the lock
+        allow(campaign).to receive(:with_lock).and_yield
+
+        # 2. Simulate that another process finished the job while we were waiting
+        #    (The record is reloaded inside with_lock, so it sees the new status)
+        allow(campaign).to receive(:completed?).and_return(true)
+
+        # 3. Expect that we do NOT run the materialization logic again
+        expect(item.registerable).not_to receive(:materialize_allocation!)
+
+        campaign.finalize!
+      end
+    end
   end
 end
