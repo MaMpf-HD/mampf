@@ -1,13 +1,62 @@
+@import "~/styles/branding";
+
 #lecture-search {
-    background-color: #d35bff;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    // Abstract background shapes
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.6;
+        z-index: 0;
+    }
+
+    &::before {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #d4a5ff 0%, #b8a5ff 100%);
+        top: -100px;
+        right: -100px;
+    }
+
+    &::after {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #a5d8ff 0%, #a5c4ff 100%);
+        bottom: -150px;
+        left: -100px;
+    }
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.472);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 18px 9px rgba(255, 255, 255, 0.9);
+
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 0.5em;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
 #lecture-search-wrapper {
-    background-color: #ffffff;
     width: 100%;
     max-width: 800px;
     max-height: fit-content;
@@ -19,7 +68,7 @@
 }
 
 #lecture-search-bar {
-    border: 2px solid #eee;
+    border: 2px solid #b4b4b4;
     border-radius: 30px;
     padding: 15px 25px;
     padding-right: 50px;
@@ -27,7 +76,7 @@
     transition: all 0.3s ease;
 
     &:focus {
-        border-color: #d35bff;
+        border-color: $mampf-blue;
         box-shadow: none;
     }
 }
@@ -51,10 +100,6 @@
 }
 
 .lecture-search-result {
-    background-color: #ffffff;
     padding: 2em;
     margin-top: 1em;
-
-    border-radius: 0.5em;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
