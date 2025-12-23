@@ -15,6 +15,8 @@ export default class extends Controller {
   static targets = ["form", "scrollObserver"];
 
   connect() {
+    this.isSubmitting = false;
+
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
       entries.forEach((entry) => {
@@ -61,11 +63,13 @@ export default class extends Controller {
   search() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
+      if (this.isSubmitting) return;
+
       // Indicate to controller that we want the initial page for a new search.
       // This is especially important when the user has already scrolled down
       // and we were on a later page.
       addDataToForm(this.formTarget, { page: "" });
-      this.formTarget.requestSubmit();
+      this.submitForm();
     }, 200);
   }
 
@@ -76,6 +80,8 @@ export default class extends Controller {
    * This works together with the pagy keyset pagination.
    */
   retrieveNextPage() {
+    if (this.isSubmitting) return;
+
     const pagyDataElement = document.querySelector("#pagy-nav-next");
     if (!pagyDataElement) return;
 
@@ -83,10 +89,19 @@ export default class extends Controller {
     // The Page string is base64-encoded by Pagy, but we shouldn't bother
     // about this implementation detail.
     const nextPage = pagyDataElement.dataset.nextPage;
-    console.log(`Next page token: ${nextPage}`);
     if (!nextPage) return;
 
     addDataToForm(this.formTarget, { page: nextPage });
+    this.submitForm();
+  }
+
+  /**
+   * Submits the search form (and prevents multiple simultaneous submissions).
+   */
+  submitForm() {
+    this.isSubmitting = true;
+    const unlockHandler = () => this.isSubmitting = false;
+    document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
   }
 }
