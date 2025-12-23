@@ -35,25 +35,27 @@ export default class extends Controller {
   }
 
   loadAllLectures() {
-    const form = this.hasFormTarget ? this.formTarget : this.element.querySelector("form");
-    if (!form) {
-      return;
-    }
+    console.log("Loading all lectures");
 
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
+    //   const form = this.hasFormTarget ? this.formTarget : this.element.querySelector("form");
+    //   if (!form) {
+    //     return;
+    //   }
 
-    // TODO: do this more elegantly with Hotwire
-    fetch(`${form.action}?${params}`, {
-      method: "GET",
-      headers: {
-        "Accept": "text/javascript",
-        "X-Requested-With": "XMLHttpRequest",
-      },
-    })
-      .then(response => response.text())
-      .then((script) => {
-        eval(script);
-      });
+    //   const formData = new FormData(form);
+    //   const params = new URLSearchParams(formData);
+
+  //   // TODO: do this more elegantly with Hotwire
+  //   fetch(`${form.action}?${params}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Accept": "text/javascript",
+  //       "X-Requested-With": "XMLHttpRequest",
+  //     },
+  //   })
+  //     .then(response => response.text())
+  //     .then((script) => {
+  //       eval(script);
+  //     });
   }
 }

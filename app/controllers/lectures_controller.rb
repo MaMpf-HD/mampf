@@ -276,16 +276,18 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
+    _pagy, lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator
     )
 
-    @results_as_list = params.dig(:search, :results_as_list) == "true"
-
     respond_to do |format|
-      format.js { render template: "lectures/search/search" }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.append("lecture-search-results",
+                                                 partial: "main/events_list",
+                                                 locals: { lectures: lectures })
+      end
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")
       end
