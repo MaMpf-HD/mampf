@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { addDataToForm } from "~/js/form_helper.js";
 
 /**
  * Controller that loads lectures when the user scrolls to the bottom of the
@@ -14,8 +15,6 @@ export default class extends Controller {
   static targets = ["form", "scrollObserver"];
 
   connect() {
-    this.isFetchingNextPage = false;
-
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
       entries.forEach((entry) => {
@@ -73,8 +72,6 @@ export default class extends Controller {
    * This works together with the pagy keyset pagination.
    */
   retrieveNextPage() {
-    if (this.isFetchingNextPage) return;
-
     const pagyDataElement = document.querySelector("#pagy-nav-next");
     if (!pagyDataElement) return;
 
@@ -85,23 +82,7 @@ export default class extends Controller {
     console.log(`Next page token: ${nextPage}`);
     if (!nextPage) return;
 
-    // Add or update hidden page input
-    let pageInput = this.formTarget.querySelector("input[name='page']");
-    if (!pageInput) {
-      pageInput = document.createElement("input");
-      pageInput.type = "hidden";
-      pageInput.name = "page";
-      this.formTarget.appendChild(pageInput);
-    }
-    pageInput.value = nextPage;
-
-    this.isFetchingNextPage = true;
-    this.formTarget.addEventListener("turbo:submit-end", () => {
-      this.isFetchingNextPage = false;
-    }, { once: true });
-
-    console.log(`Final form URL: ${this.formTarget.action}?${new URLSearchParams(new FormData(this.formTarget)).toString()}`);
-
+    addDataToForm(this.formTarget, { page: nextPage });
     this.formTarget.requestSubmit();
   }
 }
