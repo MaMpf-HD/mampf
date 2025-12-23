@@ -287,7 +287,7 @@ class LecturesController < ApplicationController
       format.turbo_stream do
         if @pagy.page.nil?
           # initial rendering of first search results
-          render turbo_stream: turbo_stream.replace("lecture-search-results",
+          render turbo_stream: turbo_stream.replace("lecture-search-results-wrapper",
                                                     partial: "lectures/search/list")
         else
           # For keyset/keynav_js pagination, append results for subsequent pages

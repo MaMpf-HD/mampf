@@ -1,6 +1,8 @@
-<div id="lecture-search-results">
-  <%= render partial: "lectures/search/lecture", collection: @lectures %>
-</div>
+<div id="lecture-search-results-wrapper">
+  <div id="lecture-search-results">
+    <%= render partial: "lectures/search/lecture", collection: @lectures %>
+  </div>
 
-<%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
-<div data-lecture-search-target="scrollObserver"></div>
+  <%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
+  <div data-lecture-search-target="scrollObserver"></div>
+</div>
