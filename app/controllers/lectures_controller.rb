@@ -285,7 +285,7 @@ class LecturesController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("lecture-search-results",
-                                                  partial: "main/events_list",
+                                                  partial: "lectures/search/list",
                                                   locals: { lectures: lectures })
       end
       format.html do
