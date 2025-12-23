@@ -1,4 +1,5 @@
 en:
   lecture:
     search:
+      go_to_search: Search lectures
       placeholder: Search for lectures...

@@ -1,0 +1,39 @@
+#go-to-lecture-search {
+    position: absolute;
+    bottom: 2em;
+    left: 50%;
+    transform: translateX(-50%);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    color: #666;
+    transition: color 0.3s ease;
+    z-index: 10;
+
+    &:hover {
+        color: #333;
+
+        #arrow-go-to-lecture-wrapper {
+            transform: translateY(-5px);
+        }
+    }
+}
+
+#arrow-go-to-lecture {
+    font-size: 1.5em;
+    animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+@keyframes bounce-subtle {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
