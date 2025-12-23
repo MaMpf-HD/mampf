@@ -1,8 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Controller that loads all lectures when the user scrolls to the bottom of the
- * page.
+ * Controller that loads lectures when the user scrolls to the bottom of the
+ * dashboard page.
+ *
+ * Without any lecture filtering (default), all lectures are shown. However,
+ * to improve performance, we only load a limited number of lectures at once.
+ * Only when the user scrolls again to the bottom of the page, more lectures are
+ * loaded (infinite scrolling).
+ *
  */
 export default class extends Controller {
   static targets = ["form", "scrollObserver"];
@@ -11,21 +17,14 @@ export default class extends Controller {
     this.isFetchingNextPage = false;
 
     this.observer = new IntersectionObserver((entries) => {
-      if (this.loaded) return;
-
+      if (this.initiallyLoaded) return;
       entries.forEach((entry) => {
-        if (!this.loaded && entry.isIntersecting) {
+        if (!this.initiallyLoaded && entry.isIntersecting) {
           this.search();
-          this.loaded = true;
+          this.loainitiallyLoadedded = true;
         }
       });
-    },
-    {
-      root: null,
-      threshold: 0.1,
-    },
-    );
-
+    }, { root: null, threshold: 0.1 });
     this.observer.observe(this.formTarget);
   }
 
@@ -41,13 +40,7 @@ export default class extends Controller {
           this.retrieveNextPage();
         }
       });
-    },
-    {
-      root: null,
-      rootMargin: "100px",
-      threshold: 0.1,
-    });
-
+    }, { root: null, rootMargin: "100px", threshold: 0.1 });
     this.scrollObserver.observe(this.scrollObserverTarget);
   }
 
@@ -61,9 +54,10 @@ export default class extends Controller {
   }
 
   /**
-   * Triggers a search when the user types in the search field.
+   * Triggers a search.
    *
    * We use a small delay to avoid too many requests.
+   * This method is called whenever the user types in the search field.
    */
   search() {
     clearTimeout(this.timeout);
@@ -76,7 +70,7 @@ export default class extends Controller {
    * Retrieves the next page of results when the user scrolls to the bottom
    * of the page. This is important for performance when there are many results.
    *
-   * This works together with the pagy keyset or rather keynav_js pagination.
+   * This works together with the pagy keyset pagination.
    */
   retrieveNextPage() {
     if (this.isFetchingNextPage) return;
