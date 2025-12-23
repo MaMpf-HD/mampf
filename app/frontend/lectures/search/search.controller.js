@@ -8,13 +8,12 @@ export default class extends Controller {
   static targets = ["form"];
 
   connect() {
-    this.loadAllLectures = this.loadAllLectures.bind(this);
     this.observer = new IntersectionObserver((entries) => {
       if (this.loaded) return;
 
       entries.forEach((entry) => {
         if (!this.loaded && entry.isIntersecting) {
-          this.loadAllLectures();
+          this.search();
           this.loaded = true;
         }
       });
@@ -44,30 +43,5 @@ export default class extends Controller {
     this.timeout = setTimeout(() => {
       this.element.requestSubmit();
     }, 200);
-  }
-
-  loadAllLectures() {
-    console.log("Loading all lectures");
-
-    //   const form = this.hasFormTarget ? this.formTarget : this.element.querySelector("form");
-    //   if (!form) {
-    //     return;
-    //   }
-
-    //   const formData = new FormData(form);
-    //   const params = new URLSearchParams(formData);
-
-  //   // TODO: do this more elegantly with Hotwire
-  //   fetch(`${form.action}?${params}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Accept": "text/javascript",
-  //       "X-Requested-With": "XMLHttpRequest",
-  //     },
-  //   })
-  //     .then(response => response.text())
-  //     .then((script) => {
-  //       eval(script);
-  //     });
   }
 }
