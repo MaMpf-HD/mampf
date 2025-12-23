@@ -279,13 +279,28 @@ class LecturesController < ApplicationController
     @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
-      configurator_class: Search::Configurators::LectureSearchConfigurator
+      configurator_class: Search::Configurators::LectureSearchConfigurator,
+      options: { use_keynav: true, default_per_page: 2 }
     )
 
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: turbo_stream.replace("lecture-search-results",
-                                                  partial: "lectures/search/list")
+        #test
+        # For keynav_js pagination, append results for subsequent pages
+        if params[:page].present? && params[:page].to_i > 1
+          render turbo_stream: [
+            turbo_stream.append("lecture-search-results",
+                                partial: "lectures/search/lecture",
+                                collection: @lectures),
+            turbo_stream.replace("lecture-search-nav",
+                                 partial: "lectures/search/nav",
+                                 locals: { pagy: @pagy })
+          ]
+        else
+          # initial rendering of first search results
+          render turbo_stream: turbo_stream.replace("lecture-search-results",
+                                                    partial: "lectures/search/list")
+        end
       end
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")

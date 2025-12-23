@@ -26,6 +26,7 @@ module Search
       def self.search(controller:, model_class:, configurator_class:, options: {})
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
+        use_keynav = options.fetch(:use_keynav, false)
 
         config = configurator_class.configure(
           user: controller.current_user,
@@ -41,12 +42,19 @@ module Search
           config: config
         )
 
-        items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                  default_per_page)
-
-        controller.send(:pagy, :countish, search_results,
-                        limit: items_per_page,
-                        page: config.params[:page])
+        if use_keynav
+          items_per_page = config.params[:per] || default_per_page
+          # keynav_js requires simple column-based ordering
+          # Override the complex search order with a simple id-based order
+          search_results = search_results.reorder(id: :asc)
+          controller.send(:pagy, :keynav_js, search_results,
+                          limit: items_per_page, page: config.params[:page])
+        else
+          items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                    default_per_page)
+          controller.send(:pagy, :countish, search_results,
+                          limit: items_per_page, page: config.params[:page])
+        end
       end
 
       class << self

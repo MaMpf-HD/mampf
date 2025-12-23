@@ -1,13 +1,13 @@
 <%= vite_stylesheet_tag "lectures/search/_search.scss" %>
 
-<div id="lecture-search">
+<div id="lecture-search" data-controller="lecture-search">
 
   <div id="lecture-search-wrapper" class="glass">
     <%= form_with url: search_lectures_path,
                   method: :get,
                   data: { remote: false,
                           turbo_stream: true,
-                          controller: "lecture-search" } do |f| %>
+                          lecture_search_target: "form" } do |f| %>
 
       <div id="lecture-search-input-group">
         <%= f.text_field "search[fulltext]",
