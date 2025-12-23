@@ -280,7 +280,7 @@ class LecturesController < ApplicationController
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator,
-      options: { infinite_scroll: params[:infinite_scroll] }
+      options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
 
     respond_to do |format|
