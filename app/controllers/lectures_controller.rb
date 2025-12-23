@@ -285,21 +285,20 @@ class LecturesController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        #test
-        # For keynav_js pagination, append results for subsequent pages
-        if params[:page].present? && params[:page].to_i > 1
-          render turbo_stream: [
-            turbo_stream.append("lecture-search-results",
-                                partial: "lectures/search/lecture",
-                                collection: @lectures),
-            turbo_stream.replace("lecture-search-nav",
-                                 partial: "lectures/search/nav",
-                                 locals: { pagy: @pagy })
-          ]
-        else
+        if @pagy.page.nil?
           # initial rendering of first search results
           render turbo_stream: turbo_stream.replace("lecture-search-results",
                                                     partial: "lectures/search/list")
+        else
+          # For keyset/keynav_js pagination, append results for subsequent pages
+          render turbo_stream: [
+            turbo_stream.replace("pagy-nav-next",
+                                 partial: "lectures/search/nav",
+                                 locals: { pagy: @pagy }),
+            turbo_stream.append("lecture-search-results",
+                                partial: "lectures/search/lecture",
+                                collection: @lectures)
+          ]
         end
       end
       format.html do

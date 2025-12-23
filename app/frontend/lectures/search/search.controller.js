@@ -81,15 +81,15 @@ export default class extends Controller {
   retrieveNextPage() {
     if (this.isFetchingNextPage) return;
 
-    const navContainer = document.querySelector("#pagy-nav-container");
-    if (!navContainer) return;
+    const pagyDataElement = document.querySelector("#pagy-nav-next");
+    if (!pagyDataElement) return;
 
-    const nextPageUrl = navContainer.dataset.nextPageUrl;
-    if (!nextPageUrl) return;
-
-    console.log("Fetching next page:", nextPageUrl);
-    const url = new URL(nextPageUrl, window.location.origin);
-    const pageValue = url.searchParams.get("page");
+    // Recursion-anchor: when no page token is present, we are at the end.
+    // The Page string is base64-encoded by Pagy, but we shouldn't bother
+    // about this implementation detail.
+    const nextPage = pagyDataElement.dataset.nextPage;
+    console.log(`Next page token: ${nextPage}`);
+    if (!nextPage) return;
 
     // Add or update hidden page input
     let pageInput = this.formTarget.querySelector("input[name='page']");
@@ -99,14 +99,13 @@ export default class extends Controller {
       pageInput.name = "page";
       this.formTarget.appendChild(pageInput);
     }
-    pageInput.value = pageValue;
+    pageInput.value = nextPage;
 
     this.isFetchingNextPage = true;
     this.formTarget.addEventListener("turbo:submit-end", () => {
       this.isFetchingNextPage = false;
     }, { once: true });
 
-    console.log(`Targetting page ${pageValue}`);
     console.log(`Final form URL: ${this.formTarget.action}?${new URLSearchParams(new FormData(this.formTarget)).toString()}`);
 
     this.formTarget.requestSubmit();

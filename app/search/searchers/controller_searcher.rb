@@ -42,16 +42,16 @@ module Search
           config: config
         )
 
+        items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                  default_per_page)
+
         if use_keynav
-          items_per_page = config.params[:per] || default_per_page
-          # keynav_js requires simple column-based ordering
+          # keyset/keynav_js require simple column-based ordering
           # Override the complex search order with a simple id-based order
+          # TODO: think of better ordering
           search_results = search_results.reorder(id: :asc)
-          controller.send(:pagy, :keynav_js, search_results,
-                          limit: items_per_page, page: config.params[:page])
+          controller.send(:pagy, :keyset, search_results, limit: items_per_page)
         else
-          items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                    default_per_page)
           controller.send(:pagy, :countish, search_results,
                           limit: items_per_page, page: config.params[:page])
         end

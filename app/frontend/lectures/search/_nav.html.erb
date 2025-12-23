@@ -1,3 +1,4 @@
-<% if pagy&.next %>
-  <div id="pagy-nav-container" data-next-page-url="<%= pagy.page_url(:next) %>"></div>
+<% if pagy.next %>
+  <div id="pagy-nav-next" data-next-page="<%= pagy.next %>">
+  </div>
 <% end %>

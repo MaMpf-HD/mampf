@@ -2,8 +2,6 @@
   <%= render partial: "lectures/search/lecture", collection: @lectures %>
 </div>
 
-<div id="lecture-search-nav">
-  <%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
-</div>
+<%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
 
 <div data-lecture-search-target="scrollObserver"></div>
