@@ -3272,6 +3272,7 @@ en:
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'
+    confirm: 'Are you sure?'
     basics: 'Basics'
     action: 'Action'
     actions: 'Actions'

@@ -1,0 +1,54 @@
+<div class="card mb-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>
+      <%= t("registration.user_registration.index.title", default: "Registrations") %>
+      <span class="badge bg-secondary"><%= campaign.user_registrations.count %></span>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if campaign.user_registrations.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+              <th><%= t("basics.status") %></th>
+              <th><%= t("registration.item.one") %></th>
+              <% if campaign.preference_based? %>
+                <th><%= t("registration.user_registration.rank", default: "Rank") %></th>
+              <% end %>
+              <th><%= t("basics.actions") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% campaign.user_registrations.includes(:user, :registration_item).order("users.name").each do |registration| %>
+              <tr id="<%= dom_id(registration) %>">
+                <td><%= registration.user.name %></td>
+                <td><%= registration.user.email %></td>
+                <td>
+                  <span class="badge bg-<%= registration_status_color(registration) %>">
+                    <%= t("registration.user_registration.status.#{registration.status}") %>
+                  </span>
+                </td>
+                <td><%= registration.registration_item&.title %></td>
+                <% if campaign.preference_based? %>
+                  <td><%= registration.preference_rank %></td>
+                <% end %>
+                <td>
+                  <%= button_to t("buttons.delete"),
+                                registration_campaign_registration_path(campaign, registration),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                data: { confirm: t("basics.confirm"), turbo_stream: true } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-muted"><%= t("registration.user_registration.none", default: "No registrations found.") %></p>
+    <% end %>
+  </div>
+</div>

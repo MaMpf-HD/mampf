@@ -167,6 +167,7 @@ en:
         finalization: "Finalization"
         both: "Both"
     item:
+      one: "Item"
       index:
         title: "Items"
         none: "No items added yet."
@@ -198,6 +199,17 @@ en:
       destroyed: "Item removed successfully."
       registerable_destroyed: "%{type} deleted successfully."
       updated: "Item updated successfully."
+    user_registration:
+      index:
+        title: "Registrations"
+      status:
+        pending: "Pending"
+        confirmed: "Confirmed"
+        rejected: "Rejected"
+      rank: "Rank"
+      destroyed: "Registration removed successfully."
+      none: "No registrations found."
+      preferences: "Preferences"
       invalid_type: "Invalid type."
       cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
       confirm_delete: "Are you sure you want to remove this item?"

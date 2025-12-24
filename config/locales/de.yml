@@ -3486,6 +3486,7 @@ de:
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'
+    confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
     action: 'Aktion'
     actions: 'Aktionen'

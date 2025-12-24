@@ -67,6 +67,14 @@
         </span>
       </button>
     </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'registrations' %>" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="<%= tab == 'registrations' %>">
+        <%= t("registration.user_registration.index.title", default: "Registrations") %>
+        <span class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.user_registrations.count %>
+        </span>
+      </button>
+    </li>
   </ul>
 
   <div class="tab-content" id="campaignTabsContent">
@@ -84,5 +92,9 @@
 
     <div class="tab-pane fade <%= 'show active' if tab == 'policies' %>" id="policies" role="tabpanel" aria-labelledby="policies-tab">
       <%= render "registration/policies/index" %>
+    </div>
+
+    <div class="tab-pane fade <%= 'show active' if tab == 'registrations' %>" id="registrations" role="tabpanel" aria-labelledby="registrations-tab">
+      <%= render "registration/user_registrations/index", campaign: campaign %>
     </div>
   </div>

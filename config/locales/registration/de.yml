@@ -160,6 +160,7 @@ de:
         finalization: "Finalisierung"
         both: "Beide"
     item:
+      one: "Element"
       index:
         title: "Elemente"
         none: "Noch keine Elemente hinzugefügt."
@@ -196,6 +197,17 @@ de:
       confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
       confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
       confirm_delete_registerable: "Sind Sie sicher, dass Sie dieses %{type} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    user_registration:
+      index:
+        title: "Anmeldungen"
+      status:
+        pending: "Ausstehend"
+        confirmed: "Bestätigt"
+        rejected: "Abgelehnt"
+      rank: "Rang"
+      destroyed: "Anmeldung erfolgreich entfernt."
+      none: "Keine Anmeldungen gefunden."
+      preferences: "Präferenzen"
   activerecord:
     errors:
       models:
