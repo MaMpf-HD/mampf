@@ -45,13 +45,12 @@ module Search
 
         if use_keyset_navigation
           keyset = Search::Pagination::OrderParser.keyset_from(model_class.default_search_order)
-          page_obj, records = Search::Pagination::KeysetPager.paginate(
+          Search::Pagination::KeysetPager.paginate(
             set: search_results,
             keyset: keyset,
             limit: default_per_page,
             page: config.params[:page]
           )
-          [page_obj, records]
         else
           items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                     default_per_page)
