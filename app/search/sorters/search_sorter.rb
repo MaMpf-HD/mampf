@@ -43,37 +43,28 @@ module Search
         # Applies the default order and modifies the SELECT list to include
         # the ordering columns.
         def apply_default_order
-          # The order expression string might contain ASC/DESC, which is invalid
-          # in a SELECT list. We need to extract just the column names for the SELECT.
-          select_columns_sql = order_expression.to_s.gsub(/\s+(ASC|DESC)\b/i, "")
-          select_expression = Arel.sql(select_columns_sql)
-
+          built = Search::Pagination::OrderParser.build(order_expression)
           scope_with_joins = add_required_joins(scope)
 
-          # Always include the order expression in the SELECT list to prevent errors
-          # when .distinct is used.
-          scope_with_joins.select(model_class.arel_table[Arel.star], select_expression)
-                          .order(order_expression)
+          scope_with_joins
+            .select(model_class.arel_table[Arel.star], *built[:select_parts])
+            .order(order_expression)
         end
 
         # Applies keyset-compatible ordering and ensures ORDER BY expressions
         # are present in the SELECT list to satisfy DISTINCT.
         def apply_keyset_order
+          built = Search::Pagination::OrderParser.build(order_expression)
           scope_with_joins = add_required_joins(scope)
-          parts = Search::Pagination::OrderParser.parse(order_expression)
 
-          select_parts = [model_class.arel_table[Arel.star]]
-          order_parts = []
-          parts.each do |alias_name, expr, dir|
-            select_parts << Arel.sql("#{expr} AS #{alias_name}")
-            order_parts << Arel.sql("#{alias_name} #{dir}")
-          end
+          subquery = scope_with_joins.select(
+            model_class.arel_table[Arel.star], *built[:select_parts]
+          )
 
-          subquery = scope_with_joins.select(*select_parts)
-
-          model_class.from(subquery, :keyset_subquery)
-                     .select(Arel.sql("keyset_subquery.*"))
-                     .order(*order_parts)
+          model_class
+            .from(subquery, :keyset_subquery)
+            .select(Arel.sql("keyset_subquery.*"))
+            .order(*built[:order_parts])
         end
 
       # No longer needed

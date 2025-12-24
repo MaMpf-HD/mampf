@@ -36,16 +36,15 @@ module Search
 
         return controller.send(:pagy, :countish, model_class.none, limit: 1, page: 1) unless config
 
+        search_results = ModelSearcher.search(
+          model_class: model_class,
+          user: controller.current_user,
+          config: config,
+          keyset_mode: use_keyset_navigation
+        )
+
         if use_keyset_navigation
-          search_results = ModelSearcher.search(
-            model_class: model_class,
-            user: controller.current_user,
-            config: config,
-            keyset_mode: true
-          )
-
           keyset = Search::Pagination::OrderParser.keyset_from(model_class.default_search_order)
-
           page_obj, records = Search::Pagination::KeysetPager.paginate(
             set: search_results,
             keyset: keyset,
@@ -54,12 +53,6 @@ module Search
           )
           [page_obj, records]
         else
-          search_results = ModelSearcher.search(
-            model_class: model_class,
-            user: controller.current_user,
-            config: config
-          )
-
           items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                     default_per_page)
           controller.send(:pagy, :countish, search_results,

@@ -3,8 +3,9 @@ module Search
     module OrderParser
       module_function
 
-      # Parses a comma-separated ORDER BY SQL expression string and returns
-      # an array of [alias, expression, direction] with stable alias names.
+      # Parses the order expression into an array of [alias_name, expression, direction].
+      # For example, "title DESC, created_at ASC" becomes:
+      # [[:keyset_1, "title", :desc], [:keyset_2, "created_at", :asc]]
       def parse(order_expression)
         sql = order_expression.to_s
         clauses = sql.split(",").map(&:strip)
@@ -19,9 +20,18 @@ module Search
         end.compact
       end
 
-      # Builds a hash suitable for the KeysetPager: { alias => direction }
+      # Builds the SELECT parts and ORDER BY parts from the order expression.
+      # Returns a hash with :select_parts, :order_parts, and :keyset.
+      def build(order_expression)
+        parts = parse(order_expression)
+        select_parts = parts.map { |alias_name, expr, _dir| Arel.sql("#{expr} AS #{alias_name}") }
+        order_parts = parts.map { |alias_name, _expr, dir| Arel.sql("#{alias_name} #{dir}") }
+        keyset = parts.to_h { |alias_name, _expr, dir| [alias_name, dir] }
+        { select_parts: select_parts, order_parts: order_parts, keyset: keyset }
+      end
+
       def keyset_from(order_expression)
-        parse(order_expression).to_h { |alias_name, _expr, dir| [alias_name, dir] }
+        build(order_expression)[:keyset]
       end
     end
   end
