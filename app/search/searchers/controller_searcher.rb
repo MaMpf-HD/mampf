@@ -43,13 +43,16 @@ module Search
             config: config,
             keyset_mode: true
           )
-          keyset_config = if model_class.respond_to?(:pagy_keyset_config)
-            model_class.pagy_keyset_config
-          else
-            {}
-          end
-          controller.send(:pagy, :keyset, search_results,
-                          **keyset_config, limit: default_per_page, counter_over: true)
+
+          keyset = Search::Pagination::OrderParser.keyset_from(model_class.default_search_order)
+
+          page_obj, records = Search::Pagination::KeysetPager.paginate(
+            set: search_results,
+            keyset: keyset,
+            limit: default_per_page,
+            page: config.params[:page]
+          )
+          [page_obj, records]
         else
           search_results = ModelSearcher.search(
             model_class: model_class,

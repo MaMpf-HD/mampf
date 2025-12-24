@@ -56,61 +56,27 @@ module Search
                           .order(order_expression)
         end
 
-        # Applies keyset-compatible ordering with aliased columns for Pagy.
-        # Extracts column mappings from the model's pagy_keyset_config and
-        # default_search_order, then adds them to SELECT with proper aliases.
-        #
-        # TODO:
-        # The sorter (when in keyset_mode) will add the ordering columns from
-        # the model's default_search_order as SELECT aliases that match the keys
-        # in pagy_keyset_config. This allows Pagy to extract and use the keyset
-        # values for pagination.
+        # Applies keyset-compatible ordering and ensures ORDER BY expressions
+        # are present in the SELECT list to satisfy DISTINCT.
         def apply_keyset_order
           scope_with_joins = add_required_joins(scope)
-          return scope_with_joins unless model_class.respond_to?(:pagy_keyset_config)
+          parts = Search::Pagination::OrderParser.parse(order_expression)
 
-          keyset_config = model_class.pagy_keyset_config[:keyset]
-          return scope_with_joins unless keyset_config
-
-          # Parse the order expression to extract table.column mappings
-          order_mappings = parse_order_expression_for_keyset(keyset_config)
-
-          # Build SELECT with aliased columns
           select_parts = [model_class.arel_table[Arel.star]]
           order_parts = []
-
-          order_mappings.each do |alias_name, (column_expr, direction)|
-            select_parts << Arel.sql("#{column_expr} AS #{alias_name}")
-            order_parts << Arel.sql("#{alias_name} #{direction}")
+          parts.each do |alias_name, expr, dir|
+            select_parts << Arel.sql("#{expr} AS #{alias_name}")
+            order_parts << Arel.sql("#{alias_name} #{dir}")
           end
 
-          scope_with_joins.select(*select_parts).order(*order_parts)
+          subquery = scope_with_joins.select(*select_parts)
+
+          model_class.from(subquery, :keyset_subquery)
+                     .select(Arel.sql("keyset_subquery.*"))
+                     .order(*order_parts)
         end
 
-        # Parses the default_search_order SQL string to extract column expressions
-        # and map them to the keyset config keys.
-        def parse_order_expression_for_keyset(keyset_config)
-          order_sql = order_expression.to_s
-          mappings = {}
-
-          # Split by comma to get individual order clauses
-          order_clauses = order_sql.split(",").map(&:strip)
-
-          keyset_config.each_with_index do |(key, direction), index|
-            next if index >= order_clauses.size
-
-            clause = order_clauses[index]
-            # Extract column expression and direction
-            # e.g., "terms.year DESC" -> ["terms.year", "DESC"]
-            match = clause.match(/^(.+?)\s+(ASC|DESC)$/i)
-            if match
-              column_expr = match[1].strip
-              mappings[key] = [column_expr, direction.to_s.upcase]
-            end
-          end
-
-          mappings
-        end
+      # No longer needed
     end
   end
 end

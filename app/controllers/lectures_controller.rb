@@ -276,7 +276,7 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
+    @page, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator,
@@ -286,7 +286,7 @@ class LecturesController < ApplicationController
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
       format.turbo_stream do
-        if @pagy.page.nil?
+        if params[:page].blank?
           # initial rendering of first search results
           render turbo_stream: turbo_stream.replace("lecture-search-results-wrapper",
                                                     partial: "lectures/search/list")
@@ -295,7 +295,7 @@ class LecturesController < ApplicationController
           render turbo_stream: [
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
-                                 locals: { pagy: @pagy }),
+                                 locals: { page: @page }),
             turbo_stream.append("lecture-search-results",
                                 partial: "lectures/search/lecture",
                                 collection: @lectures)
