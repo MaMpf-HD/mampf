@@ -92,7 +92,7 @@ de:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
     allocation:
-      started: "Zuteilungsprozess gestartet."
+      started: "Zuteilung wurde berechnet."
       dashboard:
         title: "Zuteilungs-Dashboard"
         unassigned_students: "Nicht zugewiesene Studierende"

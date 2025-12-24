@@ -92,7 +92,7 @@ en:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
     allocation:
-      started: "Allocation process started."
+      started: "Allocation has been calculated."
       dashboard:
         title: "Allocation Dashboard"
         unassigned_students: "Unassigned Students"
