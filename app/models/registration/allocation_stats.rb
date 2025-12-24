@@ -38,6 +38,34 @@ module Registration
     private
 
       def calculate
+        if @campaign.first_come_first_served?
+          calculate_fcfs
+        else
+          calculate_preference_based
+        end
+      end
+
+      def calculate_fcfs
+        @total_registrations = @campaign.total_registrations_count
+        @assigned_users = @assignment.size
+        @unassigned_users = @total_registrations - @assigned_users
+
+        # In FCFS, unassigned users are those who have registrations but are not in the assignment list
+        # (e.g. rejected or pending if any)
+        all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
+        @unassigned_user_ids = all_user_ids - @assignment.keys
+
+        @preference_counts = Hash.new(0)
+        @items = {}
+        @global_avg_rank = 0
+        @percent_top_choice = 0
+
+        @assignment.each do |user_id, item_id|
+          update_item_stats(item_id, :fcfs)
+        end
+      end
+
+      def calculate_preference_based
         user_preferences = @campaign.user_registrations
                                     .where.not(preference_rank: nil)
                                     .includes(:registration_item)
@@ -79,6 +107,8 @@ module Registration
 
         if rank == :forced
           @items[item_id][:forced] += 1
+        elsif rank == :fcfs
+          # No rank stats for FCFS
         else
           @items[item_id][:sum_rank] += rank
         end

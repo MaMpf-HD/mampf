@@ -1,4 +1,27 @@
 <div class="container mt-4">
+  <% if @policy_violations.present? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> <%= t("registration.allocation.errors.policy_violation_title") %></h4>
+      <p><%= t("registration.allocation.errors.policy_violation_desc") %></p>
+      <hr>
+      <ul>
+        <% @policy_violations.each do |violation| %>
+          <li>
+            <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) - 
+            <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+          </li>
+        <% end %>
+      </ul>
+      <div class="mt-3">
+        <%= button_to t("registration.campaign.actions.force_finalize"),
+                      finalize_registration_campaign_allocation_path(@campaign, force: true),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.force_finalize") },
+                      class: "btn btn-danger" %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="mb-3">
     <%= link_to registration_campaign_path(@campaign),
                 class: "btn btn-sm btn-outline-secondary",
@@ -11,22 +34,30 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><%= t("registration.allocation.dashboard.title") %></h2>
     <div class="d-flex gap-2">
-      <%= button_to t("registration.campaign.actions.allocate"),
-                    registration_campaign_allocation_path(@campaign),
-                    method: :post,
-                    class: "btn btn-primary" %>
+      <% if @campaign.preference_based? %>
+        <%= button_to t("registration.campaign.actions.allocate"),
+                      registration_campaign_allocation_path(@campaign),
+                      method: :post,
+                      class: "btn btn-primary" %>
+      <% end %>
       
+      <%# Disable normal finalize if there are violations %>
       <%= button_to t("registration.campaign.actions.finalize"),
                     finalize_registration_campaign_allocation_path(@campaign),
                     method: :patch,
                     data: { confirm: t("registration.campaign.confirmations.finalize") },
-                    class: "btn btn-danger" %>
+                    class: "btn btn-danger",
+                    disabled: @policy_violations.present? %>
     </div>
   </div>
 
   <div class="alert alert-info mb-4">
     <i class="bi bi-info-circle-fill me-2"></i>
-    <%= t("registration.allocation.dashboard.workflow_info") %>
+    <% if @campaign.first_come_first_served? %>
+      <%= t("registration.allocation.dashboard.workflow_info_fcfs") %>
+    <% else %>
+      <%= t("registration.allocation.dashboard.workflow_info") %>
+    <% end %>
   </div>
 
   <div class="row mb-4">
@@ -58,61 +89,63 @@
     </div>
   </div>
 
-  <div class="card mb-4">
-    <div class="card-header">
-      <%= t("registration.allocation.stats.happiness_distribution") %>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th><%= t("registration.allocation.stats.rank") %></th>
-              <th class="text-end"><%= t("registration.allocation.stats.count") %></th>
-              <th style="width: 40%"><%= t("registration.allocation.stats.percentage") %></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }.each do |rank, count| %>
-              <% percentage = @stats.assigned_users > 0 ? (count.to_f / @stats.assigned_users * 100) : 0 %>
-              <% bar_class = case rank
-                             when :forced then "bg-danger"
-                             when 1 then "bg-success"
-                             when 2 then "bg-primary"
-                             else "bg-secondary"
-                             end %>
+  <% unless @campaign.first_come_first_served? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <%= t("registration.allocation.stats.happiness_distribution") %>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
               <tr>
-                <td>
-                  <% if rank == :forced %>
-                    <%= t("registration.allocation.stats.forced") %>
-                  <% else %>
-                    <%= t("registration.allocation.stats.rank_label", rank: rank) %>
-                  <% end %>
-                </td>
-                <td class="text-end"><%= count %></td>
-                <td class="align-middle">
-                  <div class="d-flex align-items-center">
-                    <div class="progress flex-grow-1" style="height: 10px;">
-                      <div class="progress-bar <%= bar_class %>"
-                           role="progressbar"
-                           style="width: <%= percentage %>%;"
-                           aria-valuenow="<%= percentage %>"
-                           aria-valuemin="0"
-                           aria-valuemax="100">
+                <th><%= t("registration.allocation.stats.rank") %></th>
+                <th class="text-end"><%= t("registration.allocation.stats.count") %></th>
+                <th style="width: 40%"><%= t("registration.allocation.stats.percentage") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }.each do |rank, count| %>
+                <% percentage = @stats.assigned_users > 0 ? (count.to_f / @stats.assigned_users * 100) : 0 %>
+                <% bar_class = case rank
+                               when :forced then "bg-danger"
+                               when 1 then "bg-success"
+                               when 2 then "bg-primary"
+                               else "bg-secondary"
+                               end %>
+                <tr>
+                  <td>
+                    <% if rank == :forced %>
+                      <%= t("registration.allocation.stats.forced") %>
+                    <% else %>
+                      <%= t("registration.allocation.stats.rank_label", rank: rank) %>
+                    <% end %>
+                  </td>
+                  <td class="text-end"><%= count %></td>
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center">
+                      <div class="progress flex-grow-1" style="height: 10px;">
+                        <div class="progress-bar <%= bar_class %>"
+                             role="progressbar"
+                             style="width: <%= percentage %>%;"
+                             aria-valuenow="<%= percentage %>"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                      <div class="ms-2 text-end" style="width: 3.5rem;">
+                        <%= number_to_percentage(percentage, precision: 0) %>
                       </div>
                     </div>
-                    <div class="ms-2 text-end" style="width: 3.5rem;">
-                      <%= number_to_percentage(percentage, precision: 0) %>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <div class="card mb-4">
     <div class="card-header">

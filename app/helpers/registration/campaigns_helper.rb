@@ -99,6 +99,13 @@ module Registration
               data: { turbo_stream: true })
     end
 
+    def review_and_finalize_button(campaign)
+      link_to(t("registration.campaign.actions.review_and_finalize"),
+              registration_campaign_allocation_path(campaign),
+              class: "btn btn-primary",
+              data: { turbo_stream: true })
+    end
+
     def open_campaign_button(campaign)
       confirm_msg = t("registration.campaign.confirmations.open")
       if campaign.registration_items.any? { |i| i.capacity.nil? }

@@ -6,26 +6,44 @@ module Registration
       @campaign = campaign
     end
 
-    def check
+    def check(ignore_policies: false)
       if @campaign.completed?
         return failure(:already_completed,
                        I18n.t("registration.allocation.errors.already_completed"))
       end
 
-      unless @campaign.processing? || @campaign.closed?
-        return failure(:wrong_status,
-                       I18n.t("registration.allocation.errors.wrong_status"))
+      # 1. Status Check
+      # FCFS must be closed. Preference-based must be processing.
+      if @campaign.preference_based?
+        unless @campaign.processing?
+          return failure(:wrong_status,
+                         I18n.t("registration.allocation.errors.wrong_status"))
+        end
+      else
+        unless @campaign.closed?
+          return failure(:wrong_status,
+                         I18n.t("registration.allocation.errors.wrong_status"))
+        end
       end
 
-      validate_policies
+      # 2. Policy Check
+      unless ignore_policies
+        policy_errors = check_policies
+        if policy_errors.any?
+          return failure(:policy_violation,
+                         I18n.t("registration.allocation.errors.policy_violation"), policy_errors)
+        end
+      end
+
+      success
     end
 
     private
 
-      def validate_policies
+      def check_policies
         # Check policies that apply to finalization phase (or both)
         policies = @campaign.registration_policies.active.for_phase(:finalization)
-        return success if policies.empty?
+        return [] if policies.empty?
 
         invalid_users = []
 
@@ -36,18 +54,23 @@ module Registration
             next if result[:pass]
 
             invalid_users << { user_id: user.id,
+                               name: user.name,
                                email: user.email,
                                policy: policy.kind }
           end
         end
 
-        if invalid_users.any?
-          return failure(:policy_violation,
-                         I18n.t("registration.allocation.errors.policy_violation"),
-                         invalid_users)
-        end
+        invalid_users
+      end
 
-        success
+      def validate_policies
+        # Deprecated: use check_policies instead
+        errors = check_policies
+        return success if errors.empty?
+
+        failure(:policy_violation,
+                I18n.t("registration.allocation.errors.policy_violation"),
+                errors)
       end
 
       def success

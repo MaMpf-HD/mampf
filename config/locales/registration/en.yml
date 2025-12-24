@@ -64,14 +64,17 @@ en:
         close: "End Registration"
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"
+        force_finalize: "Force Finalize (Ignore Errors)"
         allocate: "Run Allocation"
         view_allocation: "View Allocation"
+        review_and_finalize: "Review & Finalize"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
+        force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -95,6 +98,7 @@ en:
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
+        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
         item_capacities: "Tutorial Capacities"
       stats:
         total_registrations: "Total Applicants"
@@ -116,7 +120,9 @@ en:
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
-        policy_violation: "Policy violation: %{errors}"
+        policy_violation: "Policy violations detected. Please review details below."
+        policy_violation_title: "Policy Violations Detected"
+        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization."
         failed: "Allocation failed: %{error}"
     policy:
         failed: "Allocation failed: %{error}"

@@ -20,16 +20,15 @@
         <% if campaign.preference_based? %>
           <%= allocate_campaign_button(campaign) %>
         <% else %>
-          <%= finalize_campaign_button(campaign) %>
+          <%# FCFS: Go to dashboard for review instead of direct finalize %>
+          <%= review_and_finalize_button(campaign) %>
         <% end %>
       <% elsif campaign.processing? %>
-        <%= view_allocation_button(campaign) %>
+        <%= review_and_finalize_button(campaign) %>
         
         <% if campaign.preference_based? %>
           <%= allocate_campaign_button(campaign) %>
         <% end %>
-
-        <%= finalize_campaign_button(campaign) %>
       <% elsif campaign.draft? %>
         <%= open_campaign_button(campaign) %>
       <% end %>

@@ -11,6 +11,10 @@ module Registration
       authorize! :view_allocation, @campaign
       load_allocation_data
 
+      # Check for policy violations (dry run)
+      guard_result = Registration::FinalizationGuard.new(@campaign).check
+      @policy_violations = guard_result.success? ? [] : guard_result.data
+
       respond_to do |format|
         format.html
         format.turbo_stream do
@@ -49,10 +53,13 @@ module Registration
       authorize! :finalize, @campaign
 
       guard = Registration::FinalizationGuard.new(@campaign)
-      result = guard.check
+      # Allow skipping policies if 'force' param is present
+      result = guard.check(ignore_policies: params[:force] == "true")
 
       unless result.success?
-        respond_with_error(result.error_message)
+        # Redirect to dashboard to show errors
+        redirect_to registration_campaign_allocation_path(@campaign),
+                    alert: t("registration.allocation.errors.#{result.error_code}")
         return
       end
 

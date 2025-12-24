@@ -64,14 +64,17 @@ de:
         close: "Anmeldung beenden"
         reopen: "Anmeldung wiedereröffnen"
         finalize: "Zuteilung durchführen"
+        force_finalize: "Finalisierung erzwingen (Fehler ignorieren)"
         allocate: "Zuteilung berechnen"
         view_allocation: "Zuteilung ansehen"
+        review_and_finalize: "Prüfen & Abschließen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
         reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
         finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
+        force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -95,6 +98,7 @@ de:
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
         workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."
+        workflow_info_fcfs: "Überprüfen Sie die Liste der registrierten Studierenden. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
         item_capacities: "Auslastung"
       stats:
         total_registrations: "Bewerbungen Gesamt"
@@ -111,7 +115,9 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
-        policy_violation: "Richtlinienverstoß: %{errors}"
+        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
+        policy_violation_title: "Richtlinienverstöße erkannt"
+        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen."
         failed: "Zuteilung fehlgeschlagen: %{error}"
     policy:
       helpdesk:

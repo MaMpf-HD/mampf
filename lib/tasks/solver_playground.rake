@@ -267,7 +267,8 @@ namespace :solver do
       FactoryBot.create(:registration_policy,
                         registration_campaign: campaign,
                         kind: :institutional_email,
-                        config: { "allowed_domains" => "example.com" })
+                        config: { "allowed_domains" => "example.com" },
+                        phase: :both)
       puts "Added institutional email policy (example.com)"
     end
 
@@ -303,7 +304,7 @@ namespace :solver do
 
   desc "Generate registrations for FCFS campaign"
   task create_fcfs_registrations: :environment do
-    campaign = Registration::Campaign.where(description: "FCFS Solver Campaign").last
+    campaign = Registration::Campaign.where(description: "FCFS Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_fcfs_campaign first."
       exit
