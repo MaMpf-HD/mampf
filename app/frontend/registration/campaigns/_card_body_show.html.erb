@@ -13,52 +13,25 @@
     <% end %>
     <div class="d-flex gap-2">
       <% if campaign.open? %>
-        <%= button_to t("registration.campaign.actions.close"),
-                      close_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: { confirm: campaign_close_confirmation(campaign) },
-                      class: "btn btn-warning" %>
+        <%= close_campaign_button(campaign) %>
       <% elsif campaign.closed? %>
-        <%= button_to t("registration.campaign.actions.reopen"),
-                      reopen_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.reopen") },
-                      class: "btn btn-success" %>
+        <%= reopen_campaign_button(campaign) %>
         
         <% if campaign.preference_based? %>
-          <%= button_to t("registration.campaign.actions.allocate"),
-                        registration_campaign_allocation_path(campaign),
-                        method: :post,
-                        class: "btn btn-primary" %>
+          <%= allocate_campaign_button(campaign) %>
         <% else %>
-          <%= button_to t("registration.campaign.actions.finalize"),
-                        finalize_registration_campaign_allocation_path(campaign),
-                        method: :patch,
-                        data: { confirm: t("registration.campaign.confirmations.finalize") },
-                        class: "btn btn-primary" %>
+          <%= finalize_campaign_button(campaign) %>
         <% end %>
       <% elsif campaign.processing? %>
-        <%= link_to t("registration.campaign.actions.view_allocation"),
-                    registration_campaign_allocation_path(campaign),
-                    class: "btn btn-secondary",
-                    data: { turbo_stream: true } %>
-        <%= button_to t("registration.campaign.actions.finalize"),
-                      finalize_registration_campaign_allocation_path(campaign),
-                      method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.finalize") },
-                      class: "btn btn-primary" %>
+        <%= view_allocation_button(campaign) %>
+        
+        <% if campaign.preference_based? %>
+          <%= allocate_campaign_button(campaign) %>
+        <% end %>
+
+        <%= finalize_campaign_button(campaign) %>
       <% elsif campaign.draft? %>
-        <% 
-           confirm_msg = t("registration.campaign.confirmations.open")
-           if campaign.registration_items.any? { |i| i.capacity.nil? }
-             confirm_msg += "\n\n" + t("registration.campaign.warnings.unlimited_items")
-           end
-        %>
-        <%= button_to t("registration.campaign.actions.open"),
-                      open_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: { confirm: confirm_msg },
-                      class: "btn btn-success" %>
+        <%= open_campaign_button(campaign) %>
       <% end %>
 
       <% if campaign.can_be_deleted? %>

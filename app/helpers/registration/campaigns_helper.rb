@@ -76,5 +76,56 @@ module Registration
 
       t("registration.campaign.planning_only_disabled")
     end
+
+    def finalize_campaign_button(campaign)
+      button_to(t("registration.campaign.actions.finalize"),
+                finalize_registration_campaign_allocation_path(campaign),
+                method: :patch,
+                data: { confirm: t("registration.campaign.confirmations.finalize") },
+                class: "btn btn-danger")
+    end
+
+    def allocate_campaign_button(campaign)
+      button_to(t("registration.campaign.actions.allocate"),
+                registration_campaign_allocation_path(campaign),
+                method: :post,
+                class: "btn btn-primary")
+    end
+
+    def view_allocation_button(campaign)
+      link_to(t("registration.campaign.actions.view_allocation"),
+              registration_campaign_allocation_path(campaign),
+              class: "btn btn-secondary",
+              data: { turbo_stream: true })
+    end
+
+    def open_campaign_button(campaign)
+      confirm_msg = t("registration.campaign.confirmations.open")
+      if campaign.registration_items.any? { |i| i.capacity.nil? }
+        confirm_msg += "\n\n" + t("registration.campaign.warnings.unlimited_items")
+      end
+
+      button_to(t("registration.campaign.actions.open"),
+                open_registration_campaign_path(campaign),
+                method: :patch,
+                data: { confirm: confirm_msg },
+                class: "btn btn-success")
+    end
+
+    def close_campaign_button(campaign)
+      button_to(t("registration.campaign.actions.close"),
+                close_registration_campaign_path(campaign),
+                method: :patch,
+                data: { confirm: campaign_close_confirmation(campaign) },
+                class: "btn btn-warning")
+    end
+
+    def reopen_campaign_button(campaign)
+      button_to(t("registration.campaign.actions.reopen"),
+                reopen_registration_campaign_path(campaign),
+                method: :patch,
+                data: { confirm: t("registration.campaign.confirmations.reopen") },
+                class: "btn btn-success")
+    end
   end
 end

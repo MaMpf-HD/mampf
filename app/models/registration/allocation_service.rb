@@ -7,6 +7,20 @@ module Registration
     end
 
     def allocate!
+      # Clean up forced registrations from previous runs (idempotency)
+      # Only delete rank-less registrations if the user has other registrations,
+      # preserving manual single-assignments.
+      subquery = Registration::UserRegistration
+                 .select(:user_id)
+                 .where(registration_campaign_id: @campaign.id)
+                 .group(:user_id)
+                 .having("count(*) > 1")
+
+      @campaign.user_registrations
+               .where(preference_rank: nil)
+               .where(user_id: subquery)
+               .delete_all
+
       solver =
         case @strategy
         when :min_cost_flow
