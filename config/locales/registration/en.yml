@@ -1,5 +1,10 @@
 en:
   registration:
+    allocation:
+      started: "Allocation started."
+      errors:
+        failed: "Allocation failed: %{error}"
+        wrong_status: "Allocation cannot be started because the campaign is not closed."
     campaign:
       planning_only: "Planning only"
       created: "Campaign created successfully."
@@ -92,7 +97,7 @@ en:
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
-        policy_violation: "Policy violation: %{errors}"
+        policy_violation: "Some users no longer meet the requirements."
         failed: "Allocation failed: %{error}"
     policy:
       helpdesk:
@@ -134,11 +139,6 @@ en:
         registration: "Registration"
         finalization: "Finalization"
         both: "Both"
-    allocation:
-      errors:
-        already_completed: "Campaign is already completed."
-        wrong_status: "Campaign must be in processing state."
-        policy_violation: "Some users no longer meet the requirements."
     item:
       index:
         title: "Items"

@@ -2,9 +2,12 @@ module Registration
   class AllocationsController < ApplicationController
     before_action :set_campaign
 
+    def current_ability
+      @current_ability ||= RegistrationCampaignAbility.new(current_user)
+    end
+
     def create
       authorize! :allocate, @campaign
-
       if @campaign.closed?
         Registration::AllocationService.new(@campaign).allocate!
         redirect_to registration_campaign_path(@campaign),
@@ -13,9 +16,6 @@ module Registration
         redirect_to registration_campaign_path(@campaign),
                     alert: t("registration.allocation.errors.wrong_status")
       end
-    rescue StandardError => e
-      redirect_to registration_campaign_path(@campaign),
-                  alert: t("registration.allocation.errors.failed", error: e.message)
     end
 
     def finalize
@@ -42,7 +42,7 @@ module Registration
     private
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:campaign_id])
+        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
       end
   end
 end

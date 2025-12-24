@@ -51,7 +51,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
       context "when guard checks pass" do
         before do
           allow_any_instance_of(Registration::FinalizationGuard)
-            .to receive(:check).and_return(Registration::FinalizationGuard::Result.new(success?: true))
+            .to receive(:check)
+            .and_return(Registration::FinalizationGuard::Result.new(success?: true))
         end
 
         it "finalizes the campaign" do

@@ -92,7 +92,7 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
-        policy_violation: "Richtlinienverstoß: %{errors}"
+        policy_violation: "Einige Nutzer erfüllen die Voraussetzungen nicht mehr."
         failed: "Zuteilung fehlgeschlagen: %{error}"
     policy:
       helpdesk:
@@ -134,11 +134,6 @@ de:
         registration: "Registrierung"
         finalization: "Finalisierung"
         both: "Beide"
-    allocation:
-      errors:
-        already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
-        wrong_status: "Anmeldeverfahren muss im Status 'In Bearbeitung' sein."
-        policy_violation: "Einige Nutzer erfüllen die Voraussetzungen nicht mehr."
     item:
       index:
         title: "Elemente"
