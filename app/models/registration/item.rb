@@ -55,10 +55,7 @@ module Registration
     def capacity_editable?
       return true if registration_campaign.draft?
 
-      if registration_campaign.completed? ||
-         (registration_campaign.processing? && registration_campaign.preference_based?)
-        return false
-      end
+      return false if registration_campaign.completed?
 
       true
     end

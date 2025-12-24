@@ -22,7 +22,7 @@ module Registration
 
     def create
       authorize! :allocate, @campaign
-      if @campaign.closed?
+      if @campaign.closed? || @campaign.processing?
         Registration::AllocationService.new(@campaign).allocate!
         load_allocation_data
 
