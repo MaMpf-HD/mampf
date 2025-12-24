@@ -315,7 +315,12 @@ Rails.application.routes.draw do
 
       resources :registrations,
                 controller: "registration/user_registrations",
-                only: [:destroy]
+                only: [:destroy] do
+        collection do
+          delete "user/:user_id", to: "registration/user_registrations#destroy_for_user",
+                                  as: :destroy_for_user
+        end
+      end
     end
   end
 

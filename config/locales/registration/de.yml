@@ -206,8 +206,12 @@ de:
         rejected: "Abgelehnt"
       rank: "Rang"
       destroyed: "Anmeldung erfolgreich entfernt."
+      destroyed_all_for_user: "%{count} Anmeldungen für Benutzer entfernt."
+      destroy_failed: "Anmeldungen konnten nicht entfernt werden."
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
+      actions:
+        remove_user: "Benutzer aus Anmeldeverfahren entfernen"
   activerecord:
     errors:
       models:

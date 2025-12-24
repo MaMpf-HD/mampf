@@ -54,6 +54,7 @@ module Registration
             next if result[:pass]
 
             invalid_users << { user_id: user.id,
+                               registration_id: registration.id,
                                name: user.name,
                                email: user.email,
                                policy: policy.kind }

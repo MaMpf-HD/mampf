@@ -15,12 +15,33 @@ module Registration
         respond_to do |format|
           format.turbo_stream { render turbo_stream: turbo_stream.remove(@registration) }
           format.html do
-            redirect_to registration_campaign_path(@campaign),
-                        notice: t("registration.user_registration.destroyed")
+            redirect_back_or_to(registration_campaign_path(@campaign),
+                                notice: t("registration.user_registration.destroyed"))
           end
         end
       else
         respond_with_error(@registration.errors.full_messages.join(", "))
+      end
+    end
+
+    def destroy_for_user
+      @user = User.find(params[:user_id])
+      registrations = @campaign.user_registrations.where(user: @user)
+
+      if registrations.empty?
+        redirect_back_or_to(registration_campaign_path(@campaign),
+                            alert: t("registration.user_registration.none"))
+        return
+      end
+
+      # Authorize based on the first registration (all belong to same campaign)
+      authorize! :destroy, registrations.first
+
+      if registrations.destroy_all
+        redirect_back_or_to(registration_campaign_path(@campaign), notice: t("registration.user_registration.destroyed_all_for_user",
+                                                                             count: registrations.count))
+      else
+        respond_with_error(t("registration.user_registration.destroy_failed"))
       end
     end
 

@@ -208,8 +208,12 @@ en:
         rejected: "Rejected"
       rank: "Rank"
       destroyed: "Registration removed successfully."
+      destroyed_all_for_user: "Removed %{count} registrations for user."
+      destroy_failed: "Failed to remove registrations."
       none: "No registrations found."
       preferences: "Preferences"
+      actions:
+        remove_user: "Remove user from campaign"
       invalid_type: "Invalid type."
       cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
       confirm_delete: "Are you sure you want to remove this item?"

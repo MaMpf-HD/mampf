@@ -6,9 +6,17 @@
       <hr>
       <ul>
         <% @policy_violations.each do |violation| %>
-          <li>
+          <li class="mb-1">
             <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) - 
             <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+            <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: violation[:user_id]),
+                          method: :delete,
+                          class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                          data: { confirm: t("basics.confirm"), turbo: false },
+                          form: { style: "display:inline-block;" },
+                          title: t("registration.user_registration.actions.remove_user") do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
           </li>
         <% end %>
       </ul>

@@ -2,7 +2,7 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <div>
       <%= t("registration.user_registration.index.title", default: "Registrations") %>
-      <span class="badge bg-secondary"><%= campaign.user_registrations.count %></span>
+      <span class="badge bg-secondary"><%= campaign.user_registrations.distinct.count(:user_id) %></span>
     </div>
   </div>
   <div class="card-body">
@@ -13,34 +13,55 @@
             <tr>
               <th><%= t("basics.name") %></th>
               <th><%= t("basics.email") %></th>
-              <th><%= t("basics.status") %></th>
-              <th><%= t("registration.item.one") %></th>
               <% if campaign.preference_based? %>
-                <th><%= t("registration.user_registration.rank", default: "Rank") %></th>
+                <th><%= t("registration.user_registration.preferences") %></th>
+              <% else %>
+                <th><%= t("basics.status") %></th>
+                <th><%= t("registration.item.one") %></th>
               <% end %>
               <th><%= t("basics.actions") %></th>
             </tr>
           </thead>
           <tbody>
-            <% campaign.user_registrations.includes(:user, :registration_item).order("users.name").each do |registration| %>
-              <tr id="<%= dom_id(registration) %>">
-                <td><%= registration.user.name %></td>
-                <td><%= registration.user.email %></td>
-                <td>
-                  <span class="badge bg-<%= registration_status_color(registration) %>">
-                    <%= t("registration.user_registration.status.#{registration.status}") %>
-                  </span>
-                </td>
-                <td><%= registration.registration_item&.title %></td>
+            <% campaign.user_registrations.includes(:user, :registration_item).order("users.name").group_by(&:user).each do |user, registrations| %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                
                 <% if campaign.preference_based? %>
-                  <td><%= registration.preference_rank %></td>
+                  <td>
+                    <ul class="list-unstyled mb-0">
+                      <% registrations.sort_by(&:preference_rank).each do |reg| %>
+                        <li>
+                          <span class="badge bg-secondary rounded-pill me-1"><%= reg.preference_rank %></span>
+                          <%= reg.registration_item&.title %>
+                          <% unless reg.pending? %>
+                            <span class="badge bg-<%= registration_status_color(reg) %> ms-1">
+                              <%= t("registration.user_registration.status.#{reg.status}") %>
+                            </span>
+                          <% end %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </td>
+                <% else %>
+                  <% registration = registrations.first %>
+                  <td>
+                    <span class="badge bg-<%= registration_status_color(registration) %>">
+                      <%= t("registration.user_registration.status.#{registration.status}") %>
+                    </span>
+                  </td>
+                  <td><%= registration.registration_item&.title %></td>
                 <% end %>
+
                 <td>
-                  <%= button_to t("buttons.delete"),
-                                registration_campaign_registration_path(campaign, registration),
+                  <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user.id),
                                 method: :delete,
                                 class: "btn btn-sm btn-outline-danger",
-                                data: { confirm: t("basics.confirm"), turbo_stream: true } %>
+                                data: { confirm: t("basics.confirm"), turbo: false },
+                                title: t("registration.user_registration.actions.remove_user") do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
                 </td>
               </tr>
             <% end %>
