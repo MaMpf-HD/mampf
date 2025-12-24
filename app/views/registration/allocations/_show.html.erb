@@ -14,14 +14,19 @@
       <%= button_to t("registration.campaign.actions.allocate"),
                     registration_campaign_allocation_path(@campaign),
                     method: :post,
-                    class: "btn btn-outline-primary" %>
+                    class: "btn btn-primary" %>
       
       <%= button_to t("registration.campaign.actions.finalize"),
                     finalize_registration_campaign_allocation_path(@campaign),
                     method: :patch,
                     data: { confirm: t("registration.campaign.confirmations.finalize") },
-                    class: "btn btn-primary" %>
+                    class: "btn btn-danger" %>
     </div>
+  </div>
+
+  <div class="alert alert-info mb-4">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <%= t("registration.allocation.dashboard.workflow_info") %>
   </div>
 
   <div class="row mb-4">
@@ -38,7 +43,7 @@
         <div class="card-body text-success">
           <h5 class="card-title"><%= t("registration.allocation.stats.assigned") %></h5>
           <p class="display-4"><%= @stats.assigned_users %></p>
-          <p class="card-text"><%= number_to_percentage(@stats.assigned_percentage, precision: 1) %></p>
+          <p class="card-text"><%= number_to_percentage(@stats.assigned_percentage, precision: 0) %></p>
         </div>
       </div>
     </div>
@@ -47,7 +52,7 @@
         <div class="card-body text-danger">
           <h5 class="card-title"><%= t("registration.allocation.stats.unassigned") %></h5>
           <p class="display-4"><%= @stats.unassigned_users %></p>
-          <p class="card-text"><%= number_to_percentage(@stats.unassigned_percentage, precision: 1) %></p>
+          <p class="card-text"><%= number_to_percentage(@stats.unassigned_percentage, precision: 0) %></p>
         </div>
       </div>
     </div>
@@ -97,9 +102,61 @@
                       </div>
                     </div>
                     <div class="ms-2 text-end" style="width: 3.5rem;">
-                      <%= number_to_percentage(percentage, precision: 1) %>
+                      <%= number_to_percentage(percentage, precision: 0) %>
                     </div>
                   </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <%= t("registration.allocation.dashboard.item_capacities") %>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th><%= t("basics.title") %></th>
+              <th class="text-end">
+                <%= t("registration.allocation.stats.count") %> / <%= t("registration.allocation.stats.capacity") %>
+              </th>
+              <th style="width: 40%"><%= t("registration.allocation.stats.utilization") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @stats.item_stats.each do |data| %>
+              <% percentage = data[:percentage] || 0 %>
+              <tr>
+                <td><%= data[:item].title %></td>
+                <td class="text-end">
+                  <%= data[:count] %> / <%= data[:capacity] || "∞" %>
+                </td>
+                <td class="align-middle">
+                  <% if data[:capacity] %>
+                    <div class="d-flex align-items-center">
+                      <div class="progress flex-grow-1" style="height: 10px;">
+                        <div class="progress-bar <%= utilization_bar_class(percentage) %>"
+                             role="progressbar"
+                             style="width: <%= [percentage, 100].min %>%;"
+                             aria-valuenow="<%= percentage %>"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                      <div class="ms-2 text-end" style="width: 3.5rem;">
+                        <%= number_to_percentage(percentage, precision: 0) %>
+                      </div>
+                    </div>
+                  <% else %>
+                    <span class="text-muted">-</span>
+                  <% end %>
                 </td>
               </tr>
             <% end %>

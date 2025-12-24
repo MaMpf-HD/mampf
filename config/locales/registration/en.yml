@@ -1,10 +1,5 @@
 en:
   registration:
-    allocation:
-      started: "Allocation started."
-      errors:
-        failed: "Allocation failed: %{error}"
-        wrong_status: "Allocation cannot be started because the campaign is not closed."
     campaign:
       planning_only: "Planning only"
       created: "Campaign created successfully."
@@ -99,6 +94,8 @@ en:
         title: "Allocation Dashboard"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments."
+        item_capacities: "Tutorial Capacities"
       stats:
         total_registrations: "Total Applicants"
         assigned: "Assigned"
@@ -109,6 +106,13 @@ en:
         percentage: "Percentage"
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
+        capacity: "Capacity"
+        utilization: "Utilization"
+      errors:
+        already_completed: "Campaign is already completed."
+        wrong_status: "Campaign has wrong status for this action."
+        policy_violation: "Policy violation: %{errors}"
+        failed: "Allocation failed: %{error}"        
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."

@@ -25,6 +25,16 @@ module Registration
       end
     end
 
+    def utilization_bar_class(percentage)
+      if percentage > 100
+        "bg-danger"
+      elsif percentage < 50
+        "bg-warning"
+      else
+        "bg-success"
+      end
+    end
+
     def item_stats_count(item)
       campaign = item.registration_campaign
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?

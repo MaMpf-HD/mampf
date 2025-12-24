@@ -94,6 +94,8 @@ de:
         title: "Zuteilungs-Dashboard"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
+        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern."
+        item_capacities: "Auslastung"
       stats:
         total_registrations: "Bewerbungen Gesamt"
         assigned: "Zugewiesen"
@@ -104,6 +106,8 @@ de:
         percentage: "Prozent"
         rank_label: "Wahl #%{rank}"
         forced: "Zwangszuweisung"
+        capacity: "Kapazität"
+        utilization: "Auslastung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."

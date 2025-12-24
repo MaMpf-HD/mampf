@@ -22,6 +22,19 @@ module Registration
       (unassigned_users.to_f / total_registrations * 100)
     end
 
+    def item_stats
+      @campaign.registration_items.includes(:registerable).map do |item|
+        stats = @items[item.id] || { count: 0 }
+        capacity = item.capacity
+        {
+          item: item,
+          count: stats[:count],
+          capacity: capacity,
+          percentage: capacity.present? && capacity.positive? ? (stats[:count].to_f / capacity * 100) : nil
+        }
+      end.sort_by { |data| data[:item].title }
+    end
+
     private
 
       def calculate
