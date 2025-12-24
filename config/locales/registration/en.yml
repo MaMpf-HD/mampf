@@ -94,7 +94,7 @@ en:
         title: "Allocation Dashboard"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments."
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
         item_capacities: "Tutorial Capacities"
       stats:
         total_registrations: "Total Applicants"

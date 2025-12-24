@@ -442,6 +442,17 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end.to change(campaign, :status).from("processing").to("completed")
     end
 
+    it "updates pending registrations to rejected" do
+      create(:registration_user_registration, registration_campaign: campaign, status: :pending)
+      create(:registration_user_registration, registration_campaign: campaign, status: :confirmed)
+
+      campaign.finalize!
+
+      expect(campaign.user_registrations.pending).to be_empty
+      expect(campaign.user_registrations.rejected.count).to eq(1)
+      expect(campaign.user_registrations.confirmed.count).to eq(1)
+    end
+
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield

@@ -115,6 +115,12 @@ module Registration
         return if completed?
 
         Registration::AllocationMaterializer.new(self).materialize!
+
+        # Reject all remaining pending registrations so the state is explicit
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.pending.update_all(status: :rejected)
+        # rubocop:enable Rails/SkipsModelValidations
+
         update!(status: :completed)
       end
     end
