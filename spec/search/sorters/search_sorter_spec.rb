@@ -117,5 +117,66 @@ RSpec.describe(Search::Sorters::SearchSorter) do
         end
       end
     end
+
+    context "when in keyset mode" do
+      let(:order_expression) do
+        "terms.year DESC, terms.season DESC, LOWER(unaccent(courses.title)) ASC"
+      end
+      let(:keyset_config) { { keyset: { year: :desc, season: :desc, title: :asc } } }
+      let(:joins) { [:course, :term] }
+      let(:joined_scope) { instance_spy(ActiveRecord::Relation, "JoinedScope") }
+      let(:selected_scope) { instance_spy(ActiveRecord::Relation, "SelectedScope") }
+
+      subject(:ordered_scope) do
+        described_class.sort(
+          scope: initial_scope,
+          model_class: model_class,
+          search_params: search_params,
+          keyset_mode: true
+        )
+      end
+
+      before do
+        allow(model_class).to receive(:respond_to?) do |method_name, *args|
+          case method_name
+          when :default_search_order, :default_search_order_joins, :pagy_keyset_config, :arel_table
+            true
+          else
+            Course.method(:respond_to?).super_method.call(method_name, *args)
+          end
+        end
+        allow(model_class).to receive(:default_search_order).and_return(order_expression)
+        allow(model_class).to receive(:default_search_order_joins).and_return(joins)
+        allow(model_class).to receive(:pagy_keyset_config).and_return(keyset_config)
+        allow(model_class).to receive(:arel_table).and_return(Course.arel_table)
+        allow(initial_scope).to receive(:left_outer_joins).with(joins).and_return(joined_scope)
+        allow(joined_scope).to receive(:select).and_return(selected_scope)
+      end
+
+      it "applies joins, adds aliased columns to select, and orders by aliases" do
+        ordered_scope
+
+        expect(initial_scope).to have_received(:left_outer_joins).with(joins)
+        expect(joined_scope).to have_received(:select) do |*args|
+          expect(args.length).to eq(4)
+          expect(args[0]).to be_a(Arel::Attributes::Attribute)
+          expect(args[1].to_s).to eq("terms.year AS year")
+          expect(args[2].to_s).to eq("terms.season AS season")
+          expect(args[3].to_s).to eq("LOWER(unaccent(courses.title)) AS title")
+        end
+        expect(selected_scope).to have_received(:order) do |*args|
+          expect(args.length).to eq(3)
+          expect(args[0].to_s).to eq("year DESC")
+          expect(args[1].to_s).to eq("season DESC")
+          expect(args[2].to_s).to eq("title ASC")
+        end
+      end
+
+      it "returns the final ordered scope" do
+        final_scope = double("FinalScope")
+        allow(selected_scope).to receive(:order).and_return(final_scope)
+        expect(ordered_scope).to eq(final_scope)
+      end
+    end
   end
 end

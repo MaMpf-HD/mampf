@@ -9,18 +9,17 @@ module Search
       # @param config [Configurators::Configuration]
       #   The configuration object from the model's configurator.
       # @return [ActiveRecord::Relation] The resulting query object.
-      def self.search(model_class:, user:, config:)
+      def self.search(model_class:, user:, config:, keyset_mode: false)
         sorter_class = config.sorter_class || Sorters::SearchSorter
-
         scope = Filters::FilterApplier.apply(scope: model_class.all,
                                              user: user,
                                              config: config)
 
         scope = scope.distinct
-
         sorter_class.sort(model_class: model_class,
                           scope: scope,
-                          search_params: config.params)
+                          search_params: config.params,
+                          keyset_mode: keyset_mode)
       end
     end
   end

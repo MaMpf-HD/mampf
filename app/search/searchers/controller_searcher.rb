@@ -36,22 +36,29 @@ module Search
 
         return controller.send(:pagy, :countish, model_class.none, limit: 1, page: 1) unless config
 
-        search_results = ModelSearcher.search(
-          model_class: model_class,
-          user: controller.current_user,
-          config: config
-        )
-
-        items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                  default_per_page)
-
         if use_keyset_navigation
-          # keyset requires simple column-based ordering
-          # Override the complex search order with a simple id-based order
-          # TODO: think of better ordering
-          search_results = search_results.reorder(id: :asc)
-          controller.send(:pagy, :keyset, search_results, limit: items_per_page)
+          search_results = ModelSearcher.search(
+            model_class: model_class,
+            user: controller.current_user,
+            config: config,
+            keyset_mode: true
+          )
+          keyset_config = if model_class.respond_to?(:pagy_keyset_config)
+            model_class.pagy_keyset_config
+          else
+            {}
+          end
+          controller.send(:pagy, :keyset, search_results,
+                          **keyset_config, limit: default_per_page, counter_over: true)
         else
+          search_results = ModelSearcher.search(
+            model_class: model_class,
+            user: controller.current_user,
+            config: config
+          )
+
+          items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                    default_per_page)
           controller.send(:pagy, :countish, search_results,
                           limit: items_per_page, page: config.params[:page])
         end
