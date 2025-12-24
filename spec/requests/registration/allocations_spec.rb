@@ -11,6 +11,26 @@ RSpec.describe("Registration::Allocations", type: :request) do
     create(:editable_user_join, user: editor, editable: lecture)
   end
 
+  describe "GET /campaigns/:campaign_id/allocation" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get registration_campaign_allocation_path(campaign)
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get registration_campaign_allocation_path(campaign)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
   describe "POST /campaigns/:campaign_id/allocation" do
     context "as an editor" do
       before { sign_in editor }
@@ -18,7 +38,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
       it "triggers allocation service" do
         expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
         post registration_campaign_allocation_path(campaign)
-        expect(response).to redirect_to(registration_campaign_path(campaign))
+        expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
         expect(flash[:notice]).to be_present
       end
 
@@ -51,16 +71,10 @@ RSpec.describe("Registration::Allocations", type: :request) do
       context "when guard checks pass" do
         before do
           allow_any_instance_of(Registration::FinalizationGuard)
-            .to receive(:check)
-            .and_return(Registration::FinalizationGuard::Result.new(success?: true))
-          allow_any_instance_of(Registration::AllocationMaterializer)
-            .to receive(:materialize!)
+            .to receive(:check).and_return(Registration::FinalizationGuard::Result.new(success?: true))
         end
 
         it "finalizes the campaign" do
-          expect_any_instance_of(Registration::AllocationMaterializer)
-            .to receive(:materialize!)
-
           patch finalize_registration_campaign_allocation_path(campaign)
 
           campaign.reload

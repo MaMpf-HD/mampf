@@ -297,7 +297,7 @@ Rails.application.routes.draw do
       end
       resource :allocation,
                controller: "registration/allocations",
-               only: [:create] do
+               only: [:show, :create] do
         patch :finalize
       end
       resources :policies,

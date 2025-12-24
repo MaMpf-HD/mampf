@@ -1,0 +1,143 @@
+<div class="container mt-4">
+  <div class="mb-3">
+    <%= link_to registration_campaign_path(@campaign),
+                class: "btn btn-sm btn-outline-secondary",
+                role: "button",
+                data: { turbo_stream: true } do %>
+      <i class="bi bi-arrow-left"></i> <%= t("back") %>
+    <% end %>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><%= t("registration.allocation.dashboard.title") %></h2>
+    <div class="d-flex gap-2">
+      <%= button_to t("registration.campaign.actions.allocate"),
+                    registration_campaign_allocation_path(@campaign),
+                    method: :post,
+                    class: "btn btn-outline-primary" %>
+      
+      <%= button_to t("registration.campaign.actions.finalize"),
+                    finalize_registration_campaign_allocation_path(@campaign),
+                    method: :patch,
+                    data: { confirm: t("registration.campaign.confirmations.finalize") },
+                    class: "btn btn-primary" %>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <h5 class="card-title"><%= t("registration.allocation.stats.total_registrations") %></h5>
+          <p class="display-4"><%= @stats.total_registrations %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center h-100 border-success">
+        <div class="card-body text-success">
+          <h5 class="card-title"><%= t("registration.allocation.stats.assigned") %></h5>
+          <p class="display-4"><%= @stats.assigned_users %></p>
+          <p class="card-text"><%= number_to_percentage(@stats.assigned_percentage, precision: 1) %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center h-100 border-danger">
+        <div class="card-body text-danger">
+          <h5 class="card-title"><%= t("registration.allocation.stats.unassigned") %></h5>
+          <p class="display-4"><%= @stats.unassigned_users %></p>
+          <p class="card-text"><%= number_to_percentage(@stats.unassigned_percentage, precision: 1) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <%= t("registration.allocation.stats.happiness_distribution") %>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th><%= t("registration.allocation.stats.rank") %></th>
+              <th class="text-end"><%= t("registration.allocation.stats.count") %></th>
+              <th style="width: 40%"><%= t("registration.allocation.stats.percentage") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }.each do |rank, count| %>
+              <% percentage = @stats.assigned_users > 0 ? (count.to_f / @stats.assigned_users * 100) : 0 %>
+              <% bar_class = case rank
+                             when :forced then "bg-danger"
+                             when 1 then "bg-success"
+                             when 2 then "bg-primary"
+                             else "bg-secondary"
+                             end %>
+              <tr>
+                <td>
+                  <% if rank == :forced %>
+                    <%= t("registration.allocation.stats.forced") %>
+                  <% else %>
+                    <%= t("registration.allocation.stats.rank_label", rank: rank) %>
+                  <% end %>
+                </td>
+                <td class="text-end"><%= count %></td>
+                <td class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="progress flex-grow-1" style="height: 10px;">
+                      <div class="progress-bar <%= bar_class %>"
+                           role="progressbar"
+                           style="width: <%= percentage %>%;"
+                           aria-valuenow="<%= percentage %>"
+                           aria-valuemin="0"
+                           aria-valuemax="100">
+                      </div>
+                    </div>
+                    <div class="ms-2 text-end" style="width: 3.5rem;">
+                      <%= number_to_percentage(percentage, precision: 1) %>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-danger text-white">
+      <%= t("registration.allocation.dashboard.unassigned_students") %>
+    </div>
+    <div class="card-body p-0">
+      <% if @unassigned_students.any? %>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th><%= t("basics.display_name") %></th>
+                <th><%= t("basics.email") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @unassigned_students.each do |student| %>
+                <tr>
+                  <td><%= student.tutorial_name %></td>
+                  <td><%= student.email %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-3 text-center text-muted">
+          <%= t("registration.allocation.dashboard.no_unassigned") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

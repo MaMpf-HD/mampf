@@ -70,6 +70,7 @@ en:
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"
         allocate: "Run Allocation"
+        view_allocation: "View Allocation"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
@@ -94,10 +95,26 @@ en:
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
     allocation:
       started: "Allocation process started."
+      dashboard:
+        title: "Allocation Dashboard"
+        unassigned_students: "Unassigned Students"
+        no_unassigned: "All students have been assigned!"
+      stats:
+        total_registrations: "Total Applicants"
+        assigned: "Assigned"
+        unassigned: "Unassigned"
+        happiness_distribution: "Preference Distribution"
+        rank: "Preference Rank"
+        count: "Count"
+        percentage: "Percentage"
+        rank_label: "Choice #%{rank}"
+        forced: "Forced Assignment"
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
-        policy_violation: "Some users no longer meet the requirements."
+        policy_violation: "Policy violation: %{errors}"
+        failed: "Allocation failed: %{error}"
+    policy:
         failed: "Allocation failed: %{error}"
     policy:
       helpdesk:

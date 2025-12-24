@@ -65,6 +65,7 @@ de:
         reopen: "Anmeldung wiedereröffnen"
         finalize: "Zuteilung durchführen"
         allocate: "Zuteilung berechnen"
+        view_allocation: "Zuteilung ansehen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
@@ -89,10 +90,24 @@ de:
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
     allocation:
       started: "Zuteilungsprozess gestartet."
+      dashboard:
+        title: "Zuteilungs-Dashboard"
+        unassigned_students: "Nicht zugewiesene Studierende"
+        no_unassigned: "Alle Studierenden wurden zugewiesen!"
+      stats:
+        total_registrations: "Bewerbungen Gesamt"
+        assigned: "Zugewiesen"
+        unassigned: "Nicht zugewiesen"
+        happiness_distribution: "Präferenzverteilung"
+        rank: "Präferenzrang"
+        count: "Anzahl"
+        percentage: "Prozent"
+        rank_label: "Wahl #%{rank}"
+        forced: "Zwangszuweisung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
-        policy_violation: "Einige Nutzer erfüllen die Voraussetzungen nicht mehr."
+        policy_violation: "Richtlinienverstoß: %{errors}"
         failed: "Zuteilung fehlgeschlagen: %{error}"
     policy:
       helpdesk:
