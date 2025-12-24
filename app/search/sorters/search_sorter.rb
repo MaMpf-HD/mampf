@@ -66,8 +66,6 @@ module Search
             .select(Arel.sql("keyset_subquery.*"))
             .order(*built[:order_parts])
         end
-
-      # No longer needed
     end
   end
 end
