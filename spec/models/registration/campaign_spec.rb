@@ -433,21 +433,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
   describe "#finalize!" do
     let(:campaign) { create(:registration_campaign, :with_items, status: :processing) }
-    let(:item) { campaign.registration_items.first }
-    let(:user) { create(:user) }
 
-    before do
-      create(:registration_user_registration, :confirmed, registration_item: item, user: user,
-                                                          registration_campaign: campaign)
-    end
+    it "delegates to AllocationMaterializer and updates status" do
+      expect_any_instance_of(Registration::AllocationMaterializer).to receive(:materialize!)
 
-    it "calls materialize_allocation! on items and updates status" do
-      # Verify side effect: Roster entry should be created (via materialize_allocation!)
       expect do
         campaign.finalize!
-      end.to change { item.registerable.roster_entries.count }.by(1)
-
-      expect(campaign.reload.status).to eq("completed")
+      end.to change(campaign, :status).from("processing").to("completed")
     end
 
     context "concurrency protection" do
@@ -465,7 +457,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         allow(campaign).to receive(:completed?).and_return(true)
 
         # 3. Expect that we do NOT run the materialization logic again
-        expect(item.registerable).not_to receive(:materialize_allocation!)
+        expect_any_instance_of(Registration::AllocationMaterializer).not_to receive(:materialize!)
 
         campaign.finalize!
       end

@@ -73,19 +73,6 @@ module Registration
       draft?
     end
 
-    def finalize!
-      # Protect against concurrent finalization attempts via locking
-      with_lock do
-        return if completed?
-
-        registration_items.find_each do |item|
-          item.registerable.materialize_allocation!(user_ids: item.confirmed_user_ids,
-                                                    campaign: self)
-        end
-        update!(status: :completed)
-      end
-    end
-
     def total_registrations_count
       user_registrations.distinct.count(:user_id)
     end
@@ -120,6 +107,16 @@ module Registration
     def can_be_planning_only?
       registration_items.empty? ||
         (registration_items.size == 1 && registration_items.first.registerable == campaignable)
+    end
+
+    def finalize!
+      # Protect against concurrent finalization attempts via locking
+      with_lock do
+        return if completed?
+
+        Registration::AllocationMaterializer.new(self).materialize!
+        update!(status: :completed)
+      end
     end
 
     private

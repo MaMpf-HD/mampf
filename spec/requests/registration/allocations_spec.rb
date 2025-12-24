@@ -53,9 +53,14 @@ RSpec.describe("Registration::Allocations", type: :request) do
           allow_any_instance_of(Registration::FinalizationGuard)
             .to receive(:check)
             .and_return(Registration::FinalizationGuard::Result.new(success?: true))
+          allow_any_instance_of(Registration::AllocationMaterializer)
+            .to receive(:materialize!)
         end
 
         it "finalizes the campaign" do
+          expect_any_instance_of(Registration::AllocationMaterializer)
+            .to receive(:materialize!)
+
           patch finalize_registration_campaign_allocation_path(campaign)
 
           campaign.reload
