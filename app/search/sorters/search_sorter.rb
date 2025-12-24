@@ -53,6 +53,10 @@ module Search
 
         # Applies keyset-compatible ordering and ensures ORDER BY expressions
         # are present in the SELECT list to satisfy DISTINCT.
+        #
+        # When using DISTINCT with ORDER BY in PostgreSQL, all expressions in the
+        # ORDER BY clause must appear in the SELECT list, this is why we build
+        # a subquery that includes these expressions.
         def apply_keyset_order
           built = Search::Pagination::OrderParser.build(order_expression)
           scope_with_joins = add_required_joins(scope)
