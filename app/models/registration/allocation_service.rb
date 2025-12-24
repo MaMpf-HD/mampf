@@ -27,12 +27,43 @@ module Registration
           # This ensures idempotency if we run the solver multiple times.
           @campaign.user_registrations.update_all(status: :pending) # rubocop:disable Rails/SkipsModelValidations
 
-          # Mark selected registrations as confirmed
-          # allocation is a Hash: { user_id => registration_item_id }
+          # Group allocations by item_id to perform bulk updates
+          allocations_by_item = Hash.new { |h, k| h[k] = [] }
           allocation.each do |user_id, item_id|
+            allocations_by_item[item_id] << user_id
+          end
+
+          allocations_by_item.each do |item_id, user_ids|
+            # Update existing registrations
+            # rubocop:disable Rails/SkipsModelValidations
             @campaign.user_registrations
-                     .where(user_id: user_id, registration_item_id: item_id)
-                     .update_all(status: :confirmed) # rubocop:disable Rails/SkipsModelValidations
+                     .where(registration_item_id: item_id, user_id: user_ids)
+                     .update_all(status: :confirmed)
+            # rubocop:enable Rails/SkipsModelValidations
+
+            # Handle forced assignments: create records for users who didn't select this item
+            existing_user_ids = @campaign.user_registrations
+                                         .where(registration_item_id: item_id, user_id: user_ids)
+                                         .pluck(:user_id)
+
+            missing_user_ids = user_ids - existing_user_ids
+            next if missing_user_ids.empty?
+
+            records = missing_user_ids.map do |user_id|
+              {
+                user_id: user_id,
+                registration_item_id: item_id,
+                registration_campaign_id: @campaign.id,
+                status: Registration::UserRegistration.statuses[:confirmed],
+                preference_rank: nil,
+                created_at: Time.current,
+                updated_at: Time.current
+              }
+            end
+
+            # rubocop:disable Rails/SkipsModelValidations
+            Registration::UserRegistration.insert_all(records)
+            # rubocop:enable Rails/SkipsModelValidations
           end
 
           # Ensure campaign is in processing state (Allocation Run)

@@ -1,6 +1,7 @@
 module Registration
   class AllocationsController < ApplicationController
     before_action :set_campaign
+    before_action :set_locale
 
     def current_ability
       @current_ability ||= RegistrationCampaignAbility.new(current_user)
@@ -10,11 +11,9 @@ module Registration
       authorize! :allocate, @campaign
       if @campaign.closed?
         Registration::AllocationService.new(@campaign).allocate!
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.allocation.started")
+        respond_with_success(t("registration.allocation.started"))
       else
-        redirect_to registration_campaign_path(@campaign),
-                    alert: t("registration.allocation.errors.wrong_status")
+        respond_with_error(t("registration.allocation.errors.wrong_status"))
       end
     end
 
@@ -25,17 +24,14 @@ module Registration
       result = guard.check
 
       unless result.success?
-        redirect_to registration_campaign_path(@campaign),
-                    alert: result.error_message
+        respond_with_error(result.error_message)
         return
       end
 
       if @campaign.finalize!
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.finalized")
+        respond_with_success(t("registration.campaign.finalized"))
       else
-        redirect_to registration_campaign_path(@campaign),
-                    alert: @campaign.errors.full_messages.join(", ")
+        respond_with_error(@campaign.errors.full_messages.join(", "))
       end
     end
 
@@ -43,6 +39,39 @@ module Registration
 
       def set_campaign
         @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+      end
+
+      def set_locale
+        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
+      end
+
+      def respond_with_success(message)
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign), notice: message
+          end
+          format.turbo_stream do
+            flash.now[:notice] = message
+            render turbo_stream: [
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_show",
+                                  locals: { campaign: @campaign }),
+              stream_flash
+            ]
+          end
+        end
+      end
+
+      def respond_with_error(message)
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign), alert: message
+          end
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
+          end
+        end
       end
   end
 end
