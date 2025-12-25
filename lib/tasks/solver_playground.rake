@@ -157,6 +157,15 @@ namespace :solver do
       puts "Created campaign: #{campaign.id}"
     end
 
+    unless campaign.registration_policies.exists?(kind: :institutional_email)
+      FactoryBot.create(:registration_policy,
+                        registration_campaign: campaign,
+                        kind: :institutional_email,
+                        config: { "allowed_domains" => "example.com" },
+                        phase: :both)
+      puts "Added institutional email policy (example.com)"
+    end
+
     # Create Friendly Tutorials
     # Total Cap: 80 (4 * 20)
     4.times do |i|
