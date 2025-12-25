@@ -127,6 +127,7 @@ en:
         finalization: "Finalization"
         both: "Both"
     item:
+      not_found: "Registration item not found."
       index:
         title: "Items"
         none: "No items added yet."

@@ -127,6 +127,7 @@ de:
         finalization: "Finalisierung"
         both: "Beide"
     item:
+      not_found: "Registrierungselement nicht gefunden."
       index:
         title: "Elemente"
         none: "Noch keine Elemente hinzugefügt."
