@@ -9,7 +9,6 @@ module Search
       # Applies the sorting logic.
       def sort
         return scope if fulltext_search? || !orderable?
-        return apply_keyset_order if keyset_mode?
 
         apply_default_order
       end
@@ -43,32 +42,17 @@ module Search
         # Applies the default order and modifies the SELECT list to include
         # the ordering columns.
         def apply_default_order
-          built = Search::Pagination::OrderParser.build(order_expression)
+          # The order expression string might contain ASC/DESC, which is invalid
+          # in a SELECT list. We need to extract just the column names for the SELECT.
+          select_columns_sql = order_expression.to_s.gsub(/\s+(ASC|DESC)\b/i, "")
+          select_expression = Arel.sql(select_columns_sql)
+
           scope_with_joins = add_required_joins(scope)
 
-          scope_with_joins
-            .select(model_class.arel_table[Arel.star], *built[:select_parts])
-            .order(order_expression)
-        end
-
-        # Applies keyset-compatible ordering and ensures ORDER BY expressions
-        # are present in the SELECT list to satisfy DISTINCT.
-        #
-        # When using DISTINCT with ORDER BY in PostgreSQL, all expressions in the
-        # ORDER BY clause must appear in the SELECT list, this is why we build
-        # a subquery that includes these expressions.
-        def apply_keyset_order
-          built = Search::Pagination::OrderParser.build(order_expression)
-          scope_with_joins = add_required_joins(scope)
-
-          subquery = scope_with_joins.select(
-            model_class.arel_table[Arel.star], *built[:select_parts]
-          )
-
-          model_class
-            .from(subquery, :keyset_subquery)
-            .select(Arel.sql("keyset_subquery.*"))
-            .order(*built[:order_parts])
+          # Always include the order expression in the SELECT list to prevent errors
+          # when .distinct is used.
+          scope_with_joins.select(model_class.arel_table[Arel.star], select_expression)
+                          .order(order_expression)
         end
     end
   end
