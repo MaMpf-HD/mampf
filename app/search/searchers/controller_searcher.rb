@@ -34,7 +34,7 @@ module Search
           cookies: controller.send(:cookies)
         )
 
-        return controller.send(:pagy, :countish, model_class.none, limit: 1, page: 1) unless config
+        return controller.send(:pagy, :countish, model_class.none, limit: 1) unless config
 
         search_results = ModelSearcher.search(
           model_class: model_class,
@@ -44,12 +44,11 @@ module Search
 
         if use_infinite_scroll_pagination
           controller.send(:pagy, :countless, search_results,
-                          limit: default_per_page, headless: true, count_over: true)
+                          limit: default_per_page, count_over: true)
         else
           items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                     default_per_page)
-          controller.send(:pagy, :countish, search_results,
-                          limit: items_per_page, page: config.params[:page])
+          controller.send(:pagy, :countish, search_results, limit: items_per_page)
         end
       end
 
@@ -60,9 +59,7 @@ module Search
           # on the controller, and then merges in the top-level :page parameter.
           def permitted_controller_params(controller, params_method_name)
             search_specific_params = controller.send(params_method_name)
-            permitted_hash = search_specific_params.to_h
-            permitted_hash[:page] = controller.params[:page] if controller.params.key?(:page)
-            permitted_hash
+            search_specific_params.to_h
           end
 
           def calculate_items_per_page(config, model_class, search_results, default_per_page)

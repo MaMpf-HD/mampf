@@ -94,7 +94,7 @@ export default class extends Controller {
    * Retrieves the next page of results when the user scrolls to the bottom
    * of the page. This is important for performance when there are many results.
    *
-   * This works together with the pagy keyset pagination.
+   * This works together with Pagy :countless pagination.
    */
   retrieveNextPage() {
     if (this.isSubmitting) return;
@@ -102,9 +102,7 @@ export default class extends Controller {
     const pagyDataElement = document.querySelector("#pagy-nav-next");
     if (!pagyDataElement) return;
 
-    // Recursion-anchor: when no page token is present, we are at the end.
-    // The Page string is base64-encoded by Pagy, but we shouldn't bother
-    // about this implementation detail.
+    // Recursion-anchor: when no next page token is present, we are at the end.
     const nextPage = pagyDataElement.dataset.nextPage;
     if (!nextPage) return;
 

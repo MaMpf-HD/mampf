@@ -286,12 +286,12 @@ class LecturesController < ApplicationController
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
       format.turbo_stream do
-        if params[:page].blank?
+        if @pagy.page == 1
           # initial rendering of first search results
           render turbo_stream: turbo_stream.replace("lecture-search-results-wrapper",
                                                     partial: "lectures/search/list")
         else
-          # For keyset/keynav_js pagination, append results for subsequent pages
+          # For infinite-scroll pagination, append results for subsequent pages
           render turbo_stream: [
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
