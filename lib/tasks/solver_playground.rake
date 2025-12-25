@@ -346,8 +346,8 @@ namespace :solver do
 
       # Find an item with available capacity
       # We need to manually track capacity here since we are seeding
-      item = items.find do |it|
-        it.confirmed_registrations_count < it.registerable.capacity
+      item = items.find do |j|
+        j.confirmed_registrations_count < j.registerable.capacity
       end
 
       unless item
@@ -423,7 +423,7 @@ namespace :solver do
       # Add a single "Planning" item
       FactoryBot.create(:registration_item,
                         registration_campaign: campaign1,
-                        registerable: seminar) # Planning campaigns often use the lecture itself or a dummy item
+                        registerable: seminar)
 
       puts "Created Campaign 1 (Planning)"
     end
@@ -456,11 +456,11 @@ namespace :solver do
     campaign2 = Registration::Campaign.find_by(campaignable: seminar,
                                                description: "Stage 2: Allocation")
 
-    # We need to destroy it if it exists to reset the scenario cleanly, or we handle idempotency carefully.
-    # Let's destroy it to be safe for this playground task.
     if campaign2
       puts "Recreating Campaign 2..."
+      # rubocop:disable Rails/SkipsModelValidations
       campaign2.update_columns(status: :draft) # Force draft to allow destruction
+      # rubocop:enable Rails/SkipsModelValidations
       campaign2.destroy!
     end
 
@@ -473,7 +473,7 @@ namespace :solver do
     puts "Created Campaign 2 (Allocation)"
 
     # Add Prerequisite Policy
-    policy = Registration::Policy.create!(
+    Registration::Policy.create!(
       registration_campaign: campaign2,
       kind: :prerequisite_campaign,
       phase: :finalization,
@@ -483,7 +483,7 @@ namespace :solver do
     puts "Added Prerequisite Policy (Must have registered in Stage 1)"
 
     # Create 12 Talks (Items)
-    12.times do |i|
+    12.times do |_i|
       title = Faker::Book.title
       talk = FactoryBot.create(:talk,
                                lecture: seminar,
@@ -506,7 +506,7 @@ namespace :solver do
 
     # Popularity bias: First 3 items are popular.
     popular_items = items.first(3)
-    other_items = items.drop(3)
+    items.drop(3)
 
     students.each do |student|
       # Each student picks 3 choices.
