@@ -11,10 +11,6 @@ module Registration
       authorize! :view_allocation, @campaign
       load_allocation_data
 
-      # Check for policy violations (dry run)
-      guard_result = Registration::FinalizationGuard.new(@campaign).check
-      @policy_violations = guard_result.success? ? [] : guard_result.data
-
       respond_to do |format|
         format.html
         format.turbo_stream do
@@ -88,6 +84,10 @@ module Registration
         @stats = Registration::AllocationStats.new(@campaign, assignment)
         @unassigned_students = User.where(id: @stats.unassigned_user_ids)
                                    .order(:email)
+
+        # Check for policy violations (dry run)
+        guard_result = Registration::FinalizationGuard.new(@campaign).check
+        @policy_violations = guard_result.success? ? [] : guard_result.data
       end
 
       def respond_with_success(message)
