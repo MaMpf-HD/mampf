@@ -68,6 +68,14 @@ module Registration
       end
     end
 
+    def rank_label(rank)
+      if rank == :forced
+        t("registration.allocation.stats.forced")
+      else
+        t("registration.allocation.stats.rank_label", rank: rank)
+      end
+    end
+
     def utilization_bar_class(percentage)
       if percentage >= 100
         "bg-danger"

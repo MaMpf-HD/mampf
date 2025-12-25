@@ -226,4 +226,15 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       end
     end
   end
+
+  describe "#rank_label" do
+    it "returns forced label for :forced" do
+      expect(helper.rank_label(:forced)).to eq(I18n.t("registration.allocation.stats.forced"))
+    end
+
+    it "returns rank label for numbers" do
+      expect(helper.rank_label(1)).to eq(I18n.t("registration.allocation.stats.rank_label",
+                                                rank: 1))
+    end
+  end
 end

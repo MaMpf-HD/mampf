@@ -22,6 +22,12 @@ module Registration
       (unassigned_users.to_f / total_registrations * 100)
     end
 
+    def percentage_of_assigned(count)
+      return 0 unless assigned_users.positive?
+
+      (count.to_f / assigned_users * 100)
+    end
+
     def item_stats
       mapped_items = @campaign.registration_items.includes(:registerable).map do |item|
         stats = @items[item.id] || { count: 0 }

@@ -118,14 +118,10 @@
             </thead>
             <tbody>
               <% sorted_preference_counts(@stats).each do |rank, count| %>
-                <% percentage = @stats.assigned_users > 0 ? (count.to_f / @stats.assigned_users * 100) : 0 %>
+                <% percentage = @stats.percentage_of_assigned(count) %>
                 <tr>
                   <td>
-                    <% if rank == :forced %>
-                      <%= t("registration.allocation.stats.forced") %>
-                    <% else %>
-                      <%= t("registration.allocation.stats.rank_label", rank: rank) %>
-                    <% end %>
+                    <%= rank_label(rank) %>
                   </td>
                   <td class="text-end"><%= count %></td>
                   <td class="align-middle">
