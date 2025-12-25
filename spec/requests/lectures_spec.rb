@@ -54,13 +54,18 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     context "with a Turbo Stream request" do
-      it "renders the initial list replacement" do
-        get search_lectures_path,
-            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
-            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
-
+      def turbo_stream_search(page: nil)
+        params = { search: { fulltext: "Calculus" }, infinite_scroll: true }
+        params[:page] = page if page
+        get(search_lectures_path, params: params,
+                                  headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
         expect(response).to have_http_status(:ok)
         expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      end
+
+      it "renders the initial list replacement" do
+        turbo_stream_search
+
         expect(response.body).to include("lecture-search-results-wrapper")
         expect(response.body).to include(calculus_courses.first.title)
         expect(response.body).not_to include(lecture_algebra.course.title)
@@ -68,13 +73,8 @@ RSpec.describe("Lectures", type: :request) do
       end
 
       it "appends results on subsequent pages" do
-        get search_lectures_path,
-            params: { search: { fulltext: "Calculus" }, infinite_scroll: true, page: 2 },
-            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+        turbo_stream_search(page: 2)
 
-        puts response.body
-
-        expect(response).to have_http_status(:ok)
         expect(response.body).to include("turbo-stream action=\"append\"")
         expect(response.body).to include("lecture-search-results")
         expect(response.body).to include(calculus_courses[10].title)
