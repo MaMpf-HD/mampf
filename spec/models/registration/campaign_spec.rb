@@ -173,6 +173,28 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
+    describe "#ensure_editable" do
+      let(:campaign) { create(:registration_campaign, :completed) }
+
+      it "prevents updates if campaign is completed" do
+        campaign.description = "New description"
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
+      end
+
+      it "allows updates if status is changing (re-opening)" do
+        campaign.status = :open
+        campaign.registration_deadline = 1.day.from_now
+        expect(campaign).to be_valid
+      end
+
+      it "allows updates if status is changing (finalizing)" do
+        campaign = create(:registration_campaign, :processing)
+        campaign.status = :completed
+        expect(campaign).to be_valid
+      end
+    end
+
     describe "#validate_real_campaign_uniqueness" do
       let(:lecture) { create(:lecture) }
 

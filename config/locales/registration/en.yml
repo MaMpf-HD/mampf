@@ -236,6 +236,7 @@ en:
           attributes:
             base:
               frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
+              already_finalized: "Campaign is already finalized."
               cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
               referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
               prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."

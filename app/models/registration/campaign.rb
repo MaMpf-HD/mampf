@@ -42,6 +42,7 @@ module Registration
 
     validate :allocation_mode_frozen, on: :update
     validate :cannot_revert_to_draft, on: :update
+    validate :ensure_editable, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
@@ -127,6 +128,13 @@ module Registration
     end
 
     private
+
+      def ensure_editable
+        return unless completed?
+        return unless changed?
+
+        errors.add(:base, :already_finalized) unless status_changed?
+      end
 
       def prerequisites_not_draft
         prereq_ids = registration_policies.select { |p| p.kind == "prerequisite_campaign" }

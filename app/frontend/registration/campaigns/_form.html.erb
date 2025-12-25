@@ -11,7 +11,7 @@
   <div class="mb-3">
     <%= f.label :description, t("registration.campaign.form.description"), class: "form-label" %>
     <%= helpdesk(t("registration.campaign.helpdesk.description"), false) %>
-    <%= f.text_field :description, class: "form-control" %>
+    <%= f.text_field :description, class: "form-control", disabled: campaign.completed? %>
   </div>
 
   <div class="mb-3">
@@ -38,11 +38,13 @@
                        class: "form-control td-input",
                        data: { td_target: "#registration-deadline-picker" },
                        value: campaign.registration_deadline&.strftime("%Y-%m-%d %H:%M"),
-                       autocomplete: "off" %>
+                       autocomplete: "off",
+                       disabled: campaign.completed? %>
       <span class="input-group-text td-picker-button"
             role="button"
             data-td-target="#registration-deadline-picker"
-            data-td-toggle="datetimepicker">
+            data-td-toggle="datetimepicker"
+            <%= "disabled" if campaign.completed? %>>
         <i class="bi bi-calendar-fill"></i>
       </span>
       <div class="invalid-feedback td-error"
@@ -52,7 +54,7 @@
   </div>
 
   <div class="mb-3 form-check">
-    <%= f.check_box :planning_only, class: "form-check-input", disabled: !campaign.can_be_planning_only? %>
+    <%= f.check_box :planning_only, class: "form-check-input", disabled: !campaign.can_be_planning_only? || campaign.completed? %>
     <%= f.label :planning_only, t("registration.campaign.form.planning_only"), class: "form-check-label" %>
     <%= helpdesk(t("registration.campaign.helpdesk.planning_only"), false) %>
     <% if !campaign.can_be_planning_only? %>
@@ -62,7 +64,7 @@
     <% end %>
   </div>
 
-  <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary" %>
+  <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary", disabled: campaign.completed? %>
   <%= link_to t("buttons.cancel"),
               campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
               class: "btn btn-secondary",
