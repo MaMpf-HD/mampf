@@ -39,7 +39,9 @@ module Registration
         Registration::Campaign.transaction do
           # Reset all registrations to pending to clear previous runs
           # This ensures idempotency if we run the solver multiple times.
-          @campaign.user_registrations.update_all(status: :pending) # rubocop:disable Rails/SkipsModelValidations
+          # rubocop:disable Rails/SkipsModelValidations
+          @campaign.user_registrations.update_all(status: :pending, updated_at: Time.current)
+          # rubocop:enable Rails/SkipsModelValidations
 
           # Group allocations by item_id to perform bulk updates
           allocations_by_item = Hash.new { |h, k| h[k] = [] }
@@ -52,7 +54,7 @@ module Registration
             # rubocop:disable Rails/SkipsModelValidations
             @campaign.user_registrations
                      .where(registration_item_id: item_id, user_id: user_ids)
-                     .update_all(status: :confirmed)
+                     .update_all(status: :confirmed, updated_at: Time.current)
             # rubocop:enable Rails/SkipsModelValidations
 
             # Handle forced assignments: create records for users who didn't select this item

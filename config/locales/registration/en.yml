@@ -68,6 +68,7 @@ en:
         finalize: "Finalize Allocation"
         force_finalize: "Force Finalize (Ignore Errors)"
         allocate: "Run Allocation"
+        reallocate: "Recalculate Allocation"
         view_allocation: "View Allocation"
         review_and_finalize: "Review & Finalize"
       confirmations:
@@ -77,6 +78,7 @@ en:
         reopen: "Are you sure you want to reopen registration?"
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
         force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
+        reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -97,6 +99,7 @@ en:
       started: "Allocation has been calculated."
       dashboard:
         title: "Allocation Dashboard"
+        last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."

@@ -68,6 +68,7 @@ de:
         finalize: "Zuteilung durchführen"
         force_finalize: "Finalisierung erzwingen (Fehler ignorieren)"
         allocate: "Zuteilung berechnen"
+        reallocate: "Zuteilung neu berechnen"
         view_allocation: "Zuteilung ansehen"
         review_and_finalize: "Prüfen & Abschließen"
       confirmations:
@@ -77,6 +78,7 @@ de:
         reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
         finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
         force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -97,6 +99,7 @@ de:
       started: "Zuteilung wurde berechnet."
       dashboard:
         title: "Zuteilungs-Dashboard"
+        last_updated: "Stand: %{time}"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
         workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."

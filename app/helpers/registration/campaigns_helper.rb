@@ -86,10 +86,15 @@ module Registration
     end
 
     def allocate_campaign_button(campaign)
-      button_to(t("registration.campaign.actions.allocate"),
+      has_allocation = campaign.user_registrations.where(status: :confirmed).exists?
+      label = has_allocation ? t("registration.campaign.actions.reallocate") : t("registration.campaign.actions.allocate")
+      confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
+
+      button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
-                class: "btn btn-primary")
+                class: "btn btn-primary",
+                data: { confirm: confirm, turbo: true })
     end
 
     def view_allocation_button(campaign)

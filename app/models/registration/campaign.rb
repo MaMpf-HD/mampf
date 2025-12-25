@@ -125,6 +125,10 @@ module Registration
       end
     end
 
+    def last_allocation_updated_at
+      user_registrations.maximum(:updated_at)
+    end
+
     private
 
       def prerequisites_not_draft

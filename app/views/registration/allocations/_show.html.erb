@@ -40,13 +40,18 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><%= t("registration.allocation.dashboard.title") %></h2>
+    <div>
+      <h2><%= t("registration.allocation.dashboard.title") %></h2>
+      <% last_updated = @campaign.last_allocation_updated_at %>
+      <% if @stats.total_registrations > 0 && last_updated %>
+        <small class="text-muted">
+          <%= t("registration.allocation.dashboard.last_updated", time: l(last_updated, format: :short)) %>
+        </small>
+      <% end %>
+    </div>
     <div class="d-flex gap-2">
       <% if @campaign.preference_based? %>
-        <%= button_to t("registration.campaign.actions.allocate"),
-                      registration_campaign_allocation_path(@campaign),
-                      method: :post,
-                      class: "btn btn-primary" %>
+        <%= allocate_campaign_button(@campaign) %>
       <% end %>
       
       <%# Disable normal finalize if there are violations %>
