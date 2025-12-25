@@ -17,10 +17,6 @@ export default class extends Controller {
   }
 
   update(status) {
-    this.element
-      .querySelectorAll("[data-requires-touch-enable]")
-      .forEach(btn => btn.disabled = !status);
-
     if (status == true)
       document.querySelector("[data-requires-touch-display]").classList.remove("d-none");
     else

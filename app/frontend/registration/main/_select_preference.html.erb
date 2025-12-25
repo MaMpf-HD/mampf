@@ -45,8 +45,8 @@
               </button>
               <button type="submit"
                       class="btn btn-primary btn-sm"
-                      data-requires-touch-enable disabled
                       data-action="touched-check#reset"
+                      data-turbo="false"
                       formaction="<%= save_campaign_preferences_path(campaign.id) %>">
                       <%= t('buttons.save')%>
               </button>

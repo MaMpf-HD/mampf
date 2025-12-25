@@ -36,7 +36,8 @@ module Registration
                     notice: I18n.t("registration.messages.campaign_unavailable")
       when :lecture_details
         init_details
-        render template: "registration/main/show_main_campaign", layout: "application_no_sidebar"
+        render template: "registration/main/show_main_campaign",
+               layout: "application_no_sidebar"
       when :exam_details
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       when :lecture_result
@@ -75,10 +76,16 @@ module Registration
                                                          )
         result = Registration::UserRegistration::LecturePreferenceEditService
                  .new(@campaign, current_user).update!(pref_items)
-        return reset_preferences if result.success?
-
-        respond_with_flash(:alert, t("vignettes.slide_not_created"),
-                           fallback_location: edit_questionnaire_path(@questionnaire))
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      success: I18n.t("registration.messages.preferences_saved")
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+          )
+        end
       elsif @campaign.exam_based?
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
