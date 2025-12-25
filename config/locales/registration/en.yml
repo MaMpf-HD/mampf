@@ -14,6 +14,8 @@ en:
       reopened: "Campaign reopened."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
+      not_found: "Registration campaign not found."
+      lecture_not_found: "Lecture not found."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
@@ -105,6 +107,7 @@ en:
       created: "Policy created successfully."
       updated: "Policy updated successfully."
       destroyed: "Policy deleted successfully."
+      not_found: "Registration policy not found."
       errors:
         missing_domains: "At least one allowed domain must be specified."
         missing_prerequisite_campaign: "A prerequisite campaign must be selected."
@@ -174,6 +177,8 @@ en:
               already_has_real_campaign: "A standard registration campaign already exists for this context. Only one standard campaign is allowed."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"
+            status:
+              cannot_revert_to_draft: "cannot be reverted to draft once opened"
             allocation_mode:
               frozen: "cannot be changed after campaign is opened"
             planning_only:
