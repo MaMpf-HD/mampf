@@ -14,6 +14,8 @@ de:
       reopened: "Anmeldung wiedereröffnet."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       planning_only_disabled: "Diese Option ist deaktiviert, da das Anmeldeverfahren bereits Elemente enthält, die keine Vorlesung sind."
+      not_found: "Anmeldeverfahren nicht gefunden."
+      lecture_not_found: "Veranstaltung nicht gefunden."
       helpdesk:
         campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
         description: "Eine kurze Beschreibung des Anmeldeverfahrens (max. 100 Zeichen). Diese wird in Übersichten und Tabellen angezeigt."
@@ -89,6 +91,7 @@ de:
         policies_frozen: "Richtlinien können nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
         kind: "Die Art der Regel. Zum Beispiel verlangt 'Institutionelle E-Mail', dass Nutzer eine E-Mail-Adresse einer bestimmten Domain haben."
         phase: "Wann die Regel geprüft wird. 'Registrierung': Prüfung bei der Anmeldung. 'Finalisierung': Prüfung bei der endgültigen Zuteilung (nachdem die Registrierungsfrist abgelaufen ist). 'Beide': Prüfung zu beiden Zeitpunkten."
+        allowed_domains: "Geben Sie die Hauptdomains an (z.B. 'uni-heidelberg.de'). Subdomains (wie 'stud.uni-heidelberg.de') sind automatisch eingeschlossen. Trennen Sie mehrere Domains durch Kommas."
       index:
         title: "Richtlinien"
         add: "Richtlinie hinzufügen"
@@ -104,16 +107,17 @@ de:
       created: "Richtlinie erfolgreich erstellt."
       updated: "Richtlinie erfolgreich aktualisiert."
       destroyed: "Richtlinie erfolgreich gelöscht."
+      not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
       configs:
-        allowed_domains: "Erlaubte Domains (kommagetrennt)"
+        allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
         lecture_id: "Veranstaltung"
       hints:
-        allowed_domains: "z.B. uni-heidelberg.de, mathi.uni-heidelberg.de"
+        allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
       kinds:
         institutional_email: "Institutionelle E-Mail"
         prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
@@ -123,6 +127,7 @@ de:
         finalization: "Finalisierung"
         both: "Beide"
     item:
+      not_found: "Registrierungselement nicht gefunden."
       index:
         title: "Elemente"
         none: "Noch keine Elemente hinzugefügt."
@@ -173,6 +178,8 @@ de:
               already_has_real_campaign: "Es existiert bereits ein reguläres Anmeldeverfahren für diesen Kontext. Es ist nur ein reguläres Verfahren erlaubt."
             registration_deadline:
               must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+            status:
+              cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
             planning_only:
@@ -194,3 +201,7 @@ de:
               planning_only_allows_only_lecture: "Im Planungsmodus kann nur die Vorlesung selbst hinzugefügt werden."
               planning_only_allows_single_item: "Im Planungsmodus kann nur ein einziges Element (die Vorlesung) hinzugefügt werden."
               already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "muss zum selben Anmeldeverfahren gehören"

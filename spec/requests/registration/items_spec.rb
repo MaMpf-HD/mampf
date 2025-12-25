@@ -81,6 +81,16 @@ RSpec.describe("Registration::Items", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when campaign does not exist" do
+      before { sign_in editor }
+
+      it "redirects to root with error" do
+        post(registration_campaign_items_path(registration_campaign_id: -1), params: valid_params)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+      end
+    end
   end
 
   describe "PATCH /registration_campaigns/:registration_campaign_id/items/:id" do
@@ -112,7 +122,8 @@ RSpec.describe("Registration::Items", type: :request) do
       context "when update fails (e.g. capacity too low)" do
         before do
           campaign.update(allocation_mode: :first_come_first_served, status: :open)
-          create_list(:registration_user_registration, 5, :confirmed, registration_item: item)
+          create_list(:registration_user_registration, 5, :confirmed,
+                      registration_item: item, registration_campaign: campaign)
           tutorial.update(capacity: 10)
         end
 
@@ -142,6 +153,18 @@ RSpec.describe("Registration::Items", type: :request) do
           registration_item: { capacity: 42 }
         }
         expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "when item does not exist" do
+      before { sign_in editor }
+
+      it "redirects to campaign items tab with error" do
+        patch registration_campaign_item_path(campaign, id: -1), params: {
+          registration_item: { capacity: 42 }
+        }
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(flash[:alert]).to eq(I18n.t("registration.item.not_found"))
       end
     end
   end
@@ -191,9 +214,10 @@ RSpec.describe("Registration::Items", type: :request) do
       end
 
       context "with turbo stream" do
-        it "updates the settings tab" do
+        it "updates the campaigns container" do
           delete registration_campaign_item_path(campaign, item), as: :turbo_stream
-          expect(response.body).to include('turbo-stream action="update" target="settings"')
+          expect(response.body)
+            .to include('turbo-stream action="update" target="campaigns_container"')
         end
       end
     end
@@ -204,6 +228,15 @@ RSpec.describe("Registration::Items", type: :request) do
       it "redirects to root (unauthorized)" do
         delete registration_campaign_item_path(campaign, item)
         expect(response).to redirect_to(root_path)
+      end
+    end
+    context "when item does not exist" do
+      before { sign_in editor }
+
+      it "redirects to campaign items tab with error" do
+        delete registration_campaign_item_path(campaign, id: -1)
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(flash[:alert]).to eq(I18n.t("registration.item.not_found"))
       end
     end
   end

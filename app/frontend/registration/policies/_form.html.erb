@@ -37,6 +37,7 @@
       <div data-registration-policy-form-target="configSection" data-kind="institutional_email" class="d-none">
         <div class="mb-3">
           <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
+          <%= helpdesk(t("registration.policy.helpdesk.allowed_domains"), false) %>
           <%= f.text_field :allowed_domains, class: "form-control" %>
           <div class="form-text"><%= t("registration.policy.hints.allowed_domains") %></div>
         </div>
@@ -49,7 +50,7 @@
           <%= f.collection_select :prerequisite_campaign_id,
                                   Registration::Campaign.where.not(id: @campaign.id),
                                   :id,
-                                  :title,
+                                  :description,
                                   { include_blank: true },
                                   class: "form-select" %>
         </div>
