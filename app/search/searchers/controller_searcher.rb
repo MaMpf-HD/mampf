@@ -26,7 +26,7 @@ module Search
       def self.search(controller:, model_class:, configurator_class:, options: {})
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
-        use_keyset_navigation = options.fetch(:infinite_scroll, false)
+        use_infinite_scroll_pagination = options.fetch(:infinite_scroll, false)
 
         config = configurator_class.configure(
           user: controller.current_user,
@@ -39,18 +39,12 @@ module Search
         search_results = ModelSearcher.search(
           model_class: model_class,
           user: controller.current_user,
-          config: config,
-          keyset_mode: use_keyset_navigation
+          config: config
         )
 
-        if use_keyset_navigation
-          keyset = Search::Pagination::OrderParser.keyset_from(model_class.default_search_order)
-          Search::Pagination::KeysetPager.paginate(
-            set: search_results,
-            keyset: keyset,
-            limit: default_per_page,
-            page: config.params[:page]
-          )
+        if use_infinite_scroll_pagination
+          controller.send(:pagy, :countless, search_results,
+                          limit: items_per_page, headless: true, count_over: true)
         else
           items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                     default_per_page)
