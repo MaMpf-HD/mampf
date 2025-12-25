@@ -31,7 +31,7 @@ module Registration
       end
 
       def summary
-        campaign&.title
+        campaign&.description
       end
 
       private

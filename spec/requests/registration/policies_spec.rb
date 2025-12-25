@@ -31,6 +31,16 @@ RSpec.describe("Registration::Policies", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when campaign does not exist" do
+      before { sign_in editor }
+
+      it "redirects to root with error" do
+        get new_registration_campaign_policy_path(registration_campaign_id: -1)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+      end
+    end
   end
 
   describe "GET /campaigns/:campaign_id/policies/:id/edit" do
@@ -54,6 +64,17 @@ RSpec.describe("Registration::Policies", type: :request) do
       it "redirects to root (unauthorized)" do
         get edit_registration_campaign_policy_path(campaign, policy)
         expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "when policy does not exist" do
+      before { sign_in editor }
+
+      it "redirects to campaign policies tab with error" do
+        get edit_registration_campaign_policy_path(campaign, id: -1)
+        expect(response).to redirect_to(registration_campaign_path(campaign,
+                                                                   anchor: "policies-tab"))
+        expect(flash[:alert]).to eq(I18n.t("registration.policy.not_found"))
       end
     end
   end
