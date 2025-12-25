@@ -127,6 +127,8 @@ de:
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
             registration_deadline:
               must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+            status:
+              cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
         registration/policy:

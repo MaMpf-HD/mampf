@@ -127,6 +127,8 @@ en:
               prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"
+            status:
+              cannot_revert_to_draft: "cannot be reverted to draft once opened"
             allocation_mode:
               frozen: "cannot be changed after campaign is opened"
         registration/policy:
