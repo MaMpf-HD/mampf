@@ -90,7 +90,11 @@ module Registration
 
     def allocate_campaign_button(campaign)
       has_allocation = campaign.last_allocation_calculated_at.present?
-      label = has_allocation ? t("registration.campaign.actions.reallocate") : t("registration.campaign.actions.allocate")
+      label = if has_allocation
+        t("registration.campaign.actions.reallocate")
+      else
+        t("registration.campaign.actions.allocate")
+      end
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
 
       button_to(label,
@@ -117,7 +121,7 @@ module Registration
     def open_campaign_button(campaign)
       confirm_msg = t("registration.campaign.confirmations.open")
       if campaign.registration_items.any? { |i| i.capacity.nil? }
-        confirm_msg += "\n\n" + t("registration.campaign.warnings.unlimited_items")
+        confirm_msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
 
       button_to(t("registration.campaign.actions.open"),

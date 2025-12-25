@@ -23,16 +23,20 @@ module Registration
     end
 
     def item_stats
-      @campaign.registration_items.includes(:registerable).map do |item|
+      mapped_items = @campaign.registration_items.includes(:registerable).map do |item|
         stats = @items[item.id] || { count: 0 }
         capacity = item.capacity
         {
           item: item,
           count: stats[:count],
           capacity: capacity,
-          percentage: capacity.present? && capacity.positive? ? (stats[:count].to_f / capacity * 100) : nil
+          percentage: if capacity.present? && capacity.positive?
+                        (stats[:count].to_f / capacity * 100)
+                      end
         }
-      end.sort_by { |data| data[:item].title }
+      end
+
+      mapped_items.sort_by { |data| data[:item].title }
     end
 
     private
@@ -50,8 +54,8 @@ module Registration
         @assigned_users = @assignment.size
         @unassigned_users = @total_registrations - @assigned_users
 
-        # In FCFS, unassigned users are those who have registrations but are not in the assignment list
-        # (e.g. rejected or pending if any)
+        # In FCFS, unassigned users are those who have registrations but are not
+        # in the assignment list (e.g. rejected or pending if any)
         all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
         @unassigned_user_ids = all_user_ids - @assignment.keys
 
@@ -60,7 +64,7 @@ module Registration
         @global_avg_rank = 0
         @percent_top_choice = 0
 
-        @assignment.each do |user_id, item_id|
+        @assignment.each_value do |item_id|
           update_item_stats(item_id, :fcfs)
         end
       end

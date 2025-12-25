@@ -42,8 +42,10 @@ RSpec.describe(Registration::AllocationService) do
           .and_return(solver_double)
         allow(solver_double).to receive(:run).and_return(expected_result)
 
-        # The service returns the result of the transaction block, which is true/false or the result of the last operation
-        # We don't strictly care about the return value here, but we want to ensure it runs without error
+        # The service returns the result of the transaction block, which is true/false
+        # or the result of the last operation
+        # We don't strictly care about the return value here, but we want to ensure
+        # it runs without error
         expect { service.allocate! }.not_to raise_error
       end
     end
