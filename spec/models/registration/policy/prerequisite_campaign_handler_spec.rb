@@ -49,8 +49,8 @@ RSpec.describe(Registration::Policy::PrerequisiteCampaignHandler, type: :model) 
   end
 
   describe "#summary" do
-    it "returns campaign title" do
-      expect(handler.summary).to eq(prereq.title)
+    it "returns campaign description" do
+      expect(handler.summary).to eq(prereq.description)
     end
   end
 end

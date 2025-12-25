@@ -399,7 +399,9 @@ GEM
       sanitize
     options (2.3.2)
     orm_adapter (0.5.0)
-    pagy (9.4.0)
+    pagy (43.2.2)
+      json
+      yaml
     pairing_heap (3.1.0)
     parallel (1.27.0)
     parser (3.3.10.0)
@@ -699,6 +701,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     will_paginate (4.0.1)
+    yaml (0.4.0)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -754,7 +757,7 @@ DEPENDENCIES
   mini_magick (~> 4.13)
   mobility (~> 1.2)
   net-smtp (~> 0.5)
-  pagy (~> 9.4)
+  pagy (~> 43.2)
   pdf-reader (~> 2.12)
   pg (~> 1.5)
   pg_search (~> 2.3)

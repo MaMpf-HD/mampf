@@ -10,6 +10,13 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
+    # This association - which seems redundant at first glance - allows us to
+    # enforce uniqueness constraints at the database level in addition to the
+    # model level validations defined in UserRegistration (see the corresponding
+    # indexes in the UserRegistration table in the schema):
+    # - in preference  mode,  the same preference_rank cannot be used twice by
+    #   the same user in the same campaign.
+    # - in FCFS mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
@@ -34,6 +41,7 @@ module Registration
     validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
+    validate :cannot_revert_to_draft, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
@@ -168,6 +176,12 @@ module Registration
         return unless allocation_mode_changed? && status_was != "draft"
 
         errors.add(:allocation_mode, :frozen)
+      end
+
+      def cannot_revert_to_draft
+        return unless status_changed? && draft?
+
+        errors.add(:status, :cannot_revert_to_draft)
       end
 
       def registration_deadline_future_if_open

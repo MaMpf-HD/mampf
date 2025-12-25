@@ -180,10 +180,11 @@ module Registration
         end
       end
 
-      def respond_with_error(message)
+      def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            redirect_to after_action_path, alert: message
+            path = redirect_path || after_action_path
+            redirect_to path, alert: message
           end
           format.turbo_stream do
             flash.now[:alert] = message
@@ -193,7 +194,10 @@ module Registration
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:registration_campaign_id])
+        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        return if @campaign
+
+        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
       end
 
       def set_locale
@@ -201,7 +205,10 @@ module Registration
       end
 
       def set_item
-        @item = @campaign.registration_items.find(params[:id])
+        @item = @campaign.registration_items.find_by(id: params[:id])
+        return if @item
+
+        respond_with_error(t("registration.item.not_found"))
       end
 
       def item_params

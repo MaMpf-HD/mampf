@@ -1,4 +1,7 @@
 module Registration
+  # Enables domain models (like Tutorial or Talk) to be the target of a registration campaign.
+  # Enforces an interface for managing capacity and materializing the final list of
+  # allocated users into the domain.
   module Registerable
     extend ActiveSupport::Concern
 

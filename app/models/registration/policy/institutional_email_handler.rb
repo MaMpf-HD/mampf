@@ -7,7 +7,9 @@ module Registration
         return fail_result(:configuration_error, "No allowed domains configured") if domains.empty?
 
         email = user.email.to_s.downcase
-        allowed = domains.any? { |domain| email.end_with?("@#{domain}") }
+        allowed = domains.any? do |domain|
+          email.end_with?("@#{domain}", ".#{domain}")
+        end
 
         if allowed
           pass_result(:domain_ok)
@@ -40,7 +42,7 @@ module Registration
           else
             Array(raw_domains)
           end
-          list.map { |d| (d || "").strip.downcase }.reject(&:empty?)
+          list.map { |d| (d || "").strip.downcase.delete_prefix(".") }.reject(&:empty?)
         end
     end
   end
