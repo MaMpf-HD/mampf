@@ -70,7 +70,7 @@
     <li class="nav-item" role="presentation">
       <button class="nav-link <%= 'active' if tab == 'registrations' %>" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="<%= tab == 'registrations' %>">
         <%= t("registration.user_registration.index.title", default: "Registrations") %>
-        <span class="badge rounded-pill bg-secondary ms-1">
+        <span class="badge rounded-pill bg-secondary ms-1" id="registrations-tab-count">
           <%= campaign.user_registrations.distinct.count(:user_id) %>
         </span>
       </button>

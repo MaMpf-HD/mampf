@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div class="container mt-4" id="allocation-dashboard">
   <% if @policy_violations.present? %>
     <div class="alert alert-danger">
       <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> <%= t("registration.allocation.errors.policy_violation_title") %></h4>
@@ -9,10 +9,10 @@
           <li class="mb-1">
             <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) - 
             <%= t("registration.policy.kinds.#{violation[:policy]}") %>
-            <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: violation[:user_id]),
+            <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: violation[:user_id], source: "allocation"),
                           method: :delete,
                           class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
-                          data: { confirm: t("basics.confirm"), turbo: false },
+                          data: { confirm: t("basics.confirm") },
                           form: { style: "display:inline-block;" },
                           title: t("registration.user_registration.actions.remove_user") do %>
               <i class="bi bi-trash"></i>

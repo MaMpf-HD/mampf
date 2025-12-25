@@ -1,4 +1,4 @@
-<div class="card mb-3">
+<div class="card mb-3" id="user-registrations-list">
   <div class="card-header d-flex justify-content-between align-items-center">
     <div>
       <%= t("registration.user_registration.index.title", default: "Registrations") %>
@@ -19,7 +19,9 @@
                 <th><%= t("basics.status") %></th>
                 <th><%= t("registration.item.one") %></th>
               <% end %>
-              <th><%= t("basics.actions") %></th>
+              <% unless campaign.completed? %>
+                <th><%= t("basics.actions") %></th>
+              <% end %>
             </tr>
           </thead>
           <tbody>
@@ -54,15 +56,17 @@
                   <td><%= registration.registration_item&.title %></td>
                 <% end %>
 
-                <td>
-                  <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user.id),
-                                method: :delete,
-                                class: "btn btn-sm btn-outline-danger",
-                                data: { confirm: t("basics.confirm"), turbo: false },
-                                title: t("registration.user_registration.actions.remove_user") do %>
-                    <i class="bi bi-trash"></i>
-                  <% end %>
-                </td>
+                <% unless campaign.completed? %>
+                  <td>
+                    <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user.id, source: "registrations"),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger",
+                                  data: { confirm: t("basics.confirm") },
+                                  title: t("registration.user_registration.actions.remove_user") do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>

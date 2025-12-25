@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      errors:
+        already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       planning_only: "Nur Planung"
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
