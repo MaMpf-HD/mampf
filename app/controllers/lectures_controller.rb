@@ -276,7 +276,7 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    @page, @lectures = Search::Searchers::ControllerSearcher.search(
+    @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator,
@@ -295,7 +295,7 @@ class LecturesController < ApplicationController
           render turbo_stream: [
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
-                                 locals: { page: @page }),
+                                 locals: { pagy: @pagy }),
             turbo_stream.append("lecture-search-results",
                                 partial: "lectures/search/lecture",
                                 collection: @lectures)

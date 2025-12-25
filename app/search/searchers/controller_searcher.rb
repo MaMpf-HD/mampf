@@ -44,7 +44,7 @@ module Search
 
         if use_infinite_scroll_pagination
           controller.send(:pagy, :countless, search_results,
-                          limit: items_per_page, headless: true, count_over: true)
+                          limit: default_per_page, headless: true, count_over: true)
         else
           items_per_page = calculate_items_per_page(config, model_class, search_results,
                                                     default_per_page)
