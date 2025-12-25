@@ -33,9 +33,13 @@
                 <% if campaign.preference_based? %>
                   <td>
                     <ul class="list-unstyled mb-0">
-                      <% registrations.sort_by(&:preference_rank).each do |reg| %>
+                      <% registrations.sort_by { |r| r.preference_rank || Float::INFINITY }.each do |reg| %>
                         <li>
-                          <span class="badge bg-secondary rounded-pill me-1"><%= reg.preference_rank %></span>
+                          <% if reg.preference_rank %>
+                            <span class="badge bg-secondary rounded-pill me-1"><%= reg.preference_rank %></span>
+                          <% else %>
+                            <span class="badge bg-info rounded-pill me-1" title="<%= t('registration.user_registration.forced_assignment') %>">!</span>
+                          <% end %>
                           <%= reg.registration_item&.title %>
                           <% unless reg.pending? %>
                             <span class="badge bg-<%= registration_status_color(reg) %> ms-1">
