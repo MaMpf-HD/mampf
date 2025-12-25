@@ -37,66 +37,86 @@ module Registration
 
       def save_allocation(allocation)
         Registration::Campaign.transaction do
-          # Reset all registrations to pending to clear previous runs
-          # This ensures idempotency if we run the solver multiple times.
-          # rubocop:disable Rails/SkipsModelValidations
-          @campaign.user_registrations.update_all(status: :pending, updated_at: Time.current)
-          # rubocop:enable Rails/SkipsModelValidations
-
-          # Group allocations by item_id to perform bulk updates
-          allocations_by_item = Hash.new { |h, k| h[k] = [] }
-          allocation.each do |user_id, item_id|
-            allocations_by_item[item_id] << user_id
-          end
-
-          allocations_by_item.each do |item_id, user_ids|
-            # Update existing registrations
-            # rubocop:disable Rails/SkipsModelValidations
-            @campaign.user_registrations
-                     .where(registration_item_id: item_id, user_id: user_ids)
-                     .update_all(status: :confirmed, updated_at: Time.current)
-            # rubocop:enable Rails/SkipsModelValidations
-
-            # Handle forced assignments: create records for users who didn't select this item
-            existing_user_ids = @campaign.user_registrations
-                                         .where(registration_item_id: item_id, user_id: user_ids)
-                                         .pluck(:user_id)
-
-            missing_user_ids = user_ids - existing_user_ids
-            next if missing_user_ids.empty?
-
-            records = missing_user_ids.map do |user_id|
-              {
-                user_id: user_id,
-                registration_item_id: item_id,
-                registration_campaign_id: @campaign.id,
-                status: Registration::UserRegistration.statuses[:confirmed],
-                preference_rank: nil,
-                created_at: Time.current,
-                updated_at: Time.current
-              }
-            end
-
-            # rubocop:disable Rails/SkipsModelValidations
-            Registration::UserRegistration.insert_all(records)
-            # rubocop:enable Rails/SkipsModelValidations
-          end
-
-          # Recalculate confirmed_registrations_count for all items in the campaign
-          # This is necessary because we used update_all/delete_all/insert_all which skip callbacks
-          @campaign.registration_items.each do |item|
-            count = item.user_registrations.confirmed.count
-            # rubocop:disable Rails/SkipsModelValidations
-            item.update_columns(confirmed_registrations_count: count)
-            # rubocop:enable Rails/SkipsModelValidations
-          end
-
-          # Mark the campaign as having been allocated
-          @campaign.touch(:last_allocation_calculated_at)
-
-          # Ensure campaign is in processing state (Allocation Run)
-          @campaign.update!(status: :processing) unless @campaign.processing?
+          reset_registrations
+          process_allocations(allocation)
+          update_item_counts
+          update_campaign_status
         end
+      end
+
+      def reset_registrations
+        # Reset all registrations to pending to clear previous runs
+        # This ensures idempotency if we run the solver multiple times.
+        # rubocop:disable Rails/SkipsModelValidations
+        @campaign.user_registrations.update_all(status: :pending, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def process_allocations(allocation)
+        # Group allocations by item_id to perform bulk updates
+        allocations_by_item = Hash.new { |h, k| h[k] = [] }
+        allocation.each do |user_id, item_id|
+          allocations_by_item[item_id] << user_id
+        end
+
+        allocations_by_item.each do |item_id, user_ids|
+          update_existing_registrations(item_id, user_ids)
+          create_forced_assignments(item_id, user_ids)
+        end
+      end
+
+      def update_existing_registrations(item_id, user_ids)
+        # Update existing registrations
+        # rubocop:disable Rails/SkipsModelValidations
+        @campaign.user_registrations
+                 .where(registration_item_id: item_id, user_id: user_ids)
+                 .update_all(status: :confirmed, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def create_forced_assignments(item_id, user_ids)
+        # Handle forced assignments: create records for users who didn't select this item
+        existing_user_ids = @campaign.user_registrations
+                                     .where(registration_item_id: item_id, user_id: user_ids)
+                                     .pluck(:user_id)
+
+        missing_user_ids = user_ids - existing_user_ids
+        return if missing_user_ids.empty?
+
+        records = missing_user_ids.map do |user_id|
+          {
+            user_id: user_id,
+            registration_item_id: item_id,
+            registration_campaign_id: @campaign.id,
+            status: Registration::UserRegistration.statuses[:confirmed],
+            preference_rank: nil,
+            created_at: Time.current,
+            updated_at: Time.current
+          }
+        end
+
+        # rubocop:disable Rails/SkipsModelValidations
+        Registration::UserRegistration.insert_all(records)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def update_item_counts
+        # Recalculate confirmed_registrations_count for all items in the campaign
+        # This is necessary because we used update_all/delete_all/insert_all which skip callbacks
+        @campaign.registration_items.each do |item|
+          count = item.user_registrations.confirmed.count
+          # rubocop:disable Rails/SkipsModelValidations
+          item.update_columns(confirmed_registrations_count: count)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+      end
+
+      def update_campaign_status
+        # Mark the campaign as having been allocated
+        @campaign.touch(:last_allocation_calculated_at)
+
+        # Ensure campaign is in processing state (Allocation Run)
+        @campaign.update!(status: :processing) unless @campaign.processing?
       end
   end
 end
