@@ -7,28 +7,6 @@ module Registration
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
     end
 
-    def destroy
-      if @campaign.completed?
-        respond_with_error(t("registration.campaign.errors.already_finalized"))
-        return
-      end
-
-      @registration = @campaign.user_registrations.find(params[:id])
-      authorize! :destroy, @registration
-
-      if @registration.destroy
-        respond_to do |format|
-          format.turbo_stream { render turbo_stream: turbo_stream.remove(@registration) }
-          format.html do
-            redirect_back_or_to(registration_campaign_path(@campaign),
-                                notice: t("registration.user_registration.destroyed"))
-          end
-        end
-      else
-        respond_with_error(@registration.errors.full_messages.join(", "))
-      end
-    end
-
     def destroy_for_user
       if @campaign.completed?
         respond_with_error(t("registration.campaign.errors.already_finalized"))
