@@ -25,10 +25,53 @@ module Registration
       end
     end
 
+    # rubocop :disable Metrics/ParameterLists
+    def registration_progress_bar(value, max, classification: :neutral, label: nil,
+                                  height: "1.5rem", show_label: true,
+                                  container_class: "progress mb-2", style: nil)
+      # rubocop :enable Metrics/ParameterLists
+      percentage = max.to_i.positive? ? (value.to_f / max * 100).clamp(0, 100) : 0
+
+      color_class = case classification
+                    when :utilization
+                      utilization_color(percentage)
+                    when :time
+                      "bg-info"
+                    when :neutral
+                      "bg-primary"
+                    else
+                      "bg-#{classification}"
+      end
+
+      tag.div(class: container_class, style: [style, "height: #{height}"].compact.join("; ")) do
+        tag.div(class: "progress-bar #{color_class}",
+                role: "progressbar",
+                style: "width: #{percentage}%",
+                "aria-valuenow": value,
+                "aria-valuemin": 0,
+                "aria-valuemax": max) do
+          label || "#{percentage.round}%" if show_label
+        end
+      end
+    end
+
+    def sorted_preference_counts(stats)
+      stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }
+    end
+
+    def rank_color(rank)
+      case rank
+      when :forced then :danger
+      when 1 then :success
+      when 2 then :primary
+      else :secondary
+      end
+    end
+
     def utilization_bar_class(percentage)
-      if percentage > 100
+      if percentage >= 100
         "bg-danger"
-      elsif percentage < 50
+      elsif percentage >= 80
         "bg-warning"
       else
         "bg-success"
@@ -41,24 +84,6 @@ module Registration
         item.confirmed_registrations_count
       else
         item.first_choice_count
-      end
-    end
-
-    def item_capacity_percentage(item)
-      return 0 if item.capacity.to_i.zero?
-
-      (item.confirmed_registrations_count.to_f / item.capacity * 100).clamp(0, 100)
-    end
-
-    def item_capacity_progress_color(item)
-      percentage = item_capacity_percentage(item)
-
-      if percentage >= 100
-        "danger"
-      elsif percentage >= 80
-        "warning"
-      else
-        "success"
       end
     end
 
@@ -146,5 +171,17 @@ module Registration
                 data: { confirm: t("registration.campaign.confirmations.reopen") },
                 class: "btn btn-success")
     end
+
+    private
+
+      def utilization_color(percentage)
+        if percentage >= 100
+          "bg-danger"
+        elsif percentage >= 80
+          "bg-warning"
+        else
+          "bg-success"
+        end
+      end
   end
 end

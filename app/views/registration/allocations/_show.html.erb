@@ -117,14 +117,8 @@
               </tr>
             </thead>
             <tbody>
-              <% @stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }.each do |rank, count| %>
+              <% sorted_preference_counts(@stats).each do |rank, count| %>
                 <% percentage = @stats.assigned_users > 0 ? (count.to_f / @stats.assigned_users * 100) : 0 %>
-                <% bar_class = case rank
-                               when :forced then "bg-danger"
-                               when 1 then "bg-success"
-                               when 2 then "bg-primary"
-                               else "bg-secondary"
-                               end %>
                 <tr>
                   <td>
                     <% if rank == :forced %>
@@ -136,14 +130,12 @@
                   <td class="text-end"><%= count %></td>
                   <td class="align-middle">
                     <div class="d-flex align-items-center">
-                      <div class="progress flex-grow-1" style="height: 10px;">
-                        <div class="progress-bar <%= bar_class %>"
-                             role="progressbar"
-                             style="width: <%= percentage %>%;"
-                             aria-valuenow="<%= percentage %>"
-                             aria-valuemin="0"
-                             aria-valuemax="100">
-                        </div>
+                      <div class="flex-grow-1">
+                        <%= registration_progress_bar(count, @stats.assigned_users,
+                                                      classification: rank_color(rank),
+                                                      height: "10px",
+                                                      show_label: false,
+                                                      container_class: "progress") %>
                       </div>
                       <div class="ms-2 text-end" style="width: 3.5rem;">
                         <%= number_to_percentage(percentage, precision: 0) %>
@@ -186,14 +178,12 @@
                 <td class="align-middle">
                   <% if data[:capacity] %>
                     <div class="d-flex align-items-center">
-                      <div class="progress flex-grow-1" style="height: 10px;">
-                        <div class="progress-bar <%= utilization_bar_class(percentage) %>"
-                             role="progressbar"
-                             style="width: <%= [percentage, 100].min %>%;"
-                             aria-valuenow="<%= percentage %>"
-                             aria-valuemin="0"
-                             aria-valuemax="100">
-                        </div>
+                      <div class="flex-grow-1">
+                        <%= registration_progress_bar(data[:count], data[:capacity],
+                                                      classification: :utilization,
+                                                      height: "10px",
+                                                      show_label: false,
+                                                      container_class: "progress") %>
                       </div>
                       <div class="ms-2 text-end" style="width: 3.5rem;">
                         <%= number_to_percentage(percentage, precision: 0) %>
