@@ -63,7 +63,10 @@ module Registration
     end
 
     def show_item_capacity_progress?(item)
-      item.registration_campaign.first_come_first_served? && item.capacity.to_i.positive?
+      campaign = item.registration_campaign
+      return false unless item.capacity.to_i.positive?
+
+      campaign.first_come_first_served? || campaign.completed?
     end
 
     def campaign_close_confirmation(campaign)

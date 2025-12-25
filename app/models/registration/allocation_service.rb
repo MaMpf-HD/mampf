@@ -82,6 +82,15 @@ module Registration
             # rubocop:enable Rails/SkipsModelValidations
           end
 
+          # Recalculate confirmed_registrations_count for all items in the campaign
+          # This is necessary because we used update_all/delete_all/insert_all which skip callbacks
+          @campaign.registration_items.each do |item|
+            count = item.user_registrations.confirmed.count
+            # rubocop:disable Rails/SkipsModelValidations
+            item.update_columns(confirmed_registrations_count: count)
+            # rubocop:enable Rails/SkipsModelValidations
+          end
+
           # Ensure campaign is in processing state (Allocation Run)
           @campaign.update!(status: :processing) unless @campaign.processing?
         end
