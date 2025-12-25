@@ -41,6 +41,7 @@ module Registration
     validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
+    validate :cannot_revert_to_draft, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
@@ -163,6 +164,12 @@ module Registration
         return unless allocation_mode_changed? && status_was != "draft"
 
         errors.add(:allocation_mode, :frozen)
+      end
+
+      def cannot_revert_to_draft
+        return unless status_changed? && draft?
+
+        errors.add(:status, :cannot_revert_to_draft)
       end
 
       def registration_deadline_future_if_open
