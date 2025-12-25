@@ -33,7 +33,7 @@
                 <% if campaign.preference_based? %>
                   <td>
                     <ul class="list-unstyled mb-0">
-                      <% registrations.sort_by { |r| r.preference_rank || Float::INFINITY }.each do |reg| %>
+                      <% sort_registrations_by_rank(registrations).each do |reg| %>
                         <li>
                           <% if reg.preference_rank %>
                             <span class="badge bg-secondary rounded-pill me-1"><%= reg.preference_rank %></span>
