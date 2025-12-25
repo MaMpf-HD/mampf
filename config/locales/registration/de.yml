@@ -12,6 +12,8 @@ de:
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
+      not_found: "Anmeldeverfahren nicht gefunden."
+      lecture_not_found: "Veranstaltung nicht gefunden."
       helpdesk:
         campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
         description: "Eine kurze Beschreibung des Anmeldeverfahrens (max. 100 Zeichen). Diese wird in Übersichten und Tabellen angezeigt."
@@ -97,6 +99,7 @@ de:
       created: "Richtlinie erfolgreich erstellt."
       updated: "Richtlinie erfolgreich aktualisiert."
       destroyed: "Richtlinie erfolgreich gelöscht."
+      not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."

@@ -116,11 +116,19 @@ module Registration
     private
 
       def set_lecture
-        @lecture = Lecture.find(params[:lecture_id])
+        @lecture = Lecture.find_by(id: params[:lecture_id])
+        return if @lecture
+
+        respond_with_error(t("registration.campaign.lecture_not_found"),
+                           redirect_path: root_path)
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:id])
+        @campaign = Registration::Campaign.find_by(id: params[:id])
+        return if @campaign
+
+        respond_with_error(t("registration.campaign.not_found"),
+                           redirect_path: root_path)
       end
 
       def set_locale
@@ -202,10 +210,11 @@ module Registration
         end
       end
 
-      def respond_with_error(message)
+      def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign), alert: message
+            path = redirect_path || registration_campaign_path(@campaign)
+            redirect_to path, alert: message
           end
           format.turbo_stream do
             flash.now[:alert] = message

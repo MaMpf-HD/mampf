@@ -33,6 +33,16 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when lecture does not exist" do
+      before { sign_in editor }
+
+      it "redirects to root with error" do
+        get lecture_registration_campaigns_path(lecture_id: -1)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.lecture_not_found"))
+      end
+    end
   end
 
   describe "POST /lectures/:lecture_id/campaigns" do
@@ -243,6 +253,16 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       it "redirects to root (unauthorized)" do
         get registration_campaign_path(campaign)
         expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "when campaign does not exist" do
+      before { sign_in editor }
+
+      it "redirects to root with error" do
+        get registration_campaign_path(id: -1)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
       end
     end
   end
