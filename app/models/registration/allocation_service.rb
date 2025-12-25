@@ -91,6 +91,9 @@ module Registration
             # rubocop:enable Rails/SkipsModelValidations
           end
 
+          # Mark the campaign as having been allocated
+          @campaign.touch(:last_allocation_calculated_at)
+
           # Ensure campaign is in processing state (Allocation Run)
           @campaign.update!(status: :processing) unless @campaign.processing?
         end

@@ -89,7 +89,7 @@ module Registration
     end
 
     def allocate_campaign_button(campaign)
-      has_allocation = campaign.user_registrations.where(status: :confirmed).exists?
+      has_allocation = campaign.last_allocation_calculated_at.present?
       label = has_allocation ? t("registration.campaign.actions.reallocate") : t("registration.campaign.actions.allocate")
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
 

@@ -42,10 +42,9 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2><%= t("registration.allocation.dashboard.title") %></h2>
-      <% last_updated = @campaign.last_allocation_updated_at %>
-      <% if @stats.total_registrations > 0 && last_updated %>
+      <% if @campaign.last_allocation_calculated_at %>
         <small class="text-muted">
-          <%= t("registration.allocation.dashboard.last_updated", time: l(last_updated, format: :short)) %>
+          <%= t("registration.allocation.dashboard.last_updated", time: l(@campaign.last_allocation_calculated_at, format: :short)) %>
         </small>
       <% end %>
     </div>
