@@ -77,13 +77,13 @@ class ConvertRegistrationTablesToUuid < ActiveRecord::Migration[8.0]
 
     # Registration Campaigns
     remove_column :registration_campaigns, :id
-    add_column :registration_campaigns, :id, :bigint, primary_key: true
+    add_column :registration_campaigns, :id, :primary_key
 
     # Registration Items
     remove_column :registration_items, :id
     remove_column :registration_items, :registration_campaign_id
 
-    add_column :registration_items, :id, :bigint, primary_key: true
+    add_column :registration_items, :id, :primary_key
     add_column :registration_items, :registration_campaign_id, :bigint, null: false
 
     add_index :registration_items, :registration_campaign_id
@@ -95,7 +95,7 @@ class ConvertRegistrationTablesToUuid < ActiveRecord::Migration[8.0]
     remove_column :registration_policies, :id
     remove_column :registration_policies, :registration_campaign_id
 
-    add_column :registration_policies, :id, :bigint, primary_key: true
+    add_column :registration_policies, :id, :primary_key
     add_column :registration_policies, :registration_campaign_id, :bigint, null: false
 
     add_index :registration_policies, :registration_campaign_id
@@ -108,7 +108,7 @@ class ConvertRegistrationTablesToUuid < ActiveRecord::Migration[8.0]
     remove_column :registration_user_registrations, :registration_campaign_id
     remove_column :registration_user_registrations, :registration_item_id
 
-    add_column :registration_user_registrations, :id, :bigint, primary_key: true
+    add_column :registration_user_registrations, :id, :primary_key
     add_column :registration_user_registrations, :registration_campaign_id, :bigint, null: false
     add_column :registration_user_registrations, :registration_item_id, :bigint, null: false
 
