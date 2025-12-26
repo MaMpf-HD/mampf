@@ -58,7 +58,8 @@ class ConvertRegistrationTablesToUuid < ActiveRecord::Migration[8.0]
     add_column :registration_user_registrations, :registration_campaign_id, :uuid, null: false
     add_column :registration_user_registrations, :registration_item_id, :uuid, null: false
 
-    add_index :registration_user_registrations, :registration_campaign_id
+    add_index :registration_user_registrations, :registration_campaign_id,
+              name: "index_reg_user_regs_on_campaign_id"
     add_index :registration_user_registrations, :registration_item_id
     add_index :registration_user_registrations,
               [:registration_campaign_id, :user_id, :preference_rank],
