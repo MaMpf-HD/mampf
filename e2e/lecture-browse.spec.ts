@@ -14,8 +14,8 @@ test("loads initial results when scrolling to search bar",
 
     const dashboard = new DashboardPage(page);
     await dashboard.goto();
-    await expect(dashboard.results).not.toBeVisible();
 
+    await expect(dashboard.results).not.toBeVisible();
     await dashboard.waitForInitialResults();
     await expect(dashboard.results).toBeVisible();
     await expect(dashboard.results).toContainText("Course 1");
@@ -28,12 +28,11 @@ test("loads more results when scrolling to bottom",
 
     const dashboard = new DashboardPage(page);
     await dashboard.goto();
-    await dashboard.scrollToSearchBar();
-
     await dashboard.waitForInitialResults();
     await expect(dashboard.results).toBeVisible();
 
     const initialCount = await dashboard.getLectureCardCount();
+    expect(initialCount).toBeGreaterThan(0);
     await dashboard.scrollToBottom();
     const finalCount = await dashboard.getLectureCardCount();
     expect(finalCount).toBeGreaterThan(initialCount);

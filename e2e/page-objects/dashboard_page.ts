@@ -15,17 +15,22 @@ export class DashboardPage {
     await this.page.locator("#lecture-search").scrollIntoViewIfNeeded();
   }
 
-  async waitForInitialResults() {
-    const lectureSearchPromise = this.page.waitForResponse(response =>
+  async getLectureSearchPromise() {
+    return this.page.waitForResponse(response =>
       response.url().includes("lectures/search"),
     );
+  }
+
+  async waitForInitialResults() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
     await this.scrollToSearchBar();
     await lectureSearchPromise;
   }
 
   async searchFor(query: string) {
+    const lectureSearchPromise = this.getLectureSearchPromise();
     await this.page.locator("#lecture-search-bar").fill(query);
-    await this.page.waitForTimeout(400);
+    await lectureSearchPromise;
   }
 
   async scrollToBottom() {
@@ -39,11 +44,8 @@ export class DashboardPage {
     return this.page.locator("#lecture-search-results");
   }
 
-  get lectureCards() {
-    return this.page.locator("#lecture-search-results .lecture-card");
-  }
-
   async getLectureCardCount() {
-    return await this.lectureCards.count();
+    const lectureCards = this.page.getByTestId("lecture-search-result-card");
+    return await lectureCards.count();
   }
 }
