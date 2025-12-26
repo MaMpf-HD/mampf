@@ -575,7 +575,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.uuid "registration_item_id", null: false
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
-    t.index ["registration_campaign_id"], name: "idx_on_registration_campaign_id_5f8ca153cb"
+    t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
