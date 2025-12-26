@@ -42,30 +42,23 @@ module Search
           config: config
         )
 
-        paginate_results(controller, search_results, default_per_page, model_class,
-                         use_infinite_scroll_pagination)
+        if use_infinite_scroll_pagination
+          controller.send(:pagy, :countless, search_results,
+                          limit: default_per_page, count_over: true)
+        else
+          items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                    default_per_page)
+          controller.send(:pagy, :countish, search_results, limit: items_per_page)
+        end
       end
 
       class << self
         private
 
           # Gets the initial, permitted parameters by calling the specified method
-          # on the controller, and then merges in the top-level :page parameter.
+          # on the controller.
           def permitted_controller_params(controller, params_method_name)
-            search_specific_params = controller.send(params_method_name)
-            search_specific_params.to_h
-          end
-
-          def paginate_results(controller, search_results, per_page, model_class,
-                               use_infinite_scroll_pagination)
-            if use_infinite_scroll_pagination
-              controller.send(:pagy, :countless, search_results,
-                              limit: per_page, count_over: true)
-            else
-              items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                        per_page)
-              controller.send(:pagy, :countish, search_results, limit: items_per_page)
-            end
+            controller.send(params_method_name).to_h
           end
 
           def calculate_items_per_page(config, model_class, search_results, default_per_page)
