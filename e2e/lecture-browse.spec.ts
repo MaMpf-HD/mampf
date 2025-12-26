@@ -1,52 +1,41 @@
 import { expect, test } from "./_support/fixtures";
+import { DashboardPage } from "./page-objects/dashboard_page";
+
+async function createLecturesWithCourses(factory: any, count: number, titlePrefix: string) {
+  for (let i = 1; i <= count; i++) {
+    const course = await factory.create("course", [], { title: `${titlePrefix} ${i}` });
+    await factory.create("lecture", ["released_for_all"], { course_id: course.id });
+  }
+}
 
 test("loads initial results when scrolling to search bar",
   async ({ factory, student: { page } }) => {
-    const courses = [];
-    for (let i = 1; i <= 5; i++) {
-      courses.push(await factory.create("course", [], { title: `Course ${i}` }));
-    }
-    for (const course of courses) {
-      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
-    }
+    await createLecturesWithCourses(factory, 5, "Course");
 
-    await page.goto("/");
-    await expect(page.locator("#lecture-search-results")).not.toBeVisible();
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+    await expect(dashboard.results).not.toBeVisible();
 
-    const lectureSearchPromise = page.waitForResponse(response =>
-      response.url().includes("lectures/search"),
-    );
-    await page.locator("#lecture-search").scrollIntoViewIfNeeded();
-    await lectureSearchPromise;
-
-    await expect(page.locator("#lecture-search-results")).toBeVisible();
-    await expect(page.locator("#lecture-search-results")).toContainText("Course 1");
-    await expect(page.locator("#lecture-search-results")).toContainText("Course 5");
+    await dashboard.waitForInitialResults();
+    await expect(dashboard.results).toBeVisible();
+    await expect(dashboard.results).toContainText("Course 1");
+    await expect(dashboard.results).toContainText("Course 5");
   });
 
 test("loads more results when scrolling to bottom",
   async ({ factory, student: { page } }) => {
-    const courses = [];
-    for (let i = 1; i <= 25; i++) {
-      courses.push(await factory.create("course", [], { title: `Test Course ${i}` }));
-    }
-    for (const course of courses) {
-      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
-    }
+    await createLecturesWithCourses(factory, 25, "Test Course");
 
-    await page.goto("/");
-    await page.locator("#lecture-search").scrollIntoViewIfNeeded();
-    await page.waitForTimeout(300);
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchBar();
 
-    await expect(page.locator("#lecture-search-results")).toBeVisible();
-    const initialCount = await page.locator("#lecture-search-results .lecture-card").count();
+    await dashboard.waitForInitialResults();
+    await expect(dashboard.results).toBeVisible();
 
-    await page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
-    await page.waitForTimeout(500);
-
-    const finalCount = await page.locator("#lecture-search-results .lecture-card").count();
+    const initialCount = await dashboard.getLectureCardCount();
+    await dashboard.scrollToBottom();
+    const finalCount = await dashboard.getLectureCardCount();
     expect(finalCount).toBeGreaterThan(initialCount);
   });
 
@@ -61,51 +50,42 @@ test("filters results based on search input",
     const mathCourse = await factory.create("course", [], { title: "Discrete Mathematics" });
     await factory.create("lecture", ["released_for_all"], { course_id: mathCourse.id });
 
-    await page.goto("/");
-    await page.locator("#lecture-search").scrollIntoViewIfNeeded();
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchBar();
     await page.waitForTimeout(300);
 
-    await expect(page.locator("#lecture-search-results")).toContainText("Calculus");
-    await expect(page.locator("#lecture-search-results")).toContainText("Algebra");
-    await expect(page.locator("#lecture-search-results")).toContainText("Mathematics");
+    await expect(dashboard.results).toContainText("Calculus");
+    await expect(dashboard.results).toContainText("Algebra");
+    await expect(dashboard.results).toContainText("Mathematics");
 
-    await page.locator("#lecture-search-bar").fill("Algebra");
-    await page.waitForTimeout(400);
+    await dashboard.searchFor("Algebra");
 
-    await expect(page.locator("#lecture-search-results")).toContainText("Algebra");
-    await expect(page.locator("#lecture-search-results")).not.toContainText("Calculus");
-    await expect(page.locator("#lecture-search-results")).not.toContainText("Mathematics");
+    await expect(dashboard.results).toContainText("Algebra");
+    await expect(dashboard.results).not.toContainText("Calculus");
+    await expect(dashboard.results).not.toContainText("Mathematics");
   });
 
 test("resets pagination when performing new search",
   async ({ factory, student: { page } }) => {
-    const courses = [];
-    for (let i = 1; i <= 20; i++) {
-      courses.push(await factory.create("course", [], { title: `Calculus ${i}` }));
-    }
-    for (const course of courses) {
-      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
-    }
+    await createLecturesWithCourses(factory, 20, "Calculus");
 
     const topologyCourse = await factory.create("course", [], { title: "Unique Topology Course" });
     await factory.create("lecture", [], { course_id: topologyCourse.id });
 
-    await page.goto("/");
-    await page.locator("#lecture-search").scrollIntoViewIfNeeded();
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchBar();
     await page.waitForTimeout(300);
 
-    await page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
-    await page.waitForTimeout(500);
+    await dashboard.scrollToBottom();
 
-    const initialCount = await page.locator("#lecture-search-results .lecture-card").count();
+    const initialCount = await dashboard.getLectureCardCount();
     expect(initialCount).toBeGreaterThan(10);
 
-    await page.locator("#lecture-search-bar").fill("Topology");
-    await page.waitForTimeout(400);
+    await dashboard.searchFor("Topology");
 
-    await expect(page.locator("#lecture-search-results")).toContainText("Topology");
-    const filteredCount = await page.locator("#lecture-search-results .lecture-card").count();
+    await expect(dashboard.results).toContainText("Topology");
+    const filteredCount = await dashboard.getLectureCardCount();
     expect(filteredCount).toBe(1);
   });
