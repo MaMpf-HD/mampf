@@ -1,6 +1,12 @@
 <div id="lecture-search-results-wrapper">
   <div id="lecture-search-results" data-testid="lecture-search-results">
-    <%= render partial: "lectures/search/lecture", collection: @lectures %>
+    <% if @lectures.any? %>
+      <%= render partial: "lectures/search/lecture", collection: @lectures %>
+    <% else %>
+      <div class="text-center text-muted my-4">
+      <%= t("lecture.search.no_results") %>
+      </div>
+    <% end %>
   </div>
 
   <%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
