@@ -15,7 +15,7 @@ module Registration
         format.html
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("campaigns_container",
-                                                   partial: "registration/allocations/show")
+                                                   partial: "registration/allocations/dashboard")
         end
       end
     end
@@ -35,7 +35,7 @@ module Registration
             flash.now[:notice] = t("registration.allocation.started")
             render turbo_stream: [
               turbo_stream.update("campaigns_container",
-                                  partial: "registration/allocations/show"),
+                                  partial: "registration/allocations/dashboard"),
               stream_flash
             ]
           end
