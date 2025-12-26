@@ -7,7 +7,7 @@ test("loads initial results when scrolling to search bar",
       courses.push(await factory.create("course", [], { title: `Course ${i}` }));
     }
     for (const course of courses) {
-      await factory.create("lecture", [], { course_id: course.id });
+      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
     }
 
     await page.goto("/");
@@ -18,7 +18,6 @@ test("loads initial results when scrolling to search bar",
     );
     await page.locator("#lecture-search").scrollIntoViewIfNeeded();
     await lectureSearchPromise;
-    await page.waitForTimeout(2000);
 
     await expect(page.locator("#lecture-search-results")).toBeVisible();
     await expect(page.locator("#lecture-search-results")).toContainText("Course 1");
@@ -32,7 +31,7 @@ test("loads more results when scrolling to bottom",
       courses.push(await factory.create("course", [], { title: `Test Course ${i}` }));
     }
     for (const course of courses) {
-      await factory.create("lecture", [], { course_id: course.id });
+      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
     }
 
     await page.goto("/");
@@ -54,13 +53,13 @@ test("loads more results when scrolling to bottom",
 test("filters results based on search input",
   async ({ factory, student: { page } }) => {
     const calculusCourse = await factory.create("course", [], { title: "Advanced Calculus" });
-    await factory.create("lecture", [], { course_id: calculusCourse.id });
+    await factory.create("lecture", ["released_for_all"], { course_id: calculusCourse.id });
 
     const algebraCourse = await factory.create("course", [], { title: "Linear Algebra" });
-    await factory.create("lecture", [], { course_id: algebraCourse.id });
+    await factory.create("lecture", ["released_for_all"], { course_id: algebraCourse.id });
 
     const mathCourse = await factory.create("course", [], { title: "Discrete Mathematics" });
-    await factory.create("lecture", [], { course_id: mathCourse.id });
+    await factory.create("lecture", ["released_for_all"], { course_id: mathCourse.id });
 
     await page.goto("/");
     await page.locator("#lecture-search").scrollIntoViewIfNeeded();
@@ -85,7 +84,7 @@ test("resets pagination when performing new search",
       courses.push(await factory.create("course", [], { title: `Calculus ${i}` }));
     }
     for (const course of courses) {
-      await factory.create("lecture", [], { course_id: course.id });
+      await factory.create("lecture", ["released_for_all"], { course_id: course.id });
     }
 
     const topologyCourse = await factory.create("course", [], { title: "Unique Topology Course" });
