@@ -64,16 +64,6 @@ module Registration
         invalid_users
       end
 
-      def validate_policies
-        # Deprecated: use check_policies instead
-        errors = check_policies
-        return success if errors.empty?
-
-        failure(:policy_violation,
-                I18n.t("registration.allocation.errors.policy_violation"),
-                errors)
-      end
-
       def success
         Result.new(success?: true)
       end
