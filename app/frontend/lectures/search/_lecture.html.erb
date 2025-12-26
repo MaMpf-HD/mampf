@@ -20,7 +20,7 @@
               <%= lecture.term.to_label_short %>
             </span>
           <% end %>
-          <% if !lecture.disable_teacher_display %>
+          <% unless lecture.disable_teacher_display %>
             <span class="lecture-search-result-teacher">
               <%= lecture.teacher.name %>
             </span>
