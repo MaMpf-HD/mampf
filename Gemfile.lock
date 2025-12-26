@@ -771,7 +771,7 @@ DEPENDENCIES
   rqrcode (~> 2.2)
   rspec-github (~> 2.4)
   rspec-rails (~> 6.1)
-  rubocop (= 1.81.7)
+  rubocop (~> 1.65)
   rubocop-performance (~> 1.21)
   rubocop-rails (~> 2.24)
   ruby-lsp-rspec (~> 0.1.28)
