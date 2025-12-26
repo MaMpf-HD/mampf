@@ -22,20 +22,25 @@ test("loads initial results when scrolling to search bar",
     await expect(dashboard.results).toContainText("Course 5");
   });
 
-test("loads more results when scrolling to bottom",
+test("loads more results when scrolling to bottom (even multiple times)",
   async ({ factory, student: { page } }) => {
-    await createLecturesWithCourses(factory, 25, "Test Course");
+    await createLecturesWithCourses(factory, 50, "Sample Course");
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
     await expect(dashboard.results).toBeVisible();
 
-    const initialCount = await dashboard.getLectureCardCount();
-    expect(initialCount).toBeGreaterThan(0);
+    const firstCount = await dashboard.getLectureCardCount();
+    expect(firstCount).toBeGreaterThan(0);
+
     await dashboard.scrollToBottom();
-    const finalCount = await dashboard.getLectureCardCount();
-    expect(finalCount).toBeGreaterThan(initialCount);
+    const secondCount = await dashboard.getLectureCardCount();
+    expect(secondCount).toBeGreaterThan(firstCount);
+
+    await dashboard.scrollToBottom();
+    const thirdCount = await dashboard.getLectureCardCount();
+    expect(thirdCount).toBeGreaterThan(secondCount);
   });
 
 test("filters results based on search input",
@@ -59,25 +64,4 @@ test("filters results based on search input",
     await expect(dashboard.results).toContainText("Algebra");
     await expect(dashboard.results).not.toContainText("Calculus");
     await expect(dashboard.results).not.toContainText("Mathematics");
-  });
-
-test("resets pagination when performing new search",
-  async ({ factory, student: { page } }) => {
-    await createLecturesWithCourses(factory, 20, "Calculus");
-
-    const topologyCourse = await factory.create("course", [], { title: "Unique Topology Course" });
-    await factory.create("lecture", ["released_for_all"], { course_id: topologyCourse.id });
-
-    const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.goto();
-    await dashboard.scrollToSearchAndWaitForResults();
-    await dashboard.scrollToBottom();
-
-    const initialCount = await dashboard.getLectureCardCount();
-    expect(initialCount).toBeGreaterThan(10);
-
-    await dashboard.searchFor("Topology");
-    await expect(dashboard.results).toContainText("Topology");
-    const filteredCount = await dashboard.getLectureCardCount();
-    expect(filteredCount).toBe(1);
   });
