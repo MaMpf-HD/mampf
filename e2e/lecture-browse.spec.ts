@@ -1,5 +1,5 @@
 import { expect, test } from "./_support/fixtures";
-import { DashboardPage } from "./page-objects/dashboard_page";
+import { DashboardLectureBrowsePage } from "./page-objects/dashboard_lecture_browse_page";
 
 async function createLecturesWithCourses(factory: any, count: number, titlePrefix: string) {
   for (let i = 1; i <= count; i++) {
@@ -12,7 +12,7 @@ test("loads initial results when scrolling to search bar",
   async ({ factory, student: { page } }) => {
     await createLecturesWithCourses(factory, 5, "Course");
 
-    const dashboard = new DashboardPage(page);
+    const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
 
     await expect(dashboard.results).not.toBeVisible();
@@ -26,7 +26,7 @@ test("loads more results when scrolling to bottom",
   async ({ factory, student: { page } }) => {
     await createLecturesWithCourses(factory, 25, "Test Course");
 
-    const dashboard = new DashboardPage(page);
+    const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
     await expect(dashboard.results).toBeVisible();
@@ -47,7 +47,7 @@ test("filters results based on search input",
     const mathCourse = await factory.create("course", [], { title: "Discrete Mathematics" });
     await factory.create("lecture", ["released_for_all"], { course_id: mathCourse.id });
 
-    const dashboard = new DashboardPage(page);
+    const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
 
@@ -68,7 +68,7 @@ test("resets pagination when performing new search",
     const topologyCourse = await factory.create("course", [], { title: "Unique Topology Course" });
     await factory.create("lecture", ["released_for_all"], { course_id: topologyCourse.id });
 
-    const dashboard = new DashboardPage(page);
+    const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
     await dashboard.scrollToBottom();

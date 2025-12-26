@@ -1,6 +1,6 @@
 import { Page } from "../_support/fixtures";
 
-export class DashboardPage {
+export class DashboardLectureBrowsePage {
   readonly page: Page;
 
   constructor(page: Page) {
