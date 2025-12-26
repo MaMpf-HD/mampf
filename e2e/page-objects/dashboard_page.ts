@@ -21,7 +21,7 @@ export class DashboardPage {
     );
   }
 
-  async waitForInitialResults() {
+  async scrollToSearchAndWaitForResults() {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.scrollToSearchBar();
     await lectureSearchPromise;
