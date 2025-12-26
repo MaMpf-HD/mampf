@@ -58,7 +58,7 @@ module Registration
                  .new(@campaign, current_user, @item).register!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.registration_success")
+                      notice: I18n.t("registration.messages.registration_success")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")
@@ -78,7 +78,7 @@ module Registration
                  .new(@campaign, current_user).update!(pref_items)
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.preferences_saved")
+                      notice: I18n.t("registration.messages.preferences_saved")
         else
           respond_with_flash(
             :alert,
@@ -101,7 +101,7 @@ module Registration
                  .new(@campaign, current_user, @item).withdraw!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.withdrawn")
+                      notice: I18n.t("registration.messages.withdrawn")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")
@@ -132,6 +132,7 @@ module Registration
     end
 
     def reset_preferences
+      @items = @campaign.registration_items.includes(:user_registrations)
       init_preferences
       rerender_preferences
     end
@@ -193,22 +194,14 @@ module Registration
       end
 
       def init_preferences
-        @user_registrations = @campaign.user_registrations
-                                       .where(user_id: current_user.id)
-                                       .where(status: [:confirmed, :pending])
-        @item_preferences =
-          @user_registrations.includes(:registration_item)
-                             .map(&:registration_item)
-                             .flatten
-                             .sort_by { |i| i.preference_rank(current_user) }
-                             .map do |item|
-            ItemPreference.new(item,
-                               item.preference_rank(current_user))
-          end
+        @item_preferences = UserRegistration::PreferencesHandler.new
+                                                                .preferences_info(@campaign,
+                                                                                  current_user)
       end
 
       def handle_preference_action(action)
         @campaign = @item.registration_campaign
+        @items = @campaign.registration_items.includes(:user_registrations)
         handler = UserRegistration::PreferencesHandler.new
         @item_preferences = handler.public_send(action, params[:item_id].to_i,
                                                 params[:preferences_json])
@@ -216,8 +209,8 @@ module Registration
       end
 
       def rerender_preferences
-        render partial: "registration/main/preferences_table",
-               locals: { item_preferences: @item_preferences, campaign: @campaign }
+        render partial: "registration/main/pb/preferences_workspace",
+               locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
       end
   end
 end

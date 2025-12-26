@@ -1,73 +1,13 @@
-<%= form_with method: :post,
-              data: { turbo_frame: "preferences_table",
-                      controller: "touched-check" } do %>
-  
-  <div class="alert alert-info py-2 px-2 m-3 d-none" data-requires-touch-display>
-    <span>
-      <%= t("registration.need_save") %>
-    </span>
-  </div>
-
-  <div class="card-body">
-    <div data-test="multi-item-preference">
-
-      <div class="h5">
-        <%= t("basics.select_type", type: campaign.registerable_type) %>
-      </div>
-
-      <div class="row g-3">
-
-        <!-- Left column: preferences -->
-        <div class="col-12 col-xl-6">
-          <div class="border rounded p-2 h-100">
-
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="fw-semibold"><%= t('registration.preferences_title')%></div>
-
-              <!-- saved time -->
-              <% last_updated = campaign.user_registrations_last_updated(current_user) %>
-              <% if last_updated %>
-                <div class="col-4 small text-success text-end fw-semibold">
-                  <%= t("basics.saved_at", time: format_date(last_updated)) %>
-                </div>
-              <% end %>
-            </div>
-
-            <%= render partial: "registration/main/preferences_table",
-                       locals: { campaign: campaign, item_preferences: item_preferences } %>
-
-            <div class="d-flex justify-content-end gap-2">
-              <button type="submit"
-                      class="btn btn-outline-primary btn-sm"
-                      data-action="touched-check#reset"
-                      formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
-                      <%= t('buttons.reset')%>
-              </button>
-              <button type="submit"
-                      class="btn btn-primary btn-sm"
-                      data-action="touched-check#reset"
-                      data-turbo="false"
-                      formaction="<%= save_campaign_preferences_path(campaign.id) %>">
-                      <%= t('buttons.save')%>
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Right column: catalog -->
-        <div class="col-12 col-xl-6">
-          <div class="border rounded p-2 h-100">
-
-            <div class="col align-items-center gap-2 mb-2 flex-wrap">
+<div class="col align-items-center m-3">
+  <% items_selected = item_preferences.map{|i| i.item.id} %>
               <div data-controller="registration-item-search">
-
+                <div class="mb-3">
                 <%= render partial: "registration/item_search_form/search_form",
                            locals: {
                              controller: "registration-item-search",
                              placeholder: t("registration.filter_placeholder")
                            } %>
-
+                </div>
                 <div class="table-responsive">
                   <table class="table table-sm align-middle mb-2">
                     <thead class="bg-grey-lighten-5 text-dark small">
@@ -101,10 +41,12 @@
                                     border-0 bg-transparent p-0 m-0"
                                     data-action="touched-check#mark"
                                     data-bs-toggle="tooltip"
+                                    <%= "disabled" if items_selected.include?(item.id)%>
                                     title="<%= t('buttons.add_to_list') %>"
                                     formaction="<%= add_preference_path(item.id) %>">
                               playlist_add
                             </button>
+                            
                           </td>
 
                         </tr>
@@ -120,12 +62,3 @@
               </span>
 
             </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-<% end %>

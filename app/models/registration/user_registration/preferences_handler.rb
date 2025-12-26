@@ -17,6 +17,20 @@ module Registration
         normalize_ranks(pref_item_from_json(json))
       end
 
+      def preferences_info(campaign, user)
+        user_registrations = campaign.user_registrations
+                                     .where(user_id: user.id)
+                                     .where(status: [:confirmed, :pending])
+        user_registrations.includes(:registration_item)
+                          .map(&:registration_item)
+                          .flatten
+                          .sort_by { |i| i.preference_rank(user) }
+                          .map do |item|
+          ItemPreference.new(item,
+                             item.preference_rank(user))
+        end
+      end
+
       def up(item_id, json)
         pref_items = pref_item_from_json(json)
         swap(pref_items, item_id, -1)

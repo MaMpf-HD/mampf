@@ -41,12 +41,12 @@
     <div class="col-12 col-lg-8">
       <div class="card h-100">
         <% if @campaign.first_come_first_served? %>
-        <%= render partial: 'registration/main/select_fcfs',
+        <%= render partial: 'registration/main/fcfs/select_fcfs',
           locals: { campaign: @campaign,
                     campaignable_host: @campaignable_host,
                     items: @items } %>
         <% else %>
-        <%= render partial: 'registration/main/select_preference',
+        <%= render partial: 'registration/main/pb/select_preference',
           locals: { campaign: @campaign,
                     campaignable_host: @campaignable_host,
                     item_preferences: @item_preferences,
@@ -84,12 +84,12 @@
   <!-- Selection card -->
   <div class="card mt-3">
     <% if @campaign.first_come_first_served? %>
-    <%= render partial: 'registration/main/select_fcfs',
+    <%= render partial: 'registration/main/fcfs/select_fcfs',
       locals: { campaign: @campaign,
                 campaignable_host: @campaignable_host,
                 items: @items } %>
     <% else %>
-    <%= render partial: 'registration/main/select_preference',
+    <%= render partial: 'registration/main/pb/select_preference',
       locals: { campaign: @campaign,
                 campaignable_host: @campaignable_host,
                 item_preferences: @item_preferences,
