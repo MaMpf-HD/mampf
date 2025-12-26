@@ -80,17 +80,21 @@ module Registration
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:registration_campaign_id])
+        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        return if @campaign
+
+        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
       end
 
       def set_locale
-        I18n.locale = @campaign.campaignable.locale_with_inheritance
+        I18n.locale = @campaign&.campaignable&.locale_with_inheritance || I18n.locale
       end
 
-      def respond_with_error(message)
+      def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            redirect_back_or_to(registration_campaign_path(@campaign), alert: message)
+            path = redirect_path || registration_campaign_path(@campaign)
+            redirect_back_or_to(path, alert: message)
           end
           format.turbo_stream do
             flash.now[:alert] = message

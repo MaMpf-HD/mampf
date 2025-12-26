@@ -29,6 +29,16 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when campaign does not exist" do
+      before { sign_in editor }
+
+      it "redirects to root with error" do
+        get registration_campaign_allocation_path(registration_campaign_id: -1)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+      end
+    end
   end
 
   describe "POST /campaigns/:campaign_id/allocation" do

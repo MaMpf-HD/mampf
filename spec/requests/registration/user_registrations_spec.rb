@@ -50,6 +50,19 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
     end
 
+    context "when campaign does not exist" do
+      let(:path) do
+        destroy_for_user_registration_campaign_registrations_path(registration_campaign_id: -1,
+                                                                  user_id: student.id)
+      end
+
+      it "redirects to root with error" do
+        delete path
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+      end
+    end
+
     context "when campaign is completed" do
       before do
         campaign.update!(status: :completed)
