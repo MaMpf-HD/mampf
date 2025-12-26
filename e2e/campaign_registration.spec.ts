@@ -115,10 +115,10 @@ test.describe("given open campaign, lecture campaign", () => {
   });
 });
 
-test.describe("open tutorial campaign", () => {
+test.describe("open fcfs tutorial campaign", () => {
   test.describe("register open tutorial campaign", () => {
     test("creates a confirmed registration when validations pass", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
 
@@ -139,7 +139,7 @@ test.describe("open tutorial campaign", () => {
     });
 
     test("with full item, when user visits, then register button is disabled", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open", "no_capacity_remained_first_item"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "no_capacity_remained_first_item", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
       const buttons = student.page.locator('button:has-text("Register now")');
@@ -150,13 +150,72 @@ test.describe("open tutorial campaign", () => {
 
   test.describe("withdraw open tutorial campaign", () => {
     test("when user withdraws, then status updates to rejected", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
 
       await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
       await page.withdraw();
       await expect(student.page.getByText("/ 300 filled")).toContainText("0 / 300");
+    });
+  });
+});
+
+test.describe("open preference based tutorial campaign", () => {
+  test.describe("register open tutorial campaign", () => {
+    test("creates pending registrations when validations pass", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "preference_based"], { capacity: 100 });
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+
+      // be possible to add items to preferences list
+      const buttons = student.page.locator('button:has-text("playlist_add")');
+      await expect(buttons).toHaveCount(3);
+      await expect(buttons.nth(0)).toBeEnabled();
+      await expect(buttons.nth(1)).toBeEnabled();
+      await expect(buttons.nth(2)).toBeEnabled();
+
+      // add first 2 options to list, added options cannot be readd
+      await buttons.nth(0).click();
+      await expect(buttons.nth(0)).toBeDisabled();
+      await buttons.nth(1).click();
+      await expect(buttons.nth(1)).toBeDisabled();
+
+      // rank list should be updated
+      let ranklist = student.page.getByText("Rank:");
+      await expect(ranklist).toHaveCount(2);
+      await expect(student.page.getByText("You have unsaved changes.")).toBeVisible();
+
+      // save should refresh page and selected list should be displayed
+      const saveButton = student.page.locator('button:has-text("Save")');
+      await Promise.all([
+        student.page.waitForURL("**/campaign_registrations/**"),
+        saveButton.click(),
+      ]);
+      ranklist = student.page.getByText("Rank:");
+      await expect(ranklist).toHaveCount(2);
+
+      // up action should move content up
+      const titleBefore1 = await student.page.locator(".row.m-2").locator(".text-primary").nth(1).allTextContents();
+      const titleBefore2 = await student.page.locator(".row.m-2").locator(".text-primary").nth(4).allTextContents();
+      console.log(titleBefore1, titleBefore2);
+      await Promise.all([
+        student.page.waitForLoadState("networkidle"),
+        student.page.locator(".row.m-2").nth(1).locator("button.arrow_upward").dispatchEvent("click"),
+      ]);
+      const titleAfter1 = await student.page.locator(".row.m-2").locator(".text-primary").nth(1).allTextContents();
+      const titleAfter2 = await student.page.locator(".row.m-2").locator(".text-primary").nth(4).allTextContents();
+      console.log(titleAfter1, titleAfter2);
+      expect(titleBefore1[0]).toBe(titleAfter2[0]);
+      expect(titleBefore2[0]).toBe(titleAfter1[0]);
+
+      // remove action should remove content from list
+      await Promise.all([
+        student.page.waitForLoadState("networkidle"),
+        student.page.locator(".row.m-2").nth(1).locator("button.playlist_remove").click(),
+      ]);
+      ranklist = student.page.getByText("Rank:");
+      await expect(ranklist).toHaveCount(1);
     });
   });
 });

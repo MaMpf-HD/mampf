@@ -18,7 +18,7 @@ RSpec.describe(Registration::UserRegistration::PreferencesHandler, type: :servic
     let(:pref_items_json) { [pref_from_fe, pref_from_fe2, pref_from_fe3].to_json }
     let(:pref_items_json2) { [pref_from_fe, pref_from_fe2].to_json }
 
-    it "result before saved must be normalized" do
+    it "result before being saved must be normalized" do
       service = described_class.new
       pref_from_fe2_incorrect = Registration::UserRegistration::PreferencesHandler::SimpleItemPreference.new(
         item.id, 3
