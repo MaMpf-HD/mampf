@@ -42,14 +42,8 @@ module Search
           config: config
         )
 
-        if use_infinite_scroll_pagination
-          controller.send(:pagy, :countless, search_results,
-                          limit: default_per_page, count_over: true)
-        else
-          items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                    default_per_page)
-          controller.send(:pagy, :countish, search_results, limit: items_per_page)
-        end
+        paginate_results(controller, search_results, default_per_page, model_class,
+                         use_infinite_scroll_pagination)
       end
 
       class << self
@@ -60,6 +54,18 @@ module Search
           def permitted_controller_params(controller, params_method_name)
             search_specific_params = controller.send(params_method_name)
             search_specific_params.to_h
+          end
+
+          def paginate_results(controller, search_results, per_page, model_class,
+                               use_infinite_scroll_pagination)
+            if use_infinite_scroll_pagination
+              controller.send(:pagy, :countless, search_results,
+                              limit: per_page, count_over: true)
+            else
+              items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                        per_page)
+              controller.send(:pagy, :countish, search_results, limit: items_per_page)
+            end
           end
 
           def calculate_items_per_page(config, model_class, search_results, default_per_page)
