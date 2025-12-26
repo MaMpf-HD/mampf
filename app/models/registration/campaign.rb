@@ -106,6 +106,13 @@ module Registration
                         .count(:user_id)
     end
 
+    def user_registrations_grouped_by_user
+      user_registrations.includes(:user, :registration_item)
+                        .joins(:user)
+                        .order("users.name")
+                        .group_by(&:user)
+    end
+
     def can_be_planning_only?
       registration_items.empty? ||
         (registration_items.size == 1 && registration_items.first.registerable == campaignable)

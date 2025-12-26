@@ -502,4 +502,25 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
   end
+
+  describe "#user_registrations_grouped_by_user" do
+    let(:campaign) { create(:registration_campaign, :with_items) }
+    let(:user1) { create(:confirmed_user, name: "Alice") }
+    let(:user2) { create(:confirmed_user, name: "Bob") }
+    let(:user3) { create(:confirmed_user, name: "Charlie") }
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign, user: user2)
+      create(:registration_user_registration, registration_campaign: campaign, user: user3)
+      create(:registration_user_registration, registration_campaign: campaign, user: user1)
+    end
+
+    it "returns registrations grouped by user and ordered by user name" do
+      grouped = campaign.user_registrations_grouped_by_user
+      expect(grouped.keys.map(&:name)).to eq(["Alice", "Bob", "Charlie"])
+      expect(grouped[user1].count).to eq(1)
+      expect(grouped[user2].count).to eq(1)
+      expect(grouped[user3].count).to eq(1)
+    end
+  end
 end

@@ -25,7 +25,7 @@
             </tr>
           </thead>
           <tbody>
-            <% campaign.user_registrations.includes(:user, :registration_item).order("users.name").group_by(&:user).each do |user, registrations| %>
+            <% campaign.user_registrations_grouped_by_user.each do |user, registrations| %>
               <tr>
                 <td><%= user.name %></td>
                 <td><%= user.email %></td>
