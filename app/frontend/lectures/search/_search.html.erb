@@ -1,6 +1,8 @@
 <%= vite_stylesheet_tag "lectures/search/_search.scss" %>
 
-<div id="lecture-search" data-controller="lecture-search">
+<div id="lecture-search"
+     data-controller="lecture-search"
+     data-testid="lecture-search">
 
   <div id="lecture-search-wrapper" class="glass">
     <%= form_with url: search_lectures_path,
@@ -15,7 +17,8 @@
                           id: "lecture-search-bar",
                           placeholder: t('lecture.search.placeholder'),
                           "aria-label": t('lecture.search.placeholder'),
-                          data: { action: "input->lecture-search#search" } %>
+                          data: { action: "input->lecture-search#search",
+                                  testid: "lecture-search-bar" } %>
         <i class="fas fa-search" id="lecture-search-icon"></i>
       </div>
 

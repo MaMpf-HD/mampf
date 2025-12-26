@@ -12,7 +12,7 @@ export class DashboardLectureBrowsePage {
   }
 
   async scrollToSearchBar() {
-    await this.page.locator("#lecture-search").scrollIntoViewIfNeeded();
+    await this.page.getByTestId("lecture-search").scrollIntoViewIfNeeded();
   }
 
   async getLectureSearchPromise() {
@@ -29,7 +29,7 @@ export class DashboardLectureBrowsePage {
 
   async searchFor(query: string) {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.locator("#lecture-search-bar").fill(query);
+    await this.page.getByTestId("lecture-search-bar").fill(query);
     await lectureSearchPromise;
   }
 
@@ -37,11 +37,12 @@ export class DashboardLectureBrowsePage {
     await this.page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
+    // Hack such that scrolling itself is really finished before we continue
     await this.page.waitForTimeout(500);
   }
 
   get results() {
-    return this.page.locator("#lecture-search-results");
+    return this.page.getByTestId("lecture-search-results");
   }
 
   async getLectureCardCount() {
