@@ -123,8 +123,7 @@
 .lecture-search-result {
     border: 2px solid mampf-blue(0.35);
     margin-top: 1em;
-    transition: box-shadow 250ms ease;
-    transition: border-color 250ms ease;
+    transition: box-shadow 250ms ease, border-color 250ms ease;
 }
 
 .lecture-search-result-image {
