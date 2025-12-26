@@ -1,4 +1,4 @@
-class AddLastAllocationCalculatedAtToRegistrationCampaigns < ActiveRecord::Migration[7.0]
+class AddLastAllocationCalculatedAtToRegistrationCampaigns < ActiveRecord::Migration[8.0]
   def change
     add_column :registration_campaigns, :last_allocation_calculated_at, :datetime
   end
