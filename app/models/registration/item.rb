@@ -44,7 +44,6 @@ module Registration
     before_destroy :ensure_campaign_is_draft
 
     def item_capacity_used
-      # user_registrations.where(status: :confirmed).count
       confirmed_registrations_count
     end
 
@@ -70,6 +69,11 @@ module Registration
 
     def title
       registerable&.registration_title || registerable&.title
+    end
+
+    def preference_rank(user)
+      registration = user_registrations.find_by(user_id: user.id)
+      registration&.preference_rank
     end
 
     def capacity_editable?

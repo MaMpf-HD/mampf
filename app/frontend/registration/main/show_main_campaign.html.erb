@@ -10,12 +10,12 @@
       </li>
     </ol>
   </nav>
-
   <!-- Campaign info card -->
   <div class="mt-3 mb-4">
   <%= render partial: 'registration/main/campaign_info',
     locals: { campaignable_host: @campaignable_host,
               campaign: @campaign } %>
+
   </div>
 
   <!-- notification banner if campaign has been closed earlier than deadline -->
@@ -28,6 +28,7 @@
   <% is_single_mode = single_mode?(@campaign.registerable_type)%>
 
   <% if is_single_mode %>
+
   <div class="row g-4">
     <!-- Eligibility card -->
     <div class="col-12 col-lg-4">
@@ -40,20 +41,20 @@
     <div class="col-12 col-lg-8">
       <div class="card h-100">
         <% if @campaign.first_come_first_served? %>
-        <%= render partial: 'registration/main/select_fcfs',
+        <%= render partial: 'registration/main/fcfs/select_fcfs',
           locals: { campaign: @campaign,
                     campaignable_host: @campaignable_host,
                     items: @items } %>
         <% else %>
-        <%= render partial: 'registration/main/select_preference',
+        <%= render partial: 'registration/main/pb/select_preference',
           locals: { campaign: @campaign,
                     campaignable_host: @campaignable_host,
+                    item_preferences: @item_preferences,
                     items: @items } %>
         <% end %>
       </div>
     </div>
   </div>
-
   <!-- Campaign details card -->
   <div class="card mt-4">
     <%= render partial: 'registration/main/campaign_details',
@@ -83,14 +84,15 @@
   <!-- Selection card -->
   <div class="card mt-3">
     <% if @campaign.first_come_first_served? %>
-    <%= render partial: 'registration/main/select_fcfs',
+    <%= render partial: 'registration/main/fcfs/select_fcfs',
       locals: { campaign: @campaign,
                 campaignable_host: @campaignable_host,
                 items: @items } %>
     <% else %>
-    <%= render partial: 'registration/main/select_preference',
+    <%= render partial: 'registration/main/pb/select_preference',
       locals: { campaign: @campaign,
                 campaignable_host: @campaignable_host,
+                item_preferences: @item_preferences,
                 items: @items } %>
     <% end %>
   </div>

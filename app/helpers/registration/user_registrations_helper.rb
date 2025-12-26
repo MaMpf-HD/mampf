@@ -66,7 +66,7 @@ module Registration
           cell_class: "text-start fw-medium",
           field: ->(item) { item.title } },
         { header: I18n.t("basics.position"),
-          cell_class: "text-center",
+          cell_class: "text-end",
           field: ->(item) { item.registerable.position } },
         { header: I18n.t("basics.date"),
           field: lambda { |item|
@@ -143,6 +143,12 @@ module Registration
         "bg-secondary-subtle text-secondary"
       else
         "bg-info-subtle text-info"
+      end
+    end
+
+    def item_json(items)
+      items.map do |item|
+        { id: item.id, preference_rank: item.preference_rank(current_user) }
       end
     end
   end

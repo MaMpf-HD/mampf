@@ -1,0 +1,62 @@
+<%= turbo_frame_tag "preferences_workspace" do %>
+  <div class="row g-3">
+    <input type="hidden"
+         name="preferences_json"
+         id="preferences-json"
+         value="<%= item_preferences.to_json %>">
+
+        <!-- Left column: preferences -->
+        <div class="col-12 col-xl-6">
+          <div class="border rounded p-2 h-100">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-semibold h6 m-2"><%= t('registration.preferences_title')%></div>
+
+              <!-- saved time -->
+              <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+              <% if last_updated %>
+                <div class="col-4 small text-success text-end fw-semibold m-3">
+                  <%= t("basics.saved_at", time: format_date(last_updated)) %>
+                </div>
+              <% end %>
+            </div>
+
+            <%= render partial: "registration/main/pb/preferences_table",
+                       locals: { campaign: campaign, item_preferences: item_preferences } %>
+
+            
+            
+            <div class="row gap-3 justify-content-end ms-auto m-4">
+              <button type="submit"
+                      class="btn btn-outline-primary btn-sm w-auto"
+                      data-action="touched-check#reset"
+                      <%= "disabled" if !campaign.open_for_registrations?%>
+                      formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
+                      <%= t('buttons.reset')%>
+              </button>
+              <button type="submit"
+                      class="btn btn-primary btn-sm w-auto"
+                      data-action="touched-check#reset"
+                      data-turbo="false"
+                      <%= "disabled" if !campaign.open_for_registrations?%>
+                      formaction="<%= save_campaign_preferences_path(campaign.id) %>">
+                      <%= t('buttons.save')%>
+              </button>
+            </div>
+            
+
+          </div>
+        </div>
+
+        <!-- Right column: catalog -->
+        <div class="col-12 col-xl-6">
+          <div class="border rounded p-2 h-100">
+
+            <%= render partial: "registration/main/pb/options_table",
+                       locals: { campaign: campaign, item_preferences: item_preferences, items: items } %>
+
+          </div>
+        </div>
+
+      </div>
+<% end %>

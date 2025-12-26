@@ -37,7 +37,7 @@
           <tr>
             <!-- attribute data columns -->
             <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-              <th class="fw-semibold"><%= col[:header] %></th>
+              <th class="fw-semibold <%= col[:cell_class] %>"><%= col[:header] %></th>
             <% end %>
 
             <!-- seats + status + action columns -->
