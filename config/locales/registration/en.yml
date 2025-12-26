@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    errors:
+      models:
+        registration/user_registration:
+          attributes:
+            registration_item:
+              must_belong_to_same_campaign: "must belong to the same campaign"

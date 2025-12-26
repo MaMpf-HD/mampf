@@ -1,0 +1,160 @@
+@import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+#lecture-search {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2em 0.7em;
+
+    // Abstract background shapes
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.6;
+        z-index: 0;
+    }
+
+    &::before {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #d4a5ff 0%, #b8a5ff 100%);
+        top: -100px;
+        right: -100px;
+    }
+
+    &::after {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #a5d8ff 0%, #a5c4ff 100%);
+        bottom: -150px;
+        left: -100px;
+    }
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.472);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 18px 9px rgba(255, 255, 255, 0.35);
+
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 0.5em;
+}
+
+#lecture-search-wrapper {
+    width: 100%;
+    max-width: 800px;
+    max-height: fit-content;
+    padding: 2em;
+
+    border-radius: 0.5em;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+#lecture-search-bar {
+    border: 2px solid #b4b4b4;
+    border-radius: 30px;
+    padding: 15px 25px;
+    padding-right: 50px;
+    width: 100%;
+    transition: all 0.3s ease;
+
+    &:focus {
+        border-color: $mampf-blue;
+        box-shadow: none;
+    }
+}
+
+#lecture-search-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#lecture-search-icon {
+    position: absolute;
+    right: 20px;
+    color: #666;
+}
+
+#lecture-search-results-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+.lecture-search-result-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+
+    &:hover {
+        text-decoration: none;
+
+        .lecture-search-result {
+            border: 2px solid $mampf-blue;
+            box-shadow:
+                0px 5px 10px -3px rgba(0, 0, 0, 0.2),
+                0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+                0 0 5px -5px mampf-blue(0.6);
+        }
+    }
+}
+
+.lecture-search-result {
+    border: 2px solid mampf-blue(0.35);
+    margin-top: 1em;
+    transition: box-shadow 250ms ease, border-color 250ms ease;
+}
+
+.lecture-search-result-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.5em 0 0 0.5em;
+
+    @include media-breakpoint-down(md) {
+        border-radius: 0.5em 0.5em 0 0;
+    }
+}
+
+.lecture-search-result-body {
+    padding: 1.5em;
+}
+
+.lecture-search-result-title {
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.lecture-search-result-info {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.lecture-search-result-term {
+    margin-right: 0.5em;
+
+    &::after {
+        content: '•';
+        margin-left: 0.5em;
+    }
+}

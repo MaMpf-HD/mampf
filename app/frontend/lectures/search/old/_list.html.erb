@@ -1,0 +1,52 @@
+<div class="row bg-mdb-color-lighten-5 mx-2 px-4 py-3">
+  <div class="col-3">
+    <strong>
+      <%= t('basics.title') %>
+    </strong>
+  </div>
+  <div class="col-2">
+    <strong>
+      <%= t('basics.term') %>
+    </strong>
+  </div>
+  <div class="col-3">
+    <strong>
+      <%= t('basics.teacher') %>
+    </strong>
+  </div>
+  <div class="col-2">
+    <strong>
+      <%= t('basics.type') %>
+    </strong>
+  </div>
+  <div class="col-2">
+    <strong>
+      <%= t('basics.action') %>
+    </strong>
+    <%= helpdesk(t('admin.teachables.info.action'), false) %>
+  </div>
+</div>
+<% lectures.each do |l| %>
+  <div class="row border-bottom mx-2 px-4 py-2">
+    <div class="col-3">
+      <%= l.course.title %>
+    </div>
+    <div class="col-2">
+      <%= l.term&.to_label %>
+    </div>
+    <div class="col-3">
+      <%= l.teacher.name %>
+    </div>
+    <div class="col-2">
+      <%= l.sort_localized %>
+    </div>
+    <div class="col-2">
+      <% if current_user.can_edit?(l) %>
+        <%= lecture_edit_icon(l) %>
+      <% end %>
+      <%= lecture_view_icon(l) %>
+    </div>
+  </div>
+<% end %>
+<div class="row my-3">
+</div>

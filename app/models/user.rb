@@ -70,6 +70,13 @@ class User < ApplicationRecord
   # and claiming the certificate
   has_many :quiz_certificates, dependent: :destroy
 
+  # a user has many user registrations for registration campaigns
+  has_many :user_registrations,
+           class_name: "Registration::UserRegistration",
+           dependent: :destroy
+  has_many :registration_campaigns, through: :user_registrations
+  has_many :registration_items, through: :user_registrations
+
   # a user may have many user answers for questionnaires that they filled out.
   has_many :vignettes_user_answers, dependent: :destroy, class_name: "Vignettes::UserAnswer"
 

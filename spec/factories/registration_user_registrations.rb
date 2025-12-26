@@ -2,8 +2,10 @@ FactoryBot.define do
   factory :registration_user_registration,
           class: "Registration::UserRegistration" do
     association :user, factory: :confirmed_user
-    association :registration_campaign
-    association :registration_item
+    registration_campaign { association :registration_campaign }
+    registration_item do
+      association :registration_item, registration_campaign: registration_campaign
+    end
     status { :pending }
     preference_rank { nil }
 

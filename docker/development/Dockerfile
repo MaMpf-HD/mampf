@@ -117,7 +117,8 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
     fi
 
 # Playwright browser
-RUN npx playwright install chromium
+# (--no-shell to avoid downloading the old headless mode)
+RUN npx playwright install chromium --no-shell
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
