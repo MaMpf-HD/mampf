@@ -8,41 +8,17 @@ module Registration
     end
 
     def destroy_for_user
-      if @campaign.completed?
-        respond_with_error(t("registration.campaign.errors.already_finalized"))
-        return
-      end
+      return if campaign_completed?
 
       @user = User.find(params[:user_id])
       registrations = @campaign.user_registrations.where(user: @user)
 
-      if registrations.empty?
-        redirect_back_or_to(registration_campaign_path(@campaign),
-                            alert: t("registration.user_registration.none"))
-        return
-      end
+      return if no_registrations_found?(registrations)
 
       # Authorize based on the first registration (all belong to same campaign)
       authorize! :destroy, registrations.first
 
-      count = registrations.count
-
-      if registrations.destroy_all
-        respond_to do |format|
-          format.html do
-            redirect_back_or_to(registration_campaign_path(@campaign),
-                                notice: t("registration.user_registration.destroyed_all_for_user",
-                                          count: count))
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.user_registration.destroyed_all_for_user",
-                                   count: count)
-            render_turbo_stream_response
-          end
-        end
-      else
-        respond_with_error(t("registration.user_registration.destroy_failed"))
-      end
+      destroy_registrations(registrations)
     end
 
     private
@@ -99,6 +75,45 @@ module Registration
           format.turbo_stream do
             flash.now[:alert] = message
             render turbo_stream: stream_flash
+          end
+        end
+      end
+
+      def campaign_completed?
+        return false unless @campaign.completed?
+
+        respond_with_error(t("registration.campaign.errors.already_finalized"))
+        true
+      end
+
+      def no_registrations_found?(registrations)
+        return false if registrations.any?
+
+        redirect_back_or_to(registration_campaign_path(@campaign),
+                            alert: t("registration.user_registration.none"))
+        true
+      end
+
+      def destroy_registrations(registrations)
+        count = registrations.count
+
+        if registrations.destroy_all
+          respond_with_destroy_success(count)
+        else
+          respond_with_error(t("registration.user_registration.destroy_failed"))
+        end
+      end
+
+      def respond_with_destroy_success(count)
+        message = t("registration.user_registration.destroyed_all_for_user", count: count)
+        respond_to do |format|
+          format.html do
+            redirect_back_or_to(registration_campaign_path(@campaign),
+                                notice: message)
+          end
+          format.turbo_stream do
+            flash.now[:notice] = message
+            render_turbo_stream_response
           end
         end
       end
