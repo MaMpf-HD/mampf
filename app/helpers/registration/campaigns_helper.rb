@@ -180,6 +180,10 @@ module Registration
                 class: "btn btn-success")
     end
 
+    def planning_only_checkbox_disabled?(campaign)
+      !campaign.can_be_planning_only? || campaign.completed?
+    end
+
     private
 
       def utilization_color(percentage)
