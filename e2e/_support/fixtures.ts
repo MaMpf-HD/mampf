@@ -2,6 +2,7 @@ import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
+import { enableFeature } from "./backend";
 
 class UserFixture {
   page: Page;
@@ -67,4 +68,7 @@ export const test = base.extend<MaMpfFixtures>({
 test.beforeEach(async ({ request }) => {
   // Clean database before every test (brutal, but effective for good test isolation)
   await callBackend(request, "database_cleaner", {});
+
+  // Enable the feature flag so guarded routes exist
+  await enableFeature(request, "registration_campaigns");
 });

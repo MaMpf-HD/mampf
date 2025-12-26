@@ -1,0 +1,128 @@
+<div class="row g-3">
+  <!-- case: student receives assignment -->
+  <% if item_succeed %>
+    <div class="d-flex flex-column gap-3">
+      <div class="row justify-content-between g-3">
+        <div class="col-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="h5">
+                <%= t("registration.confirmed_assignment_pref", type: item_succeed.registerable_type) %>
+              </div>
+
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
+                <div>
+                  <div class="text-muted small">
+                    <%= item_succeed.registerable_type %>: <%= item_succeed.title %>
+                  </div>
+                  <div class="fs-1 fw-semibold text-primary">
+                    <%= item_succeed.try(:time) || item_succeed.try(:title) %>
+                  </div>
+                  <div class="text-muted small">
+                    <% if item_succeed.try(:room).present? %>
+                      <%= t("basics.room") %>: <%= item_succeed.room %><br>
+                    <% end %>
+
+                    <% if item_succeed.registerable.try(:tutors).present? %>
+                      <%= t("basics.tutor") %>:
+                      <%= item_succeed.registerable.tutors.map { |e|
+                            link_to "#{e.name_in_tutorials.presence || e.name} (#{e.email})", teacher_path(e)
+                          }.join(", ").html_safe %><br>
+                    <% end %>
+
+                    <% if item_succeed.registerable.try(:position).present? %>
+                      <%= t("basics.position") %>: <%= item_succeed.registerable.position %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <span class="badge rounded-pill text-bg-success mt-2 mt-md-0">
+                  <%= t("basics.confirmed") %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="row g-2">
+                <div class="col-6 col-md-3">
+                  <div class="small text-muted"><%= t("basics.capacity") %></div>
+                  <div class="fw-semibold">
+                    <%= item_succeed.item_capacity_used %> / <%= nullable_capacity_display(item_succeed.capacity) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="h6"><%= t("registration.submitted_pref") %></div>
+            <ol class="small mb-0">
+              <% items_selected.each do |item| %>
+                <li>
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      &nbsp;&nbsp;<%= item.registerable_type %>: <%= item.title %>
+                      &nbsp;&nbsp;<%= item.try(:time) || item.try(:title) %>
+                      &nbsp;&nbsp;<%= t("basics.capacity") %>: <%= item.item_capacity_used %> / <%= nullable_capacity_display(item.capacity) %>
+                    </div>
+                    <%= confirm_status_badge(status_items_selected[item]) %>
+                  </div>
+                </li>
+              <% end %>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- case: all preferences are rejected -->
+  <% else %>
+    <div class="col-12 col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <div class="alert alert-danger py-1 px-2">
+            <span><%= t("registration.messages.cannot_secure_slot") %></span>
+          </div>
+
+          <div class="h6"><%= t("registration.status_for_registration") %></div>
+          <table class="table align-middle mb-2">
+            <thead>
+              <tr>
+                <th class="fw-semibold"><%= t("basics.title") %></th>
+                <th class="fw-semibold"><%= t("basics.time") %></th>
+                <th class="fw-semibold"><%= t("basics.capacity") %></th>
+                <th class="fw-semibold"><%= t("basics.status") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% items_selected.each do |item| %>
+                <tr>
+                  <td><%= item.title %></td>
+                  <td><%= item.try(:time) || item.try(:title) %></td>
+                  <td><%= item.item_capacity_used %> / <%= item.capacity %></td>
+                  <td><%= confirm_status_badge(status_items_selected[item]) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <%= t("registration.messages.course_admin_help") %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

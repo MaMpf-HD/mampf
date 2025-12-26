@@ -36,13 +36,37 @@ module Registration
               uniqueness: {
                 scope: [:registration_campaign_id, :registerable_type]
               }
-
     validate :registerable_type_consistency, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
     validate :validate_planning_only_compliance
     validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
+
+    def item_capacity_used
+      # user_registrations.where(status: :confirmed).count
+      confirmed_registrations_count
+    end
+
+    def capacity_remained
+      return nil if capacity.nil?
+
+      capacity - item_capacity_used
+    end
+
+    def still_have_capacity?
+      return true if capacity.nil?
+
+      capacity_remained.positive?
+    end
+
+    def user_registered?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
 
     def title
       registerable&.registration_title || registerable&.title

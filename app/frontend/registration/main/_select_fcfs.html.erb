@@ -1,0 +1,13 @@
+<div class="card-body border-top-0">
+  <% if single_mode?(campaign.registerable_type)%>
+  <%= render partial: 'registration/main/select_single_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      item: items[0] } %>
+  <% else %>
+  <%= render partial: 'registration/main/select_multi_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      items: items } %>
+  <% end %>
+</div>

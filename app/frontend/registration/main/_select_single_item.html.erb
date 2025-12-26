@@ -1,0 +1,47 @@
+<div data-test="single-item-fcfs">
+  <div class="h5 mb-3"><%= t('registration.title') %></div>
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="small text-muted">
+      <%= t('registration.seats_remaining') %>:
+      <span id="seatsRemaining"><%= nullable_capacity_display(item.capacity_remained) %></span>
+    </div>
+
+    <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+    <% if last_updated %>
+      <div class="col-4 small text-success text-end fw-semibold">
+        <%= t('basics.saved_at', time: format_date(last_updated)) %>
+      </div>
+    <% end %>
+  </div>
+
+  <% registered = item.user_registered?(current_user) %>
+
+  <div class="d-flex gap-2 justify-content-between flex-wrap">
+    <div class="mb-3">
+      <% if registered %>
+        <span class="badge rounded-pill text-bg-success">
+          <%= t('registration.registered') %>
+        </span>
+      <% else %>
+        <span class="badge rounded-pill text-bg-secondary">
+          <%= t('registration.not_registered') %>
+        </span>
+      <% end %>
+    </div>
+
+    <% if registered %>
+      <%= button_to t('registration.withdraw'),
+                    withdraw_item_path(campaign.id, item.id),
+                    method: :delete,
+                    disabled: !campaign.open_for_withdrawals?,
+                    class: "btn btn-outline-danger btn-sm" %>
+    <% else %>
+      <%= button_to t('registration.register_now'),
+                    register_item_path(campaign.id, item.id),
+                    method: :post,
+                    disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
+                    class: "btn btn-primary btn-sm" %>
+    <% end %>
+  </div>
+</div>
