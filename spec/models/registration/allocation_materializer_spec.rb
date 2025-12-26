@@ -13,9 +13,11 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
 
   describe "#materialize!" do
     it "delegates to registerable#materialize_allocation!" do
-      # Force the query to return our specific item instance so we can set expectations on it
-      allow(campaign).to receive_message_chain(:registration_items, :includes,
-                                               :find_each).and_yield(item)
+      # Mock the chain to return our specific item
+      relation = double("ActiveRecord::Relation")
+      allow(campaign).to receive(:registration_items).and_return(relation)
+      allow(relation).to receive(:includes).with(:registerable).and_return(relation)
+      allow(relation).to receive(:find_each).and_yield(item)
 
       expect(item.registerable).to receive(:materialize_allocation!).with(
         user_ids: [user.id],
