@@ -208,6 +208,11 @@ en:
       destroyed: "Item removed successfully."
       registerable_destroyed: "%{type} deleted successfully."
       updated: "Item updated successfully."
+      invalid_type: "Invalid type."
+      cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
+      confirm_delete: "Are you sure you want to remove this item?"
+      confirm_remove: "Are you sure you want to remove this item from the campaign?"
+      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
     user_registration:
       forced_assignment: "Forced Assignment"
       index:
@@ -224,11 +229,6 @@ en:
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from campaign"
-      invalid_type: "Invalid type."
-      cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
-      confirm_delete: "Are you sure you want to remove this item?"
-      confirm_remove: "Are you sure you want to remove this item from the campaign?"
-      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
   activerecord:
     errors:
       models:
