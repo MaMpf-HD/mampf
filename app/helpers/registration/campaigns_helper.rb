@@ -25,11 +25,11 @@ module Registration
       end
     end
 
-    # rubocop :disable Metrics/ParameterLists
+    # rubocop:disable Metrics/ParameterLists
     def registration_progress_bar(value, max, classification: :neutral, label: nil,
                                   height: "1.5rem", show_label: true,
                                   container_class: "progress mb-2", style: nil)
-      # rubocop :enable Metrics/ParameterLists
+      # rubocop:enable Metrics/ParameterLists
       percentage = max.to_i.positive? ? (value.to_f / max * 100).clamp(0, 100) : 0
 
       color_class = case classification
