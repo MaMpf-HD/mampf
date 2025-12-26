@@ -118,20 +118,13 @@ en:
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
         capacity: "Capacity"
-        utilization: "Utilization"
-      errors:
-        already_completed: "Campaign is already completed."
-        wrong_status: "Campaign has wrong status for this action."
-        policy_violation: "Policy violation: %{errors}"
-        failed: "Allocation failed: %{error}"        
+        utilization: "Utilization"        
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
         policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
-        failed: "Allocation failed: %{error}"
-    policy:
         failed: "Allocation failed: %{error}"
     policy:
       helpdesk:
