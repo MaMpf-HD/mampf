@@ -32,6 +32,10 @@ module SearchForm
           default_options = { class: css_manager.field_css_classes }
           accessibility_options = build_accessibility_attributes
 
+          if @field_data.options.key?(:input_name)
+            additional_options[:name] = @field_data.options[:input_name]
+          end
+
           html_options_with_id(default_options.merge(accessibility_options)
                                               .merge(additional_options))
         end

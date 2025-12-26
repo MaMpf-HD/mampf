@@ -101,7 +101,8 @@ RSpec.describe(SearchForm::Fields::MediumTypeField, type: :component) do
                   collection: [["Quizzable", "quizzable"]],
                   selected: "Question",
                   multiple: false,
-                  disabled: false
+                  disabled: false,
+                  input_name: "search[types][]"
                 ))
         expect(quiz_field).not_to receive(:setup_checkbox_group)
 

@@ -53,7 +53,7 @@ module SearchForm
       private
 
         def setup_fields
-          @multi_select_field = create_multi_select_field(
+          field_options = {
             name: :types,
             label: I18n.t("basics.types"),
             help_text: I18n.t("search.helpdesks.medium_type_field"),
@@ -62,7 +62,12 @@ module SearchForm
             multiple: purpose.in?(["media", "import"]),
             disabled: purpose == "media",
             **options
-          )
+          }
+
+          # Force array submission for single-select quiz mode
+          field_options[:input_name] = "search[types][]" if purpose == "quiz"
+
+          @multi_select_field = create_multi_select_field(**field_options)
 
           setup_checkbox_group unless skip_all_checkbox?
         end
