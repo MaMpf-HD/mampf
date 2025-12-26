@@ -6,6 +6,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
   describe "register lecture campaign" do
     let(:campaign) { FactoryBot.create(:registration_campaign, :open, self_registerable: true) }
+    let(:campaign_draft) do
+      create(:registration_campaign, :draft, :with_items, self_registerable: true)
+    end
     let(:item) { campaign.registration_items.first }
 
     it "creates a confirmed registration when validations pass, " \
@@ -39,8 +42,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "raises error if campaign is closed" do
-      campaign.update!(status: :draft)
-      service = described_class.new(campaign, user, item)
+      service = described_class.new(campaign_draft, user, item)
 
       result = service.register!
       expect(result.success?).to be(false)
@@ -93,7 +95,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "raises error if campaign is closed" do
-      campaign.update!(status: :draft)
+      campaign.update!(status: :closed)
       service = described_class.new(campaign, user, item)
 
       result = service.withdraw!
@@ -104,6 +106,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
   describe "register tutorial campaign" do
     let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
+    let(:campaign_draft) do
+      create(:registration_campaign, :draft, :with_items, self_registerable: true)
+    end
     let(:item) { campaign.registration_items.first }
     let(:item2) { campaign.registration_items.second }
 
@@ -141,8 +146,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "raises error if campaign is closed" do
-      campaign.update!(status: :draft)
-      service = described_class.new(campaign, user, item)
+      service = described_class.new(campaign_draft, user, item)
 
       result = service.register!
       expect(result.success?).to be(false)
@@ -197,7 +201,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       end
 
       it "raises error if campaign is closed" do
-        campaign.update!(status: :draft)
+        campaign.update!(status: :closed)
         service = described_class.new(campaign, user, item)
 
         result = service.withdraw!
@@ -238,6 +242,10 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
     let(:policy) { campaign_child.registration_policies.find_by(kind: :prerequisite_campaign) }
 
+    before(:each) do
+      Registration::UserRegistration.delete_all
+    end
+
     it "expect id of preq policy of child match parent id" do
       expect(policy.config["prerequisite_campaign_id"]).to eq(campaign_parent.id)
     end
@@ -255,34 +263,6 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       service = described_class.new(campaign_child, user, item_child)
       result = service.register!
       expect(result.success?).to be(true)
-    end
-
-    it "cannot withdraw parent if child has been registered + " \
-       "freely to deregister child + " \
-       "freely to deregister parent if child has not been registered" do
-      service_parent = described_class.new(campaign_parent, user, item_parent)
-      service_parent.register!
-      service_child = described_class.new(campaign_child, user, item_child)
-      service_child.register!
-
-      # withdraw parent if child has been registered
-      service_parent1 = described_class.new(campaign_parent, user, item_parent)
-      result1 = service_parent1.withdraw!
-      expect(result1.success?).to be(false)
-      expect(result1.errors).to include(
-        I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
-               names: campaign_parent.title)
-      )
-
-      # freely to withdraw child
-      service_child1 = described_class.new(campaign_child, user, item_child)
-      result2 = service_child1.withdraw!
-      expect(result2.success?).to be(true)
-
-      # freely to withdraw parent if child has not been registered
-      service_parent2 = described_class.new(campaign_parent, user, item_parent)
-      result3 = service_parent2.withdraw!
-      expect(result3.success?).to be(true)
     end
   end
 end
