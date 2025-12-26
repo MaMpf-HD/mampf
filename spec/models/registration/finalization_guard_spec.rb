@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Registration::FinalizationGuard, type: :model) do
-  let(:campaign) { build(:registration_campaign, status: :processing) }
+  let(:campaign) { build(:registration_campaign, :preference_based, status: :processing) }
   let(:guard) { described_class.new(campaign) }
 
   describe "#check" do
@@ -43,7 +43,9 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
 
     context "with policies" do
       # Create as draft first to allow policy creation
-      let(:campaign) { create(:registration_campaign, :with_items, status: :draft) }
+      let(:campaign) do
+        create(:registration_campaign, :preference_based, :with_items, status: :draft)
+      end
       let(:item) { campaign.registration_items.first }
       let(:user) { create(:user, email: "valid@uni.edu") }
 
@@ -103,6 +105,7 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         create(:registration_user_registration, :pending,
                registration_campaign: campaign,
                registration_item: item,
+               preference_rank: 1,
                user: other_user)
 
         result = guard.check

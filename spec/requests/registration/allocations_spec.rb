@@ -90,7 +90,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
           allow_any_instance_of(Registration::FinalizationGuard)
             .to receive(:check).and_return(
               Registration::FinalizationGuard::Result.new(success?: false,
-                                                          error_message: "Some error")
+                                                          error_code: :wrong_status)
             )
         end
 
@@ -99,8 +99,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
 
           campaign.reload
           expect(campaign).not_to be_completed
-          expect(response).to redirect_to(registration_campaign_path(campaign))
-          expect(flash[:alert]).to eq("Some error")
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.wrong_status"))
         end
       end
     end

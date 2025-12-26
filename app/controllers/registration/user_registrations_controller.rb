@@ -86,5 +86,17 @@ module Registration
       def set_locale
         I18n.locale = @campaign.campaignable.locale_with_inheritance
       end
+
+      def respond_with_error(message)
+        respond_to do |format|
+          format.html do
+            redirect_back_or_to(registration_campaign_path(@campaign), alert: message)
+          end
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
+          end
+        end
+      end
   end
 end
