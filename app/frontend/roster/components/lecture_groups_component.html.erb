@@ -16,7 +16,7 @@
                   <th><%= t('roster.columns.speakers', default: 'Speakers') %></th>
                 <% end %>
                 <th><%= t('roster.columns.capacity') %></th>
-                <th><%= t('roster.occupancy') %></th>
+                <th><%= t('roster.columns.occupancy') %></th>
                 <th></th>
               </tr>
             </thead>
@@ -49,6 +49,12 @@
             </tbody>
           </table>
         </div>
+        <% if group[:items].sum { |i| i.roster_entries.count }.zero? %>
+          <div class="card-footer text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            <%= t('roster.empty_hint', default: 'No participants yet. Please finalize a registration campaign to populate the roster.') %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>

@@ -1,7 +1,8 @@
+<% group_type ||= :all %>
 <div class="row px-4 py-2">
   <div class="col-12">
     <%= turbo_frame_tag "roster_maintenance",
-                        src: lecture_roster_path(@lecture),
+                        src: lecture_roster_path(@lecture, group_type: group_type),
                         loading: "lazy" do %>
       <div class="text-center my-5">
         <div class="spinner-border" role="status">

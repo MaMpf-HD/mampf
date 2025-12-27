@@ -1,14 +1,17 @@
 de:
   roster:
-    title: "Teilnehmende"
-    occupancy: "Belegung"
-    manage: "Verwalten"
+    title: 'Teilnehmende'
+    tabs:
+      tutorial_maintenance: 'Übungsbetrieb'
+      talk_maintenance: 'Vortragsbetrieb'
     columns:
-      title: "Titel"
-      tutors: "Tutor:innen"
-      capacity: "Kapazität"
+      title: 'Titel'
+      tutors: 'TutorInnen'
+      speakers: 'Vortragende'
+      capacity: 'Kapazität'
+      occupancy: 'Belegung'
+    manage: 'Verwalten'
+    empty_hint: 'Noch keine Teilnehmenden. Sie können die Liste füllen, indem Sie eine Anmeldekampagne abschließen oder Studierende manuell hinzufügen.'
     errors:
-      lecture_not_found: "Veranstaltung nicht gefunden."
-      rosterable_not_found: "Element nicht gefunden."
-    occupancy: "Belegung"
-    manage: "Verwalten"
+      lecture_not_found: 'Veranstaltung nicht gefunden.'
+      rosterable_not_found: 'Eintrag nicht gefunden.'

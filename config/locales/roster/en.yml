@@ -1,14 +1,17 @@
 en:
   roster:
-    title: "Roster"
-    occupancy: "Occupancy"
-    manage: "Manage"
+    title: 'Roster'
+    tabs:
+      tutorial_maintenance: 'Coursework'
+      talk_maintenance: 'Coursework'
     columns:
-      title: "Title"
-      tutors: "Tutors"
-      capacity: "Capacity"
+      title: 'Title'
+      tutors: 'Tutors'
+      speakers: 'Speakers'
+      capacity: 'Capacity'
+      occupancy: 'Occupancy'
+    manage: 'Manage'
+    empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually.'
     errors:
-      lecture_not_found: "Lecture not found."
-      rosterable_not_found: "Item not found."
-    occupancy: "Occupancy"
-    manage: "Manage"
+      lecture_not_found: 'Lecture not found.'
+      rosterable_not_found: 'Roster item not found.'

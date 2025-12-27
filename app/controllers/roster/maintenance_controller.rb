@@ -12,6 +12,7 @@ module Roster
     # GET /lectures/:lecture_id/roster
     def index
       authorize! :edit, @lecture
+      @group_type = params[:group_type]&.to_sym || :all
     end
 
     # GET /:rosterable_type/:rosterable_id/roster

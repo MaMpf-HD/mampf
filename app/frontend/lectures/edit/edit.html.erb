@@ -48,8 +48,16 @@
       <% end %>
 
       <% if Flipper.enabled?(:item_dashboard) %>
-        <% component.with_tab(name: "roster", label: t("roster.title")) do %>
-          <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture } %>
+        <% if @lecture.tutorials.any? %>
+          <% component.with_tab(name: "tutorials", label: t("roster.tabs.tutorial_maintenance")) do %>
+            <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture, group_type: :tutorials } %>
+          <% end %>
+        <% end %>
+
+        <% if @lecture.talks.any? %>
+          <% component.with_tab(name: "talks", label: t("roster.tabs.talk_maintenance")) do %>
+            <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture, group_type: :talks } %>
+          <% end %>
         <% end %>
       <% end %>
 

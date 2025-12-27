@@ -1,3 +1,3 @@
 <%= turbo_frame_tag "roster_maintenance" do %>
-  <%= render LectureGroupsComponent.new(lecture: @lecture) %>
+  <%= render LectureGroupsComponent.new(lecture: @lecture, group_type: @group_type) %>
 <% end %>
