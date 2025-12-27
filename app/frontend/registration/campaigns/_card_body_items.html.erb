@@ -1,0 +1,43 @@
+<div id="registration_items_container">
+  <div class="mb-4">
+    <h5><%= t("registration.item.index.title") %></h5>
+
+    <% if campaign.registration_items.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th><%= t("registration.item.columns.title") %></th>
+              <th><%= t("registration.item.columns.capacity") %></th>
+              <% unless campaign.draft? %>
+                <th>
+                  <%= item_stats_label(campaign) %>
+                  <% unless campaign.first_come_first_served? || campaign.processing? || campaign.completed? %>
+                    <%= helpdesk(t("registration.campaign.helpdesk.first_choice"), false) %>
+                  <% end %>
+                </th>
+              <% end %>
+              <% if campaign.draft? %>
+                <th class="text-end"><%= t("basics.actions") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "registration/items/item", collection: campaign.registration_items, as: :item %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        <%= t("registration.item.index.none") %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if campaign.draft? %>
+    <div class="mt-5">
+      <h5><%= t("registration.item.add.title") %></h5>
+      <%= render "registration/items/available_items", campaign: campaign %>
+    </div>
+  <% end %>
+</div>

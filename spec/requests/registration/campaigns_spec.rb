@@ -61,7 +61,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
                params: { registration_campaign: valid_attributes })
         end.to change(Registration::Campaign, :count).by(1)
 
-        expect(response).to redirect_to(registration_campaign_path(Registration::Campaign.last))
+        expect(response).to redirect_to(registration_campaign_path(Registration::Campaign.last,
+                                                                   tab: "items"))
       end
     end
 
@@ -92,9 +93,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     context "when campaign is open" do
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
       before do
         sign_in editor
-        campaign.update!(status: :open)
       end
 
       it "prevents updating frozen attributes (allocation_mode)" do
@@ -129,12 +131,34 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when enabling planning_only with incompatible items" do
+      let!(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      end
+
+      before { sign_in editor }
+
+      it "fails validation and shows error" do
+        patch registration_campaign_path(campaign),
+              params: { registration_campaign: { planning_only: true } }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body)
+          .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
+                             ".planning_only.incompatible_items"))
+      end
+    end
   end
 
   describe "Lifecycle Actions" do
     describe "PATCH /campaigns/:id/open" do
       context "as an editor" do
-        before { sign_in editor }
+        before do
+          sign_in editor
+          create(:registration_item, registration_campaign: campaign)
+        end
 
         it "changes status from draft to open" do
           patch open_registration_campaign_path(campaign)
@@ -156,7 +180,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     describe "PATCH /campaigns/:id/close" do
-      before { campaign.update!(status: :open, registration_deadline: 1.week.from_now) }
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
       context "as an editor" do
         before { sign_in editor }
@@ -214,7 +238,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
 
       context "when campaign is open" do
-        before { campaign.update!(status: :open) }
+        let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
         it "does not destroy the campaign" do
           expect do
@@ -288,7 +312,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
   end
 
   describe "PATCH /campaigns/:id/reopen" do
-    before { campaign.update!(status: :closed) }
+    let!(:campaign) do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              registration_deadline: 1.week.from_now)
+    end
 
     context "as an editor" do
       before { sign_in editor }

@@ -25,10 +25,16 @@
                       data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
       <% elsif campaign.draft? %>
+        <% 
+           confirm_msg = t("registration.campaign.confirmations.open")
+           if campaign.registration_items.any? { |i| i.capacity.nil? }
+             confirm_msg += "\n\n" + t("registration.campaign.warnings.unlimited_items")
+           end
+        %>
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.open") },
+                      data: { confirm: confirm_msg },
                       class: "btn btn-success" %>
       <% end %>
 
@@ -51,6 +57,14 @@
       <button class="nav-link <%= 'active' if tab == 'settings' %>" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="<%= tab == 'settings' %>"><%= t("basics.settings", default: "Settings") %></button>
     </li>
     <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'items' %>" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="<%= tab == 'items' %>">
+        <%= t("registration.item.index.title") %>
+        <span id="items-tab-count" class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.registration_items.count %>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
       <button class="nav-link <%= 'active' if tab == 'policies' %>" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="<%= tab == 'policies' %>">
         <%= t("registration.policy.index.title") %>
         <span class="badge rounded-pill bg-secondary ms-1">
@@ -67,6 +81,10 @@
 
     <div class="tab-pane fade <%= 'show active' if tab == 'settings' %>" id="settings" role="tabpanel" aria-labelledby="settings-tab">
       <%= render "registration/campaigns/form", campaign: campaign, lecture: campaign.campaignable %>
+    </div>
+
+    <div class="tab-pane fade <%= 'show active' if tab == 'items' %>" id="items" role="tabpanel" aria-labelledby="items-tab">
+      <%= render "registration/campaigns/card_body_items", campaign: campaign %>
     </div>
 
     <div class="tab-pane fade <%= 'show active' if tab == 'policies' %>" id="policies" role="tabpanel" aria-labelledby="policies-tab">
