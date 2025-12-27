@@ -10,8 +10,10 @@
             <thead>
               <tr>
                 <th><%= t('roster.columns.title') %></th>
-                <% if group[:type] == :tutorial %>
+                <% if group[:type] == :tutorials %>
                   <th><%= t('roster.columns.tutors') %></th>
+                <% elsif group[:type] == :talks %>
+                  <th><%= t('roster.columns.speakers', default: 'Speakers') %></th>
                 <% end %>
                 <th><%= t('roster.columns.capacity') %></th>
                 <th><%= t('roster.occupancy') %></th>
@@ -22,9 +24,13 @@
               <% group[:items].each do |item| %>
                 <tr>
                   <td><%= item.title %></td>
-                  <% if group[:type] == :tutorial %>
+                  <% if group[:type] == :tutorials %>
                     <td>
                       <%= item.tutors.map(&:name).join(", ") %>
+                    </td>
+                  <% elsif group[:type] == :talks %>
+                    <td>
+                      <%= item.speakers.map(&:name).join(", ") %>
                     </td>
                   <% end %>
                   <td><%= item.capacity %></td>
@@ -34,7 +40,7 @@
                   </td>
                   <td class="text-end">
                     <%= link_to t('roster.manage'),
-                                roster_path(item),
+                                group_path(item),
                                 class: "btn btn-sm btn-outline-primary",
                                 data: { turbo_frame: "_top" } %>
                   </td>

@@ -800,7 +800,11 @@ Rails.application.routes.draw do
        to: "talks#modify",
        as: "modify_talk"
 
-  resources :talks, except: [:index]
+  resources :talks, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
+    end
+  end
 
   # tutorials routes
 
