@@ -48,7 +48,7 @@
       <% end %>
 
       <% if Flipper.enabled?(:item_dashboard) %>
-        <% component.with_tab(name: "roster", label: t("basics.roster", default: "Roster")) do %>
+        <% component.with_tab(name: "roster", label: t("roster.title")) do %>
           <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture } %>
         <% end %>
       <% end %>

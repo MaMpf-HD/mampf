@@ -57,7 +57,6 @@ en:
     mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
-    roster: 'Roster'
   unauthorized:
     default: >
       You are not authorized to access this page.

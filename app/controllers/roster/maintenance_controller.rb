@@ -5,6 +5,10 @@ module Roster
     before_action :set_lecture, only: [:index]
     before_action :set_rosterable, only: [:show]
 
+    def current_ability
+      @current_ability ||= LectureAbility.new(current_user)
+    end
+
     # GET /lectures/:lecture_id/roster
     def index
       authorize! :edit, @lecture

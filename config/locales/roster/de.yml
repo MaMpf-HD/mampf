@@ -1,5 +1,14 @@
 de:
   roster:
+    title: "Teilnehmende"
+    occupancy: "Belegung"
+    manage: "Verwalten"
+    columns:
+      title: "Titel"
+      tutors: "Tutor:innen"
+      capacity: "Kapazität"
     errors:
       lecture_not_found: "Veranstaltung nicht gefunden."
       rosterable_not_found: "Element nicht gefunden."
+    occupancy: "Belegung"
+    manage: "Verwalten"

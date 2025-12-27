@@ -1,0 +1,55 @@
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <% groups.each do |group| %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><%= group[:title] %></h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th><%= t('roster.columns.title') %></th>
+                <% if group[:type] == :tutorial %>
+                  <th><%= t('roster.columns.tutors') %></th>
+                <% end %>
+                <th><%= t('roster.columns.capacity') %></th>
+                <th><%= t('roster.occupancy') %></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% group[:items].each do |item| %>
+                <tr>
+                  <td><%= item.title %></td>
+                  <% if group[:type] == :tutorial %>
+                    <td>
+                      <%= item.tutors.map(&:name).join(", ") %>
+                    </td>
+                  <% end %>
+                  <td><%= item.capacity %></td>
+                  <td>
+                    <%# Simple text for now, visual bar can be added later %>
+                    <%= item.roster_entries.count %> / <%= item.capacity %>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to t('roster.manage'),
+                                roster_path(item),
+                                class: "btn btn-sm btn-outline-primary",
+                                data: { turbo_frame: "_top" } %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-12 col-lg-4">
+    <%# Candidates Panel Placeholder %>
+    <div class="alert alert-secondary">
+      Candidates Panel (Coming in Step 4)
+    </div>
+  </div>
+</div>

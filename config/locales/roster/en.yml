@@ -1,5 +1,14 @@
 en:
   roster:
+    title: "Roster"
+    occupancy: "Occupancy"
+    manage: "Manage"
+    columns:
+      title: "Title"
+      tutors: "Tutors"
+      capacity: "Capacity"
     errors:
       lecture_not_found: "Lecture not found."
       rosterable_not_found: "Item not found."
+    occupancy: "Occupancy"
+    manage: "Manage"
