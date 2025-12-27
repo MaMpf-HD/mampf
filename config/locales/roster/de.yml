@@ -1,0 +1,5 @@
+de:
+  roster:
+    errors:
+      lecture_not_found: "Veranstaltung nicht gefunden."
+      rosterable_not_found: "Element nicht gefunden."

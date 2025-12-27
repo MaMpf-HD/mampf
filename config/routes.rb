@@ -277,6 +277,10 @@ Rails.application.routes.draw do
        as: "import_lecture_toc"
 
   resources :lectures, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+      get "roster", to: "roster/maintenance#index"
+    end
+
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
       resources :campaigns,
                 controller: "registration/campaigns",
@@ -828,7 +832,11 @@ Rails.application.routes.draw do
       to: "tutorials#export_teams",
       as: "export_teams_to_csv"
 
-  resources :tutorials, only: [:new, :edit, :create, :update, :destroy]
+  resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
+    end
+  end
 
   # sections routes
 

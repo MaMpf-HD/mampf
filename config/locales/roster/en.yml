@@ -1,0 +1,5 @@
+en:
+  roster:
+    errors:
+      lecture_not_found: "Lecture not found."
+      rosterable_not_found: "Item not found."
