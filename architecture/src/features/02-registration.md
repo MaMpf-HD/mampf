@@ -1002,49 +1002,73 @@ Ensures every confirmed user passes all finalization-phase policies before roste
 ```ruby
 module Registration
   class FinalizationGuard
+    Result = Struct.new(:success?, :error_code, :error_message, :data, keyword_init: true)
+
     def initialize(campaign)
       @campaign = campaign
     end
 
-    def check!
-      policies = @campaign.registration_policies.active.for_phase(:finalization).order(:position)
-      return true if policies.empty?
+    def check
+      if @campaign.completed?
+        return failure(:already_completed, "Campaign is already completed")
+      end
 
-      confirmed = @campaign.user_registrations.confirmed.includes(:user)
+      unless @campaign.processing?
+        return failure(:wrong_status, "Campaign must be in processing state")
+      end
 
-      confirmed.each do |ur|
-        user = ur.user
-        policies.each do |policy|
-          if policy.kind == "student_performance"
-            lecture = Lecture.find(policy.config["lecture_id"])
-            cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
+      validate_policies
+    end
 
-            if cert.nil? || cert.pending?
-              raise StandardError, "Finalization blocked: certification missing or pending for user #{user.id}"
-            elsif cert.failed?
-              ur.update!(status: :rejected)
-              next
-            end
-          else
-            outcome = policy.evaluate(user)
-            unless outcome[:pass]
-              raise StandardError, "Finalization blocked by policy #{policy.id} (#{policy.kind})"
+    private
+
+      def validate_policies
+        policies = @campaign.registration_policies.active.for_phase(:finalization)
+        return success if policies.empty?
+
+        invalid_users = []
+
+        # Eager load to avoid N+1
+        @campaign.registration_items.includes(user_registrations: :user).find_each do |item|
+          item.user_registrations.select(&:confirmed?).each do |registration|
+            user = registration.user
+            policies.each do |policy|
+              result = policy.evaluate(user)
+              unless result[:pass]
+                invalid_users << { user_id: user.id,
+                                   email: user.email,
+                                   policy: policy.kind }
+              end
             end
           end
         end
+
+        if invalid_users.any?
+          return failure(:policy_violation,
+                         "Some users no longer meet the requirements.",
+                         invalid_users)
+        end
+
+        success
       end
-      true
-    end
+
+      def success
+        Result.new(success?: true)
+      end
+
+      def failure(code, message, data = nil)
+        Result.new(success?: false, error_code: code, error_message: message, data: data)
+      end
   end
 end
 ```
 
 ### Behavior Highlights
 
-- **Auto-reject failed certifications:** Students with `StudentPerformance::Certification.status == :failed` are automatically moved to `rejected` status
-- **Hard-fail on missing/pending:** If any confirmed student has no certification or `status: :pending`, raise error and block finalization
-- **Remediation UI trigger:** The error message should trigger UI showing which students need certification resolution
-- **Other policies:** Evaluated normally; any failure blocks finalization
+- **Policy Validation:** Checks all policies configured for the `:finalization` phase (or `:both`).
+- **Safety Net:** Ensures that users who might have become ineligible after registration (e.g., changed email) are caught before being added to the roster.
+- **Manual Resolution:** If violations are found, the guard returns a failure result with the list of invalid users. The admin must then manually reject these users or fix the issue before retrying finalization.
+- **State Check:** Ensures the campaign is in the correct state (`processing`) and not already completed.
 
 See also: Student Performance → Certification and Pre-flight Validation (`05-student-performance.md`).
 

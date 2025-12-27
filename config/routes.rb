@@ -295,6 +295,11 @@ Rails.application.routes.draw do
         patch :close
         patch :reopen
       end
+      resource :allocation,
+               controller: "registration/allocations",
+               only: [:show, :create] do
+        patch :finalize
+      end
       resources :policies,
                 controller: "registration/policies",
                 only: [:new, :create, :edit, :update, :destroy] do
@@ -307,6 +312,15 @@ Rails.application.routes.draw do
       resources :items,
                 controller: "registration/items",
                 only: [:create, :destroy, :update]
+
+      resources :registrations,
+                controller: "registration/user_registrations",
+                only: [:destroy] do
+        collection do
+          delete "user/:user_id", to: "registration/user_registrations#destroy_for_user",
+                                  as: :destroy_for_user
+        end
+      end
     end
   end
 

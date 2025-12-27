@@ -48,13 +48,14 @@ module Registration
       registerable&.registration_title || registerable&.title
     end
 
+    def confirmed_user_ids
+      user_registrations.confirmed.pluck(:user_id)
+    end
+
     def capacity_editable?
       return true if registration_campaign.draft?
 
-      if registration_campaign.completed? ||
-         (registration_campaign.processing? && registration_campaign.preference_based?)
-        return false
-      end
+      return false if registration_campaign.completed?
 
       true
     end

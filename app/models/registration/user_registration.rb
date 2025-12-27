@@ -19,13 +19,19 @@ module Registration
 
     validate :ensure_item_belongs_to_campaign, if: :registration_item
 
-    # preference-based campaigns: rank required and unique per user+campaign
-    # For the uniqueness validation, there is also a DB index to enforce it at the
-    # database level (see the schema).
+    # preference-based campaigns: rank required unless it is a forced assignment
+    # (confirmed with no rank).
     validates :preference_rank,
               presence: true,
+              if: -> { registration_campaign.preference_based? && !confirmed? }
+
+    # preference-based campaigns: rank must be unique per user+campaign.
+    # We allow nil here because forced assignments (nil rank) are handled by the
+    # partial index `index_reg_user_regs_unique_unranked` in the database.
+    validates :preference_rank,
               uniqueness: {
-                scope: [:user_id, :registration_campaign_id]
+                scope: [:user_id, :registration_campaign_id],
+                allow_nil: true
               },
               if: -> { registration_campaign.preference_based? }
 

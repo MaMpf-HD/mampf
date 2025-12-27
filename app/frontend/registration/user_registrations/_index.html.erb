@@ -1,0 +1,83 @@
+<div class="card mb-3" id="user-registrations-list">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>
+      <%= t("registration.user_registration.index.title", default: "Registrations") %>
+      <span class="badge bg-secondary"><%= campaign.user_registrations.distinct.count(:user_id) %></span>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if campaign.user_registrations.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+              <% if campaign.preference_based? %>
+                <th><%= t("registration.user_registration.preferences") %></th>
+              <% else %>
+                <th><%= t("basics.status") %></th>
+                <th><%= t("registration.item.one") %></th>
+              <% end %>
+              <% unless campaign.completed? %>
+                <th><%= t("basics.actions") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% campaign.user_registrations_grouped_by_user.each do |user, registrations| %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                
+                <% if campaign.preference_based? %>
+                  <td>
+                    <ul class="list-unstyled mb-0">
+                      <% sort_registrations_by_rank(registrations).each do |reg| %>
+                        <li>
+                          <% if reg.preference_rank %>
+                            <span class="badge bg-secondary rounded-pill me-1"><%= reg.preference_rank %></span>
+                          <% else %>
+                            <span class="badge bg-info rounded-pill me-1" title="<%= t('registration.user_registration.forced_assignment') %>">!</span>
+                          <% end %>
+                          <%= reg.registration_item&.title %>
+                          <% unless reg.pending? %>
+                            <span class="badge bg-<%= registration_status_color(reg) %> ms-1">
+                              <%= t("registration.user_registration.status.#{reg.status}") %>
+                            </span>
+                          <% end %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </td>
+                <% else %>
+                  <% registration = registrations.first %>
+                  <td>
+                    <span class="badge bg-<%= registration_status_color(registration) %>">
+                      <%= t("registration.user_registration.status.#{registration.status}") %>
+                    </span>
+                  </td>
+                  <td><%= registration.registration_item&.title %></td>
+                <% end %>
+
+                <% unless campaign.completed? %>
+                  <td>
+                    <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user.id, source: "registrations"),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger",
+                                  data: { confirm: t("basics.confirm") },
+                                  title: t("registration.user_registration.actions.remove_user") do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-muted"><%= t("registration.user_registration.none", default: "No registrations found.") %></p>
+    <% end %>
+  </div>
+</div>

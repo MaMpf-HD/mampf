@@ -1,6 +1,8 @@
 en:
   registration:
     campaign:
+      errors:
+        already_finalized: "Campaign is already finalized."
       planning_only: "Planning only"
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
@@ -12,6 +14,7 @@ en:
       opened: "Campaign opened."
       closed: "Campaign closed."
       reopened: "Campaign reopened."
+      finalized: "Campaign finalized successfully."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       not_found: "Registration campaign not found."
@@ -64,11 +67,20 @@ en:
         open: "Start Registration"
         close: "End Registration"
         reopen: "Reopen Registration"
+        finalize: "Finalize Allocation"
+        force_finalize: "Force Finalize (Ignore Errors)"
+        allocate: "Run Allocation"
+        reallocate: "Recalculate Allocation"
+        view_allocation: "View Allocation"
+        review_and_finalize: "Review & Finalize"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
+        finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
+        force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
+        reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -85,6 +97,35 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+    allocation:
+      started: "Allocation has been calculated."
+      dashboard:
+        title: "Allocation Dashboard"
+        last_updated: "Last updated: %{time}"
+        unassigned_students: "Unassigned Students"
+        no_unassigned: "All students have been assigned!"
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
+        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        item_capacities: "Tutorial Capacities"
+      stats:
+        total_registrations: "Total Applicants"
+        assigned: "Assigned"
+        unassigned: "Unassigned"
+        happiness_distribution: "Preference Distribution"
+        rank: "Preference Rank"
+        count: "Count"
+        percentage: "Percentage"
+        rank_label: "Choice #%{rank}"
+        forced: "Forced Assignment"
+        capacity: "Capacity"
+        utilization: "Utilization"        
+      errors:
+        already_completed: "Campaign is already completed."
+        wrong_status: "Campaign has wrong status for this action."
+        policy_violation: "Policy violations detected. Please review details below."
+        policy_violation_title: "Policy Violations Detected"
+        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        failed: "Allocation failed: %{error}"
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -128,6 +169,7 @@ en:
         both: "Both"
     item:
       not_found: "Registration item not found."
+      one: "Item"
       index:
         title: "Items"
         none: "No items added yet."
@@ -164,6 +206,22 @@ en:
       confirm_delete: "Are you sure you want to remove this item?"
       confirm_remove: "Are you sure you want to remove this item from the campaign?"
       confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
+    user_registration:
+      forced_assignment: "Forced Assignment"
+      index:
+        title: "Registrations"
+      status:
+        pending: "Pending"
+        confirmed: "Confirmed"
+        rejected: "Rejected"
+      rank: "Rank"
+      destroyed: "Registration removed successfully."
+      destroyed_all_for_user: "Removed %{count} registrations for user."
+      destroy_failed: "Failed to remove registrations."
+      none: "No registrations found."
+      preferences: "Preferences"
+      actions:
+        remove_user: "Remove user from campaign"
   activerecord:
     errors:
       models:
@@ -171,6 +229,7 @@ en:
           attributes:
             base:
               frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
+              already_finalized: "Campaign is already finalized."
               cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
               referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
               prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
