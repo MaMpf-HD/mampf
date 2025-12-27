@@ -4,6 +4,15 @@ en:
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
+    stats:
+      total_participants: 'Total Participants'
+      capacity_usage: 'of %{count} spots filled'
+    dashboard:
+      title: 'Dashboard'
+      description: 'Manage allocations and view global performance.'
+    actions:
+      export_all: 'Export All'
+      global_roster: 'Global Roster'
     columns:
       title: 'Title'
       tutors: 'Tutors'

@@ -10,22 +10,40 @@ class LectureGroupsComponent < ViewComponent::Base
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
   def groups
-    case @group_type
-    when :tutorials
-      [tutorial_group]
-    when :talks
-      [talk_group]
-    when :exams
-      # [exam_group] # Future implementation
-      []
-    else
-      # :all or default
-      [
-        tutorial_group,
-        talk_group
-        # Future: exam_group
-      ]
+    @groups ||= case @group_type
+                when :tutorials
+                  [tutorial_group]
+                when :talks
+                  [talk_group]
+                when :exams
+                  # [exam_group] # Future implementation
+                  []
+                else
+                  # :all or default
+                  [
+                    tutorial_group,
+                    talk_group
+                    # Future: exam_group
+                  ]
     end.compact
+  end
+
+  def total_participants
+    groups.sum do |group|
+      group[:items].sum { |item| item.roster_entries.count }
+    end
+  end
+
+  def total_capacity
+    sum = 0
+    groups.each do |group|
+      group[:items].each do |item|
+        return nil if item.capacity.nil?
+
+        sum += item.capacity
+      end
+    end
+    sum
   end
 
   private

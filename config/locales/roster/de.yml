@@ -4,6 +4,15 @@ de:
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
+    stats:
+      total_participants: 'Teilnehmende gesamt'
+      capacity_usage: 'von %{count} Plätzen belegt'
+    dashboard:
+      title: 'Dashboard'
+      description: 'Verwaltung der Zuteilungen und globale Übersicht.'
+    actions:
+      export_all: 'Alle exportieren'
+      global_roster: 'Gesamtliste'
     columns:
       title: 'Titel'
       tutors: 'TutorInnen'
