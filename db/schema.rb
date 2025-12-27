@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_20_000003) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_25_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -539,7 +539,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_20_000003) do
     t.index ["medium_id"], name: "index_referrals_on_medium_id"
   end
 
-  create_table "registration_campaigns", force: :cascade do |t|
+  create_table "registration_campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
     t.string "description"
@@ -554,19 +554,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_20_000003) do
     t.index ["status"], name: "index_registration_campaigns_on_status"
   end
 
-  create_table "registration_items", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "registerable_type", null: false
     t.bigint "registerable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
     t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
 
-  create_table "registration_policies", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "kind", null: false
     t.integer "phase", default: 0, null: false
     t.integer "position"
@@ -574,6 +573,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_20_000003) do
     t.jsonb "config", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
     t.index ["active"], name: "index_registration_policies_on_active"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
@@ -581,17 +581,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_20_000003) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
-  create_table "registration_user_registrations", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "registration_item_id", null: false
     t.integer "preference_rank"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
+    t.uuid "registration_item_id", null: false
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
-    t.index ["registration_campaign_id"], name: "idx_on_registration_campaign_id_5f8ca153cb"
+    t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
