@@ -18,6 +18,8 @@ Rails.application.routes.draw do
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
       resources :i18n, only: :create
+      post "feature_flags/enable", to: "feature_flags#enable"
+      post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
     end
@@ -274,7 +276,35 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  resources :lectures, except: [:index]
+  resources :lectures, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :campaigns,
+                controller: "registration/campaigns",
+                only: [:index, :new, :create],
+                as: :registration_campaigns
+    end
+  end
+
+  constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+    resources :campaigns,
+              controller: "registration/campaigns",
+              only: [:show, :edit, :update, :destroy],
+              as: :registration_campaigns do
+      member do
+        patch :open
+        patch :close
+        patch :reopen
+      end
+      resources :policies,
+                controller: "registration/policies",
+                only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :move_up
+          patch :move_down
+        end
+      end
+    end
+  end
 
   # lessons routes
 

@@ -26,3 +26,7 @@ altcha_solutions_cleaner_job:
   cron: "0 0 */2 * *"
   class: "AltchaSolutionsCleaner"
   queue: critical
+
+campaign_status_worker:
+  cron: "*/1 * * * *"
+  class: "CampaignStatusWorker"
