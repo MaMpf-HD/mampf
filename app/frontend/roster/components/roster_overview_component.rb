@@ -1,6 +1,6 @@
 # Renders a list of groups (tutorials, exams, etc.) for a lecture.
 # Can be filtered by group_type (:tutorials, :exams, :all).
-class LectureGroupsComponent < ViewComponent::Base
+class RosterOverviewComponent < ViewComponent::Base
   def initialize(lecture:, group_type: :all)
     super()
     @lecture = lecture
