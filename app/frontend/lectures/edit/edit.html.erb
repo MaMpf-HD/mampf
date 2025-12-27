@@ -47,6 +47,12 @@
         </div>
       <% end %>
 
+      <% if Flipper.enabled?(:item_dashboard) %>
+        <% component.with_tab(name: "roster", label: t("basics.roster", default: "Roster")) do %>
+          <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture } %>
+        <% end %>
+      <% end %>
+
       <% component.with_tab(name: "orga", label: t("admin.lecture.orga")) do %>
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/organizational_concept',

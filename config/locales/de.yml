@@ -64,6 +64,7 @@ de:
     mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
     tutorials: 'Tutorien'
+    roster: 'Teilnehmende'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
