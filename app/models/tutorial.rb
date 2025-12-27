@@ -2,11 +2,16 @@ require "csv"
 
 class Tutorial < ApplicationRecord
   include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
   has_many :tutors, through: :tutor_tutorial_joins
+
+  # Roster associations
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :members, through: :tutorial_memberships, source: :user
 
   has_many :submissions, dependent: :destroy
 
@@ -49,6 +54,10 @@ class Tutorial < ApplicationRecord
 
   def add_tutor(tutor)
     tutors << tutor unless tutors.include?(tutor)
+  end
+
+  def roster_entries
+    tutorial_memberships
   end
 
   private

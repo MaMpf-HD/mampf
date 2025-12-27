@@ -15,13 +15,18 @@ module Registration
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
     # - Implement #allocated_user_ids (returns array of user IDs)
     # - Implement #materialize_allocation!(user_ids:, campaign:)
+    #
+    # Note: Including Rosters::Rosterable provides default implementations for
+    # the last two requirements.
 
     def allocated_user_ids
-      raise(NotImplementedError, "Registerable must implement #allocated_user_ids")
+      raise(NotImplementedError,
+            "#{self.class} must implement #allocated_user_ids. You may want to include Rosters::Rosterable.")
     end
 
     def materialize_allocation!(user_ids:, campaign:)
-      raise(NotImplementedError, "Registerable must implement #materialize_allocation!")
+      raise(NotImplementedError,
+            "#{self.class} must implement #materialize_allocation!. You may want to include Rosters::Rosterable.")
     end
 
     private

@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(Talk, type: :model) do
-  it_behaves_like "a registerable model"
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_talk)).to be_valid

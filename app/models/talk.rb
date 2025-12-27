@@ -1,6 +1,7 @@
 # Talk class
 class Talk < ApplicationRecord
   include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :lecture, touch: true
 
@@ -116,6 +117,14 @@ class Talk < ApplicationRecord
 
   def add_speaker(speaker)
     speakers << speaker unless speaker.in?(speakers)
+  end
+
+  def roster_entries
+    speaker_talk_joins
+  end
+
+  def roster_user_id_column
+    :speaker_id
   end
 
   private

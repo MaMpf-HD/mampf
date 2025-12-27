@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(Lecture, type: :model) do
-  it_behaves_like "a registerable model"
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
   it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
@@ -244,11 +250,5 @@ RSpec.describe(Lecture, type: :model) do
       expect(campaign).to be_persisted
       expect(campaign.campaignable).to eq(lecture)
     end
-  end
-
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:lecture) }
-
-    it_behaves_like "a registerable model"
   end
 end
