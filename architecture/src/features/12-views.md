@@ -252,6 +252,47 @@ Student “Show”.
 | Confirmation (result)                  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show       | After submit/close                    | Shows assignment and summary |
 | Fulfill requirements (policy)          | —                                                                                      | Policy-configured flow | External or internal                  | Follow instructions to satisfy policy, then retry |
 
+## Item Dashboard (Tutorials, Talk, Exams)
+
+The **Item Dashboard** is the central operational hub for managing a single allocated group, whether it is a **Tutorial** (Group A), a **Seminar Talk** (Team 1), or an entire **Exam** cohort. It is the primary workspace for Tutors and Staff.
+
+### Placement & Access
+- **Location:** Accessible via the `Roster::MaintenanceController#show` action.
+- **Entry Points:**
+    - **Lecture Settings:** From the "Tutorials" tab in `Lecture#edit`, clicking "Manage Roster" opens the dashboard for a specific group.
+    - **Lecture Overview:** From the high-level Roster Overview (`Roster::MaintenanceController#index`), clicking on a group row.
+    - **Registration Dashboard:** Clicking on an allocated item in the "Items" tab.
+    - **My Mampf:** (Future) Tutors can access their assigned groups directly.
+
+### Architecture
+The dashboard uses a **Tabbed Layout** to switch between different management contexts without leaving the page.
+
+#### 1. Roster Tab (Membership)
+*Focus: Who is in this group?*
+- **List View:** Displays all students currently allocated to this item (Name, Matriculation, Email). Supports pagination for large rosters (e.g., Exams).
+- **Maintenance Actions:**
+    - **Move:** Transactional move to another group (checks capacity).
+    - **Remove:** Removes student from the group.
+    - **Add:** Manually adds a student (bypassing registration constraints).
+- **Candidates Panel:** (Admin only) Displays unassigned students from the campaign to facilitate manual placement.
+
+#### 2. Gradebook Tab (Performance)
+*Focus: How are they doing?*
+This tab provides a matrix view of students and their assessments. It adapts to the item type:
+- **Tutorials:** Columns are Assignments (Sheet 1, Sheet 2). Cells are total points. Drill-down reveals task-level points.
+- **Exams:** Columns are Questions (Q1, Q2). Cells are points per question.
+- **Seminars:** Single assessment form for the presentation.
+
+#### 3. Attendance Tab (Optional)
+*Focus: Are they showing up?*
+- Used if the lecture tracks attendance as a requirement.
+- Simple matrix of Students vs. Dates.
+
+### Integration in Lecture Settings
+To provide sufficient screen real estate for wide tables (rosters, gradebooks), the dashboard is also integrated into the `Lecture#edit` view as a **Full-Width Tab** named "Roster".
+- **Mechanism:** Uses a `turbo_frame_tag` with `loading="lazy"` to fetch the `Roster::MaintenanceController#index` (Lecture-level overview) into the settings page.
+- **Layout:** Unlike other settings tabs which are constrained to a narrow container, this tab spans the full width of the page, similar to the "Content" tab.
+
 ## Rosters
 
 #### Flow
