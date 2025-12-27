@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_26_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -327,10 +327,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["section_id"], name: "index_items_on_section_id"
   end
 
-  create_table "lecture_memberships", force: :cascade do |t|
+  create_table "lecture_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "lecture_id", null: false
-    t.bigint "source_campaign_id"
+    t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"
@@ -551,7 +551,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["medium_id"], name: "index_referrals_on_medium_id"
   end
 
-  create_table "registration_campaigns", force: :cascade do |t|
+  create_table "registration_campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
     t.string "description"
@@ -566,12 +566,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["status"], name: "index_registration_campaigns_on_status"
   end
 
-  create_table "registration_items", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "registerable_type", null: false
     t.bigint "registerable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY ((ARRAY['Tutorial'::character varying, 'Talk'::character varying])::text[]))"
@@ -579,8 +579,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
 
-  create_table "registration_policies", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "kind", null: false
     t.integer "phase", default: 0, null: false
     t.integer "position"
@@ -588,6 +587,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.jsonb "config", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
     t.index ["active"], name: "index_registration_policies_on_active"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
@@ -595,17 +595,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
-  create_table "registration_user_registrations", force: :cascade do |t|
-    t.bigint "registration_campaign_id", null: false
+  create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "registration_item_id", null: false
     t.integer "preference_rank"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registration_campaign_id", null: false
+    t.uuid "registration_item_id", null: false
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
-    t.index ["registration_campaign_id"], name: "idx_on_registration_campaign_id_5f8ca153cb"
+    t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
@@ -650,7 +650,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.bigint "speaker_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "source_campaign_id"
+    t.uuid "source_campaign_id"
     t.index ["source_campaign_id"], name: "index_speaker_talk_joins_on_source_campaign_id"
     t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
@@ -967,10 +967,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_22_000000) do
     t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
   end
 
-  create_table "tutorial_memberships", force: :cascade do |t|
+  create_table "tutorial_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "tutorial_id", null: false
-    t.bigint "source_campaign_id"
+    t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"

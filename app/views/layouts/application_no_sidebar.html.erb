@@ -11,13 +11,9 @@
     <%= render partial: "flash/messages" %>
     <%= render partial: "shared/navbar" %>
 
-    <div class="container-fluid fluidvert">
-      <div class="row">
-        <main class="col-12 pt-3" role="main">
-          <%= yield %>
-        </main>
-      </div>
-    </div>
+    <main class="pt-3">
+      <%= yield %>
+    </main>
 
     <div id="modal-container"></div>
 
