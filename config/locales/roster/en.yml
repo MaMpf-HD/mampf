@@ -7,7 +7,7 @@ en:
       groups: 'Group Management'
       candidates: 'Candidates'
       grades: 'Grades'
-      statistics: 'Statistics'
+      global: 'Global Roster'
     stats:
       total_participants: 'Total Participants'
       capacity_usage: 'of %{count} spots filled'

@@ -1,21 +1,4 @@
 <div class="mb-3">
-  <!-- Header & Actions -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h3 class="fw-bold mb-0"><%= group_type_title %></h3>
-      <div class="text-muted small mt-1">
-        <%= t('roster.stats.total_participants') %>: <strong><%= total_participants %></strong>
-        &middot;
-        <%= t('roster.stats.capacity_usage', count: total_capacity) %>
-      </div>
-    </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-primary btn-sm" disabled>
-        <i class="bi bi-people me-1"></i> <%= t('roster.actions.global_roster') %>
-      </button>
-    </div>
-  </div>
-
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
     <li class="nav-item" role="presentation">
@@ -39,9 +22,12 @@
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link disabled" id="stats-tab" type="button" role="tab" title="Coming soon">
-        <%= t('roster.tabs.statistics') %>
+      <button class="nav-link" id="global-tab" data-bs-toggle="tab" data-bs-target="#global-pane" type="button" role="tab">
+        <%= t('roster.tabs.global', default: 'Global Roster') %>
       </button>
+    </li>
+    <li class="nav-item ms-auto align-self-center text-muted small">
+      <%= t('roster.stats.total_participants') %>: <strong><%= total_participants %></strong>
     </li>
   </ul>
 
@@ -109,6 +95,16 @@
     <!-- Candidates Tab -->
     <div class="tab-pane fade" id="candidates-pane" role="tabpanel">
       <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
+    </div>
+
+    <!-- Global Roster Tab -->
+    <div class="tab-pane fade" id="global-pane" role="tabpanel">
+      <div class="card border-top-0">
+        <div class="card-body text-center text-muted py-5">
+          <i class="bi bi-bar-chart-line fs-1 d-block mb-2"></i>
+          <p>Global statistics and participant list coming soon.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

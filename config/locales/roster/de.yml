@@ -7,7 +7,7 @@ de:
       groups: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       grades: 'Notenliste'
-      statistics: 'Statistik'
+      global: 'Gesamtliste'
     stats:
       total_participants: 'Teilnehmende gesamt'
       capacity_usage: 'von %{count} Plätzen belegt'
