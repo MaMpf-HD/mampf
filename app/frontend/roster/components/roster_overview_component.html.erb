@@ -20,12 +20,12 @@
   <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" type="button" role="tab">
-        <%= t('roster.tabs.groups', default: 'Groups') %>
+        <%= t('roster.tabs.groups') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
-        <%= t('roster.tabs.candidates', default: 'Candidates') %>
+        <%= t('roster.tabs.candidates') %>
         <% if unassigned_count.positive? %>
           <span class="badge rounded-pill bg-danger ms-1"><%= unassigned_count %></span>
         <% else %>
@@ -35,12 +35,12 @@
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link disabled" id="grades-tab" type="button" role="tab" title="Coming soon">
-        <%= t('roster.tabs.grades', default: 'Grades') %>
+        <%= t('roster.tabs.grades') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link disabled" id="stats-tab" type="button" role="tab" title="Coming soon">
-        <%= t('roster.tabs.statistics', default: 'Statistics') %>
+        <%= t('roster.tabs.statistics') %>
       </button>
     </li>
   </ul>
