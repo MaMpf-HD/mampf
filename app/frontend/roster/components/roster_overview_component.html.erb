@@ -31,114 +31,17 @@
   <div class="tab-content" id="rosterTabsContent">
     <!-- Groups Tab -->
     <div class="tab-pane fade show active" id="groups-pane" role="tabpanel">
-      <div class="card border-top-0">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th><%= t('roster.columns.title') %></th>
-                <% if @group_type == :tutorials %>
-                  <th><%= t('roster.columns.tutors') %></th>
-                <% elsif @group_type == :talks %>
-                  <th><%= t('roster.columns.speakers') %></th>
-                <% end %>
-                <th><%= t('roster.columns.capacity') %></th>
-                <th><%= t('roster.columns.occupancy') %></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <% groups.each do |group| %>
-                <% group[:items].each do |item| %>
-                  <tr>
-                    <td class="fw-medium"><%= item.title %></td>
-                    <% if @group_type == :tutorials %>
-                      <td><%= item.tutors.map(&:name).join(", ") %></td>
-                    <% elsif @group_type == :talks %>
-                      <td><%= item.speakers.map(&:name).join(", ") %></td>
-                    <% end %>
-                    <td><%= item.capacity %></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                          <% percentage = item.capacity ? (item.roster_entries.count.to_f / item.capacity * 100).clamp(0, 100) : 0 %>
-                          <div class="progress-bar <%= percentage >= 100 ? 'bg-danger' : 'bg-primary' %>"
-                               role="progressbar"
-                               style="width: <%= percentage %>%"></div>
-                        </div>
-                        <span class="small text-muted"><%= item.roster_entries.count %></span>
-                      </div>
-                    </td>
-                    <td class="text-end">
-                      <%= link_to t('roster.manage'),
-                                  group_path(item),
-                                  class: "btn btn-sm btn-outline-primary" %>
-                    </td>
-                  </tr>
-                <% end %>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-        <% if total_participants.zero? %>
-          <div class="card-footer text-muted small text-center py-3">
-            <i class="bi bi-info-circle me-1"></i> <%= t('roster.empty_hint') %>
-          </div>
-        <% end %>
-      </div>
+      <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
     </div>
 
     <!-- Candidates Tab -->
     <div class="tab-pane fade" id="candidates-pane" role="tabpanel">
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            <%= t('roster.manual_enrollment.title') %>
-            <span class="badge bg-warning text-dark ms-1">Mock</span>
-          </h5>
-        </div>
-        <div class="card-body">
-          <p class="card-text text-muted small mb-3">
-            <%= t('roster.manual_enrollment.description') %>
-          </p>
-          <form class="row g-3 align-items-end">
-            <div class="col-md-5">
-              <label class="form-label"><%= t('roster.manual_enrollment.student') %></label>
-              <!-- TODO: Integrate with user search/autocomplete component -->
-              <input type="text" class="form-control" placeholder="Search student...">
-            </div>
-            <div class="col-md-5">
-              <label class="form-label"><%= t('roster.manual_enrollment.group') %></label>
-              <select class="form-select">
-                <option selected disabled>Choose group...</option>
-                <% groups.each do |group| %>
-                  <% group[:items].each do |item| %>
-                    <option value="<%= item.id %>">
-                      <%= item.title %>
-                      (<%= item.roster_entries.count %>/<%= item.capacity || '∞' %>)
-                    </option>
-                  <% end %>
-                <% end %>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn btn-primary w-100">Add</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
+      <%= render "roster/components/enrollment_tab", groups: groups, lecture: @lecture, group_type: @group_type %>
     </div>
 
     <!-- Overview Tab -->
     <div class="tab-pane fade" id="overview-pane" role="tabpanel">
-      <div class="card border-top-0">
-        <div class="card-body text-center text-muted py-5">
-          <i class="bi bi-bar-chart-line fs-1 d-block mb-2"></i>
-          <p>Global statistics and participant list coming soon.</p>
-        </div>
-      </div>
+      <%= render "roster/components/overview_tab" %>
     </div>
   </div>
 </div>

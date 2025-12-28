@@ -72,6 +72,18 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  # Helper to generate the correct polymorphic path
+  def group_path(item)
+    case item
+    when Tutorial
+      helpers.tutorial_roster_path(item)
+    when Talk
+      helpers.talk_roster_path(item)
+    else
+      "#"
+    end
+  end
+
   private
 
     def tutorial_group
@@ -94,17 +106,5 @@ class RosterOverviewComponent < ViewComponent::Base
         items: items,
         type: :talks
       }
-    end
-
-    # Helper to generate the correct polymorphic path
-    def group_path(item)
-      case item
-      when Tutorial
-        helpers.tutorial_roster_path(item)
-      when Talk
-        helpers.talk_roster_path(item)
-      else
-        "#"
-      end
     end
 end
