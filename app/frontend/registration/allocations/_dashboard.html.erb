@@ -126,7 +126,7 @@
                   <td class="align-middle">
                     <div class="d-flex align-items-center">
                       <div class="flex-grow-1">
-                        <%= registration_progress_bar(count, @stats.assigned_users,
+                        <%= progress_bar(count, @stats.assigned_users,
                                                       classification: rank_color(rank),
                                                       height: "10px",
                                                       show_label: false,
@@ -174,7 +174,7 @@
                   <% if data[:capacity] %>
                     <div class="d-flex align-items-center">
                       <div class="flex-grow-1">
-                        <%= registration_progress_bar(data[:count], data[:capacity],
+                        <%= progress_bar(data[:count], data[:capacity],
                                                       classification: :utilization,
                                                       height: "10px",
                                                       show_label: false,

@@ -99,45 +99,45 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#registration_progress_bar" do
+  describe "#progress_bar" do
     it "renders a progress bar with correct percentage" do
-      html = helper.registration_progress_bar(50, 100)
+      html = helper.progress_bar(50, 100)
       expect(html).to include('style="width: 50.0%"')
       expect(html).to include('aria-valuenow="50"')
       expect(html).to include("50%")
     end
 
     it "clamps percentage to 100" do
-      html = helper.registration_progress_bar(150, 100)
+      html = helper.progress_bar(150, 100)
       expect(html).to include('style="width: 100%"')
     end
 
     it "handles zero max value" do
-      html = helper.registration_progress_bar(50, 0)
+      html = helper.progress_bar(50, 0)
       expect(html).to include('style="width: 0%"')
     end
 
     it "applies utilization colors" do
-      expect(helper.registration_progress_bar(50, 100, classification: :utilization))
+      expect(helper.progress_bar(50, 100, classification: :utilization))
         .to include("bg-success")
-      expect(helper.registration_progress_bar(85, 100, classification: :utilization))
+      expect(helper.progress_bar(85, 100, classification: :utilization))
         .to include("bg-warning")
-      expect(helper.registration_progress_bar(100, 100, classification: :utilization))
+      expect(helper.progress_bar(100, 100, classification: :utilization))
         .to include("bg-danger")
     end
 
     it "applies custom classification colors" do
-      expect(helper.registration_progress_bar(50, 100, classification: :info))
+      expect(helper.progress_bar(50, 100, classification: :info))
         .to include("bg-info")
     end
 
     it "supports custom height and style" do
-      html = helper.registration_progress_bar(50, 100, height: "10px", style: "width: 50px")
+      html = helper.progress_bar(50, 100, height: "10px", style: "width: 50px")
       expect(html).to include('style="width: 50px; height: 10px"')
     end
 
     it "can hide label" do
-      html = helper.registration_progress_bar(50, 100, show_label: false)
+      html = helper.progress_bar(50, 100, show_label: false)
       expect(html).not_to include("50%")
     end
   end

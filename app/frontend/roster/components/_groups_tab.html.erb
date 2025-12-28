@@ -27,11 +27,15 @@
               <td><%= item.capacity %></td>
               <td>
                 <div class="d-flex align-items-center">
-                  <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                    <% percentage = item.capacity ? (item.roster_entries.count.to_f / item.capacity * 100).clamp(0, 100) : 0 %>
-                    <div class="progress-bar <%= percentage >= 100 ? 'bg-danger' : 'bg-primary' %>"
-                          role="progressbar"
-                          style="width: <%= percentage %>%"></div>
+                  <div class="flex-grow-1 me-2">
+                    <%= progress_bar(
+                          item.roster_entries.count,
+                          item.capacity,
+                          classification: :utilization,
+                          height: "6px",
+                          show_label: false,
+                          container_class: "progress"
+                        ) %>
                   </div>
                   <span class="small text-muted"><%= item.roster_entries.count %></span>
                 </div>
