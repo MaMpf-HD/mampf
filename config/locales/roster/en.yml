@@ -7,8 +7,8 @@ en:
       groups: 'Group Management'
       candidates: 'Candidates'
       enrollment: 'Enrollment'
-      grades: 'Grades'
-      global: 'Global Roster'
+      performance: 'Performance'
+      overview: 'Overview'
     stats:
       total_participants: 'Total Participants'
       capacity_usage: 'of %{count} spots filled'
@@ -30,6 +30,7 @@ en:
       title: 'Unassigned Candidates'
       help: 'Students who registered via a campaign but are not currently assigned to any group.'
       empty: 'No unassigned candidates found.'
+      no_prefs: 'No preferences'
     manual_enrollment:
       title: 'Manual Enrollment'
       description: 'Manually add a student to a group. This is useful for late-comers.'
@@ -43,6 +44,7 @@ en:
       occupancy: 'Occupancy'
       name: 'Name'
       email: 'Email'
+      preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
     empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually.'

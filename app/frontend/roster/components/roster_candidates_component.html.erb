@@ -1,51 +1,62 @@
 <div class="card h-100">
   <div class="card-header">
     <h5 class="card-title mb-0">
-      <%= t('roster.candidates.title', default: 'Unassigned Candidates') %>
-      <%= helpers.helpdesk(t('roster.candidates.help'), false) %>
+      <%= t('roster.candidates.title') %>
       <span class="badge bg-secondary rounded-pill ms-2"><%= candidates.count %></span>
+      <%= helpers.helpdesk(t('roster.candidates.help'), false) %>
     </h5>
   </div>
   <div class="card-body p-0">
     <% if candidates.any? %>
-      <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
-        <% candidates.each do |user| %>
-          <div class="list-group-item">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <div>
-                <div class="fw-bold"><%= user.name %></div>
-                <small class="text-muted"><%= user.email %></small>
-              </div>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <%= t('roster.actions.assign', default: 'Assign') %>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to', default: 'Assign to...') %></h6></li>
-                  <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
-                </ul>
-              </div>
-            </div>
-            
-            <% candidate_info(user).each do |info| %>
-              <div class="small mt-1 text-muted">
-                <span class="fw-bold"><%= info[:campaign_title] %>:</span>
-                <% if info[:wishes].present? %>
-                  <span class="text-truncate" title="<%= info[:wishes] %>">
-                    <%= info[:wishes] %>
-                  </span>
-                <% else %>
-                  <span class="fst-italic"><%= t('roster.candidates.no_prefs', default: 'No preferences') %></span>
-                <% end %>
-              </div>
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th><%= t('roster.columns.name') %></th>
+              <th><%= t('roster.columns.email') %></th>
+              <th><%= t('roster.columns.preferences') %></th>
+              <th class="text-end"><%= t('roster.columns.actions') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% candidates.each do |user| %>
+              <tr>
+                <td class="fw-medium"><%= user.name %></td>
+                <td class="text-muted"><%= user.email %></td>
+                <td>
+                  <% candidate_info(user).each do |info| %>
+                    <div class="small">
+                      <span class="fw-bold"><%= info[:campaign_title] %>:</span>
+                      <% if info[:wishes].present? %>
+                        <span class="text-truncate d-inline-block align-bottom" style="max-width: 300px;" title="<%= info[:wishes] %>">
+                          <%= info[:wishes] %>
+                        </span>
+                      <% else %>
+                        <span class="fst-italic text-muted"><%= t('roster.candidates.no_prefs') %></span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </td>
+                <td class="text-end">
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <%= t('roster.actions.assign') %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
+                      <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
             <% end %>
-          </div>
-        <% end %>
+          </tbody>
+        </table>
       </div>
     <% else %>
       <div class="p-4 text-center text-muted">
         <i class="bi bi-check-circle display-6 mb-3"></i>
-        <p class="mb-0"><%= t('roster.candidates.empty', default: 'No unassigned candidates found.') %></p>
+        <p class="mb-0"><%= t('roster.candidates.empty') %></p>
       </div>
     <% end %>
   </div>

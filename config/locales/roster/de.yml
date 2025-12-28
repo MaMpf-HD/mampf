@@ -7,8 +7,8 @@ de:
       groups: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       enrollment: 'Einschreibung'
-      grades: 'Notenliste'
-      global: 'Gesamtliste'
+      performance: 'Leistungen'
+      overview: 'Übersicht'
     stats:
       total_participants: 'Teilnehmende gesamt'
       capacity_usage: 'von %{count} Plätzen belegt'
@@ -30,6 +30,7 @@ de:
       title: 'Nicht zugewiesene Kandidaten'
       help: 'Studierende, die sich über eine Kampagne angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
       empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
+      no_prefs: 'Keine Präferenzen'
     manual_enrollment:
       title: 'Manuelle Einschreibung'
       description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'
@@ -43,6 +44,7 @@ de:
       occupancy: 'Belegung'
       name: 'Name'
       email: 'E-Mail'
+      preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
     empty_hint: 'Noch keine Teilnehmenden. Sie können die Liste füllen, indem Sie eine Anmeldekampagne abschließen oder Studierende manuell hinzufügen.'

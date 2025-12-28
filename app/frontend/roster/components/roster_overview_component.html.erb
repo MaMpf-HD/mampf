@@ -1,3 +1,4 @@
+<% I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do %>
 <div class="mb-3">
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
@@ -12,13 +13,13 @@
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link disabled" id="grades-tab" type="button" role="tab" title="Coming soon">
-        <%= t('roster.tabs.grades') %>
+      <button class="nav-link disabled" id="performance-tab" type="button" role="tab" title="Coming soon">
+        <%= t('roster.tabs.performance') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="global-tab" data-bs-toggle="tab" data-bs-target="#global-pane" type="button" role="tab">
-        <%= t('roster.tabs.global') %>
+      <button class="nav-link" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab">
+        <%= t('roster.tabs.overview') %>
       </button>
     </li>
     <li class="nav-item ms-auto align-self-center text-muted small">
@@ -130,8 +131,8 @@
       <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
     </div>
 
-    <!-- Global Roster Tab -->
-    <div class="tab-pane fade" id="global-pane" role="tabpanel">
+    <!-- Overview Tab -->
+    <div class="tab-pane fade" id="overview-pane" role="tabpanel">
       <div class="card border-top-0">
         <div class="card-body text-center text-muted py-5">
           <i class="bi bi-bar-chart-line fs-1 d-block mb-2"></i>
@@ -141,3 +142,4 @@
     </div>
   </div>
 </div>
+<% end %>
