@@ -13,6 +13,11 @@ en:
     actions:
       export_all: 'Export All'
       global_roster: 'Global Roster'
+      assign: 'Assign'
+      assign_to: 'Assign to...'
+    candidates:
+      title: 'Candidates'
+      empty: 'No unassigned candidates found.'
     columns:
       title: 'Title'
       tutors: 'Tutors'

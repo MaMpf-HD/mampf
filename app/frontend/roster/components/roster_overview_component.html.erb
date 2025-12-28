@@ -98,9 +98,6 @@
     <% end %>
   </div>
   <div class="col-12 col-lg-4">
-    <%# Candidates Panel Placeholder %>
-    <div class="alert alert-secondary">
-      Candidates Panel (Coming in Step 4)
-    </div>
+    <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
   </div>
 </div>

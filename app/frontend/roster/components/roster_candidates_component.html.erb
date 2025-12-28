@@ -1,0 +1,36 @@
+<div class="card h-100">
+  <div class="card-header">
+    <h5 class="card-title mb-0">
+      <%= t('roster.candidates.title', default: 'Candidates') %>
+      <span class="badge bg-secondary rounded-pill ms-2"><%= candidates.count %></span>
+    </h5>
+  </div>
+  <div class="card-body p-0">
+    <% if candidates.any? %>
+      <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+        <% candidates.each do |user| %>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-bold"><%= user.name %></div>
+              <small class="text-muted"><%= user.email %></small>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <%= t('roster.actions.assign', default: 'Assign') %>
+              </button>
+              <ul class="dropdown-menu">
+                <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to', default: 'Assign to...') %></h6></li>
+                <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-4 text-center text-muted">
+        <i class="bi bi-check-circle display-6 mb-3"></i>
+        <p class="mb-0"><%= t('roster.candidates.empty', default: 'No unassigned candidates found.') %></p>
+      </div>
+    <% end %>
+  </div>
+</div>

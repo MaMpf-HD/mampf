@@ -13,6 +13,11 @@ de:
     actions:
       export_all: 'Alle exportieren'
       global_roster: 'Gesamtliste'
+      assign: 'Zuweisen'
+      assign_to: 'Zuweisen zu...'
+    candidates:
+      title: 'Kandidaten'
+      empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
     columns:
       title: 'Titel'
       tutors: 'TutorInnen'
