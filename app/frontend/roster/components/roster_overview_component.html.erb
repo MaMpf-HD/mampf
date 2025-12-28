@@ -8,12 +8,7 @@
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
-        <%= t('roster.tabs.candidates') %>
-        <% if unassigned_count.positive? %>
-          <span class="badge rounded-pill bg-danger ms-1"><%= unassigned_count %></span>
-        <% else %>
-          <span class="badge rounded-pill bg-secondary ms-1">0</span>
-        <% end %>
+        <%= t('roster.tabs.enrollment') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -23,7 +18,7 @@
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="global-tab" data-bs-toggle="tab" data-bs-target="#global-pane" type="button" role="tab">
-        <%= t('roster.tabs.global', default: 'Global Roster') %>
+        <%= t('roster.tabs.global') %>
       </button>
     </li>
     <li class="nav-item ms-auto align-self-center text-muted small">
@@ -94,6 +89,44 @@
 
     <!-- Candidates Tab -->
     <div class="tab-pane fade" id="candidates-pane" role="tabpanel">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <%= t('roster.manual_enrollment.title') %>
+            <span class="badge bg-warning text-dark ms-1">Mock</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text text-muted small mb-3">
+            <%= t('roster.manual_enrollment.description') %>
+          </p>
+          <form class="row g-3 align-items-end">
+            <div class="col-md-5">
+              <label class="form-label"><%= t('roster.manual_enrollment.student') %></label>
+              <!-- TODO: Integrate with user search/autocomplete component -->
+              <input type="text" class="form-control" placeholder="Search student...">
+            </div>
+            <div class="col-md-5">
+              <label class="form-label"><%= t('roster.manual_enrollment.group') %></label>
+              <select class="form-select">
+                <option selected disabled>Choose group...</option>
+                <% groups.each do |group| %>
+                  <% group[:items].each do |item| %>
+                    <option value="<%= item.id %>">
+                      <%= item.title %>
+                      (<%= item.roster_entries.count %>/<%= item.capacity || '∞' %>)
+                    </option>
+                  <% end %>
+                <% end %>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
     </div>
 

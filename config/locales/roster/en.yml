@@ -6,6 +6,7 @@ en:
       talk_maintenance: 'Coursework'
       groups: 'Group Management'
       candidates: 'Candidates'
+      enrollment: 'Enrollment'
       grades: 'Grades'
       global: 'Global Roster'
     stats:
@@ -29,6 +30,11 @@ en:
       title: 'Unassigned Candidates'
       help: 'Students who registered via a campaign but are not currently assigned to any group.'
       empty: 'No unassigned candidates found.'
+    manual_enrollment:
+      title: 'Manual Enrollment'
+      description: 'Manually add a student to a group. This is useful for late-comers.'
+      student: 'Student'
+      group: 'Group'
     columns:
       title: 'Title'
       tutors: 'Tutors'

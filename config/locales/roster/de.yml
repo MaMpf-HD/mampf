@@ -6,6 +6,7 @@ de:
       talk_maintenance: 'Vortragsbetrieb'
       groups: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
+      enrollment: 'Einschreibung'
       grades: 'Notenliste'
       global: 'Gesamtliste'
     stats:
@@ -29,6 +30,11 @@ de:
       title: 'Nicht zugewiesene Kandidaten'
       help: 'Studierende, die sich über eine Kampagne angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
       empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
+    manual_enrollment:
+      title: 'Manuelle Einschreibung'
+      description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'
+      student: 'Studierende/r'
+      group: 'Gruppe'
     columns:
       title: 'Titel'
       tutors: 'TutorInnen'
