@@ -22,6 +22,8 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
+    has_many :users, -> { distinct }, through: :user_registrations
+
     has_many :registration_policies,
              class_name: "Registration::Policy",
              dependent: :destroy,
@@ -132,6 +134,37 @@ module Registration
 
         update!(status: :completed)
       end
+    end
+
+    # Returns users registered in this campaign who are not assigned to any group
+    # of the same type within the campaignable (Lecture).
+    # This respects the materialization logic: if a user is assigned via another campaign
+    # (or manually), they are considered "assigned" and thus not a candidate here.
+    def unassigned_users
+      # Ignore campaigns that are still in planning
+      return User.none if status == "planning"
+
+      # Identify the types of items in this campaign (e.g., ["Tutorial"])
+      types = registration_items.pluck(:registerable_type).uniq
+
+      # Find users already assigned to ANY item of these types in the lecture.
+      allocated_user_ids = types.flat_map do |type|
+        klass = type.constantize
+        # Optimization: Use direct SQL join if the standard :users association exists.
+        # This avoids N+1 queries on instances.
+        if klass.reflect_on_association(:users)
+          klass.where(lecture: campaignable).joins(:users).pluck("users.id")
+        else
+          # Fallback: Load instances and use the Rosterable interface.
+          # This is slower but guarantees correctness if the association name differs.
+          klass.where(lecture: campaignable).flat_map(&:allocated_user_ids)
+        end
+      end.uniq
+
+      # Return registered users who are not in the allocated list
+      # We look at all users who have at least one registration entry in this campaign
+      # (regardless of status, as they are "candidates" until assigned elsewhere)
+      users.where.not(id: allocated_user_ids)
     end
 
     private

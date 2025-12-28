@@ -4,9 +4,15 @@ de:
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
+      groups: 'Gruppen'
+      candidates: 'Kandidaten'
+      grades: 'Notenliste'
+      statistics: 'Statistik'
     stats:
       total_participants: 'Teilnehmende gesamt'
       capacity_usage: 'von %{count} Plätzen belegt'
+      unassigned: 'Nicht zugewiesen'
+      action_required: 'Handlung erforderlich'
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
@@ -15,8 +21,13 @@ de:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
+      back: 'Zurück'
+    details:
+      participants: 'Teilnehmer'
+      empty: 'Keine Teilnehmer in dieser Gruppe.'
     candidates:
-      title: 'Kandidaten'
+      title: 'Nicht zugewiesene Kandidaten'
+      help: 'Studierende, die sich über eine Kampagne angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
       empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
     columns:
       title: 'Titel'
@@ -24,6 +35,9 @@ de:
       speakers: 'Vortragende'
       capacity: 'Kapazität'
       occupancy: 'Belegung'
+      name: 'Name'
+      email: 'E-Mail'
+      actions: 'Aktionen'
     manage: 'Verwalten'
     empty_hint: 'Noch keine Teilnehmenden. Sie können die Liste füllen, indem Sie eine Anmeldekampagne abschließen oder Studierende manuell hinzufügen.'
     errors:

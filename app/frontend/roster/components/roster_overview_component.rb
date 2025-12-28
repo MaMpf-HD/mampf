@@ -46,6 +46,32 @@ class RosterOverviewComponent < ViewComponent::Base
     sum
   end
 
+  def unassigned_count
+    klass_name = case @group_type
+                 when :tutorials then "Tutorial"
+                 when :talks then "Talk"
+                 else return 0
+    end
+
+    campaigns = Registration::Campaign.where(campaignable: @lecture)
+                                      .joins(:registration_items)
+                                      .where(registration_items: { registerable_type: klass_name })
+                                      .distinct
+
+    campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq.count
+  end
+
+  def group_type_title
+    case @group_type
+    when :tutorials
+      I18n.t("roster.tabs.tutorial_maintenance")
+    when :talks
+      I18n.t("roster.tabs.talk_maintenance")
+    else
+      I18n.t("roster.dashboard.title")
+    end
+  end
+
   private
 
     def tutorial_group

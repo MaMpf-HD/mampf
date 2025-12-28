@@ -1,5 +1,5 @@
 <% group_type ||= :all %>
-<div class="row px-4 py-2">
+<div class="container-fluid lecture-pane">
   <div class="col-12">
     <%= turbo_frame_tag "roster_maintenance",
                         src: lecture_roster_path(@lecture, group_type: group_type),

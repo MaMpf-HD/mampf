@@ -1,58 +1,64 @@
-<div class="mb-4">
-  <div class="row g-3 mb-4">
-    <!-- Stats Cards -->
-    <div class="col-md-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h6 class="card-subtitle mb-2 text-muted"><%= t('roster.stats.total_participants', default: 'Total Participants') %></h6>
-          <h2 class="card-title mb-0"><%= total_participants %></h2>
-          <small class="text-muted">
-            <%= t('roster.stats.capacity_usage', count: total_capacity, default: "of %{count} spots filled") %>
-          </small>
-        </div>
+<div class="mb-3">
+  <!-- Header & Actions -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0"><%= group_type_title %></h3>
+      <div class="text-muted small mt-1">
+        <%= t('roster.stats.total_participants') %>: <strong><%= total_participants %></strong>
+        &middot;
+        <%= t('roster.stats.capacity_usage', count: total_capacity) %>
       </div>
     </div>
-
-    <!-- Global Actions -->
-    <div class="col-md-8">
-      <div class="card h-100">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <h5 class="card-title"><%= t('roster.dashboard.title', default: 'Dashboard') %></h5>
-            <p class="card-text text-muted small mb-0">
-              <%= t('roster.dashboard.description', default: 'Manage allocations and view global performance.') %>
-            </p>
-          </div>
-          <div class="d-flex gap-2">
-             <button class="btn btn-outline-secondary" disabled>
-               <i class="bi bi-download me-1"></i> <%= t('roster.actions.export_all', default: 'Export All') %>
-             </button>
-             <button class="btn btn-primary" disabled>
-               <i class="bi bi-people me-1"></i> <%= t('roster.actions.global_roster', default: 'Global Roster') %>
-             </button>
-          </div>
-        </div>
-      </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary btn-sm" disabled>
+        <i class="bi bi-people me-1"></i> <%= t('roster.actions.global_roster') %>
+      </button>
     </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12 col-lg-8">
-    <% groups.each do |group| %>
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title mb-0"><%= group[:title] %></h5>
-        </div>
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" type="button" role="tab">
+        <%= t('roster.tabs.groups', default: 'Groups') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
+        <%= t('roster.tabs.candidates', default: 'Candidates') %>
+        <% if unassigned_count.positive? %>
+          <span class="badge rounded-pill bg-danger ms-1"><%= unassigned_count %></span>
+        <% else %>
+          <span class="badge rounded-pill bg-secondary ms-1">0</span>
+        <% end %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="grades-tab" type="button" role="tab" title="Coming soon">
+        <%= t('roster.tabs.grades', default: 'Grades') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="stats-tab" type="button" role="tab" title="Coming soon">
+        <%= t('roster.tabs.statistics', default: 'Statistics') %>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="rosterTabsContent">
+    <!-- Groups Tab -->
+    <div class="tab-pane fade show active" id="groups-pane" role="tabpanel">
+      <div class="card border-top-0">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
-            <thead>
+            <thead class="table-light">
               <tr>
                 <th><%= t('roster.columns.title') %></th>
-                <% if group[:type] == :tutorials %>
+                <% if @group_type == :tutorials %>
                   <th><%= t('roster.columns.tutors') %></th>
-                <% elsif group[:type] == :talks %>
-                  <th><%= t('roster.columns.speakers', default: 'Speakers') %></th>
+                <% elsif @group_type == :talks %>
+                  <th><%= t('roster.columns.speakers') %></th>
                 <% end %>
                 <th><%= t('roster.columns.capacity') %></th>
                 <th><%= t('roster.columns.occupancy') %></th>
@@ -60,44 +66,49 @@
               </tr>
             </thead>
             <tbody>
-              <% group[:items].each do |item| %>
-                <tr>
-                  <td><%= item.title %></td>
-                  <% if group[:type] == :tutorials %>
+              <% groups.each do |group| %>
+                <% group[:items].each do |item| %>
+                  <tr>
+                    <td class="fw-medium"><%= item.title %></td>
+                    <% if @group_type == :tutorials %>
+                      <td><%= item.tutors.map(&:name).join(", ") %></td>
+                    <% elsif @group_type == :talks %>
+                      <td><%= item.speakers.map(&:name).join(", ") %></td>
+                    <% end %>
+                    <td><%= item.capacity %></td>
                     <td>
-                      <%= item.tutors.map(&:name).join(", ") %>
+                      <div class="d-flex align-items-center">
+                        <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                          <% percentage = item.capacity ? (item.roster_entries.count.to_f / item.capacity * 100).clamp(0, 100) : 0 %>
+                          <div class="progress-bar <%= percentage >= 100 ? 'bg-danger' : 'bg-primary' %>"
+                               role="progressbar"
+                               style="width: <%= percentage %>%"></div>
+                        </div>
+                        <span class="small text-muted"><%= item.roster_entries.count %></span>
+                      </div>
                     </td>
-                  <% elsif group[:type] == :talks %>
-                    <td>
-                      <%= item.speakers.map(&:name).join(", ") %>
+                    <td class="text-end">
+                      <%= link_to t('roster.manage'),
+                                  group_path(item),
+                                  class: "btn btn-sm btn-outline-primary" %>
                     </td>
-                  <% end %>
-                  <td><%= item.capacity %></td>
-                  <td>
-                    <%# Simple text for now, visual bar can be added later %>
-                    <%= item.roster_entries.count %> / <%= item.capacity %>
-                  </td>
-                  <td class="text-end">
-                    <%= link_to t('roster.manage'),
-                                group_path(item),
-                                class: "btn btn-sm btn-outline-primary",
-                                data: { turbo_frame: "_top" } %>
-                  </td>
-                </tr>
+                  </tr>
+                <% end %>
               <% end %>
             </tbody>
           </table>
         </div>
-        <% if group[:items].sum { |i| i.roster_entries.count }.zero? %>
-          <div class="card-footer text-muted small">
-            <i class="bi bi-info-circle me-1"></i>
-            <%= t('roster.empty_hint', default: 'No participants yet. Please finalize a registration campaign to populate the roster.') %>
+        <% if total_participants.zero? %>
+          <div class="card-footer text-muted small text-center py-3">
+            <i class="bi bi-info-circle me-1"></i> <%= t('roster.empty_hint') %>
           </div>
         <% end %>
       </div>
-    <% end %>
-  </div>
-  <div class="col-12 col-lg-4">
-    <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
+    </div>
+
+    <!-- Candidates Tab -->
+    <div class="tab-pane fade" id="candidates-pane" role="tabpanel">
+      <%= render RosterCandidatesComponent.new(lecture: @lecture, group_type: @group_type) %>
+    </div>
   </div>
 </div>

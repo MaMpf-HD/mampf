@@ -1,7 +1,8 @@
 <div class="card h-100">
   <div class="card-header">
     <h5 class="card-title mb-0">
-      <%= t('roster.candidates.title', default: 'Candidates') %>
+      <%= t('roster.candidates.title', default: 'Unassigned Candidates') %>
+      <%= helpers.helpdesk(t('roster.candidates.help'), false) %>
       <span class="badge bg-secondary rounded-pill ms-2"><%= candidates.count %></span>
     </h5>
   </div>
@@ -9,20 +10,35 @@
     <% if candidates.any? %>
       <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
         <% candidates.each do |user| %>
-          <div class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <div class="fw-bold"><%= user.name %></div>
-              <small class="text-muted"><%= user.email %></small>
+          <div class="list-group-item">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <div class="fw-bold"><%= user.name %></div>
+                <small class="text-muted"><%= user.email %></small>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <%= t('roster.actions.assign', default: 'Assign') %>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to', default: 'Assign to...') %></h6></li>
+                  <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
+                </ul>
+              </div>
             </div>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <%= t('roster.actions.assign', default: 'Assign') %>
-              </button>
-              <ul class="dropdown-menu">
-                <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to', default: 'Assign to...') %></h6></li>
-                <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
-              </ul>
-            </div>
+            
+            <% candidate_info(user).each do |info| %>
+              <div class="small mt-1 text-muted">
+                <span class="fw-bold"><%= info[:campaign_title] %>:</span>
+                <% if info[:wishes].present? %>
+                  <span class="text-truncate" title="<%= info[:wishes] %>">
+                    <%= info[:wishes] %>
+                  </span>
+                <% else %>
+                  <span class="fst-italic"><%= t('roster.candidates.no_prefs', default: 'No preferences') %></span>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         <% end %>
       </div>

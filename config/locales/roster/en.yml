@@ -4,9 +4,15 @@ en:
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
+      groups: 'Groups'
+      candidates: 'Candidates'
+      grades: 'Grades'
+      statistics: 'Statistics'
     stats:
       total_participants: 'Total Participants'
       capacity_usage: 'of %{count} spots filled'
+      unassigned: 'Unassigned'
+      action_required: 'Action required'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
@@ -15,8 +21,13 @@ en:
       global_roster: 'Global Roster'
       assign: 'Assign'
       assign_to: 'Assign to...'
+      back: 'Back'
+    details:
+      participants: 'Participants'
+      empty: 'No participants in this group.'
     candidates:
-      title: 'Candidates'
+      title: 'Unassigned Candidates'
+      help: 'Students who registered via a campaign but are not currently assigned to any group.'
       empty: 'No unassigned candidates found.'
     columns:
       title: 'Title'
@@ -24,6 +35,9 @@ en:
       speakers: 'Speakers'
       capacity: 'Capacity'
       occupancy: 'Occupancy'
+      name: 'Name'
+      email: 'Email'
+      actions: 'Actions'
     manage: 'Manage'
     empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually.'
     errors:

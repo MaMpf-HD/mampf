@@ -1,0 +1,50 @@
+<div class="mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0"><%= title %></h3>
+      <div class="text-muted small mt-1">
+        <%= @lecture.title %>
+      </div>
+    </div>
+    <div>
+      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm" do %>
+        <i class="bi bi-arrow-left me-1"></i> <%= t('roster.actions.back') %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0"><%= t('roster.details.participants') %></h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th><%= t('roster.columns.name') %></th>
+            <th><%= t('roster.columns.email') %></th>
+            <th><%= t('roster.columns.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.each do |student| %>
+            <tr>
+              <td><%= student.name %></td>
+              <td><%= student.email %></td>
+              <td>
+                <!-- Actions placeholder -->
+              </td>
+            </tr>
+          <% end %>
+          <% if students.empty? %>
+            <tr>
+              <td colspan="3" class="text-center text-muted py-3">
+                <%= t('roster.details.empty') %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

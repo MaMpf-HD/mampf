@@ -18,32 +18,53 @@ class RosterCandidatesComponent < ViewComponent::Base
   private
 
     def fetch_candidates
-      klass = case @group_type
-              when :tutorials then Tutorial
-              when :talks then Talk
-              else return []
+      klass_name = case @group_type
+                   when :tutorials then "Tutorial"
+                   when :talks then "Talk"
+                   else return []
       end
 
-      # Users already assigned to any group of this type in this lecture
-      allocated_user_ids = klass.where(lecture: @lecture)
-                                .joins(:members)
-                                .pluck("users.id")
-                                .uniq
+      # Find all campaigns for this lecture that handle this item type
+      campaigns = Registration::Campaign.where(campaignable: @lecture)
+                                        .joins(:registration_items)
+                                        .where(registration_items: { registerable_type: klass_name })
+                                        .distinct
 
-      # Users registered in relevant campaigns
-      campaign_ids = Registration::Campaign.where(campaignable: @lecture).pluck(:id)
+      # Aggregate unassigned users from all relevant campaigns.
+      # The campaign model handles the logic of checking global allocations
+      # to ensure we don't list students who are already assigned (e.g. via another campaign).
+      candidate_ids = campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq
 
-      relevant_campaign_ids = Registration::Item.where(
-        registration_campaign_id: campaign_ids,
-        registerable_type: klass.name
-      ).pluck(:registration_campaign_id).uniq
+      # Preload registrations to display preferences and source campaign
+      User.where(id: candidate_ids)
+          .includes(user_registrations: [:registration_campaign,
+                                         { registration_item: :registerable }])
+          .order(:name, :email)
+    end
 
-      candidate_user_ids = Registration::UserRegistration.where(
-        registration_campaign_id: relevant_campaign_ids
-      ).pluck(:user_id).uniq
+    def candidate_info(user)
+      # Find relevant registrations for this user in the lecture's campaigns
+      # We filter in memory because we already eager loaded them
+      regs = user.user_registrations.select do |r|
+        r.registration_campaign.campaignable == @lecture &&
+          r.registration_item&.registerable_type == (@group_type == :tutorials ? "Tutorial" : "Talk")
+      end
 
-      unassigned_ids = candidate_user_ids - allocated_user_ids
+      # Group by campaign to show source
+      regs.group_by(&:registration_campaign).map do |campaign, campaign_regs|
+        {
+          campaign_title: campaign.description.presence || "Campaign ##{campaign.id}",
+          wishes: format_wishes(campaign_regs)
+        }
+      end
+    end
 
-      User.where(id: unassigned_ids).order(:name, :email)
+    def format_wishes(registrations)
+      # Sort by preference rank (if present)
+      sorted = registrations.sort_by { |r| r.preference_rank || 999 }
+
+      sorted.map do |r|
+        r.registration_item.registerable.title
+      end.join(", ")
     end
 end
