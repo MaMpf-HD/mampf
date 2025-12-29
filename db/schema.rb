@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -374,6 +374,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
     t.integer "capacity"
+    t.boolean "campaignable", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -713,6 +714,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
     t.text "description"
     t.boolean "display_description", default: false
     t.integer "capacity"
+    t.boolean "campaignable", default: true, null: false
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -986,6 +988,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "capacity"
+    t.boolean "campaignable", default: true, null: false
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 

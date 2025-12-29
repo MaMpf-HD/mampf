@@ -5,6 +5,10 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
+    # Models including this concern must:
+    # - Have a `campaignable` boolean column (default: true)
+    # - Implement #roster_entries (returns ActiveRecord::Relation)
+
     included do
       # Abstract method to retrieve the roster entries (e.g., memberships or joins)
       # Should return an ActiveRecord::Relation
@@ -16,6 +20,18 @@ module Rosters
       def roster_user_id_column
         :user_id
       end
+    end
+
+    # Checks if the roster is currently locked for manual modifications.
+    # A roster is locked if it is marked as campaignable and no non-planning
+    # campaign including this rosterable has been completed yet.
+    def locked?
+      return false unless campaignable?
+
+      !Registration::Campaign
+        .joins(:registration_items)
+        .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+        .exists?(status: :completed, planning_only: false)
     end
 
     # Returns the IDs of users currently in the roster.
