@@ -6,7 +6,7 @@ module Rosters
     extend ActiveSupport::Concern
 
     # Models including this concern must:
-    # - Have a `campaignable` boolean column (default: true)
+    # - Have a `managed_by_campaign` boolean column (default: true)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
 
     included do
@@ -23,10 +23,10 @@ module Rosters
     end
 
     # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if it is marked as campaignable and no non-planning
+    # A roster is locked if it is marked as managed_by_campaign and no non-planning
     # campaign including this rosterable has been completed yet.
     def locked?
-      return false unless campaignable?
+      return false unless managed_by_campaign?
 
       if association(:registration_items).loaded?
         registration_items.none? do |item|

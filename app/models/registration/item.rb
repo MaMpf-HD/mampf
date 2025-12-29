@@ -38,7 +38,7 @@ module Registration
               }
 
     validate :registerable_type_consistency, on: :create
-    validate :validate_registerable_is_campaignable, on: :create
+    validate :validate_registerable_is_managed_by_campaign, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
     validate :validate_planning_only_compliance
@@ -162,12 +162,12 @@ module Registration
         errors.add(:base, :already_in_other_campaign)
       end
 
-      def validate_registerable_is_campaignable
+      def validate_registerable_is_managed_by_campaign
         return unless registerable
-        return unless registerable.respond_to?(:campaignable?)
-        return if registerable.campaignable?
+        return unless registerable.respond_to?(:managed_by_campaign?)
+        return if registerable.managed_by_campaign?
 
-        errors.add(:base, :registerable_not_campaignable)
+        errors.add(:base, :registerable_not_managed_by_campaign)
       end
   end
 end

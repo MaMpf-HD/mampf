@@ -50,7 +50,7 @@ module Roster
     private
 
       def rosterable_params
-        params.expect(rosterable: [:campaignable])
+        params.expect(rosterable: [:managed_by_campaign])
       end
 
       def group_type_for_rosterable

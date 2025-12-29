@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
-  it "ensures all including models have a campaignable attribute" do
+  it "ensures all including models have a managed_by_campaign attribute" do
     # Eager load the application to ensure all models are loaded and discoverable
     Rails.application.eager_load!
 
@@ -10,22 +10,23 @@ RSpec.describe(Rosters::Rosterable) do
     end
 
     models.each do |model|
-      expect(model.new).to(respond_to(:campaignable), "#{model} must have a campaignable attribute")
+      expect(model.new)
+        .to(respond_to(:managed_by_campaign), "#{model} must have a managed_by_campaign attribute")
     end
   end
 
   describe "#locked?" do
-    let(:rosterable) { create(:tutorial, campaignable: true) }
+    let(:rosterable) { create(:tutorial, managed_by_campaign: true) }
 
-    context "when not campaignable" do
-      before { rosterable.update(campaignable: false) }
+    context "when not managed_by_campaign" do
+      before { rosterable.update(managed_by_campaign: false) }
 
       it "returns false" do
         expect(rosterable.locked?).to(be(false))
       end
     end
 
-    context "when campaignable" do
+    context "when managed_by_campaign" do
       context "with no campaigns" do
         it "returns true" do
           expect(rosterable.locked?).to(be(true))

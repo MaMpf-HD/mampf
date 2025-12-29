@@ -43,25 +43,26 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "PATCH /tutorials/:id/roster" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, campaignable: true) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, managed_by_campaign: true) }
 
     context "as an editor" do
       before { sign_in editor }
 
-      it "updates the campaignable flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
-        expect(tutorial.reload.campaignable).to be(false)
+      it "updates the managed_by_campaign flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { managed_by_campaign: false } }
+        expect(tutorial.reload.managed_by_campaign).to be(false)
       end
 
       it "redirects to the roster index" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        patch tutorial_roster_path(tutorial), params: { rosterable: { managed_by_campaign: false } }
         expect(response).to redirect_to(lecture_roster_path(lecture, group_type: :tutorials))
       end
 
       context "with turbo stream" do
         it "returns turbo stream response" do
-          patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } },
-                                                as: :turbo_stream
+          patch tutorial_roster_path(tutorial),
+                params: { rosterable: { managed_by_campaign: false } },
+                as: :turbo_stream
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body)
             .to include('turbo-stream action="replace" target="roster_maintenance_tutorials"')
@@ -73,13 +74,13 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       before { sign_in student }
 
       it "redirects to root (unauthorized)" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        patch tutorial_roster_path(tutorial), params: { rosterable: { managed_by_campaign: false } }
         expect(response).to redirect_to(root_path)
       end
 
-      it "does not update the campaignable flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
-        expect(tutorial.reload.campaignable).to be(true)
+      it "does not update the managed_by_campaign flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { managed_by_campaign: false } }
+        expect(tutorial.reload.managed_by_campaign).to be(true)
       end
     end
   end

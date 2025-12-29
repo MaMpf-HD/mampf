@@ -70,7 +70,7 @@
                       <%= button_to t('roster.enable_manual_management'),
                                     component.group_path(item),
                                     method: :patch,
-                                    params: { rosterable: { campaignable: false } },
+                                    params: { rosterable: { managed_by_campaign: false } },
                                     class: "btn btn-sm btn-outline-secondary",
                                     form: { style: "display: inline-block;" } %>
                     </div>
