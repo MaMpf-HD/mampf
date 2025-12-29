@@ -28,7 +28,7 @@ en:
       empty: 'No participants in this group.'
     candidates:
       title: 'Unassigned Candidates'
-      help: 'Students who registered via a campaign but are not currently assigned to any group.'
+      help: 'Students who registered via a completed campaign but are not currently assigned to any group.'
       empty: 'No unassigned candidates found.'
       no_prefs: 'No preferences'
     manual_enrollment:
@@ -50,7 +50,7 @@ en:
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
-    empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually (if allowed).'
+    empty_hint: 'To populate the roster, create and finalize a registration campaign. While a campaign is active, manual editing is disabled.'
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'

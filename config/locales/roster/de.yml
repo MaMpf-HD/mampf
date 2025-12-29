@@ -28,7 +28,7 @@ de:
       empty: 'Keine Teilnehmer in dieser Gruppe.'
     candidates:
       title: 'Nicht zugewiesene Kandidaten'
-      help: 'Studierende, die sich über ein Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
+      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
       empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
       no_prefs: 'Keine Präferenzen'
     manual_enrollment:
@@ -50,7 +50,7 @@ de:
     view_campaign: 'Anmeldeverfahren ansehen'
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'
-    empty_hint: 'Noch keine Teilnehmenden. Sie können die Liste füllen, indem Sie ein Anmeldeverfahren abschließen oder Studierende manuell hinzufügen (falls erlaubt).'
+    empty_hint: 'Um die Liste zu füllen, erstellen und schließen Sie ein Anmeldeverfahren ab. Während ein Verfahren läuft, ist die manuelle Bearbeitung deaktiviert.'
     errors:
       lecture_not_found: 'Veranstaltung nicht gefunden.'
       rosterable_not_found: 'Eintrag nicht gefunden.'

@@ -1,4 +1,11 @@
 <div class="card border-top-0">
+  <% if total_participants.zero? || groups.any? { |g| g[:items].any?(&:locked?) } %>
+    <div class="card-body bg-light border-bottom">
+      <div class="text-muted small text-center">
+        <i class="bi bi-info-circle me-1"></i> <%= t('roster.empty_hint') %>
+      </div>
+    </div>
+  <% end %>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
@@ -51,12 +58,14 @@
                 <% if item.locked? %>
                   <% if campaign %>
                     <%= link_to t('roster.view_campaign'),
-                                registration_campaign_path(campaign),
-                                class: "btn btn-sm btn-outline-secondary" %>
+                                edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
+                                class: "btn btn-sm btn-outline-secondary",
+                                data: { turbo_frame: "_top" } %>
                   <% else %>
                     <%= link_to t('roster.create_campaign'),
-                                lecture_registration_campaigns_path(component.lecture),
-                                class: "btn btn-sm btn-outline-secondary" %>
+                                edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+                                class: "btn btn-sm btn-outline-secondary",
+                                data: { turbo_frame: "_top" } %>
                   <% end %>
                 <% else %>
                   <%= link_to t('roster.manage'),
@@ -70,9 +79,4 @@
       </tbody>
     </table>
   </div>
-  <% if total_participants.zero? %>
-    <div class="card-footer text-muted small text-center py-3">
-      <i class="bi bi-info-circle me-1"></i> <%= t('roster.empty_hint') %>
-    </div>
-  <% end %>
 </div>

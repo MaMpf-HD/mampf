@@ -25,9 +25,11 @@ class RosterCandidatesComponent < ViewComponent::Base
       end
 
       # Find all campaigns for this lecture that handle this item type
-      campaigns = Registration::Campaign.where(campaignable: @lecture)
+      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed,
+                                               planning_only: false)
                                         .joins(:registration_items)
-                                        .where(registration_items: { registerable_type: klass_name })
+                                        .where(registration_items:
+                                        { registerable_type: klass_name })
                                         .distinct
 
       # Aggregate unassigned users from all relevant campaigns.
@@ -47,7 +49,8 @@ class RosterCandidatesComponent < ViewComponent::Base
       # We filter in memory because we already eager loaded them
       regs = user.user_registrations.select do |r|
         r.registration_campaign.campaignable == @lecture &&
-          r.registration_item&.registerable_type == (@group_type == :tutorials ? "Tutorial" : "Talk")
+          r.registration_item&.registerable_type ==
+            (@group_type == :tutorials ? "Tutorial" : "Talk")
       end
 
       # Group by campaign to show source

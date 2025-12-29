@@ -87,17 +87,22 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def active_campaign_for(item)
-    Registration::Campaign
-      .joins(:registration_items)
-      .where(registration_items: { registerable_id: item.id, registerable_type: item.class.name })
-      .where.not(status: :completed)
-      .first
+    if item.association(:registration_items).loaded?
+      item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
+    else
+      Registration::Campaign
+        .joins(:registration_items)
+        .where(registration_items: { registerable_id: item.id, registerable_type: item.class.name })
+        .where.not(status: :completed)
+        .first
+    end
   end
 
   private
 
     def tutorial_group
-      items = @lecture.tutorials.includes(:tutors).order(:title)
+      items = @lecture.tutorials.includes(:tutors,
+                                          registration_items: :registration_campaign).order(:title)
       return nil if items.empty?
 
       {
@@ -108,7 +113,8 @@ class RosterOverviewComponent < ViewComponent::Base
     end
 
     def talk_group
-      items = @lecture.talks.includes(:speakers).order(:title)
+      items = @lecture.talks.includes(:speakers,
+                                      registration_items: :registration_campaign).order(:title)
       return nil if items.empty?
 
       {

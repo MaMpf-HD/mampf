@@ -10,5 +10,11 @@
               data: { turbo_stream: true } %>
 </div>
 <div id="campaigns_container">
-  <%= render "registration/campaigns/card_body_index", lecture: lecture %>
+  <% if local_assigns[:new_campaign] %>
+    <%= render "registration/campaigns/card_body_form", campaign: new_campaign, lecture: lecture %>
+  <% elsif local_assigns[:campaign] %>
+    <%= render "registration/campaigns/card_body_show", campaign: campaign %>
+  <% else %>
+    <%= render "registration/campaigns/card_body_index", lecture: lecture %>
+  <% end %>
 </div>

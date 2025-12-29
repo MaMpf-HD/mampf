@@ -28,10 +28,16 @@ module Rosters
     def locked?
       return false unless campaignable?
 
-      !Registration::Campaign
-        .joins(:registration_items)
-        .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-        .exists?(status: :completed, planning_only: false)
+      if association(:registration_items).loaded?
+        !registration_items.any? do |item|
+          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+        end
+      else
+        !Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .exists?(status: :completed, planning_only: false)
+      end
     end
 
     # Returns the IDs of users currently in the roster.
