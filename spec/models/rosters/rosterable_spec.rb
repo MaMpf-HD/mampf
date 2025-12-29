@@ -72,6 +72,28 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe "#can_disable_campaign_management?" do
+    let(:rosterable) { create(:tutorial, managed_by_campaign: true) }
+
+    context "when campaign is running" do
+      before do
+        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :open,
+                                                  planning_only: false)
+        create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+      end
+
+      it "returns false" do
+        expect(rosterable.can_disable_campaign_management?).to(be(false))
+      end
+    end
+
+    context "when no campaign is running" do
+      it "returns true" do
+        expect(rosterable.can_disable_campaign_management?).to(be(true))
+      end
+    end
+  end
+
   describe "validations" do
     let(:rosterable) { create(:tutorial, managed_by_campaign: false) }
 
