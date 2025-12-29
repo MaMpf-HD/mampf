@@ -77,9 +77,10 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when campaign is running" do
       before do
-        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :open,
+        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :draft,
                                                   planning_only: false)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+        campaign.update(status: :open)
       end
 
       it "returns false" do
