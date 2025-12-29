@@ -62,10 +62,18 @@
                                 class: "btn btn-sm btn-outline-secondary",
                                 data: { turbo_frame: "_top" } %>
                   <% else %>
-                    <%= link_to t('roster.create_campaign'),
-                                edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-                                class: "btn btn-sm btn-outline-secondary",
-                                data: { turbo_frame: "_top" } %>
+                    <div class="btn-group">
+                      <%= link_to t('roster.create_campaign'),
+                                  edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+                                  class: "btn btn-sm btn-outline-secondary",
+                                  data: { turbo_frame: "_top" } %>
+                      <%= button_to t('roster.enable_manual_management'),
+                                    component.group_path(item),
+                                    method: :patch,
+                                    params: { rosterable: { campaignable: false } },
+                                    class: "btn btn-sm btn-outline-secondary",
+                                    form: { style: "display: inline-block;" } %>
+                    </div>
                   <% end %>
                 <% else %>
                   <%= link_to t('roster.manage'),

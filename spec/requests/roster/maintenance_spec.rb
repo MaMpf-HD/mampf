@@ -1,27 +1,86 @@
 require "rails_helper"
 
 RSpec.describe("Roster::Maintenance", type: :request) do
-  let(:user) { create(:user, :admin) }
   let(:lecture) { create(:lecture) }
+  let(:editor) { create(:confirmed_user) }
+  let(:student) { create(:confirmed_user) }
 
   before do
-    sign_in user
+    Flipper.enable(:item_dashboard)
+    create(:editable_user_join, user: editor, editable: lecture)
+    editor.reload
+    lecture.reload
   end
 
   describe "GET /lectures/:id/roster" do
-    it "returns http success" do
-      get lecture_roster_path(lecture)
-      expect(response).to have_http_status(:success)
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get lecture_roster_path(lecture)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "assigns group_type from params" do
+        get lecture_roster_path(lecture, group_type: "tutorials")
+        expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials"')
+      end
+
+      it "defaults group_type to :all" do
+        get lecture_roster_path(lecture)
+        expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
+      end
     end
 
-    it "assigns group_type from params" do
-      get lecture_roster_path(lecture, group_type: "tutorials")
-      expect(assigns(:group_type)).to eq(:tutorials)
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get lecture_roster_path(lecture)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "PATCH /tutorials/:id/roster" do
+    let(:tutorial) { create(:tutorial, lecture: lecture, campaignable: true) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "updates the campaignable flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        expect(tutorial.reload.campaignable).to be(false)
+      end
+
+      it "redirects to the roster index" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        expect(response).to redirect_to(lecture_roster_path(lecture, group_type: :tutorials))
+      end
+
+      context "with turbo stream" do
+        it "returns turbo stream response" do
+          patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } },
+                                                as: :turbo_stream
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body)
+            .to include('turbo-stream action="replace" target="roster_maintenance_tutorials"')
+        end
+      end
     end
 
-    it "defaults group_type to :all" do
-      get lecture_roster_path(lecture)
-      expect(assigns(:group_type)).to eq(:all)
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not update the campaignable flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { campaignable: false } }
+        expect(tutorial.reload.campaignable).to be(true)
+      end
     end
   end
 end

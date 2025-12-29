@@ -47,6 +47,7 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
+    enable_manual_management: 'Enable Manual Management'
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'

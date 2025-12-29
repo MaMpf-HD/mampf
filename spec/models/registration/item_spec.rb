@@ -178,6 +178,23 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
+    describe "#validate_registerable_is_campaignable" do
+      let(:campaign) { create(:registration_campaign) }
+      let(:tutorial) { create(:tutorial, lecture: campaign.campaignable, campaignable: false) }
+
+      it "does not allow creating an item for a non-campaignable registerable" do
+        item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        expect(item).not_to be_valid
+        expect(item.errors[:base]).to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.registerable_not_campaignable"))
+      end
+
+      it "allows creating an item for a campaignable registerable" do
+        tutorial.update(campaignable: true)
+        item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        expect(item).to be_valid
+      end
+    end
+
     describe "#validate_capacity_change_from_registerable!" do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }

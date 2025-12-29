@@ -38,6 +38,7 @@ module Registration
               }
 
     validate :registerable_type_consistency, on: :create
+    validate :validate_registerable_is_campaignable, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
     validate :validate_planning_only_compliance
@@ -159,6 +160,14 @@ module Registration
         return unless scope.exists?
 
         errors.add(:base, :already_in_other_campaign)
+      end
+
+      def validate_registerable_is_campaignable
+        return unless registerable
+        return unless registerable.respond_to?(:campaignable?)
+        return if registerable.campaignable?
+
+        errors.add(:base, :registerable_not_campaignable)
       end
   end
 end

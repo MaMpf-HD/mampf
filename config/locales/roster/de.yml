@@ -47,10 +47,13 @@ de:
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
+    enable_manual_management: 'Manuelle Verwaltung aktivieren'
     view_campaign: 'Anmeldeverfahren ansehen'
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'
-    empty_hint: 'Nutzen Sie Anmeldeverfahren, um Teilnehmende einzuschreiben. Manuelle Änderungen sind erst nach Abschluss der Verfahren möglich.'
+    empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen 
+      einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach 
+      Abschluss der Verfahren möglich.'
     errors:
       lecture_not_found: 'Veranstaltung nicht gefunden.'
       rosterable_not_found: 'Eintrag nicht gefunden.'

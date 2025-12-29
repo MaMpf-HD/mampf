@@ -263,6 +263,7 @@ en:
               planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
               planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."
               already_in_other_campaign: "This item is already part of another standard registration campaign."
+              registerable_not_campaignable: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
             registration_item:

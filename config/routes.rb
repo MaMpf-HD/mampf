@@ -803,6 +803,7 @@ Rails.application.routes.draw do
   resources :talks, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Talk" }
     end
   end
 
@@ -839,6 +840,7 @@ Rails.application.routes.draw do
   resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
     constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Tutorial" }
     end
   end
 
