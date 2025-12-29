@@ -20,7 +20,7 @@ de:
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
-      go_to_roster: "Zur Teilnehmerliste"
+      go_to_roster: "Zur Gruppenverwaltung"
       lecture_not_found: "Veranstaltung nicht gefunden."
       helpdesk:
         campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
