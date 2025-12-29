@@ -24,18 +24,20 @@
               <% elsif group_type == :talks %>
                 <td><%= item.speakers.map(&:name).join(", ") %></td>
               <% end %>
-              <td><%= item.capacity %></td>
+              <td><%= item.capacity || "∞" %></td>
               <td>
                 <div class="d-flex align-items-center">
                   <div class="flex-grow-1 me-2">
-                    <%= progress_bar(
-                          item.roster_entries.count,
-                          item.capacity,
-                          classification: :utilization,
-                          height: "6px",
-                          show_label: false,
-                          container_class: "progress"
-                        ) %>
+                    <% if item.capacity %>
+                      <%= progress_bar(
+                            item.roster_entries.count,
+                            item.capacity,
+                            classification: :utilization,
+                            height: "6px",
+                            show_label: false,
+                            container_class: "progress"
+                          ) %>
+                    <% end %>
                   </div>
                   <span class="small text-muted"><%= item.roster_entries.count %></span>
                 </div>
