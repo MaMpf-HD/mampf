@@ -23,6 +23,8 @@ en:
       assign: 'Assign'
       assign_to: 'Assign to...'
       back: 'Back'
+      enable_manual_management: 'Manual Management'
+      enable_campaign_management: 'Campaign Management'
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'

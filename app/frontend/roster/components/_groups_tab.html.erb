@@ -69,7 +69,7 @@
                                   edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
                                   class: "btn btn-sm btn-outline-secondary",
                                   data: { turbo_frame: "_top" } %>
-                      <%= button_to t('roster.enable_manual_management'),
+                      <%= button_to t('roster.actions.enable_manual_management'),
                                     component.group_path(item),
                                     method: :patch,
                                     params: { rosterable: { managed_by_campaign: false } },
@@ -78,9 +78,19 @@
                     </div>
                   <% end %>
                 <% else %>
-                  <%= link_to t('roster.manage'),
-                              component.group_path(item),
-                              class: "btn btn-sm btn-outline-primary" %>
+                  <div class="btn-group">
+                    <%= link_to t('roster.manage'),
+                                component.group_path(item),
+                                class: "btn btn-sm btn-outline-primary" %>
+                    <% if item.can_enable_campaign_management? %>
+                      <%= button_to t('roster.actions.enable_campaign_management'),
+                                    component.group_path(item),
+                                    method: :patch,
+                                    params: { rosterable: { managed_by_campaign: true } },
+                                    class: "btn btn-sm btn-outline-secondary",
+                                    form: { style: "display: inline-block;" } %>
+                    <% end %>
+                  </div>
                 <% end %>
               </td>
             </tr>

@@ -23,6 +23,8 @@ de:
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
       back: 'Zurück'
+      enable_manual_management: 'Manuelle Verwaltung'
+      enable_campaign_management: 'Kampagnenverwaltung'
     details:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'

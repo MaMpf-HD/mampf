@@ -42,6 +42,12 @@ module Rosters
       end
     end
 
+    # Checks if campaign management can be enabled for this rosterable.
+    # This is only allowed if the roster is empty to prevent data inconsistency.
+    def can_enable_campaign_management?
+      !roster_entries.exists?
+    end
+
     # Returns the IDs of users currently in the roster.
     # Required by the Registration::Registerable concern.
     def allocated_user_ids
@@ -106,7 +112,7 @@ module Rosters
       def cannot_enable_campaign_management_if_roster_present
         return unless managed_by_campaign_changed?(from: false, to: true)
 
-        return unless roster_entries.exists?
+        return if can_enable_campaign_management?
 
         errors.add(:managed_by_campaign,
                    I18n.t("roster.errors.roster_not_empty"))
