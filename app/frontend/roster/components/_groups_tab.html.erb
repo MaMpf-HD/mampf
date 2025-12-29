@@ -1,11 +1,27 @@
 <div class="card border-top-0">
-  <% if total_participants.zero? || groups.any? { |g| g[:items].any?(&:locked?) } %>
-    <div class="card-body bg-light border-bottom">
-      <div class="text-muted small text-center">
-        <i class="bi bi-info-circle me-1"></i> <%= t('roster.empty_hint') %>
+  <div class="card-body bg-light border-bottom">
+    <details <%= "open" if total_participants.zero? %>>
+      <summary class="text-muted" style="cursor: pointer;">
+        <i class="bi bi-info-circle me-1"></i> <%= t('roster.workflow.title') %>
+      </summary>
+      <div class="mt-3 text-muted">
+        <p class="mb-1 fw-bold"><%= t('roster.workflow.standard_method') %>:</p>
+        <ol class="ps-3 mb-2">
+          <li>
+            <%= t('roster.workflow.step_1_html',
+                  link: link_to(t('registration.campaign.index.title', default: 'Anmeldeverfahren'),
+                                edit_lecture_path(component.lecture, tab: "campaigns"),
+                                data: { turbo_frame: "_top" })) %>
+          </li>
+          <li><%= t('roster.workflow.step_2') %></li>
+          <li><%= t('roster.workflow.step_3') %></li>
+          <li><%= t('roster.workflow.step_4') %></li>
+        </ol>
+        <p class="mb-1 fw-bold"><%= t('roster.workflow.manual_method') %>:</p>
+        <p class="mb-0"><%= t('roster.workflow.manual_desc') %></p>
       </div>
-    </div>
-  <% end %>
+    </details>
+  </div>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
@@ -34,7 +50,7 @@
               <% end %>
               <td><%= item.capacity || "∞" %></td>
               <td>
-                <% if item.locked? && campaign && item.roster_entries.count.zero? %>
+                <% if component.show_campaign_running_badge?(item, campaign) %>
                   <span class="badge bg-info text-dark">
                     <%= t('roster.campaign_running') %>
                   </span>
@@ -64,7 +80,7 @@
                                 class: "btn btn-sm btn-outline-secondary",
                                 data: { turbo_frame: "_top" } %>
                   <% else %>
-                    <div class="btn-group">
+                    <div class="d-flex gap-2 justify-content-end align-items-center">
                       <%= link_to t('roster.create_campaign'),
                                   edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
                                   class: "btn btn-sm btn-outline-secondary",
@@ -78,7 +94,7 @@
                     </div>
                   <% end %>
                 <% else %>
-                  <div class="btn-group">
+                  <div class="d-flex gap-2 justify-content-end align-items-center">
                     <%= link_to t('roster.manage'),
                                 component.group_path(item),
                                 class: "btn btn-sm btn-outline-primary" %>

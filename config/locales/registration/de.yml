@@ -31,7 +31,7 @@ de:
         allocation_mode_frozen: "Der Zuteilungsmodus kann nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
         first_choice: "Zeigt die Anzahl der Studierenden, die dieses Element als erste Priorität gewählt haben. Dies hilft, die Nachfrage abzuschätzen, bevor die endgültige Zuteilung berechnet wird."
       index:
-        title: "Anmeldungen"
+        title: "Anmeldeverfahren"
         card_title: "Anmeldeverfahren"
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."

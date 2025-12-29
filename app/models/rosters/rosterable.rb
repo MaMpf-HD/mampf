@@ -45,6 +45,11 @@ module Rosters
     # Checks if campaign management can be enabled for this rosterable.
     # This is only allowed if the roster is empty to prevent data inconsistency.
     def can_enable_campaign_management?
+      roster_empty?
+    end
+
+    # Checks if the roster is currently empty.
+    def roster_empty?
       !roster_entries.exists?
     end
 

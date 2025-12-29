@@ -17,6 +17,15 @@ de:
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
+    workflow:
+      title: "Wie funktioniert die Platzvergabe?"
+      standard_method: "Standard-Ablauf (Anmeldeverfahren)"
+      step_1_html: "Wechseln Sie zum Reiter %{link} und erstellen Sie ein neues Verfahren."
+      step_2: "Dabei können Sie Tutorien oder Vorträge direkt mit anlegen (Schnell-Erstellung) oder bereits existierende auswählen."
+      step_3: "Studierende geben ihre Präferenzen an oder melden sich direkt an (je nach Modus)."
+      step_4: "Die Plätze werden automatisch verteilt. Sie können das Ergebnis hier nachträglich anpassen."
+      manual_method: "Manuelle Verwaltung"
+      manual_desc: "Für einzelne Gruppen können Sie die automatische Verteilung vollständig deaktivieren, um Studierende manuell zuzuweisen. Achtung: Gruppen mit manuellen Einträgen können nicht mehr für Anmeldeverfahren verwendet werden."
     actions:
       export_all: 'Alle exportieren'
       global_roster: 'Gesamtliste'

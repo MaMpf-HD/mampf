@@ -98,6 +98,10 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def show_campaign_running_badge?(item, campaign)
+    item.managed_by_campaign? && campaign.present? && item.roster_empty?
+  end
+
   private
 
     def tutorial_group
