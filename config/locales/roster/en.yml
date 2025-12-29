@@ -47,7 +47,10 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
-    empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually.'
+    view_campaign: 'View Campaign'
+    create_campaign: 'Create Campaign'
+    campaign_running: 'Campaign running'
+    empty_hint: 'No participants yet. You can populate the roster by finalizing a registration campaign or by adding students manually (if allowed).'
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'

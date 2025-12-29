@@ -7,6 +7,8 @@ class RosterOverviewComponent < ViewComponent::Base
     @group_type = group_type
   end
 
+  attr_reader :lecture
+
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
   def groups
@@ -82,6 +84,14 @@ class RosterOverviewComponent < ViewComponent::Base
     else
       "#"
     end
+  end
+
+  def active_campaign_for(item)
+    Registration::Campaign
+      .joins(:registration_items)
+      .where(registration_items: { registerable_id: item.id, registerable_type: item.class.name })
+      .where.not(status: :completed)
+      .first
   end
 
   private

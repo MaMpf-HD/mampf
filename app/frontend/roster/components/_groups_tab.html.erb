@@ -17,6 +17,7 @@
       <tbody>
         <% groups.each do |group| %>
           <% group[:items].each do |item| %>
+            <% campaign = component.active_campaign_for(item) %>
             <tr>
               <td class="fw-medium"><%= item.title %></td>
               <% if group_type == :tutorials %>
@@ -26,26 +27,42 @@
               <% end %>
               <td><%= item.capacity || "∞" %></td>
               <td>
-                <div class="d-flex align-items-center">
-                  <div class="flex-grow-1 me-2">
-                    <% if item.capacity %>
-                      <%= progress_bar(
-                            item.roster_entries.count,
-                            item.capacity,
-                            classification: :utilization,
-                            height: "6px",
-                            show_label: false,
-                            container_class: "progress"
-                          ) %>
-                    <% end %>
+                <% if item.locked? && campaign && item.roster_entries.count.zero? %>
+                  <span class="badge bg-info text-dark"><%= t('roster.campaign_running') %></span>
+                <% else %>
+                  <div class="d-flex align-items-center">
+                    <div class="flex-grow-1 me-2">
+                      <% if item.capacity %>
+                        <%= progress_bar(
+                              item.roster_entries.count,
+                              item.capacity,
+                              classification: :utilization,
+                              height: "6px",
+                              show_label: false,
+                              container_class: "progress"
+                            ) %>
+                      <% end %>
+                    </div>
+                    <span class="small text-muted"><%= item.roster_entries.count %></span>
                   </div>
-                  <span class="small text-muted"><%= item.roster_entries.count %></span>
-                </div>
+                <% end %>
               </td>
               <td class="text-end">
-                <%= link_to t('roster.manage'),
-                            component.group_path(item),
-                            class: "btn btn-sm btn-outline-primary" %>
+                <% if item.locked? %>
+                  <% if campaign %>
+                    <%= link_to t('roster.view_campaign'),
+                                registration_campaign_path(campaign),
+                                class: "btn btn-sm btn-outline-secondary" %>
+                  <% else %>
+                    <%= link_to t('roster.create_campaign'),
+                                lecture_registration_campaigns_path(component.lecture),
+                                class: "btn btn-sm btn-outline-secondary" %>
+                  <% end %>
+                <% else %>
+                  <%= link_to t('roster.manage'),
+                              component.group_path(item),
+                              class: "btn btn-sm btn-outline-primary" %>
+                <% end %>
               </td>
             </tr>
           <% end %>
