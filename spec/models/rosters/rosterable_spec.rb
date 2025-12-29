@@ -71,4 +71,30 @@ RSpec.describe(Rosters::Rosterable) do
       end
     end
   end
+
+  describe "validations" do
+    let(:rosterable) { create(:tutorial, managed_by_campaign: false) }
+
+    context "when enabling managed_by_campaign" do
+      context "when roster is empty" do
+        it "is valid" do
+          rosterable.managed_by_campaign = true
+          expect(rosterable).to(be_valid)
+        end
+      end
+
+      context "when roster is not empty" do
+        before do
+          rosterable.add_user_to_roster!(create(:user))
+        end
+
+        it "is invalid" do
+          rosterable.managed_by_campaign = true
+          expect(rosterable).not_to(be_valid)
+          expect(rosterable.errors[:managed_by_campaign])
+            .to(include(I18n.t("roster.errors.roster_not_empty")))
+        end
+      end
+    end
+  end
 end

@@ -35,7 +35,9 @@
               <td><%= item.capacity || "∞" %></td>
               <td>
                 <% if item.locked? && campaign && item.roster_entries.count.zero? %>
-                  <span class="badge bg-info text-dark"><%= t('roster.campaign_running') %></span>
+                  <span class="badge bg-info text-dark">
+                    <%= t('roster.campaign_running') %>
+                  </span>
                 <% else %>
                   <div class="d-flex align-items-center">
                     <div class="flex-grow-1 me-2">

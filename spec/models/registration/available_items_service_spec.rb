@@ -27,6 +27,7 @@ RSpec.describe(Registration::AvailableItemsService) do
       let!(:manual_tutorial) { create(:tutorial, lecture: lecture, managed_by_campaign: false) }
       let!(:manual_talk) { create(:talk, lecture: lecture, managed_by_campaign: false) }
       let!(:auto_tutorial) { create(:tutorial, lecture: lecture, managed_by_campaign: true) }
+      let!(:auto_talk) { create(:talk, lecture: lecture, managed_by_campaign: true) }
 
       it "does not return manually managed tutorials" do
         expect(service.items[:tutorials]).not_to include(manual_tutorial)
@@ -35,6 +36,7 @@ RSpec.describe(Registration::AvailableItemsService) do
 
       it "does not return manually managed talks" do
         expect(service.items[:talks]).not_to include(manual_talk)
+        expect(service.items[:talks]).to include(auto_talk)
       end
     end
 

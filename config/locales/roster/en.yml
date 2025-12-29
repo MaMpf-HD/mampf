@@ -55,3 +55,4 @@ en:
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'
+      roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."

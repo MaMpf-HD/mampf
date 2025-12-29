@@ -20,6 +20,8 @@ module Rosters
       def roster_user_id_column
         :user_id
       end
+
+      validate :cannot_enable_campaign_management_if_roster_present
     end
 
     # Checks if the roster is currently locked for manual modifications.
@@ -98,5 +100,16 @@ module Rosters
 
       entries_to_remove.delete_all
     end
+
+    private
+
+      def cannot_enable_campaign_management_if_roster_present
+        return unless managed_by_campaign_changed?(from: false, to: true)
+
+        return unless roster_entries.exists?
+
+        errors.add(:managed_by_campaign,
+                   I18n.t("roster.errors.roster_not_empty"))
+      end
   end
 end
