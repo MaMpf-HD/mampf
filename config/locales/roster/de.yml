@@ -24,8 +24,8 @@ de:
       assign_to: 'Zuweisen zu...'
       back: 'Zurück'
     details:
-      participants: 'Teilnehmer'
-      empty: 'Keine Teilnehmer in dieser Gruppe.'
+      participants: 'Teilnehmende'
+      empty: 'Keine Teilnehmenden in dieser Gruppe.'
     candidates:
       title: 'Nicht zugewiesene Kandidaten'
       help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
@@ -50,7 +50,7 @@ de:
     view_campaign: 'Anmeldeverfahren ansehen'
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'
-    empty_hint: 'Um die Liste zu füllen, erstellen und schließen Sie ein Anmeldeverfahren ab. Während ein Verfahren läuft, ist die manuelle Bearbeitung deaktiviert.'
+    empty_hint: 'Nutzen Sie Anmeldeverfahren, um Teilnehmende einzuschreiben. Manuelle Änderungen sind erst nach Abschluss der Verfahren möglich.'
     errors:
       lecture_not_found: 'Veranstaltung nicht gefunden.'
       rosterable_not_found: 'Eintrag nicht gefunden.'

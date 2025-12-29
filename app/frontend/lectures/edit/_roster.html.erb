@@ -1,7 +1,7 @@
 <% group_type ||= :all %>
 <div class="container-fluid lecture-pane">
   <div class="col-12">
-    <%= turbo_frame_tag "roster_maintenance",
+    <%= turbo_frame_tag "roster_maintenance_#{group_type}",
                         src: lecture_roster_path(@lecture, group_type: group_type),
                         loading: "lazy" do %>
       <div class="text-center my-5">

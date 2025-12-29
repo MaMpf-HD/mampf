@@ -50,7 +50,7 @@ en:
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
-    empty_hint: 'To populate the roster, create and finalize a registration campaign. While a campaign is active, manual editing is disabled.'
+    empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'

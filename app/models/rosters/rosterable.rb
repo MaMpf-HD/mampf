@@ -29,7 +29,7 @@ module Rosters
       return false unless campaignable?
 
       if association(:registration_items).loaded?
-        !registration_items.any? do |item|
+        registration_items.none? do |item|
           item.registration_campaign.completed? && !item.registration_campaign.planning_only?
         end
       else
