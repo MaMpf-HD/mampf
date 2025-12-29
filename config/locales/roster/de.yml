@@ -69,3 +69,4 @@ de:
       lecture_not_found: 'Veranstaltung nicht gefunden.'
       rosterable_not_found: 'Eintrag nicht gefunden.'
       roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
+      campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."

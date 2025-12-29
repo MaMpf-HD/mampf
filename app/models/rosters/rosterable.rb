@@ -22,6 +22,7 @@ module Rosters
       end
 
       validate :cannot_enable_campaign_management_if_roster_present
+      validate :cannot_disable_campaign_management_if_campaign_running
     end
 
     # Checks if the roster is currently locked for manual modifications.
@@ -121,6 +122,24 @@ module Rosters
 
         errors.add(:managed_by_campaign,
                    I18n.t("roster.errors.roster_not_empty"))
+      end
+
+      def cannot_disable_campaign_management_if_campaign_running
+        return unless managed_by_campaign_changed?(from: true, to: false)
+
+        return unless campaign_running?
+
+        errors.add(:managed_by_campaign,
+                   I18n.t("roster.errors.campaign_running"))
+      end
+
+      def campaign_running?
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .where.not(status: :completed)
+          .where(planning_only: false)
+          .exists?
       end
   end
 end

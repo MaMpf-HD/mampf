@@ -98,7 +98,18 @@ The “contract” required by the maintenance service, defining how to read and
 - **Idempotent:** Calling `replace_roster!` with the same set of IDs should result in no change.
 - **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
 - **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
-// ...existing code...
+
+### Management Mode & Campaign Integration
+The `Rosterable` concern introduces a `managed_by_campaign` boolean flag to explicitly control the lifecycle of the roster.
+
+- **Campaign Mode (`managed_by_campaign: true`):** The roster is intended to be populated by a registration campaign. This is the default state.
+- **Manual Mode (`managed_by_campaign: false`):** The roster is managed manually by staff. Users can be added or removed directly.
+- **Transition Rules:**
+  - **Manual → Campaign:** Only allowed if the roster is currently **empty**. This prevents accidental overwriting of manually curated lists and ensures a clean slate for the campaign allocation.
+  - **Campaign → Manual:** Only allowed if **no active campaign** (including drafts) is currently running for this item. This prevents disrupting an ongoing allocation process. Once a campaign is completed, the system hands off the populated roster to staff for manual maintenance (handling dropouts, late additions, etc.).
+
+This flag serves as a safety guardrail, ensuring that items with existing memberships aren't accidentally attached to a campaign which might overwrite them.
+
 ### Example Implementation
 ```ruby
 # filepath: app/models/concerns/roster/rosterable.rb

@@ -96,5 +96,31 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
     end
+
+    context "when disabling managed_by_campaign" do
+      let(:rosterable) { create(:tutorial, managed_by_campaign: true) }
+
+      context "when campaign is running" do
+        before do
+          campaign = create(:registration_campaign, campaignable: rosterable.lecture,
+                                                    status: :draft, planning_only: false)
+          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+        end
+
+        it "is invalid" do
+          rosterable.managed_by_campaign = false
+          expect(rosterable).not_to(be_valid)
+          expect(rosterable.errors[:managed_by_campaign])
+            .to(include(I18n.t("roster.errors.campaign_running")))
+        end
+      end
+
+      context "when no campaign is running" do
+        it "is valid" do
+          rosterable.managed_by_campaign = false
+          expect(rosterable).to(be_valid)
+        end
+      end
+    end
   end
 end
