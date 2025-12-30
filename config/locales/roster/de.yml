@@ -27,7 +27,6 @@ de:
       manual_method: "Manuelle Verwaltung"
       manual_desc: "Für einzelne Gruppen können Sie den manuellen Modus aktivieren, um Studierende von Anfang an manuell zuzuweisen. Achtung: Dies ist nur möglich, solange die Gruppe noch nicht Bestandteil eines Anmeldeverfahrens war. Sobald Studierende eingetragen sind, ist eine Verwendung in Anmeldeverfahren ausgeschlossen."
     actions:
-      export_all: 'Alle exportieren'
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
@@ -77,5 +76,8 @@ de:
       rosterable_not_found: 'Eintrag nicht gefunden.'
       roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
+    warnings:
+      capacity_exceeded: "Warnung: Gruppenkapazität überschritten."
+      confirm_overbooking: "Diese Gruppe ist bereits voll. Möchten Sie fortfahren und sie überbuchen?"
     messages:
       updated: "Einstellungen aktualisiert."

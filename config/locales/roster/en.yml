@@ -27,7 +27,6 @@ en:
       manual_method: "Manual Management"
       manual_desc: "For individual groups, you can enable manual mode to assign students manually from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
     actions:
-      export_all: 'Export All'
       global_roster: 'Global Roster'
       assign: 'Assign'
       assign_to: 'Assign to...'
@@ -85,6 +84,7 @@ en:
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
     warnings:
       capacity_exceeded: "Warning: Group capacity exceeded."
+      confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"
     messages:
       updated: "Settings updated."
       user_moved: "Student moved to %{target}."
