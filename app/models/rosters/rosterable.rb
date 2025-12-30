@@ -144,8 +144,7 @@ module Rosters
           .joins(:registration_items)
           .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
           .where.not(status: :completed)
-          .where(planning_only: false)
-          .exists?
+          .exists?(planning_only: false)
       end
   end
 end
