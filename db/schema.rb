@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_27_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -604,6 +604,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000001) do
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
     t.uuid "registration_item_id", null: false
+    t.datetime "materialized_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
     t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
