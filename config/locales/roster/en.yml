@@ -46,6 +46,8 @@ en:
       help: 'Students who registered via a completed campaign but are not currently assigned to any group.'
       empty: 'No unassigned candidates found.'
       no_prefs: 'No preferences'
+      previously_assigned_tooltip: 'Previously assigned'
+      show_previously_assigned: 'Show %{count} previously assigned candidates'
     manual_enrollment:
       title: 'Manual Enrollment'
       description: 'Manually add a student to a group. This is useful for late-comers.'

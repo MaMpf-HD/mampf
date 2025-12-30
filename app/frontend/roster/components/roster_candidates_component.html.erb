@@ -18,10 +18,38 @@
               <th class="text-end"><%= t('roster.columns.actions') %></th>
             </tr>
           </thead>
-          <tbody>
-            <% candidates.each do |user| %>
+          <% [
+               { users: fresh_candidates, id: nil },
+               { users: previously_assigned_candidates, id: "previouslyAssignedCollapse" }
+             ].each do |group| %>
+            <% next if group[:users].empty? %>
+
+            <% if group[:id] %>
+              <tbody class="border-top-0">
+                <tr class="bg-light">
+                  <td colspan="4" class="p-0">
+                    <button class="btn btn-link btn-sm text-decoration-none w-100 text-start p-2 text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#<%= group[:id] %>" aria-expanded="false" aria-controls="<%= group[:id] %>">
+                      <i class="bi bi-chevron-down me-1"></i>
+                      <%= t('roster.candidates.show_previously_assigned', count: group[:users].count) %>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="collapse" id="<%= group[:id] %>">
+            <% else %>
+              <tbody>
+            <% end %>
+
+            <% group[:users].each do |user| %>
               <tr>
-                <td class="fw-medium"><%= user.name %></td>
+                <td class="fw-medium">
+                  <%= user.name %>
+                  <% if previously_assigned?(user) %>
+                    <span class="badge bg-warning text-dark ms-1" title="<%= t('roster.candidates.previously_assigned_tooltip') %>" data-bs-toggle="tooltip">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                    </span>
+                  <% end %>
+                </td>
                 <td class="text-muted"><%= user.email %></td>
                 <td>
                   <% candidate_info(user).each do |info| %>
@@ -62,7 +90,8 @@
                 </td>
               </tr>
             <% end %>
-          </tbody>
+            </tbody>
+          <% end %>
         </table>
       </div>
     <% else %>

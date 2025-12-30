@@ -45,6 +45,8 @@ de:
       help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
       empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
       no_prefs: 'Keine Präferenzen'
+      previously_assigned_tooltip: 'War bereits zugewiesen'
+      show_previously_assigned: '%{count} ehemals zugewiesene Kandidaten anzeigen'
     manual_enrollment:
       title: 'Manuelle Einschreibung'
       description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'

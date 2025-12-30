@@ -15,6 +15,14 @@ class RosterCandidatesComponent < ViewComponent::Base
     @candidates ||= fetch_candidates
   end
 
+  def fresh_candidates
+    candidates.reject { |u| previously_assigned?(u) }
+  end
+
+  def previously_assigned_candidates
+    candidates.select { |u| previously_assigned?(u) }
+  end
+
   def available_groups
     groups = case @group_type
              when :tutorials then @lecture.tutorials
@@ -22,6 +30,17 @@ class RosterCandidatesComponent < ViewComponent::Base
              else return []
     end
     groups.order(:title).reject(&:locked?)
+  end
+
+  def previously_assigned?(user)
+    # Check if any registration for this user in the relevant campaigns has been materialized.
+    # This indicates they were once assigned but are now back in the pool.
+    user.user_registrations.any? do |r|
+      r.registration_campaign.campaignable == @lecture &&
+        r.registration_item&.registerable_type ==
+          (@group_type == :tutorials ? "Tutorial" : "Talk") &&
+        r.materialized_at.present?
+    end
   end
 
   private
