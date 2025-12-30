@@ -103,6 +103,7 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
 - Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
+- Previously Assigned: the student was once assigned (confirmed) but later removed (e.g. manually). This is tracked via the `materialized_at` timestamp on `Registration::UserRegistration`.
 - No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
 
 ```admonish note "Status semantics"
@@ -120,6 +121,7 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 - **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
   FCFS campaigns skip this step (results already determined).
 - **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
+  - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
 - **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
 - **Lecture performance completeness checks:**
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
@@ -526,6 +528,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 | `registration_item_id`    | DB column         | Foreign key for the selected item.                               |
 | `status`                  | DB column (Enum)  | `pending`, `confirmed`, `rejected`.                              |
 | `preference_rank`         | DB column         | Nullable integer for preference-based mode.                      |
+| `materialized_at`         | DB column         | Timestamp set when the registration results in a domain assignment. |
 | `user`                    | Association       | The user who submitted.                                          |
 | `registration_campaign`   | Association       | The parent campaign.                                             |
 | `registration_item`       | Association       | The selected item.                                               |
@@ -533,6 +536,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 ### Behavior Highlights
 - The `status` tracks the lifecycle: `pending` (awaiting allocation), `confirmed` (successful), or `rejected` (unsuccessful).
 - The `preference_rank` is only used in `preference_based` campaigns and must be unique per user within a campaign.
+- The `materialized_at` timestamp indicates that this registration was successfully turned into a domain assignment (e.g. tutorial membership). It persists even if the user is later removed from the domain roster, allowing the system to identify "previously assigned" candidates.
 - In `first_come_first_served` mode, a registration is typically created directly with `confirmed` status if capacity allows.
 - Business logic should enforce that a user can only have one `confirmed` registration per campaign.
 
