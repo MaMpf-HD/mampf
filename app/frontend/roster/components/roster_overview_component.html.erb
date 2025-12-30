@@ -3,12 +3,12 @@
   <!-- Tabs -->
   <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" type="button" role="tab">
+      <button class="nav-link <%= 'active' if @active_tab == :groups %>" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" type="button" role="tab">
         <%= t('roster.tabs.groups') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
+      <button class="nav-link <%= 'active' if @active_tab == :enrollment %>" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
         <%= t('roster.tabs.enrollment') %>
       </button>
     </li>
@@ -18,7 +18,7 @@
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab">
+      <button class="nav-link <%= 'active' if @active_tab == :overview %>" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab">
         <%= t('roster.tabs.overview') %>
       </button>
     </li>
@@ -30,19 +30,19 @@
   <!-- Tab Content -->
   <div class="tab-content" id="rosterTabsContent">
     <!-- Groups Tab -->
-    <div class="tab-pane fade show active" id="groups-pane" role="tabpanel">
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :groups %>" id="groups-pane" role="tabpanel">
       <div id="roster_groups_list">
         <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
       </div>
     </div>
 
     <!-- Candidates Tab -->
-    <div class="tab-pane fade" id="candidates-pane" role="tabpanel">
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :enrollment %>" id="candidates-pane" role="tabpanel">
       <%= render "roster/components/enrollment_tab", groups: groups, lecture: @lecture, group_type: @group_type %>
     </div>
 
     <!-- Overview Tab -->
-    <div class="tab-pane fade" id="overview-pane" role="tabpanel">
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :overview %>" id="overview-pane" role="tabpanel">
       <%= render "roster/components/overview_tab" %>
     </div>
   </div>

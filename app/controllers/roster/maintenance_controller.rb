@@ -13,6 +13,7 @@ module Roster
     def index
       authorize! :edit, @lecture
       @group_type = params[:group_type]&.to_sym || :all
+      @active_tab = params[:tab]&.to_sym || :groups
     end
 
     def enroll
@@ -47,23 +48,10 @@ module Roster
             flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
             render turbo_stream: [
               turbo_stream.update(
-                "roster_groups_list",
-                view_context.render(
-                  "roster/components/groups_tab",
-                  groups: RosterOverviewComponent.new(lecture: @lecture,
-                                                      group_type: group_type_for_rosterable).groups,
-                  total_participants:
-                  RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable).total_participants,
-                  group_type: group_type_for_rosterable,
-                  component: RosterOverviewComponent.new(lecture: @lecture,
-                                                         group_type: group_type_for_rosterable)
-                )
-              ),
-              turbo_stream.update(
-                "roster_candidates_list",
-                RosterCandidatesComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable)
+                "roster_maintenance_#{group_type_for_rosterable}",
+                RosterOverviewComponent.new(lecture: @lecture,
+                                            group_type: group_type_for_rosterable,
+                                            active_tab: :enrollment)
               ),
               stream_flash
             ]
@@ -130,28 +118,9 @@ module Roster
           format.turbo_stream do
             flash.now[:notice] = t("roster.messages.user_added")
             render turbo_stream: [
-              turbo_stream.replace(
-                view_context.dom_id(@rosterable, :roster_detail),
+              turbo_stream.update(
+                "roster_maintenance_#{group_type_for_rosterable}",
                 RosterDetailComponent.new(rosterable: @rosterable)
-              ),
-              turbo_stream.update(
-                "roster_groups_list",
-                view_context.render(
-                  "roster/components/groups_tab",
-                  groups: RosterOverviewComponent.new(lecture: @lecture,
-                                                      group_type: group_type_for_rosterable).groups,
-                  total_participants:
-                  RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable).total_participants,
-                  group_type: group_type_for_rosterable,
-                  component: RosterOverviewComponent.new(lecture: @lecture,
-                                                         group_type: group_type_for_rosterable)
-                )
-              ),
-              turbo_stream.update(
-                "roster_candidates_list",
-                RosterCandidatesComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable)
               ),
               stream_flash
             ]
@@ -178,8 +147,8 @@ module Roster
         format.turbo_stream do
           flash.now[:notice] = t("roster.messages.user_removed")
           render turbo_stream: [
-            turbo_stream.replace(
-              view_context.dom_id(@rosterable, :roster_detail),
+            turbo_stream.update(
+              "roster_maintenance_#{group_type_for_rosterable}",
               RosterDetailComponent.new(rosterable: @rosterable)
             ),
             stream_flash
@@ -214,8 +183,8 @@ module Roster
         format.turbo_stream do
           flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
           render turbo_stream: [
-            turbo_stream.replace(
-              view_context.dom_id(@rosterable, :roster_detail),
+            turbo_stream.update(
+              "roster_maintenance_#{group_type_for_rosterable}",
               RosterDetailComponent.new(rosterable: @rosterable)
             ),
             stream_flash
