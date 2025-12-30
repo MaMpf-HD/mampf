@@ -78,7 +78,10 @@ en:
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
+      user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
+    warnings:
+      capacity_exceeded: "Warning: Group capacity exceeded."
     messages:
       user_moved: "Student moved to %{target}."
       user_added: "Student added successfully."

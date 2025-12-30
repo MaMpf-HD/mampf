@@ -1,4 +1,13 @@
 module Rosters
+  class UserAlreadyInBundleError < StandardError
+    attr_reader :conflicting_group
+
+    def initialize(conflicting_group)
+      @conflicting_group = conflicting_group
+      super
+    end
+  end
+
   class MaintenanceService
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
@@ -6,6 +15,8 @@ module Rosters
 
     def add_user!(user, rosterable, force: false)
       return if user_in_roster?(user, rosterable)
+
+      ensure_uniqueness!(user, rosterable)
 
       unless force || within_capacity?(rosterable)
         raise(CapacityExceededError,
@@ -37,6 +48,17 @@ module Rosters
         return true if rosterable.capacity.nil?
 
         rosterable.roster_entries.count < rosterable.capacity
+      end
+
+      def ensure_uniqueness!(user, rosterable)
+        return unless rosterable.is_a?(Tutorial)
+
+        siblings = rosterable.lecture.tutorials.where.not(id: rosterable.id)
+        membership = TutorialMembership.where(tutorial: siblings, user: user).first
+
+        return unless membership
+
+        raise(UserAlreadyInBundleError, membership.tutorial)
       end
   end
 end

@@ -44,7 +44,7 @@
                 <% unless locked? %>
                   <div class="d-flex justify-content-end gap-2">
                     <div class="dropdown">
-                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}'>
                         <%= t('roster.actions.move') %>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end">

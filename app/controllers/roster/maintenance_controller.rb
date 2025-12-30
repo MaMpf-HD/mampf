@@ -42,10 +42,13 @@ module Roster
 
       user = User.find_by(email: params[:email])
       if user
-        Rosters::MaintenanceService.new.add_user!(user, @rosterable)
+        Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+
+        flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
+        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
+
         respond_to do |format|
           format.turbo_stream do
-            flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
             render turbo_stream: [
               turbo_stream.update(
                 "roster_maintenance_#{group_type_for_rosterable}",
@@ -58,12 +61,15 @@ module Roster
           end
           format.html do
             redirect_to lecture_roster_path(@lecture, tab: "enrollment"),
-                        notice: t("roster.messages.user_added_to", group: @rosterable.title)
+                        notice: flash.now[:notice], alert: flash.now[:alert]
           end
         end
       else
         respond_with_error(t("roster.errors.user_not_found"))
       end
+    rescue Rosters::UserAlreadyInBundleError => e
+      respond_with_error(t("roster.errors.user_already_in_bundle",
+                           group: e.conflicting_group.title))
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
@@ -113,10 +119,13 @@ module Roster
       end
 
       if user
-        Rosters::MaintenanceService.new.add_user!(user, @rosterable)
+        Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+
+        flash.now[:notice] = t("roster.messages.user_added")
+        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
+
         respond_to do |format|
           format.turbo_stream do
-            flash.now[:notice] = t("roster.messages.user_added")
             render turbo_stream: [
               turbo_stream.update(
                 "roster_maintenance_#{group_type_for_rosterable}",
@@ -125,11 +134,16 @@ module Roster
               stream_flash
             ]
           end
-          format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_added") }
+          format.html do
+            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
+          end
         end
       else
         respond_with_error(t("roster.errors.user_not_found"))
       end
+    rescue Rosters::UserAlreadyInBundleError => e
+      respond_with_error(t("roster.errors.user_already_in_bundle",
+                           group: e.conflicting_group.title))
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
@@ -177,11 +191,13 @@ module Roster
         return
       end
 
-      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target)
+      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+
+      flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(target)
 
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
           render turbo_stream: [
             turbo_stream.update(
               "roster_maintenance_#{group_type_for_rosterable}",
@@ -192,9 +208,12 @@ module Roster
         end
         format.html do
           redirect_back_or_to fallback_path,
-                              notice: t("roster.messages.user_moved", target: target.title)
+                              notice: flash.now[:notice], alert: flash.now[:alert]
         end
       end
+    rescue Rosters::UserAlreadyInBundleError => e
+      respond_with_error(t("roster.errors.user_already_in_bundle",
+                           group: e.conflicting_group.title))
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
@@ -202,6 +221,13 @@ module Roster
     end
 
     private
+
+      def over_capacity?(rosterable)
+        return false unless rosterable.respond_to?(:capacity)
+        return false if rosterable.capacity.nil?
+
+        rosterable.roster_entries.count > rosterable.capacity
+      end
 
       def fallback_path
         lecture_roster_path(@lecture, group_type: group_type_for_rosterable)
