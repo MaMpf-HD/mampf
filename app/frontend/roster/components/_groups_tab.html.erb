@@ -92,7 +92,9 @@
 
                   <% if item.manual_roster_mode? %>
                     <% if item.can_disable_manual_mode? %>
-                      <%= form_with model: item, scope: :rosterable, url: component.group_path(item), method: :patch,
+                      <%= form_with model: item, scope: :rosterable,
+                            url: send("#{item.class.name.underscore}_roster_path", item),
+                            method: :patch,
                             data: { turbo: true }, class: "d-inline-block" do |f| %>
                         <div class="form-check form-switch">
                           <%= f.check_box :manual_roster_mode,
@@ -105,7 +107,9 @@
                       <% end %>
                     <% end %>
                   <% elsif item.can_enable_manual_mode? %>
-                    <%= form_with model: item, scope: :rosterable, url: component.group_path(item), method: :patch,
+                    <%= form_with model: item, scope: :rosterable,
+                          url: send("#{item.class.name.underscore}_roster_path", item),
+                          method: :patch,
                           data: { turbo: true }, class: "d-inline-block" do |f| %>
                       <div class="form-check form-switch">
                         <%= f.check_box :manual_roster_mode,

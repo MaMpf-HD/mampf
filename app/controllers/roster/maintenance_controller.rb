@@ -88,18 +88,24 @@ module Roster
       if @rosterable.update(rosterable_params)
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "roster_maintenance_#{group_type_for_rosterable}",
-              view_context.turbo_frame_tag(
+            flash.now[:notice] = t("roster.messages.updated")
+            render turbo_stream: [
+              turbo_stream.update(
                 "roster_maintenance_#{group_type_for_rosterable}",
-                src: view_context.lecture_roster_path(@lecture,
-                                                      group_type: group_type_for_rosterable),
-                loading: "lazy"
-              ) { "" }
-            )
+                view_context.render(
+                  RosterOverviewComponent.new(
+                    lecture: @lecture,
+                    group_type: group_type_for_rosterable,
+                    active_tab: :groups
+                  )
+                )
+              ),
+              turbo_stream.update("flash", partial: "flash/message")
+            ]
           end
           format.html do
-            redirect_to lecture_roster_path(@lecture, group_type: group_type_for_rosterable)
+            redirect_to lecture_roster_path(@lecture, group_type: group_type_for_rosterable),
+                        notice: t("roster.messages.updated")
           end
         end
       else

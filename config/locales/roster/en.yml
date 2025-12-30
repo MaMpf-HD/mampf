@@ -86,6 +86,7 @@ en:
     warnings:
       capacity_exceeded: "Warning: Group capacity exceeded."
     messages:
+      updated: "Settings updated."
       user_moved: "Student moved to %{target}."
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
