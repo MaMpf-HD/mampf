@@ -22,6 +22,7 @@ class RosterDetailComponent < ViewComponent::Base
     when Talk then :talks
     end
   end
+
   def add_member_path
     case @rosterable
     when Tutorial
