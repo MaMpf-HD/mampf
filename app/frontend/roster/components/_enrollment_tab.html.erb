@@ -21,8 +21,7 @@
               <% group[:items].each do |item| %>
                 <% next if item.locked? %>
                 <option value="<%= "#{item.class.name}-#{item.id}" %>">
-                  <%= item.title %>
-                  (<%= item.roster_entries.count %>/<%= item.capacity || '∞' %>)
+                  <%= group_title_with_capacity(item) %>
                 </option>
               <% end %>
             </optgroup>
@@ -36,4 +35,6 @@
   </div>
 </div>
 
-<%= render RosterCandidatesComponent.new(lecture: lecture, group_type: group_type) %>
+<div id="roster_candidates_list">
+  <%= render RosterCandidatesComponent.new(lecture: lecture, group_type: group_type) %>
+</div>

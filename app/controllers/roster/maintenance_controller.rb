@@ -52,12 +52,18 @@ module Roster
                   "roster/components/groups_tab",
                   groups: RosterOverviewComponent.new(lecture: @lecture,
                                                       group_type: group_type_for_rosterable).groups,
-                  total_participants: RosterOverviewComponent.new(lecture: @lecture,
-                                                                  group_type: group_type_for_rosterable).total_participants,
+                  total_participants:
+                  RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable).total_participants,
                   group_type: group_type_for_rosterable,
                   component: RosterOverviewComponent.new(lecture: @lecture,
                                                          group_type: group_type_for_rosterable)
                 )
+              ),
+              turbo_stream.update(
+                "roster_candidates_list",
+                RosterCandidatesComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable)
               ),
               stream_flash
             ]
@@ -112,7 +118,12 @@ module Roster
       authorize! :edit, @lecture
       return if locked_check_failed?
 
-      user = User.find_by(email: params[:email])
+      user = if params[:user_id]
+        User.find_by(id: params[:user_id])
+      else
+        User.find_by(email: params[:email])
+      end
+
       if user
         Rosters::MaintenanceService.new.add_user!(user, @rosterable)
         respond_to do |format|
@@ -122,6 +133,25 @@ module Roster
               turbo_stream.replace(
                 view_context.dom_id(@rosterable, :roster_detail),
                 RosterDetailComponent.new(rosterable: @rosterable)
+              ),
+              turbo_stream.update(
+                "roster_groups_list",
+                view_context.render(
+                  "roster/components/groups_tab",
+                  groups: RosterOverviewComponent.new(lecture: @lecture,
+                                                      group_type: group_type_for_rosterable).groups,
+                  total_participants:
+                  RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable).total_participants,
+                  group_type: group_type_for_rosterable,
+                  component: RosterOverviewComponent.new(lecture: @lecture,
+                                                         group_type: group_type_for_rosterable)
+                )
+              ),
+              turbo_stream.update(
+                "roster_candidates_list",
+                RosterCandidatesComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable)
               ),
               stream_flash
             ]

@@ -52,7 +52,7 @@
                         <% if available_groups.any? %>
                           <% available_groups.each do |group| %>
                             <li>
-                              <%= button_to "#{group.title} (#{group.roster_entries.count}/#{group.capacity || '∞'})",
+                              <%= button_to helpers.group_title_with_capacity(group),
                                   move_member_path(student),
                                   params: { target_id: group.id },
                                   method: :patch,

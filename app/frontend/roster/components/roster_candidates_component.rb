@@ -16,11 +16,12 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def available_groups
-    case @group_type
-    when :tutorials then @lecture.tutorials.order(:title)
-    when :talks then @lecture.talks.order(:title)
-    else []
+    groups = case @group_type
+             when :tutorials then @lecture.tutorials
+             when :talks then @lecture.talks
+             else return []
     end
+    groups.order(:title).reject(&:locked?)
   end
 
   private
