@@ -26,5 +26,20 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
 
       materializer.materialize!
     end
+
+    it "updates the materialized_at timestamp for confirmed registrations" do
+      relation = double("ActiveRecord::Relation")
+      allow(campaign).to receive(:registration_items).and_return(relation)
+      allow(relation).to receive(:includes).with(:registerable).and_return(relation)
+      allow(relation).to receive(:find_each).and_yield(item)
+      allow(item.registerable).to receive(:materialize_allocation!)
+
+      expect do
+        materializer.materialize!
+      end.to change {
+               user.user_registrations.find_by(registration_item: item)
+                   .reload.materialized_at
+             }.from(nil)
+    end
   end
 end

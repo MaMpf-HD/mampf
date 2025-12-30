@@ -40,6 +40,24 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.not_to(change { tutorial.members.count })
       end
     end
+
+    context "when a registration exists" do
+      let(:campaign) { create(:registration_campaign) }
+      let(:item) do
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: tutorial)
+      end
+      let!(:registration) do
+        create(:registration_user_registration, user: user, registration_item: item,
+                                                registration_campaign: campaign)
+      end
+
+      it "updates the materialized_at timestamp" do
+        expect do
+          subject.add_user!(user, tutorial)
+        end.to change { registration.reload.materialized_at }.from(nil)
+      end
+    end
   end
 
   describe "#remove_user!" do
