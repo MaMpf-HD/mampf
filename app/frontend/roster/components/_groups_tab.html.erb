@@ -83,31 +83,38 @@
                                 edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
                                 class: "btn btn-sm btn-outline-secondary",
                                 data: { turbo_frame: "_top" } %>
+                  <% elsif !item.in_real_campaign? %>
+                    <%= link_to t('roster.create_campaign'),
+                                edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+                                class: "btn btn-sm btn-outline-secondary",
+                                data: { turbo_frame: "_top" } %>
                   <% end %>
 
                   <% if item.manual_roster_mode? %>
                     <% if item.can_disable_manual_mode? %>
-                      <%= button_to t('roster.actions.enable_campaign_management'),
-                                    component.group_path(item),
-                                    method: :patch,
-                                    params: { rosterable: { manual_roster_mode: false } },
-                                    class: "btn btn-sm btn-outline-secondary",
-                                    form: { style: "display: inline-block;" } %>
+                      <%= form_with model: item, scope: :rosterable, url: component.group_path(item), method: :patch,
+                            data: { turbo: true }, class: "d-inline-block" do |f| %>
+                        <div class="form-check form-switch">
+                          <%= f.check_box :manual_roster_mode,
+                                class: "form-check-input",
+                                role: "switch",
+                                checked: true,
+                                onchange: "this.form.requestSubmit()" %>
+                          <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
+                        </div>
+                      <% end %>
                     <% end %>
-                  <% else %>
-                    <% if item.can_enable_manual_mode? %>
-                      <%= button_to t('roster.actions.enable_manual_management'),
-                                    component.group_path(item),
-                                    method: :patch,
-                                    params: { rosterable: { manual_roster_mode: true } },
-                                    class: "btn btn-sm btn-outline-secondary",
-                                    form: { style: "display: inline-block;" } %>
-                    <% end %>
-                    <% if !campaign && !item.in_real_campaign? %>
-                      <%= link_to t('roster.create_campaign'),
-                                  edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-                                  class: "btn btn-sm btn-outline-secondary",
-                                  data: { turbo_frame: "_top" } %>
+                  <% elsif item.can_enable_manual_mode? %>
+                    <%= form_with model: item, scope: :rosterable, url: component.group_path(item), method: :patch,
+                          data: { turbo: true }, class: "d-inline-block" do |f| %>
+                      <div class="form-check form-switch">
+                        <%= f.check_box :manual_roster_mode,
+                              class: "form-check-input",
+                              role: "switch",
+                              checked: false,
+                              onchange: "this.form.requestSubmit()" %>
+                        <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
+                      </div>
                     <% end %>
                   <% end %>
                 </div>
