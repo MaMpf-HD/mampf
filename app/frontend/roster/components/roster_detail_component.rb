@@ -47,9 +47,9 @@ class RosterDetailComponent < ViewComponent::Base
     groups = case @rosterable
              when Tutorial then @lecture.tutorials
              when Talk then @lecture.talks
-             else []
+             else return []
     end
-    groups.where.not(id: @rosterable.id).order(:title)
+    groups.where.not(id: @rosterable.id).order(:title).reject(&:locked?)
   end
 
   private

@@ -68,12 +68,12 @@ module Roster
           format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_added") }
         end
       else
-        redirect_back_or_to fallback_path, alert: t("roster.errors.user_not_found")
+        respond_with_error(t("roster.errors.user_not_found"))
       end
     rescue Rosters::MaintenanceService::CapacityExceededError
-      redirect_back_or_to fallback_path, alert: t("roster.errors.capacity_exceeded")
+      respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
-      redirect_back_or_to fallback_path, alert: e.message
+      respond_with_error(e.message)
     end
 
     def remove_member
@@ -97,7 +97,7 @@ module Roster
         format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_removed") }
       end
     rescue StandardError => e
-      redirect_back_or_to fallback_path, alert: e.message
+      respond_with_error(e.message)
     end
 
     def move_member
@@ -108,12 +108,12 @@ module Roster
       target = find_target_rosterable(params[:target_id])
 
       if target.nil?
-        redirect_back_or_to fallback_path, alert: t("roster.errors.target_not_found")
+        respond_with_error(t("roster.errors.target_not_found"))
         return
       end
 
       if target.locked?
-        redirect_back_or_to fallback_path, alert: t("roster.errors.target_locked")
+        respond_with_error(t("roster.errors.target_locked"))
         return
       end
 
@@ -136,9 +136,9 @@ module Roster
         end
       end
     rescue Rosters::MaintenanceService::CapacityExceededError
-      redirect_back_or_to fallback_path, alert: t("roster.errors.capacity_exceeded")
+      respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
-      redirect_back_or_to fallback_path, alert: e.message
+      respond_with_error(e.message)
     end
 
     private
@@ -149,7 +149,7 @@ module Roster
 
       def locked_check_failed?
         if @rosterable.locked?
-          redirect_back_or_to fallback_path, alert: t("roster.errors.item_locked")
+          respond_with_error(t("roster.errors.item_locked"))
           return true
         end
         false
@@ -193,6 +193,16 @@ module Roster
           @lecture = @rosterable.lecture
         else
           redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
+        end
+      end
+
+      def respond_with_error(message)
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
+          end
+          format.html { redirect_back_or_to fallback_path, alert: message }
         end
       end
   end
