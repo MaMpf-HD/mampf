@@ -25,7 +25,7 @@ en:
       step_3: "Students register their preferences or sign up directly (depending on mode)."
       step_4: "Spots are allocated automatically. You can fine-tune results here afterwards."
       manual_method: "Manual Management"
-      manual_desc: "For individual items, you can fully disable automatic allocation to assign students manually. Note: Groups with manual entries cannot be used in registration campaigns."
+      manual_desc: "For individual groups, you can enable manual mode to assign students manually from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
     actions:
       export_all: 'Export All'
       global_roster: 'Global Roster'

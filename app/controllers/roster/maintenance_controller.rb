@@ -132,13 +132,27 @@ module Roster
 
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.update(
-                "roster_maintenance_#{group_type_for_rosterable}",
-                RosterDetailComponent.new(rosterable: @rosterable)
-              ),
-              stream_flash
-            ]
+            # If we are in the enrollment tab (candidates panel), we want to refresh the overview
+            # instead of showing the detail view of the group we just added to.
+            if params[:tab] == "enrollment"
+              render turbo_stream: [
+                turbo_stream.update(
+                  "roster_maintenance_#{group_type_for_rosterable}",
+                  RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable,
+                                              active_tab: :enrollment)
+                ),
+                stream_flash
+              ]
+            else
+              render turbo_stream: [
+                turbo_stream.update(
+                  "roster_maintenance_#{group_type_for_rosterable}",
+                  RosterDetailComponent.new(rosterable: @rosterable)
+                ),
+                stream_flash
+              ]
+            end
           end
           format.html do
             redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]

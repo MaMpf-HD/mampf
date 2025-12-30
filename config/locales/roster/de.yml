@@ -25,7 +25,7 @@ de:
       step_3: "Studierende geben ihre Präferenzen an oder melden sich direkt an (je nach Modus)."
       step_4: "Die Plätze werden automatisch verteilt. Sie können das Ergebnis hier nachträglich anpassen."
       manual_method: "Manuelle Verwaltung"
-      manual_desc: "Für einzelne Gruppen können Sie die automatische Verteilung vollständig deaktivieren, um Studierende manuell zuzuweisen. Achtung: Gruppen mit manuellen Einträgen können nicht mehr für Anmeldeverfahren verwendet werden."
+      manual_desc: "Für einzelne Gruppen können Sie den manuellen Modus aktivieren, um Studierende von Anfang an manuell zuzuweisen. Achtung: Dies ist nur möglich, solange die Gruppe noch nicht Bestandteil eines Anmeldeverfahrens war. Sobald Studierende eingetragen sind, ist eine Verwendung in Anmeldeverfahren ausgeschlossen."
     actions:
       export_all: 'Alle exportieren'
       global_roster: 'Gesamtliste'
