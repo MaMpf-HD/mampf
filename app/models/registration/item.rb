@@ -164,8 +164,8 @@ module Registration
 
       def validate_registerable_is_managed_by_campaign
         return unless registerable
-        return unless registerable.respond_to?(:managed_by_campaign?)
-        return if registerable.managed_by_campaign?
+        return unless registerable.respond_to?(:manual_roster_mode?)
+        return unless registerable.manual_roster_mode?
 
         errors.add(:base, :registerable_not_managed_by_campaign)
       end

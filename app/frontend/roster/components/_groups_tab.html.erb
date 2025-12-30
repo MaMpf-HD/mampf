@@ -73,43 +73,44 @@
                 <% end %>
               </td>
               <td class="text-end">
-                <% if item.locked? %>
-                  <% if campaign %>
+                <div class="d-flex gap-2 justify-content-end align-items-center">
+                  <% if !item.locked? %>
+                    <%= link_to t('roster.manage'),
+                                component.group_path(item),
+                                class: "btn btn-sm btn-outline-primary" %>
+                  <% elsif campaign %>
                     <%= link_to t('roster.view_campaign'),
                                 edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
                                 class: "btn btn-sm btn-outline-secondary",
                                 data: { turbo_frame: "_top" } %>
+                  <% end %>
+
+                  <% if item.manual_roster_mode? %>
+                    <% if item.can_disable_manual_mode? %>
+                      <%= button_to t('roster.actions.enable_campaign_management'),
+                                    component.group_path(item),
+                                    method: :patch,
+                                    params: { rosterable: { manual_roster_mode: false } },
+                                    class: "btn btn-sm btn-outline-secondary",
+                                    form: { style: "display: inline-block;" } %>
+                    <% end %>
                   <% else %>
-                    <div class="d-flex gap-2 justify-content-end align-items-center">
+                    <% if item.can_enable_manual_mode? %>
+                      <%= button_to t('roster.actions.enable_manual_management'),
+                                    component.group_path(item),
+                                    method: :patch,
+                                    params: { rosterable: { manual_roster_mode: true } },
+                                    class: "btn btn-sm btn-outline-secondary",
+                                    form: { style: "display: inline-block;" } %>
+                    <% end %>
+                    <% if !campaign && !item.in_real_campaign? %>
                       <%= link_to t('roster.create_campaign'),
                                   edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
                                   class: "btn btn-sm btn-outline-secondary",
                                   data: { turbo_frame: "_top" } %>
-                      <% if item.can_disable_campaign_management? %>
-                        <%= button_to t('roster.actions.enable_manual_management'),
-                                      component.group_path(item),
-                                      method: :patch,
-                                      params: { rosterable: { managed_by_campaign: false } },
-                                      class: "btn btn-sm btn-outline-secondary",
-                                      form: { style: "display: inline-block;" } %>
-                      <% end %>
-                    </div>
-                  <% end %>
-                <% else %>
-                  <div class="d-flex gap-2 justify-content-end align-items-center">
-                    <%= link_to t('roster.manage'),
-                                component.group_path(item),
-                                class: "btn btn-sm btn-outline-primary" %>
-                    <% if item.can_enable_campaign_management? %>
-                      <%= button_to t('roster.actions.enable_campaign_management'),
-                                    component.group_path(item),
-                                    method: :patch,
-                                    params: { rosterable: { managed_by_campaign: true } },
-                                    class: "btn btn-sm btn-outline-secondary",
-                                    form: { style: "display: inline-block;" } %>
                     <% end %>
-                  </div>
-                <% end %>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>

@@ -246,7 +246,7 @@ module Roster
       end
 
       def rosterable_params
-        params.expect(rosterable: [:managed_by_campaign])
+        params.expect(rosterable: [:manual_roster_mode])
       end
 
       def group_type_for_rosterable

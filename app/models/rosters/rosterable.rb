@@ -6,7 +6,7 @@ module Rosters
     extend ActiveSupport::Concern
 
     # Models including this concern must:
-    # - Have a `managed_by_campaign` boolean column (default: true)
+    # - Have a `manual_roster_mode` boolean column (default: false)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
 
     included do
@@ -21,43 +21,77 @@ module Rosters
         :user_id
       end
 
-      validate :cannot_enable_campaign_management_if_roster_present
-      validate :cannot_disable_campaign_management_if_campaign_running
+      validate :validate_manual_mode_switch
     end
 
     # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if it is marked as managed_by_campaign and no non-planning
-    # campaign including this rosterable has been completed yet.
+    # A roster is locked if it is NOT in manual mode AND a campaign is active (pending/running).
+    # If manual mode is true, it is never locked.
+    # If manual mode is false, it is unlocked only if no campaign is active.
     def locked?
-      return false unless managed_by_campaign?
+      return false if manual_roster_mode?
 
-      if association(:registration_items).loaded?
-        registration_items.none? do |item|
-          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
-        end
-      else
-        !Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-          .exists?(status: :completed, planning_only: false)
-      end
+      # If in system mode, it is locked unless it was part of a completed campaign
+      !campaign_completed?
     end
 
-    # Checks if campaign management can be enabled for this rosterable.
-    # This is only allowed if the roster is empty to prevent data inconsistency.
-    def can_enable_campaign_management?
+    # Checks if manual mode can be enabled (switched from false to true).
+    # This is only allowed if the item has never been part of a real (non-planning) campaign.
+    def can_enable_manual_mode?
+      !in_real_campaign?
+    end
+
+    # Checks if manual mode can be disabled (switched from true to false).
+    # This is generally allowed as long as the roster is empty (to prevent data loss/inconsistency),
+    # but since we enforce "once in campaign, always in campaign" via can_enable_manual_mode?,
+    # the reverse path is less critical but should still be safe.
+    # For now, we allow it if the roster is empty.
+    def can_disable_manual_mode?
       roster_empty?
-    end
-
-    # Checks if campaign management can be disabled for this rosterable.
-    # This is only allowed if no campaign is currently running.
-    def can_disable_campaign_management?
-      !campaign_running?
     end
 
     # Checks if the roster is currently empty.
     def roster_empty?
       !roster_entries.exists?
+    end
+
+    # Checks if the item is associated with any non-planning campaign.
+    def in_real_campaign?
+      if association(:registration_items).loaded?
+        registration_items.any? { |item| !item.registration_campaign.planning_only? }
+      else
+        registration_items.joins(:registration_campaign)
+                          .exists?(registration_campaigns: { planning_only: false })
+      end
+    end
+
+    # Checks if an active (non-completed) campaign exists for this item.
+    def campaign_active?
+      if association(:registration_items).loaded?
+        registration_items.any? do |item|
+          !item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+        end
+      else
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .where.not(status: :completed)
+          .exists?(planning_only: false)
+      end
+    end
+
+    # Checks if the item is associated with a completed non-planning campaign.
+    def campaign_completed?
+      if association(:registration_items).loaded?
+        registration_items.any? do |item|
+          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+        end
+      else
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .exists?(status: :completed, planning_only: false)
+      end
     end
 
     # Returns the IDs of users currently in the roster.
@@ -121,30 +155,22 @@ module Rosters
 
     private
 
-      def cannot_enable_campaign_management_if_roster_present
-        return unless managed_by_campaign_changed?(from: false, to: true)
+      def validate_manual_mode_switch
+        return unless manual_roster_mode_changed?
 
-        return if can_enable_campaign_management?
-
-        errors.add(:managed_by_campaign,
-                   I18n.t("roster.errors.roster_not_empty"))
-      end
-
-      def cannot_disable_campaign_management_if_campaign_running
-        return unless managed_by_campaign_changed?(from: true, to: false)
-
-        return unless campaign_running?
-
-        errors.add(:managed_by_campaign,
-                   I18n.t("roster.errors.campaign_running"))
-      end
-
-      def campaign_running?
-        Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-          .where.not(status: :completed)
-          .exists?(planning_only: false)
+        if manual_roster_mode?
+          # Switching from false (System) to true (Manual)
+          # Only allowed if never in a real campaign
+          if in_real_campaign?
+            errors.add(:manual_roster_mode, I18n.t("roster.errors.campaign_associated"))
+          end
+        else
+          # Switching from true (Manual) to false (System)
+          # Only allowed if roster is empty (to avoid data inconsistency)
+          unless roster_empty?
+            errors.add(:manual_roster_mode, I18n.t("roster.errors.roster_not_empty"))
+          end
+        end
       end
   end
 end
