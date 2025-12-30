@@ -53,12 +53,24 @@ module Roster
 
       user = User.find_by(email: params[:email])
       if user
-        Rosters::MaintenanceService.new(@rosterable).add_user!(user)
-        redirect_back_or_to fallback_path, notice: t("roster.messages.user_added")
+        Rosters::MaintenanceService.new.add_user!(user, @rosterable)
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:notice] = t("roster.messages.user_added")
+            render turbo_stream: [
+              turbo_stream.replace(
+                view_context.dom_id(@rosterable, :roster_detail),
+                RosterDetailComponent.new(rosterable: @rosterable)
+              ),
+              stream_flash
+            ]
+          end
+          format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_added") }
+        end
       else
         redirect_back_or_to fallback_path, alert: t("roster.errors.user_not_found")
       end
-    rescue Rosters::CapacityExceededError
+    rescue Rosters::MaintenanceService::CapacityExceededError
       redirect_back_or_to fallback_path, alert: t("roster.errors.capacity_exceeded")
     rescue StandardError => e
       redirect_back_or_to fallback_path, alert: e.message
@@ -69,8 +81,21 @@ module Roster
       return if locked_check_failed?
 
       user = User.find(params[:user_id])
-      Rosters::MaintenanceService.new(@rosterable).remove_user!(user)
-      redirect_back_or_to fallback_path, notice: t("roster.messages.user_removed")
+      Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = t("roster.messages.user_removed")
+          render turbo_stream: [
+            turbo_stream.replace(
+              view_context.dom_id(@rosterable, :roster_detail),
+              RosterDetailComponent.new(rosterable: @rosterable)
+            ),
+            stream_flash
+          ]
+        end
+        format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_removed") }
+      end
     rescue StandardError => e
       redirect_back_or_to fallback_path, alert: e.message
     end
@@ -92,9 +117,25 @@ module Roster
         return
       end
 
-      Rosters::MaintenanceService.new(@rosterable).move_user!(user, target)
-      redirect_back_or_to fallback_path, notice: t("roster.messages.user_moved")
-    rescue Rosters::CapacityExceededError
+      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target)
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
+          render turbo_stream: [
+            turbo_stream.replace(
+              view_context.dom_id(@rosterable, :roster_detail),
+              RosterDetailComponent.new(rosterable: @rosterable)
+            ),
+            stream_flash
+          ]
+        end
+        format.html do
+          redirect_back_or_to fallback_path,
+                              notice: t("roster.messages.user_moved", target: target.title)
+        end
+      end
+    rescue Rosters::MaintenanceService::CapacityExceededError
       redirect_back_or_to fallback_path, alert: t("roster.errors.capacity_exceeded")
     rescue StandardError => e
       redirect_back_or_to fallback_path, alert: e.message
@@ -138,9 +179,16 @@ module Roster
       end
 
       def set_rosterable
+        allowed_types = ["Tutorial", "Talk"]
+        unless allowed_types.include?(params[:type])
+          redirect_to root_path, alert: t("roster.errors.invalid_type")
+          return
+        end
+
         klass = params[:type].constantize
         param_key = "#{params[:type].underscore}_id"
-        @rosterable = klass.find_by(id: params[param_key])
+        id = params[param_key] || params[:id]
+        @rosterable = klass.find_by(id: id)
         if @rosterable
           @lecture = @rosterable.lecture
         else

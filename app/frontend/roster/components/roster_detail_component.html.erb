@@ -1,4 +1,4 @@
-<div class="mb-3">
+<div class="mb-3" id="<%= dom_id(@rosterable, :roster_detail) %>">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h3 class="fw-bold mb-0"><%= title %></h3>
@@ -32,7 +32,38 @@
               <td><%= student.name %></td>
               <td><%= student.email %></td>
               <td>
-                <!-- Actions placeholder -->
+                <% unless locked? %>
+                  <div class="d-flex justify-content-end gap-2">
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <%= t('roster.actions.move') %>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
+                        <% if available_groups.any? %>
+                          <% available_groups.each do |group| %>
+                            <li>
+                              <%= button_to group.title,
+                                  move_member_path(student),
+                                  params: { target_id: group.id },
+                                  method: :patch,
+                                  class: "dropdown-item" %>
+                            </li>
+                          <% end %>
+                        <% else %>
+                          <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
+                        <% end %>
+                      </ul>
+                    </div>
+
+                    <%= button_to remove_member_path(student),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger",
+                                  data: { turbo_confirm: t('roster.actions.confirm_remove') } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </div>
+                <% end %>
               </td>
             </tr>
           <% end %>
@@ -46,5 +77,20 @@
         </tbody>
       </table>
     </div>
+    <% unless locked? %>
+      <div class="card-footer bg-light">
+        <%= form_with url: add_member_path, method: :post, class: "row g-2 align-items-center" do |f| %>
+          <div class="col-auto">
+            <%= f.label :email, t('roster.actions.add_student_label'), class: "visually-hidden" %>
+            <%= f.email_field :email, class: "form-control form-control-sm", placeholder: t('roster.actions.add_student_placeholder'), required: true %>
+          </div>
+          <div class="col-auto">
+            <%= f.button type: "submit", class: "btn btn-sm btn-primary" do %>
+              <i class="bi bi-plus-lg me-1"></i> <%= t('roster.actions.add') %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>

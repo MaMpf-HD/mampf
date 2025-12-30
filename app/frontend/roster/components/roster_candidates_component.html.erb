@@ -44,7 +44,18 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                       <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
-                      <li><a class="dropdown-item disabled" href="#">Select Group...</a></li>
+                      <% if available_groups.any? %>
+                        <% available_groups.each do |group| %>
+                          <li>
+                            <%= link_to group.title,
+                                public_send("add_member_#{group.class.name.underscore}_path", group, user_id: user.id),
+                                data: { turbo_method: :post },
+                                class: "dropdown-item" %>
+                          </li>
+                        <% end %>
+                      <% else %>
+                        <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
+                      <% end %>
                     </ul>
                   </div>
                 </td>

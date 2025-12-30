@@ -31,7 +31,12 @@ en:
       global_roster: 'Global Roster'
       assign: 'Assign'
       assign_to: 'Assign to...'
+      move: 'Move'
       back: 'Back'
+      add: 'Add'
+      add_student_label: 'Student Email'
+      add_student_placeholder: 'student@example.com'
+      confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Manual Management'
       enable_campaign_management: 'Campaign Management'
     details:
@@ -66,5 +71,13 @@ en:
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'
+      invalid_type: 'Invalid group type.'
       roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."
       campaign_running: "cannot be disabled while a campaign is running."
+      capacity_exceeded: "Group capacity exceeded."
+      target_not_found: "Target group not found."
+      target_locked: "Target group is locked."
+    messages:
+      user_moved: "Student moved to %{target}."
+      user_added: "Student added successfully."
+      user_removed: "Student removed successfully."

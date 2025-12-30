@@ -806,7 +806,7 @@ Rails.application.routes.draw do
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Talk" }
 
       member do
-        scope "roster", controller: "roster/maintenance" do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
@@ -851,7 +851,7 @@ Rails.application.routes.draw do
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Tutorial" }
 
       member do
-        scope "roster", controller: "roster/maintenance" do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member

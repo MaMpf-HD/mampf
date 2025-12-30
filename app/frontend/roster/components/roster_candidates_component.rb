@@ -15,6 +15,14 @@ class RosterCandidatesComponent < ViewComponent::Base
     @candidates ||= fetch_candidates
   end
 
+  def available_groups
+    case @group_type
+    when :tutorials then @lecture.tutorials.order(:title)
+    when :talks then @lecture.talks.order(:title)
+    else []
+    end
+  end
+
   private
 
     def fetch_candidates
