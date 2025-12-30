@@ -13,9 +13,15 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def back_path
-    helpers.lecture_roster_path(@lecture, group_type: group_type_for_rosterable)
+    helpers.lecture_roster_path(@lecture, group_type: group_type)
   end
 
+  def group_type
+    case @rosterable
+    when Tutorial then :tutorials
+    when Talk then :talks
+    end
+  end
   def add_member_path
     case @rosterable
     when Tutorial

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div>
-      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm" do %>
+      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm", data: { turbo_frame: "roster_maintenance_#{group_type}" } do %>
         <i class="bi bi-arrow-left me-1"></i> <%= t('roster.actions.back') %>
       <% end %>
     </div>

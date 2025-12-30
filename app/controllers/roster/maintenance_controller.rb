@@ -148,7 +148,10 @@ module Roster
               render turbo_stream: [
                 turbo_stream.update(
                   "roster_maintenance_#{group_type_for_rosterable}",
-                  RosterDetailComponent.new(rosterable: @rosterable)
+                  RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type_for_rosterable,
+                                              active_tab: :groups,
+                                              rosterable: @rosterable)
                 ),
                 stream_flash
               ]
@@ -183,7 +186,10 @@ module Roster
           render turbo_stream: [
             turbo_stream.update(
               "roster_maintenance_#{group_type_for_rosterable}",
-              RosterDetailComponent.new(rosterable: @rosterable)
+              RosterOverviewComponent.new(lecture: @lecture,
+                                          group_type: group_type_for_rosterable,
+                                          active_tab: :groups,
+                                          rosterable: @rosterable)
             ),
             stream_flash
           ]
@@ -221,7 +227,10 @@ module Roster
           render turbo_stream: [
             turbo_stream.update(
               "roster_maintenance_#{group_type_for_rosterable}",
-              RosterDetailComponent.new(rosterable: @rosterable)
+              RosterOverviewComponent.new(lecture: @lecture,
+                                          group_type: group_type_for_rosterable,
+                                          active_tab: :groups,
+                                          rosterable: @rosterable)
             ),
             stream_flash
           ]

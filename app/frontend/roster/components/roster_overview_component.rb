@@ -1,14 +1,15 @@
 # Renders a list of groups (tutorials, exams, etc.) for a lecture.
 # Can be filtered by group_type (:tutorials, :exams, :all).
 class RosterOverviewComponent < ViewComponent::Base
-  def initialize(lecture:, group_type: :all, active_tab: :groups)
+  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil)
     super()
     @lecture = lecture
     @group_type = group_type
     @active_tab = active_tab
+    @rosterable = rosterable
   end
 
-  attr_reader :lecture, :active_tab
+  attr_reader :lecture, :active_tab, :rosterable
 
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
