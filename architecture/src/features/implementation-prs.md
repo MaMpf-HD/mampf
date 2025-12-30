@@ -188,6 +188,15 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
 ```
 
+```admonish example "PR-5.5 — Generic Registration (Cohorts & Offerings)"
+- Scope: Support for non-tutorial groups and non-lecture contexts.
+- Models: `Cohort` (Rosterable), `Offering` (Campaignable).
+- Migrations: Create tables for cohorts and offerings.
+- Controllers: `OfferingsController` (CRUD).
+- Refs: [Generic Groups](10-future-extensions.md#generic-registration-groups-lightweight-rosterables)
+- Acceptance: Can create an Offering; can create Cohorts; can run a campaign for an Offering; Maintenance UI works for Cohorts without code changes.
+```
+
 ```admonish abstract
 Grading — Step 6: Foundations (Schema)
 ```
