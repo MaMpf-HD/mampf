@@ -2,37 +2,37 @@
   <div class="card-header">
     <h5 class="card-title mb-0">
       <%= t('roster.manual_enrollment.title') %>
-      <span class="badge bg-warning text-dark ms-1">Mock</span>
     </h5>
   </div>
   <div class="card-body">
     <p class="card-text text-muted small mb-3">
       <%= t('roster.manual_enrollment.description') %>
     </p>
-    <form class="row g-3 align-items-end">
+    <%= form_with url: lecture_roster_enroll_path(lecture), method: :post, class: "row g-3 align-items-end" do |f| %>
       <div class="col-md-5">
-        <label class="form-label"><%= t('roster.manual_enrollment.student') %></label>
-        <!-- TODO: Integrate with user search/autocomplete component -->
-        <input type="text" class="form-control" placeholder="Search student...">
+        <%= f.label :email, t('roster.manual_enrollment.student'), class: "form-label" %>
+        <%= f.email_field :email, class: "form-control", placeholder: t('roster.actions.add_student_placeholder'), required: true %>
       </div>
       <div class="col-md-5">
-        <label class="form-label"><%= t('roster.manual_enrollment.group') %></label>
-        <select class="form-select">
-          <option selected disabled>Choose group...</option>
+        <%= f.label :rosterable_id, t('roster.manual_enrollment.group'), class: "form-label" %>
+        <%= f.select :rosterable_id, nil, { include_blank: "Choose group..." }, { class: "form-select", required: true } do %>
           <% groups.each do |group| %>
-            <% group[:items].each do |item| %>
-              <option value="<%= item.id %>">
-                <%= item.title %>
-                (<%= item.roster_entries.count %>/<%= item.capacity || '∞' %>)
-              </option>
-            <% end %>
+            <optgroup label="<%= group[:title] %>">
+              <% group[:items].each do |item| %>
+                <% next if item.locked? %>
+                <option value="<%= "#{item.class.name}-#{item.id}" %>">
+                  <%= item.title %>
+                  (<%= item.roster_entries.count %>/<%= item.capacity || '∞' %>)
+                </option>
+              <% end %>
+            </optgroup>
           <% end %>
-        </select>
+        <% end %>
       </div>
       <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Add</button>
+        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100" %>
       </div>
-    </form>
+    <% end %>
   </div>
 </div>
 

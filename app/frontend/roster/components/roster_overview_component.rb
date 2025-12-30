@@ -78,9 +78,9 @@ class RosterOverviewComponent < ViewComponent::Base
   def group_path(item)
     case item
     when Tutorial
-      helpers.tutorial_roster_path(item)
+      Rails.application.routes.url_helpers.tutorial_roster_path(item)
     when Talk
-      helpers.talk_roster_path(item)
+      Rails.application.routes.url_helpers.talk_roster_path(item)
     else
       "#"
     end

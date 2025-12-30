@@ -14,8 +14,17 @@
   </div>
 
   <div class="card">
-    <div class="card-header bg-light">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0"><%= t('roster.details.participants') %></h5>
+      <% unless locked? %>
+        <%= form_with url: add_member_path, method: :post, class: "d-flex gap-2 align-items-center" do |f| %>
+          <%= f.label :email, t('roster.actions.add_student_label'), class: "visually-hidden" %>
+          <%= f.email_field :email, class: "form-control form-control-sm", placeholder: t('roster.actions.add_student_placeholder'), required: true, style: "width: 250px;" %>
+          <%= f.button type: "submit", class: "btn btn-sm btn-primary text-nowrap" do %>
+            <i class="bi bi-plus-lg me-1"></i> <%= t('roster.actions.add') %>
+          <% end %>
+        <% end %>
+      <% end %>
     </div>
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
@@ -77,20 +86,5 @@
         </tbody>
       </table>
     </div>
-    <% unless locked? %>
-      <div class="card-footer bg-light">
-        <%= form_with url: add_member_path, method: :post, class: "row g-2 align-items-center" do |f| %>
-          <div class="col-auto">
-            <%= f.label :email, t('roster.actions.add_student_label'), class: "visually-hidden" %>
-            <%= f.email_field :email, class: "form-control form-control-sm", placeholder: t('roster.actions.add_student_placeholder'), required: true %>
-          </div>
-          <div class="col-auto">
-            <%= f.button type: "submit", class: "btn btn-sm btn-primary" do %>
-              <i class="bi bi-plus-lg me-1"></i> <%= t('roster.actions.add') %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
   </div>
 </div>

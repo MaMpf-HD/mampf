@@ -279,6 +279,7 @@ Rails.application.routes.draw do
   resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
       get "roster", to: "roster/maintenance#index"
+      post "roster/enroll", to: "roster/maintenance#enroll"
     end
 
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do

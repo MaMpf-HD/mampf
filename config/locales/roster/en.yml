@@ -82,4 +82,5 @@ en:
     messages:
       user_moved: "Student moved to %{target}."
       user_added: "Student added successfully."
+      user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."

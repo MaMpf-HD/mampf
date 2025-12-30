@@ -2,7 +2,7 @@ module Roster
   # Manages group allocations through a lecture-level overview and a polymorphic
   # item dashboard. Handles student membership visualization and maintenance actions.
   class MaintenanceController < ApplicationController
-    before_action :set_lecture, only: [:index]
+    before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
 
     def current_ability
@@ -13,6 +13,67 @@ module Roster
     def index
       authorize! :edit, @lecture
       @group_type = params[:group_type]&.to_sym || :all
+    end
+
+    def enroll
+      authorize! :edit, @lecture
+
+      type, id = params[:rosterable_id].split("-")
+      allowed_types = ["Tutorial", "Talk"]
+
+      unless allowed_types.include?(type)
+        respond_with_error(t("roster.errors.invalid_type"))
+        return
+      end
+
+      klass = type.constantize
+      @rosterable = klass.find_by(id: id)
+
+      unless @rosterable
+        respond_with_error(t("roster.errors.rosterable_not_found"))
+        return
+      end
+
+      if @rosterable.locked?
+        respond_with_error(t("roster.errors.item_locked"))
+        return
+      end
+
+      user = User.find_by(email: params[:email])
+      if user
+        Rosters::MaintenanceService.new.add_user!(user, @rosterable)
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
+            render turbo_stream: [
+              turbo_stream.update(
+                "roster_groups_list",
+                view_context.render(
+                  "roster/components/groups_tab",
+                  groups: RosterOverviewComponent.new(lecture: @lecture,
+                                                      group_type: group_type_for_rosterable).groups,
+                  total_participants: RosterOverviewComponent.new(lecture: @lecture,
+                                                                  group_type: group_type_for_rosterable).total_participants,
+                  group_type: group_type_for_rosterable,
+                  component: RosterOverviewComponent.new(lecture: @lecture,
+                                                         group_type: group_type_for_rosterable)
+                )
+              ),
+              stream_flash
+            ]
+          end
+          format.html do
+            redirect_to lecture_roster_path(@lecture, tab: "enrollment"),
+                        notice: t("roster.messages.user_added_to", group: @rosterable.title)
+          end
+        end
+      else
+        respond_with_error(t("roster.errors.user_not_found"))
+      end
+    rescue Rosters::MaintenanceService::CapacityExceededError
+      respond_with_error(t("roster.errors.capacity_exceeded"))
+    rescue StandardError => e
+      respond_with_error(e.message)
     end
 
     # GET /:rosterable_type/:rosterable_id/roster

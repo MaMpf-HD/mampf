@@ -31,7 +31,9 @@
   <div class="tab-content" id="rosterTabsContent">
     <!-- Groups Tab -->
     <div class="tab-pane fade show active" id="groups-pane" role="tabpanel">
-      <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
+      <div id="roster_groups_list">
+        <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
+      </div>
     </div>
 
     <!-- Candidates Tab -->
