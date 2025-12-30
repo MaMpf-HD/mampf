@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-5">
         <%= f.label :rosterable_id, t('roster.manual_enrollment.group'), class: "form-label" %>
-        <%= f.select :rosterable_id, nil, { include_blank: "Choose group..." }, { class: "form-select", required: true } do %>
+        <%= f.select :rosterable_id, nil, { include_blank: t('roster.manual_enrollment.choose_group') }, { class: "form-select", required: true } do %>
           <% groups.each do |group| %>
             <optgroup label="<%= group[:title] %>">
               <% group[:items].each do |item| %>

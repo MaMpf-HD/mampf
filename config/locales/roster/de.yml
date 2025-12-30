@@ -52,6 +52,7 @@ de:
       description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'
       student: 'Studierende/r'
       group: 'Gruppe'
+      choose_group: 'Gruppe wählen...'
     columns:
       title: 'Titel'
       tutors: 'TutorInnen'

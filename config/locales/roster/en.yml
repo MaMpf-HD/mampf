@@ -53,6 +53,7 @@ en:
       description: 'Manually add a student to a group. This is useful for late-comers.'
       student: 'Student'
       group: 'Group'
+      choose_group: 'Choose group...'
     columns:
       title: 'Title'
       tutors: 'Tutors'
