@@ -85,6 +85,7 @@ en:
       user_not_found: "Student not found."
       user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
+      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
     warnings:
       capacity_exceeded: "Warning: Group capacity exceeded."
       confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"

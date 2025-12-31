@@ -87,6 +87,7 @@ de:
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      campaign_associated: "Diese Gruppe ist Teil eines Anmeldeverfahrens und kann nicht manuell verwaltet werden."
     warnings:
       capacity_exceeded: "Warnung: Gruppenkapazität überschritten."
       confirm_overbooking: "Diese Gruppe ist bereits voll. Möchten Sie fortfahren und sie überbuchen?"
