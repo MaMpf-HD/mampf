@@ -8,7 +8,9 @@
     <p class="card-text text-muted small mb-3">
       <%= t('roster.manual_enrollment.description') %>
     </p>
-    <%= form_with url: lecture_roster_enroll_path(lecture), method: :post, class: "row g-3 align-items-end" do |f| %>
+    <%= form_with url: lecture_roster_enroll_path(lecture), method: :post, class: "row g-3 align-items-end",
+                  data: { controller: "roster-enrollment",
+                          roster_enrollment_confirm_message_value: t('roster.warnings.confirm_overbooking') } do |f| %>
       <div class="col-md-5">
         <%= f.label :email, t('roster.manual_enrollment.student'), class: "form-label" %>
         <%= f.email_field :email, class: "form-control", placeholder: t('roster.actions.add_student_placeholder'), required: true %>
@@ -21,7 +23,7 @@
               <optgroup label="<%= group[:title] %>">
                 <% group[:items].each do |item| %>
                   <% next if item.locked? %>
-                  <option value="<%= "#{item.class.name}-#{item.id}" %>">
+                  <option value="<%= "#{item.class.name}-#{item.id}" %>" data-overbooked="<%= item.full? %>">
                     <%= group_title_with_capacity(item) %>
                   </option>
                 <% end %>
