@@ -277,7 +277,7 @@ Rails.application.routes.draw do
        as: "import_lecture_toc"
 
   resources :lectures, except: [:index] do
-    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
       post "roster/enroll", to: "roster/maintenance#enroll"
     end
@@ -802,7 +802,7 @@ Rails.application.routes.draw do
        as: "modify_talk"
 
   resources :talks, except: [:index] do
-    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Talk" }
 
@@ -847,7 +847,7 @@ Rails.application.routes.draw do
       as: "export_teams_to_csv"
 
   resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
-    constraints ->(_req) { Flipper.enabled?(:item_dashboard) } do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Tutorial" }
 

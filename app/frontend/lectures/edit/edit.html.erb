@@ -47,7 +47,7 @@
         </div>
       <% end %>
 
-      <% if Flipper.enabled?(:item_dashboard) %>
+      <% if Flipper.enabled?(:roster_maintenance) %>
         <% if @lecture.tutorials.any? %>
           <% component.with_tab(name: "tutorials", label: t("roster.tabs.tutorial_maintenance")) do %>
             <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture, group_type: :tutorials } %>
