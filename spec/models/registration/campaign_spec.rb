@@ -546,7 +546,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
       create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
     end
 
-    it "returns users who are registered but not assigned to any item of the same type in the lecture" do
+    it "returns users who are registered but not assigned to any item of the " \
+       "same type in the lecture" do
       expect(campaign.unassigned_users).to include(unassigned_user)
       expect(campaign.unassigned_users).not_to include(assigned_user)
     end
