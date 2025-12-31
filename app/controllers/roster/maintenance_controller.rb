@@ -45,6 +45,8 @@ module Roster
 
     def enroll
       set_rosterable_from_composite_id
+      return unless @rosterable
+
       ensure_rosterable_unlocked!
 
       user = find_user
@@ -56,12 +58,10 @@ module Roster
       render_roster_update(tab: :enrollment)
     end
 
-    # GET /:rosterable_type/:rosterable_id/roster
     def show
       @active_tab = params[:tab] || "roster"
     end
 
-    # PATCH /:rosterable_type/:rosterable_id/roster
     def update
       if @rosterable.update(rosterable_params)
         flash.now[:notice] = t("roster.messages.updated")
@@ -126,23 +126,22 @@ module Roster
 
       def render_roster_update(tab: nil, rosterable: @rosterable)
         active_tab = tab&.to_sym || :groups
-        # If we are in the enrollment tab (candidates panel), we want to refresh the overview
-        # instead of showing the detail view of the group we just added to.
         target_rosterable = active_tab == :enrollment ? nil : rosterable
         group_type = params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
 
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: [
+            streams = [
               turbo_stream.update(
                 "roster_maintenance_#{group_type}",
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type,
                                             active_tab: active_tab,
                                             rosterable: target_rosterable)
-              ),
-              turbo_stream.update("flash-messages", partial: "flash/message")
+              )
             ]
+            streams << stream_flash if flash.present?
+            render turbo_stream: streams
           end
           format.html do
             redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
@@ -187,7 +186,9 @@ module Roster
       end
 
       def find_target_rosterable(id)
-        @lecture.tutorials.find_by(id: id) || @lecture.talks.find_by(id: id)
+        # Scope the search to the same type as the current group to avoid ID collisions
+        # between Tutorials and Talks.
+        @rosterable.class.find_by(id: id, lecture: @lecture)
       end
 
       def rosterable_params
