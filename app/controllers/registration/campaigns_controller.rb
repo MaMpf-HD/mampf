@@ -180,7 +180,9 @@ module Registration
       def refresh_roster_streams(lecture)
         return [] unless lecture
 
-        [:tutorials, :talks].map do |type|
+        [:tutorials, :talks].filter_map do |type|
+          next unless lecture.public_send(type).any?
+
           turbo_stream.replace("roster_maintenance_#{type}",
                                view_context.turbo_frame_tag("roster_maintenance_#{type}",
                                                             src: view_context.lecture_roster_path(
