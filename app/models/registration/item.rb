@@ -38,7 +38,7 @@ module Registration
               }
 
     validate :registerable_type_consistency, on: :create
-    validate :validate_registerable_is_managed_by_campaign, on: :create
+    validate :validate_registerable_allows_campaigns, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
     validate :validate_planning_only_compliance
@@ -162,7 +162,7 @@ module Registration
         errors.add(:base, :already_in_other_campaign)
       end
 
-      def validate_registerable_is_managed_by_campaign
+      def validate_registerable_allows_campaigns
         return unless registerable
         return unless registerable.respond_to?(:manual_roster_mode?)
         return unless registerable.manual_roster_mode?
