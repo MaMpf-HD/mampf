@@ -141,10 +141,8 @@ module Registration
     # This respects the materialization logic: if a user is assigned via another campaign
     # (or manually), they are considered "assigned" and thus not a candidate here.
     def unassigned_users
-      # Ignore campaigns that are still in planning
-      return User.none if status == "planning"
+      return User.none if draft? || planning_only?
 
-      # Identify the types of items in this campaign (e.g., ["Tutorial"])
       types = registration_items.pluck(:registerable_type).uniq
 
       # Find users already assigned to ANY item of these types in the lecture.
