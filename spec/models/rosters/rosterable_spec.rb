@@ -153,4 +153,121 @@ RSpec.describe(Rosters::Rosterable) do
       end
     end
   end
+
+  describe "#materialize_allocation!" do
+    let(:rosterable) { create(:tutorial) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user1) { create(:user) }
+    let(:user2) { create(:user) }
+    let(:user3) { create(:user) }
+
+    before do
+      # Initial state: user1 is in roster (via campaign), user2 is in roster (manual)
+      rosterable.add_user_to_roster!(user1, campaign)
+      rosterable.add_user_to_roster!(user2, nil)
+    end
+
+    it "adds new users from the list" do
+      rosterable.materialize_allocation!(user_ids: [user1.id, user3.id], campaign: campaign)
+      expect(rosterable.allocated_user_ids).to include(user3.id)
+    end
+
+    it "removes users not in the list who were added by this campaign" do
+      rosterable.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
+      expect(rosterable.allocated_user_ids).not_to include(user1.id)
+    end
+
+    it "preserves manual entries" do
+      rosterable.materialize_allocation!(user_ids: [user1.id], campaign: campaign)
+      expect(rosterable.allocated_user_ids).to include(user2.id)
+    end
+
+    it "preserves entries from other campaigns" do
+      other_campaign = create(:registration_campaign)
+      rosterable.add_user_to_roster!(user3, other_campaign)
+
+      rosterable.materialize_allocation!(user_ids: [user1.id], campaign: campaign)
+      expect(rosterable.allocated_user_ids).to include(user3.id)
+    end
+  end
+
+  describe "capacity checks" do
+    let(:rosterable) { create(:tutorial) }
+
+    before do
+      allow(rosterable).to receive(:capacity).and_return(2)
+    end
+
+    describe "#over_capacity?" do
+      it "returns false when under capacity" do
+        expect(rosterable.over_capacity?).to be(false)
+      end
+
+      it "returns false when at capacity" do
+        create_list(:tutorial_membership, 2, tutorial: rosterable)
+        expect(rosterable.over_capacity?).to be(false)
+      end
+
+      it "returns true when over capacity" do
+        create_list(:tutorial_membership, 3, tutorial: rosterable)
+        expect(rosterable.over_capacity?).to be(true)
+      end
+
+      it "returns false if capacity is nil" do
+        allow(rosterable).to receive(:capacity).and_return(nil)
+        create_list(:tutorial_membership, 3, tutorial: rosterable)
+        expect(rosterable.over_capacity?).to be(false)
+      end
+    end
+
+    describe "#full?" do
+      it "returns false when under capacity" do
+        expect(rosterable.full?).to be(false)
+      end
+
+      it "returns true when at capacity" do
+        create_list(:tutorial_membership, 2, tutorial: rosterable)
+        expect(rosterable.full?).to be(true)
+      end
+
+      it "returns true when over capacity" do
+        create_list(:tutorial_membership, 3, tutorial: rosterable)
+        expect(rosterable.full?).to be(true)
+      end
+    end
+  end
+
+  describe "roster management" do
+    let(:rosterable) { create(:tutorial) }
+    let(:user) { create(:user) }
+
+    describe "#add_user_to_roster!" do
+      it "adds the user to the roster" do
+        expect { rosterable.add_user_to_roster!(user) }
+          .to change { rosterable.roster_entries.count }.by(1)
+        expect(rosterable.allocated_user_ids).to include(user.id)
+      end
+    end
+
+    describe "#remove_user_from_roster!" do
+      before { rosterable.add_user_to_roster!(user) }
+
+      it "removes the user from the roster" do
+        expect { rosterable.remove_user_from_roster!(user) }
+          .to change { rosterable.roster_entries.count }.by(-1)
+        expect(rosterable.allocated_user_ids).not_to include(user.id)
+      end
+    end
+
+    describe "#roster_empty?" do
+      it "returns true when empty" do
+        expect(rosterable.roster_empty?).to be(true)
+      end
+
+      it "returns false when not empty" do
+        rosterable.add_user_to_roster!(user)
+        expect(rosterable.roster_empty?).to be(false)
+      end
+    end
+  end
 end
