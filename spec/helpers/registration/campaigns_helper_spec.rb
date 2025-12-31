@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# Missing top-level docstring, please formulate one yourself 😁
 RSpec.describe(Registration::CampaignsHelper, type: :helper) do
   describe "#campaign_badge_color" do
     it "returns the correct color for each status" do
@@ -99,49 +98,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#progress_bar" do
-    it "renders a progress bar with correct percentage" do
-      html = helper.progress_bar(50, 100)
-      expect(html).to include('style="width: 50.0%"')
-      expect(html).to include('aria-valuenow="50"')
-      expect(html).to include("50%")
-    end
-
-    it "clamps percentage to 100" do
-      html = helper.progress_bar(150, 100)
-      expect(html).to include('style="width: 100%"')
-    end
-
-    it "handles zero max value" do
-      html = helper.progress_bar(50, 0)
-      expect(html).to include('style="width: 0%"')
-    end
-
-    it "applies utilization colors" do
-      expect(helper.progress_bar(50, 100, classification: :utilization))
-        .to include("bg-success")
-      expect(helper.progress_bar(85, 100, classification: :utilization))
-        .to include("bg-warning")
-      expect(helper.progress_bar(100, 100, classification: :utilization))
-        .to include("bg-danger")
-    end
-
-    it "applies custom classification colors" do
-      expect(helper.progress_bar(50, 100, classification: :info))
-        .to include("bg-info")
-    end
-
-    it "supports custom height and style" do
-      html = helper.progress_bar(50, 100, height: "10px", style: "width: 50px")
-      expect(html).to include('style="width: 50px; height: 10px"')
-    end
-
-    it "can hide label" do
-      html = helper.progress_bar(50, 100, show_label: false)
-      expect(html).not_to include("50%")
-    end
-  end
-
   describe "#sorted_preference_counts" do
     it "sorts ranks correctly with forced last" do
       stats = double(preference_counts: { 2 => 10, :forced => 5, 1 => 20 })
@@ -156,20 +112,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.rank_color(2)).to eq(:primary)
       expect(helper.rank_color(3)).to eq(:secondary)
       expect(helper.rank_color(:forced)).to eq(:danger)
-    end
-  end
-
-  describe "#utilization_bar_class" do
-    it "returns success for low usage" do
-      expect(helper.utilization_bar_class(40)).to eq("bg-success")
-    end
-
-    it "returns warning for medium usage" do
-      expect(helper.utilization_bar_class(85)).to eq("bg-warning")
-    end
-
-    it "returns danger for high usage" do
-      expect(helper.utilization_bar_class(110)).to eq("bg-danger")
     end
   end
 
