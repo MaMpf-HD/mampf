@@ -17,10 +17,9 @@
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0"><%= t('roster.details.participants') %></h5>
       <% unless locked? %>
-        <% overbooked = @rosterable.capacity && @rosterable.roster_entries.count >= @rosterable.capacity %>
         <%= form_with url: add_member_path, method: :post,
               class: "d-flex gap-2 align-items-center",
-              data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked) } do |f| %>
+              data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked?) } do |f| %>
           <%= f.label :email, t('roster.actions.add_student_label'), class: "visually-hidden" %>
           <%= f.email_field :email, class: "form-control form-control-sm", placeholder: t('roster.actions.add_student_placeholder'), required: true, style: "width: 250px;" %>
           <%= f.button type: "submit", class: "btn btn-sm btn-primary text-nowrap" do %>
@@ -55,12 +54,11 @@
                         <% if available_groups.any? %>
                           <% available_groups.each do |group| %>
                             <li>
-                              <% overbooked = group.capacity && group.roster_entries.count >= group.capacity %>
                               <%= button_to helpers.group_title_with_capacity(group),
                                   move_member_path(student),
                                   params: { target_id: group.id, group_type: group_type },
                                   method: :patch,
-                                  data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked) },
+                                  data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked?(group)) },
                                   class: "dropdown-item" %>
                             </li>
                           <% end %>

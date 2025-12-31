@@ -35,9 +35,7 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def overbooked?(group)
-    return false unless group.respond_to?(:capacity) && group.capacity.present?
-
-    group.roster_entries.count >= group.capacity
+    group.full?
   end
 
   private

@@ -6,7 +6,7 @@ class RosterDetailComponent < ViewComponent::Base
     @group_type = group_type
   end
 
-  delegate :title, :locked?, to: :@rosterable
+  delegate :title, :locked?, :roster_group_type, to: :@rosterable
 
   def students
     User.where(id: @rosterable.roster_entries.pluck(@rosterable.roster_user_id_column))
@@ -18,52 +18,37 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def group_type
-    @group_type || @rosterable.roster_group_type
+    @group_type || roster_group_type
   end
 
   def add_member_path
-    case @rosterable
-    when Tutorial
-      helpers.add_member_tutorial_path(@rosterable)
-    when Talk
-      helpers.add_member_talk_path(@rosterable)
-    end
+    route_helper("add_member")
   end
 
   def remove_member_path(user)
-    case @rosterable
-    when Tutorial
-      helpers.remove_member_tutorial_path(@rosterable, user)
-    when Talk
-      helpers.remove_member_talk_path(@rosterable, user)
-    end
+    route_helper("remove_member", user)
   end
 
   def move_member_path(user)
-    case @rosterable
-    when Tutorial
-      helpers.move_member_tutorial_path(@rosterable, user)
-    when Talk
-      helpers.move_member_talk_path(@rosterable, user)
-    end
+    route_helper("move_member", user)
   end
 
   def available_groups
-    groups = case @rosterable
-             when Tutorial then @lecture.tutorials
-             when Talk then @lecture.talks
-             else return []
-    end
+    # Dynamically fetch the collection (e.g. @lecture.tutorials) based on the type
+    groups = @lecture.public_send(roster_group_type)
     groups.where.not(id: @rosterable.id).order(:title).reject(&:locked?)
+  end
+
+  def overbooked?(group = @rosterable)
+    group.full?
   end
 
   private
 
-    def group_type_for_rosterable
-      case @rosterable
-      when Tutorial then :tutorials
-      when Talk then :talks
-      else :all
-      end
+    def route_helper(prefix, *)
+      # Dynamically call the correct helper, e.g. add_member_tutorial_path(@rosterable)
+      # This relies on the route helpers following the convention: {action}_{model}_path
+      method_name = "#{prefix}_#{@rosterable.model_name.singular_route_key}_path"
+      helpers.public_send(method_name, @rosterable, *)
     end
 end

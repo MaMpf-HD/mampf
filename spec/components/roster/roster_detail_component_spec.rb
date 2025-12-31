@@ -46,6 +46,33 @@ RSpec.describe(RosterDetailComponent, type: :component) do
                  tutorial, user
                ))
     end
+
+    describe "#overbooked?" do
+      it "returns false if group has no capacity" do
+        tutorial.update(capacity: nil)
+        expect(component.overbooked?).to be(false)
+      end
+
+      it "returns false if group is not full" do
+        tutorial.update(capacity: 10)
+        expect(component.overbooked?).to be(false)
+      end
+
+      it "returns true if group is full" do
+        tutorial.update(capacity: 1)
+        expect(component.overbooked?).to be(true)
+      end
+
+      it "returns true if group is over capacity" do
+        tutorial.update(capacity: 0)
+        expect(component.overbooked?).to be(true)
+      end
+
+      it "checks other group if provided" do
+        other_tutorial.update(capacity: 0)
+        expect(component.overbooked?(other_tutorial)).to be(true)
+      end
+    end
   end
 
   context "with a Talk" do

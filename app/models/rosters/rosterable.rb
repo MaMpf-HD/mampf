@@ -161,6 +161,14 @@ module Rosters
       roster_entries.count > capacity
     end
 
+    # Checks if the roster is full (reached or exceeded capacity).
+    def full?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count >= capacity
+    end
+
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
     def roster_group_type
       self.class.name.tableize.to_sym
