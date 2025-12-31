@@ -37,6 +37,15 @@ class RosterCandidatesComponent < ViewComponent::Base
     relevant_registrations(user).any? { |r| r.materialized_at.present? }
   end
 
+  def add_member_path(group, user)
+    case group
+    when Tutorial
+      helpers.add_member_tutorial_path(group, user_id: user.id, tab: "enrollment")
+    when Talk
+      helpers.add_member_talk_path(group, user_id: user.id, tab: "enrollment")
+    end
+  end
+
   private
 
     def registerable_class_name

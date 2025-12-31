@@ -50,6 +50,27 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
       expect(component.previously_assigned_candidates).not_to include(fresh_user)
     end
 
+    describe "#add_member_path" do
+      before { render_inline(component) }
+
+      it "returns correct path for tutorial" do
+        path = component.add_member_path(tutorial, fresh_user)
+        expect(path)
+          .to eq(Rails.application.routes.url_helpers
+          .add_member_tutorial_path(tutorial,
+                                    user_id: fresh_user.id, tab: "enrollment"))
+      end
+
+      it "returns correct path for talk" do
+        talk = create(:talk, lecture: lecture)
+        path = component.add_member_path(talk, fresh_user)
+        expect(path)
+          .to eq(Rails.application.routes.url_helpers
+          .add_member_talk_path(talk,
+                                user_id: fresh_user.id, tab: "enrollment"))
+      end
+    end
+
     it "lists available groups" do
       expect(component.available_groups).to include(tutorial)
     end
