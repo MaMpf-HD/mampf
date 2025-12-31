@@ -1,6 +1,8 @@
 # Renders a list of unassigned candidates for a given group type.
 # Candidates are users who have registered in a campaign but are not assigned to any group.
 class RosterCandidatesComponent < ViewComponent::Base
+  include RosterTransferable
+
   def initialize(lecture:, group_type:)
     super()
     @lecture = lecture
@@ -26,16 +28,13 @@ class RosterCandidatesComponent < ViewComponent::Base
   def available_groups
     return [] unless render?
 
-    @lecture.public_send(@group_type).order(:title).reject(&:locked?)
+    # Memoize to avoid re-fetching for every student row in the view if accessed multiple times
+    @available_groups ||= @lecture.public_send(@group_type).order(:title).reject(&:locked?)
   end
 
   def previously_assigned?(user)
     # Check if any registration for this user in the relevant campaigns has been materialized.
     relevant_registrations(user).any? { |r| r.materialized_at.present? }
-  end
-
-  def overbooked?(group)
-    group.full?
   end
 
   private

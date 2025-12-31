@@ -51,14 +51,15 @@
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
-                        <% if available_groups.any? %>
-                          <% available_groups.each do |group| %>
+                        <% if transfer_targets.any? %>
+                          <% transfer_targets.each do |target| %>
+                            <% group = target[:group] %>
                             <li>
                               <%= button_to helpers.group_title_with_capacity(group),
                                   move_member_path(student),
                                   params: { target_id: group.id, group_type: group_type },
                                   method: :patch,
-                                  data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked?(group)) },
+                                  data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if target[:overbooked]) },
                                   class: "dropdown-item" %>
                             </li>
                           <% end %>

@@ -1,4 +1,6 @@
 class RosterDetailComponent < ViewComponent::Base
+  include RosterTransferable
+
   def initialize(rosterable:, group_type: nil)
     super()
     @rosterable = rosterable
@@ -35,12 +37,15 @@ class RosterDetailComponent < ViewComponent::Base
 
   def available_groups
     # Dynamically fetch the collection (e.g. @lecture.tutorials) based on the type
-    groups = @lecture.public_send(roster_group_type)
-    groups.where.not(id: @rosterable.id).order(:title).reject(&:locked?)
+    # Memoize to avoid re-fetching for every student row in the view if accessed multiple times
+    @available_groups ||= begin
+      groups = @lecture.public_send(roster_group_type)
+      groups.where.not(id: @rosterable.id).order(:title).reject(&:locked?)
+    end
   end
 
   def overbooked?(group = @rosterable)
-    group.full?
+    super
   end
 
   private

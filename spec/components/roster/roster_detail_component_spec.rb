@@ -73,6 +73,16 @@ RSpec.describe(RosterDetailComponent, type: :component) do
         expect(component.overbooked?(other_tutorial)).to be(true)
       end
     end
+
+    describe "#transfer_targets" do
+      it "returns a list of targets with overbooked status" do
+        other_tutorial.update(capacity: 0)
+        targets = component.transfer_targets
+        expect(targets).to include(
+          { group: other_tutorial, overbooked: true }
+        )
+      end
+    end
   end
 
   context "with a Talk" do
