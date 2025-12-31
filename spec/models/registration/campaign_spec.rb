@@ -574,4 +574,24 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
   end
+
+  describe "#roster_group_type" do
+    let(:campaign) { build(:registration_campaign) }
+
+    it "returns 'tutorials' by default" do
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'tutorials' when items are tutorials" do
+      tutorial = create(:tutorial)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'talks' when items are talks" do
+      talk = create(:talk)
+      create(:registration_item, registration_campaign: campaign, registerable: talk)
+      expect(campaign.roster_group_type).to eq("talks")
+    end
+  end
 end

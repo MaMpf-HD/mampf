@@ -13,8 +13,8 @@ module Registration
     def campaign_item_type_label(campaign)
       return "—" if campaign.registration_items.empty?
 
-      type = campaign.registration_items.first.registerable_type
-      t("registration.item.types.#{type.underscore}")
+      type = campaign.roster_group_type.singularize
+      t("registration.item.types.#{type}")
     end
 
     def item_stats_label(campaign)

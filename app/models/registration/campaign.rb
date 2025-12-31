@@ -167,6 +167,10 @@ module Registration
       users.where.not(id: allocated_user_ids)
     end
 
+    def roster_group_type
+      registration_items.first&.registerable_type&.tableize || "tutorials"
+    end
+
     private
 
       def ensure_editable
