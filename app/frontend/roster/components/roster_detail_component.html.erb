@@ -58,7 +58,7 @@
                               <% overbooked = group.capacity && group.roster_entries.count >= group.capacity %>
                               <%= button_to helpers.group_title_with_capacity(group),
                                   move_member_path(student),
-                                  params: { target_id: group.id },
+                                  params: { target_id: group.id, group_type: group_type },
                                   method: :patch,
                                   data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked) },
                                   class: "dropdown-item" %>

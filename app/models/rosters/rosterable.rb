@@ -153,6 +153,19 @@ module Rosters
       entries_to_remove.delete_all
     end
 
+    # Checks if the roster is over capacity.
+    def over_capacity?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count > capacity
+    end
+
+    # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
+    def roster_group_type
+      self.class.name.tableize.to_sym
+    end
+
     private
 
       def validate_manual_mode_switch

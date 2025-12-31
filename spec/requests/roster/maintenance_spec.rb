@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe("Roster::Maintenance", type: :request) do
-  let(:lecture) { create(:lecture) }
+  let(:lecture) { create(:lecture, locale: I18n.default_locale) }
   let(:editor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
 
@@ -207,6 +207,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.to change { source.members.count }.by(-1)
                                               .and(change { target.members.count }.by(1))
+      end
+
+      it "sets the correct flash message" do
+        patch move_member_tutorial_path(source, user_id: member.id),
+              params: { target_id: target.id }
+        expect(flash[:notice]).to eq(I18n.t("roster.messages.user_moved", target: target.title))
       end
 
       context "when target is locked" do

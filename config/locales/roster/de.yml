@@ -30,6 +30,7 @@ de:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
+      move: 'Verschieben'
       back: 'Zurück'
       add: 'Hinzufügen'
       add_student_label: 'E-Mail des Studierenden'
@@ -77,10 +78,21 @@ de:
     errors:
       lecture_not_found: 'Veranstaltung nicht gefunden.'
       rosterable_not_found: 'Eintrag nicht gefunden.'
+      invalid_type: 'Ungültiger Gruppentyp.'
       roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
+      capacity_exceeded: "Gruppenkapazität überschritten."
+      target_not_found: "Zielgruppe nicht gefunden."
+      target_locked: "Zielgruppe ist gesperrt."
+      user_not_found: "Studierende/r nicht gefunden."
+      user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
+      item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
     warnings:
       capacity_exceeded: "Warnung: Gruppenkapazität überschritten."
       confirm_overbooking: "Diese Gruppe ist bereits voll. Möchten Sie fortfahren und sie überbuchen?"
     messages:
       updated: "Einstellungen aktualisiert."
+      user_moved: "Studierende/r wurde nach %{target} verschoben."
+      user_added: "Studierende/r erfolgreich hinzugefügt."
+      user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
+      user_removed: "Studierende/r erfolgreich entfernt."

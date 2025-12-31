@@ -10,6 +10,7 @@ module Roster
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
     before_action :authorize_lecture
+    before_action :use_lecture_locale
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
@@ -50,7 +51,7 @@ module Roster
       Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
       flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       render_roster_update(tab: :enrollment)
     end
@@ -78,7 +79,7 @@ module Roster
       Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
       flash.now[:notice] = t("roster.messages.user_added")
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       render_roster_update(tab: params[:tab])
     end
@@ -112,7 +113,7 @@ module Roster
       Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
 
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(target)
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
       render_roster_update(tab: params[:tab])
     end
@@ -128,14 +129,15 @@ module Roster
         # If we are in the enrollment tab (candidates panel), we want to refresh the overview
         # instead of showing the detail view of the group we just added to.
         target_rosterable = active_tab == :enrollment ? nil : rosterable
+        group_type = params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
 
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.update(
-                "roster_maintenance_#{group_type_for_rosterable}",
+                "roster_maintenance_#{group_type}",
                 RosterOverviewComponent.new(lecture: @lecture,
-                                            group_type: group_type_for_rosterable,
+                                            group_type: group_type,
                                             active_tab: active_tab,
                                             rosterable: target_rosterable)
               ),
@@ -180,15 +182,8 @@ module Roster
         nil
       end
 
-      def over_capacity?(rosterable)
-        return false unless rosterable.respond_to?(:capacity)
-        return false if rosterable.capacity.nil?
-
-        rosterable.roster_entries.count > rosterable.capacity
-      end
-
       def fallback_path
-        lecture_roster_path(@lecture, group_type: group_type_for_rosterable)
+        lecture_roster_path(@lecture, group_type: @rosterable&.roster_group_type || :all)
       end
 
       def find_target_rosterable(id)
@@ -197,14 +192,6 @@ module Roster
 
       def rosterable_params
         params.expect(rosterable: [:manual_roster_mode])
-      end
-
-      def group_type_for_rosterable
-        case @rosterable
-        when Tutorial then :tutorials
-        when Talk then :talks
-        else :all
-        end
       end
 
       def set_lecture
@@ -239,6 +226,11 @@ module Roster
           end
           format.html { redirect_back_or_to fallback_path, alert: message }
         end
+      end
+
+      def use_lecture_locale
+        locale = @lecture&.locale_with_inheritance || I18n.default_locale
+        I18n.locale = locale
       end
   end
 end

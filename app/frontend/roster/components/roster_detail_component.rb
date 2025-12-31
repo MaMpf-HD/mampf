@@ -1,8 +1,9 @@
 class RosterDetailComponent < ViewComponent::Base
-  def initialize(rosterable:)
+  def initialize(rosterable:, group_type: nil)
     super()
     @rosterable = rosterable
     @lecture = rosterable.lecture
+    @group_type = group_type
   end
 
   delegate :title, :locked?, to: :@rosterable
@@ -17,10 +18,7 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def group_type
-    case @rosterable
-    when Tutorial then :tutorials
-    when Talk then :talks
-    end
+    @group_type || @rosterable.roster_group_type
   end
 
   def add_member_path
