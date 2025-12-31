@@ -134,7 +134,7 @@ Requires conditional UI logic to show the "Add Policy" button but restrict the f
 
 **Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like "Lecture Admission" (where no tutorials exist) or "Event Registration" (e.g., Faculty Barbecue).
 
-**Proposed Solution:** Introduce a `Cohort` model (contained within a generic `Offering`) that acts as a lightweight container.
+**Proposed Solution:** Introduce a `Cohort` model (contained within a generic `Grouping`) that acts as a lightweight container.
 
 **New Models:**
 1.  **`Cohort` (The Bucket):**
@@ -143,7 +143,7 @@ Requires conditional UI logic to show the "Add Policy" button but restrict the f
     - **Polymorphic Parent:** Belongs to `context` (Lecture, Offering, etc.).
     - **No Scheduling:** No tutors, rooms, or time slots.
 
-2.  **`Offering` (The Context):**
+2.  **`Grouping` (The Context):**
     - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
     - **Attributes:** `title`, `description`.
     - **Associations:** `has_one :campaign`, `has_many :cohorts`.
