@@ -252,46 +252,51 @@ Student “Show”.
 | Confirmation (result)                  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show       | After submit/close                    | Shows assignment and summary |
 | Fulfill requirements (policy)          | —                                                                                      | Policy-configured flow | External or internal                  | Follow instructions to satisfy policy, then retry |
 
-## Item Dashboard (Tutorials, Talk, Exams)
+## Roster Maintenance
 
-The **Item Dashboard** is the central operational hub for managing a single allocated group, whether it is a **Tutorial** (Group A), a **Seminar Talk** (Team 1), or an entire **Exam** cohort. It is the primary workspace for Tutors and Staff.
+The **Roster Maintenance** view is the central hub for managing group allocations. It provides both a high-level overview of all groups in a lecture and detailed management for individual groups.
 
 ### Placement & Access
-- **Location:** Accessible via the `Roster::MaintenanceController#show` action.
+- **Location:** Accessible via the `Roster::MaintenanceController#index` action.
+- **Route:** `/lectures/:id/roster`
 - **Entry Points:**
-    - **Lecture Settings:** From the "Tutorials" tab in `Lecture#edit`, clicking "Manage Roster" opens the dashboard for a specific group.
-    - **Lecture Overview:** From the high-level Roster Overview (`Roster::MaintenanceController#index`), clicking on a group row.
-    - **Registration Dashboard:** Clicking on an allocated item in the "Items" tab.
-    - **My Mampf:** (Future) Tutors can access their assigned groups directly.
+    - **Lecture Settings:** From the "Participants" tab in `Lecture#edit`.
+    - **Navigation:** (Future) Direct link from the lecture dashboard.
 
 ### Architecture
-The dashboard uses a **Tabbed Layout** to switch between different management contexts without leaving the page.
+The view uses a **Tabbed Layout** to switch between different management contexts.
 
-#### 1. Roster Tab (Membership)
-*Focus: Who is in this group?*
-- **List View:** Displays all students currently allocated to this item (Name, Matriculation, Email). Supports pagination for large rosters (e.g., Exams).
-- **Maintenance Actions:**
-    - **Move:** Transactional move to another group (checks capacity).
-    - **Remove:** Removes student from the group.
-    - **Add:** Manually adds a student (bypassing registration constraints).
-- **Candidates Panel:** (Admin only) Displays unassigned students from the campaign to facilitate manual placement.
+#### 1. Groups Tab (Overview)
+*Focus: How are students distributed?*
+- **List View:** Displays all groups (Tutorials, Talks) with their current occupancy and capacity.
+- **Stats:** Shows total participants and unassigned candidates count.
+- **Actions:**
+    - **Manage:** Drill down into a specific group's detail view.
+    - **Manual Mode:** Toggle manual management for individual groups (if eligible).
 
-#### 2. Gradebook Tab (Performance)
+#### 2. Enrollment Tab (Candidates)
+*Focus: Who needs a spot?*
+- **Candidates List:** Displays students who registered via a campaign but are currently unassigned.
+- **Context:** Shows the student's original preferences (top 3) to aid in placement.
+- **Actions:**
+    - **Assign:** Directly assign a candidate to a specific group (checks capacity).
+
+#### 3. Performance Tab (Future)
 *Focus: How are they doing?*
-This tab provides a matrix view of students and their assessments. It adapts to the item type:
-- **Tutorials:** Columns are Assignments (Sheet 1, Sheet 2). Cells are total points. Drill-down reveals task-level points.
-- **Exams:** Columns are Questions (Q1, Q2). Cells are points per question.
-- **Seminars:** Single assessment form for the presentation.
+- Placeholder for future gradebook integration.
 
-#### 3. Attendance Tab (Optional)
-*Focus: Are they showing up?*
-- Used if the lecture tracks attendance as a requirement.
-- Simple matrix of Students vs. Dates.
+### Detail View (Single Group)
+When selecting "Manage" on a group, the view updates (via Turbo Frame) to show the details for that specific group.
+
+- **Participants List:** Table of all students in the group.
+- **Actions:**
+    - **Add Member:** Manually add a student by email.
+    - **Move:** Move a student to another group (dropdown with capacity checks).
+    - **Remove:** Remove a student from the group.
+- **Navigation:** "Back" button returns to the Groups overview.
 
 ### Integration in Lecture Settings
-To provide sufficient screen real estate for wide tables (rosters, gradebooks), the dashboard is also integrated into the `Lecture#edit` view as a **Full-Width Tab** named "Roster".
-- **Mechanism:** Uses a `turbo_frame_tag` with `loading="lazy"` to fetch the `Roster::MaintenanceController#index` (Lecture-level overview) into the settings page.
-- **Layout:** Unlike other settings tabs which are constrained to a narrow container, this tab spans the full width of the page, similar to the "Content" tab.
+The roster maintenance view is integrated directly into the `Lecture#edit` page as a tab, allowing seamless management without leaving the settings context. It uses Turbo Frames to load lazily and handle updates without full page reloads.
 
 ## Rosters
 
