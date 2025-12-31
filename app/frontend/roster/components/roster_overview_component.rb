@@ -1,6 +1,13 @@
 # Renders a list of groups (tutorials, exams, etc.) for a lecture.
 # Can be filtered by group_type (:tutorials, :exams, :all).
 class RosterOverviewComponent < ViewComponent::Base
+  # Central configuration for supported types.
+  # Maps the group_type symbol to the model class name string and roster association.
+  SUPPORTED_TYPES = {
+    tutorials: { model: "Tutorial", association: :tutorial_memberships },
+    talks: { model: "Talk", association: :speaker_talk_joins }
+  }.freeze
+
   def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil)
     super()
     @lecture = lecture
@@ -14,63 +21,18 @@ class RosterOverviewComponent < ViewComponent::Base
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
   def groups
-    @groups ||= case @group_type
-                when :tutorials
-                  [tutorial_group]
-                when :talks
-                  [talk_group]
-                when :exams
-                  # [exam_group] # Future implementation
-                  []
-                else
-                  # :all or default
-                  [
-                    tutorial_group,
-                    talk_group
-                    # Future: exam_group
-                  ]
-    end.compact
+    @groups ||= target_types.filter_map { |type| build_group_data(type) }
   end
 
   def total_participants
     groups.sum do |group|
-      group[:items].sum { |item| item.roster_entries.count }
+      group[:items].sum { |item| item.roster_entries.size }
     end
-  end
-
-  def total_capacity
-    sum = 0
-    groups.each do |group|
-      group[:items].each do |item|
-        return nil if item.capacity.nil?
-
-        sum += item.capacity
-      end
-    end
-    sum
-  end
-
-  def unassigned_count
-    klass_name = case @group_type
-                 when :tutorials then "Tutorial"
-                 when :talks then "Talk"
-                 else return 0
-    end
-
-    campaigns = Registration::Campaign.where(campaignable: @lecture)
-                                      .joins(:registration_items)
-                                      .where(registration_items: { registerable_type: klass_name })
-                                      .distinct
-
-    campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq.count
   end
 
   def group_type_title
-    case @group_type
-    when :tutorials
-      I18n.t("roster.tabs.tutorial_maintenance")
-    when :talks
-      I18n.t("roster.tabs.talk_maintenance")
+    if SUPPORTED_TYPES.key?(@group_type)
+      I18n.t("roster.tabs.#{@group_type.to_s.singularize}_maintenance")
     else
       I18n.t("roster.dashboard.title")
     end
@@ -78,26 +40,12 @@ class RosterOverviewComponent < ViewComponent::Base
 
   # Helper to generate the correct polymorphic path
   def group_path(item)
-    case item
-    when Tutorial
-      Rails.application.routes.url_helpers.tutorial_roster_path(item)
-    when Talk
-      Rails.application.routes.url_helpers.talk_roster_path(item)
-    else
-      "#"
-    end
+    method_name = "#{item.model_name.singular_route_key}_roster_path"
+    helpers.public_send(method_name, item)
   end
 
   def active_campaign_for(item)
-    if item.association(:registration_items).loaded?
-      item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
-    else
-      Registration::Campaign
-        .joins(:registration_items)
-        .where(registration_items: { registerable_id: item.id, registerable_type: item.class.name })
-        .where.not(status: :completed)
-        .first
-    end
+    item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
   def show_campaign_running_badge?(item, campaign)
@@ -106,27 +54,24 @@ class RosterOverviewComponent < ViewComponent::Base
 
   private
 
-    def tutorial_group
-      items = @lecture.tutorials.includes(:tutors,
-                                          registration_items: :registration_campaign).order(:title)
-      return nil if items.empty?
-
-      {
-        title: Tutorial.model_name.human(count: 2),
-        items: items,
-        type: :tutorials
-      }
+    def target_types
+      @group_type == :all ? SUPPORTED_TYPES.keys : [@group_type]
     end
 
-    def talk_group
-      items = @lecture.talks.includes(:speakers,
-                                      registration_items: :registration_campaign).order(:title)
+    def build_group_data(type)
+      config = SUPPORTED_TYPES[type]
+      items = @lecture.public_send(type)
+                      .includes(config[:association], registration_items: :registration_campaign)
+                      .order(:title)
+
       return nil if items.empty?
 
+      klass = config[:model].constantize
+
       {
-        title: Talk.model_name.human(count: 2),
+        title: klass.model_name.human(count: 2),
         items: items,
-        type: :talks
+        type: type
       }
     end
 end

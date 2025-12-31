@@ -47,65 +47,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "#total_capacity" do
-    let!(:tutorial_1) { create(:tutorial, lecture: lecture, capacity: 10) }
-    let!(:tutorial_2) { create(:tutorial, lecture: lecture, capacity: 20) }
-
-    it "returns the sum of capacities" do
-      expect(component.total_capacity).to eq(30)
-    end
-
-    context "when a group has nil capacity" do
-      before { tutorial_2.update(capacity: nil) }
-
-      it "returns nil" do
-        expect(component.total_capacity).to be_nil
-      end
-    end
-  end
-
-  describe "#unassigned_count" do
-    context "when group_type is :tutorials" do
-      let(:component) { described_class.new(lecture: lecture, group_type: :tutorials) }
-      let(:campaign) { instance_double(Registration::Campaign) }
-      let(:user_ids) { [1, 2, 3] }
-
-      before do
-        allow(Registration::Campaign).to receive(:where).and_return(Registration::Campaign.all)
-        allow(Registration::Campaign).to receive(:joins).and_return(Registration::Campaign.all)
-        # We need to mock the chain: where(campaignable).joins(:registration_items).where(type).distinct
-        # This is getting messy to mock ActiveRecord chains.
-        # Let's try to create the records instead if possible, or use a simpler mock approach.
-      end
-
-      # Alternative: Mock the private method or the query result if possible.
-      # But we can't easily mock private methods in the component without send.
-      # Let's try to create a campaign.
-
-      it "counts unassigned users" do
-        # This test might be brittle if we don't set up the full registration machinery.
-        # Let's skip deep integration testing of unassigned_users logic here and focus on the component logic.
-        # We can mock the result of the query.
-
-        relation = double("ActiveRecord::Relation")
-        allow(Registration::Campaign).to receive(:where).with(campaignable: lecture).and_return(relation)
-        allow(relation).to receive(:joins).with(:registration_items).and_return(relation)
-        allow(relation).to receive(:where).with(registration_items: { registerable_type: "Tutorial" }).and_return(relation)
-        allow(relation).to receive(:distinct).and_return([campaign])
-
-        allow(campaign).to receive_message_chain(:unassigned_users, :pluck).and_return([1, 2])
-
-        expect(component.unassigned_count).to eq(2)
-      end
-    end
-
-    context "when group_type is :all" do
-      it "returns 0" do
-        expect(component.unassigned_count).to eq(0)
-      end
-    end
-  end
-
   describe "#group_type_title" do
     it "returns the correct title for tutorials" do
       component = described_class.new(lecture: lecture, group_type: :tutorials)
@@ -123,14 +64,22 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
   end
 
   describe "#group_path" do
+    let(:helpers) { double("helpers") }
+
+    before do
+      allow(component).to receive(:helpers).and_return(helpers)
+    end
+
     it "returns tutorial roster path for a Tutorial" do
       tutorial = create(:tutorial, lecture: lecture)
-      expect(component.group_path(tutorial)).to eq(Rails.application.routes.url_helpers.tutorial_roster_path(tutorial))
+      allow(helpers).to receive(:tutorial_roster_path).with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
+      expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
 
     it "returns talk roster path for a Talk" do
       talk = create(:talk, lecture: lecture)
-      expect(component.group_path(talk)).to eq(Rails.application.routes.url_helpers.talk_roster_path(talk))
+      allow(helpers).to receive(:talk_roster_path).with(talk).and_return("/talks/#{talk.id}/roster")
+      expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
     end
   end
 
