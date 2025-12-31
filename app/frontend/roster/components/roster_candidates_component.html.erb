@@ -75,10 +75,9 @@
                       <% if available_groups.any? %>
                         <% available_groups.each do |group| %>
                           <li>
-                            <% overbooked = group.capacity && group.roster_entries.count >= group.capacity %>
                             <%= link_to helpers.group_title_with_capacity(group),
                                 public_send("add_member_#{group.class.name.underscore}_path", group, user_id: user.id, tab: "enrollment"),
-                                data: { turbo_method: :post, turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked) },
+                                data: { turbo_method: :post, turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked?(group)) },
                                 class: "dropdown-item" %>
                           </li>
                         <% end %>

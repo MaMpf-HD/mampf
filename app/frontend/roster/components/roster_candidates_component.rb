@@ -8,7 +8,7 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def render?
-    [:tutorials, :talks].include?(@group_type)
+    registerable_class_name.present?
   end
 
   def candidates
@@ -24,40 +24,48 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def available_groups
-    groups = case @group_type
-             when :tutorials then @lecture.tutorials
-             when :talks then @lecture.talks
-             else return []
-    end
-    groups.order(:title).reject(&:locked?)
+    return [] unless render?
+
+    @lecture.public_send(@group_type).order(:title).reject(&:locked?)
   end
 
   def previously_assigned?(user)
     # Check if any registration for this user in the relevant campaigns has been materialized.
-    # This indicates they were once assigned but are now back in the pool.
-    user.user_registrations.any? do |r|
-      r.registration_campaign.campaignable == @lecture &&
-        r.registration_item&.registerable_type ==
-          (@group_type == :tutorials ? "Tutorial" : "Talk") &&
-        r.materialized_at.present?
-    end
+    relevant_registrations(user).any? { |r| r.materialized_at.present? }
+  end
+
+  def overbooked?(group)
+    return false unless group.respond_to?(:capacity) && group.capacity.present?
+
+    group.roster_entries.count >= group.capacity
   end
 
   private
 
-    def fetch_candidates
-      klass_name = case @group_type
-                   when :tutorials then "Tutorial"
-                   when :talks then "Talk"
-                   else return []
+    def registerable_class_name
+      @registerable_class_name ||= case @group_type
+                                   when :tutorials then "Tutorial"
+                                   when :talks then "Talk"
       end
+    end
+
+    def relevant_registrations(user)
+      # Filter in memory because we eager loaded them in fetch_candidates
+      user.user_registrations.select do |r|
+        r.registration_campaign.campaignable_id == @lecture.id &&
+          r.registration_item&.registerable_type == registerable_class_name
+      end
+    end
+
+    def fetch_candidates
+      return [] unless render?
 
       # Find all campaigns for this lecture that handle this item type
       campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed,
                                                planning_only: false)
                                         .joins(:registration_items)
                                         .where(registration_items:
-                                        { registerable_type: klass_name })
+                                        { registerable_type: registerable_class_name })
                                         .distinct
 
       # Aggregate unassigned users from all relevant campaigns.
@@ -73,16 +81,8 @@ class RosterCandidatesComponent < ViewComponent::Base
     end
 
     def candidate_info(user)
-      # Find relevant registrations for this user in the lecture's campaigns
-      # We filter in memory because we already eager loaded them
-      regs = user.user_registrations.select do |r|
-        r.registration_campaign.campaignable == @lecture &&
-          r.registration_item&.registerable_type ==
-            (@group_type == :tutorials ? "Tutorial" : "Talk")
-      end
-
       # Group by campaign to show source
-      regs.group_by(&:registration_campaign).map do |campaign, campaign_regs|
+      relevant_registrations(user).group_by(&:registration_campaign).map do |campaign, campaign_regs|
         {
           campaign_title: campaign.description.presence || "Campaign ##{campaign.id}",
           wishes: format_wishes(campaign_regs)
