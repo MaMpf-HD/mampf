@@ -173,7 +173,7 @@ module Roster
         end
 
         klass = type.constantize
-        @rosterable = klass.find_by(id: id)
+        @rosterable = klass.find_by(id: id, lecture: @lecture)
 
         return if @rosterable
 
