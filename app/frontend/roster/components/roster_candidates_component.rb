@@ -82,7 +82,8 @@ class RosterCandidatesComponent < ViewComponent::Base
 
     def candidate_info(user)
       # Group by campaign to show source
-      relevant_registrations(user).group_by(&:registration_campaign).map do |campaign, campaign_regs|
+      relevant_registrations(user).group_by(&:registration_campaign)
+                                  .map do |campaign, campaign_regs|
         {
           campaign_title: campaign.description.presence || "Campaign ##{campaign.id}",
           wishes: format_wishes(campaign_regs)
