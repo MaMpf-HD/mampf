@@ -15,21 +15,25 @@
       </div>
       <div class="col-md-5">
         <%= f.label :rosterable_id, t('roster.manual_enrollment.group'), class: "form-label" %>
-        <%= f.select :rosterable_id, nil, { include_blank: t('roster.manual_enrollment.choose_group') }, { class: "form-select", required: true } do %>
-          <% groups.each do |group| %>
-            <optgroup label="<%= group[:title] %>">
-              <% group[:items].each do |item| %>
-                <% next if item.locked? %>
-                <option value="<%= "#{item.class.name}-#{item.id}" %>">
-                  <%= group_title_with_capacity(item) %>
-                </option>
-              <% end %>
-            </optgroup>
+        <% if groups.any? %>
+          <%= f.select :rosterable_id, [], { include_blank: t('roster.manual_enrollment.choose_group') }, { class: "form-select", required: true } do %>
+            <% groups.each do |group| %>
+              <optgroup label="<%= group[:title] %>">
+                <% group[:items].each do |item| %>
+                  <% next if item.locked? %>
+                  <option value="<%= "#{item.class.name}-#{item.id}" %>">
+                    <%= group_title_with_capacity(item) %>
+                  </option>
+                <% end %>
+              </optgroup>
+            <% end %>
           <% end %>
+        <% else %>
+          <%= f.select :rosterable_id, [], { include_blank: t('roster.details.empty') }, { class: "form-select", disabled: true } %>
         <% end %>
       </div>
       <div class="col-md-2">
-        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100" %>
+        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100", disabled: groups.empty? %>
       </div>
     <% end %>
   </div>

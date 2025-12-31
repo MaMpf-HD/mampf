@@ -73,6 +73,8 @@ module Roster
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
+      raise(e) if e.is_a?(CanCan::AccessDenied)
+
       respond_with_error(e.message)
     end
 
@@ -170,6 +172,8 @@ module Roster
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
+      raise(e) if e.is_a?(CanCan::AccessDenied)
+
       respond_with_error(e.message)
     end
 
@@ -197,6 +201,8 @@ module Roster
         format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_removed") }
       end
     rescue StandardError => e
+      raise(e) if e.is_a?(CanCan::AccessDenied)
+
       respond_with_error(e.message)
     end
 
@@ -246,6 +252,8 @@ module Roster
     rescue Rosters::MaintenanceService::CapacityExceededError
       respond_with_error(t("roster.errors.capacity_exceeded"))
     rescue StandardError => e
+      raise(e) if e.is_a?(CanCan::AccessDenied)
+
       respond_with_error(e.message)
     end
 
