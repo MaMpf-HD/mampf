@@ -8,7 +8,7 @@ class Talk < ApplicationRecord
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
   # Alias for Rosterable compatibility (enables efficient SQL joins in Campaign#unassigned_users)
-  has_many :users, through: :speaker_talk_joins, source: :speaker
+  has_many :members, through: :speaker_talk_joins, source: :speaker
 
   has_many :claims, as: :claimable, dependent: :destroy
 
