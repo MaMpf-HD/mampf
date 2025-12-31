@@ -115,8 +115,9 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       context "when group is locked" do
         let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
         let!(:campaign) do
-          create(:registration_campaign, :open, campaignable: lecture,
-                                                registration_items: [build(:registration_item, registerable: tutorial)])
+          create(:registration_campaign, :open,
+                 campaignable: lecture,
+                 registration_items: [build(:registration_item, registerable: tutorial)])
         end
 
         it "rejects the request" do
@@ -161,8 +162,9 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       context "when group is locked" do
         let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
         let!(:campaign) do
-          create(:registration_campaign, :open, campaignable: lecture,
-                                                registration_items: [build(:registration_item, registerable: tutorial)])
+          create(:registration_campaign, :open,
+                 campaignable: lecture,
+                 registration_items: [build(:registration_item, registerable: tutorial)])
         end
 
         it "rejects the request" do
@@ -210,8 +212,9 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       context "when target is locked" do
         let(:target) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
         let!(:campaign) do
-          create(:registration_campaign, :open, campaignable: lecture,
-                                                registration_items: [build(:registration_item, registerable: target)])
+          create(:registration_campaign, :open,
+                 campaignable: lecture,
+                 registration_items: [build(:registration_item, registerable: target)])
         end
 
         it "rejects the request" do

@@ -2,8 +2,39 @@ module Roster
   # Manages group allocations through a lecture-level overview and a polymorphic
   # item dashboard. Handles student membership visualization and maintenance actions.
   class MaintenanceController < ApplicationController
+    class RosterLockedError < StandardError; end
+    class UserNotFoundError < StandardError; end
+
+    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk"].freeze
+
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
+    before_action :authorize_lecture
+
+    rescue_from StandardError do |e|
+      respond_with_error(e.message)
+    end
+
+    rescue_from "Rosters::UserAlreadyInBundleError" do |e|
+      respond_with_error(t("roster.errors.user_already_in_bundle",
+                           group: e.conflicting_group.title))
+    end
+
+    rescue_from "Rosters::MaintenanceService::CapacityExceededError" do
+      respond_with_error(t("roster.errors.capacity_exceeded"))
+    end
+
+    rescue_from RosterLockedError do
+      respond_with_error(t("roster.errors.item_locked"))
+    end
+
+    rescue_from UserNotFoundError do
+      respond_with_error(t("roster.errors.user_not_found"))
+    end
+
+    rescue_from CanCan::AccessDenied do |exception|
+      redirect_to main_app.root_url, alert: exception.message
+    end
 
     def current_ability
       @current_ability ||= LectureAbility.new(current_user)
@@ -11,105 +42,33 @@ module Roster
 
     # GET /lectures/:lecture_id/roster
     def index
-      authorize! :edit, @lecture
       @group_type = params[:group_type]&.to_sym || :all
       @active_tab = params[:tab]&.to_sym || :groups
     end
 
     def enroll
-      authorize! :edit, @lecture
+      set_rosterable_from_composite_id
+      ensure_rosterable_unlocked!
 
-      type, id = params[:rosterable_id].split("-")
-      allowed_types = ["Tutorial", "Talk"]
+      user = find_user
+      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
-      unless allowed_types.include?(type)
-        respond_with_error(t("roster.errors.invalid_type"))
-        return
-      end
+      flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
 
-      klass = type.constantize
-      @rosterable = klass.find_by(id: id)
-
-      unless @rosterable
-        respond_with_error(t("roster.errors.rosterable_not_found"))
-        return
-      end
-
-      if @rosterable.locked?
-        respond_with_error(t("roster.errors.item_locked"))
-        return
-      end
-
-      user = User.find_by(email: params[:email])
-      if user
-        Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
-
-        flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
-        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
-
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.update(
-                "roster_maintenance_#{group_type_for_rosterable}",
-                RosterOverviewComponent.new(lecture: @lecture,
-                                            group_type: group_type_for_rosterable,
-                                            active_tab: :enrollment)
-              ),
-              stream_flash
-            ]
-          end
-          format.html do
-            redirect_to lecture_roster_path(@lecture, tab: "enrollment"),
-                        notice: flash.now[:notice], alert: flash.now[:alert]
-          end
-        end
-      else
-        respond_with_error(t("roster.errors.user_not_found"))
-      end
-    rescue Rosters::UserAlreadyInBundleError => e
-      respond_with_error(t("roster.errors.user_already_in_bundle",
-                           group: e.conflicting_group.title))
-    rescue Rosters::MaintenanceService::CapacityExceededError
-      respond_with_error(t("roster.errors.capacity_exceeded"))
-    rescue StandardError => e
-      raise(e) if e.is_a?(CanCan::AccessDenied)
-
-      respond_with_error(e.message)
+      render_roster_update(tab: :enrollment)
     end
 
     # GET /:rosterable_type/:rosterable_id/roster
     def show
-      authorize! :edit, @lecture
       @active_tab = params[:tab] || "roster"
     end
 
     # PATCH /:rosterable_type/:rosterable_id/roster
     def update
-      authorize! :edit, @lecture
       if @rosterable.update(rosterable_params)
-        respond_to do |format|
-          format.turbo_stream do
-            flash.now[:notice] = t("roster.messages.updated")
-            render turbo_stream: [
-              turbo_stream.update(
-                "roster_maintenance_#{group_type_for_rosterable}",
-                view_context.render(
-                  RosterOverviewComponent.new(
-                    lecture: @lecture,
-                    group_type: group_type_for_rosterable,
-                    active_tab: :groups
-                  )
-                )
-              ),
-              turbo_stream.update("flash", partial: "flash/message")
-            ]
-          end
-          format.html do
-            redirect_to lecture_roster_path(@lecture, group_type: group_type_for_rosterable),
-                        notice: t("roster.messages.updated")
-          end
-        end
+        flash.now[:notice] = t("roster.messages.updated")
+        render_roster_update
       else
         redirect_to lecture_roster_path(@lecture),
                     alert: @rosterable.errors.full_messages.join(", ")
@@ -117,100 +76,31 @@ module Roster
     end
 
     def add_member
-      authorize! :edit, @lecture
-      return if locked_check_failed?
+      ensure_rosterable_unlocked!
 
-      user = if params[:user_id]
-        User.find_by(id: params[:user_id])
-      else
-        User.find_by(email: params[:email])
-      end
+      user = find_user
+      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
-      if user
-        Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+      flash.now[:notice] = t("roster.messages.user_added")
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
 
-        flash.now[:notice] = t("roster.messages.user_added")
-        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(@rosterable)
-
-        respond_to do |format|
-          format.turbo_stream do
-            # If we are in the enrollment tab (candidates panel), we want to refresh the overview
-            # instead of showing the detail view of the group we just added to.
-            if params[:tab] == "enrollment"
-              render turbo_stream: [
-                turbo_stream.update(
-                  "roster_maintenance_#{group_type_for_rosterable}",
-                  RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable,
-                                              active_tab: :enrollment)
-                ),
-                stream_flash
-              ]
-            else
-              render turbo_stream: [
-                turbo_stream.update(
-                  "roster_maintenance_#{group_type_for_rosterable}",
-                  RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type_for_rosterable,
-                                              active_tab: :groups,
-                                              rosterable: @rosterable)
-                ),
-                stream_flash
-              ]
-            end
-          end
-          format.html do
-            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
-          end
-        end
-      else
-        respond_with_error(t("roster.errors.user_not_found"))
-      end
-    rescue Rosters::UserAlreadyInBundleError => e
-      respond_with_error(t("roster.errors.user_already_in_bundle",
-                           group: e.conflicting_group.title))
-    rescue Rosters::MaintenanceService::CapacityExceededError
-      respond_with_error(t("roster.errors.capacity_exceeded"))
-    rescue StandardError => e
-      raise(e) if e.is_a?(CanCan::AccessDenied)
-
-      respond_with_error(e.message)
+      render_roster_update(tab: params[:tab])
     end
 
     def remove_member
-      authorize! :edit, @lecture
-      return if locked_check_failed?
+      ensure_rosterable_unlocked!
 
-      user = User.find(params[:user_id])
+      user = find_user
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
-      respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = t("roster.messages.user_removed")
-          render turbo_stream: [
-            turbo_stream.update(
-              "roster_maintenance_#{group_type_for_rosterable}",
-              RosterOverviewComponent.new(lecture: @lecture,
-                                          group_type: group_type_for_rosterable,
-                                          active_tab: :groups,
-                                          rosterable: @rosterable)
-            ),
-            stream_flash
-          ]
-        end
-        format.html { redirect_back_or_to fallback_path, notice: t("roster.messages.user_removed") }
-      end
-    rescue StandardError => e
-      raise(e) if e.is_a?(CanCan::AccessDenied)
-
-      respond_with_error(e.message)
+      flash.now[:notice] = t("roster.messages.user_removed")
+      render_roster_update
     end
 
     def move_member
-      authorize! :edit, @lecture
-      return if locked_check_failed?
+      ensure_rosterable_unlocked!
 
-      user = User.find(params[:user_id])
+      user = find_user
       target = find_target_rosterable(params[:target_id])
 
       if target.nil?
@@ -228,36 +118,71 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(target)
 
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update(
-              "roster_maintenance_#{group_type_for_rosterable}",
-              RosterOverviewComponent.new(lecture: @lecture,
-                                          group_type: group_type_for_rosterable,
-                                          active_tab: :groups,
-                                          rosterable: @rosterable)
-            ),
-            stream_flash
-          ]
-        end
-        format.html do
-          redirect_back_or_to fallback_path,
-                              notice: flash.now[:notice], alert: flash.now[:alert]
-        end
-      end
-    rescue Rosters::UserAlreadyInBundleError => e
-      respond_with_error(t("roster.errors.user_already_in_bundle",
-                           group: e.conflicting_group.title))
-    rescue Rosters::MaintenanceService::CapacityExceededError
-      respond_with_error(t("roster.errors.capacity_exceeded"))
-    rescue StandardError => e
-      raise(e) if e.is_a?(CanCan::AccessDenied)
-
-      respond_with_error(e.message)
+      render_roster_update
     end
 
     private
+
+      def authorize_lecture
+        authorize! :edit, @lecture
+      end
+
+      def render_roster_update(tab: nil)
+        active_tab = tab&.to_sym || :groups
+        # If we are in the enrollment tab (candidates panel), we want to refresh the overview
+        # instead of showing the detail view of the group we just added to.
+        rosterable = active_tab == :enrollment ? nil : @rosterable
+
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update(
+                "roster_maintenance_#{group_type_for_rosterable}",
+                RosterOverviewComponent.new(lecture: @lecture,
+                                            group_type: group_type_for_rosterable,
+                                            active_tab: active_tab,
+                                            rosterable: rosterable)
+              ),
+              stream_flash
+            ]
+          end
+          format.html do
+            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
+          end
+        end
+      end
+
+      def find_user
+        user = if params[:user_id]
+          User.find_by(id: params[:user_id])
+        else
+          User.find_by(email: params[:email])
+        end
+        raise(UserNotFoundError) unless user
+
+        user
+      end
+
+      def ensure_rosterable_unlocked!
+        raise(RosterLockedError) if @rosterable.locked?
+      end
+
+      def set_rosterable_from_composite_id
+        type, id = params[:rosterable_id].split("-")
+
+        unless ALLOWED_ROSTERABLE_TYPES.include?(type)
+          respond_with_error(t("roster.errors.invalid_type"))
+          return
+        end
+
+        klass = type.constantize
+        @rosterable = klass.find_by(id: id)
+
+        return if @rosterable
+
+        respond_with_error(t("roster.errors.rosterable_not_found"))
+        nil
+      end
 
       def over_capacity?(rosterable)
         return false unless rosterable.respond_to?(:capacity)
@@ -268,14 +193,6 @@ module Roster
 
       def fallback_path
         lecture_roster_path(@lecture, group_type: group_type_for_rosterable)
-      end
-
-      def locked_check_failed?
-        if @rosterable.locked?
-          respond_with_error(t("roster.errors.item_locked"))
-          return true
-        end
-        false
       end
 
       def find_target_rosterable(id)
@@ -302,8 +219,7 @@ module Roster
       end
 
       def set_rosterable
-        allowed_types = ["Tutorial", "Talk"]
-        unless allowed_types.include?(params[:type])
+        unless ALLOWED_ROSTERABLE_TYPES.include?(params[:type])
           redirect_to root_path, alert: t("roster.errors.invalid_type")
           return
         end
