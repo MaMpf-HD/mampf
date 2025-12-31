@@ -11,7 +11,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     context "when group_type is :all" do
       it "returns both tutorials and talks" do
         groups = component.groups
-        expect(groups.map { |g| g[:type] }).to contain_exactly(:tutorials, :talks)
+        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :talks)
       end
     end
 
@@ -20,7 +20,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns only tutorials" do
         groups = component.groups
-        expect(groups.map { |g| g[:type] }).to contain_exactly(:tutorials)
+        expect(groups.pluck(:type)).to contain_exactly(:tutorials)
       end
     end
 
@@ -29,7 +29,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns only talks" do
         groups = component.groups
-        expect(groups.map { |g| g[:type] }).to contain_exactly(:talks)
+        expect(groups.pluck(:type)).to contain_exactly(:talks)
       end
     end
   end
@@ -72,7 +72,8 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
     it "returns tutorial roster path for a Tutorial" do
       tutorial = create(:tutorial, lecture: lecture)
-      allow(helpers).to receive(:tutorial_roster_path).with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
+      allow(helpers).to receive(:tutorial_roster_path)
+        .with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
       expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
 
