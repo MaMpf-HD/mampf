@@ -1,4 +1,4 @@
-<% group_type = @rosterable.is_a?(Tutorial) ? :tutorials : :talks %>
+<% group_type = @rosterable.roster_group_type %>
 <%= turbo_frame_tag "roster_maintenance_#{group_type}" do %>
   <%= render RosterOverviewComponent.new(lecture: @lecture, group_type: group_type, active_tab: :groups, rosterable: @rosterable) %>
 <% end %>
