@@ -71,6 +71,16 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
       end
     end
 
+    describe "#candidate_info" do
+      before { render_inline(component) }
+
+      it "returns correct info" do
+        info = component.candidate_info(fresh_user)
+        expect(info.first[:campaign_title]).to eq(campaign.description)
+        expect(info.first[:wishes]).to eq(tutorial.title)
+      end
+    end
+
     it "lists available groups" do
       expect(component.available_groups).to include(tutorial)
     end

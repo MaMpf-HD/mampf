@@ -46,6 +46,17 @@ class RosterCandidatesComponent < ViewComponent::Base
     end
   end
 
+  def candidate_info(user)
+    # Group by campaign to show source
+    relevant_registrations(user).group_by(&:registration_campaign)
+                                .map do |campaign, campaign_regs|
+      {
+        campaign_title: campaign.description.presence || "Campaign ##{campaign.id}",
+        wishes: format_wishes(campaign_regs)
+      }
+    end
+  end
+
   private
 
     def registerable_class_name
@@ -84,17 +95,6 @@ class RosterCandidatesComponent < ViewComponent::Base
           .includes(user_registrations: [:registration_campaign,
                                          { registration_item: :registerable }])
           .order(:name, :email)
-    end
-
-    def candidate_info(user)
-      # Group by campaign to show source
-      relevant_registrations(user).group_by(&:registration_campaign)
-                                  .map do |campaign, campaign_regs|
-        {
-          campaign_title: campaign.description.presence || "Campaign ##{campaign.id}",
-          wishes: format_wishes(campaign_regs)
-        }
-      end
     end
 
     def format_wishes(registrations)
