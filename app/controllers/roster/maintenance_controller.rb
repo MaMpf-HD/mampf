@@ -11,10 +11,6 @@ module Roster
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
     before_action :authorize_lecture
 
-    rescue_from StandardError do |e|
-      respond_with_error(e.message)
-    end
-
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
                            group: e.conflicting_group.title))
@@ -68,7 +64,7 @@ module Roster
     def update
       if @rosterable.update(rosterable_params)
         flash.now[:notice] = t("roster.messages.updated")
-        render_roster_update
+        render_roster_update(rosterable: nil)
       else
         redirect_to lecture_roster_path(@lecture),
                     alert: @rosterable.errors.full_messages.join(", ")
@@ -118,7 +114,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if over_capacity?(target)
 
-      render_roster_update
+      render_roster_update(tab: params[:tab])
     end
 
     private
@@ -127,11 +123,11 @@ module Roster
         authorize! :edit, @lecture
       end
 
-      def render_roster_update(tab: nil)
+      def render_roster_update(tab: nil, rosterable: @rosterable)
         active_tab = tab&.to_sym || :groups
         # If we are in the enrollment tab (candidates panel), we want to refresh the overview
         # instead of showing the detail view of the group we just added to.
-        rosterable = active_tab == :enrollment ? nil : @rosterable
+        target_rosterable = active_tab == :enrollment ? nil : rosterable
 
         respond_to do |format|
           format.turbo_stream do
@@ -141,9 +137,9 @@ module Roster
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type_for_rosterable,
                                             active_tab: active_tab,
-                                            rosterable: rosterable)
+                                            rosterable: target_rosterable)
               ),
-              stream_flash
+              turbo_stream.update("flash-messages", partial: "flash/message")
             ]
           end
           format.html do
