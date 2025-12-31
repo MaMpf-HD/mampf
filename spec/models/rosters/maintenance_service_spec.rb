@@ -58,6 +58,22 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.to change { registration.reload.materialized_at }.from(nil)
       end
     end
+
+    context "when user is already in another tutorial of the same lecture" do
+      let(:lecture) { create(:lecture) }
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+
+      before do
+        create(:tutorial_membership, tutorial: other_tutorial, user: user)
+      end
+
+      it "raises UserAlreadyInBundleError" do
+        expect do
+          subject.add_user!(user, tutorial)
+        end.to raise_error(Rosters::UserAlreadyInBundleError)
+      end
+    end
   end
 
   describe "#remove_user!" do
