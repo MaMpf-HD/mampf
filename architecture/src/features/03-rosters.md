@@ -100,13 +100,13 @@ The “contract” required by the maintenance service, defining how to read and
 - **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
 
 ### Management Mode & Campaign Integration
-The `Rosterable` concern introduces a `managed_by_campaign` boolean flag to explicitly control the lifecycle of the roster.
+The `Rosterable` concern introduces a `manual_roster_mode` boolean flag to explicitly control the lifecycle of the roster.
 
-- **Campaign Mode (`managed_by_campaign: true`):** The roster is intended to be populated by a registration campaign. This is the default state.
-- **Manual Mode (`managed_by_campaign: false`):** The roster is managed manually by staff. Users can be added or removed directly.
+- **System Mode (`manual_roster_mode: false`):** The roster is managed by registration campaigns. This is the default state. Even in system mode, manual adjustments (moves/adds) are allowed *after* the campaign is completed.
+- **Manual Mode (`manual_roster_mode: true`):** The roster is managed exclusively by staff. Users can be added or removed directly at any time. This is intended for groups that will *never* be part of a registration campaign (e.g., special "late-comers" groups or manually managed seminars).
 - **Transition Rules:**
-  - **Manual → Campaign:** Only allowed if the roster is currently **empty**. This prevents accidental overwriting of manually curated lists and ensures a clean slate for the campaign allocation.
-  - **Campaign → Manual:** Only allowed if **no active campaign** (including drafts) is currently running for this item. This prevents disrupting an ongoing allocation process. Once a campaign is completed, the system hands off the populated roster to staff for manual maintenance (handling dropouts, late additions, etc.).
+  - **System → Manual:** Only allowed if the group has **never** been part of a real (non-planning) campaign. Once a group is used in a campaign, it is locked into system mode to ensure the integrity of the allocation process.
+  - **Manual → System:** Only allowed if the roster is currently **empty**. This prevents data inconsistency where manually added students might be overwritten or ignored by the campaign allocation logic.
 
 This flag serves as a safety guardrail, ensuring that items with existing memberships aren't accidentally attached to a campaign which might overwrite them.
 
