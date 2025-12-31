@@ -177,6 +177,7 @@ module Rosters
     private
 
       def validate_manual_mode_switch
+        return if new_record?
         return unless manual_roster_mode_changed?
 
         if manual_roster_mode?

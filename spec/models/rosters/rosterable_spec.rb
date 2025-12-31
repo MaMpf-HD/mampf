@@ -99,6 +99,18 @@ RSpec.describe(Rosters::Rosterable) do
   end
 
   describe "validations" do
+    context "when creating a new record" do
+      it "allows manual_roster_mode: true" do
+        new_tutorial = build(:tutorial, manual_roster_mode: true)
+        expect(new_tutorial).to be_valid
+      end
+
+      it "allows manual_roster_mode: false" do
+        new_tutorial = build(:tutorial, manual_roster_mode: false)
+        expect(new_tutorial).to be_valid
+      end
+    end
+
     # Switching Manual -> System (enabling managed_by_campaign)
     # Corresponds to manual_roster_mode: true -> false
     context "when disabling manual_roster_mode" do
