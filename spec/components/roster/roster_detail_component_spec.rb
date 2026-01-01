@@ -77,10 +77,14 @@ RSpec.describe(RosterDetailComponent, type: :component) do
     describe "#transfer_targets" do
       it "returns a list of targets with overbooked status" do
         other_tutorial.update(capacity: 0)
+        render_inline(component)
         targets = component.transfer_targets
-        expect(targets).to include(
-          { group: other_tutorial, overbooked: true }
+        expect(targets.first).to include(
+          group: other_tutorial,
+          overbooked: true,
+          id: other_tutorial.id
         )
+        expect(targets.first[:title]).to include(other_tutorial.title)
       end
     end
   end

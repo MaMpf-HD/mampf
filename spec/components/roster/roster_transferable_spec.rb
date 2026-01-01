@@ -14,18 +14,24 @@ RSpec.describe(RosterTransferable) do
     end
   end
 
-  let(:group_full) { instance_double("Tutorial", full?: true) }
-  let(:group_empty) { instance_double("Tutorial", full?: false) }
+  let(:group_full) { instance_double("Tutorial", full?: true, id: 1) }
+  let(:group_empty) { instance_double("Tutorial", full?: false, id: 2) }
   let(:groups) { [group_full, group_empty] }
   let(:instance) { test_class.new(groups) }
+
+  before do
+    allow(instance).to receive(:helpers).and_return(double(group_title_with_capacity: "Group Title"))
+  end
 
   describe "#transfer_targets" do
     it "returns a list of hashes with group and overbooked status" do
       targets = instance.transfer_targets
 
       expect(targets.size).to eq(2)
-      expect(targets[0]).to include(group: group_full, overbooked: true)
-      expect(targets[1]).to include(group: group_empty, overbooked: false)
+      expect(targets[0]).to include(group: group_full, overbooked: true, title: "Group Title",
+                                    id: 1)
+      expect(targets[1]).to include(group: group_empty, overbooked: false, title: "Group Title",
+                                    id: 2)
     end
 
     it "memoizes the result" do

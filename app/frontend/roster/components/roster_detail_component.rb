@@ -11,8 +11,10 @@ class RosterDetailComponent < ViewComponent::Base
   delegate :title, :locked?, :roster_group_type, to: :@rosterable
 
   def students
-    User.where(id: @rosterable.roster_entries.pluck(@rosterable.roster_user_id_column))
-        .order(:name)
+    @students ||=
+      User.where(id: @rosterable.roster_entries.pluck(@rosterable.roster_user_id_column))
+          .order(:name)
+          .to_a
   end
 
   def back_path
