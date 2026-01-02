@@ -70,6 +70,16 @@ Registration — Step 2: Foundations (Schema)
 - Acceptance: Same as PR-2.3 for seminar context.
 ```
 
+```admonish example "PR-2.5 — Cohort model (Generic Subgroups)"
+- Scope: Create `Cohort` model for non-tutorial groups (e.g., "Repeaters", "Exchange Students").
+- Model: `Cohort` (attributes: `title`, `capacity`, `description`).
+- Associations: `belongs_to :context, polymorphic: true` (initially used for `Lecture`).
+- Concerns: Include `Registration::Registerable` and `Rosters::Rosterable`.
+- Migration: `create_cohorts`, `create_cohort_memberships`.
+- Refs: [Cohort model](02-registration.md#cohort-new-model), [Cohort roster](03-rosters.md#cohort-new-model)
+- Acceptance: Cohort model exists; acts as a valid registerable item; can be linked to a Lecture via `context`.
+```
+
 ```admonish abstract
 Registration — Step 3: FCFS Mode
 ```
@@ -112,6 +122,17 @@ Registration — Step 3: FCFS Mode
 - UI: Item selection dropdown; Turbo Stream for dynamic item list updates.
 - Refs: [Multi-item campaigns](02-registration.md#multi-item-campaigns)
 - Acceptance: Students can select from available items; capacity per item enforced; switching items updates previous registration.
+```
+
+```admonish example "PR-3.5 — Admin: Campaign Wizard (Blueprints)"
+- Scope: "New Campaign" wizard to guide configuration.
+- Controllers: `Registration::CampaignsController#new` handles `?blueprint=` param.
+- Blueprints:
+  - `tutorials`: Pre-fills all tutorials, preference mode.
+  - `enrollment`: Pre-fills lecture item, FCFS mode.
+  - `cohort`: Creates/selects a Cohort, FCFS mode.
+- UI: Modal selection for blueprint before showing the form.
+- Acceptance: "New Campaign" shows blueprint options; selecting one pre-fills the form correctly.
 ```
 
 ```admonish abstract
@@ -159,9 +180,10 @@ Registration — Step 5: Roster Maintenance
 ```admonish example "PR-5.1 — Roster maintenance UI (admin)"
 - Scope: Post-allocation roster management.
 - Controllers: `Roster::MaintenanceController` (move/add/remove actions).
-- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks.
+- Logic: Support `Lecture` and `Cohort` as rosterable types.
+- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks; "Enrollment" tab for Lecture roster; "Cohorts" tab if cohorts exist.
 - Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
-- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work.
+- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work; Lecture/Cohort rosters viewable/editable.
 ```
 
 ```admonish example "PR-5.2 — Tutor abilities (read-only roster access)"
