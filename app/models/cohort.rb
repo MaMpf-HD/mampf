@@ -13,4 +13,8 @@ class Cohort < ApplicationRecord
   def materialize_allocation!(user_ids:, campaign:)
     raise(NotImplementedError, "Cohort must implement #materialize_allocation!")
   end
+
+  def lecture
+    context if context.is_a?(Lecture)
+  end
 end

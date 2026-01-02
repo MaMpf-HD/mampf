@@ -48,4 +48,17 @@ RSpec.describe(Cohort, type: :model) do
       end.to raise_error(NotImplementedError)
     end
   end
+
+  describe "#lecture" do
+    it "returns the context as lecture if it is a Lecture" do
+      lecture = build(:lecture)
+      cohort = build(:cohort, context: lecture)
+      expect(cohort.lecture).to eq(lecture)
+    end
+
+    it "returns nil for lecture if context is not a Lecture" do
+      cohort = build(:cohort, context: nil)
+      expect(cohort.lecture).to be_nil
+    end
+  end
 end
