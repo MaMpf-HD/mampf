@@ -85,18 +85,8 @@ Registration — Step 3: FCFS Mode
 - Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; freezing rules enforced with clear error messages; frozen fields disabled in UI; feature flag gates UI.
 ```
 
-```admonish example "PR-3.2a — Cohort model (Generic Subgroups)"
-- Scope: Create `Cohort` model for non-tutorial groups (e.g., "Repeaters", "Exchange Students").
-- Model: `Cohort` (attributes: `title`, `capacity`, `description`).
-- Associations: `belongs_to :context, polymorphic: true` (initially used for `Lecture`).
-- Concerns: Include `Registration::Registerable`.
-- Migration: `create_cohorts`.
-- Refs: [Cohort model](02-registration.md#cohort-new-model)
-- Acceptance: Cohort model exists; acts as a valid registerable item; can be linked to a Lecture via `context`.
-```
-
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
-- Scope: Manage registerable items within a campaign.
+- Scope: Manage registerable items within a campaign, including cohorts
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
 - Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
 - UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.
