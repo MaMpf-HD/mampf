@@ -86,7 +86,7 @@ Registration — Step 3: FCFS Mode
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
-- Scope: Manage registerable items within a campaign, including cohorts
+- Scope: Manage registerable items within a campaign, including cohorts.
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
 - Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
 - UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.

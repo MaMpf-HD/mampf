@@ -57,107 +57,23 @@ We use a unified system with:
 
 ## Configuration Patterns
 
-To ensure consistent rosters, the system encourages specific campaign combinations via the "New Campaign" wizard.
+We recommend that users follow one of these patterns:
 
-### Pattern 1: The "Group Track" (Standard)
-Use this when your lecture has sub-groups (Tutorials or Talks).
+### Pattern 1: The "Group Track" (almost like MÜSLI)
+Use this when your lecture has groups (Tutorials or Talks).
 - **Primary Campaign:** "Group Registration" (Items: All Tutorials/Talks).
 - **Secondary Campaign (Optional):** "Special Groups" (Item: Cohort "Repeaters").
 - **Roster Logic:** The Lecture Roster is the **union** of all Group members and Cohort members.
 
-### Pattern 2: The "Enrollment Track" (Simple)
-Use this when your lecture has no subgroups (e.g., Advanced Lecture, Ringvorlesung).
+### Pattern 2: The "Enrollment Track
+Use this when your lecture has no groups (e.g., Advanced Lecture).
 - **Primary Campaign:** "Course Enrollment" (Item: The Lecture itself).
 - **Roster Logic:** The Lecture Roster is the list of registered students.
 
 ### Pattern 3: The "Mixed Track" (Discouraged)
 It is possible to have both a "Group Registration" and a "Course Enrollment" campaign active simultaneously.
-- **Use Case:** When lecture enrollment is technically required (e.g. for Moodle access) but groups are optional.
-- **Implication:** This creates two parallel rosters. A student might be in a group but fail to register for the lecture.
-- **System Behavior:** The wizard requires explicit acknowledgement to enable this track.
+- **Implication:** This creates separate rosters. A student might be in a group but fail to register for the lecture.
 
-## Registration Setup Strategy
-
-To ensure consistent rosters, the system provides a **Registration Wizard** to guide the setup process, while allowing manual control for advanced cases.
-
-### Entry Points & Opt-out
-
-1.  **Guided Setup (Default for new lectures):**
-    - When a lecture has **zero campaigns**, clicking "Create Registration" launches the Wizard automatically.
-    - The Wizard enforces the architectural patterns (Group vs. Enrollment tracks).
-
-2.  **Manual Mode (Opt-out):**
-    - Users can bypass the Wizard via a "Create Manually" option (or "Advanced Mode").
-    - This opens a standard CRUD form for `Registration::Campaign`.
-    - **Safety Net:** The system still performs a **Context Scan** on save. If a "Mixed Track" (Lecture + Tutorial campaigns) is detected, a non-blocking warning is displayed to the editor.
-
-### The Wizard Workflow
-
-The Wizard guides the user through a 2-step process with a guarded fallback for the discouraged pattern.
-
-#### Step 0: Context Scan (Implicit)
-Before showing the UI, the system detects the current state of the lecture:
-- Does it have groupables (Tutorials/Talks)?
-- Does it already have campaigns for the Lecture itself?
-- Does it already have campaigns for Tutorials/Talks?
-- Does it already have campaigns for Cohorts?
-
-*This scan is used to tailor defaults and warnings, not to block the user.*
-
-#### Step 1: Pattern Selection
-The user is presented with exactly the three patterns as choices.
-
-**Pattern 1 — Group Track**
-- **Copy:** "Students end up in groups (tutorials/talks). Lecture roster is derived as union of groups + cohorts."
-- **Preview:**
-    - Campaign A: Group Registration (items: all tutorials/talks)
-    - Optionally Campaign B: Special Groups (items: cohorts)
-- **Primary CTA:** "Continue"
-
-**Pattern 2 — Enrollment Track**
-- **Copy:** "Students enroll directly into the lecture. No groups required."
-- **Preview:**
-    - Campaign A: Course Enrollment (item: lecture)
-- **Primary CTA:** "Continue"
-
-**Pattern 3 — Mixed Track (Discouraged)**
-*Visible but gated.*
-- **Copy:** "Creates two independent rosters. Use only if you really need double registration."
-- **Preview:**
-    - Campaign A: Group Registration
-    - Campaign B: Course Enrollment
-- **UX Requirement:** Explicit acknowledgement checkbox (e.g., "I understand students may need to register twice" / "I understand rosters can diverge").
-- **Primary CTA:** "Continue anyway"
-
-#### Step 2: Pattern-Specific Configuration
-
-**If Pattern 1 (Group Track)**
-1.  **Confirm Group Source:**
-    - If both Tutorials and Talks exist, ask: "Which should this campaign manage?" (Single choice).
-    - If only one exists, skip.
-2.  **Create Primary Campaign:**
-    - Auto-creates draft "Group Registration".
-    - Items prefilled with all existing groups of chosen type.
-    - Default mode: Preference-based.
-3.  **Optional "Special Groups":**
-    - Toggle: "Add special groups (repeaters, exchange students, …)".
-    - If enabled: Ask to create a new Cohort (name + capacity) or select an existing one.
-    - Creates draft "Special Groups" campaign with that cohort.
-
-**If Pattern 2 (Enrollment Track)**
-1.  **Create Campaign:**
-    - Creates draft "Course Enrollment".
-    - Item: Lecture.
-    - Default mode: FCFS.
-
-**If Pattern 3 (Mixed Track)**
-1.  **Confirm Group Source:** Same as Pattern 1.
-2.  **Create Both Campaigns:**
-    - Creates draft "Group Registration" (as in Pattern 1).
-    - Creates draft "Course Enrollment" (as in Pattern 2).
-3.  **Final Review:**
-    - Shows both campaigns.
-    - Explains student-facing consequence: "Students must do both if they want both."
 
 ## Registration::Campaign (ActiveRecord Model)
 **_The Registration Process Orchestrator_**
