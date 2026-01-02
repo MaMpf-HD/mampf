@@ -146,10 +146,12 @@ de:
       groups:
         tutorials: "Tutorien"
         talks: "Vorträge"
+        cohorts: "Sondergruppen"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        cohort: "Sondergruppe"
         lecture: "Vorlesung"
         lecture_signup: "Allgemeine Anmeldung"
       actions:

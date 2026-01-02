@@ -146,10 +146,12 @@ en:
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
+        cohorts: "Special Groups"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        cohort: "Special Group"
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
