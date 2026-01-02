@@ -88,29 +88,29 @@ en:
       patterns:
         title: "Configuration Patterns"
         group_track:
-          title: "Pattern 1: The \"Group Track\" (Standard)"
-          description: "Use this when your lecture has sub-groups (Tutorials or Talks)."
-          primary_label: "Primary Campaign:"
-          primary_text: " \"Group Registration\" (Items: All Tutorials/Talks)."
+          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
+          description: "Use this when your lecture has groups (Tutorials or Talks)."
+          primary_label: "Primary Registration Campaign:"
+          primary_text: "Items are Tutorials or Talks."
           secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
           secondary_label: "Secondary Campaign (Optional):"
           secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
           logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
         enrollment_track:
-          title: "Pattern 2: The \"Enrollment Track\" (Simple)"
-          description: "Use this when your lecture has no subgroups (e.g., Advanced Lecture, Ringvorlesung)."
-          primary_label: "Primary Campaign:"
-          primary_text: " \"Course Enrollment\" (Item: The Lecture itself)."
+          title: "Pattern 2: The \"Enrollment Track\""
+          description: "Use this when you do not need groups for your lecture."
+          primary_label: "Registration Campaign:"
+          primary_text: "Sole item is the lecture itself."
           logic: "Roster Logic: The Lecture Roster is the list of registered students."
         mixed_track:
-          title: "Pattern 3: The \"Mixed Track\" (Discouraged)"
-          description: "It is possible to have both a \"Group Registration\" and a \"Course Enrollment\" campaign active simultaneously."
-          implication: "Implication: This creates two parallel rosters. A student might be in a group but fail to register for the lecture."
+          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
+          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
+          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
         notes:
           title: "Important Notes"
           assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
           item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
-          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized."
+          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."

@@ -97,20 +97,20 @@ de:
           secondary_text: "Elemente sind Sondergruppen."
           logic: "Teilnehmerliste: Die Teilnehmerliste der Veranstaltung ist die Vereinigung aller Gruppenmitglieder und Sondergruppenmitglieder."
         enrollment_track:
-          title: "Muster 2: Der \"Einschreibungs-Pfad\" (Einfach)"
+          title: "Muster 2: Der \"Einschreibungs-Pfad\""
           description: "Verwenden Sie dies, wenn Sie für Ihre Ihre Veranstaltung keine Gruppen benötigen."
           primary_label: "Anmeldeverfahren:"
           primary_text: "Einziges Element ist die Veranstaltung selbst."
           logic: "Teilnehmerliste: Die Teilnehmerliste der Veranstaltung ist die Liste der registrierten Studierenden."
         mixed_track:
           title: "Muster 3: Der \"Gemischte Pfad\" (Möglich, aber nicht empfohlen)"
-          description: "Es ist möglich, gleichzeitig eine \"Gruppenanmeldeverfahren\" und ein \"Veranstaltungsanmeldeverfahren\" zu haben."
-          implication: "Auswirkung: Jeder Studierende muss sich für zwei separate Verfahren registrieren. Es werden zwei separate Teilnehmerlisten erstellt (von denen keine eine Teilmenge der anderen zu sein braucht)."
+          description: "Es ist möglich, gleichzeitig \"Gruppenanmeldeverfahren\" und ein \"Veranstaltungsanmeldeverfahren\" zu haben."
+          implication: "Auswirkung: Jeder Studierende muss sich für separate Verfahren registrieren. Es werden separate Teilnehmerlisten erstellt (die a priori nichts miteinander zu tun haben müssen)."
         notes:
           title: "Wichtige Hinweise"
           assessments: "Punkte für Übungsblätter werden über Tutorien verwaltet. Wenn Sie das benötigen, verwenden Sie den \"Gruppen-Pfad\", auch wenn Sie nur eine Gruppe haben."
           item_types: "In einem Anmeldeverfahren kann es nur eine Art von Elementen geben (keine Mischung). Zum Beispiel können Sie nicht Tutorien und die Veranstaltung selbst im selben Verfahren haben."
-          planning: "Um den Bedarf für eine Veranstaltung im Voraus zu messen, ist es möglich, ein Nur-Planungs-Verfahren für die Veranstaltung (als einziges Element) zu verwenden. Das Ergebnis dieses Verfahrens wird nicht in eine Teilnehmerliste übertragen."
+          planning: "Um den Bedarf für eine Veranstaltung im Voraus zu messen, ist es möglich, ein Nur-Planungs-Verfahren für die Veranstaltung (als einziges Element) zu verwenden. Das Ergebnis dieses Verfahrens wird nicht in eine Teilnehmerliste übertragen. Ein solches Verfahren kann also auch problemlos als Ergänzung zum \"Gruppen-Pfad\" verwendet werden."
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
