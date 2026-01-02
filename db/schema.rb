@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_26_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_26_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -138,6 +138,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_26_000001) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
+  end
+
+  create_table "cohorts", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "capacity"
+    t.string "context_type", null: false
+    t.bigint "context_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
