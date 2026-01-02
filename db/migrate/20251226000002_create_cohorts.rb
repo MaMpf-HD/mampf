@@ -1,6 +1,6 @@
 class CreateCohorts < ActiveRecord::Migration[8.0]
   def change
-    create_table :cohorts do |t|
+    create_table :cohorts, id: :uuid do |t|
       t.string :title
       t.text :description
       t.integer :capacity
