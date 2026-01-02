@@ -3,6 +3,7 @@ require "csv"
 module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
+               "Created At",
                "Codename",
                "Slide position",
                "Slide title",
@@ -18,6 +19,7 @@ module Vignettes
     def self.answer_data(answer)
       data = [
         answer.id,
+        answer.created_at.strftime("%Y-%m-%d %H:%M"),
         Codename.user_codename(answer.user_answer.user, answer.user_answer.questionnaire.lecture),
         answer.slide.position,
         answer.slide.title,

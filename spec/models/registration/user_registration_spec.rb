@@ -147,4 +147,21 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       expect(other_registration).to be_valid
     end
   end
+
+  describe "integrity validations" do
+    it "ensures registration item belongs to the same campaign" do
+      campaign1 = FactoryBot.create(:registration_campaign)
+      campaign2 = FactoryBot.create(:registration_campaign)
+      item_from_campaign2 = FactoryBot.create(:registration_item, registration_campaign: campaign2)
+
+      registration = FactoryBot.build(:registration_user_registration,
+                                      registration_campaign: campaign1,
+                                      registration_item: item_from_campaign2)
+
+      expect(registration).not_to be_valid
+      error_msg = I18n.t("activerecord.errors.models.registration/user_registration.attributes." \
+                         "registration_item.must_belong_to_same_campaign")
+      expect(registration.errors[:registration_item]).to include(error_msg)
+    end
+  end
 end

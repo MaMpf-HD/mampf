@@ -10,6 +10,13 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
+    # This association - which seems redundant at first glance - allows us to
+    # enforce uniqueness constraints at the database level in addition to the
+    # model level validations defined in UserRegistration (see the corresponding
+    # indexes in the UserRegistration table in the schema):
+    # - in preference  mode,  the same preference_rank cannot be used twice by
+    #   the same user in the same campaign.
+    # - in FCFS mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,

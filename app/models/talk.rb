@@ -1,5 +1,7 @@
 # Talk class
 class Talk < ApplicationRecord
+  include Registration::Registerable
+
   belongs_to :lecture, touch: true
 
   has_many :speaker_talk_joins, dependent: :destroy

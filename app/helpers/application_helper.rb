@@ -1,6 +1,4 @@
 module ApplicationHelper
-  include Pagy::Frontend
-
   # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
     return start_path if user_signed_in?

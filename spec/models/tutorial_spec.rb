@@ -35,4 +35,10 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.tutors.size).to eq(3)
     end
   end
+
+  describe "Registration::Registerable" do
+    subject { FactoryBot.create(:tutorial) }
+
+    it_behaves_like "a registerable model"
+  end
 end

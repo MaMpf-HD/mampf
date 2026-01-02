@@ -1,6 +1,8 @@
 require "csv"
 
 class Tutorial < ApplicationRecord
+  include Registration::Registerable
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
