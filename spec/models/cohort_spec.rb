@@ -6,12 +6,29 @@ RSpec.describe(Cohort, type: :model) do
   end
 
   describe "validations" do
-    it { should validate_presence_of(:title) }
-    it { should validate_numericality_of(:capacity).is_greater_than_or_equal_to(0).allow_nil }
+    it "is invalid without a title" do
+      cohort = build(:cohort, title: nil)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:title]).to be_present
+    end
+
+    it "is invalid with a negative capacity" do
+      cohort = build(:cohort, capacity: -1)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:capacity]).to be_present
+    end
+
+    it "is valid with a nil capacity" do
+      cohort = build(:cohort, capacity: nil)
+      expect(cohort).to be_valid
+    end
   end
 
   describe "associations" do
-    it { should belong_to(:context) }
+    it "belongs to a context" do
+      association = described_class.reflect_on_association(:context)
+      expect(association.macro).to eq(:belongs_to)
+    end
   end
 
   describe "Registerable interface" do
