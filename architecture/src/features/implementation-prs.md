@@ -70,16 +70,6 @@ Registration — Step 2: Foundations (Schema)
 - Acceptance: Same as PR-2.3 for seminar context.
 ```
 
-```admonish example "PR-2.5 — Cohort model (Generic Subgroups)"
-- Scope: Create `Cohort` model for non-tutorial groups (e.g., "Repeaters", "Exchange Students").
-- Model: `Cohort` (attributes: `title`, `capacity`, `description`).
-- Associations: `belongs_to :context, polymorphic: true` (initially used for `Lecture`).
-- Concerns: Include `Registration::Registerable` and `Rosters::Rosterable`.
-- Migration: `create_cohorts`, `create_cohort_memberships`.
-- Refs: [Cohort model](02-registration.md#cohort-new-model), [Cohort roster](03-rosters.md#cohort-new-model)
-- Acceptance: Cohort model exists; acts as a valid registerable item; can be linked to a Lecture via `context`.
-```
-
 ```admonish abstract
 Registration — Step 3: FCFS Mode
 ```
@@ -93,6 +83,16 @@ Registration — Step 3: FCFS Mode
 - Refs: [Campaign lifecycle & freezing](02-registration.md#campaign-lifecycle--freezing-rules),
   [State diagram](02-registration.md#campaign-state-diagram)
 - Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; freezing rules enforced with clear error messages; frozen fields disabled in UI; feature flag gates UI.
+```
+
+```admonish example "PR-3.2a — Cohort model (Generic Subgroups)"
+- Scope: Create `Cohort` model for non-tutorial groups (e.g., "Repeaters", "Exchange Students").
+- Model: `Cohort` (attributes: `title`, `capacity`, `description`).
+- Associations: `belongs_to :context, polymorphic: true` (initially used for `Lecture`).
+- Concerns: Include `Registration::Registerable`.
+- Migration: `create_cohorts`.
+- Refs: [Cohort model](02-registration.md#cohort-new-model)
+- Acceptance: Cohort model exists; acts as a valid registerable item; can be linked to a Lecture via `context`.
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
