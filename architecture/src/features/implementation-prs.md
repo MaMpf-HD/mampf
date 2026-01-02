@@ -70,6 +70,16 @@ Registration — Step 2: Foundations (Schema)
 - Acceptance: Same as PR-2.3 for seminar context.
 ```
 
+```admonish example "PR-2.5 — Cohort model (Generic Subgroups)"
+- Scope: Create `Cohort` model for non-tutorial groups (e.g., "Repeaters", "Exchange Students").
+- Model: `Cohort` (attributes: `title`, `capacity`, `description`).
+- Associations: `belongs_to :context, polymorphic: true` (initially used for `Lecture`).
+- Concerns: Include `Registration::Registerable` and `Rosters::Rosterable`.
+- Migration: `create_cohorts`, `create_cohort_memberships`.
+- Refs: [Cohort model](02-registration.md#cohort-new-model), [Cohort roster](03-rosters.md#cohort-new-model)
+- Acceptance: Cohort model exists; acts as a valid registerable item; can be linked to a Lecture via `context`.
+```
+
 ```admonish abstract
 Registration — Step 3: FCFS Mode
 ```
@@ -112,6 +122,21 @@ Registration — Step 3: FCFS Mode
 - UI: Item selection dropdown; Turbo Stream for dynamic item list updates.
 - Refs: [Multi-item campaigns](02-registration.md#multi-item-campaigns)
 - Acceptance: Students can select from available items; capacity per item enforced; switching items updates previous registration.
+```
+
+```admonish example "PR-3.5 — Admin: Campaign Wizard (Pattern Selector)"
+- Scope: "New Campaign" wizard that forces an explicit choice of Registration Pattern.
+- Controllers: `Registration::CampaignsController#new` handles `?pattern=` param.
+- Logic:
+  - **Step 1 (Pattern Selection):** User chooses between:
+    - **Group Track (Pattern 1):** Creates "Group Registration" campaign (Tutorials/Talks) + optional "Special Groups" campaign (Cohorts).
+    - **Enrollment Track (Pattern 2):** Creates "Course Enrollment" campaign (Lecture).
+    - **Mixed Track (Pattern 3):** Creates both (gated by explicit acknowledgement).
+  - **Step 2 (Configuration):**
+    - For Group Track: Select group source (Tutorials vs Talks), optionally add Cohorts.
+    - For Enrollment Track: Confirm Lecture target.
+- UI: Modal with 3 distinct choices; "Mixed Track" is visually distinct/gated.
+- Acceptance: Wizard guides user through pattern selection; correctly creates 1 or 2 campaigns based on choice; enforces acknowledgement for Mixed Track.
 ```
 
 ```admonish abstract
@@ -159,9 +184,10 @@ Registration — Step 5: Roster Maintenance
 ```admonish example "PR-5.1 — Roster maintenance UI (admin)"
 - Scope: Post-allocation roster management.
 - Controllers: `Roster::MaintenanceController` (move/add/remove actions).
-- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks.
+- Logic: Support `Lecture` and `Cohort` as rosterable types.
+- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks; "Enrollment" tab for Lecture roster; "Cohorts" tab if cohorts exist.
 - Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
-- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work.
+- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work; Lecture/Cohort rosters viewable/editable.
 ```
 
 ```admonish example "PR-5.2 — Tutor abilities (read-only roster access)"
