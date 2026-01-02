@@ -17,4 +17,8 @@ class Cohort < ApplicationRecord
   def lecture
     context if context.is_a?(Lecture)
   end
+
+  def registration_title
+    title
+  end
 end
