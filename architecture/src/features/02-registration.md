@@ -1272,6 +1272,7 @@ A lightweight container for students within a specific context (e.g., "Repeaters
 #### Responsibilities
 - Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate. In the old Muesli system, fake tutorials had to be created for often times (e.g. to take care of repeating students) - we want to avoid that.
 - Acts as a `Rosterable` container for students.
+- Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events (see below).
 
 #### Example Implementation
 ```ruby
@@ -1279,7 +1280,9 @@ class Cohort < ApplicationRecord
   include Registration::Registerable
   include Roster::Rosterable
 
-  belongs_to :context, polymorphic: true # e.g., Lecture
+  # Context is polymorphic to support both academic (Lecture) and
+  # generic (Grouping) use cases.
+  belongs_to :context, polymorphic: true
 
   # Rosterable implementation details in Rosters chapter
   def capacity
@@ -1291,6 +1294,26 @@ class Cohort < ApplicationRecord
   end
 end
 ```
+
+### Generic Registration Groups (Future Extension)
+
+**Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like an "Event Registration" (e.g., Faculty Barbecue).
+
+**Proposed Solution:** Leverage the `Cohort` model (defined above) as the bucket, and introduce a `Grouping` model as the container.
+
+**New Model:**
+1.  **`Grouping` (The Context):**
+    - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
+    - **Attributes:** `title`, `description`.
+    - **Associations:** `has_one :campaign`, `has_many :cohorts, as: :context`.
+    - **Examples:**
+        - **Event:** "Faculty Barbecue" containing cohorts "Meat", "Vegetarian".
+        - **Poll:** "New Building Name" containing cohorts "Turing Hall", "Noether Hall".
+
+**Benefits:**
+- Decouples registration from academic scheduling.
+- Simplifies UI for non-tutorial use cases.
+- Reuses existing `MaintenanceController` and `Allocation` logic.
 
 ---
 
