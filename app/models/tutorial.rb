@@ -21,6 +21,12 @@ class Tutorial < ApplicationRecord
     "#{title}, #{tutor_names}"
   end
 
+  def registration_title
+    return title unless tutors.any?
+
+    "#{title} (#{tutor_names})"
+  end
+
   def tutor_names
     return unless tutors.any?
 

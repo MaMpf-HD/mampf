@@ -3467,6 +3467,8 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
+    seats: 'Plätze'
+    add: 'Hinzufügen'
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3642,6 +3644,7 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    unlimited: unbegrenzt
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

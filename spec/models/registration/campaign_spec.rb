@@ -26,6 +26,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign = FactoryBot.create(:registration_campaign, :open)
       expect(campaign).to be_valid
       expect(campaign.status).to eq("open")
+      expect(campaign.registration_items).not_to be_empty
     end
 
     it "creates a valid closed campaign" do
@@ -99,7 +100,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
   describe "validations" do
     it "validates registration_deadline is in the future if open" do
-      campaign = build(:registration_campaign, :open, registration_deadline: 1.day.ago)
+      campaign = create(:registration_campaign, :open)
+      campaign.registration_deadline = 1.day.ago
       expect(campaign).not_to be_valid
       expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
     end
@@ -115,6 +117,91 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign).not_to be_valid
       expect(campaign.errors.added?(:base, :prerequisite_is_draft,
                                     description: prereq.description)).to be(true)
+    end
+
+    describe "#description" do
+      it "validates maximum length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 101)
+        expect(campaign).not_to be_valid
+        expect(campaign.errors[:description]).to include(I18n.t("errors.messages.too_long",
+                                                                count: 100))
+      end
+
+      it "allows length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 100)
+        expect(campaign).to be_valid
+      end
+    end
+
+    describe "#planning_only" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
+
+      context "when campaign has no items" do
+        it "is valid" do
+          expect(campaign).to be_valid
+        end
+      end
+
+      context "when campaign has lecture item" do
+        before do
+          create(:registration_item, registration_campaign: campaign, registerable: lecture)
+        end
+
+        it "is valid" do
+          expect(campaign).to be_valid
+        end
+      end
+
+      context "when campaign has tutorial items" do
+        let(:campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: false)
+        end
+
+        before do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: create(:tutorial, lecture: lecture))
+          campaign.planning_only = true
+        end
+
+        it "is invalid" do
+          expect(campaign).not_to be_valid
+          expect(campaign.errors[:planning_only])
+            .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
+                               ".planning_only.incompatible_items"))
+        end
+      end
+    end
+
+    describe "#validate_real_campaign_uniqueness" do
+      let(:lecture) { create(:lecture) }
+
+      context "when a standard campaign already exists" do
+        let!(:existing_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: false)
+        end
+
+        it "allows creating another standard campaign (uniqueness is enforced by items)" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
+          expect(new_campaign).to be_valid
+        end
+      end
+
+      context "when a planning_only campaign already exists" do
+        let!(:existing_campaign) do
+          create(:registration_campaign, campaignable: lecture, planning_only: true)
+        end
+
+        it "allows creating a standard campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
+          expect(new_campaign).to be_valid
+        end
+
+        it "allows creating another planning_only campaign" do
+          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
+          expect(new_campaign).to be_valid
+        end
+      end
     end
   end
 
@@ -230,6 +317,123 @@ RSpec.describe(Registration::Campaign, type: :model) do
       allow(lecture).to receive(:locale_with_inheritance).and_return(nil)
       allow(lecture).to receive(:locale).and_return("en")
       expect(campaign.locale_with_inheritance).to eq("en")
+    end
+  end
+
+  describe "registration counts" do
+    context "with preference based campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
+      let(:item1) { campaign.registration_items.first }
+      let(:item2) { campaign.registration_items.second }
+      let(:user) { create(:user) }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts pending users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts rejected users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :rejected,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes confirmed status over pending and rejected" do
+        # Confirmed on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+        # Pending on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes pending status over rejected" do
+        # Pending on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        # Rejected on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :rejected,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts distinct users only" do
+        # Two pending registrations for same user
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+    end
+
+    context "with FCFS campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
+      let(:item1) { campaign.registration_items.first }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1, status: :confirmed)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
     end
   end
 end

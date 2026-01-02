@@ -110,7 +110,11 @@ RSpec.describe("Registration::Policies", type: :request) do
       end
 
       context "when campaign is not draft" do
-        before { campaign.update!(status: :open) }
+        before do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: create(:tutorial, lecture: lecture))
+          campaign.update!(status: :open)
+        end
 
         it "fails to create policy" do
           expect do
@@ -168,6 +172,8 @@ RSpec.describe("Registration::Policies", type: :request) do
       context "when campaign is not draft" do
         before do
           policy # ensure policy is created before campaign status update
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: create(:tutorial, lecture: lecture))
           campaign.update!(status: :open)
         end
 
@@ -213,6 +219,8 @@ RSpec.describe("Registration::Policies", type: :request) do
       context "when campaign is not draft" do
         before do
           policy # ensure policy is created before campaign status update
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: create(:tutorial, lecture: lecture))
           campaign.update!(status: :open)
         end
 

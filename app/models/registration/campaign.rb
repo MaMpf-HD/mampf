@@ -44,8 +44,10 @@ module Registration
     validate :cannot_revert_to_draft, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
+    validate :items_present_before_open, if: -> { status_changed? && open? }
+    validate :planning_only_constraints, if: :planning_only
 
-    before_destroy :ensure_campaign_is_draft
+    before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
 
     def locale_with_inheritance
@@ -70,6 +72,42 @@ module Registration
 
     def can_be_deleted?
       draft?
+    end
+
+    def total_registrations_count
+      user_registrations.distinct.count(:user_id)
+    end
+
+    def confirmed_count
+      user_registrations.confirmed.distinct.count(:user_id)
+    end
+
+    def pending_count
+      # Users with at least one pending registration, but no confirmed registration.
+      # This covers:
+      # - Preference mode: All applicants before allocation (since none are confirmed).
+      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
+      user_registrations.pending
+                        .where.not(user_id: user_registrations.confirmed.select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
+    def rejected_count
+      # Users with at least one rejected registration, but no confirmed or pending registration.
+      # This explicitly queries for :rejected state, ensuring we don't count possibly other future
+      # states.
+      user_registrations.rejected
+                        .where.not(user_id: user_registrations
+                        .where(status: [:confirmed,
+                                        :pending]).select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
+    def can_be_planning_only?
+      registration_items.empty? ||
+        (registration_items.size == 1 && registration_items.first.registerable == campaignable)
     end
 
     private
@@ -126,6 +164,18 @@ module Registration
         return unless registration_deadline <= Time.current
 
         errors.add(:registration_deadline, :must_be_in_future)
+      end
+
+      def items_present_before_open
+        return unless registration_items.empty?
+
+        errors.add(:base, :no_items)
+      end
+
+      def planning_only_constraints
+        return if can_be_planning_only?
+
+        errors.add(:planning_only, :incompatible_items)
       end
 
       def policy_engine

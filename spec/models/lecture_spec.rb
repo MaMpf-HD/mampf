@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(Lecture, type: :model) do
+  it_behaves_like "a registerable model"
+
   it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
   end

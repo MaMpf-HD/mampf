@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_25_000003) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_26_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -138,6 +138,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_25_000003) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
+  end
+
+  create_table "cohorts", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "capacity"
+    t.string "context_type", null: false
+    t.bigint "context_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -560,7 +571,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_25_000003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
+    t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
+    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY ((ARRAY['Tutorial'::character varying, 'Talk'::character varying])::text[]))"
     t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
