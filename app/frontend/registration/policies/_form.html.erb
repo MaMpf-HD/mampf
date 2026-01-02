@@ -1,0 +1,77 @@
+<%= form_with(model: [@campaign, @policy],
+              url: @policy.persisted? ? registration_campaign_policy_path(@campaign, @policy) : registration_campaign_policies_path(@campaign),
+              data: { controller: "registration-policy-form" }) do |f| %>
+
+  <% if @policy.errors[:base].present? %>
+    <div class="alert alert-danger">
+      <%= @policy.errors[:base].join(", ") %>
+    </div>
+  <% end %>
+
+  <div class="row g-2 align-items-end mb-3">
+    <div class="col-12 col-md-6">
+      <%= f.label :kind, t("registration.policy.kind"), class: "form-label" %>
+      <%= helpdesk(t("registration.policy.helpdesk.kind"), false) %>
+      <%= f.select :kind,
+                   Registration::Policy.kinds.keys.map { |k| [t("registration.policy.kinds.#{k}"), k] },
+                   {},
+                   class: "form-select",
+                   data: { action: "registration-policy-form#changeKind", registration_policy_form_target: "kindSelect" } %>
+    </div>
+    <div class="col-12 col-md-6">
+      <%= f.label :phase, t("registration.policy.phase"), class: "form-label" %>
+      <%= helpdesk(t("registration.policy.helpdesk.phase"), false) %>
+      <%= f.select :phase,
+                   Registration::Policy.phases.keys.map { |k| [t("registration.policy.phases.#{k}"), k] },
+                   {},
+                   class: "form-select" %>
+    </div>
+  </div>
+
+  <!-- Config Fields -->
+  <div class="card bg-light mb-3">
+    <div class="card-body">
+      <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.policy.config") %></h6>
+
+      <!-- Institutional Email -->
+      <div data-registration-policy-form-target="configSection" data-kind="institutional_email" class="d-none">
+        <div class="mb-3">
+          <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
+          <%= helpdesk(t("registration.policy.helpdesk.allowed_domains"), false) %>
+          <%= f.text_field :allowed_domains, class: "form-control" %>
+          <div class="form-text"><%= t("registration.policy.hints.allowed_domains") %></div>
+        </div>
+      </div>
+
+      <!-- Prerequisite Campaign -->
+      <div data-registration-policy-form-target="configSection" data-kind="prerequisite_campaign" class="d-none">
+        <div class="mb-3">
+          <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
+          <%= f.collection_select :prerequisite_campaign_id,
+                                  Registration::Campaign.where.not(id: @campaign.id),
+                                  :id,
+                                  :description,
+                                  { include_blank: true },
+                                  class: "form-select" %>
+        </div>
+      </div>
+
+      <!-- Lecture Performance -->
+      <div data-registration-policy-form-target="configSection" data-kind="lecture_performance" class="d-none">
+        <div class="mb-3">
+          <label class="form-label"><%= t("registration.policy.configs.lecture_id") %></label>
+          <%= select_tag "registration_policy[config][lecture_id]",
+                         options_from_collection_for_select(Lecture.all, :id, :title, @policy.config&.fetch("lecture_id", nil)),
+                         include_blank: true,
+                         class: "form-select" %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+    <%= link_to t("buttons.cancel"), registration_campaign_path(@campaign, anchor: "policies-tab"), class: "btn btn-secondary" %>
+  </div>
+<% end %>

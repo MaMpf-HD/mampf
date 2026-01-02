@@ -73,12 +73,8 @@ class LecturesController < ApplicationController
   end
 
   def edit
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
-      eager_load_stuff
-      render template: "lectures/edit/edit"
-    end
+    eager_load_stuff
+    render template: "lectures/edit/edit"
   end
 
   def create

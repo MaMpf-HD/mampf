@@ -1,0 +1,75 @@
+  <div class="mb-3">
+    <%= link_to lecture_registration_campaigns_path(campaign.campaignable),
+                class: "btn btn-sm btn-outline-secondary",
+                role: "button",
+                data: { turbo_stream: true } do %>
+      <i class="bi bi-arrow-left"></i> <%= t("back") %>
+    <% end %>
+  </div>
+
+  <div class="d-flex <%= campaign.description.present? ? 'justify-content-between' : 'justify-content-end' %> align-items-center mb-4">
+    <% if campaign.description.present? %>
+      <h3><%= campaign.description %></h3>
+    <% end %>
+    <div class="d-flex gap-2">
+      <% if campaign.open? %>
+        <%= button_to t("registration.campaign.actions.close"),
+                      close_registration_campaign_path(campaign),
+                      method: :patch,
+                      data: { confirm: campaign_close_confirmation(campaign) },
+                      class: "btn btn-warning" %>
+      <% elsif campaign.closed? %>
+        <%= button_to t("registration.campaign.actions.reopen"),
+                      reopen_registration_campaign_path(campaign),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.reopen") },
+                      class: "btn btn-success" %>
+      <% elsif campaign.draft? %>
+        <%= button_to t("registration.campaign.actions.open"),
+                      open_registration_campaign_path(campaign),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.open") },
+                      class: "btn btn-success" %>
+      <% end %>
+
+      <% if campaign.can_be_deleted? %>
+        <%= button_to t("buttons.delete"),
+                      registration_campaign_path(campaign),
+                      method: :delete,
+                      data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?"), turbo_stream: true },
+                      class: "btn btn-outline-danger" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% tab ||= "overview" %>
+  <ul class="nav nav-tabs mb-3" id="campaignTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'overview' %>" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="<%= tab == 'overview' %>"><%= t("basics.overview") %></button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'settings' %>" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="<%= tab == 'settings' %>"><%= t("basics.settings", default: "Settings") %></button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'policies' %>" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="<%= tab == 'policies' %>">
+        <%= t("registration.policy.index.title") %>
+        <span class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.registration_policies.count %>
+        </span>
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="campaignTabsContent">
+    <div class="tab-pane fade <%= 'show active' if tab == 'overview' %>" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+      <%= render "registration/campaigns/overview", campaign: campaign %>
+    </div>
+
+    <div class="tab-pane fade <%= 'show active' if tab == 'settings' %>" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+      <%= render "registration/campaigns/form", campaign: campaign, lecture: campaign.campaignable %>
+    </div>
+
+    <div class="tab-pane fade <%= 'show active' if tab == 'policies' %>" id="policies" role="tabpanel" aria-labelledby="policies-tab">
+      <%= render "registration/policies/index" %>
+    </div>
+  </div>
