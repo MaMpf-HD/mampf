@@ -124,15 +124,19 @@ Registration — Step 3: FCFS Mode
 - Acceptance: Students can select from available items; capacity per item enforced; switching items updates previous registration.
 ```
 
-```admonish example "PR-3.5 — Admin: Campaign Wizard (Blueprints)"
-- Scope: "New Campaign" wizard to guide configuration.
-- Controllers: `Registration::CampaignsController#new` handles `?blueprint=` param.
-- Blueprints:
-  - `tutorials`: Pre-fills all tutorials, preference mode.
-  - `enrollment`: Pre-fills lecture item, FCFS mode.
-  - `cohort`: Creates/selects a Cohort, FCFS mode.
-- UI: Modal selection for blueprint before showing the form.
-- Acceptance: "New Campaign" shows blueprint options; selecting one pre-fills the form correctly.
+```admonish example "PR-3.5 — Admin: Campaign Wizard (Pattern Selector)"
+- Scope: "New Campaign" wizard that forces an explicit choice of Registration Pattern.
+- Controllers: `Registration::CampaignsController#new` handles `?pattern=` param.
+- Logic:
+  - **Step 1 (Pattern Selection):** User chooses between:
+    - **Group Track (Pattern 1):** Creates "Group Registration" campaign (Tutorials/Talks) + optional "Special Groups" campaign (Cohorts).
+    - **Enrollment Track (Pattern 2):** Creates "Course Enrollment" campaign (Lecture).
+    - **Mixed Track (Pattern 3):** Creates both (gated by explicit acknowledgement).
+  - **Step 2 (Configuration):**
+    - For Group Track: Select group source (Tutorials vs Talks), optionally add Cohorts.
+    - For Enrollment Track: Confirm Lecture target.
+- UI: Modal with 3 distinct choices; "Mixed Track" is visually distinct/gated.
+- Acceptance: Wizard guides user through pattern selection; correctly creates 1 or 2 campaigns based on choice; enforces acknowledgement for Mixed Track.
 ```
 
 ```admonish abstract
