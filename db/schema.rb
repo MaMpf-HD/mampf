@@ -140,7 +140,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_26_000002) do
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
   end
 
-  create_table "cohorts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "cohorts", force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.integer "capacity"
