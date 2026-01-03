@@ -160,6 +160,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.bigint "context_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "manual_roster_mode", default: false, null: false
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
   end
 
