@@ -41,8 +41,6 @@ module Roster
     def index
       @group_type = if params[:group_type].is_a?(Array)
         params[:group_type].map(&:to_sym)
-      elsif params[:group_type].is_a?(String) && params[:group_type].include?(" ")
-        params[:group_type].split(" ").map(&:to_sym)
       else
         params[:group_type]&.to_sym || :all
       end
@@ -135,8 +133,6 @@ module Roster
         target_rosterable = active_tab == :enrollment ? nil : rosterable
         group_type = if params[:group_type].is_a?(Array)
           params[:group_type].map(&:to_sym)
-        elsif params[:group_type].is_a?(String) && params[:group_type].include?(" ")
-          params[:group_type].split(" ").map(&:to_sym)
         else
           params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
         end

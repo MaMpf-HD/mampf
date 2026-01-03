@@ -53,4 +53,20 @@ RSpec.describe(RosterHelper, type: :helper) do
         .to eq("roster_maintenance_tutorials_cohorts")
     end
   end
+
+  describe "#hidden_group_type_field" do
+    it "renders single hidden field for symbol" do
+      expected = '<input type="hidden" name="group_type" id="group_type" ' \
+                 'value="tutorials" autocomplete="off" />'
+      expect(helper.hidden_group_type_field(:tutorials)).to eq(expected)
+    end
+
+    it "renders multiple hidden fields for array" do
+      expected = '<input type="hidden" name="group_type[]" id="group_type_" ' \
+                 'value="tutorials" autocomplete="off" />' \
+                 '<input type="hidden" name="group_type[]" id="group_type_" ' \
+                 'value="cohorts" autocomplete="off" />'
+      expect(helper.hidden_group_type_field([:tutorials, :cohorts])).to eq(expected)
+    end
+  end
 end
