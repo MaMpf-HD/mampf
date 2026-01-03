@@ -1,0 +1,4 @@
+<% group_types = roster_group_types(@lecture) %>
+<%= turbo_frame_tag roster_maintenance_frame_id(group_types) do %>
+  <%= render RosterOverviewComponent.new(lecture: @lecture, group_type: group_types, active_tab: :groups, rosterable: @rosterable) %>
+<% end %>

@@ -18,6 +18,9 @@ en:
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       not_found: "Registration campaign not found."
+      completed_title: "Campaign Completed"
+      completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
+      go_to_roster: "Go to Roster"
       lecture_not_found: "Lecture not found."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
@@ -288,6 +291,7 @@ en:
               planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
               planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."
               already_in_other_campaign: "This item is already part of another standard registration campaign."
+              registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
             registration_item:

@@ -1,0 +1,98 @@
+en:
+  roster:
+    title: 'Roster'
+    tabs:
+      tutorial_maintenance: 'Coursework'
+      talk_maintenance: 'Coursework'
+      groups: 'Groups'
+      group_maintenance: 'Group Management'
+      candidates: 'Candidates'
+      enrollment: 'Enrollment'
+      performance: 'Performance'
+      overview: 'Overview'
+    stats:
+      total_participants: 'Total Participants'
+      capacity_usage: 'of %{count} spots filled'
+      unassigned: 'Unassigned'
+      action_required: 'Action required'
+    dashboard:
+      title: 'Dashboard'
+      description: 'Manage allocations and view global performance.'
+    workflow:
+      title: "How does the assignment process work?"
+      standard_method: "Standard Workflow (Registration Campaigns)"
+      step_1_html: "Switch to the %{link} tab and create a new campaign."
+      step_2: "You can create tutorials or talks directly there (quick-create) or select existing ones."
+      step_3: "Students register their preferences or sign up directly (depending on mode)."
+      step_4: "Spots are allocated automatically. You can fine-tune results here afterwards."
+      manual_method: "Manual Management"
+      manual_desc: "For individual groups, you can enable manual mode to assign students manually from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
+    actions:
+      global_roster: 'Global Roster'
+      assign: 'Assign'
+      assign_to: 'Assign to...'
+      move: 'Move'
+      back: 'Back'
+      add: 'Add'
+      add_student_label: 'Student Email'
+      add_student_placeholder: 'student@example.com'
+      confirm_remove: 'Are you sure you want to remove this student?'
+      enable_manual_management: 'Manual Management'
+      enable_campaign_management: 'Campaign Management'
+    details:
+      participants: 'Participants'
+      empty: 'No participants in this group.'
+    candidates:
+      title: 'Unassigned Candidates'
+      help: 'Students who registered via a completed campaign but are not currently assigned to any group.'
+      empty: 'No unassigned candidates found.'
+      no_prefs: 'No preferences'
+      previously_assigned_tooltip: 'Previously assigned'
+      show_previously_assigned: 'Show %{count} previously assigned candidates'
+    manual_enrollment:
+      title: 'Manual Enrollment'
+      description: 'Manually add a student to a group. This is useful for late-comers.'
+      student: 'Student'
+      group: 'Group'
+      choose_group: 'Choose group...'
+    columns:
+      title: 'Title'
+      tutors: 'Tutors'
+      speakers: 'Speakers'
+      capacity: 'Capacity'
+      occupancy: 'Occupancy'
+      name: 'Name'
+      email: 'Email'
+      preferences: 'Preferences'
+      actions: 'Actions'
+    manage: 'Manage'
+    manual_mode: 'Manual Mode'
+    enable_manual_hint: 'Cannot enable manual mode because this group was part of a campaign.'
+    disable_manual_hint: 'Cannot disable manual mode because the roster is not empty.'
+    enable_manual_management: 'Enable Manual Management'
+    view_campaign: 'View Campaign'
+    create_campaign: 'Create Campaign'
+    campaign_running: 'Campaign running'
+    empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
+    errors:
+      lecture_not_found: 'Lecture not found.'
+      rosterable_not_found: 'Roster item not found.'
+      invalid_type: 'Invalid group type.'
+      roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."
+      campaign_running: "cannot be disabled while a campaign is running."
+      capacity_exceeded: "Group capacity exceeded."
+      target_not_found: "Target group not found."
+      target_locked: "Target group is locked."
+      user_not_found: "Student not found."
+      user_already_in_bundle: "Student is already assigned to %{group}."
+      item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
+      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+    warnings:
+      capacity_exceeded: "Warning: Group capacity exceeded."
+      confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"
+    messages:
+      updated: "Settings updated."
+      user_moved: "Student moved to %{target}."
+      user_added: "Student added successfully."
+      user_added_to: "Student added to %{group}."
+      user_removed: "Student removed successfully."

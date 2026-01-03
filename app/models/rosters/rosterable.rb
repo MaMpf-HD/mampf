@@ -5,6 +5,10 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
+    # Models including this concern must:
+    # - Have a `manual_roster_mode` boolean column (default: false)
+    # - Implement #roster_entries (returns ActiveRecord::Relation)
+
     included do
       # Abstract method to retrieve the roster entries (e.g., memberships or joins)
       # Should return an ActiveRecord::Relation
@@ -15,6 +19,80 @@ module Rosters
       # Override this method if the foreign key for the user in the roster entry is not :user_id
       def roster_user_id_column
         :user_id
+      end
+
+      validate :validate_manual_mode_switch
+    end
+
+    # Checks if the roster is currently locked for manual modifications.
+    # A roster is locked if it is NOT in manual mode AND a campaign is active (pending/running).
+    # If manual mode is true, it is never locked.
+    # If manual mode is false, it is unlocked only if no campaign is active.
+    def locked?
+      return false if manual_roster_mode?
+
+      # If in system mode, it is locked unless it was part of a completed campaign
+      !campaign_completed?
+    end
+
+    # Checks if manual mode can be enabled (switched from false to true).
+    # This is only allowed if the item has never been part of a real (non-planning) campaign.
+    def can_enable_manual_mode?
+      !in_real_campaign?
+    end
+
+    # Checks if manual mode can be disabled (switched from true to false).
+    # This is generally allowed as long as the roster is empty (to prevent data loss/inconsistency),
+    # but since we enforce "once in campaign, always in campaign" via can_enable_manual_mode?,
+    # the reverse path is less critical but should still be safe.
+    # For now, we allow it if the roster is empty.
+    def can_disable_manual_mode?
+      roster_empty?
+    end
+
+    # Checks if the roster is currently empty.
+    def roster_empty?
+      !roster_entries.exists?
+    end
+
+    # Checks if the item is associated with any non-planning campaign.
+    def in_real_campaign?
+      return false unless respond_to?(:registration_items)
+
+      if association(:registration_items).loaded?
+        registration_items.any? { |item| !item.registration_campaign.planning_only? }
+      else
+        registration_items.joins(:registration_campaign)
+                          .exists?(registration_campaigns: { planning_only: false })
+      end
+    end
+
+    # Checks if an active (non-completed) campaign exists for this item.
+    def campaign_active?
+      if association(:registration_items).loaded?
+        registration_items.any? do |item|
+          !item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+        end
+      else
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .where.not(status: :completed)
+          .exists?(planning_only: false)
+      end
+    end
+
+    # Checks if the item is associated with a completed non-planning campaign.
+    def campaign_completed?
+      if association(:registration_items).loaded?
+        registration_items.any? do |item|
+          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+        end
+      else
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .exists?(status: :completed, planning_only: false)
       end
     end
 
@@ -76,5 +154,47 @@ module Rosters
 
       entries_to_remove.delete_all
     end
+
+    # Checks if the roster is over capacity.
+    def over_capacity?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count > capacity
+    end
+
+    # Checks if the roster is full (reached or exceeded capacity).
+    def full?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count >= capacity
+    end
+
+    # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
+    def roster_group_type
+      self.class.name.tableize.to_sym
+    end
+
+    private
+
+      def validate_manual_mode_switch
+        return if new_record?
+        return unless manual_roster_mode_changed?
+
+        if manual_roster_mode?
+          # Switching from false (System) to true (Manual)
+          # Only allowed if never in a real campaign
+          if in_real_campaign?
+            errors.add(:manual_roster_mode, I18n.t("roster.errors.campaign_associated"))
+          end
+        else
+          # Switching from true (Manual) to false (System)
+          # Only allowed if roster is empty (to avoid data inconsistency)
+          unless roster_empty?
+            errors.add(:manual_roster_mode, I18n.t("roster.errors.roster_not_empty"))
+          end
+        end
+      end
   end
 end

@@ -28,6 +28,23 @@ RSpec.describe(Registration::AvailableItemsService) do
       end
     end
 
+    context "when items are manually managed" do
+      let!(:manual_tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+      let!(:manual_talk) { create(:talk, lecture: lecture, manual_roster_mode: true) }
+      let!(:auto_tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
+      let!(:auto_talk) { create(:talk, lecture: lecture, manual_roster_mode: false) }
+
+      it "does not return manually managed tutorials" do
+        expect(service.items[:tutorials]).not_to include(manual_tutorial)
+        expect(service.items[:tutorials]).to include(auto_tutorial)
+      end
+
+      it "does not return manually managed talks" do
+        expect(service.items[:talks]).not_to include(manual_talk)
+        expect(service.items[:talks]).to include(auto_talk)
+      end
+    end
+
     context "when campaign has tutorial items" do
       let!(:tutorial1) { create(:tutorial, lecture: lecture) }
       let!(:tutorial2) { create(:tutorial, lecture: lecture) }

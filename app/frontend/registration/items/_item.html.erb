@@ -42,7 +42,7 @@
             <%= item_stats_count(item) %>
           </div>
           <% if show_item_capacity_progress?(item) %>
-            <%= registration_progress_bar(item.confirmed_registrations_count,
+            <%= progress_bar(item.confirmed_registrations_count,
                                           item.capacity,
                                           classification: :utilization,
                                           label: "",

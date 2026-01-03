@@ -178,6 +178,28 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
+    describe "#validate_registerable_allows_campaigns" do
+      let(:campaign) { create(:registration_campaign) }
+      let(:tutorial) do
+        create(:tutorial, lecture: campaign.campaignable,
+                          manual_roster_mode: true)
+      end
+
+      it "does not allow creating an item for a manual_roster_mode registerable" do
+        item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        expect(item).not_to be_valid
+        expect(item.errors[:base])
+          .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                             ".registerable_not_managed_by_campaign"))
+      end
+
+      it "allows creating an item for a non-manual_roster_mode registerable" do
+        tutorial.update(manual_roster_mode: false)
+        item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        expect(item).to be_valid
+      end
+    end
+
     describe "#validate_capacity_change_from_registerable!" do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
