@@ -49,7 +49,8 @@ RSpec.describe(RosterHelper, type: :helper) do
 
     it "handles array of symbols" do
       expect(helper.roster_maintenance_frame_id([:tutorials,
-                                                 :cohorts])).to eq("roster_maintenance_tutorials_cohorts")
+                                                 :cohorts]))
+        .to eq("roster_maintenance_tutorials_cohorts")
     end
   end
 end
