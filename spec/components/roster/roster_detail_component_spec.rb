@@ -59,8 +59,9 @@ RSpec.describe(RosterDetailComponent, type: :component) do
         it "includes group_type in paths" do
           render_inline(component)
           expect(component.add_member_path)
-            .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(tutorial,
-                                                                                 group_type: :tutorials))
+            .to eq(Rails.application.routes.url_helpers
+            .add_member_tutorial_path(tutorial,
+                                      group_type: :tutorials))
           expect(component.remove_member_path(user))
             .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
                      tutorial, user, group_type: :tutorials
