@@ -10,7 +10,7 @@
             <p class="mb-1 fw-bold"><%= t('registration.campaign.completed_title') %></p>
             <p class="mb-2 text-muted small"><%= t('registration.campaign.completed_description') %></p>
             <%= link_to t('registration.campaign.go_to_roster'),
-                        edit_lecture_path(campaign.campaignable, tab: campaign.roster_group_type),
+                        edit_lecture_path(campaign.campaignable, tab: "roster"),
                         class: "btn btn-sm btn-primary" %>
           </div>
         </div>

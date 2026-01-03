@@ -8,7 +8,7 @@
     <p class="card-text text-muted small mb-3">
       <%= t('roster.manual_enrollment.description') %>
     </p>
-    <%= form_with url: lecture_roster_enroll_path(lecture), method: :post, class: "row g-3 align-items-end",
+    <%= form_with url: lecture_roster_enroll_path(lecture, group_type: group_type), method: :post, class: "row g-3 align-items-end",
                   data: { controller: "roster-enrollment",
                           roster_enrollment_confirm_message_value: t('roster.warnings.confirm_overbooking') } do |f| %>
       <div class="col-md-5">
