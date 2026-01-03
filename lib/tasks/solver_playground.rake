@@ -245,9 +245,9 @@ namespace :solver do
     puts "Done. Created registrations for #{registered_count} students."
   end
 
-  desc "Generate a FCFS campaign with email policy"
-  task create_fcfs_campaign: :environment do
-    puts "Creating FCFS campaign..."
+  desc "Generate a FCFS campaign for cohorts with email policy"
+  task create_cohort_fcfs_campaign: :environment do
+    puts "Creating Cohort FCFS campaign..."
 
     lecture = Lecture.find_by(id: 1)
     unless lecture
@@ -257,7 +257,7 @@ namespace :solver do
 
     # Create Campaign
     campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "FCFS Campaign")
+                                              description: "Cohort FCFS Campaign")
 
     if campaign
       puts "Campaign already exists: #{campaign.id}"
@@ -281,27 +281,27 @@ namespace :solver do
       puts "Added institutional email policy (example.com)"
     end
 
-    # Create FCFS Tutorials
+    # Create FCFS Cohorts
     # Total Cap: 40 (2 * 20)
     2.times do |i|
-      title = "FCFS Tutorial #{i + 1}"
-      tutorial = Tutorial.find_by(lecture: lecture, title: title)
+      title = "FCFS Cohort #{i + 1}"
+      cohort = Cohort.find_by(context_type: Lecture, context_id: lecture.id, title: title)
 
-      if tutorial
+      if cohort
         puts "#{title} already exists"
       else
-        tutorial = FactoryBot.create(:tutorial,
-                                     lecture: lecture,
-                                     title: title,
-                                     capacity: 20)
+        cohort = FactoryBot.create(:cohort,
+                                   context: lecture,
+                                   title: title,
+                                   capacity: 20)
         puts "Created #{title}"
       end
 
-      next if Registration::Item.exists?(registration_campaign: campaign, registerable: tutorial)
+      next if Registration::Item.exists?(registration_campaign: campaign, registerable: cohort)
 
       FactoryBot.create(:registration_item,
                         registration_campaign: campaign,
-                        registerable: tutorial)
+                        registerable: cohort)
       puts "Added #{title} to campaign"
     end
 
@@ -312,7 +312,7 @@ namespace :solver do
   end
 
   desc "Generate registrations for FCFS campaign"
-  task create_fcfs_registrations: :environment do
+  task create_cohort_fcfs_registrations: :environment do
     campaign = Registration::Campaign.where(description: "FCFS Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_fcfs_campaign first."
@@ -335,9 +335,9 @@ namespace :solver do
     registered_count = 0
 
     num_users.times do |i|
-      email = "solver_user_#{i}@example.com"
+      email = "cohort_user_#{i}@example.com"
       user = User.find_by(email: email)
-      user ||= FactoryBot.create(:confirmed_user, email: email, name: "Solver User #{i}")
+      user ||= FactoryBot.create(:confirmed_user, email: email, name: "Cohort User #{i}")
 
       # In FCFS, users pick ONE item (usually).
       # Or they can pick multiple? The model allows multiple rows per user.
