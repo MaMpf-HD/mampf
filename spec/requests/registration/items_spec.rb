@@ -60,6 +60,35 @@ RSpec.describe("Registration::Items", type: :request) do
         end
       end
 
+      context "when creating a new cohort" do
+        let(:new_cohort_params) do
+          {
+            registration_item: {
+              new_registerable: "true",
+              registerable_type: "Cohort",
+              title: "New Cohort",
+              capacity: 15
+            }
+          }
+        end
+
+        it "creates a new cohort and item" do
+          expect do
+            post(registration_campaign_items_path(campaign), params: new_cohort_params)
+          end.to change(Registration::Item, :count).by(1)
+             .and(change(Cohort, :count).by(1))
+
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          follow_redirect!
+          expect(response.body).to include(I18n.t("registration.item.created"))
+
+          cohort = Cohort.last
+          expect(cohort.title).to eq("New Cohort")
+          expect(cohort.capacity).to eq(15)
+          expect(cohort.context).to eq(lecture)
+        end
+      end
+
       context "with invalid parameters" do
         it "does not create an item" do
           expect do

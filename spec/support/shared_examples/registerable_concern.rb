@@ -44,7 +44,10 @@ RSpec.shared_examples("a registerable model") do
     context "when capacity reduction is invalid" do
       before do
         campaign.update!(status: :open)
-        create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+        # Ensure the item belongs to the campaign
+        item.update!(registration_campaign: campaign)
+        create_list(:registration_user_registration, 3, :confirmed, registration_item: item,
+                                                                    registration_campaign: campaign)
         registerable.update!(capacity: 5)
       end
 

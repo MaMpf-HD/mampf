@@ -97,6 +97,32 @@ de:
       warnings:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
+      patterns:
+        title: "Konfigurationsmuster"
+        group_track:
+          title: "Muster 1: Der \"Gruppen-Pfad\" ((Fast) wie in MÜSLI)"
+          description: "Verwenden Sie dies, wenn Ihre Veranstaltung Gruppen hat (Tutorien oder Vorträge)."
+          primary_label: "Primäres Anmeldeverfahren:"
+          primary_text: "Elemente sind Tutorien oder Vorträge."
+          secondary_description: "Häufig sind neben den regulären Gruppen auch Sondergruppen (z.B. für Wiederholer) vorhanden. Diese können über ein zweites, optionales Anmeldeverfahren abgebildet werden."
+          secondary_label: "Sekundäres Verfahren (Optional):"
+          secondary_text: "Elemente sind Sondergruppen."
+          logic: "Teilnehmerliste: Die Teilnehmerliste der Veranstaltung ist die Vereinigung aller Gruppenmitglieder und Sondergruppenmitglieder."
+        enrollment_track:
+          title: "Muster 2: Der \"Einschreibungs-Pfad\""
+          description: "Verwenden Sie dies, wenn Sie für Ihre Ihre Veranstaltung keine Gruppen benötigen."
+          primary_label: "Anmeldeverfahren:"
+          primary_text: "Einziges Element ist die Veranstaltung selbst."
+          logic: "Teilnehmerliste: Die Teilnehmerliste der Veranstaltung ist die Liste der registrierten Studierenden."
+        mixed_track:
+          title: "Muster 3: Der \"Gemischte Pfad\" (Möglich, aber nicht empfohlen)"
+          description: "Es ist möglich, gleichzeitig \"Gruppenanmeldeverfahren\" und ein \"Veranstaltungsanmeldeverfahren\" zu haben."
+          implication: "Auswirkung: Jeder Studierende muss sich für separate Verfahren registrieren. Es werden separate Teilnehmerlisten erstellt (die a priori nichts miteinander zu tun haben müssen)."
+        notes:
+          title: "Wichtige Hinweise"
+          assessments: "Punkte für Übungsblätter werden über Tutorien verwaltet. Wenn Sie das benötigen, verwenden Sie den \"Gruppen-Pfad\", auch wenn Sie nur eine Gruppe haben."
+          item_types: "In einem Anmeldeverfahren kann es nur eine Art von Elementen geben (keine Mischung). Zum Beispiel können Sie nicht Tutorien und die Veranstaltung selbst im selben Verfahren haben."
+          planning: "Um den Bedarf für eine Veranstaltung im Voraus zu messen, ist es möglich, ein Nur-Planungs-Verfahren für die Veranstaltung (als einziges Element) zu verwenden. Das Ergebnis dieses Verfahrens wird nicht in eine Teilnehmerliste übertragen. Ein solches Verfahren kann also auch problemlos als Ergänzung zum \"Gruppen-Pfad\" verwendet werden."
     allocation:
       started: "Zuteilung wurde berechnet."
       dashboard:
@@ -188,12 +214,14 @@ de:
       groups:
         tutorials: "Tutorien"
         talks: "Vorträge"
+        cohorts: "Sondergruppen"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        cohort: "Sondergruppe"
         lecture: "Vorlesung"
-        lecture_signup: "Allgemeine Anmeldung"
+        lecture_signup: "Vorlesungseinschreibung"
       actions:
         remove_from_campaign: "Aus Anmeldeverfahren entfernen"
         delete_registerable: "%{type} löschen"
@@ -228,7 +256,7 @@ de:
         registration/campaign:
           attributes:
             base:
-              frozen: "Die Kampagnenkonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
+              frozen: "Die Anmeldeverfahrenskonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
               already_finalized: "Das Anmeldeverfahren ist bereits abgeschlossen."
               cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
