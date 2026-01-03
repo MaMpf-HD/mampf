@@ -9,6 +9,7 @@ RSpec.describe(Registration::AvailableItemsService) do
     context "when campaign has no items" do
       let!(:tutorial) { create(:tutorial, lecture: lecture) }
       let!(:talk) { create(:talk, lecture: lecture) }
+      let!(:cohort) { create(:cohort, context: lecture) }
 
       it "returns all available tutorials" do
         expect(service.items[:tutorials]).to include(tutorial)
@@ -16,6 +17,10 @@ RSpec.describe(Registration::AvailableItemsService) do
 
       it "returns all available talks" do
         expect(service.items[:talks]).to include(talk)
+      end
+
+      it "returns all available cohorts" do
+        expect(service.items[:cohorts]).to include(cohort)
       end
 
       it "returns the lecture itself" do
@@ -41,6 +46,11 @@ RSpec.describe(Registration::AvailableItemsService) do
         expect(service.items[:talks]).to be_nil
       end
 
+      it "does not return cohorts" do
+        create(:cohort, context: lecture)
+        expect(service.items[:cohorts]).to be_nil
+      end
+
       it "does not return lecture" do
         expect(service.items[:lecture]).to be_nil
       end
@@ -62,6 +72,11 @@ RSpec.describe(Registration::AvailableItemsService) do
       it "does not return tutorials" do
         create(:tutorial, lecture: lecture)
         expect(service.items[:tutorials]).to be_nil
+      end
+
+      it "does not return cohorts" do
+        create(:cohort, context: lecture)
+        expect(service.items[:cohorts]).to be_nil
       end
     end
 
@@ -92,6 +107,30 @@ RSpec.describe(Registration::AvailableItemsService) do
 
       it "returns the lecture itself" do
         expect(service.items[:lecture]).to include(lecture)
+      end
+    end
+
+    context "when campaign has cohort items" do
+      let!(:cohort1) { create(:cohort, context: lecture) }
+      let!(:cohort2) { create(:cohort, context: lecture) }
+
+      before do
+        create(:registration_item, registration_campaign: campaign, registerable: cohort1)
+      end
+
+      it "returns remaining cohorts" do
+        expect(service.items[:cohorts]).to include(cohort2)
+        expect(service.items[:cohorts]).not_to include(cohort1)
+      end
+
+      it "does not return tutorials" do
+        create(:tutorial, lecture: lecture)
+        expect(service.items[:tutorials]).to be_nil
+      end
+
+      it "does not return talks" do
+        create(:talk, lecture: lecture)
+        expect(service.items[:talks]).to be_nil
       end
     end
   end

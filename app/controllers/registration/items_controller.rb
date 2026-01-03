@@ -7,7 +7,8 @@ module Registration
 
     REGISTERABLE_CLASSES = {
       "Tutorial" => Tutorial,
-      "Talk" => Talk
+      "Talk" => Talk,
+      "Cohort" => Cohort
     }.freeze
 
     def current_ability
@@ -18,6 +19,7 @@ module Registration
         # (Tutorials/Talks). Without this, can?(:destroy, item.registerable) fails.
         ability.merge(TutorialAbility.new(current_user))
         ability.merge(TalkAbility.new(current_user))
+        ability.merge(CohortAbility.new(current_user))
         ability
       end
     end
@@ -129,11 +131,18 @@ module Registration
       end
 
       def build_registerable(type)
-        REGISTERABLE_CLASSES[type].new(
-          lecture: @campaign.campaignable,
+        attributes = {
           title: params[:registration_item][:title],
           capacity: params[:registration_item][:capacity]
-        )
+        }
+
+        if type == "Cohort"
+          attributes[:context] = @campaign.campaignable
+        else
+          attributes[:lecture] = @campaign.campaignable
+        end
+
+        REGISTERABLE_CLASSES[type].new(attributes)
       end
 
       def persist_registerable_and_item(registerable, type)
