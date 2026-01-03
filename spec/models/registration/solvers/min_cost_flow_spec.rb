@@ -4,6 +4,14 @@ RSpec.describe(Registration::Solvers::MinCostFlow) do
   let(:campaign) { create(:registration_campaign, :preference_based) }
   let(:solver) { described_class.new(campaign) }
 
+  # Fix random seed for deterministic tie-breaking in tests.
+  # This ensures that 'rand' returns the same sequence of numbers every time this spec runs.
+  around do |example|
+    srand(12_345)
+    example.run
+    srand # Reset seed to random after tests
+  end
+
   describe "#run" do
     context "when no users are registered" do
       it "returns an empty hash" do
