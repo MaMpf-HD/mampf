@@ -198,12 +198,19 @@ module Roster
       end
 
       def find_target_rosterable(id)
+        target_type = params[:target_type]
+
+        return nil if target_type.present? && ALLOWED_ROSTERABLE_TYPES.exclude?(target_type)
+
+        target_type ||= @rosterable.class.name
+        klass = target_type.constantize
+
         # Scope the search to the same type as the current group to avoid ID collisions
         # between Tutorials and Talks.
-        if @rosterable.is_a?(Cohort)
-          @rosterable.class.find_by(id: id, context: @lecture)
+        if klass == Cohort
+          klass.find_by(id: id, context: @lecture)
         else
-          @rosterable.class.find_by(id: id, lecture: @lecture)
+          klass.find_by(id: id, lecture: @lecture)
         end
       end
 

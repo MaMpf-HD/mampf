@@ -5,8 +5,6 @@ module RosterTransferable
     @transfer_targets ||= available_groups.map do |group|
       {
         group: group,
-        id: group.id,
-        title: helpers.group_title_with_capacity(group),
         overbooked: overbooked?(group)
       }
     end

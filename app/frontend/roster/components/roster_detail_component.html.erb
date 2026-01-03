@@ -53,15 +53,30 @@
                         <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
                         <% if transfer_targets.any? %>
                           <% transfer_targets.each do |target| %>
-                            <% group = target[:group] %>
-                            <li>
-                              <%= button_to helpers.group_title_with_capacity(group),
-                                  move_member_path(student),
-                                  params: { target_id: group.id, group_type: group_type },
-                                  method: :patch,
-                                  data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if target[:overbooked]) },
-                                  class: "dropdown-item" %>
-                            </li>
+                            <% if target[:type] %>
+                              <li><h6 class="dropdown-header"><%= target[:title] %></h6></li>
+                              <% target[:items].each do |item| %>
+                                <% group = item[:group] %>
+                                <li>
+                                  <%= button_to helpers.group_title_with_capacity(group),
+                                      move_member_path(student),
+                                      params: { target_id: group.id, target_type: group.class.name, group_type: group_type },
+                                      method: :patch,
+                                      data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if item[:overbooked]) },
+                                      class: "dropdown-item" %>
+                                </li>
+                              <% end %>
+                            <% else %>
+                              <% group = target[:group] %>
+                              <li>
+                                <%= button_to helpers.group_title_with_capacity(group),
+                                    move_member_path(student),
+                                    params: { target_id: group.id, target_type: group.class.name, group_type: group_type },
+                                    method: :patch,
+                                    data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if target[:overbooked]) },
+                                    class: "dropdown-item" %>
+                              </li>
+                            <% end %>
                           <% end %>
                         <% else %>
                           <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
