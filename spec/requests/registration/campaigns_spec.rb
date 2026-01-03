@@ -61,7 +61,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
                params: { registration_campaign: valid_attributes })
         end.to change(Registration::Campaign, :count).by(1)
 
-        expect(response).to redirect_to(registration_campaign_path(Registration::Campaign.last,
+        new_campaign = Registration::Campaign.order(created_at: :desc).first
+        expect(response).to redirect_to(registration_campaign_path(new_campaign,
                                                                    tab: "items"))
       end
     end

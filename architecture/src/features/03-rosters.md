@@ -388,11 +388,105 @@ end
 ```
 
 The `speaker_talk_joins` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each speaker assignment.
+
 ---
+
+### Cohort (New Model)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+A generic group of students, managed via `cohort_memberships`.
+```
+
+#### Rosterable Implementation
+The `Cohort` model includes the `Roster::Rosterable` concern.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `user_id`s from the `cohort_memberships` join table. |
+| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones. |
+
+#### Example Implementation
+```ruby
+class Cohort < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  belongs_to :context, polymorphic: true
+  has_many :cohort_memberships, dependent: :destroy
+  has_many :members, through: :cohort_memberships, source: :user
+
+  def roster_user_ids
+    cohort_memberships.pluck(:user_id)
+  end
+
+  def replace_roster!(user_ids:)
+    CohortMembership.transaction do
+      cohort_memberships.delete_all
+      user_ids.each { |uid| cohort_memberships.create!(user_id: uid) }
+    end
+  end
+
+  def roster_entries
+    cohort_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    cohort_memberships.where(user_id: user_ids)
+                      .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
+
+### Lecture (Enhanced)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+The lecture itself, acting as a roster container for direct enrollment.
+```
+
+#### Rosterable Implementation
+The `Lecture` model includes the `Roster::Rosterable` concern.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `user_id`s from the `lecture_memberships` join table. |
+| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones. |
+
+#### Example Implementation
+```ruby
+class Lecture < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :members, through: :lecture_memberships, source: :user
+
+  def roster_user_ids
+    lecture_memberships.pluck(:user_id)
+  end
+
+  def replace_roster!(user_ids:)
+    LectureMembership.transaction do
+      lecture_memberships.delete_all
+      user_ids.each { |uid| lecture_memberships.create!(user_id: uid) }
+    end
+  end
+
+  def roster_entries
+    lecture_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    lecture_memberships.where(user_id: user_ids)
+                      .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
 
 ## ERD for Roster Implementations
 
-This diagram shows the concrete database relationships for the two example `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
+This diagram shows the concrete database relationships for the `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
 
 ```mermaid
 erDiagram
@@ -401,6 +495,12 @@ erDiagram
 
     TALK ||--o{ SPEAKER_TALK_JOIN : "has (existing)"
     SPEAKER_TALK_JOIN }o--|| USER : "links to"
+
+    COHORT ||--o{ COHORT_MEMBERSHIP : "has (new)"
+    COHORT_MEMBERSHIP }o--|| USER : "links to"
+
+    LECTURE ||--o{ LECTURE_MEMBERSHIP : "has (existing)"
+    LECTURE_MEMBERSHIP }o--|| USER : "links to"
 ```
 
 ---
@@ -468,6 +568,7 @@ The roster system doesn't introduce new database tables. Instead, it provides a 
 
 - `tutorial_memberships` (to be created) - Join table for tutorial student rosters
 - `speaker_talk_joins` (existing) - Join table for talk speaker assignments
+- `cohort_memberships` (to be created) - Join table for cohort student memberships
 
 ```admonish note
 The `Roster::Rosterable` concern provides a uniform interface (`roster_user_ids`, `replace_roster!`) regardless of the underlying table structure. Column details are shown in the example implementations above.

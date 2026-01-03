@@ -17,6 +17,7 @@ module Registration
       groups = {}
       add_tutorials(groups) if type_allowed?("Tutorial")
       add_talks(groups) if type_allowed?("Talk")
+      add_cohorts(groups) if type_allowed?("Cohort")
       add_lecture(groups) if type_allowed?("Lecture")
       groups
     end
@@ -45,6 +46,12 @@ module Registration
         used_ids = Registration::Item.where(registerable_type: "Talk").pluck(:registerable_id)
         talks = @lecture.talks.where(manual_roster_mode: false).where.not(id: used_ids)
         groups[:talks] = talks if talks.any?
+      end
+
+      def add_cohorts(groups)
+        used_ids = Registration::Item.where(registerable_type: "Cohort").pluck(:registerable_id)
+        cohorts = @lecture.cohorts.where.not(id: used_ids)
+        groups[:cohorts] = cohorts if cohorts.any?
       end
 
       def add_lecture(groups)

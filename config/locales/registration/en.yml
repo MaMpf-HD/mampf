@@ -100,6 +100,32 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+      patterns:
+        title: "Configuration Patterns"
+        group_track:
+          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
+          description: "Use this when your lecture has groups (Tutorials or Talks)."
+          primary_label: "Primary Registration Campaign:"
+          primary_text: "Items are Tutorials or Talks."
+          secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
+          secondary_label: "Secondary Campaign (Optional):"
+          secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
+          logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
+        enrollment_track:
+          title: "Pattern 2: The \"Enrollment Track\""
+          description: "Use this when you do not need groups for your lecture."
+          primary_label: "Registration Campaign:"
+          primary_text: "Sole item is the lecture itself."
+          logic: "Roster Logic: The Lecture Roster is the list of registered students."
+        mixed_track:
+          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
+          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
+          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
+        notes:
+          title: "Important Notes"
+          assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
+          item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
+          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
     allocation:
       started: "Allocation has been calculated."
       dashboard:
@@ -121,7 +147,7 @@ en:
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
         capacity: "Capacity"
-        utilization: "Utilization"        
+        utilization: "Utilization"
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
@@ -191,10 +217,12 @@ en:
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
+        cohorts: "Special Groups"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        cohort: "Special Group"
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
@@ -268,3 +296,4 @@ en:
           attributes:
             registration_item:
               must_belong_to_same_campaign: "must belong to the same campaign"
+

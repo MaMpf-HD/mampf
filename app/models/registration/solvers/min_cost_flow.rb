@@ -3,10 +3,14 @@ require "or-tools"
 module Registration
   module Solvers
     class MinCostFlow
+      # Scale factor to allow adding random noise for tie-breaking without violating rank order.
+      # Rank 1 becomes 1000..1999, Rank 2 becomes 2000..2999.
+      COST_SCALE = 1_000
+
       # Cost for leaving a user unassigned (must be higher than any possible preference cost)
-      UNASSIGNED_COST = 1_000_000
+      UNASSIGNED_COST = 1_000_000 * COST_SCALE
       # Cost for assigning a user to an item they didn't select (when force_assignments: true)
-      FORCED_COST = 5_000
+      FORCED_COST = 5_000 * COST_SCALE
 
       # @param campaign [Registration::Campaign]
       # @param force_assignments [Boolean] If true, adds high-cost edges to non-selected items,
@@ -73,20 +77,26 @@ module Registration
               rank = prefs[item.id]
 
               if rank
-                # Preference edge
+                # Preference edge with random noise for tie-breaking
+                # Cost = Rank * 1000 + Random(0..999)
+                cost = (rank * COST_SCALE) + rand(COST_SCALE)
+
                 mcf.add_arc_with_capacity_and_unit_cost(
                   user_offset + u_idx,
                   item_offset + i_idx,
                   1,
-                  rank
+                  cost
                 )
               elsif @force_assignments
                 # Forced assignment edge (only if unassigned is NOT allowed)
+                # Add noise here too for consistency
+                cost = FORCED_COST + rand(COST_SCALE)
+
                 mcf.add_arc_with_capacity_and_unit_cost(
                   user_offset + u_idx,
                   item_offset + i_idx,
                   1,
-                  FORCED_COST
+                  cost
                 )
               end
             end
@@ -111,11 +121,15 @@ module Registration
           # Always allow unassigned path as a fallback (with high penalty)
           # Users -> Dummy (High Cost)
           @user_ids.each_with_index do |_, i|
+            # Add noise to unassigned cost so that if we MUST reject people,
+            # the choice of whom to reject is also randomized.
+            cost = UNASSIGNED_COST + rand(COST_SCALE)
+
             mcf.add_arc_with_capacity_and_unit_cost(
               user_offset + i,
               dummy_node,
               1,
-              UNASSIGNED_COST
+              cost
             )
           end
 
