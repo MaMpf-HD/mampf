@@ -573,4 +573,100 @@ namespace :solver do
     end
     puts "Done. 2 extra students registered."
   end
+
+  desc "Generate an overbooked preference-based campaign for cohorts"
+  task create_cohort_preference_campaign: :environment do
+    puts "Creating Cohort Preference campaign..."
+
+    lecture = Lecture.find_by(id: 1)
+    unless lecture
+      puts "Error: Lecture 1 not found."
+      exit 1
+    end
+
+    # Create Campaign
+    campaign = Registration::Campaign.find_by(campaignable: lecture,
+                                              description: "Cohort Preference Campaign")
+
+    if campaign
+      puts "Campaign already exists: #{campaign.id}"
+    else
+      campaign = FactoryBot.create(:registration_campaign,
+                                   campaignable: lecture,
+                                   status: :draft,
+                                   allocation_mode: :preference_based,
+                                   registration_deadline: 1.week.from_now,
+                                   description: "Cohort Preference Campaign")
+      puts "Created campaign: #{campaign.id}"
+    end
+
+    # Create Cohorts
+    # Total Cap: 20 (2 * 10)
+    2.times do |i|
+      title = "Pref Cohort #{i + 1}"
+      cohort = Cohort.find_by(context: lecture, title: title)
+
+      if cohort
+        puts "#{title} already exists"
+      else
+        cohort = FactoryBot.create(:cohort,
+                                   context: lecture,
+                                   title: title,
+                                   capacity: 10)
+        puts "Created #{title}"
+      end
+
+      next if Registration::Item.exists?(registration_campaign: campaign, registerable: cohort)
+
+      FactoryBot.create(:registration_item,
+                        registration_campaign: campaign,
+                        registerable: cohort)
+      puts "Added #{title} to campaign"
+    end
+
+    if campaign.draft?
+      campaign.update!(status: :open)
+      puts "Opened campaign"
+    end
+  end
+
+  desc "Generate registrations for Cohort Preference campaign"
+  task create_cohort_preference_registrations: :environment do
+    campaign = Registration::Campaign.where(description: "Cohort Preference Campaign").last
+    unless campaign
+      puts "Campaign not found. Run solver:create_cohort_preference_campaign first."
+      exit
+    end
+
+    puts "Cleaning up old registrations..."
+    campaign.user_registrations.destroy_all
+
+    items = campaign.registration_items.to_a
+    # Total capacity is 20.
+    num_users = 30
+
+    puts "Creating registrations for #{num_users} users..."
+    puts "Scenario: Overbooked Cohorts."
+    puts "- 30 students registering for 20 spots"
+
+    num_users.times do |i|
+      email = "pref_cohort_user_#{i}@example.com"
+      user = User.find_by(email: email)
+      user ||= FactoryBot.create(:confirmed_user, email: email, name: "Pref Cohort User #{i}")
+
+      # Pick random preferences
+      selected_items = items.shuffle
+
+      selected_items.each_with_index do |item, rank|
+        FactoryBot.create(:registration_user_registration,
+                          user: user,
+                          registration_campaign: campaign,
+                          registration_item: item,
+                          preference_rank: rank + 1,
+                          status: :pending)
+      end
+    end
+
+    puts "Done. Created registrations for #{num_users} students."
+  end
 end
