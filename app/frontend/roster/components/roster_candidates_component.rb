@@ -14,15 +14,31 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def candidates
-    @candidates ||= fetch_candidates
+    @candidates ||= grouped_candidates.flat_map { |g| g[:users] }.uniq
   end
 
-  def fresh_candidates
-    candidates.reject { |u| previously_assigned?(u) }
+  def grouped_candidates
+    @grouped_candidates ||= Array(@group_type).filter_map do |type|
+      klass_name = type_to_class_name(type)
+      next unless klass_name
+
+      users = fetch_candidates_for_class(klass_name)
+      next if users.empty?
+
+      {
+        type: type,
+        title: klass_name.constantize.model_name.human(count: 2),
+        users: users
+      }
+    end
   end
 
-  def previously_assigned_candidates
-    candidates.select { |u| previously_assigned?(u) }
+  def fresh_candidates(users)
+    users.reject { |u| previously_assigned?(u) }
+  end
+
+  def previously_assigned_candidates(users)
+    users.select { |u| previously_assigned?(u) }
   end
 
   def available_groups
@@ -80,6 +96,14 @@ class RosterCandidatesComponent < ViewComponent::Base
       classes
     end
 
+    def type_to_class_name(type)
+      {
+        tutorials: "Tutorial",
+        talks: "Talk",
+        cohorts: "Cohort"
+      }[type]
+    end
+
     def relevant_registrations(user)
       # Filter in memory because we eager loaded them in fetch_candidates
       user.user_registrations.select do |r|
@@ -88,7 +112,7 @@ class RosterCandidatesComponent < ViewComponent::Base
       end
     end
 
-    def fetch_candidates
+    def fetch_candidates_for_class(klass_name)
       return [] unless render?
 
       # Find all campaigns for this lecture that handle this item type
@@ -96,7 +120,7 @@ class RosterCandidatesComponent < ViewComponent::Base
                                                planning_only: false)
                                         .joins(:registration_items)
                                         .where(registration_items:
-                                        { registerable_type: registerable_class_names })
+                                        { registerable_type: klass_name })
                                         .distinct
 
       # Aggregate unassigned users from all relevant campaigns.

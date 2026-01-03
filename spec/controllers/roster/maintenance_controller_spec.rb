@@ -55,7 +55,8 @@ RSpec.describe(Roster::MaintenanceController, type: :controller) do
         allow(target_tutorial).to receive(:locked?).and_return(true)
         allow(Tutorial).to receive(:find_by).with(id: target_tutorial.id.to_s,
                                                   lecture: lecture).and_return(target_tutorial)
-        # We need to mock the find_by for the source tutorial as well because the controller re-fetches it
+        # We need to mock the find_by for the source tutorial as well because
+        # the controller re-fetches it
         allow(Tutorial).to receive(:find_by).with(id: tutorial.id.to_s).and_return(tutorial)
       end
 

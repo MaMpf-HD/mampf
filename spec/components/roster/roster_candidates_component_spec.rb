@@ -40,14 +40,23 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
       expect(component.candidates).not_to include(curr_user)
     end
 
+    it "groups candidates by type" do
+      groups = component.grouped_candidates
+      expect(groups.size).to eq(1)
+      expect(groups.first[:type]).to eq(:tutorials)
+      expect(groups.first[:users]).to include(fresh_user, prev_user)
+    end
+
     it "identifies fresh candidates" do
-      expect(component.fresh_candidates).to include(fresh_user)
-      expect(component.fresh_candidates).not_to include(prev_user)
+      users = component.candidates
+      expect(component.fresh_candidates(users)).to include(fresh_user)
+      expect(component.fresh_candidates(users)).not_to include(prev_user)
     end
 
     it "identifies previously assigned candidates" do
-      expect(component.previously_assigned_candidates).to include(prev_user)
-      expect(component.previously_assigned_candidates).not_to include(fresh_user)
+      users = component.candidates
+      expect(component.previously_assigned_candidates(users)).to include(prev_user)
+      expect(component.previously_assigned_candidates(users)).not_to include(fresh_user)
     end
 
     describe "#add_member_path" do
