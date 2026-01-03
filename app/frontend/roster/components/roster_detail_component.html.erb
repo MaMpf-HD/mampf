@@ -7,7 +7,7 @@
       </div>
     </div>
     <div>
-      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm", data: { turbo_frame: "roster_maintenance_#{group_type}" } do %>
+      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm", data: { turbo_frame: helpers.roster_maintenance_frame_id(group_type) } do %>
         <i class="bi bi-arrow-left me-1"></i> <%= t('roster.actions.back') %>
       <% end %>
     </div>
@@ -53,10 +53,11 @@
                         <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
                         <% if transfer_targets.any? %>
                           <% transfer_targets.each do |target| %>
+                            <% group = target[:group] %>
                             <li>
-                              <%= button_to target[:title],
+                              <%= button_to helpers.group_title_with_capacity(group),
                                   move_member_path(student),
-                                  params: { target_id: target[:id], group_type: group_type },
+                                  params: { target_id: group.id, group_type: group_type },
                                   method: :patch,
                                   data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if target[:overbooked]) },
                                   class: "dropdown-item" %>

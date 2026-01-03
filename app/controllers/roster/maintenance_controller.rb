@@ -5,7 +5,7 @@ module Roster
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
-    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk"].freeze
+    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort"].freeze
 
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
@@ -39,7 +39,11 @@ module Roster
 
     # GET /lectures/:lecture_id/roster
     def index
-      @group_type = params[:group_type]&.to_sym || :all
+      @group_type = if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type]&.to_sym || :all
+      end
       @active_tab = params[:tab]&.to_sym || :groups
     end
 
@@ -127,13 +131,17 @@ module Roster
       def render_roster_update(tab: nil, rosterable: @rosterable)
         active_tab = tab&.to_sym || :groups
         target_rosterable = active_tab == :enrollment ? nil : rosterable
-        group_type = params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
+        group_type = if params[:group_type].is_a?(Array)
+          params[:group_type].map(&:to_sym)
+        else
+          params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
+        end
 
         respond_to do |format|
           format.turbo_stream do
             streams = [
               turbo_stream.update(
-                "roster_maintenance_#{group_type}",
+                view_context.roster_maintenance_frame_id(group_type),
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type,
                                             active_tab: active_tab,

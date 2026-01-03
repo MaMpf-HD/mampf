@@ -5,7 +5,8 @@ class RosterOverviewComponent < ViewComponent::Base
   # Maps the group_type symbol to the model class name string and roster association.
   SUPPORTED_TYPES = {
     tutorials: { model: "Tutorial", association: :tutorial_memberships },
-    talks: { model: "Talk", association: :speaker_talk_joins }
+    talks: { model: "Talk", association: :speaker_talk_joins },
+    cohorts: { model: "Cohort", association: :cohort_memberships }
   }.freeze
 
   def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil)
@@ -31,7 +32,9 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def group_type_title
-    if SUPPORTED_TYPES.key?(@group_type)
+    if @group_type.is_a?(Array) || @group_type == :all
+      I18n.t("roster.tabs.group_maintenance")
+    elsif SUPPORTED_TYPES.key?(@group_type)
       I18n.t("roster.tabs.#{@group_type.to_s.singularize}_maintenance")
     else
       I18n.t("roster.dashboard.title")
@@ -55,7 +58,13 @@ class RosterOverviewComponent < ViewComponent::Base
   private
 
     def target_types
-      @group_type == :all ? SUPPORTED_TYPES.keys : [@group_type]
+      if @group_type == :all
+        SUPPORTED_TYPES.keys
+      elsif @group_type.is_a?(Array)
+        @group_type
+      else
+        [@group_type]
+      end
     end
 
     def build_group_data(type)

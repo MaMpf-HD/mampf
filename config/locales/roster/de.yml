@@ -4,7 +4,8 @@ de:
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
-      groups: 'Gruppenverwaltung'
+      groups: 'Gruppen'
+      group_maintenance: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       enrollment: 'Einschreibung'
       performance: 'Leistungen'
@@ -72,8 +73,8 @@ de:
     view_campaign: 'Anmeldeverfahren ansehen'
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'
-    empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen 
-      einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach 
+    empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen
+      einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
     errors:
       lecture_not_found: 'Veranstaltung nicht gefunden.'

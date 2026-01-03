@@ -861,6 +861,23 @@ Rails.application.routes.draw do
     end
   end
 
+  # cohorts routes
+
+  resources :cohorts, only: [:create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Cohort" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+  end
+
   # sections routes
 
   get "sections/:id/display",

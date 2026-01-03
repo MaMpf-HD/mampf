@@ -180,16 +180,17 @@ module Registration
       def refresh_roster_streams(lecture)
         return [] unless lecture
 
-        [:tutorials, :talks].filter_map do |type|
-          next unless lecture.public_send(type).any?
+        group_type = view_context.roster_group_types(lecture)
+        frame_id = view_context.roster_maintenance_frame_id(group_type)
 
-          turbo_stream.replace("roster_maintenance_#{type}",
-                               view_context.turbo_frame_tag("roster_maintenance_#{type}",
+        [
+          turbo_stream.replace(frame_id,
+                               view_context.turbo_frame_tag(frame_id,
                                                             src: view_context.lecture_roster_path(
-                                                              lecture, group_type: type
+                                                              lecture, group_type: group_type
                                                             ),
-                                                            loading: "lazy") { "" })
-        end
+                                                            loading: "lazy"))
+        ]
       end
 
       def respond_with_success(message, tab: nil)

@@ -4,7 +4,8 @@ en:
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
-      groups: 'Group Management'
+      groups: 'Groups'
+      group_maintenance: 'Group Management'
       candidates: 'Candidates'
       enrollment: 'Enrollment'
       performance: 'Performance'

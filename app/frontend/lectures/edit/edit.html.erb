@@ -48,15 +48,13 @@
       <% end %>
 
       <% if Flipper.enabled?(:roster_maintenance) %>
-        <% if @lecture.tutorials.any? %>
-          <% component.with_tab(name: "tutorials", label: t("roster.tabs.tutorial_maintenance")) do %>
-            <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture, group_type: :tutorials } %>
-          <% end %>
-        <% end %>
-
-        <% if @lecture.talks.any? %>
-          <% component.with_tab(name: "talks", label: t("roster.tabs.talk_maintenance")) do %>
-            <%= render partial: 'lectures/edit/roster', locals: { lecture: @lecture, group_type: :talks } %>
+        <% if !@lecture.legacy_seminar %>
+          <% component.with_tab(name: "roster", label: t("roster.tabs.groups")) do %>
+            <div class="container small-width lecture-pane">
+              <%= render partial: 'lectures/edit/roster',
+                         locals: { lecture: @lecture,
+                                   group_type: roster_group_types(@lecture) } %>
+            </div>
           <% end %>
         <% end %>
       <% end %>

@@ -27,9 +27,9 @@
       <thead class="table-light">
         <tr>
           <th><%= t('roster.columns.title') %></th>
-          <% if group_type == :tutorials %>
+          <% if group_type == :tutorials || (group_type.is_a?(Array) && group_type.include?(:tutorials)) %>
             <th><%= t('roster.columns.tutors') %></th>
-          <% elsif group_type == :talks %>
+          <% elsif group_type == :talks || (group_type.is_a?(Array) && group_type.include?(:talks)) %>
             <th><%= t('roster.columns.speakers') %></th>
           <% end %>
           <th><%= t('roster.columns.capacity') %></th>
@@ -43,10 +43,10 @@
             <% campaign = component.active_campaign_for(item) %>
             <tr>
               <td class="fw-medium"><%= item.title %></td>
-              <% if group_type == :tutorials %>
-                <td><%= item.tutors.map(&:name).join(", ") %></td>
-              <% elsif group_type == :talks %>
-                <td><%= item.speakers.map(&:name).join(", ") %></td>
+              <% if group_type == :tutorials || (group_type.is_a?(Array) && group_type.include?(:tutorials)) %>
+                <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
+              <% elsif group_type == :talks || (group_type.is_a?(Array) && group_type.include?(:talks)) %>
+                <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
               <% end %>
               <td><%= item.capacity || "∞" %></td>
               <td>
