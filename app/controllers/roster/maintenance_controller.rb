@@ -181,7 +181,11 @@ module Roster
         end
 
         klass = type.constantize
-        @rosterable = klass.find_by(id: id, lecture: @lecture)
+        @rosterable = if klass == Cohort
+          klass.find_by(id: id, context: @lecture)
+        else
+          klass.find_by(id: id, lecture: @lecture)
+        end
 
         return if @rosterable
 
@@ -196,7 +200,11 @@ module Roster
       def find_target_rosterable(id)
         # Scope the search to the same type as the current group to avoid ID collisions
         # between Tutorials and Talks.
-        @rosterable.class.find_by(id: id, lecture: @lecture)
+        if @rosterable.is_a?(Cohort)
+          @rosterable.class.find_by(id: id, context: @lecture)
+        else
+          @rosterable.class.find_by(id: id, lecture: @lecture)
+        end
       end
 
       def rosterable_params

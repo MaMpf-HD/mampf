@@ -26,6 +26,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials"')
       end
 
+      it "handles array group_type params" do
+        get lecture_roster_path(lecture, group_type: ["tutorials", "cohorts"])
+        expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials_cohorts"')
+      end
+
       it "defaults group_type to :all" do
         get lecture_roster_path(lecture)
         expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
@@ -287,6 +292,106 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           post(lecture_roster_enroll_path(lecture),
                params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
         end.not_to(change { tutorial.members.count })
+      end
+    end
+  end
+
+  describe "POST /cohorts/:id/roster/add_member" do
+    let(:cohort) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:new_student) { create(:confirmed_user) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "adds the user to the roster" do
+        expect do
+          post(add_member_cohort_path(cohort), params: { email: new_student.email })
+        end.to change { cohort.members.count }.by(1)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        post add_member_cohort_path(cohort), params: { email: new_student.email }
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not add the user" do
+        expect do
+          post(add_member_cohort_path(cohort), params: { email: new_student.email })
+        end.not_to(change { cohort.members.count })
+      end
+    end
+  end
+
+  describe "DELETE /cohorts/:id/roster/remove_member" do
+    let(:cohort) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:member) { create(:confirmed_user) }
+
+    before { create(:cohort_membership, cohort: cohort, user: member) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "removes the user from the roster" do
+        expect do
+          delete(remove_member_cohort_path(cohort, user_id: member.id))
+        end.to change { cohort.members.count }.by(-1)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        delete remove_member_cohort_path(cohort, user_id: member.id)
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not remove the user" do
+        expect do
+          delete(remove_member_cohort_path(cohort, user_id: member.id))
+        end.not_to(change { cohort.members.count })
+      end
+    end
+  end
+
+  describe "PATCH /cohorts/:id/roster/move_member" do
+    let(:source) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:target) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:member) { create(:confirmed_user) }
+
+    before { create(:cohort_membership, cohort: source, user: member) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "moves the user to the target group" do
+        expect do
+          patch(move_member_cohort_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.to change { source.members.count }.by(-1)
+                                              .and(change { target.members.count }.by(1))
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch move_member_cohort_path(source, user_id: member.id),
+              params: { target_id: target.id }
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not move the user" do
+        expect do
+          patch(move_member_cohort_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.not_to(change { source.members.count })
+        expect(target.members.count).to eq(0)
       end
     end
   end
