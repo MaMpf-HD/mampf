@@ -38,18 +38,39 @@ RSpec.describe(RosterDetailComponent, type: :component) do
       expect(component.available_groups).to include(cohort)
     end
 
-    it "generates correct paths" do
-      render_inline(component)
-      expect(component.add_member_path)
-        .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(tutorial))
-      expect(component.remove_member_path(user))
-        .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
-                 tutorial, user
-               ))
-      expect(component.move_member_path(user))
-        .to eq(Rails.application.routes.url_helpers.move_member_tutorial_path(
-                 tutorial, user
-               ))
+    describe "path generation" do
+      it "generates correct paths without group_type" do
+        render_inline(component)
+        expect(component.add_member_path)
+          .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(tutorial))
+        expect(component.remove_member_path(user))
+          .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
+                   tutorial, user
+                 ))
+        expect(component.move_member_path(user))
+          .to eq(Rails.application.routes.url_helpers.move_member_tutorial_path(
+                   tutorial, user
+                 ))
+      end
+
+      context "with group_type" do
+        let(:component) { described_class.new(rosterable: tutorial, group_type: :tutorials) }
+
+        it "includes group_type in paths" do
+          render_inline(component)
+          expect(component.add_member_path)
+            .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(tutorial,
+                                                                                 group_type: :tutorials))
+          expect(component.remove_member_path(user))
+            .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
+                     tutorial, user, group_type: :tutorials
+                   ))
+          expect(component.move_member_path(user))
+            .to eq(Rails.application.routes.url_helpers.move_member_tutorial_path(
+                     tutorial, user, group_type: :tutorials
+                   ))
+        end
+      end
     end
 
     describe "#overbooked?" do
@@ -126,18 +147,39 @@ RSpec.describe(RosterDetailComponent, type: :component) do
       expect(component.available_groups).not_to include(talk)
     end
 
-    it "generates correct paths" do
-      render_inline(component)
-      expect(component.add_member_path)
-        .to eq(Rails.application.routes.url_helpers.add_member_talk_path(talk))
-      expect(component.remove_member_path(user))
-        .to eq(Rails.application.routes.url_helpers.remove_member_talk_path(
-                 talk, user
-               ))
-      expect(component.move_member_path(user))
-        .to eq(Rails.application.routes.url_helpers.move_member_talk_path(
-                 talk, user
-               ))
+    describe "path generation" do
+      it "generates correct paths without group_type" do
+        render_inline(component)
+        expect(component.add_member_path)
+          .to eq(Rails.application.routes.url_helpers.add_member_talk_path(talk))
+        expect(component.remove_member_path(user))
+          .to eq(Rails.application.routes.url_helpers.remove_member_talk_path(
+                   talk, user
+                 ))
+        expect(component.move_member_path(user))
+          .to eq(Rails.application.routes.url_helpers.move_member_talk_path(
+                   talk, user
+                 ))
+      end
+
+      context "with group_type" do
+        let(:component) { described_class.new(rosterable: talk, group_type: :talks) }
+
+        it "includes group_type in paths" do
+          render_inline(component)
+          expect(component.add_member_path)
+            .to eq(Rails.application.routes.url_helpers.add_member_talk_path(talk,
+                                                                             group_type: :talks))
+          expect(component.remove_member_path(user))
+            .to eq(Rails.application.routes.url_helpers.remove_member_talk_path(
+                     talk, user, group_type: :talks
+                   ))
+          expect(component.move_member_path(user))
+            .to eq(Rails.application.routes.url_helpers.move_member_talk_path(
+                     talk, user, group_type: :talks
+                   ))
+        end
+      end
     end
   end
 end

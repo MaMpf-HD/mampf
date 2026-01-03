@@ -26,15 +26,15 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def add_member_path
-    route_helper("add_member")
+    route_helper("add_member", group_type: @group_type)
   end
 
   def remove_member_path(user)
-    route_helper("remove_member", user)
+    route_helper("remove_member", user, group_type: @group_type)
   end
 
   def move_member_path(user)
-    route_helper("move_member", user)
+    route_helper("move_member", user, group_type: @group_type)
   end
 
   def available_groups
