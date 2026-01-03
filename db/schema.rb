@@ -140,6 +140,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000000) do
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
   end
 
+  create_table "cohorts", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "capacity"
+    t.string "context_type", null: false
+    t.bigint "context_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
+  end
+
   create_table "commontator_comments", force: :cascade do |t|
     t.bigint "thread_id", null: false
     t.string "creator_type", null: false
