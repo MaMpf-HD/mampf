@@ -50,6 +50,9 @@ window.Stimulus.register("datetimepicker", DatetimepickerController);
 import RosterEnrollmentController from "~/roster/roster_enrollment_controller.js";
 window.Stimulus.register("roster-enrollment", RosterEnrollmentController);
 
+import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
+window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

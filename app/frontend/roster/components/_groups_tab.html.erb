@@ -95,14 +95,14 @@
                       <%= form_with model: item, scope: :rosterable,
                             url: send("#{item.class.name.underscore}_roster_path", item),
                             method: :patch,
-                            data: { turbo: true }, class: "d-inline-block" do |f| %>
+                            data: { turbo: true, controller: "auto-submit-form" }, class: "d-inline-block" do |f| %>
                         <%= hidden_group_type_field(group_type) %>
                         <div class="form-check form-switch">
                           <%= f.check_box :manual_roster_mode,
                                 class: "form-check-input",
                                 role: "switch",
                                 checked: true,
-                                onchange: "this.form.requestSubmit()" %>
+                                data: { action: "change->auto-submit-form#submit" } %>
                           <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
                         </div>
                       <% end %>
@@ -111,14 +111,14 @@
                     <%= form_with model: item, scope: :rosterable,
                           url: send("#{item.class.name.underscore}_roster_path", item),
                           method: :patch,
-                          data: { turbo: true }, class: "d-inline-block" do |f| %>
+                          data: { turbo: true, controller: "auto-submit-form" }, class: "d-inline-block" do |f| %>
                       <%= hidden_group_type_field(group_type) %>
                       <div class="form-check form-switch">
                         <%= f.check_box :manual_roster_mode,
                               class: "form-check-input",
                               role: "switch",
                               checked: false,
-                              onchange: "this.form.requestSubmit()" %>
+                              data: { action: "change->auto-submit-form#submit" } %>
                         <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
                       </div>
                     <% end %>
