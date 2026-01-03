@@ -393,7 +393,7 @@ namespace :solver do
 
     seminar = Lecture.find_by(course: course, teacher: teacher)
     unless seminar
-      seminar = FactoryBot.create(:lecture,
+      seminar = FactoryBot.create(:seminar,
                                   course: course,
                                   teacher: teacher,
                                   released: true,
