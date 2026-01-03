@@ -3,6 +3,7 @@ class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
   include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :course
 
@@ -59,6 +60,10 @@ class Lecture < ApplicationRecord
   # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
+
+  # Roster associations
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :members, through: :lecture_memberships, source: :user
 
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
@@ -837,6 +842,10 @@ class Lecture < ApplicationRecord
 
   def vignettes?
     vignettes_questionnaires.any?
+  end
+
+  def roster_entries
+    lecture_memberships
   end
 
   private

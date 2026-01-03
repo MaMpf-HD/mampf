@@ -32,20 +32,25 @@ RSpec.describe(Cohort, type: :model) do
   end
 
   describe "Registerable interface" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosterable interface" do
+    it_behaves_like "a rosterable model"
+  end
+
+  describe "Registerable interface" do
     it "includes Registration::Registerable" do
       expect(Cohort.ancestors).to include(Registration::Registerable)
     end
 
-    it "raises NotImplementedError for allocated_user_ids" do
-      cohort = build(:cohort)
-      expect { cohort.allocated_user_ids }.to raise_error(NotImplementedError)
+    it "includes Rosters::Rosterable" do
+      expect(Cohort.ancestors).to include(Rosters::Rosterable)
     end
 
-    it "raises NotImplementedError for materialize_allocation!" do
+    it "implements roster_entries" do
       cohort = build(:cohort)
-      expect do
-        cohort.materialize_allocation!(user_ids: [], campaign: nil)
-      end.to raise_error(NotImplementedError)
+      expect(cohort).to respond_to(:roster_entries)
     end
   end
 
