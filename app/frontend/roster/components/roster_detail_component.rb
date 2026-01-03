@@ -1,3 +1,7 @@
+# Displays the student membership list for a specific group, providing controls
+# to add, remove, or move participants. It dynamically aggregates compatible
+# transfer targets across different group types to facilitate flexible student
+# reassignment.
 class RosterDetailComponent < ViewComponent::Base
   include RosterTransferable
 
