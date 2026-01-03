@@ -74,7 +74,9 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
         # Switchable items (has_switch = true) come last, sorted by title
         # We filter the list to ignore the tutorial created in the outer 'let!' block
-        relevant_tutorials = tutorials.select { |t| [manual_tutorial, standard_tutorial].include?(t) }
+        relevant_tutorials = tutorials.select do |t|
+          [manual_tutorial, standard_tutorial].include?(t)
+        end
         expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
       end
     end
