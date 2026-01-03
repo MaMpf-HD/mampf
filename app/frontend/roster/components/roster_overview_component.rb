@@ -71,15 +71,21 @@ class RosterOverviewComponent < ViewComponent::Base
       config = SUPPORTED_TYPES[type]
       items = @lecture.public_send(type)
                       .includes(config[:association], registration_items: :registration_campaign)
-                      .order(:title)
 
       return nil if items.empty?
+
+      # Sort items: those with manual mode switch at the bottom
+      sorted_items = items.sort_by do |item|
+        has_switch = (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
+                     (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+        [has_switch ? 1 : 0, item.title]
+      end
 
       klass = config[:model].constantize
 
       {
         title: klass.model_name.human(count: 2),
-        items: items,
+        items: sorted_items,
         type: type
       }
     end

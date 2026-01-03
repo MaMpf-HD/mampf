@@ -41,6 +41,43 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         expect(groups.pluck(:type)).to contain_exactly(:tutorials, :talks)
       end
     end
+
+    context "sorting" do
+      let!(:locked_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "A Locked")
+        # Simulate being in a campaign so manual mode cannot be enabled
+        allow(t).to receive(:in_real_campaign?).and_return(true)
+        allow(t).to receive(:manual_roster_mode?).and_return(false)
+        t
+      end
+
+      let!(:manual_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "B Manual", manual_roster_mode: true)
+        # Simulate empty roster so manual mode can be disabled
+        allow(t).to receive(:roster_empty?).and_return(true)
+        t
+      end
+
+      let!(:standard_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "C Standard", manual_roster_mode: false)
+        # Not in campaign, so manual mode can be enabled
+        allow(t).to receive(:in_real_campaign?).and_return(false)
+        t
+      end
+
+      it "sorts locked items first, then switchable items" do
+        groups = component.groups
+        tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
+
+        # Locked items (has_switch = false) come first
+        expect(tutorials.first).to eq(locked_tutorial)
+
+        # Switchable items (has_switch = true) come last, sorted by title
+        # We filter the list to ignore the tutorial created in the outer 'let!' block
+        relevant_tutorials = tutorials.select { |t| [manual_tutorial, standard_tutorial].include?(t) }
+        expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+      end
+    end
   end
 
   describe "#total_participants" do
