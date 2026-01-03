@@ -11,6 +11,9 @@ RSpec.describe(RosterTransferable) do
       def initialize(groups)
         @available_groups = groups
       end
+
+      def helpers
+      end
     end
   end
 
@@ -20,7 +23,8 @@ RSpec.describe(RosterTransferable) do
   let(:instance) { test_class.new(groups) }
 
   before do
-    allow(instance).to receive(:helpers).and_return(double(group_title_with_capacity: "Group Title"))
+    allow(instance).to receive(:helpers)
+      .and_return(double(group_title_with_capacity: "Group Title"))
   end
 
   describe "#transfer_targets" do
