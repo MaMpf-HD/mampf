@@ -96,6 +96,7 @@
                             url: send("#{item.class.name.underscore}_roster_path", item),
                             method: :patch,
                             data: { turbo: true }, class: "d-inline-block" do |f| %>
+                        <%= hidden_field_tag :group_type, group_type %>
                         <div class="form-check form-switch">
                           <%= f.check_box :manual_roster_mode,
                                 class: "form-check-input",
@@ -111,6 +112,7 @@
                           url: send("#{item.class.name.underscore}_roster_path", item),
                           method: :patch,
                           data: { turbo: true }, class: "d-inline-block" do |f| %>
+                      <%= hidden_field_tag :group_type, group_type %>
                       <div class="form-check form-switch">
                         <%= f.check_box :manual_roster_mode,
                               class: "form-check-input",
