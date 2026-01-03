@@ -9,7 +9,7 @@
         <ol class="ps-3 mb-2">
           <li>
             <%= t('roster.workflow.step_1_html',
-                  link: link_to(t('registration.campaign.index.title', default: 'Anmeldeverfahren'),
+                  link: link_to(t('registration.campaign.index.title'),
                                 edit_lecture_path(component.lecture, tab: "campaigns"),
                                 data: { turbo_frame: "_top" })) %>
           </li>
@@ -22,30 +22,33 @@
       </div>
     </details>
   </div>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr>
-          <th><%= t('roster.columns.title') %></th>
-          <% if group_type == :tutorials || (group_type.is_a?(Array) && group_type.include?(:tutorials)) %>
-            <th><%= t('roster.columns.tutors') %></th>
-          <% elsif group_type == :talks || (group_type.is_a?(Array) && group_type.include?(:talks)) %>
-            <th><%= t('roster.columns.speakers') %></th>
-          <% end %>
-          <th><%= t('roster.columns.capacity') %></th>
-          <th><%= t('roster.columns.occupancy') %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% groups.each do |group| %>
+  <% groups.each_with_index do |group, index| %>
+    <div class="card-header bg-light border-top border-bottom mt-3">
+      <h6 class="mb-0 fw-bold"><%= t("registration.item.groups.#{group[:type]}") %></h6>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th><%= t('roster.columns.title') %></th>
+            <% if group[:type] == :tutorials %>
+              <th><%= t('roster.columns.tutors') %></th>
+            <% elsif group[:type] == :talks %>
+              <th><%= t('roster.columns.speakers') %></th>
+            <% end %>
+            <th><%= t('roster.columns.capacity') %></th>
+            <th><%= t('roster.columns.occupancy') %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
           <% group[:items].each do |item| %>
             <% campaign = component.active_campaign_for(item) %>
             <tr>
               <td class="fw-medium"><%= item.title %></td>
-              <% if group_type == :tutorials || (group_type.is_a?(Array) && group_type.include?(:tutorials)) %>
+              <% if group[:type] == :tutorials %>
                 <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
-              <% elsif group_type == :talks || (group_type.is_a?(Array) && group_type.include?(:talks)) %>
+              <% elsif group[:type] == :talks %>
                 <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
               <% end %>
               <td><%= item.capacity || "∞" %></td>
@@ -127,8 +130,8 @@
               </td>
             </tr>
           <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>
