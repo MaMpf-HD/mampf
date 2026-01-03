@@ -32,6 +32,14 @@ RSpec.describe(Cohort, type: :model) do
   end
 
   describe "Registerable interface" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosterable interface" do
+    it_behaves_like "a rosterable model"
+  end
+
+  describe "Registerable interface" do
     it "includes Registration::Registerable" do
       expect(Cohort.ancestors).to include(Registration::Registerable)
     end
