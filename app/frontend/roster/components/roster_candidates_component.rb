@@ -10,7 +10,7 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def render?
-    registerable_class_name.present?
+    registerable_class_names.present?
   end
 
   def candidates
@@ -28,8 +28,15 @@ class RosterCandidatesComponent < ViewComponent::Base
   def available_groups
     return [] unless render?
 
-    # Memoize to avoid re-fetching for every student row in the view if accessed multiple times
-    @available_groups ||= @lecture.public_send(primary_group_type).order(:title).reject(&:locked?)
+    @available_groups ||= begin
+      groups = []
+      Array(@group_type).each do |type|
+        next unless @lecture.respond_to?(type)
+
+        groups.concat(@lecture.public_send(type).reject(&:locked?))
+      end
+      groups.sort_by(&:title)
+    end
   end
 
   def previously_assigned?(user)
@@ -45,6 +52,9 @@ class RosterCandidatesComponent < ViewComponent::Base
     when Talk
       helpers.add_member_talk_path(group, user_id: user.id, tab: "enrollment",
                                           group_type: @group_type)
+    when Cohort
+      helpers.add_member_cohort_path(group, user_id: user.id, tab: "enrollment",
+                                            group_type: @group_type)
     end
   end
 
@@ -61,25 +71,20 @@ class RosterCandidatesComponent < ViewComponent::Base
 
   private
 
-    def primary_group_type
+    def registerable_class_names
       types = Array(@group_type)
-      return :tutorials if types.include?(:tutorials)
-
-      :talks if types.include?(:talks)
-    end
-
-    def registerable_class_name
-      @registerable_class_name ||= case primary_group_type
-                                   when :tutorials then "Tutorial"
-                                   when :talks then "Talk"
-      end
+      classes = []
+      classes << "Tutorial" if types.include?(:tutorials)
+      classes << "Talk" if types.include?(:talks)
+      classes << "Cohort" if types.include?(:cohorts)
+      classes
     end
 
     def relevant_registrations(user)
       # Filter in memory because we eager loaded them in fetch_candidates
       user.user_registrations.select do |r|
         r.registration_campaign.campaignable_id == @lecture.id &&
-          r.registration_item&.registerable_type == registerable_class_name
+          registerable_class_names.include?(r.registration_item&.registerable_type)
       end
     end
 
@@ -91,7 +96,7 @@ class RosterCandidatesComponent < ViewComponent::Base
                                                planning_only: false)
                                         .joins(:registration_items)
                                         .where(registration_items:
-                                        { registerable_type: registerable_class_name })
+                                        { registerable_type: registerable_class_names })
                                         .distinct
 
       # Aggregate unassigned users from all relevant campaigns.

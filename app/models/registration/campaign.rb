@@ -148,14 +148,20 @@ module Registration
       # Find users already assigned to ANY item of these types in the lecture.
       allocated_user_ids = types.flat_map do |type|
         klass = type.constantize
+        scope = if type == "Cohort"
+          klass.where(context: campaignable)
+        else
+          klass.where(lecture: campaignable)
+        end
+
         # Optimization: Use direct SQL join if the standard :members association exists.
         # This avoids N+1 queries on instances.
         if klass.reflect_on_association(:members)
-          klass.where(lecture: campaignable).joins(:members).pluck("users.id")
+          scope.joins(:members).pluck("users.id")
         else
           # Fallback: Load instances and use the Rosterable interface.
           # This is slower but guarantees correctness if the association name differs.
-          klass.where(lecture: campaignable).flat_map(&:allocated_user_ids)
+          scope.flat_map(&:allocated_user_ids)
         end
       end.uniq
 
