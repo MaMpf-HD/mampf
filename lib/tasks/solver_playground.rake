@@ -572,6 +572,63 @@ namespace :solver do
       end
     end
     puts "Done. 2 extra students registered."
+
+    # 4. Create Campaign 3 (FCFS Cohort "Nachrücker")
+    puts "Creating Campaign 3 (Nachrücker)..."
+    campaign3 = Registration::Campaign.find_by(campaignable: seminar,
+                                               description: "Stage 3: Nachrücker (FCFS)")
+
+    if campaign3
+      puts "Campaign 3 already exists"
+    else
+      campaign3 = FactoryBot.create(:registration_campaign,
+                                    campaignable: seminar,
+                                    status: :draft,
+                                    allocation_mode: :first_come_first_served,
+                                    registration_deadline: 1.week.from_now,
+                                    description: "Stage 3: Nachrücker (FCFS)")
+      puts "Created Campaign 3 (Nachrücker)"
+    end
+
+    # Create Cohort "Nachrücker"
+    nachruecker_cohort = Cohort.find_by(context: seminar, title: "Nachrücker")
+    unless nachruecker_cohort
+      nachruecker_cohort = FactoryBot.create(:cohort,
+                                             context: seminar,
+                                             title: "Nachrücker",
+                                             capacity: 5)
+      puts "Created Cohort 'Nachrücker'"
+    end
+
+    unless Registration::Item.exists?(registration_campaign: campaign3,
+                                      registerable: nachruecker_cohort)
+      FactoryBot.create(:registration_item,
+                        registration_campaign: campaign3,
+                        registerable: nachruecker_cohort)
+      puts "Added Nachrücker to Campaign 3"
+    end
+
+    # Open Campaign 3
+    campaign3.update!(status: :open)
+    puts "Opened Campaign 3"
+
+    # Register 5 students to fill it up
+    puts "Registering 5 students to Nachrücker..."
+    item = campaign3.registration_items.first
+    5.times do |i|
+      email = "nachruecker_#{i}@mampf.edu"
+      user = User.find_by(email: email)
+      user ||= FactoryBot.create(:confirmed_user, email: email, name: "Nachrücker #{i}")
+
+      next if campaign3.user_registrations.exists?(user: user)
+
+      FactoryBot.create(:registration_user_registration,
+                        user: user,
+                        registration_campaign: campaign3,
+                        registration_item: item,
+                        status: :confirmed)
+    end
+    puts "Done. Nachrücker full."
   end
 
   desc "Generate an overbooked preference-based campaign for cohorts"
