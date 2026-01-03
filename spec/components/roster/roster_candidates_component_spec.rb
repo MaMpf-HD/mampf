@@ -58,7 +58,8 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
         expect(path)
           .to eq(Rails.application.routes.url_helpers
           .add_member_tutorial_path(tutorial,
-                                    user_id: fresh_user.id, tab: "enrollment"))
+                                    user_id: fresh_user.id, tab: "enrollment",
+                                    group_type: :tutorials))
       end
 
       it "returns correct path for talk" do
@@ -67,7 +68,8 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
         expect(path)
           .to eq(Rails.application.routes.url_helpers
           .add_member_talk_path(talk,
-                                user_id: fresh_user.id, tab: "enrollment"))
+                                user_id: fresh_user.id, tab: "enrollment",
+                                group_type: :tutorials))
       end
     end
 
@@ -137,6 +139,19 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
     it "does not render" do
       render_inline(component)
       expect(rendered_content).to be_empty
+    end
+  end
+
+  context "when group_type is an array" do
+    let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :cohorts]) }
+
+    it "renders" do
+      render_inline(component)
+      expect(rendered_content).to include("Fresh User")
+    end
+
+    it "lists available groups" do
+      expect(component.available_groups).to include(tutorial)
     end
   end
 end

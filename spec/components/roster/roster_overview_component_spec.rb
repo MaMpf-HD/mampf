@@ -32,6 +32,15 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         expect(groups.pluck(:type)).to contain_exactly(:talks)
       end
     end
+
+    context "when group_type is an array" do
+      let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :talks]) }
+
+      it "returns specified groups" do
+        groups = component.groups
+        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :talks)
+      end
+    end
   end
 
   describe "#total_participants" do
@@ -59,7 +68,12 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     it "returns the default title for all" do
-      expect(component.group_type_title).to eq(I18n.t("roster.dashboard.title"))
+      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
+    end
+
+    it "returns the default title for array" do
+      component = described_class.new(lecture: lecture, group_type: [:tutorials, :talks])
+      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
     end
   end
 

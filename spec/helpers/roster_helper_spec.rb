@@ -21,4 +21,35 @@ RSpec.describe(RosterHelper, type: :helper) do
       end
     end
   end
+
+  describe "#roster_group_types" do
+    let(:lecture) { instance_double("Lecture", seminar?: is_seminar) }
+
+    context "when lecture is a seminar" do
+      let(:is_seminar) { true }
+
+      it "returns [:talks, :cohorts]" do
+        expect(helper.roster_group_types(lecture)).to eq([:talks, :cohorts])
+      end
+    end
+
+    context "when lecture is not a seminar" do
+      let(:is_seminar) { false }
+
+      it "returns [:tutorials, :cohorts]" do
+        expect(helper.roster_group_types(lecture)).to eq([:tutorials, :cohorts])
+      end
+    end
+  end
+
+  describe "#roster_maintenance_frame_id" do
+    it "handles single symbol" do
+      expect(helper.roster_maintenance_frame_id(:tutorials)).to eq("roster_maintenance_tutorials")
+    end
+
+    it "handles array of symbols" do
+      expect(helper.roster_maintenance_frame_id([:tutorials,
+                                                 :cohorts])).to eq("roster_maintenance_tutorials_cohorts")
+    end
+  end
 end
