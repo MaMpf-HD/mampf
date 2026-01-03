@@ -1,3 +1,7 @@
+# Organizes available groups into categorized lists (e.g., Tutorials, Cohorts)
+# with formatted titles and capacity status for student transfers.
+# Serves as a shared concern for components that need to display valid assignment
+#  destinations and check for overbooking.
 module RosterTransferable
   extend ActiveSupport::Concern
 
