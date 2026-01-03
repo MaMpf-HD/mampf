@@ -52,13 +52,17 @@ module Rosters
       # for bulk allocations where we just want to sync the state.
       users_to_add_ids = target_user_ids - current_roster_user_ids
       if users_to_add_ids.any?
+        # insert_all does not automatically apply the association scope (e.g. foreign keys).
+        # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
+        scope_attrs = roster_entries.scope_attributes
+
         attributes = users_to_add_ids.map do |uid|
           {
             roster_user_id_column => uid,
             :source_campaign_id => campaign.id,
             :created_at => Time.current,
             :updated_at => Time.current
-          }
+          }.merge(scope_attrs)
         end
         # insert_all on the association automatically scopes to the parent (e.g. tutorial_id)
         roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations

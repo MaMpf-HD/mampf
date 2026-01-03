@@ -106,12 +106,9 @@ RSpec.describe(Registration::Item, type: :model) do
           campaign.update!(status: :processing)
         end
 
-        it "prevents changing capacity" do
+        it "allows changing capacity" do
           item.capacity = 10
-          expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".frozen"))
+          expect(item).to be_valid
         end
       end
     end
@@ -124,7 +121,9 @@ RSpec.describe(Registration::Item, type: :model) do
         before do
           item # ensure item exists
           campaign.update!(status: :open)
-          create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+          create_list(:registration_user_registration, 3, :confirmed,
+                      registration_item: item,
+                      registration_campaign: campaign)
           item.capacity = 5
           item.save
         end
@@ -204,7 +203,9 @@ RSpec.describe(Registration::Item, type: :model) do
         before do
           item # ensure item exists
           campaign.update!(status: :open)
-          create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+          create_list(:registration_user_registration, 3, :confirmed,
+                      registration_item: item,
+                      registration_campaign: campaign)
           item.capacity = 5
           item.save
         end
@@ -303,8 +304,8 @@ RSpec.describe(Registration::Item, type: :model) do
             campaign.update!(status: :processing)
           end
 
-          it "returns false" do
-            expect(item.capacity_editable?).to be(false)
+          it "returns true" do
+            expect(item.capacity_editable?).to be(true)
           end
         end
 

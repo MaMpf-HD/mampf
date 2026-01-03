@@ -33,14 +33,25 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     let(:user) { FactoryBot.create(:user) }
     let(:item) { FactoryBot.create(:registration_item, registration_campaign: campaign) }
 
-    it "requires preference_rank" do
+    it "requires preference_rank for pending registrations" do
       registration = FactoryBot.build(:registration_user_registration,
                                       registration_campaign: campaign,
                                       user: user,
                                       registration_item: item,
-                                      preference_rank: nil)
+                                      preference_rank: nil,
+                                      status: :pending)
       expect(registration).not_to be_valid
       expect(registration.errors[:preference_rank]).to be_present
+    end
+
+    it "allows nil preference_rank for confirmed registrations (forced assignments)" do
+      registration = FactoryBot.build(:registration_user_registration,
+                                      registration_campaign: campaign,
+                                      user: user,
+                                      registration_item: item,
+                                      preference_rank: nil,
+                                      status: :confirmed)
+      expect(registration).to be_valid
     end
 
     it "ensures preference_rank is unique per user and campaign" do

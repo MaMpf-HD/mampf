@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      errors:
+        already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       planning_only: "Nur Planung"
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
@@ -12,6 +14,7 @@ de:
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
+      finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       planning_only_disabled: "Diese Option ist deaktiviert, da das Anmeldeverfahren bereits Elemente enthält, die keine Vorlesung sind."
       not_found: "Anmeldeverfahren nicht gefunden."
@@ -64,11 +67,20 @@ de:
         open: "Anmeldung starten"
         close: "Anmeldung beenden"
         reopen: "Anmeldung wiedereröffnen"
+        finalize: "Zuteilung durchführen"
+        force_finalize: "Finalisierung erzwingen (Fehler ignorieren)"
+        allocate: "Zuteilung berechnen"
+        reallocate: "Zuteilung neu berechnen"
+        view_allocation: "Zuteilung ansehen"
+        review_and_finalize: "Prüfen & Abschließen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
         reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
+        finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
+        force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -111,6 +123,35 @@ de:
           assessments: "Punkte für Übungsblätter werden über Tutorien verwaltet. Wenn Sie das benötigen, verwenden Sie den \"Gruppen-Pfad\", auch wenn Sie nur eine Gruppe haben."
           item_types: "In einem Anmeldeverfahren kann es nur eine Art von Elementen geben (keine Mischung). Zum Beispiel können Sie nicht Tutorien und die Veranstaltung selbst im selben Verfahren haben."
           planning: "Um den Bedarf für eine Veranstaltung im Voraus zu messen, ist es möglich, ein Nur-Planungs-Verfahren für die Veranstaltung (als einziges Element) zu verwenden. Das Ergebnis dieses Verfahrens wird nicht in eine Teilnehmerliste übertragen. Ein solches Verfahren kann also auch problemlos als Ergänzung zum \"Gruppen-Pfad\" verwendet werden."
+    allocation:
+      started: "Zuteilung wurde berechnet."
+      dashboard:
+        title: "Zuteilungs-Dashboard"
+        last_updated: "Stand: %{time}"
+        unassigned_students: "Nicht zugewiesene Studierende"
+        no_unassigned: "Alle Studierenden wurden zugewiesen!"
+        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."
+        workflow_info_fcfs: "Überprüfen Sie die Liste der registrierten Studierenden. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
+        item_capacities: "Auslastung"
+      stats:
+        total_registrations: "Bewerbungen Gesamt"
+        assigned: "Zugewiesen"
+        unassigned: "Nicht zugewiesen"
+        happiness_distribution: "Präferenzverteilung"
+        rank: "Präferenzrang"
+        count: "Anzahl"
+        percentage: "Prozent"
+        rank_label: "Wahl #%{rank}"
+        forced: "Zwangszuweisung"
+        capacity: "Kapazität"
+        utilization: "Auslastung"
+      errors:
+        already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
+        wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
+        policy_violation_title: "Richtlinienverstöße erkannt"
+        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        failed: "Zuteilung fehlgeschlagen: %{error}"
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
@@ -154,6 +195,7 @@ de:
         both: "Beide"
     item:
       not_found: "Registrierungselement nicht gefunden."
+      one: "Element"
       index:
         title: "Elemente"
         none: "Noch keine Elemente hinzugefügt."
@@ -192,6 +234,22 @@ de:
       confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
       confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
       confirm_delete_registerable: "Sind Sie sicher, dass Sie dieses %{type} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    user_registration:
+      forced_assignment: "Zwangszuweisung"
+      index:
+        title: "Anmeldungen"
+      status:
+        pending: "Ausstehend"
+        confirmed: "Bestätigt"
+        rejected: "Abgelehnt"
+      rank: "Rang"
+      destroyed: "Anmeldung erfolgreich entfernt."
+      destroyed_all_for_user: "%{count} Anmeldungen für Benutzer entfernt."
+      destroy_failed: "Anmeldungen konnten nicht entfernt werden."
+      none: "Keine Anmeldungen gefunden."
+      preferences: "Präferenzen"
+      actions:
+        remove_user: "Benutzer aus Anmeldeverfahren entfernen"
   activerecord:
     errors:
       models:
@@ -199,6 +257,7 @@ de:
           attributes:
             base:
               frozen: "Die Anmeldeverfahrenskonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
+              already_finalized: "Das Anmeldeverfahren ist bereits abgeschlossen."
               cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
