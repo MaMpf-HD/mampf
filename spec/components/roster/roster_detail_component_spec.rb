@@ -33,6 +33,11 @@ RSpec.describe(RosterDetailComponent, type: :component) do
       expect(component.available_groups).not_to include(tutorial)
     end
 
+    it "includes cohorts in available groups" do
+      cohort = create(:cohort, context: lecture, manual_roster_mode: true)
+      expect(component.available_groups).to include(cohort)
+    end
+
     it "generates correct paths" do
       render_inline(component)
       expect(component.add_member_path)
@@ -75,16 +80,21 @@ RSpec.describe(RosterDetailComponent, type: :component) do
     end
 
     describe "#transfer_targets" do
-      it "returns a list of targets with overbooked status" do
+      it "returns a list of targets grouped by type" do
         other_tutorial.update(capacity: 0)
         render_inline(component)
         targets = component.transfer_targets
-        expect(targets.first).to include(
+
+        tutorial_group = targets.find { |t| t[:type] == :tutorials }
+        expect(tutorial_group).to be_present
+
+        item = tutorial_group[:items].first
+        expect(item).to include(
           group: other_tutorial,
           overbooked: true,
           id: other_tutorial.id
         )
-        expect(targets.first[:title]).to include(other_tutorial.title)
+        expect(item[:title]).to include(other_tutorial.title)
       end
     end
   end
