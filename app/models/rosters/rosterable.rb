@@ -57,6 +57,8 @@ module Rosters
 
     # Checks if the item is associated with any non-planning campaign.
     def in_real_campaign?
+      return false unless respond_to?(:registration_items)
+
       if association(:registration_items).loaded?
         registration_items.any? { |item| !item.registration_campaign.planning_only? }
       else
