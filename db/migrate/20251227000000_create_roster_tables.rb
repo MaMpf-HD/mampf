@@ -21,6 +21,16 @@ class CreateRosterTables < ActiveRecord::Migration[8.0]
     end
     add_index :lecture_memberships, [:user_id, :lecture_id], unique: true
 
+    # Stores the official roster for cohorts
+    create_table :cohort_memberships, id: :uuid do |t|
+      t.references :user, null: false, foreign_key: true
+      t.references :cohort, null: false, foreign_key: true
+      t.references :source_campaign, type: :uuid, foreign_key: { to_table: :registration_campaigns }
+
+      t.timestamps
+    end
+    add_index :cohort_memberships, [:user_id, :cohort_id], unique: true
+
     # Add tracking to the existing join table for talks
     add_reference :speaker_talk_joins, :source_campaign,
                   type: :uuid,

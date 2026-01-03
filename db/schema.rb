@@ -140,6 +140,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000000) do
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
   end
 
+  create_table "cohort_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "cohort_id", null: false
+    t.uuid "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id"], name: "index_cohort_memberships_on_cohort_id"
+    t.index ["source_campaign_id"], name: "index_cohort_memberships_on_source_campaign_id"
+    t.index ["user_id", "cohort_id"], name: "index_cohort_memberships_on_user_id_and_cohort_id", unique: true
+    t.index ["user_id"], name: "index_cohort_memberships_on_user_id"
+  end
+
   create_table "cohorts", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -1247,6 +1259,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000000) do
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
   add_foreign_key "claims", "redemptions"
+  add_foreign_key "cohort_memberships", "cohorts"
+  add_foreign_key "cohort_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "cohort_memberships", "users"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
