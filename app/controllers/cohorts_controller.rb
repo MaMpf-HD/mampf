@@ -58,7 +58,8 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: update_roster_groups_list_stream(group_type) + [stream_flash]
+        streams = update_roster_groups_list_stream(group_type) + [stream_flash]
+        render turbo_stream: streams.compact
       end
     end
   end
@@ -73,7 +74,8 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: update_roster_groups_list_stream(group_type) + [stream_flash]
+        streams = update_roster_groups_list_stream(group_type) + [stream_flash]
+        render turbo_stream: streams.compact
       end
     end
   end
@@ -128,6 +130,8 @@ class CohortsController < ApplicationController
         streams << turbo_stream.update("modal-container", "")
       elsif @cohort.new_record? || @cohort.errors.present?
         # Failure case or New form: Replace form
+        # We need to check if the form exists in the DOM, otherwise this might fail silently or cause issues
+        # But for now, let's assume the modal is open if we are editing/creating
         streams << turbo_stream.replace("new_cohort_form",
                                         partial: "cohorts/new_form",
                                         locals: { cohort: @cohort })
