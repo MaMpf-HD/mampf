@@ -3445,6 +3445,7 @@ en:
     irrelevant: 'irrelevant'
   buttons:
     create_tutorial: 'Create Tutorial'
+    create_cohort: 'Create Cohort'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3650,6 +3651,7 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
+    no_cohort: 'There is no cohort with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
@@ -3683,6 +3685,11 @@ en:
         An error happened in the creation of the zip archive: %{message}
       errors:
         cannot_delete_with_submissions: 'Cannot be deleted because there are submissions.'
+    cohorts:
+      created: 'Cohort successfully created.'
+      updated: 'Cohort successfully updated.'
+      destroyed: 'Cohort successfully deleted.'
+      destruction_failed: 'Cohort could not be deleted.'
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are

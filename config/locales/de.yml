@@ -3658,6 +3658,7 @@ de:
     irrelevant: 'egal'
   buttons:
     create_tutorial: 'Tutorium erstellen'
+    create_cohort: 'Gruppe erstellen'
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
@@ -3871,6 +3872,7 @@ de:
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
+    no_cohort: 'Eine Gruppe mit der angeforderten id existiert nicht.'
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
     no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
@@ -3901,6 +3903,11 @@ de:
         Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
       errors:
         cannot_delete_with_submissions: 'Kann nicht gelöscht werden, da Abgaben existieren.'
+    cohorts:
+      created: 'Gruppe erfolgreich erstellt.'
+      updated: 'Gruppe erfolgreich aktualisiert.'
+      destroyed: 'Gruppe erfolgreich gelöscht.'
+      destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran

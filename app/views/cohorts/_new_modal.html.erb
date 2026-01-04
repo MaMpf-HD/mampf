@@ -1,0 +1,13 @@
+<div class="modal fade" id="newCohortModal" tabindex="-1" aria-labelledby="newCohortModalLabel" aria-hidden="true"
+     data-controller="modal"
+     data-modal-show-on-connect-value="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newCohortModalLabel"><%= t('buttons.create_cohort') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <%= render "cohorts/new_form", cohort: cohort %>
+    </div>
+  </div>
+</div>

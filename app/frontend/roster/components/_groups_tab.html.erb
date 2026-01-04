@@ -31,6 +31,12 @@
                     data: { turbo_prefetch: false } do %>
           <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
         <% end %>
+      <% elsif group[:type] == :cohorts %>
+        <%= link_to new_cohort_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                    class: "btn btn-sm btn-light",
+                    data: { turbo_prefetch: false } do %>
+          <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+        <% end %>
       <% end %>
     </div>
     <div class="table-responsive">
@@ -90,6 +96,12 @@
                                 class: "btn btn-sm btn-outline-primary" %>
                     <% if item.is_a?(Tutorial) && item.destructible? %>
                       <%= link_to tutorial_path(item, group_type: group_type),
+                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                  class: "btn btn-sm btn-outline-danger" do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
+                    <% elsif item.is_a?(Cohort) && item.destructible? %>
+                      <%= link_to cohort_path(item),
                                   data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
                                   class: "btn btn-sm btn-outline-danger" do %>
                         <i class="bi bi-trash"></i>
