@@ -94,19 +94,6 @@
                     <%= link_to t('roster.manage'),
                                 component.group_path(item),
                                 class: "btn btn-sm btn-outline-primary" %>
-                    <% if item.is_a?(Tutorial) && item.destructible? %>
-                      <%= link_to tutorial_path(item, group_type: group_type),
-                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
-                                  class: "btn btn-sm btn-outline-danger" do %>
-                        <i class="bi bi-trash"></i>
-                      <% end %>
-                    <% elsif item.is_a?(Cohort) && item.destructible? %>
-                      <%= link_to cohort_path(item),
-                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
-                                  class: "btn btn-sm btn-outline-danger" do %>
-                        <i class="bi bi-trash"></i>
-                      <% end %>
-                    <% end %>
                   <% elsif campaign %>
                     <%= link_to t('roster.view_campaign'),
                                 edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
@@ -117,6 +104,20 @@
                                 edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
                                 class: "btn btn-sm btn-outline-secondary",
                                 data: { turbo_frame: "_top" } %>
+                  <% end %>
+
+                  <% if item.is_a?(Tutorial) && item.destructible? %>
+                    <%= link_to tutorial_path(item, group_type: group_type),
+                                data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                class: "btn btn-sm btn-outline-danger" do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% elsif item.is_a?(Cohort) && item.destructible? %>
+                    <%= link_to cohort_path(item, group_type: group_type),
+                                data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                class: "btn btn-sm btn-outline-danger" do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
                   <% end %>
 
                   <% if item.manual_roster_mode? %>
