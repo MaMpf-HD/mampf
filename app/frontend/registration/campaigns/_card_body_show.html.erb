@@ -16,7 +16,7 @@
         <%= close_campaign_button(campaign) %>
       <% elsif campaign.closed? %>
         <%= reopen_campaign_button(campaign) %>
-        
+
         <% if campaign.preference_based? %>
           <%= allocate_campaign_button(campaign) %>
         <% else %>
@@ -25,7 +25,7 @@
         <% end %>
       <% elsif campaign.processing? %>
         <%= review_and_finalize_button(campaign) %>
-        
+
         <% if campaign.preference_based? %>
           <%= allocate_campaign_button(campaign) %>
         <% end %>
