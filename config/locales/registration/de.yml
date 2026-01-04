@@ -73,6 +73,7 @@ de:
         reallocate: "Zuteilung neu berechnen"
         view_allocation: "Zuteilung ansehen"
         review_and_finalize: "Prüfen & Abschließen"
+        complete_planning: "Planung abschließen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
@@ -81,6 +82,7 @@ de:
         finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
         force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
         reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
+        complete_planning: "Sind Sie sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -132,6 +134,7 @@ de:
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
         workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."
         workflow_info_fcfs: "Überprüfen Sie die Liste der registrierten Studierenden. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
+        workflow_info_planning: "Überprüfen Sie die Statistiken. Da dies ein Nur-Planungs-Verfahren ist, werden keine Änderungen an Teilnehmerlisten vorgenommen. Wenn Sie zufrieden sind, klicken Sie auf 'Planung abschließen', um den aktuellen Stand zu speichern."
         item_capacities: "Auslastung"
       stats:
         total_registrations: "Bewerbungen Gesamt"
@@ -147,6 +150,7 @@ de:
         utilization: "Auslastung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
+        planning_only: "Nur Planung"
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"

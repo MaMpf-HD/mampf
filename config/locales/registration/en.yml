@@ -73,6 +73,7 @@ en:
         reallocate: "Recalculate Allocation"
         view_allocation: "View Allocation"
         review_and_finalize: "Review & Finalize"
+        complete_planning: "Complete Planning"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
@@ -81,6 +82,7 @@ en:
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
         force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
         reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
+        complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -132,6 +134,7 @@ en:
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
         workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
         item_capacities: "Tutorial Capacities"
       stats:
         total_registrations: "Total Applicants"
@@ -147,6 +150,7 @@ en:
         utilization: "Utilization"
       errors:
         already_completed: "Campaign is already completed."
+        planning_only: "Planning only"
         wrong_status: "Campaign has wrong status for this action."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
