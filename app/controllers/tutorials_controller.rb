@@ -85,35 +85,9 @@ class TutorialsController < ApplicationController
     respond_to do |format|
       format.js
       format.turbo_stream do
-        group_type = if params[:group_type].is_a?(String) && params[:group_type].include?(" ")
-          params[:group_type].split.map(&:to_sym)
-        elsif params[:group_type].is_a?(Array)
-          params[:group_type].map(&:to_sym)
-        else
-          params[:group_type]&.to_sym || :tutorials
-        end
+        group_type = parse_group_type
 
-        component = RosterOverviewComponent.new(lecture: @lecture, group_type: group_type)
-        streams = [
-          (if @tutorial.persisted?
-             [
-               turbo_stream.update("roster_groups_list",
-                                   partial: "roster/components/groups_tab",
-                                   locals: {
-                                     groups: component.groups,
-                                     total_participants: component.total_participants,
-                                     group_type: group_type,
-                                     component: component
-                                   }),
-               turbo_stream.update("modal-container", "")
-             ]
-           else
-             turbo_stream.replace("new_tutorial_form",
-                                  partial: "tutorials/new_form",
-                                  locals: { tutorial: @tutorial })
-           end)
-        ].flatten.compact
-        streams << stream_flash if flash.present?
+        streams = create_turbo_streams(group_type)
         render turbo_stream: streams, status: @tutorial.persisted? ? :ok : :unprocessable_content
       end
     end
@@ -252,5 +226,40 @@ class TutorialsController < ApplicationController
                             .correction_upload_email.deliver_later
         end
       end
+    end
+
+    def parse_group_type
+      if params[:group_type].is_a?(String) && params[:group_type].include?(" ")
+        params[:group_type].split.map(&:to_sym)
+      elsif params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type]&.to_sym || :tutorials
+      end
+    end
+
+    def create_turbo_streams(group_type)
+      component = RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type)
+      streams = []
+
+      if @tutorial.persisted?
+        streams << turbo_stream.update("roster_groups_list",
+                                       partial: "roster/components/groups_tab",
+                                       locals: {
+                                         groups: component.groups,
+                                         total_participants: component.total_participants,
+                                         group_type: group_type,
+                                         component: component
+                                       })
+        streams << turbo_stream.update("modal-container", "")
+      else
+        streams << turbo_stream.replace("new_tutorial_form",
+                                        partial: "tutorials/new_form",
+                                        locals: { tutorial: @tutorial })
+      end
+
+      streams << stream_flash if flash.present?
+      streams
     end
 end
