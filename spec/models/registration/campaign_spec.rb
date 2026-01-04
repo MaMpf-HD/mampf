@@ -153,6 +153,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
     end
 
+    it "prevents changing planning_only if not draft" do
+      # campaign is open (planning_only: false by default factory)
+      campaign.planning_only = true
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:planning_only, :frozen)).to be(true)
+    end
+
     it "allows changing allocation_mode if draft" do
       draft_campaign = create(:registration_campaign, :draft)
       draft_campaign.allocation_mode = :preference_based
