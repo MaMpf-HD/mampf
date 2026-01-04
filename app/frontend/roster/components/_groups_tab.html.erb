@@ -23,8 +23,15 @@
     </details>
   </div>
   <% groups.each_with_index do |group, index| %>
-    <div class="card-header bg-secondary text-white mt-3">
+    <div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
       <h6 class="mb-0 fw-bold"><%= t("registration.item.groups.#{group[:type]}") %></h6>
+      <% if group[:type] == :tutorials %>
+        <%= link_to new_tutorial_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                    class: "btn btn-sm btn-light",
+                    data: { turbo_prefetch: false } do %>
+          <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+        <% end %>
+      <% end %>
     </div>
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
@@ -104,9 +111,10 @@
                           <%= f.check_box :manual_roster_mode,
                                 class: "form-check-input",
                                 role: "switch",
+                                id: dom_id(item, :manual_roster_mode),
                                 checked: true,
                                 data: { action: "change->auto-submit-form#submit" } %>
-                          <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
+                          <label class="form-check-label small text-muted" for="<%= dom_id(item, :manual_roster_mode) %>"><%= t('roster.manual_mode') %></label>
                         </div>
                       <% end %>
                     <% end %>
@@ -120,9 +128,10 @@
                         <%= f.check_box :manual_roster_mode,
                               class: "form-check-input",
                               role: "switch",
+                              id: dom_id(item, :manual_roster_mode),
                               checked: false,
                               data: { action: "change->auto-submit-form#submit" } %>
-                        <label class="form-check-label small text-muted"><%= t('roster.manual_mode') %></label>
+                        <label class="form-check-label small text-muted" for="<%= dom_id(item, :manual_roster_mode) %>"><%= t('roster.manual_mode') %></label>
                       </div>
                     <% end %>
                   <% end %>

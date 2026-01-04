@@ -3232,6 +3232,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    capacity: 'Capacity'
     division: 'Division'
     error: Error
     course: 'Course'
@@ -3443,6 +3444,7 @@ en:
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
+    create_tutorial: 'Create Tutorial'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3672,6 +3674,7 @@ en:
     become_speaker_success: >
       Your speaker status has been updated.
     tutorials:
+      created: 'Tutorial successfully created.'
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
         submissions for it that include uploaded files.

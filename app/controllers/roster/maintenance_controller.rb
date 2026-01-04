@@ -68,6 +68,7 @@ module Roster
 
     def update
       if @rosterable.update(rosterable_params)
+        @lecture = Lecture.find(@lecture.id)
         flash.now[:notice] = t("roster.messages.updated")
         render_roster_update(rosterable: nil)
       else

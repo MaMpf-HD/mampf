@@ -53,6 +53,9 @@ window.Stimulus.register("roster-enrollment", RosterEnrollmentController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import SelectizeController from "~/controllers/selectize_controller.js";
+window.Stimulus.register("selectize", SelectizeController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

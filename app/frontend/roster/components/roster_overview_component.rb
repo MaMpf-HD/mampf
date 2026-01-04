@@ -44,7 +44,7 @@ class RosterOverviewComponent < ViewComponent::Base
   # Helper to generate the correct polymorphic path
   def group_path(item)
     method_name = "#{item.model_name.singular_route_key}_roster_path"
-    helpers.public_send(method_name, item)
+    Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
   def active_campaign_for(item)

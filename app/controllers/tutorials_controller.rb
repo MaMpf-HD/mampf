@@ -1,5 +1,7 @@
 # TutorialsController
 class TutorialsController < ApplicationController
+  helper RosterHelper
+
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
                                       :bulk_download_submissions,
                                       :bulk_download_corrections,
@@ -55,6 +57,18 @@ class TutorialsController < ApplicationController
     set_tutorial_locale
     @tutorial.lecture = @lecture
     authorize! :new, @tutorial
+
+    respond_to do |format|
+      format.js
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/new_modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def edit
@@ -65,8 +79,44 @@ class TutorialsController < ApplicationController
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
     set_tutorial_locale
-    @tutorial.save
+    flash.now[:notice] = t("controllers.tutorials.created") if @tutorial.save
     @errors = @tutorial.errors
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = if params[:group_type].is_a?(String) && params[:group_type].include?(" ")
+          params[:group_type].split.map(&:to_sym)
+        elsif params[:group_type].is_a?(Array)
+          params[:group_type].map(&:to_sym)
+        else
+          params[:group_type]&.to_sym || :tutorials
+        end
+
+        component = RosterOverviewComponent.new(lecture: @lecture, group_type: group_type)
+        streams = [
+          (if @tutorial.persisted?
+             [
+               turbo_stream.update("roster_groups_list",
+                                   partial: "roster/components/groups_tab",
+                                   locals: {
+                                     groups: component.groups,
+                                     total_participants: component.total_participants,
+                                     group_type: group_type,
+                                     component: component
+                                   }),
+               turbo_stream.update("modal-container", "")
+             ]
+           else
+             turbo_stream.update("modal-container",
+                                 partial: "tutorials/new_modal",
+                                 locals: { tutorial: @tutorial })
+           end)
+        ].flatten.compact
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams
+      end
+    end
   end
 
   def update
@@ -169,7 +219,7 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, { tutor_ids: [] }])
+      params.expect(tutorial: [:title, :lecture_id, :capacity, { tutor_ids: [] }])
     end
 
     def bulk_params
