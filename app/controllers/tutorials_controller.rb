@@ -241,12 +241,10 @@ class TutorialsController < ApplicationController
     end
 
     def parse_group_type
-      if params[:group_type].is_a?(String) && params[:group_type].include?(" ")
-        params[:group_type].split.map(&:to_sym)
-      elsif params[:group_type].is_a?(Array)
+      if params[:group_type].is_a?(Array)
         params[:group_type].map(&:to_sym)
       else
-        params[:group_type]&.to_sym || :tutorials
+        params[:group_type].presence&.to_sym || :tutorials
       end
     end
 

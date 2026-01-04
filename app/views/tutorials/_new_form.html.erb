@@ -1,7 +1,7 @@
 <%= form_with model: tutorial, url: tutorials_path, method: :post, id: "new_tutorial_form", data: { turbo: true } do |f| %>
   <div class="modal-body">
     <%= f.hidden_field :lecture_id %>
-    <%= hidden_field_tag :group_type, params[:group_type] %>
+    <%= hidden_group_type_field(params[:group_type]) %>
 
     <div class="mb-3">
       <%= f.label :title, t('basics.title'), class: "form-label" %>
