@@ -267,15 +267,15 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
     end
 
-    it "returns true if campaign is completed" do
+    it "returns true if campaign is not draft" do
       allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :completed
+      campaign.status = :open
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
     end
 
-    it "returns false if campaign can be planning only and is not completed" do
+    it "returns false if campaign can be planning only and is draft" do
       allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :open
+      campaign.status = :draft
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(false)
     end
   end

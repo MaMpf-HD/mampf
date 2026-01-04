@@ -166,15 +166,10 @@ module Registration
     end
 
     def open_campaign_button(campaign)
-      confirm_msg = t("registration.campaign.confirmations.open")
-      if campaign.registration_items.any? { |i| i.capacity.nil? }
-        confirm_msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
-      end
-
       button_to(t("registration.campaign.actions.open"),
                 open_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: confirm_msg },
+                data: { confirm: campaign_open_confirmation(campaign) },
                 class: "btn btn-success")
     end
 
@@ -195,7 +190,7 @@ module Registration
     end
 
     def planning_only_checkbox_disabled?(campaign)
-      !campaign.can_be_planning_only? || campaign.completed?
+      !campaign.draft? || !campaign.can_be_planning_only? || campaign.completed?
     end
 
     private
