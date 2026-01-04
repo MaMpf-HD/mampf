@@ -108,13 +108,13 @@ class TutorialsController < ApplicationController
                turbo_stream.update("modal-container", "")
              ]
            else
-             turbo_stream.update("modal-container",
-                                 partial: "tutorials/new_modal",
-                                 locals: { tutorial: @tutorial })
+             turbo_stream.replace("new_tutorial_form",
+                                  partial: "tutorials/new_form",
+                                  locals: { tutorial: @tutorial })
            end)
         ].flatten.compact
         streams << stream_flash if flash.present?
-        render turbo_stream: streams
+        render turbo_stream: streams, status: @tutorial.persisted? ? :ok : :unprocessable_content
       end
     end
   end

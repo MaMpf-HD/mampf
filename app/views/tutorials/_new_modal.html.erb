@@ -7,45 +7,7 @@
         <h5 class="modal-title" id="newTutorialModalLabel"><%= t('buttons.create_tutorial') %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <%= form_with model: tutorial, url: tutorials_path, method: :post, data: { turbo: true } do |f| %>
-        <div class="modal-body">
-          <%= f.hidden_field :lecture_id %>
-          <%= hidden_field_tag :group_type, params[:group_type] %>
-
-          <div class="mb-3">
-            <%= f.label :title, t('basics.title'), class: "form-label" %>
-            <%= f.text_field :title, class: "form-control", placeholder: t('basics.title') %>
-            <% if tutorial.errors[:title].any? %>
-              <div class="invalid-feedback d-block">
-                <%= tutorial.errors[:title].join(", ") %>
-              </div>
-            <% end %>
-          </div>
-
-          <div class="mb-3">
-            <%= f.label :tutor_ids, t('basics.tutors'), class: "form-label" %>
-            <%= f.select :tutor_ids,
-                  tutors_preselection(tutorial),
-                  {},
-                  { class: 'selectize',
-                    multiple: true,
-                    data: { ajax: false,
-                            filled: true,
-                            model: 'user',
-                            no_results: t('basics.no_results'),
-                            controller: "selectize" } } %>
-          </div>
-
-          <div class="mb-3">
-            <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
-            <%= f.number_field :capacity, class: "form-control", placeholder: "∞" %>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
-          <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
-        </div>
-      <% end %>
+      <%= render "tutorials/new_form", tutorial: tutorial %>
     </div>
   </div>
 </div>
