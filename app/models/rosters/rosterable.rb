@@ -22,6 +22,13 @@ module Rosters
       end
 
       validate :validate_manual_mode_switch
+      before_destroy :enforce_rosterable_destruction_constraints, prepend: true
+    end
+
+    # Checks if the item can be safely destroyed.
+    # By default, it must not be in a real campaign and must have an empty roster.
+    def destructible?
+      !in_real_campaign? && roster_empty?
     end
 
     # Checks if the roster is currently locked for manual modifications.
@@ -195,6 +202,18 @@ module Rosters
             errors.add(:manual_roster_mode, I18n.t("roster.errors.roster_not_empty"))
           end
         end
+      end
+
+      def enforce_rosterable_destruction_constraints
+        if in_real_campaign?
+          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
+          throw(:abort)
+        end
+
+        return if roster_empty?
+
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+        throw(:abort)
       end
   end
 end

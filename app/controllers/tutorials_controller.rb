@@ -100,7 +100,19 @@ class TutorialsController < ApplicationController
   end
 
   def destroy
-    @tutorial.destroy
+    if @tutorial.destroy
+      flash.now[:notice] = t("controllers.tutorials.destroyed")
+    else
+      flash.now[:alert] = t("controllers.tutorials.destruction_failed")
+    end
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = parse_group_type
+        render turbo_stream: [update_roster_groups_list_stream(group_type), stream_flash]
+      end
+    end
   end
 
   def cancel_edit
@@ -239,19 +251,10 @@ class TutorialsController < ApplicationController
     end
 
     def create_turbo_streams(group_type)
-      component = RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type)
       streams = []
 
       if @tutorial.persisted?
-        streams << turbo_stream.update("roster_groups_list",
-                                       partial: "roster/components/groups_tab",
-                                       locals: {
-                                         groups: component.groups,
-                                         total_participants: component.total_participants,
-                                         group_type: group_type,
-                                         component: component
-                                       })
+        streams << update_roster_groups_list_stream(group_type)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace("new_tutorial_form",
@@ -261,5 +264,18 @@ class TutorialsController < ApplicationController
 
       streams << stream_flash if flash.present?
       streams
+    end
+
+    def update_roster_groups_list_stream(group_type)
+      component = RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type)
+      turbo_stream.update("roster_groups_list",
+                          partial: "roster/components/groups_tab",
+                          locals: {
+                            groups: component.groups,
+                            total_participants: component.total_participants,
+                            group_type: group_type,
+                            component: component
+                          })
     end
 end

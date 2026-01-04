@@ -3893,11 +3893,14 @@ de:
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
+      destroyed: 'Tutorium erfolgreich gelöscht.'
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
         dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
       bulk_download_failed: >
         Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Kann nicht gelöscht werden, da Abgaben existieren.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran

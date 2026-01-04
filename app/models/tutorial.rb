@@ -39,7 +39,7 @@ class Tutorial < ApplicationRecord
   end
 
   def destructible?
-    Submission.where(tutorial: self).proper.none?
+    super && Submission.where(tutorial: self).proper.none?
   end
 
   def teams_to_csv(assignment)
@@ -63,7 +63,9 @@ class Tutorial < ApplicationRecord
   private
 
     def check_destructibility
-      throw(:abort) unless destructible?
-      true
+      return unless Submission.where(tutorial: self).proper.any?
+
+      errors.add(:base, I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
+      throw(:abort)
     end
 end
