@@ -190,7 +190,7 @@ Campaigns transition through several states to ensure data integrity and fair us
 | `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
 | `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
 | `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
-| `planning_only` | Never | Can be toggled anytime. Affects internal behavior, not student-facing. |
+| `planning_only` | After `draft` | Cannot change once opened. Changing the nature of the registration (binding vs non-binding) after students have participated is unfair. |
 
 ##### Policies
 

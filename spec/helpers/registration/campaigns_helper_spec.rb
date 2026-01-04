@@ -146,6 +146,27 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
+  describe "#campaign_open_confirmation" do
+    let(:campaign) { build(:registration_campaign) }
+
+    it "returns standard confirmation for regular campaign" do
+      expect(helper.campaign_open_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.open"))
+    end
+
+    it "returns planning confirmation for planning campaign" do
+      campaign.planning_only = true
+      expect(helper.campaign_open_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.open_planning"))
+    end
+
+    it "appends warning for unlimited items" do
+      create(:registration_item, registration_campaign: campaign, capacity: nil)
+      expect(helper.campaign_open_confirmation(campaign))
+        .to include(I18n.t("registration.campaign.warnings.unlimited_items"))
+    end
+  end
+
   describe "#planning_only_disabled_reason" do
     let(:lecture) { create(:lecture) }
     let(:campaign) { create(:registration_campaign, campaignable: lecture) }
@@ -188,15 +209,15 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
     end
 
-    it "returns true if campaign is completed" do
+    it "returns true if campaign is not draft" do
       allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :completed
+      campaign.status = :open
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
     end
 
-    it "returns false if campaign can be planning only and is not completed" do
+    it "returns false if campaign can be planning only and is draft" do
       allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :open
+      campaign.status = :draft
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(false)
     end
   end

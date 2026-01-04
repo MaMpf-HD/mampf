@@ -7,7 +7,7 @@
       <ul>
         <% @policy_violations.each do |violation| %>
           <li class="mb-1">
-            <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) - 
+            <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) -
             <%= t("registration.policy.kinds.#{violation[:policy]}") %>
             <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: violation[:user_id], source: "allocation"),
                           method: :delete,
@@ -52,19 +52,27 @@
       <% if @campaign.preference_based? %>
         <%= allocate_campaign_button(@campaign) %>
       <% end %>
-      
-      <%= button_to t("registration.campaign.actions.finalize"),
-                    finalize_registration_campaign_allocation_path(@campaign),
-                    method: :patch,
-                    data: { confirm: t("registration.campaign.confirmations.finalize") },
-                    class: "btn btn-danger",
-                    disabled: @policy_violations.present? %>
-    </div>
-  </div>
 
-  <div class="alert alert-info mb-4">
+      <% if @campaign.planning_only? %>
+        <%= button_to t("registration.campaign.actions.complete_planning"),
+                      finalize_registration_campaign_allocation_path(@campaign),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.complete_planning") },
+                      class: "btn btn-primary" %>
+      <% else %>
+        <%= button_to t("registration.campaign.actions.finalize"),
+                      finalize_registration_campaign_allocation_path(@campaign),
+                      method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.finalize") },
+                      class: "btn btn-danger",
+                      disabled: @policy_violations.present? %>
+      <% end %>
+    </div>
+  </div>  <div class="alert alert-info mb-4">
     <i class="bi bi-info-circle-fill me-2"></i>
-    <% if @campaign.first_come_first_served? %>
+    <% if @campaign.planning_only? %>
+      <%= t("registration.allocation.dashboard.workflow_info_planning") %>
+    <% elsif @campaign.first_come_first_served? %>
       <%= t("registration.allocation.dashboard.workflow_info_fcfs") %>
     <% else %>
       <%= t("registration.allocation.dashboard.workflow_info") %>

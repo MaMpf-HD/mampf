@@ -43,6 +43,7 @@ module Registration
     validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
+    validate :planning_only_frozen, on: :update
     validate :cannot_revert_to_draft, on: :update
     validate :ensure_editable, on: :update
     validate :registration_deadline_future_if_open
@@ -121,6 +122,13 @@ module Registration
     end
 
     def finalize!
+      if planning_only?
+        return true if completed?
+
+        update!(status: :completed)
+        return true
+      end
+
       # Protect against concurrent finalization attempts via locking
       with_lock do
         return if completed?
@@ -220,6 +228,12 @@ module Registration
         return unless allocation_mode_changed? && status_was != "draft"
 
         errors.add(:allocation_mode, :frozen)
+      end
+
+      def planning_only_frozen
+        return unless planning_only_changed? && status_was != "draft"
+
+        errors.add(:planning_only, :frozen)
       end
 
       def cannot_revert_to_draft
