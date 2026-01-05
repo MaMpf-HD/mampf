@@ -17,7 +17,7 @@ export default class extends Controller {
   }
 
   update(status) {
-    if (status == true)
+    if (status === true)
       document.querySelector("[data-requires-touch-display]").classList.remove("d-none");
     else
       document.querySelector("[data-requires-touch-display]").classList.add("d-none");
