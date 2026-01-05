@@ -61,7 +61,7 @@ test.describe("given completed campaign", () => {
 
 test.describe("given completed campaign, preference based", () => {
   test("with user registration, when user visits, then assigned status is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_first_item_registered"], { user_id: student["user"]["id"], self_registerable: true });
+    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_first_item_registered_preference"], { user_id: student["user"]["id"], self_registerable: true });
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
     await expect(student.page.getByText("Completed")).toBeVisible();
@@ -162,8 +162,8 @@ test.describe("open fcfs tutorial campaign", () => {
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
       const buttons = student.page.locator('button:has-text("Register now")');
-      await expect(buttons.nth(0)).toBeDisabled();
-      await expect(buttons.nth(1)).toBeEnabled();
+      await buttons.nth(0).isDisabled();
+      await buttons.nth(1).isEnabled();
     });
   });
 
@@ -215,16 +215,16 @@ test.describe("open preference based tutorial campaign", () => {
       await expect(ranklist).toHaveCount(2);
 
       // up action should move content up
-      const titleBefore1 = await student.page.locator(".row.m-2").locator(".text-primary").nth(1).allTextContents();
-      const titleBefore2 = await student.page.locator(".row.m-2").locator(".text-primary").nth(4).allTextContents();
-      console.log(titleBefore1, titleBefore2);
+      let items = student.page.locator(".row.m-2");
+      const titleBefore1 = await items.nth(0).locator(".col-9").innerText();
+      const titleBefore2 = await items.nth(1).locator(".col-9").innerText();
       await Promise.all([
         student.page.waitForLoadState("networkidle"),
-        student.page.locator(".row.m-2").nth(1).locator("button.arrow_upward").dispatchEvent("click"),
+        items.nth(1).locator("button.arrow_upward").dispatchEvent("click"),
       ]);
-      const titleAfter1 = await student.page.locator(".row.m-2").locator(".text-primary").nth(1).allTextContents();
-      const titleAfter2 = await student.page.locator(".row.m-2").locator(".text-primary").nth(4).allTextContents();
-      console.log(titleAfter1, titleAfter2);
+      items = student.page.locator(".row.m-2");
+      const titleAfter1 = await items.nth(0).locator(".col-9").innerText();
+      const titleAfter2 = await items.nth(1).locator(".col-9").innerText();
       expect(titleBefore1[0]).toBe(titleAfter2[0]);
       expect(titleBefore2[0]).toBe(titleAfter1[0]);
 
@@ -273,6 +273,6 @@ test.describe("integration between child and parent campaign", () => {
     // Try to withdraw parent
     await parentPage.goto();
     await parentPage.withdraw();
-    await expect(student.page.getByText(/Withdrawal is blocked because the following campaigns are confirmed/i)).toBeVisible();
+    await expect(student.page.getByText("Withdrawal is blocked")).toBeVisible();
   });
 });

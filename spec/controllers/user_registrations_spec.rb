@@ -109,7 +109,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item2, 1) }
     let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item, 2) }
     let(:pref_from_fe3) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item3, 3) }
-    let(:pref_items_json) { [pref_from_fe, pref_from_fe2, pref_from_fe3].to_json }
+    let(:pref_items_json) do
+      [{ item: item2, rank: 1 }, { item: item, rank: 2 }, { item: item3, rank: 3 }].to_json
+    end
     describe "calls LecturePreferenceEditService for update action" do
       it "POST update" do
         service_double = instance_double(Registration::UserRegistration::LecturePreferenceEditService)

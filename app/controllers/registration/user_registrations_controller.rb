@@ -202,7 +202,7 @@ module Registration
         @campaign = @item.registration_campaign
         @items = @campaign.registration_items.includes(:user_registrations)
         handler = UserRegistration::PreferencesHandler.new
-        @item_preferences = handler.public_send(action, params[:item_id].to_i,
+        @item_preferences = handler.public_send(action, params[:item_id],
                                                 params[:preferences_json])
         rerender_preferences
       end
