@@ -1,4 +1,12 @@
-<%= form_with model: cohort, id: "new_cohort_form", data: { turbo: true } do |f| %>
+<%= form_with model: cohort,
+              id: dom_id(cohort, "form"),
+              data: {
+                turbo: true,
+                controller: "capacity-guard",
+                action: "submit->capacity-guard#submit",
+                capacity_guard_current_count_value: cohort.members.count,
+                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+              } do |f| %>
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
   <div class="modal-body">
@@ -9,7 +17,11 @@
 
     <div class="mb-3">
       <%= f.label :capacity, t("basics.capacity"), class: "form-label" %>
-      <%= f.number_field :capacity, class: "form-control", min: 0, placeholder: "∞" %>
+      <%= f.number_field :capacity,
+            class: "form-control",
+            min: 0,
+            placeholder: "∞",
+            data: { capacity_guard_target: "input" } %>
     </div>
   </div>
 

@@ -3447,6 +3447,7 @@ en:
     create_tutorial: 'Create Tutorial'
     edit_tutorial: 'Edit Tutorial'
     create_cohort: 'Create Cohort'
+    edit_cohort: 'Edit Cohort'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'

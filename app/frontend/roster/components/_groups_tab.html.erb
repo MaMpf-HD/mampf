@@ -135,11 +135,18 @@
                         <i class="bi bi-trash"></i>
                       <% end %>
                     <% end %>
-                  <% elsif item.is_a?(Cohort) && item.destructible? %>
-                    <%= link_to cohort_path(item, group_type: group_type),
-                                data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
-                                class: "btn btn-sm btn-outline-danger" do %>
-                      <i class="bi bi-trash"></i>
+                  <% elsif item.is_a?(Cohort) %>
+                    <%= link_to edit_cohort_path(item, group_type: group_type),
+                                class: "btn btn-sm btn-outline-primary",
+                                data: { turbo_stream: true } do %>
+                      <i class="bi bi-tools"></i>
+                    <% end %>
+                    <% if item.destructible? %>
+                      <%= link_to cohort_path(item, group_type: group_type),
+                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                  class: "btn btn-sm btn-outline-danger" do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
                     <% end %>
                   <% end %>
 

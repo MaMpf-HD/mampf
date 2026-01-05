@@ -3660,6 +3660,7 @@ de:
     create_tutorial: 'Tutorium erstellen'
     edit_tutorial: 'Tutorium bearbeiten'
     create_cohort: 'Gruppe erstellen'
+    edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
