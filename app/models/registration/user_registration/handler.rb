@@ -56,7 +56,7 @@ module Registration
                                         .distinct
         return unless dependent_campaigns_confirmed.size.positive?
 
-        names = dependent_campaigns_confirmed.pluck(:title)
+        names = dependent_campaigns_confirmed.pluck(:description)
 
         I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
                names: names.join(", "))

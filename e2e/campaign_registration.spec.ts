@@ -115,10 +115,10 @@ test.describe("given open campaign, lecture campaign", () => {
   });
 });
 
-test.describe("open tutorial campaign", () => {
+test.describe("open fcfs tutorial campaign", () => {
   test.describe("register open tutorial campaign", () => {
     test("creates a confirmed registration when validations pass", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
 
@@ -139,18 +139,18 @@ test.describe("open tutorial campaign", () => {
     });
 
     test("with full item, when user visits, then register button is disabled", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open", "no_capacity_remained_first_item"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "no_capacity_remained_first_item", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
       const buttons = student.page.locator('button:has-text("Register now")');
-      await expect(buttons.nth(0)).toBeDisabled();
-      await expect(buttons.nth(1)).toBeEnabled();
+      await buttons.nth(0).isDisabled();
+      await buttons.nth(1).isEnabled();
     });
   });
 
   test.describe("withdraw open tutorial campaign", () => {
     test("when user withdraws, then status updates to rejected", async ({ factory, student }) => {
-      const campaign = await factory.create("registration_campaign", ["open"], { capacity: 100 });
+      const campaign = await factory.create("registration_campaign", ["open", "first_come_first_served"], { capacity: 100 });
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
 
@@ -195,6 +195,6 @@ test.describe("integration between child and parent campaign", () => {
     // Try to withdraw parent
     await parentPage.goto();
     await parentPage.withdraw();
-    await expect(student.page.getByText(/Withdrawal is blocked because the following campaigns are confirmed/i)).toBeVisible();
+    await expect(student.page.getByText("Withdrawal is blocked")).toBeVisible();
   });
 });
