@@ -30,6 +30,32 @@
     </div>
   <% end %>
 
+  <% if @conflicting_registrations.present? %>
+    <div class="alert alert-warning">
+      <h4 class="alert-heading"><i class="bi bi-exclamation-circle-fill"></i> <%= t("registration.allocation.conflicts.title") %></h4>
+      <p><%= t("registration.allocation.conflicts.desc") %></p>
+      <hr>
+      <ul>
+        <% @conflicting_registrations.each do |conflict| %>
+          <li class="mb-1">
+            <strong><%= conflict[:user].name %></strong> (<%= conflict[:user].email %>) -
+            <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
+            <% if conflict[:registration] %>
+              <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: conflict[:user].id, source: "allocation"),
+                            method: :delete,
+                            class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                            data: { confirm: t("basics.confirm") },
+                            form: { style: "display:inline-block;" },
+                            title: t("registration.user_registration.actions.remove_user") do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div class="mb-3">
     <%= link_to registration_campaign_path(@campaign),
                 class: "btn btn-sm btn-outline-secondary",

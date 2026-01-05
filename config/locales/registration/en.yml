@@ -129,6 +129,10 @@ en:
           planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
     allocation:
       started: "Allocation has been calculated."
+      conflicts:
+        title: "Conflicting Registrations"
+        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{tutorial}"
       dashboard:
         title: "Allocation Dashboard"
         last_updated: "Last updated: %{time}"

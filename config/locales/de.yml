@@ -4100,6 +4100,12 @@ de:
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
+                Veranstaltung.
         user:
           attributes:
             courses:

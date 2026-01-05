@@ -129,6 +129,10 @@ de:
           planning: "Um den Bedarf für eine Veranstaltung im Voraus zu messen, ist es möglich, ein Nur-Planungs-Verfahren für die Veranstaltung (als einziges Element) zu verwenden. Das Ergebnis dieses Verfahrens wird nicht in eine Teilnehmerliste übertragen. Ein solches Verfahren kann also auch problemlos als Ergänzung zum \"Gruppen-Pfad\" verwendet werden."
     allocation:
       started: "Zuteilung wurde berechnet."
+      conflicts:
+        title: "Konfligierende Registrierungen"
+        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Sie die Zuteilung durchführen, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
+        currently_in: "aktuell in %{tutorial}"
       dashboard:
         title: "Zuteilungs-Dashboard"
         last_updated: "Stand: %{time}"

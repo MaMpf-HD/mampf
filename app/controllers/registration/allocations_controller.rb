@@ -91,6 +91,29 @@ module Registration
         # Check for policy violations (dry run)
         guard_result = Registration::FinalizationGuard.new(@campaign).check
         @policy_violations = guard_result.success? ? [] : guard_result.data
+
+        # Find conflicts: Users in this campaign who are already in a tutorial for this lecture
+        @conflicting_registrations = []
+        return unless @campaign.campaignable.is_a?(Lecture)
+
+        registered_user_ids = @campaign.user_registrations.pluck(:user_id)
+        existing_memberships =
+          TutorialMembership.joins(:tutorial)
+                            .where(tutorials: { lecture_id: @campaign.campaignable.id })
+                            .where(user_id: registered_user_ids)
+                            .includes(:user, :tutorial)
+
+        registrations_by_user = @campaign.user_registrations
+                                         .where(user_id: existing_memberships.map(&:user_id))
+                                         .index_by(&:user_id)
+
+        @conflicting_registrations = existing_memberships.map do |m|
+          {
+            user: m.user,
+            tutorial: m.tutorial,
+            registration: registrations_by_user[m.user_id]
+          }
+        end
       end
 
       def respond_with_success(message)

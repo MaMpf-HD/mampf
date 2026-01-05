@@ -43,4 +43,36 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.tutors.size).to eq(3)
     end
   end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:user) }
+
+    before do
+      # User is in another tutorial of the same lecture
+      create(:tutorial_membership, user: user, tutorial: other_tutorial)
+    end
+
+    it "removes the user from other tutorials in the same lecture" do
+      expect(other_tutorial.members).to include(user)
+
+      tutorial.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(other_tutorial.reload.members).not_to include(user)
+      expect(tutorial.reload.members).to include(user)
+    end
+
+    it "does not remove the user from tutorials in other lectures" do
+      other_lecture = create(:lecture)
+      other_lecture_tutorial = create(:tutorial, lecture: other_lecture)
+      create(:tutorial_membership, user: user, tutorial: other_lecture_tutorial)
+
+      tutorial.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(other_lecture_tutorial.reload.members).to include(user)
+    end
+  end
 end
