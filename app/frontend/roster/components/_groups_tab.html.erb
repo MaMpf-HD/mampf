@@ -45,6 +45,12 @@
                     data: { turbo_prefetch: false } do %>
           <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
         <% end %>
+      <% elsif group[:type] == :talks %>
+        <%= link_to new_talk_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                    class: "btn btn-sm btn-light",
+                    data: { turbo_prefetch: false } do %>
+          <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+        <% end %>
       <% end %>
     </div>
     <div class="table-responsive">

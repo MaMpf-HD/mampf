@@ -1,0 +1,32 @@
+<%= form_with model: talk,
+              id: dom_id(talk, "form"),
+              data: {
+                turbo: true,
+                controller: "capacity-guard",
+                action: "submit->capacity-guard#submit",
+                capacity_guard_current_count_value: talk.speakers.count,
+                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+              } do |f| %>
+  <div class="modal-body">
+    <%= f.hidden_field :lecture_id %>
+    <%= hidden_group_type_field(params[:group_type]) %>
+
+    <div class="mb-3">
+      <%= f.label :title, t('basics.title'), class: "form-label" %>
+      <%= f.text_field :title, class: "form-control", placeholder: t('basics.title') %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
+      <%= f.number_field :capacity,
+            class: "form-control",
+            placeholder: "∞",
+            min: 0,
+            data: { capacity_guard_target: "input" } %>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
+    <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
+  </div>
+<% end %>

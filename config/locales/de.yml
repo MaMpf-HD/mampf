@@ -3911,6 +3911,8 @@ de:
       updated: 'Gruppe erfolgreich aktualisiert.'
       destroyed: 'Gruppe erfolgreich gelöscht.'
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
+    talks:
+      created: 'Vortrag erfolgreich erstellt.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran

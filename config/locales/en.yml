@@ -3693,6 +3693,8 @@ en:
       updated: 'Cohort successfully updated.'
       destroyed: 'Cohort successfully deleted.'
       destruction_failed: 'Cohort could not be deleted.'
+    talks:
+      created: 'Talk successfully created.'
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
