@@ -133,7 +133,7 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      params.expect(cohort: [:title, :capacity])
+      params.expect(cohort: [:title, :capacity, :description])
     end
 
     def create_turbo_streams(group_type)

@@ -60,6 +60,8 @@
             <th><%= t('roster.columns.title') %></th>
             <% if group[:type] == :tutorials %>
               <th><%= t('roster.columns.tutors') %></th>
+            <% elsif group[:type] == :cohorts %>
+              <th><%= t('basics.description') %></th>
             <% elsif group[:type] == :talks %>
               <th><%= t('basics.date') %></th>
               <th><%= t('roster.columns.speakers') %></th>
@@ -76,6 +78,14 @@
               <td class="fw-medium"><%= item.title %></td>
               <% if group[:type] == :tutorials %>
                 <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
+              <% elsif group[:type] == :cohorts %>
+                <td>
+                  <% if item.description.present? %>
+                    <span data-bs-toggle="tooltip" title="<%= item.description %>">
+                      <%= truncate(item.description, length: 40) %>
+                    </span>
+                  <% end %>
+                </td>
               <% elsif group[:type] == :talks %>
                 <td><%= format_talk_dates(item.dates) %></td>
                 <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
