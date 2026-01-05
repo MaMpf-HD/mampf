@@ -100,6 +100,8 @@ class TalksController < ApplicationController
         @talk.insert_at(position + 1)
       end
 
+      flash.now[:notice] = t("controllers.talks.updated")
+
       respond_to do |format|
         format.html { redirect_to edit_talk_path(@talk) }
         format.turbo_stream do
@@ -109,7 +111,7 @@ class TalksController < ApplicationController
             refresh_campaigns_index_stream(@talk.lecture),
             turbo_stream.update("modal-container", ""),
             stream_flash
-          ]
+          ].compact
         end
       end
       return
@@ -130,7 +132,11 @@ class TalksController < ApplicationController
 
   def destroy
     lecture = @talk.lecture
-    @talk.destroy
+    if @talk.destroy
+      flash.now[:notice] = t("controllers.talks.destroyed")
+    else
+      flash.now[:alert] = t("controllers.talks.destruction_failed")
+    end
 
     respond_to do |format|
       format.html { redirect_to edit_lecture_path(lecture) }
@@ -140,7 +146,7 @@ class TalksController < ApplicationController
           update_roster_groups_list_stream(group_type),
           refresh_campaigns_index_stream(lecture),
           stream_flash
-        ]
+        ].compact
       end
     end
   end

@@ -3913,6 +3913,9 @@ de:
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     talks:
       created: 'Vortrag erfolgreich erstellt.'
+      updated: 'Vortrag erfolgreich aktualisiert.'
+      destroyed: 'Vortrag erfolgreich gelöscht.'
+      destruction_failed: 'Vortrag konnte nicht gelöscht werden.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
