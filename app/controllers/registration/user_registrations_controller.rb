@@ -69,10 +69,10 @@ module Registration
 
     def update
       if @campaign.lecture_based?
-        pref_items = UserRegistration::PreferencesHandler.new
-                                                         .pref_item_build_for_save(
-                                                           params[:preferences_json]
-                                                         )
+        pref_items =
+          UserRegistration::PreferencesHandler
+            .new
+            .pref_item_build_for_save(params[:preferences_json])
         result = Registration::UserRegistration::LecturePreferenceEditService
                  .new(@campaign, current_user).update!(pref_items)
         if result.success?
