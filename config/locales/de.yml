@@ -3606,7 +3606,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
-    item_count: '%{count} Artikel'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
