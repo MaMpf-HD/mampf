@@ -61,6 +61,7 @@
             <% if group[:type] == :tutorials %>
               <th><%= t('roster.columns.tutors') %></th>
             <% elsif group[:type] == :talks %>
+              <th><%= t('basics.date') %></th>
               <th><%= t('roster.columns.speakers') %></th>
             <% end %>
             <th><%= t('roster.columns.capacity') %></th>
@@ -76,6 +77,7 @@
               <% if group[:type] == :tutorials %>
                 <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
               <% elsif group[:type] == :talks %>
+                <td><%= format_talk_dates(item.dates) %></td>
                 <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
               <% end %>
               <td><%= item.capacity || "∞" %></td>

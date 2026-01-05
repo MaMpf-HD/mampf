@@ -79,6 +79,20 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         end
         expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
       end
+
+      it "sorts talks by position" do
+        # Clear existing talks to avoid interference
+        lecture.talks.destroy_all
+
+        talk1 = create(:talk, lecture: lecture, position: 2)
+        talk2 = create(:talk, lecture: lecture, position: 1)
+
+        component = described_class.new(lecture: lecture, group_type: :talks)
+        groups = component.groups
+        talks = groups.find { |g| g[:type] == :talks }[:items]
+
+        expect(talks).to eq([talk2, talk1])
+      end
     end
   end
 

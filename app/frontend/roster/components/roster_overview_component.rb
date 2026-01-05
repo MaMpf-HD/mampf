@@ -84,9 +84,13 @@ class RosterOverviewComponent < ViewComponent::Base
 
       # Sort items: those with manual mode switch at the bottom
       sorted_items = items.sort_by do |item|
-        has_switch = (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
-                     (!item.manual_roster_mode? && item.can_enable_manual_mode?)
-        [has_switch ? 1 : 0, item.title]
+        if type == :talks
+          item.position
+        else
+          has_switch = (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
+                       (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+          [has_switch ? 1 : 0, item.title]
+        end
       end
 
       klass = config[:model].constantize
