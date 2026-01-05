@@ -77,6 +77,10 @@ de:
     empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
+    tooltips:
+      manage_participants: "Teilnehmende verwalten"
+      edit_settings: "Einstellungen bearbeiten"
+      delete: "Löschen"
     hints:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."

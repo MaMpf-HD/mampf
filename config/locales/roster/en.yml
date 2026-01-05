@@ -75,6 +75,10 @@ en:
     campaign_running: 'Campaign running'
     campaign_draft: 'Campaign planned'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
+    tooltips:
+      manage_participants: "Manage Participants"
+      edit_settings: "Edit Settings"
+      delete: "Delete"
     hints:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."

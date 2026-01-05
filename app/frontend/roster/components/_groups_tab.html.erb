@@ -120,7 +120,7 @@
                   <% if !item.locked? %>
                     <%= link_to component.group_path(item),
                                 class: "btn btn-sm btn-outline-primary",
-                                title: t('roster.manage'),
+                                title: t('roster.tooltips.manage_participants'),
                                 data: { bs_toggle: "tooltip" } do %>
                       <i class="bi bi-person-lines-fill"></i>
                     <% end %>
@@ -143,12 +143,14 @@
                   <% if item.is_a?(Tutorial) %>
                     <%= link_to edit_tutorial_path(item, group_type: group_type),
                                 class: "btn btn-sm btn-outline-primary",
-                                data: { turbo_stream: true } do %>
+                                title: t('roster.tooltips.edit_settings'),
+                                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
                       <i class="bi bi-tools"></i>
                     <% end %>
                     <% if item.destructible? %>
                       <%= link_to tutorial_path(item, group_type: group_type),
-                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
+                                  title: t('roster.tooltips.delete'),
                                   class: "btn btn-sm btn-outline-danger" do %>
                         <i class="bi bi-trash"></i>
                       <% end %>
@@ -156,12 +158,14 @@
                   <% elsif item.is_a?(Cohort) %>
                     <%= link_to edit_cohort_path(item, group_type: group_type),
                                 class: "btn btn-sm btn-outline-primary",
-                                data: { turbo_stream: true } do %>
+                                title: t('roster.tooltips.edit_settings'),
+                                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
                       <i class="bi bi-tools"></i>
                     <% end %>
                     <% if item.destructible? %>
                       <%= link_to cohort_path(item, group_type: group_type),
-                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
+                                  title: t('roster.tooltips.delete'),
                                   class: "btn btn-sm btn-outline-danger" do %>
                         <i class="bi bi-trash"></i>
                       <% end %>
@@ -169,12 +173,14 @@
                   <% elsif item.is_a?(Talk) %>
                     <%= link_to edit_talk_path(item, group_type: group_type),
                                 class: "btn btn-sm btn-outline-primary",
-                                data: { turbo_stream: true } do %>
+                                title: t('roster.tooltips.edit_settings'),
+                                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
                       <i class="bi bi-tools"></i>
                     <% end %>
                     <% if item.destructible? %>
                       <%= link_to talk_path(item, group_type: group_type),
-                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic') },
+                                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
+                                  title: t('roster.tooltips.delete'),
                                   class: "btn btn-sm btn-outline-danger" do %>
                         <i class="bi bi-trash"></i>
                       <% end %>
