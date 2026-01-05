@@ -176,4 +176,21 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
     end
   end
+
+  describe "#campaign_badge_props" do
+    let(:draft_campaign) { build(:registration_campaign, status: :draft) }
+    let(:running_campaign) { build(:registration_campaign, status: :open) }
+
+    it "returns draft badge properties for draft campaign" do
+      props = component.campaign_badge_props(draft_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_draft"))
+      expect(props[:css_class]).to include("bg-secondary")
+    end
+
+    it "returns running badge properties for running campaign" do
+      props = component.campaign_badge_props(running_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_running"))
+      expect(props[:css_class]).to include("bg-info")
+    end
+  end
 end
