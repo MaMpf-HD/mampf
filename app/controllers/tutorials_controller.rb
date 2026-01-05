@@ -72,6 +72,19 @@ class TutorialsController < ApplicationController
   end
 
   def edit
+    authorize! :edit, @tutorial
+
+    respond_to do |format|
+      format.js
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/edit_modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def create
@@ -94,9 +107,33 @@ class TutorialsController < ApplicationController
   end
 
   def update
-    @tutorial.update(tutorial_params)
-    @errors = @tutorial.errors
-    nil if @errors.present?
+    authorize! :update, @tutorial
+
+    if @tutorial.update(tutorial_params)
+      flash.now[:notice] = t("controllers.tutorials.updated")
+    else
+      @errors = @tutorial.errors
+    end
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = parse_group_type
+        streams = []
+
+        if @tutorial.errors.empty?
+          streams << update_roster_groups_list_stream(group_type)
+          streams << turbo_stream.update("modal-container", "")
+        else
+          streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                          partial: "tutorials/edit_form",
+                                          locals: { tutorial: @tutorial })
+        end
+
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams, status: @tutorial.errors.empty? ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def destroy

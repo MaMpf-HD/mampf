@@ -3445,6 +3445,7 @@ en:
     irrelevant: 'irrelevant'
   buttons:
     create_tutorial: 'Create Tutorial'
+    edit_tutorial: 'Edit Tutorial'
     create_cohort: 'Create Cohort'
     save: 'Save'
     cancel: 'Cancel'
@@ -3677,6 +3678,7 @@ en:
       Your speaker status has been updated.
     tutorials:
       created: 'Tutorial successfully created.'
+      updated: 'Tutorial successfully updated.'
       destroyed: 'Tutorial successfully deleted.'
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already

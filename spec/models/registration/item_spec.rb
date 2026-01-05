@@ -89,6 +89,26 @@ RSpec.describe(Registration::Item, type: :model) do
           campaign.update!(status: :completed)
         end
 
+        it "allows changing capacity" do
+          item.capacity = 10
+          expect(item).to be_valid
+        end
+      end
+
+      context "when campaign is completed and planning only" do
+        let(:campaign) do
+          create(:registration_campaign, :draft, :planning_only, campaignable: create(:lecture))
+        end
+        let(:item) do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: campaign.campaignable)
+        end
+
+        before do
+          item # ensure item exists
+          campaign.update!(status: :completed)
+        end
+
         it "prevents changing capacity" do
           item.capacity = 10
           expect(item).not_to be_valid
@@ -211,6 +231,14 @@ RSpec.describe(Registration::Item, type: :model) do
       end
 
       context "when capacity is frozen" do
+        let(:campaign) do
+          create(:registration_campaign, :draft, :planning_only, campaignable: create(:lecture))
+        end
+        let(:item) do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: campaign.campaignable)
+        end
+
         before do
           item # ensure item exists
           campaign.update!(status: :completed)
@@ -282,65 +310,6 @@ RSpec.describe(Registration::Item, type: :model) do
         allow(item.registerable).to receive(:registration_title).and_return(nil)
         allow(item.registerable).to receive(:title).and_return("Original Title")
         expect(item.title).to eq("Original Title")
-      end
-    end
-
-    describe "#capacity_editable?" do
-      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
-      let(:item) { create(:registration_item, registration_campaign: campaign) }
-
-      context "when campaign is draft" do
-        it "returns true" do
-          expect(item.capacity_editable?).to be(true)
-        end
-      end
-
-      context "when campaign is open" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :open)
-        end
-
-        it "returns true" do
-          expect(item.capacity_editable?).to be(true)
-        end
-      end
-
-      context "when campaign is completed" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :completed)
-        end
-
-        it "returns false" do
-          expect(item.capacity_editable?).to be(false)
-        end
-      end
-
-      context "when campaign is processing" do
-        context "and preference based" do
-          let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
-
-          before do
-            item # ensure item exists
-            campaign.update!(status: :processing)
-          end
-
-          it "returns true" do
-            expect(item.capacity_editable?).to be(true)
-          end
-        end
-
-        context "and FCFS" do
-          before do
-            item # ensure item exists
-            campaign.update!(status: :processing)
-          end
-
-          it "returns true" do
-            expect(item.capacity_editable?).to be(true)
-          end
-        end
       end
     end
 

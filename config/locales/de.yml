@@ -3658,6 +3658,7 @@ de:
     irrelevant: 'egal'
   buttons:
     create_tutorial: 'Tutorium erstellen'
+    edit_tutorial: 'Tutorium bearbeiten'
     create_cohort: 'Gruppe erstellen'
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
@@ -3895,6 +3896,7 @@ de:
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
+      updated: 'Tutorium erfolgreich aktualisiert.'
       destroyed: 'Tutorium erfolgreich gelöscht.'
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
