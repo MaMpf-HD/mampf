@@ -22,7 +22,8 @@ module Registration
                                      .where(user_id: user.id)
                                      .where(status: [:confirmed, :pending])
         user_registrations.includes(:registration_item)
-                          .flat_map(&:registration_item)
+                          .map(&:registration_item)
+                          .flatten
                           .sort_by { |i| i.preference_rank(user) }
                           .map do |item|
           ItemPreference.new(item,
