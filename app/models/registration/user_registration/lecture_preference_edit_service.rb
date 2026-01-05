@@ -6,8 +6,7 @@ module Registration
           errors = validate_update
           return Result.new(false, errors) unless errors.empty?
 
-          registrations_current_campaign = @campaign.user_registrations.where(user_id: @user.id)
-          registrations_current_campaign.destroy_all
+          @campaign.user_registrations.where(user_id: @user.id).destroy_all
           pref_items.each do |pref_item|
             item = Registration::Item.find(pref_item.id)
             Registration::UserRegistration.create!(

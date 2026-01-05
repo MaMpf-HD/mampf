@@ -5,11 +5,21 @@ module Registration
       ItemPreference       = Struct.new(:item, :rank)
 
       def pref_item_from_json(json)
-        Array(JSON.parse(json)).map do |h|
-          SimpleItemPreference.new(
-            h.dig("item", "id").to_i,
-            h["rank"].to_i
-          )
+        data = JSON.parse(json)
+
+        Array(data).map do |h|
+          item_id = h.dig("item", "id")
+          rank    = h["rank"]
+
+          unless item_id.is_a?(Integer) || item_id.to_s.match?(/\A\d+\z/)
+            raise(ArgumentError, "Invalid or missing item.id in preference payload: #{h.inspect}")
+          end
+
+          unless rank.is_a?(Integer) || rank.to_s.match?(/\A\d+\z/)
+            raise(ArgumentError, "Invalid or missing rank in preference payload: #{h.inspect}")
+          end
+
+          SimpleItemPreference.new(item_id.to_i, rank.to_i)
         end
       end
 
@@ -22,8 +32,7 @@ module Registration
                                      .where(user_id: user.id)
                                      .where(status: [:confirmed, :pending])
         user_registrations.includes(:registration_item)
-                          .map(&:registration_item)
-                          .flatten
+                          .flat_map(&:registration_item)
                           .sort_by { |i| i.preference_rank(user) }
                           .map do |item|
           ItemPreference.new(item,
