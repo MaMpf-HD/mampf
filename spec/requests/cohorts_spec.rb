@@ -118,11 +118,11 @@ RSpec.describe("Cohorts", type: :request) do
       end
 
       context "with invalid parameters" do
-        it "renders a successful response (but with error messages in stream)" do
+        it "renders an unprocessable_content response" do
           patch cohort_path(cohort),
                 params: { cohort: { title: "" } },
                 as: :turbo_stream
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
     end
