@@ -9,7 +9,7 @@ module Registration
 
     def show
       authorize! :view_allocation, @campaign
-      load_allocation_data
+      @dashboard = Registration::AllocationDashboard.new(@campaign)
 
       respond_to do |format|
         format.html
@@ -24,7 +24,7 @@ module Registration
       authorize! :allocate, @campaign
       if @campaign.closed? || @campaign.processing?
         Registration::AllocationService.new(@campaign).allocate!
-        load_allocation_data
+        @dashboard = Registration::AllocationDashboard.new(@campaign)
 
         respond_to do |format|
           format.html do
@@ -77,53 +77,6 @@ module Registration
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
-      end
-
-      def load_allocation_data
-        load_stats
-        check_policy_violations
-        find_conflicting_registrations
-      end
-
-      def load_stats
-        assignment = @campaign.user_registrations
-                              .where(status: :confirmed)
-                              .pluck(:user_id, :registration_item_id)
-                              .to_h
-        @stats = Registration::AllocationStats.new(@campaign, assignment)
-        @unassigned_students = User.where(id: @stats.unassigned_user_ids)
-                                   .order(:email)
-      end
-
-      def check_policy_violations
-        # Check for policy violations (dry run)
-        guard_result = Registration::FinalizationGuard.new(@campaign).check
-        @policy_violations = guard_result.success? ? [] : guard_result.data
-      end
-
-      def find_conflicting_registrations
-        # Find conflicts: Users in this campaign who are already in a tutorial for this lecture
-        @conflicting_registrations = []
-        return unless @campaign.campaignable.is_a?(Lecture)
-
-        registered_user_ids = @campaign.user_registrations.pluck(:user_id)
-        existing_memberships =
-          TutorialMembership.joins(:tutorial)
-                            .where(tutorials: { lecture_id: @campaign.campaignable.id })
-                            .where(user_id: registered_user_ids)
-                            .includes(:user, :tutorial)
-
-        registrations_by_user = @campaign.user_registrations
-                                         .where(user_id: existing_memberships.map(&:user_id))
-                                         .index_by(&:user_id)
-
-        @conflicting_registrations = existing_memberships.map do |m|
-          {
-            user: m.user,
-            tutorial: m.tutorial,
-            registration: registrations_by_user[m.user_id]
-          }
-        end
       end
 
       def respond_with_success(message)

@@ -43,16 +43,7 @@ module Registration
       end
 
       def load_allocation_data
-        assignment = @campaign.user_registrations
-                              .where(status: :confirmed)
-                              .pluck(:user_id, :registration_item_id)
-                              .to_h
-        @stats = Registration::AllocationStats.new(@campaign, assignment)
-        @unassigned_students = User.where(id: @stats.unassigned_user_ids)
-                                   .order(:email)
-
-        guard_result = Registration::FinalizationGuard.new(@campaign).check
-        @policy_violations = guard_result.success? ? [] : guard_result.data
+        @dashboard = Registration::AllocationDashboard.new(@campaign)
       end
 
       def set_campaign
