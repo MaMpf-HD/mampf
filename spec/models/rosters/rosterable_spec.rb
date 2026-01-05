@@ -327,7 +327,8 @@ RSpec.describe(Rosters::Rosterable) do
 
       it "adds an error and aborts destruction" do
         rosterable.destroy
-        expect(rosterable.errors[:base]).to(include(I18n.t("roster.errors.cannot_delete_in_campaign")))
+        expect(rosterable.errors[:base])
+          .to(include(I18n.t("roster.errors.cannot_delete_in_campaign")))
         expect(rosterable).not_to(be_destroyed)
       end
     end
@@ -339,7 +340,8 @@ RSpec.describe(Rosters::Rosterable) do
 
       it "adds an error and aborts destruction" do
         rosterable.destroy
-        expect(rosterable.errors[:base]).to(include(I18n.t("roster.errors.cannot_delete_not_empty")))
+        expect(rosterable.errors[:base])
+          .to(include(I18n.t("roster.errors.cannot_delete_not_empty")))
         expect(rosterable).not_to(be_destroyed)
       end
     end

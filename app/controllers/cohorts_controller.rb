@@ -130,7 +130,8 @@ class CohortsController < ApplicationController
         streams << turbo_stream.update("modal-container", "")
       elsif @cohort.new_record? || @cohort.errors.present?
         # Failure case or New form: Replace form
-        # We need to check if the form exists in the DOM, otherwise this might fail silently or cause issues
+        # We need to check if the form exists in the DOM, otherwise this might
+        # fail silently or cause issues.
         # But for now, let's assume the modal is open if we are editing/creating
         streams << turbo_stream.replace("new_cohort_form",
                                         partial: "cohorts/new_form",
