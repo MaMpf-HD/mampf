@@ -32,37 +32,37 @@ RSpec.describe(Registration::UserRegistration::PreferencesHandler, type: :servic
 
     it "up should swap rank selected item and item before it" do
       result = described_class.new.up(item3.id, pref_items_json)
-      expect(result.first.item.id).to equal(item2.id)
-      expect(result.first.rank).to equal(1)
-      expect(result.second.item.id).to equal(item3.id)
-      expect(result.second.rank).to equal(2)
-      expect(result.third.item.id).to equal(item.id)
-      expect(result.third.rank).to equal(3)
+      expect(result.first.item.id).to eq(item2.id)
+      expect(result.first.rank).to eq(1)
+      expect(result.second.item.id).to eq(item3.id)
+      expect(result.second.rank).to eq(2)
+      expect(result.third.item.id).to eq(item.id)
+      expect(result.third.rank).to eq(3)
     end
 
     it "down should swap rank selected item and item below it" do
       result = described_class.new.down(item2.id, pref_items_json)
-      expect(result.first.item.id).to equal(item.id)
-      expect(result.first.rank).to equal(1)
-      expect(result.second.item.id).to equal(item2.id)
-      expect(result.second.rank).to equal(2)
-      expect(result.third.item.id).to equal(item3.id)
-      expect(result.third.rank).to equal(3)
+      expect(result.first.item.id).to eq(item.id)
+      expect(result.first.rank).to eq(1)
+      expect(result.second.item.id).to eq(item2.id)
+      expect(result.second.rank).to eq(2)
+      expect(result.third.item.id).to eq(item3.id)
+      expect(result.third.rank).to eq(3)
     end
 
     it "add should add item selected into result" do
       result = described_class.new.add(item3.id, pref_items_json2)
-      expect(result.size).to equal(3)
+      expect(result.size).to eq(3)
     end
 
     it "no duplicating adding" do
       result = described_class.new.add(item2.id, pref_items_json2)
-      expect(result.size).to equal(2)
+      expect(result.size).to eq(2)
     end
 
     it "remove should remove item selected out of result" do
       result = described_class.new.remove(item3.id, pref_items_json)
-      expect(result.count).to equal(2)
+      expect(result.count).to eq(2)
     end
   end
 end
