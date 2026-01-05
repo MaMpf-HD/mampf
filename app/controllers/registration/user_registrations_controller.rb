@@ -17,7 +17,6 @@ module Registration
     before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
                                         :update]
     before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
-    ItemPreference = Struct.new(:item, :rank)
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
