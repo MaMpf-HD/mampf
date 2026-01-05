@@ -59,6 +59,25 @@ test.describe("given completed campaign", () => {
   });
 });
 
+test.describe("given completed campaign, preference based", () => {
+  test("with user registration, when user visits, then assigned status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_first_item_registered"], { user_id: student["user"]["id"], self_registerable: true });
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Assigned")).toBeVisible();
+  });
+
+  test("without user registration, when user visits, then dismissed status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "preference_based"], { self_registerable: true });
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Dismissed")).toBeVisible();
+    await expect(student.page.getByText("none of")).toBeVisible();
+  });
+});
+
 test.describe("closed campaign", () => {
   test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["closed"], { self_registerable: true });
