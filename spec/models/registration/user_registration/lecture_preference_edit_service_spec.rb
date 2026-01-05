@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, type: :service) do
   let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
+  let(:teacher) { FactoryBot.create(:confirmed_user) }
   let(:lecture) { FactoryBot.create(:lecture, teacher: teacher) }
 
   describe "edit preference tutorial campaign" do
