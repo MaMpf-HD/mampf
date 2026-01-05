@@ -1,0 +1,22 @@
+<div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
+  <h6 class="mb-0 fw-bold"><%= t("registration.item.groups.#{group[:type]}") %></h6>
+  <% if group[:type] == :tutorials %>
+    <%= link_to new_tutorial_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                class: "btn btn-sm btn-light",
+                data: { turbo_prefetch: false } do %>
+      <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+    <% end %>
+  <% elsif group[:type] == :cohorts %>
+    <%= link_to new_cohort_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                class: "btn btn-sm btn-light",
+                data: { turbo_prefetch: false } do %>
+      <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+    <% end %>
+  <% elsif group[:type] == :talks %>
+    <%= link_to new_talk_path(lecture_id: component.lecture.id, format: :turbo_stream, group_type: group_type),
+                class: "btn btn-sm btn-light",
+                data: { turbo_prefetch: false } do %>
+      <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+    <% end %>
+  <% end %>
+</div>

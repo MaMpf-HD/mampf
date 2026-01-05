@@ -1,0 +1,50 @@
+<% campaign = component.active_campaign_for(item) %>
+<tr>
+  <td class="fw-medium"><%= item.title %></td>
+  <% if group[:type] == :tutorials %>
+    <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
+  <% elsif group[:type] == :cohorts %>
+    <td>
+      <% if item.description.present? %>
+        <span data-bs-toggle="tooltip" title="<%= item.description %>">
+          <%= truncate(item.description, length: 40) %>
+        </span>
+      <% end %>
+    </td>
+  <% elsif group[:type] == :talks %>
+    <td><%= format_talk_dates(item.dates) %></td>
+    <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
+  <% end %>
+  <td><%= item.capacity || "∞" %></td>
+  <td>
+    <% if component.show_campaign_running_badge?(item, campaign) %>
+      <% badge = component.campaign_badge_props(campaign) %>
+      <span class="<%= badge[:css_class] %>">
+        <%= badge[:text] %>
+      </span>
+    <% else %>
+      <div class="d-flex align-items-center">
+        <div class="flex-grow-1 me-2">
+          <% if item.capacity %>
+            <%= progress_bar(
+                  item.roster_entries.count,
+                  item.capacity,
+                  classification: :utilization,
+                  height: "6px",
+                  show_label: false,
+                  container_class: "progress"
+                ) %>
+          <% end %>
+        </div>
+        <span class="small text-muted"><%= item.roster_entries.count %></span>
+      </div>
+    <% end %>
+  </td>
+  <td class="text-end">
+    <%= render "roster/components/groups_tab/item_actions",
+               item: item,
+               campaign: campaign,
+               component: component,
+               group_type: group_type %>
+  </td>
+</tr>

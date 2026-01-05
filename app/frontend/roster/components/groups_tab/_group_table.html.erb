@@ -1,0 +1,29 @@
+<div class="table-responsive">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th><%= t('roster.columns.title') %></th>
+        <% if group[:type] == :tutorials %>
+          <th><%= t('roster.columns.tutors') %></th>
+        <% elsif group[:type] == :cohorts %>
+          <th><%= t('basics.description') %></th>
+        <% elsif group[:type] == :talks %>
+          <th><%= t('basics.date') %></th>
+          <th><%= t('roster.columns.speakers') %></th>
+        <% end %>
+        <th><%= t('roster.columns.capacity') %></th>
+        <th><%= t('roster.columns.occupancy') %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% group[:items].each do |item| %>
+        <%= render "roster/components/groups_tab/item_row",
+                   item: item,
+                   group: group,
+                   component: component,
+                   group_type: group_type %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
