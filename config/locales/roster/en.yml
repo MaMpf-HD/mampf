@@ -91,8 +91,9 @@ en:
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
     warnings:
-      capacity_exceeded: "Warning: Group capacity exceeded."
-      confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"
+      capacity_exceeded: 'The capacity of this group has been reached.'
+      confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
+      capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
     messages:
       updated: "Settings updated."
       user_moved: "Student moved to %{target}."

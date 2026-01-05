@@ -1,4 +1,12 @@
-<%= form_with model: tutorial, id: dom_id(tutorial, "form"), data: { turbo: true } do |f| %>
+<%= form_with model: tutorial,
+              id: dom_id(tutorial, "form"),
+              data: {
+                turbo: true,
+                controller: "capacity-guard",
+                action: "submit->capacity-guard#submit",
+                capacity_guard_current_count_value: tutorial.members.count,
+                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+              } do |f| %>
   <div class="modal-body">
     <%= f.hidden_field :lecture_id %>
     <%= hidden_group_type_field(params[:group_type]) %>
@@ -24,7 +32,10 @@
 
     <div class="mb-3">
       <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
-      <%= f.number_field :capacity, class: "form-control", placeholder: "∞" %>
+      <%= f.number_field :capacity,
+            class: "form-control",
+            placeholder: "∞",
+            data: { capacity_guard_target: "input" } %>
     </div>
   </div>
   <div class="modal-footer">
