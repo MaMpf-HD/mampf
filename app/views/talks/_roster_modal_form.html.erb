@@ -69,6 +69,23 @@
         <% end %>
       </div>
     <% end %>
+
+    <% if talk.persisted? %>
+      <div class="alert alert-info mt-3 mb-0 small">
+        <i class="fas fa-info-circle me-2"></i>
+        <%= t('roster.hints.talk_content_html',
+              link: link_to(t('roster.buttons.full_editor'),
+                            edit_talk_path(talk),
+                            class: "alert-link",
+                            data: { turbo: false })) %>
+      </div>
+    <% else %>
+      <div class="alert alert-info mt-3 mb-0 small">
+        <i class="fas fa-info-circle me-2"></i>
+        <%= t('roster.hints.talk_content_new') %>
+      </div>
+    <% end %>
+
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
