@@ -68,8 +68,12 @@ class TalksController < ApplicationController
 
     respond_to do |format|
       format.js do
-        @errors = @talk.errors unless saved
-        render :create
+        if saved
+          redirect_to edit_lecture_path(@talk.lecture)
+        else
+          @errors = @talk.errors
+          render :create
+        end
       end
       format.html do
         if saved
