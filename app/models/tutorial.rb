@@ -20,6 +20,8 @@ class Tutorial < ApplicationRecord
   before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
+  validate :lecture_must_not_be_seminar
+
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
 
@@ -80,5 +82,11 @@ class Tutorial < ApplicationRecord
 
       errors.add(:base, I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
       throw(:abort)
+    end
+
+    def lecture_must_not_be_seminar
+      return unless lecture&.seminar?
+
+      errors.add(:lecture, :must_not_be_seminar)
     end
 end
