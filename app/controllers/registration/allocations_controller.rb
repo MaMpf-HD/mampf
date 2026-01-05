@@ -80,6 +80,12 @@ module Registration
       end
 
       def load_allocation_data
+        load_stats
+        check_policy_violations
+        find_conflicting_registrations
+      end
+
+      def load_stats
         assignment = @campaign.user_registrations
                               .where(status: :confirmed)
                               .pluck(:user_id, :registration_item_id)
@@ -87,11 +93,15 @@ module Registration
         @stats = Registration::AllocationStats.new(@campaign, assignment)
         @unassigned_students = User.where(id: @stats.unassigned_user_ids)
                                    .order(:email)
+      end
 
+      def check_policy_violations
         # Check for policy violations (dry run)
         guard_result = Registration::FinalizationGuard.new(@campaign).check
         @policy_violations = guard_result.success? ? [] : guard_result.data
+      end
 
+      def find_conflicting_registrations
         # Find conflicts: Users in this campaign who are already in a tutorial for this lecture
         @conflicting_registrations = []
         return unless @campaign.campaignable.is_a?(Lecture)
