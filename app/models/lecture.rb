@@ -86,6 +86,8 @@ class Lecture < ApplicationRecord
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
 
+  has_many :cohorts, as: :context, dependent: :destroy
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }

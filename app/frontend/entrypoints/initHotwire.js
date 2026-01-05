@@ -38,6 +38,10 @@ window.Stimulus.register("registration-item-search", RegistrationItemController)
 import TouchedCheckController from "~/registration/touched_check/touched_check.controller.js";
 window.Stimulus.register("touched-check", TouchedCheckController);
 
+import LectureSearchController from "~/lectures/search/search.controller.js";
+window.Stimulus.register("lecture-search", LectureSearchController);
+
+
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 

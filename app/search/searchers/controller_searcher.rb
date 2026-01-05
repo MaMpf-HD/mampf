@@ -26,6 +26,7 @@ module Search
       def self.search(controller:, model_class:, configurator_class:, options: {})
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
+        use_infinite_scroll_pagination = options.fetch(:infinite_scroll, false)
 
         config = configurator_class.configure(
           user: controller.current_user,
@@ -33,7 +34,7 @@ module Search
           cookies: controller.send(:cookies)
         )
 
-        return controller.send(:pagy, :countish, model_class.none, limit: 1, page: 1) unless config
+        return controller.send(:pagy, :countish, model_class.none, limit: 1) unless config
 
         search_results = ModelSearcher.search(
           model_class: model_class,
@@ -41,24 +42,23 @@ module Search
           config: config
         )
 
-        items_per_page = calculate_items_per_page(config, model_class, search_results,
-                                                  default_per_page)
-
-        controller.send(:pagy, :countish, search_results,
-                        limit: items_per_page,
-                        page: config.params[:page])
+        if use_infinite_scroll_pagination
+          controller.send(:pagy, :countless, search_results,
+                          limit: default_per_page, count_over: true)
+        else
+          items_per_page = calculate_items_per_page(config, model_class, search_results,
+                                                    default_per_page)
+          controller.send(:pagy, :countish, search_results, limit: items_per_page)
+        end
       end
 
       class << self
         private
 
           # Gets the initial, permitted parameters by calling the specified method
-          # on the controller, and then merges in the top-level :page parameter.
+          # on the controller.
           def permitted_controller_params(controller, params_method_name)
-            search_specific_params = controller.send(params_method_name)
-            permitted_hash = search_specific_params.to_h
-            permitted_hash[:page] = controller.params[:page] if controller.params.key?(:page)
-            permitted_hash
+            controller.send(params_method_name).to_h
           end
 
           def calculate_items_per_page(config, model_class, search_results, default_per_page)

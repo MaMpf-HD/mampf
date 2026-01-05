@@ -275,13 +275,29 @@ class LecturesController < ApplicationController
     @pagy, @lectures = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
-      configurator_class: Search::Configurators::LectureSearchConfigurator
+      configurator_class: Search::Configurators::LectureSearchConfigurator,
+      options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
 
-    @results_as_list = params.dig(:search, :results_as_list) == "true"
-
     respond_to do |format|
-      format.js { render template: "lectures/search/search" }
+      format.js { render template: "lectures/search/old/search" }
+      format.turbo_stream do
+        if @pagy.page == 1
+          # initial rendering of first search results
+          render turbo_stream: turbo_stream.replace("lecture-search-results-wrapper",
+                                                    partial: "lectures/search/list")
+        else
+          # For infinite-scroll pagination, append results for subsequent pages
+          render turbo_stream: [
+            turbo_stream.replace("pagy-nav-next",
+                                 partial: "lectures/search/nav",
+                                 locals: { pagy: @pagy }),
+            turbo_stream.append("lecture-search-results",
+                                partial: "lectures/search/lecture",
+                                collection: @lectures)
+          ]
+        end
+      end
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")
       end
