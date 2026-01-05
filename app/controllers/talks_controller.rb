@@ -68,19 +68,13 @@ class TalksController < ApplicationController
 
     respond_to do |format|
       format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TalksController#create")
         if saved
           redirect_to edit_lecture_path(@talk.lecture)
         else
           @errors = @talk.errors
           render :create
-        end
-      end
-      format.html do
-        if saved
-          redirect_to edit_lecture_path(@talk.lecture)
-        else
-          @errors = @talk.errors
-          render :new
         end
       end
       format.turbo_stream do
@@ -145,7 +139,11 @@ class TalksController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to edit_lecture_path(lecture) }
+      format.html do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy HTML format accessed in " \
+                          "TalksController#destroy")
+        redirect_to edit_lecture_path(lecture)
+      end
       format.turbo_stream do
         group_type = parse_group_type
         render turbo_stream: [
