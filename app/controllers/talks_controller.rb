@@ -21,8 +21,10 @@ class TalksController < ApplicationController
                   current_user.locale || I18n.default_locale
 
     respond_to do |format|
-      format.js
-      format.html
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TalksController#new")
+      end
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "modal-container",

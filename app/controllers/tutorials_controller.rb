@@ -59,8 +59,10 @@ class TutorialsController < ApplicationController
     authorize! :new, @tutorial
 
     respond_to do |format|
-      format.js
-      format.html
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#new")
+      end
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "modal-container",
@@ -75,8 +77,10 @@ class TutorialsController < ApplicationController
     authorize! :edit, @tutorial
 
     respond_to do |format|
-      format.js
-      format.html
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#edit")
+      end
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "modal-container",
@@ -96,7 +100,10 @@ class TutorialsController < ApplicationController
     @errors = @tutorial.errors
 
     respond_to do |format|
-      format.js
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#create")
+      end
       format.turbo_stream do
         group_type = parse_group_type
 
@@ -116,7 +123,10 @@ class TutorialsController < ApplicationController
     end
 
     respond_to do |format|
-      format.js
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#update")
+      end
       format.turbo_stream do
         group_type = parse_group_type
         streams = []
@@ -145,7 +155,10 @@ class TutorialsController < ApplicationController
     end
 
     respond_to do |format|
-      format.js
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#destroy")
+      end
       format.turbo_stream do
         group_type = parse_group_type
         render turbo_stream: [update_roster_groups_list_stream(group_type),
