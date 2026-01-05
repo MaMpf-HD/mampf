@@ -64,7 +64,7 @@ class TutorialsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "modal-container",
-          partial: "tutorials/new_modal",
+          partial: "tutorials/modal",
           locals: { tutorial: @tutorial }
         )
       end
@@ -80,7 +80,7 @@ class TutorialsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "modal-container",
-          partial: "tutorials/edit_modal",
+          partial: "tutorials/modal",
           locals: { tutorial: @tutorial }
         )
       end
@@ -127,7 +127,7 @@ class TutorialsController < ApplicationController
           streams << turbo_stream.update("modal-container", "")
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
-                                          partial: "tutorials/edit_form",
+                                          partial: "tutorials/modal_form",
                                           locals: { tutorial: @tutorial })
         end
 
@@ -296,8 +296,8 @@ class TutorialsController < ApplicationController
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
-        streams << turbo_stream.replace("new_tutorial_form",
-                                        partial: "tutorials/new_form",
+        streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                        partial: "tutorials/modal_form",
                                         locals: { tutorial: @tutorial })
       end
 
