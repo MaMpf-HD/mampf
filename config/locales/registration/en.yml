@@ -21,7 +21,8 @@ en:
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
         allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
-        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed. This option is only available for campaigns that contain only the lecture itself as an item."
+        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed. This option is only available for campaigns that contain only the lecture itself as an item. It cannot be changed once the campaign has been opened."
+        planning_only_frozen: "Cannot be changed because the campaign has already been opened."
         allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
         first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
       index:
@@ -66,6 +67,7 @@ en:
         reopen: "Reopen Registration"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
+        open_planning: "Are you sure? This opens the campaign for students. Since this is a planning-only campaign, no allocations to official rosters will be made. The 'Planning Only' option cannot be changed after opening."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
@@ -85,6 +87,32 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+      patterns:
+        title: "Configuration Patterns"
+        group_track:
+          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
+          description: "Use this when your lecture has groups (Tutorials or Talks)."
+          primary_label: "Primary Registration Campaign:"
+          primary_text: "Items are Tutorials or Talks."
+          secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
+          secondary_label: "Secondary Campaign (Optional):"
+          secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
+          logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
+        enrollment_track:
+          title: "Pattern 2: The \"Enrollment Track\""
+          description: "Use this when you do not need groups for your lecture."
+          primary_label: "Registration Campaign:"
+          primary_text: "Sole item is the lecture itself."
+          logic: "Roster Logic: The Lecture Roster is the list of registered students."
+        mixed_track:
+          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
+          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
+          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
+        notes:
+          title: "Important Notes"
+          assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
+          item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
+          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -146,10 +174,12 @@ en:
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
+        cohorts: "Special Groups"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        cohort: "Special Group"
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
@@ -205,3 +235,4 @@ en:
           attributes:
             registration_item:
               must_belong_to_same_campaign: "must belong to the same campaign"
+

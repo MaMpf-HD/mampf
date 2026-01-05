@@ -10,7 +10,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
   let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
   let(:top_level_params) { ActionController::Parameters.new(page: 2) }
-  let(:expected_merged_params) { { fulltext: "Ruby", per: 15, page: 2 } }
+  let(:expected_merged_params) { { fulltext: "Ruby", per: 15 } }
 
   let(:config) do
     instance_double(Search::Configurators::Configuration,
@@ -43,7 +43,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   end
 
   describe ".search" do
-    it "calls the configurator with correctly merged params and cookies" do
+    it "calls the configurator with correct params and cookies" do
       search
       expect(configurator_class).to have_received(:configure).with(
         user: user,
@@ -67,8 +67,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
         :pagy,
         :countish,
         search_results,
-        limit: 15,
-        page: 2
+        limit: 15
       )
     end
 
@@ -85,8 +84,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       before do
         allow(configurator_class).to receive(:configure).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
-        allow(controller).to receive(:send).with(:pagy, :countish, empty_scope,
-                                                 limit: 1, page: 1)
+        allow(controller).to receive(:send).with(:pagy, :countish, empty_scope, limit: 1)
                                            .and_return([empty_pagy, empty_results])
       end
 
@@ -97,8 +95,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
       it "calls pagy with empty scope" do
         search
-        expect(controller).to have_received(:send).with(:pagy, :countish, empty_scope,
-                                                        limit: 1, page: 1)
+        expect(controller).to have_received(:send).with(:pagy, :countish, empty_scope, limit: 1)
       end
 
       it "returns a tuple with empty pagy and results" do
@@ -133,8 +130,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
           :pagy,
           :countish,
           search_results,
-          limit: 15,
-          page: 2
+          limit: 15
         )
       end
     end
@@ -159,8 +155,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
           :pagy,
           :countish,
           search_results,
-          limit: total_count,
-          page: nil
+          limit: total_count
         )
       end
 
@@ -173,8 +168,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
             :pagy,
             :countish,
             search_results,
-            limit: 1,
-            page: nil
+            limit: 1
           )
         end
       end

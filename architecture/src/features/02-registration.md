@@ -48,6 +48,33 @@ We use a unified system with:
 - Student Registration (Index – tabs): [Student index](../mockups/student_registration_index_tabs.html)
 ```
 
+### Usage Scenarios
+- A **`Tutorial`** includes `Registerable` to manage its student roster.
+- A **`Talk`** includes `Registerable` to designate students as its speakers.
+- A **`Lecture`** (acting as a course) includes `Registerable` to manage direct enrollment.
+- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
+- A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
+
+## Configuration Patterns
+
+We recommend that users follow one of these patterns:
+
+### Pattern 1: The "Group Track" (almost like MÜSLI)
+Use this when your lecture has groups (Tutorials or Talks).
+- **Primary Campaign:** "Group Registration" (Items: All Tutorials/Talks).
+- **Secondary Campaign (Optional):** "Special Groups" (Item: Cohort "Repeaters").
+- **Roster Logic:** The Lecture Roster is the **union** of all Group members and Cohort members.
+
+### Pattern 2: The "Enrollment Track
+Use this when your lecture has no groups (e.g., Advanced Lecture).
+- **Primary Campaign:** "Course Enrollment" (Item: The Lecture itself).
+- **Roster Logic:** The Lecture Roster is the list of registered students.
+
+### Pattern 3: The "Mixed Track" (Discouraged)
+It is possible to have both a "Group Registration" and a "Course Enrollment" campaign active simultaneously.
+- **Implication:** This creates separate rosters. A student might be in a group but fail to register for the lecture.
+
+
 ## Registration::Campaign (ActiveRecord Model)
 **_The Registration Process Orchestrator_**
 
@@ -161,7 +188,7 @@ Campaigns transition through several states to ensure data integrity and fair us
 | `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
 | `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
 | `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
-| `planning_only` | Never | Can be toggled anytime. Affects internal behavior, not student-facing. |
+| `planning_only` | After `draft` | Cannot change once opened. Changing the nature of the registration (binding vs non-binding) after students have participated is unfair. |
 
 ##### Policies
 
@@ -413,6 +440,7 @@ To ensure data integrity and prevent double-booking, the following constraints a
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.
+- **For a "Cohort Registration" campaign:** A `RegistrationItem` is created for a `Cohort` (e.g., "Repeaters"). The `registerable` association points to the `Cohort` record.
 - **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
 
 ```admonish warning "Registration::Item vs. Registration::Registerable"
@@ -502,6 +530,7 @@ The `allocated_user_ids` method **must be implemented** by each registerable mod
 - A **`Tutorial`** includes `Registerable` to manage its student roster.
 - A **`Talk`** includes `Registerable` to designate students as its speakers.
 - A **`Lecture`** (acting as a seminar) includes `Registerable` to manage direct enrollment.
+- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
 - A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
 
 ---
@@ -631,7 +660,7 @@ The main fields and methods of `Registration::Policy` are:
 
 ### Behavior Highlights
 - Policies are evaluated in ascending `position` order.
-- The `PolicyEngine` short-circuits on the first policy that fails.
+- The `PolicyEngine` short-circuits on the first failure.
 - Returns a structured outcome (`{ pass: true/false, ... }`) for clear feedback.
 - Adding a new rule type involves adding to the `kind` enum and implementing its logic in `evaluate`, with no schema changes required.
 
@@ -1155,6 +1184,59 @@ class Talk < ApplicationRecord
 end
 ```
 
+### Cohort (New Model)
+**_A Generic Registration Target_**
+
+```admonish info "What it represents"
+A lightweight container for students within a specific context (e.g., "Repeaters" in a Lecture).
+```
+
+#### Responsibilities
+- Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate. In the old Muesli system, fake tutorials had to be created for often times (e.g. to take care of repeating students) - we want to avoid that.
+- Acts as a `Rosterable` container for students.
+- Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events (see below).
+
+#### Example Implementation
+```ruby
+class Cohort < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  # Context is polymorphic to support both academic (Lecture) and
+  # generic (Grouping) use cases.
+  belongs_to :context, polymorphic: true
+
+  # Rosterable implementation details in Rosters chapter
+  def capacity
+    self[:capacity]
+  end
+
+  def materialize_allocation!(user_ids:, campaign:)
+    # Delegates to Rosterable implementation
+  end
+end
+```
+
+### Generic Registration Groups (Future Extension)
+
+**Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like an "Event Registration" (e.g., Faculty Barbecue).
+
+**Proposed Solution:** Leverage the `Cohort` model (defined above) as the bucket, and introduce a `Grouping` model as the container.
+
+**New Model:**
+1.  **`Grouping` (The Context):**
+    - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
+    - **Attributes:** `title`, `description`.
+    - **Associations:** `has_one :campaign`, `has_many :cohorts, as: :context`.
+    - **Examples:**
+        - **Event:** "Faculty Barbecue" containing cohorts "Meat", "Vegetarian".
+        - **Poll:** "New Building Name" containing cohorts "Turing Hall", "Noether Hall".
+
+**Benefits:**
+- Decouples registration from academic scheduling.
+- Simplifies UI for non-tutorial use cases.
+- Reuses existing `MaintenanceController` and `Allocation` logic.
+
 ---
 
 ## Campaign Lifecycle (State Diagram)
@@ -1162,9 +1244,9 @@ end
 ```mermaid
 stateDiagram-v2
     [*] --> draft
-    draft --> open : open
-    open --> closed : close (manual or at deadline)
-    closed --> completed : finalize! (optional)
+    draft --> open: open
+    open --> closed: close (manual or at deadline)
+    closed --> completed: finalize! (optional)
 
     note right of closed
         Regular FCFS campaigns: finalize to materialize rosters.
