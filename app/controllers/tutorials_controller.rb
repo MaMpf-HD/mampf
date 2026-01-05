@@ -123,6 +123,7 @@ class TutorialsController < ApplicationController
 
         if @tutorial.errors.empty?
           streams << update_roster_groups_list_stream(group_type)
+          streams << refresh_campaigns_index_stream(@tutorial.lecture)
           streams << turbo_stream.update("modal-container", "")
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
@@ -147,7 +148,9 @@ class TutorialsController < ApplicationController
       format.js
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: [update_roster_groups_list_stream(group_type), stream_flash]
+        render turbo_stream: [update_roster_groups_list_stream(group_type),
+                              refresh_campaigns_index_stream(@tutorial.lecture),
+                              stream_flash]
       end
     end
   end
@@ -290,6 +293,7 @@ class TutorialsController < ApplicationController
 
       if @tutorial.persisted?
         streams << update_roster_groups_list_stream(group_type)
+        streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace("new_tutorial_form",

@@ -42,8 +42,9 @@ class CohortsController < ApplicationController
       format.turbo_stream do
         group_type = parse_group_type
         status = @cohort.errors.present? ? :unprocessable_content : :ok
-        render turbo_stream: update_roster_groups_list_stream(group_type) + [stream_flash],
-               status: status
+        streams = update_roster_groups_list_stream(group_type) +
+                  [refresh_campaigns_index_stream(@lecture), stream_flash]
+        render turbo_stream: streams, status: status
       end
     end
   end
@@ -58,7 +59,8 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        streams = update_roster_groups_list_stream(group_type) + [stream_flash]
+        streams = update_roster_groups_list_stream(group_type) +
+                  [refresh_campaigns_index_stream(@lecture), stream_flash]
         render turbo_stream: streams.compact
       end
     end
@@ -74,7 +76,8 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        streams = update_roster_groups_list_stream(group_type) + [stream_flash]
+        streams = update_roster_groups_list_stream(group_type) +
+                  [refresh_campaigns_index_stream(@lecture), stream_flash]
         render turbo_stream: streams.compact
       end
     end

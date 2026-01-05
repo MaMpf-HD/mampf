@@ -72,6 +72,15 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
   end
 
+  # Helper to refresh the campaigns tab content via Turbo Stream
+  def refresh_campaigns_index_stream(lecture)
+    return nil unless lecture
+
+    turbo_stream.update("campaigns_container",
+                        partial: "registration/campaigns/card_body_index",
+                        locals: { lecture: lecture })
+  end
+
   protected
 
     def configure_permitted_parameters
