@@ -72,7 +72,7 @@ module Registration
     end
 
     def preference_rank(user)
-      registration = user_registrations.find_by(user_id: user.id)
+      registration = user_registrations.find_by(user_id: user.id).includes(:registration_item)
       registration&.preference_rank
     end
 
