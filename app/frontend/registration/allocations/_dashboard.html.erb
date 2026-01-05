@@ -1,11 +1,11 @@
 <div class="container mt-4" id="allocation-dashboard">
-  <% if @policy_violations.present? %>
+  <% if @dashboard.policy_violations.present? %>
     <div class="alert alert-danger">
       <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> <%= t("registration.allocation.errors.policy_violation_title") %></h4>
       <p><%= t("registration.allocation.errors.policy_violation_desc") %></p>
       <hr>
       <ul>
-        <% @policy_violations.each do |violation| %>
+        <% @dashboard.policy_violations.each do |violation| %>
           <li class="mb-1">
             <strong><%= violation[:name] %></strong> (<%= violation[:email] %>) -
             <%= t("registration.policy.kinds.#{violation[:policy]}") %>
@@ -27,6 +27,32 @@
                       data: { confirm: t("registration.campaign.confirmations.force_finalize") },
                       class: "btn btn-danger" %>
       </div>
+    </div>
+  <% end %>
+
+  <% if @dashboard.conflicting_registrations.present? %>
+    <div class="alert alert-warning">
+      <h4 class="alert-heading"><i class="bi bi-exclamation-circle-fill"></i> <%= t("registration.allocation.conflicts.title") %></h4>
+      <p><%= t("registration.allocation.conflicts.desc") %></p>
+      <hr>
+      <ul>
+        <% @dashboard.conflicting_registrations.each do |conflict| %>
+          <li class="mb-1">
+            <strong><%= conflict[:user].name %></strong> (<%= conflict[:user].email %>) -
+            <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
+            <% if conflict[:registration] %>
+              <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: conflict[:user].id, source: "allocation"),
+                            method: :delete,
+                            class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                            data: { confirm: t("basics.confirm") },
+                            form: { style: "display:inline-block;" },
+                            title: t("registration.user_registration.actions.remove_user") do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
@@ -65,7 +91,7 @@
                       method: :patch,
                       data: { confirm: t("registration.campaign.confirmations.finalize") },
                       class: "btn btn-danger",
-                      disabled: @policy_violations.present? %>
+                      disabled: @dashboard.policy_violations.present? %>
       <% end %>
     </div>
   </div>  <div class="alert alert-info mb-4">
@@ -84,7 +110,7 @@
       <div class="card text-center h-100">
         <div class="card-body">
           <h5 class="card-title"><%= t("registration.allocation.stats.total_registrations") %></h5>
-          <p class="display-4"><%= @stats.total_registrations %></p>
+          <p class="display-4"><%= @dashboard.stats.total_registrations %></p>
         </div>
       </div>
     </div>
@@ -92,8 +118,8 @@
       <div class="card text-center h-100 border-success">
         <div class="card-body text-success">
           <h5 class="card-title"><%= t("registration.allocation.stats.assigned") %></h5>
-          <p class="display-4"><%= @stats.assigned_users %></p>
-          <p class="card-text"><%= number_to_percentage(@stats.assigned_percentage, precision: 0) %></p>
+          <p class="display-4"><%= @dashboard.stats.assigned_users %></p>
+          <p class="card-text"><%= number_to_percentage(@dashboard.stats.assigned_percentage, precision: 0) %></p>
         </div>
       </div>
     </div>
@@ -101,8 +127,8 @@
       <div class="card text-center h-100 border-danger">
         <div class="card-body text-danger">
           <h5 class="card-title"><%= t("registration.allocation.stats.unassigned") %></h5>
-          <p class="display-4"><%= @stats.unassigned_users %></p>
-          <p class="card-text"><%= number_to_percentage(@stats.unassigned_percentage, precision: 0) %></p>
+          <p class="display-4"><%= @dashboard.stats.unassigned_users %></p>
+          <p class="card-text"><%= number_to_percentage(@dashboard.stats.unassigned_percentage, precision: 0) %></p>
         </div>
       </div>
     </div>
@@ -124,8 +150,8 @@
               </tr>
             </thead>
             <tbody>
-              <% sorted_preference_counts(@stats).each do |rank, count| %>
-                <% percentage = @stats.percentage_of_assigned(count) %>
+              <% sorted_preference_counts(@dashboard.stats).each do |rank, count| %>
+                <% percentage = @dashboard.stats.percentage_of_assigned(count) %>
                 <tr>
                   <td>
                     <%= rank_label(rank) %>
@@ -134,7 +160,7 @@
                   <td class="align-middle">
                     <div class="d-flex align-items-center">
                       <div class="flex-grow-1">
-                        <%= progress_bar(count, @stats.assigned_users,
+                        <%= progress_bar(count, @dashboard.stats.assigned_users,
                                                       classification: rank_color(rank),
                                                       height: "10px",
                                                       show_label: false,
@@ -171,7 +197,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @stats.item_stats.each do |data| %>
+            <% @dashboard.stats.item_stats.each do |data| %>
               <% percentage = data[:percentage] || 0 %>
               <tr>
                 <td><%= data[:item].title %></td>
@@ -205,11 +231,11 @@
   </div>
 
   <div class="card">
-    <div class="card-header <%= @unassigned_students.any? ? 'bg-danger' : 'bg-success' %> text-white">
+    <div class="card-header <%= @dashboard.unassigned_students.any? ? 'bg-danger' : 'bg-success' %> text-white">
       <%= t("registration.allocation.dashboard.unassigned_students") %>
     </div>
     <div class="card-body p-0">
-      <% if @unassigned_students.any? %>
+      <% if @dashboard.unassigned_students.any? %>
         <div class="table-responsive">
           <table class="table table-striped mb-0">
             <thead>
@@ -219,7 +245,7 @@
               </tr>
             </thead>
             <tbody>
-              <% @unassigned_students.each do |student| %>
+              <% @dashboard.unassigned_students.each do |student| %>
                 <tr>
                   <td><%= student.tutorial_name %></td>
                   <td><%= student.email %></td>
