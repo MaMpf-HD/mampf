@@ -32,7 +32,8 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     context "when guard fails with status error" do
       before do
         allow_any_instance_of(Registration::FinalizationGuard).to receive(:check).and_return(
-          Registration::FinalizationGuard::Result.new(success?: false, error_code: :wrong_status, data: nil)
+          Registration::FinalizationGuard::Result.new(success?: false, error_code: :wrong_status,
+                                                      data: nil)
         )
       end
 

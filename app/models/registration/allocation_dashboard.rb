@@ -38,10 +38,11 @@ module Registration
 
         registered_user_ids = @campaign.user_registrations.pluck(:user_id)
 
-        existing_memberships = TutorialMembership.joins(:tutorial)
-                                                 .where(tutorials: { lecture_id: @campaign.campaignable.id })
-                                                 .where(user_id: registered_user_ids)
-                                                 .includes(:user, :tutorial)
+        existing_memberships =
+          TutorialMembership.joins(:tutorial)
+                            .where(tutorials: { lecture_id: @campaign.campaignable.id })
+                            .where(user_id: registered_user_ids)
+                            .includes(:user, :tutorial)
 
         registrations_by_user = @campaign.user_registrations
                                          .where(user_id: existing_memberships.map(&:user_id))
