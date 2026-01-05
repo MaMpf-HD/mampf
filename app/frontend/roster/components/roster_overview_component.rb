@@ -55,6 +55,14 @@ class RosterOverviewComponent < ViewComponent::Base
     !item.manual_roster_mode? && campaign.present? && item.roster_empty?
   end
 
+  def campaign_badge_props(campaign)
+    if campaign&.draft?
+      { text: I18n.t("roster.campaign_draft"), css_class: "badge bg-secondary" }
+    else
+      { text: I18n.t("roster.campaign_running"), css_class: "badge bg-info text-dark" }
+    end
+  end
+
   private
 
     def target_types
