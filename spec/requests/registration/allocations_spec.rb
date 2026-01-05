@@ -39,6 +39,30 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
       end
     end
+
+    context "with conflicting registrations" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:conflicting_student) { create(:confirmed_user) }
+      let!(:registration) do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               user: conflicting_student)
+      end
+
+      before do
+        sign_in editor
+        # Enroll student in an existing tutorial of the same lecture
+        create(:tutorial_membership, tutorial: tutorial, user: conflicting_student)
+      end
+
+      it "identifies the conflict" do
+        get registration_campaign_allocation_path(campaign)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(I18n.t("registration.allocation.conflicts.title"))
+        expect(response.body).to include(conflicting_student.name)
+        expect(response.body).to include(tutorial.title)
+      end
+    end
   end
 
   describe "POST /campaigns/:campaign_id/allocation" do
