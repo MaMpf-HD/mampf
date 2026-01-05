@@ -36,7 +36,8 @@ RSpec.describe(Tutorial, type: :model) do
     tutorial = FactoryBot.build(:tutorial, lecture: lecture)
     expect(tutorial).to be_invalid
     expect(tutorial.errors[:lecture])
-      .to include(I18n.t("activerecord.errors.models.tutorial.attributes.lecture.must_not_be_seminar"))
+      .to include(I18n.t("activerecord.errors.models.tutorial.attributes." \
+                         "lecture.must_not_be_seminar"))
   end
 
   # test traits
