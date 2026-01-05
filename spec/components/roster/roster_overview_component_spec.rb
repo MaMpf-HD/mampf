@@ -207,4 +207,37 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       expect(props[:css_class]).to include("bg-info")
     end
   end
+
+  describe "#show_manual_mode_switch?" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns true if manual mode can be disabled" do
+      allow(item).to receive(:manual_roster_mode?).and_return(true)
+      allow(item).to receive(:can_disable_manual_mode?).and_return(true)
+      expect(component.show_manual_mode_switch?(item)).to be(true)
+    end
+
+    it "returns true if manual mode can be enabled" do
+      allow(item).to receive(:manual_roster_mode?).and_return(false)
+      allow(item).to receive(:can_enable_manual_mode?).and_return(true)
+      expect(component.show_manual_mode_switch?(item)).to be(true)
+    end
+
+    it "returns false otherwise" do
+      allow(item).to receive(:manual_roster_mode?).and_return(true)
+      allow(item).to receive(:can_disable_manual_mode?).and_return(false)
+      expect(component.show_manual_mode_switch?(item)).to be(false)
+    end
+  end
+
+  describe "#toggle_manual_mode_path" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns the correct path" do
+      allow(Rails.application.routes.url_helpers).to receive(:tutorial_roster_path)
+        .with(item).and_return("/path/to/roster")
+
+      expect(component.toggle_manual_mode_path(item)).to eq("/path/to/roster")
+    end
+  end
 end

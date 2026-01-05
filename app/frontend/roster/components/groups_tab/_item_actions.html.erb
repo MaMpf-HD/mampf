@@ -1,99 +1,14 @@
 <div class="d-flex gap-2 justify-content-end align-items-center">
-  <% if !item.locked? %>
-    <%= link_to component.group_path(item),
-                class: "btn btn-sm btn-outline-primary",
-                title: t('roster.tooltips.manage_participants'),
-                data: { bs_toggle: "tooltip" } do %>
-      <i class="bi bi-person-lines-fill"></i>
-    <% end %>
-  <% elsif campaign %>
-    <%= link_to edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
-                class: "btn btn-sm btn-outline-secondary",
-                title: t('roster.view_campaign'),
-                data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-      <i class="bi bi-calendar-check"></i>
-    <% end %>
-  <% elsif !item.in_real_campaign? %>
-    <%= link_to edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-                class: "btn btn-sm btn-outline-secondary",
-                title: t('roster.create_campaign'),
-                data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-      <i class="bi bi-calendar-plus"></i>
-    <% end %>
-  <% end %>
+  <%= roster_manage_button(item, component, campaign) %>
+  <%= roster_edit_button(item, group_type) %>
+  <%= roster_destroy_button(item, group_type) %>
 
-  <% if item.is_a?(Tutorial) %>
-    <%= link_to edit_tutorial_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-primary",
-                title: t('roster.tooltips.edit_settings'),
-                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
-      <i class="bi bi-tools"></i>
-    <% end %>
-    <% if item.destructible? %>
-      <%= link_to tutorial_path(item, group_type: group_type),
-                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
-                  title: t('roster.tooltips.delete'),
-                  class: "btn btn-sm btn-outline-danger" do %>
-        <i class="bi bi-trash"></i>
-      <% end %>
-    <% end %>
-  <% elsif item.is_a?(Cohort) %>
-    <%= link_to edit_cohort_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-primary",
-                title: t('roster.tooltips.edit_settings'),
-                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
-      <i class="bi bi-tools"></i>
-    <% end %>
-    <% if item.destructible? %>
-      <%= link_to cohort_path(item, group_type: group_type),
-                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
-                  title: t('roster.tooltips.delete'),
-                  class: "btn btn-sm btn-outline-danger" do %>
-        <i class="bi bi-trash"></i>
-      <% end %>
-    <% end %>
-  <% elsif item.is_a?(Talk) %>
-    <%= link_to edit_talk_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-primary",
-                title: t('roster.tooltips.edit_settings'),
-                data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
-      <i class="bi bi-tools"></i>
-    <% end %>
-    <% if item.destructible? %>
-      <%= link_to talk_path(item, group_type: group_type),
-                  data: { turbo_method: :delete, turbo_confirm: t('confirmation.generic'), bs_toggle: "tooltip" },
-                  title: t('roster.tooltips.delete'),
-                  class: "btn btn-sm btn-outline-danger" do %>
-        <i class="bi bi-trash"></i>
-      <% end %>
-    <% end %>
-  <% end %>
-
-  <% if item.manual_roster_mode? %>
-    <% if item.can_disable_manual_mode? %>
-      <%= form_with model: item, scope: :rosterable,
-            url: send("#{item.class.name.underscore}_roster_path", item),
-            method: :patch,
-            data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
-        <%= hidden_group_type_field(group_type) %>
-        <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.manual_mode') %>" data-bs-toggle="tooltip"></i>
-        <div class="form-check form-switch mb-0">
-          <%= f.check_box :manual_roster_mode,
-                class: "form-check-input",
-                role: "switch",
-                id: dom_id(item, :manual_roster_mode),
-                id: dom_id(item, :manual_roster_mode),
-                checked: true,
-                aria: { label: t('roster.manual_mode') },
-                data: { action: "change->auto-submit-form#submit" } %>
-        </div>
-      <% end %>
-    <% end %>
-  <% elsif item.can_enable_manual_mode? %>
+  <% if component.show_manual_mode_switch?(item) %>
     <%= form_with model: item, scope: :rosterable,
-          url: send("#{item.class.name.underscore}_roster_path", item),
+          url: component.toggle_manual_mode_path(item),
           method: :patch,
-          data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
+          data: { turbo: true, controller: "auto-submit-form" },
+          class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
       <%= hidden_group_type_field(group_type) %>
       <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.manual_mode') %>" data-bs-toggle="tooltip"></i>
       <div class="form-check form-switch mb-0">
@@ -101,10 +16,11 @@
               class: "form-check-input",
               role: "switch",
               id: dom_id(item, :manual_roster_mode),
-              checked: false,
+              checked: item.manual_roster_mode?,
               aria: { label: t('roster.manual_mode') },
               data: { action: "change->auto-submit-form#submit" } %>
       </div>
     <% end %>
   <% end %>
 </div>
+

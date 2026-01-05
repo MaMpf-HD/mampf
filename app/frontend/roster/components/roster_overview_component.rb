@@ -63,6 +63,16 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def show_manual_mode_switch?(item)
+    (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
+      (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+  end
+
+  def toggle_manual_mode_path(item)
+    method_name = "#{item.class.name.underscore}_roster_path"
+    Rails.application.routes.url_helpers.public_send(method_name, item)
+  end
+
   private
 
     def target_types
