@@ -1,5 +1,6 @@
 module Registration
   class ItemsController < ApplicationController
+    helper RosterHelper
     before_action :set_campaign
     before_action :set_locale
     before_action :set_item, only: [:destroy, :update]
@@ -41,11 +42,15 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
-            render turbo_stream: [
+            streams = [
               turbo_stream.replace(@item, partial: "registration/items/item",
                                           locals: { item: @item }),
               stream_flash
             ]
+            if @campaign.campaignable.is_a?(Lecture)
+              streams << refresh_roster_groups_list_stream(@campaign.campaignable)
+            end
+            render turbo_stream: streams
           end
         end
       else
@@ -179,12 +184,16 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
+            streams = [
               turbo_stream.update("campaigns_container",
                                   partial: "registration/campaigns/card_body_show",
                                   locals: { campaign: @campaign, tab: "items" }),
               stream_flash
             ]
+            if @campaign.campaignable.is_a?(Lecture)
+              streams << refresh_roster_groups_list_stream(@campaign.campaignable)
+            end
+            render turbo_stream: streams
           end
         end
       end
