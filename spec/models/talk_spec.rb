@@ -28,7 +28,8 @@ RSpec.describe(Talk, type: :model) do
     lecture = FactoryBot.create(:lecture) # default sort is "lecture"
     talk = FactoryBot.build(:talk, lecture: lecture)
     expect(talk).to be_invalid
-    expect(talk.errors[:lecture]).to include(I18n.t("activerecord.errors.models.talk.attributes.lecture.must_be_seminar"))
+    expect(talk.errors[:lecture])
+      .to include(I18n.t("activerecord.errors.models.talk.attributes.lecture.must_be_seminar"))
   end
 
   # Test traits
