@@ -74,6 +74,9 @@ module Rosters
       end
 
       def propagate_to_lecture!(user, rosterable)
+        # Cohorts are "Sidecars" and explicit waitlists, so membership in them
+        # does NOT imply automatic access rights to the lecture details.
+        return if rosterable.is_a?(Cohort)
         return unless rosterable.respond_to?(:lecture)
 
         lecture = rosterable.lecture

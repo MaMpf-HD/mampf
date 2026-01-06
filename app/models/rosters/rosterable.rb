@@ -163,6 +163,9 @@ module Rosters
 
       def propagate_to_lecture!(user_ids)
         return if user_ids.empty?
+        # Cohorts are "Sidecars" and explicit waitlists, so membership in them
+        # does NOT imply automatic access rights to the lecture details.
+        return if is_a?(Cohort)
         return unless respond_to?(:lecture)
 
         parent = lecture

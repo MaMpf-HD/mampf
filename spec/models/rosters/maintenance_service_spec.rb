@@ -111,6 +111,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       before do
         # User is already in tutorial via outer before block
         tutorial.send(:propagate_to_lecture!, [user.id])
+        # Manually add to cohort since auto-propagation is disabled
         create(:cohort_membership, cohort: cohort, user: user)
       end
 

@@ -73,12 +73,12 @@ RSpec.describe(Cohort, type: :model) do
     let(:campaign) { create(:registration_campaign) }
     let(:user) { create(:confirmed_user) }
 
-    it "propagates users to the lecture roster" do
+    it "does NOT propagate users to the lecture roster (Sidecar behavior)" do
       expect(lecture.lecture_memberships.where(user: user)).to be_empty
 
       cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
 
-      expect(lecture.lecture_memberships.where(user: user)).to exist
+      expect(lecture.lecture_memberships.where(user: user)).not_to exist
     end
   end
 end
