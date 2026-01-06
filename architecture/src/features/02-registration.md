@@ -57,20 +57,23 @@ We use a unified system with:
 
 ## Configuration Patterns
 
-We recommend that users follow one of these patterns:
+We recommend that users follow one of these patterns based on their course structure:
 
-### Pattern 1: The "Group Track"
-Use this when your lecture has groups (Tutorials or Talks).
-- **Primary Campaign:** "Group Registration" (Items: All Tutorials/Talks).
-- **Secondary Campaign (Optional):** "Special Groups" (Item: Cohort "Repeaters").
-- **Roster Logic:** Materialization into groups automatically propagates users to the Lecture Roster.
+### Pattern 1: Group Enrollment (Complex Courses)
+Use this when your lecture has sub-structures (Tutorials or Talks) that need assignment.
+- **Primary Campaign:** Items are **Tutorials** or **Talks**.
+    - *Outcome:* Students get a group spot AND official Lecture Roster access (via propagation).
+- **Sidecar Campaign (Optional):** Item is a **Cohort** (e.g., "Waitlist").
+    - *Outcome:* Students land on a separate waitlist. They **do not** get official access until staff moves them to a group.
 
-### Pattern 2: The "Enrollment Track"
-Use this when your lecture has no groups (e.g., Advanced Lecture).
-- **Primary Campaign:** "Course Enrollment" (Item: The Lecture itself).
-- **Roster Logic:** The Lecture Roster is populated directly by this campaign.
+### Pattern 2: Lecture Enrollment (Simple Courses)
+Use this when your lecture has no sub-structures (e.g., Advanced Lecture, simple Seminar).
+- **Primary Campaign:** Item is the **Lecture** itself.
+    - *Outcome:* Students are enrolled directly on the Lecture Roster (Status "Unassigned").
+- **Repeaters:** Can be managed via a parallel Lecture Enrollment campaign.
+    - *Outcome:* They merge into the official roster and get access, without needing a tutorial spot.
 
-> **Note:** These tracks can be combined. Running both creates a Superset Roster where group members are strictly a subset of the lecture enrollment.
+> **Note:** These patterns can be run concurrently. A Lecture Enrollment campaign can run alongside Group Enrollment to act as a "General Access / Auditor" list, though using Specific Cohorts is often cleaner for waitlist management.
 
 
 
@@ -1188,13 +1191,14 @@ end
 **_A Generic Registration Target_**
 
 ```admonish info "What it represents"
-A lightweight container for students within a specific context (e.g., "Repeaters" in a Lecture).
+A lightweight container for students within a specific context (e.g., "Waitlist" in a Lecture).
 ```
 
 #### Responsibilities
-- Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate. In the old Muesli system, fake tutorials had to be created for often times (e.g. to take care of repeating students) - we want to avoid that.
+- Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate.
 - Acts as a `Rosterable` container for students.
-- Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events (see below).
+- **Sidecar Behavior:** Unlike Tutorials, membership in a Cohort does **not** imply automatic membership in the parent Lecture Roster.
+- Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events.
 
 #### Example Implementation
 ```ruby
