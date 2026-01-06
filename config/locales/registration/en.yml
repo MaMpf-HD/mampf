@@ -106,30 +106,36 @@ en:
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
       patterns:
         title: "Configuration Patterns"
-        group_track:
-          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
-          description: "Use this when your lecture has groups (Tutorials or Talks)."
-          primary_label: "Primary Registration Campaign:"
-          primary_text: "Items are Tutorials or Talks."
-          secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
-          secondary_label: "Secondary Campaign (Optional):"
-          secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
-          logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
-        enrollment_track:
-          title: "Pattern 2: The \"Enrollment Track\""
-          description: "Use this when you do not need groups for your lecture."
-          primary_label: "Registration Campaign:"
-          primary_text: "Sole item is the lecture itself."
-          logic: "Roster Logic: The Lecture Roster is the list of registered students."
-        mixed_track:
-          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
-          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
-          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
         notes:
           title: "Important Notes"
-          assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
-          item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
-          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
+          concurrent: "Campaigns can run in parallel. Example: One campaign for Tutorials and a separate one for Special Groups (e.g. Waitlists)."
+          assessments: "Points for assessments/exercises are managed via Tutorials. If you need grading features, use the Group Enrollment strategy, even if you only have a single group."
+          item_types: "A campaign can only contain one type of item (no mixing). For example, you cannot have Tutorials and the Lecture itself in the same campaign."
+          limit_lecture: "Each item (Tutorial/Lecture/Special Group) can only be part of at most one campaign."
+        superset:
+          title: "One Roster for All"
+          description: "Regardless of whether registration occurs via <strong>Group Allocation</strong> or <strong>Direct Enrollment</strong>: all students land on the central Lecture Roster and appear as official participants of the lecture."
+        group_allocation:
+          title: "Group Enrollment"
+          best_for: "Lectures with Tutorials, Seminars with Talks."
+          target: "Allocation of spots in Tutorials or Talks."
+          outcome: "Students get a specific group spot AND are enrolled in the lecture."
+        direct_enrollment:
+          title: "Lecture Enrollment"
+          best_for: "Lectures without Tutorials, Seminars without individual Talk Assignments."
+          target: "Enrollment in the Lecture."
+          outcome: "Students are enrolled in the lecture (without group assignment)."
+        special_cases:
+          title: "Handling Special Cases"
+          intro: "Use parallel campaigns to manage exceptions separately from regular operations."
+          planning: "<strong>Demand Planning:</strong> To record students interested in the lecture, you can set up a Planning-Only campaign for it. This does not modify the participant lists."
+          repeaters: "<strong>Repeaters:</strong> Students who do not need to attend tutorials (e.g. because they already have exam admission) but should be enrolled in the lecture can be managed via a parallel Lecture Enrollment campaign."
+          latecomers: "<strong>Waitlists/Latecomers:</strong> Students who should be recorded but not immediately enrolled in the lecture can be managed in Special Groups. Create these and separate campaign for this. You can leave it open indefinitely to structure late registrations. Students in Special Groups can be manually moved to the main participant list."
+        labels:
+          best_for: "Best for"
+          target: "Campaign Target"
+          outcome: "Outcome"
+          compatibility: "Compatibility"
     allocation:
       started: "Allocation has been calculated."
       conflicts:
