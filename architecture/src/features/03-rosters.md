@@ -13,31 +13,35 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 The **Lecture Roster** (`lecture_memberships`) is the central registry for all students participating in a lecture. It acts as the single source of truth for authorization (who can access Moodle, videos, etc.) and communication.
 
 **The Golden Rule:**
-$$ \text{Members(Tutorials)} \cup \text{Members(Cohorts)} \cup \text{Members(Talks)} \subseteq \text{Members(Lecture)} $$
+$$ \text{Members(Tutorials)} \cup \text{Members(Talks)} \subseteq \text{Members(Lecture)} $$
 
 **Behavioral Invariants:**
 1.  **Upstream Propagation (Addition):**
-    When a student is added to any sub-group (Tutorial, Cohort, or Talk), they are **automatically** added to the Lecture Roster.
+    When a student is added to an official sub-group (**Tutorial** or **Talk**), they are **automatically** added to the Lecture Roster.
 2.  **Sticky Membership (Removal from Group):**
     When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
 3.  **Cascading Deletion (Removal from Lecture):**
-    When a student is removed from the Lecture Roster, they are **automatically** removed from all associated sub-groups (Tutorials, Cohorts, or Talks).
+    When a student is removed from the Lecture Roster, they are **automatically** removed from all associated sub-groups.
+
+### Feature: Sidecar Rosters (Cohorts)
+**Cohorts** function as "Sidecars". Unlike Tutorials or Talks, they satisfy the `Rosterable` interface but **do not** automatically propagate their members to the Lecture Roster.
+- **Purpose:** Waitlists, Latecomer lists, organizational groups.
+- **Access Rights:** Students in a Cohort *do not* receive automatic access rights to the lecture details (Moodle/Videos). They must be promoted to the Lecture Roster or a Tutorial to gain access.
 
 ## The Tracks
 
-### A. The Group Track
+### A. The Group Track (Complex Courses)
 *   **Use Case:** Large lectures with tutorials or seminars with multiple talks.
 *   **Workflow:**
-    1.  Students register for specific sub-groups (via campaigns or manual entry).
-    2.  The system materializes these allocations into the sub-groups.
-    3.  The system automatically propagates these students to the Lecture Roster.
-*   **Result:** The Lecture Roster is the union of all groups plus any students manually added or left over from deleted groups.
+    1.  **Main Campaign:** Students register for Tutorials/Talks. Materialization grants them access via Upstream Propagation.
+    2.  **Sidecars (Optional):** "Waitlist" or "Latecomer" Cohorts collect students separately. These students do not get access until staff manually moves them to a Tutorial.
+*   **Result:** The Lecture Roster is the union of all Tutorials/Talks plus any manually added students.
 
-### B. The Enrollment Track
-*   **Use Case:** Seminars without subgroups, or lectures where group assignment happens deeply external (e.g., Moodle) but MaMpf needs to know who has access.
+### B. The Enrollment Track (Simple Courses)
+*   **Use Case:** Seminars without subgroups, or lectures without tutorials.
 *   **Workflow:**
-    1.  Students are added directly to the Lecture Roster (via manual entry or a lecture-scoped campaign).
-    2.  No sub-groups are utilized.
+    1.  **Main Campaign:** Students register for the **Lecture** directly.
+    2.  **Repeaters:** Can be managed via a parallel Lecture Campaign (effectively merging them into the roster).
 *   **Result:** The Lecture Roster contains the flat list of participants.
 
 ### Concurrent Lecture Campaigns
@@ -374,7 +378,7 @@ The `speaker_talk_joins` table should include a `source_campaign_id` column (nul
 
 ---
 
-### Cohort (New Model)
+### Cohort (Rosterable Implementation)
 **_A Rosterable Target_**
 
 ```admonish info "What it represents"
@@ -416,52 +420,6 @@ class Cohort < ApplicationRecord
 
   def mark_campaign_source!(user_ids, campaign)
     cohort_memberships.where(user_id: user_ids)
-                      .update_all(source_campaign_id: campaign.id)
-  end
-end
-```
-
-### Lecture (Enhanced)
-**_A Rosterable Target_**
-
-```admonish info "What it represents"
-The lecture itself, acting as a roster container for direct enrollment.
-```
-
-#### Rosterable Implementation
-The `Lecture` model includes the `Roster::Rosterable` concern.
-
-| Method | Implementation Detail |
-|---|---|
-| `roster_user_ids` | Plucks `user_id`s from the `lecture_memberships` join table. |
-| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones. |
-
-#### Example Implementation
-```ruby
-class Lecture < ApplicationRecord
-  include Registration::Registerable
-  include Roster::Rosterable
-
-  has_many :lecture_memberships, dependent: :destroy
-  has_many :members, through: :lecture_memberships, source: :user
-
-  def roster_user_ids
-    lecture_memberships.pluck(:user_id)
-  end
-
-  def replace_roster!(user_ids:)
-    LectureMembership.transaction do
-      lecture_memberships.delete_all
-      user_ids.each { |uid| lecture_memberships.create!(user_id: uid) }
-    end
-  end
-
-  def roster_entries
-    lecture_memberships
-  end
-
-  def mark_campaign_source!(user_ids, campaign)
-    lecture_memberships.where(user_id: user_ids)
                       .update_all(source_campaign_id: campaign.id)
   end
 end
