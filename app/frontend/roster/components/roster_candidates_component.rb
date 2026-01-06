@@ -128,11 +128,27 @@ class RosterCandidatesComponent < ViewComponent::Base
       # to ensure we don't list students who are already assigned (e.g. via another campaign).
       candidate_ids = campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq
 
+      # The campaign model only checks for assignments to groups of the SAME type.
+      # However, in the roster management context, moving a student to a 'Sidecar' (Cohort)
+      # should be considered a resolution of their unassigned status.
+      # Therefore, we filter out users who are valid members of ANY group in this lecture.
+      candidate_ids -= all_assigned_user_ids
+
       # Preload registrations to display preferences and source campaign
       User.where(id: candidate_ids)
           .includes(user_registrations: [:registration_campaign,
                                          { registration_item: :registerable }])
           .order(:name, :email)
+    end
+
+    def all_assigned_user_ids
+      @all_assigned_user_ids ||= begin
+        ids = []
+        ids += @lecture.tutorials.joins(:members).pluck("users.id")
+        ids += @lecture.talks.joins(:members).pluck("users.id")
+        ids += @lecture.cohorts.joins(:members).pluck("users.id")
+        ids.uniq
+      end
     end
 
     def format_wishes(registrations)
