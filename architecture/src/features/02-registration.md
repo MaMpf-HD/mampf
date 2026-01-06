@@ -59,20 +59,20 @@ We use a unified system with:
 
 We recommend that users follow one of these patterns:
 
-### Pattern 1: The "Group Track" (almost like MÜSLI)
+### Pattern 1: The "Group Track"
 Use this when your lecture has groups (Tutorials or Talks).
 - **Primary Campaign:** "Group Registration" (Items: All Tutorials/Talks).
 - **Secondary Campaign (Optional):** "Special Groups" (Item: Cohort "Repeaters").
-- **Roster Logic:** The Lecture Roster is the **union** of all Group members and Cohort members.
+- **Roster Logic:** Materialization into groups automatically propagates users to the Lecture Roster.
 
-### Pattern 2: The "Enrollment Track
+### Pattern 2: The "Enrollment Track"
 Use this when your lecture has no groups (e.g., Advanced Lecture).
 - **Primary Campaign:** "Course Enrollment" (Item: The Lecture itself).
-- **Roster Logic:** The Lecture Roster is the list of registered students.
+- **Roster Logic:** The Lecture Roster is populated directly by this campaign.
 
-### Pattern 3: The "Mixed Track" (Discouraged)
-It is possible to have both a "Group Registration" and a "Course Enrollment" campaign active simultaneously.
-- **Implication:** This creates separate rosters. A student might be in a group but fail to register for the lecture.
+> **Note:** These tracks can be combined. Running both creates a Superset Roster where group members are strictly a subset of the lecture enrollment.
+
+
 
 
 ## Registration::Campaign (ActiveRecord Model)
