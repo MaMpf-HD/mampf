@@ -7,65 +7,48 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 - **In this context:** It refers to the official list of students enrolled in a tutorial or the list of speakers assigned to a seminar talk.
 ```
 
-## Problem Overview
-- After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
+## The Core Concept: Lecture Roster as Superset
 
-```admonish tip "Related UI mockups"
-- Roster Overview (tutorials): [Overview – tutorials](../mockups/roster_overview.html)
-- Roster Overview (seminar): [Overview – seminar](../mockups/roster_overview_seminar.html)
-- Roster Overview (exam): [Overview – exam](../mockups/roster_overview_exam.html)
-- Roster Detail (tutorial): [Detail – tutorial](../mockups/roster_detail.html)
-- Roster Detail (seminar): [Detail – seminar](../mockups/roster_detail_seminar.html)
-- Roster Detail (exam): [Detail – exam](../mockups/roster_detail_exam.html)
-- Roster Detail (tutor read-only): [Detail – tutor read-only](../mockups/roster_detail_tutor.html)
-```
+**Definition:**
+The **Lecture Roster** (`lecture_memberships`) is the central registry for all students participating in a lecture. It acts as the single source of truth for authorization (who can access Moodle, videos, etc.) and communication.
 
-```admonish tip "Sourcing candidates after allocation"
-When a preference-based campaign completes, some participants may remain
-unassigned. These are students with zero `confirmed` registrations in the
-campaign (pending entries are normalized to rejected on close). You can source
-these candidates directly from the campaign in roster tools without a separate
-waitlist table.
-```
+**The Golden Rule:**
+$$ \text{Members(Tutorials)} \cup \text{Members(Cohorts)} \cup \text{Members(Talks)} \subseteq \text{Members(Lecture)} $$
 
-## Managing unassigned candidates
+**Behavioral Invariants:**
+1.  **Upstream Propagation (Addition):**
+    When a student is added to any sub-group (Tutorial, Cohort, or Talk), they are **automatically** added to the Lecture Roster.
+2.  **Sticky Membership (Removal from Group):**
+    When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
+3.  **Cascading Deletion (Removal from Lecture):**
+    When a student is removed from the Lecture Roster, they are **automatically** removed from all associated sub-groups (Tutorials, Cohorts, or Talks).
 
-- View unassigned candidates: from the completed Campaign Show or on the
-  Roster Overview via a right-side panel "Candidates from campaign" showing
-  only users unassigned in that campaign.
-- Inspect context: for preference-based campaigns, show each student's top 3
-  original preferences inline, with a way to view the full list on demand.
-- Actions:
-  - Assign to group: place the student into a specific tutorial if capacity permits.
-  - Move: standard roster operations continue to work across groups.
+## The Tracks
 
-```admonish info "Placement"
-The Candidates panel lives on the Roster Overview to provide capacity context
-across all groups. The Roster Detail focuses on per-group maintenance
-(participants list, remove/move) and has no candidates panel.
-```
+### A. The Group Track
+*   **Use Case:** Large lectures with tutorials or seminars with multiple talks.
+*   **Workflow:**
+    1.  Students register for specific sub-groups (via campaigns or manual entry).
+    2.  The system materializes these allocations into the sub-groups.
+    3.  The system automatically propagates these students to the Lecture Roster.
+*   **Result:** The Lecture Roster is the union of all groups plus any students manually added or left over from deleted groups.
 
-```admonish tip
-No reason entry is required for remove, move, or add actions in roster
-maintenance. Keep actions fast; capacity constraints still apply.
-```
+### B. The Enrollment Track
+*   **Use Case:** Seminars without subgroups, or lectures where group assignment happens deeply external (e.g., Moodle) but MaMpf needs to know who has access.
+*   **Workflow:**
+    1.  Students are added directly to the Lecture Roster (via manual entry or a lecture-scoped campaign).
+    2.  No sub-groups are utilized.
+*   **Result:** The Lecture Roster contains the flat list of participants.
 
-```admonish note "Data model"
-Unassigned candidates are derived from `Registration::UserRegistration` records.
-No extra table is needed; use campaign-scoped queries to list users with zero
-confirmed entries.
-```
-- Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
-- Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
+### Concurrent Lecture Campaigns
 
-## Solution Architecture
-- **Canonical Source:** Domain rosters on registerable models (e.g., `Tutorial.students`, `Talk.speakers`).
-- **Uniform API:** A `Roster::Rosterable` concern provides a consistent interface (`roster_user_ids`, `replace_roster!`, etc.).
-- **Single Service:** A `Roster::MaintenanceService` handles atomic moves, adds, and removals with capacity checks and logging.
-- **Campaign-Independent:** Actions operate directly on `Roster::Rosterable` models; no campaign context is needed for manual changes.
-- **Fast Dashboards:** The maintenance service can update denormalized counters like `Registration::Item.assigned_count` to keep UIs in sync.
-- **Auditing (Future Enhancement):** The service includes a `log()` method as a hook for future auditing. This can be implemented later to write to a dedicated audit trail (e.g., a `RosterChangeEvent` model or using a gem like PaperTrail). This would provide a full history of all manual roster modifications, separate from the immutable record of the initial automated assignment stored in `Registration::UserRegistration`.
-- **Exam-specific finalization:** When materializing exam rosters from a campaign, eligibility is revalidated at finalize-time; registrants who became ineligible are excluded unless an override exists.
+It is valid and supported to run a **Lecture Campaign** (a campaign targeting the Lecture itself) alongside Group Campaigns (targeting Tutorials/Talks).
+
+*   **Purpose:** This serves to populate the Lecture Roster directly, without assigning students to a specific sub-group.
+*   **Idempotency:** If a student registers for a Tutorial (Group Track) AND a Lecture Campaign (Enrollment Track), they are materialized into the Lecture Roster. The system handles this idempotently; they will simply exist on the roster and in the specific tutorial.
+*   **Result:** These students appear as "Unassigned" in the Group Maintenance view (unless they also secured a group spot), effectively implementing a "Course Auditor" or "Waiting List" pattern.
+
+
 
 ---
 

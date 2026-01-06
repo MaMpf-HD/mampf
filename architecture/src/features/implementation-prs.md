@@ -172,15 +172,26 @@ Registration — Step 5: Roster Maintenance
 ```
 
 ```admonish example "PR-5.1 — Roster maintenance UI (admin)"
-- Scope: Post-allocation roster management.
+- Scope: Post-allocation roster management for Sub-Groups (Tutorial/Cohort).
 - Controllers: `Roster::MaintenanceController` (move/add/remove actions).
-- Logic: Support `Lecture` and `Cohort` as rosterable types.
-- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks; "Enrollment" tab for Lecture roster; "Cohorts" tab if cohorts exist.
+- Logic: Support `Tutorial`, `Talk` and `Cohort` as rosterable types.
+- UI: Roster Overview with detail views for individual groups; candidates panel (unassigned users from campaign); basic capacity enforcement.
 - Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
-- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work; Lecture/Cohort rosters viewable/editable.
+- Acceptance: Teachers can move students between tutorials/talks/cohorts; capacity enforced; candidates panel lists unassigned users; manual add/remove works for groups.
 ```
 
-```admonish example "PR-5.2 — Tutor abilities (read-only roster access)"
+```admonish example "PR-5.2 — Lecture Roster Superset (Enrollment Track)"
+- Scope: Implement Lecture Roster as the superset of all sub-groups.
+- Backend:
+  - Implement `Lecture#ensure_roster_membership!`.
+  - Update `Tutorial/Talk/Cohort#materialize_allocation!` to propagate users to Lecture.
+  - Update `Roster::MaintenanceService` to handle Enrollment/Drop logic (cascading delete).
+- UI: "Enrollment" tab in `RosterOverviewComponent` showing all lecture members; "Unassigned" status calculation.
+- Refs: [Superset Model](03-rosters.md#the-core-concept-lecture-roster-as-superset), [Enrollment Track](03-rosters.md#b-the-enrollment-track)
+- Acceptance: Adding user to tutorial adds them to lecture; Removing from lecture removes from tutorial; Enrollment tab lists all students.
+```
+
+```admonish example "PR-5.3 — Tutor abilities (read-only roster access)"
 - Scope: Tutors can view rosters for their assigned groups.
 - Abilities: Update CanCanCan to allow read-only roster access for tutors.
 - UI: Tutors see Detail view without edit actions.
@@ -188,7 +199,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Tutors can view rosters for their tutorials; cannot edit; exams do not show candidates panel.
 ```
 
-```admonish example "PR-5.3 — Manual add student (from candidates or arbitrary)"
+```admonish example "PR-5.4 — Manual add student (from candidates or arbitrary)"
 - Scope: Add students to rosters manually.
 - Controllers: Extend `Roster::MaintenanceController` with `add_student` action.
 - UI: "Add student" button on Overview; search input for arbitrary student addition.
@@ -196,7 +207,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Teachers can add students from candidates or search; capacity enforced; duplicate prevention.
 ```
 
-```admonish example "PR-5.4 — Integrity job (assigned/allocated reconciliation)"
+```admonish example "PR-5.5 — Integrity job (assigned/allocated reconciliation)"
 - Scope: Background job to verify roster consistency.
 - Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
 - Monitoring: Logs mismatches for admin review.
