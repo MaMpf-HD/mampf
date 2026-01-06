@@ -24,11 +24,13 @@ module Rosters
       end
 
       rosterable.add_user_to_roster!(user)
+      propagate_to_lecture!(user, rosterable)
       update_registration_materialization(user, rosterable)
     end
 
     def remove_user!(user, rosterable)
       rosterable.remove_user_from_roster!(user)
+      cascade_removal_from_subgroups!(user, rosterable)
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
@@ -69,6 +71,32 @@ module Rosters
         return unless membership
 
         raise(UserAlreadyInBundleError, membership.tutorial)
+      end
+
+      def propagate_to_lecture!(user, rosterable)
+        return unless rosterable.respond_to?(:lecture)
+
+        lecture = rosterable.lecture
+        return unless lecture.is_a?(Lecture)
+        return if lecture == rosterable
+
+        lecture.ensure_roster_membership!([user.id])
+      end
+
+      def cascade_removal_from_subgroups!(user, rosterable)
+        return unless rosterable.is_a?(Lecture)
+
+        rosterable.tutorials.find_each do |tutorial|
+          tutorial.remove_user_from_roster!(user)
+        end
+
+        rosterable.talks.find_each do |talk|
+          talk.remove_user_from_roster!(user)
+        end
+
+        rosterable.cohorts.find_each do |cohort|
+          cohort.remove_user_from_roster!(user)
+        end
       end
   end
 end

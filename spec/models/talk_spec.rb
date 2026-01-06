@@ -247,4 +247,19 @@ RSpec.describe(Talk, type: :model) do
 
     it_behaves_like "a registerable model"
   end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:seminar) }
+    let(:talk) { create(:talk, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: user)).to be_empty
+
+      talk.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+    end
+  end
 end

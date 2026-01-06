@@ -83,5 +83,17 @@ RSpec.describe(Tutorial, type: :model) do
 
       expect(other_lecture_tutorial.reload.members).to include(user)
     end
+
+    it "propagates users to the lecture roster" do
+      create(:confirmed_user) # To ensure there is another user
+      user2 = create(:confirmed_user)
+
+      expect(lecture.lecture_memberships.where(user: [user, user2])).to be_empty
+
+      tutorial.materialize_allocation!(user_ids: [user.id, user2.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+      expect(lecture.lecture_memberships.where(user: user2)).to exist
+    end
   end
 end

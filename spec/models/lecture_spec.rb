@@ -251,4 +251,28 @@ RSpec.describe(Lecture, type: :model) do
       expect(campaign.campaignable).to eq(lecture)
     end
   end
+
+  describe "#ensure_roster_membership!" do
+    let(:lecture) { create(:lecture) }
+    let(:users) { create_list(:confirmed_user, 3) }
+
+    it "adds users to the roster" do
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(3)
+
+      expect(lecture.members).to include(*users)
+    end
+
+    it "respects idempotency (does not duplicate or screw up)" do
+      lecture.ensure_roster_membership!([users.first.id])
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(2) # Only 2 new ones
+
+      expect(lecture.members).to include(*users)
+      expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
+    end
+  end
 end

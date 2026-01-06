@@ -66,4 +66,19 @@ RSpec.describe(Cohort, type: :model) do
       expect(cohort.lecture).to be_nil
     end
   end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:cohort) { create(:cohort, context: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: user)).to be_empty
+
+      cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+    end
+  end
 end
