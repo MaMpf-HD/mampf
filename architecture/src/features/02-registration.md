@@ -343,6 +343,58 @@ See also the Campaigns index mockups where the planning-only row appears as
 "Interest Registration" with a note like "Planning only; not materialized".
 ```
 
+---
+
+### Self-Materialization: Direct Roster Access
+
+```admonish info "Beyond Campaigns"
+`Rosterable` models can enable direct student-initiated roster changes,
+either as a complete alternative to campaigns or as a follow-up after
+campaign completion.
+```
+
+**When to use:**
+- **As a complete alternative:** Simple courses where time-bounded orchestration, policies, or preference allocation aren't needed
+- **As a follow-up:** After campaign completion, enable students to self-balance between groups or allow latecomers to join
+
+**Design:**
+
+Each `Rosterable` model gets a `self_materialization_mode` enum:
+- `disabled` (default): Only staff or campaigns modify the roster
+- `add_only`: Students can join (up to capacity)
+- `remove_only`: Students can leave
+- `add_and_remove`: Both actions allowed
+
+**Example Scenarios:**
+
+| Use Case | Campaign? | Self-Materialization Mode | When Enabled |
+|----------|-----------|---------------------------|--------------|
+| Simple open seminar | No | `add_only` | From creation |
+| Tutorial with preference allocation | Yes (preference-based) | `disabled` → `add_and_remove` | After campaign completes |
+| Latecomer waitlist cohort | No | `add_only` | From creation |
+| Lecture with FCFS signup | Yes (FCFS) | `disabled` → `add_only` | After campaign completes |
+| Staff-managed tutorial | No | `disabled` | Never (staff uses maintenance UI) |
+
+**Validation Rules:**
+- Self-materialization must be `disabled` during any non-`planning_only`, non-`completed` campaign targeting this item
+- Capacity is enforced for `add_only`/`add_and_remove`
+- Cannot enable if active campaign exists for this item
+
+**Example Usage:**
+```ruby
+# Enable after campaign finishes
+tutorial.update!(self_materialization_mode: :add_and_remove)
+
+# Student-initiated action (via controller)
+if tutorial.can_self_add?(current_user)
+  tutorial.self_add!(current_user)
+end
+```
+
+See the `Roster::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
+
+---
+
 ## Registration::Campaignable (Concern)
 **_The Campaign Host_**
 
