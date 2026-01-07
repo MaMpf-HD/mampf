@@ -33,7 +33,24 @@
                   style: 'text-decoration: none; ' +
                         'display: ' + show_inline(privileged) %>
     </h4>
-    <%# TODO: Add an actual progress bar %>
+
+    <% progress_value = @lecture.section_completion_for_user current_user%>
+    <div class="progress mb-3 mt-3" style="height: 25px; position: relative;">
+      <% if progress_value == 0 %>
+        <span style="position: absolute; width: 100%; text-align: center; line-height: 25px; color: #6c757d;">
+        Lecture Completion
+        </span>
+      <% end %>
+      <div class="progress-bar progress-bar-animated bg-success" 
+          role="progressbar" 
+          style="width: <%= progress_value || 0 %>%;" 
+          aria-valuenow="<%= progress_value || 0 %>" 
+          aria-valuemin="0" 
+          aria-valuemax="100">
+        <%= progress_value || 0 %>%
+      </div>
+    </div>
+    
   </div>
 </div>
 <% privileged = current_user.admin ||

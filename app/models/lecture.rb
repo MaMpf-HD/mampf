@@ -836,6 +836,43 @@ class Lecture < ApplicationRecord
     vignettes_questionnaires.any?
   end
 
+  # The following functions calculate values for the progress bar
+  def total_completion_for_user(user)
+    total_completables = sections.count + assignments.count
+    return 100 if total_completables.zero?
+
+    total_completed = completions.where(user: user, lecture: self)
+    return 0 if total_completed.zero?
+
+    (total_completables.to_f / total_completed * 100).round
+  end
+
+  def section_completion_for_user(user)
+    total = sections.count
+    return 100 if total.zero?
+
+    completed = completions.where(
+      user: user,
+      lecture: self,
+      completable_type: "Section"
+    ).count
+
+    (completed.to_f / total * 100).round
+  end
+
+  def assignment_completion_for_user(user)
+    total = assignments.count
+    return 100 if total.zero?
+
+    completed = completions.where(
+      user: user,
+      lecture: self,
+      completable_type: "Assignment"
+    ).count
+
+    (completed.to_f / total * 100).round
+  end
+
   private
 
     # used for after save callback
