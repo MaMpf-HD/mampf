@@ -235,7 +235,18 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Teachers can add students from candidates or search; capacity enforced; duplicate prevention.
 ```
 
-```admonish example "PR-5.7 — Integrity job (assigned/allocated reconciliation)"
+```admonish example "PR-5.7 — Roster change notifications"
+- Scope: Email notifications for roster changes affecting students.
+- Mailer: `Roster::ChangeMailer` with methods: `added_to_group`, `removed_from_group`, `moved_between_groups`.
+- Triggers: Called from `Roster::MaintenanceService`, `Registration::Campaign#finalize!`, and `Roster::SelfMaterializationController`.
+- Content: Email includes group name, lecture context, action taken, timestamp; for moves, includes both source and target groups.
+- Configuration: Feature flag `roster_notifications_enabled`; teacher toggle per lecture for notification verbosity (all changes vs finalization-only).
+- Background: Deliver via `ActionMailer::DeliveryJob` (async).
+- Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
+- Acceptance: Students receive emails on add/remove/move; emails queued asynchronously; feature flag gates delivery; teachers can configure notification timing per lecture.
+```
+
+```admonish example "PR-5.8 — Integrity job (assigned/allocated reconciliation)"
 - Scope: Background job to verify roster consistency.
 - Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
 - Monitoring: Logs mismatches for admin review.
@@ -243,7 +254,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
 ```
 
-```admonish example "PR-5.8 — Turbo Stream Orchestrator"
+```admonish example "PR-5.9 — Turbo Stream Orchestrator"
 - Scope: Extract stream logic from controllers into `Turbo::LectureStreamService`.
 - Pattern: Controllers declare "what happened" (e.g., `roster_changed`); service returns appropriate streams.
 - Refactor: `TutorialsController`, `CohortsController`, `Registration::CampaignsController`, `Roster::MaintenanceController`.
