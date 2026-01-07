@@ -85,7 +85,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      render_roster_update(tab: params[:tab])
+      render_roster_update(tab: params[:active_tab])
     end
 
     def remove_member
@@ -95,7 +95,7 @@ module Roster
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
       flash.now[:notice] = t("roster.messages.user_removed")
-      render_roster_update
+      render_roster_update(tab: params[:active_tab])
     end
 
     def move_member
@@ -119,7 +119,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
-      render_roster_update(tab: params[:tab])
+      render_roster_update(tab: params[:active_tab])
     end
 
     private
@@ -129,13 +129,17 @@ module Roster
       end
 
       def render_roster_update(tab: nil, rosterable: @rosterable)
-        active_tab = tab&.to_sym || :groups
+        active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
         target_rosterable = active_tab == :enrollment ? nil : rosterable
+
         group_type = if params[:group_type].is_a?(Array)
           params[:group_type].map(&:to_sym)
         else
           params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
         end
+
+        # Ensure group_type is formatted correctly (strings/symbols/arrays) for the helper
+        group_type = group_type&.to_sym unless group_type.is_a?(Array)
 
         respond_to do |format|
           format.turbo_stream do

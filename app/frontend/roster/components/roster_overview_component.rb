@@ -17,7 +17,7 @@ class RosterOverviewComponent < ViewComponent::Base
     @rosterable = rosterable
   end
 
-  attr_reader :lecture, :active_tab, :rosterable
+  attr_reader :lecture, :active_tab, :rosterable, :group_type
 
   # Returns the officially enrolled participants (Lecture Superset).
   # Used for the 'Participants' tab.
