@@ -32,31 +32,68 @@ class RosterOverviewComponent < ViewComponent::Base
   # Returns :assigned or :unassigned.
   # Note: Cohorts (Waitlists) do not count as 'assigned' for structure purposes.
   def participant_status(user)
-    @assigned_user_ids ||= fetch_assigned_user_ids
-    @assigned_user_ids.include?(user.id) ? :assigned : :unassigned
+    # Check if user is in any group that is NOT a Cohort
+    is_assigned = user_memberships[user.id].any? do |group_id|
+      group = all_groups_map[group_id]
+      group && !group.is_a?(Cohort)
+    end
+
+    is_assigned ? :assigned : :unassigned
   end
 
-  # Returns the groups (Tutorials, Talks) a user is assigned to.
+  # Returns groups compatible for assignment for a specific user
+  # Logic: (All Groups) - (Locked Groups) - (User's Current Groups)
+  def available_groups_for(user)
+    reserved_ids = user_memberships[user.id]
+
+    all_assignable_groups.reject do |g|
+      g.locked? || reserved_ids.include?(g.id)
+    end
+  end
+
+  # Returns the groups the user is currently a member of (including Cohorts)
   def participant_groups(user)
-    @participant_groups_cache ||= {}
-    @participant_groups_cache[user.id] ||= begin
-      groups = []
-      groups.concat(@lecture.tutorials.joins(:tutorial_memberships)
-                            .where(tutorial_memberships: { user_id: user.id }))
-      groups.concat(@lecture.talks.joins(:speaker_talk_joins)
-                            .where(speaker_talk_joins: { speaker_id: user.id }))
-      groups
+    ids = user_memberships[user.id]
+    ids.map { |id| all_groups_map[id] }.compact.sort_by(&:title)
+  end
+
+  # Determines the appropriate action (Add or Move) for a target group
+  def assignment_action(user, target_group)
+    # Find current groups of the same type that the user is already in
+    # (e.g., if target is Cohort B, find all Cohorts the user is in)
+    current_of_type = participant_groups(user).select { |g| g.class == target_group.class }
+
+    # Heuristic:
+    # - If user is in exactly 1 group of this type, we propose "Switch" (Move).
+    #   (Matches standard partition logic: Tutorials, Cohorts, etc.)
+    # - If user is in 0 groups: "Add".
+    # - If user is in >1 groups: "Add" (Move is ambiguous without source selection).
+    if current_of_type.count == 1
+      source = current_of_type.first
+      {
+        url: helpers.public_send("move_member_#{source.class.name.underscore}_path", source, user),
+        method: :patch,
+        params: {
+          target_id: target_group.id,
+          target_type: target_group.class.name
+        },
+        label: t("roster.actions.switch_to")
+      }
+    else
+      {
+        url: helpers.public_send("add_member_#{target_group.model_name.singular_route_key}_path",
+                                 target_group),
+        method: :post,
+        params: { email: user.email },
+        label: t("roster.actions.add")
+      }
     end
   end
 
-  # Returns all available groups for moving/assigning a participant.
+  # DEPRECATED: Use available_groups_for(user) instead.
+  # Kept momentarily to avoid breaking until view is updated.
   def available_groups_for_participant
-    @available_groups_for_participant ||= begin
-      groups = []
-      groups.concat(@lecture.tutorials.to_a) if @lecture.tutorials.any?
-      groups.concat(@lecture.talks.to_a) if @lecture.talks.any?
-      groups.reject(&:locked?).sort_by(&:title)
-    end
+    available_groups_for(nil) # This won't work correctly, but we are updating the view.
   end
 
   # Returns a list of groups to display based on the selected type.
@@ -127,6 +164,51 @@ class RosterOverviewComponent < ViewComponent::Base
       end
 
       ids
+    end
+
+    def all_assignable_groups
+      @all_assignable_groups ||= begin
+        groups = []
+        groups.concat(@lecture.tutorials.to_a) if @lecture.respond_to?(:tutorials)
+        groups.concat(@lecture.talks.to_a) if @lecture.respond_to?(:talks)
+        groups.concat(@lecture.cohorts.to_a) if @lecture.respond_to?(:cohorts)
+        groups.sort_by(&:title)
+      end
+    end
+
+    def all_groups_map
+      @all_groups_map ||= all_assignable_groups.index_by(&:id)
+    end
+
+    # Pre-fetches all memberships for the lecture to avoid N+1 queries
+    # Returns: Hash { user_id => Set<group_id> }
+    def user_memberships
+      @user_memberships ||= begin
+        map = Hash.new { |h, k| h[k] = Set.new }
+
+        # Bulk load Tutorial memberships
+        if @lecture.tutorials.exists?
+          TutorialMembership.where(tutorial: @lecture.tutorials)
+                            .pluck(:user_id, :tutorial_id)
+                            .each { |uid, tid| map[uid].add(tid) }
+        end
+
+        # Bulk load Talk memberships
+        if @lecture.talks.exists?
+          SpeakerTalkJoin.where(talk: @lecture.talks)
+                         .pluck(:speaker_id, :talk_id)
+                         .each { |uid, tid| map[uid].add(tid) }
+        end
+
+        # Bulk load Cohort memberships
+        if @lecture.respond_to?(:cohorts) && @lecture.cohorts.exists?
+          CohortMembership.where(cohort: @lecture.cohorts)
+                          .pluck(:user_id, :cohort_id)
+                          .each { |uid, cid| map[uid].add(cid) }
+        end
+
+        map
+      end
     end
 
     def target_types

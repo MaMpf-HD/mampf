@@ -57,19 +57,30 @@
                             <%= t('roster.actions.assign') %>
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end">
-                            <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
-                            <% if component.available_groups_for_participant.any? %>
-                              <% component.available_groups_for_participant.each do |group| %>
-                                <li>
-                                  <%= button_to component.helpers.group_title_with_capacity(group),
-                                      component.helpers.public_send("add_member_#{group.model_name.singular_route_key}_path", group),
-                                      params: { email: user.email },
-                                      method: :post,
-                                      class: "dropdown-item" %>
-                                </li>
+                            <% available = component.available_groups_for(user) %>
+                            <% if available.any? %>
+                              <% available.group_by { |g| g.model_name.human(count: 2) }.sort.each do |type, groups| %>
+                                <li><h6 class="dropdown-header"><%= type %></h6></li>
+                                <% groups.each do |group| %>
+                                  <% action = component.assignment_action(user, group) %>
+                                  <li>
+                                    <%= button_to action[:url],
+                                        method: action[:method],
+                                        params: action[:params],
+                                        class: "dropdown-item d-flex justify-content-between align-items-center",
+                                        form_class: "d-block" do %>
+                                      <span><%= component.helpers.group_title_with_capacity(group) %></span>
+                                      <% if action[:method] == :patch %>
+                                        <span class="badge bg-light text-secondary border ms-2" title="<%= action[:label] %>">
+                                          <i class="bi bi-arrow-left-right"></i>
+                                        </span>
+                                      <% end %>
+                                    <% end %>
+                                  </li>
+                                <% end %>
                               <% end %>
                             <% else %>
-                              <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
+                              <li><span class="dropdown-item disabled fst-italic"><%= t('roster.details.empty') %></span></li>
                             <% end %>
                           </ul>
                         </div>

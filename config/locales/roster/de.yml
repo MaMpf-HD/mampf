@@ -36,6 +36,7 @@ de:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
+      switch_to: 'Wechseln zu'
       move: 'Verschieben'
       back: 'Zurück'
       add: 'Hinzufügen'

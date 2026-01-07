@@ -36,6 +36,7 @@ en:
       global_roster: 'Global Roster'
       assign: 'Assign'
       assign_to: 'Assign to...'
+      switch_to: 'Switch to'
       move: 'Move'
       back: 'Back'
       add: 'Add'
