@@ -1,11 +1,11 @@
 en:
   roster:
-    title: 'Roster'
+    title: 'Participants'
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
       groups: 'Groups'
-      group_maintenance: 'Group Management'
+      group_maintenance: 'Groups'
       candidates: 'Candidates'
       enrollment: 'Enrollment'
       performance: 'Performance'
