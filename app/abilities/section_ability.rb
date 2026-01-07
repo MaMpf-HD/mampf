@@ -4,7 +4,7 @@ class SectionAbility
   def initialize(user)
     clear_aliased_actions
 
-    can :show, Section do |section|
+    can [:show, :toggle_completion], Section do |section|
       section.visible_for_user?(user)
     end
 

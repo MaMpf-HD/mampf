@@ -788,7 +788,11 @@ Rails.application.routes.draw do
       to: "sections#display",
       as: "display_section"
 
-  resources :sections, except: [:index]
+  resources :sections, except: [:index] do
+    member do
+      post :toggle_completion
+    end
+  end
 
   # terms routes
 

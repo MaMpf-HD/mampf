@@ -54,6 +54,16 @@ class SectionsController < ApplicationController
     I18n.locale = @section.lecture.locale_with_inheritance
   end
 
+  def toggle_completion
+    if @section.completed_by?(current_user)
+      @section.unmark_as_completed_by(current_user)
+    else
+      @section.mark_as_completed_by(current_user)
+    end
+
+    redirect_back_or_to(root_path)
+  end
+
   private
 
     def set_section
