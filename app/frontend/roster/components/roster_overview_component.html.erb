@@ -8,6 +8,11 @@
       </button>
     </li>
     <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if @active_tab == :participants %>" id="participants-tab" data-bs-toggle="tab" data-bs-target="#participants-pane" type="button" role="tab">
+        <%= t('roster.tabs.participants') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
       <button class="nav-link <%= 'active' if @active_tab == :enrollment %>" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
         <%= t('roster.tabs.enrollment') %>
       </button>
@@ -38,6 +43,11 @@
           <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
         <% end %>
       </div>
+    </div>
+
+    <!-- Participants Tab -->
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :participants %>" id="participants-pane" role="tabpanel">
+      <%= render "roster/components/participants", component: self %>
     </div>
 
     <!-- Candidates Tab -->

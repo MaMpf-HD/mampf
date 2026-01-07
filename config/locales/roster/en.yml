@@ -1,11 +1,14 @@
 en:
   roster:
     title: 'Participants'
+    status: 'Status'
+    participants_footer_hint: "This list contains all people enrolled in this lecture, regardless of their group assignment."
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
       groups: 'Groups'
-      group_maintenance: 'Groups'
+      participants: 'List'
+      group_maintenance: 'Group Management'
       candidates: 'Candidates'
       enrollment: 'Enrollment'
       performance: 'Performance'
@@ -14,6 +17,8 @@ en:
       total_participants: 'Total Participants'
       capacity_usage: 'of %{count} spots filled'
       unassigned: 'Unassigned'
+      status_assigned: 'Assigned'
+      status_unassigned: 'Not Assigned'
       action_required: 'Action required'
     dashboard:
       title: 'Dashboard'
@@ -63,6 +68,7 @@ en:
       occupancy: 'Occupancy'
       name: 'Name'
       email: 'Email'
+      groups: 'Groups'
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
@@ -101,6 +107,7 @@ en:
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
     warnings:
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all group memberships. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'

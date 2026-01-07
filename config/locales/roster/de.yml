@@ -1,11 +1,14 @@
 de:
   roster:
     title: 'Teilnehmende'
+    status: 'Status'
+    participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind, unabhängig von ihrer Gruppenzugehörigkeit."
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
       groups: 'Gruppen'
-      group_maintenance: 'Gruppen'
+      participants: 'Gesamtliste'
+      group_maintenance: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       enrollment: 'Einschreibung'
       performance: 'Leistungen'
@@ -14,6 +17,8 @@ de:
       total_participants: 'Teilnehmende gesamt'
       capacity_usage: 'von %{count} Plätzen belegt'
       unassigned: 'Nicht zugewiesen'
+      status_assigned: 'Zugewiesen'
+      status_unassigned: 'Nicht zugewiesen'
       action_required: 'Handlung erforderlich'
     dashboard:
       title: 'Dashboard'
@@ -63,6 +68,7 @@ de:
       occupancy: 'Belegung'
       name: 'Name'
       email: 'E-Mail'
+      groups: 'Gruppen'
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
@@ -103,6 +109,7 @@ de:
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
     warnings:
+      confirm_kick_from_lecture: 'Diese Person wird vollständig aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'

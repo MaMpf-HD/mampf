@@ -5,7 +5,7 @@ module Roster
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
-    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
 
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]

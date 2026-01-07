@@ -19,6 +19,46 @@ class RosterOverviewComponent < ViewComponent::Base
 
   attr_reader :lecture, :active_tab, :rosterable
 
+  # Returns the officially enrolled participants (Lecture Superset).
+  # Used for the 'Participants' tab.
+  def participants
+    @participants ||= @lecture.lecture_memberships
+                              .joins(:user)
+                              .includes(:user)
+                              .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+  end
+
+  # Checks if a participant is assigned to any functional sub-group (Tutorial or Talk).
+  # Returns :assigned or :unassigned.
+  # Note: Cohorts (Waitlists) do not count as 'assigned' for structure purposes.
+  def participant_status(user)
+    @assigned_user_ids ||= fetch_assigned_user_ids
+    @assigned_user_ids.include?(user.id) ? :assigned : :unassigned
+  end
+
+  # Returns the groups (Tutorials, Talks) a user is assigned to.
+  def participant_groups(user)
+    @participant_groups_cache ||= {}
+    @participant_groups_cache[user.id] ||= begin
+      groups = []
+      groups.concat(@lecture.tutorials.joins(:tutorial_memberships)
+                            .where(tutorial_memberships: { user_id: user.id }))
+      groups.concat(@lecture.talks.joins(:speaker_talk_joins)
+                            .where(speaker_talk_joins: { speaker_id: user.id }))
+      groups
+    end
+  end
+
+  # Returns all available groups for moving/assigning a participant.
+  def available_groups_for_participant
+    @available_groups_for_participant ||= begin
+      groups = []
+      groups.concat(@lecture.tutorials.to_a) if @lecture.tutorials.any?
+      groups.concat(@lecture.talks.to_a) if @lecture.talks.any?
+      groups.reject(&:locked?).sort_by(&:title)
+    end
+  end
+
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
   def groups
@@ -74,6 +114,20 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   private
+
+    def fetch_assigned_user_ids
+      ids = Set.new
+
+      # Users in tutorials
+      ids.merge(TutorialMembership.where(tutorial: @lecture.tutorials).pluck(:user_id))
+
+      # Users in talks (if applicable)
+      if @lecture.talks.exists?
+        ids.merge(SpeakerTalkJoin.where(talk: @lecture.talks).pluck(:speaker_id))
+      end
+
+      ids
+    end
 
     def target_types
       if @group_type == :all

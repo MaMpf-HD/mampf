@@ -1,0 +1,98 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+          <%= t("roster.tabs.participants") %>
+          <span class="badge bg-secondary ms-2"><%= component.participants.count %></span>
+        </h5>
+        
+        <!-- Placeholder for Search & Add Interface -->
+        <div class="d-flex gap-2">
+          <%# render "roster/components/add_user_form", rosterable: lecture %>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"><%= t("basics.name") %></th>
+                <th scope="col"><%= t("basics.email") %></th>
+                <th scope="col"><%= t("roster.columns.groups") %></th>
+                <th scope="col" class="text-end"><%= t("basics.actions") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if component.participants.empty? %>
+                <tr>
+                  <td colspan="4" class="text-center py-4 text-muted">
+                    <%= t("roster.details.empty") %>
+                  </td>
+                </tr>
+              <% else %>
+                <% component.participants.each do |membership| %>
+                  <% user = membership.user %>
+                  <tr data-cy="participant-row-<%= user.id %>">
+                    <td>
+                      <div class="fw-bold"><%= user.tutorial_name %></div>
+                      <small class="text-muted"><%= user.email %></small>
+                    </td>
+                    <td><%= user.email %></td>
+                    <td>
+                      <% groups = component.participant_groups(user) %>
+                      <% if groups.any? %>
+                        <% groups.each do |group| %>
+                          <span class="badge bg-primary me-1"><%= group.title %></span>
+                        <% end %>
+                      <% else %>
+                        <span class="text-muted small"><%= t("roster.stats.status_unassigned") %></span>
+                      <% end %>
+                    </td>
+                    <td class="text-end">
+                      <div class="d-flex justify-content-end gap-2">
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}'>
+                            <%= t('roster.actions.assign') %>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
+                            <% if component.available_groups_for_participant.any? %>
+                              <% component.available_groups_for_participant.each do |group| %>
+                                <li>
+                                  <%= button_to component.helpers.group_title_with_capacity(group),
+                                      component.helpers.public_send("add_member_#{group.model_name.singular_route_key}_path", group),
+                                      params: { email: user.email },
+                                      method: :post,
+                                      class: "dropdown-item" %>
+                                </li>
+                              <% end %>
+                            <% else %>
+                              <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
+                            <% end %>
+                          </ul>
+                        </div>
+
+                        <%= button_to component.helpers.remove_member_lecture_path(component.lecture, user),
+                                      method: :delete,
+                                      class: "btn btn-sm btn-outline-danger",
+                                      data: { turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
+                          <i class="bi bi-trash"></i>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="card-footer text-muted small">
+        <%= t("roster.participants_footer_hint") %>
+      </div>
+    </div>
+  </div>
+</div>

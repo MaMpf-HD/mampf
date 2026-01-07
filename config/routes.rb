@@ -280,6 +280,14 @@ Rails.application.routes.draw do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
       post "roster/enroll", to: "roster/maintenance#enroll"
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
     end
 
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
