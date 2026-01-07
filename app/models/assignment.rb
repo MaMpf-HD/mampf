@@ -2,6 +2,7 @@ class Assignment < ApplicationRecord
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :completions, as: :completable, dependent: :destroy
 
   before_destroy :check_destructibility, prepend: true
 

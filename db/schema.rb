@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_07_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -181,6 +181,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.datetime "updated_at", null: false
     t.index ["closer_type", "closer_id"], name: "index_commontator_threads_on_closer_type_and_closer_id"
     t.index ["commontable_type", "commontable_id"], name: "index_commontator_threads_on_c_id_and_c_type", unique: true
+  end
+
+  create_table "completions", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.string "completable_type", null: false
+    t.bigint "completable_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completable_type", "completable_id", "user_id"], name: "index_completions_on_completable_and_user", unique: true
+    t.index ["completable_type", "completable_id"], name: "index_completions_on_completable"
+    t.index ["lecture_id", "user_id"], name: "index_completions_on_lecture_id_and_user_id"
+    t.index ["lecture_id"], name: "index_completions_on_lecture_id"
+    t.index ["user_id"], name: "index_completions_on_user_id"
   end
 
   create_table "course_self_joins", force: :cascade do |t|
@@ -1195,6 +1209,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "completions", "lectures"
+  add_foreign_key "completions", "users"
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
   add_foreign_key "feedbacks", "users"
