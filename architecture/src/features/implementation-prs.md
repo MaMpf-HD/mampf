@@ -191,7 +191,35 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Adding user to tutorial adds them to lecture; Removing from lecture removes from tutorial; Enrollment tab lists all students.
 ```
 
-```admonish example "PR-5.3 — Tutor abilities (read-only roster access)"
+```admonish example "PR-5.3 — Self-materialization (backend + admin config)"
+- Scope: Add `self_materialization_mode` enum to `Rosterable`; implement permission methods; admin UI for configuration.
+- Backend:
+  - Migration: Add `self_materialization_mode` enum column to tutorials, talks, cohorts, lectures.
+  - Update `Roster::Rosterable` concern with `can_self_add?`, `can_self_remove?`, `self_add!`, `self_remove!`.
+  - Validation: Block enabling mode during active campaigns (non-planning, non-completed).
+- Admin UI:
+  - Add mode selector dropdown to roster management UI (per-group basis).
+  - Four options: disabled/add_only/remove_only/add_and_remove.
+  - Turbo Frame update on change; validation errors shown inline.
+  - Feature flag: `self_materialization_enabled`.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access),
+  [Rosterable concern](03-rosters.md#rosterrosterable-concern)
+- Acceptance: Backend methods work; validation enforced; admin can configure mode per tutorial/cohort/talk; changes blocked with clear error if campaign active; feature flag gates both backend and UI.
+```
+
+```admonish example "PR-5.4 — Self-materialization UI (student)"
+- Scope: Student-facing join/leave buttons.
+- Controllers: `Roster::SelfMaterializationController` (join/leave actions).
+- UI:
+  - Join/Leave buttons on Tutorial/Cohort/Talk show pages.
+  - Turbo Stream updates for roster list.
+  - Buttons hidden when mode is `disabled`.
+  - Capacity/duplicate guards with error messages.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access)
+- Acceptance: Students can join/leave when enabled; buttons respect mode settings; capacity enforced; clear error messages for violations; feature flag gates UI.
+```
+
+```admonish example "PR-5.5 — Tutor abilities (read-only roster access)"
 - Scope: Tutors can view rosters for their assigned groups.
 - Abilities: Update CanCanCan to allow read-only roster access for tutors.
 - UI: Tutors see Detail view without edit actions.
@@ -199,7 +227,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Tutors can view rosters for their tutorials; cannot edit; exams do not show candidates panel.
 ```
 
-```admonish example "PR-5.4 — Manual add student (from candidates or arbitrary)"
+```admonish example "PR-5.6 — Manual add student (from candidates or arbitrary)"
 - Scope: Add students to rosters manually.
 - Controllers: Extend `Roster::MaintenanceController` with `add_student` action.
 - UI: "Add student" button on Overview; search input for arbitrary student addition.
@@ -207,7 +235,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Teachers can add students from candidates or search; capacity enforced; duplicate prevention.
 ```
 
-```admonish example "PR-5.5 — Integrity job (assigned/allocated reconciliation)"
+```admonish example "PR-5.7 — Integrity job (assigned/allocated reconciliation)"
 - Scope: Background job to verify roster consistency.
 - Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
 - Monitoring: Logs mismatches for admin review.
