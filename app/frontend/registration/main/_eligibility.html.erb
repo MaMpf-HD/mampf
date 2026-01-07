@@ -1,0 +1,32 @@
+<div class="card-body">
+  <div class="h5 mb-3"><%= t('registration.eligibility_title') %></div>
+
+  <p class="mb-2">
+    <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
+    <span class="small text-muted"><%= t('basics.status') %></span>: <%= eligibility_badge(pass) %>
+  </p>
+
+  <ul class="list-group list-group-flush">
+    <% eligibility.each do |policy| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
+
+          <% policy_info = get_policy_config_info(policy) %>
+          <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
+            <small class="text-muted">
+              <%= link_to t('registration.prerequisite_campaign'),
+                          campaign_registrations_for_campaign_path(campaign_id: policy_info),
+                          target: :_blank %>
+            </small>
+          <% else %>
+            <small class="text-muted"><%= policy_info %></small>
+          <% end %>
+        </div>
+
+        <% info = get_outcome_info(policy[:outcome]) %>
+        <span class="<%= info[:badge_class] %>"><%= info[:text] %></span>
+      </li>
+    <% end %>
+  </ul>
+</div>

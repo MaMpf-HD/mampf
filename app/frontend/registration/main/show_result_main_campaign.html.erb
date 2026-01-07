@@ -1,0 +1,33 @@
+<div class="container my-4" data-test="result">
+  <!-- Breadcrumb navigation -->
+  <nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <%= link_to t('registration.registrations'), user_registrations_path %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <%= @campaignable_host.title %> - <%= @campaign.description %> (<%= @campaign.campaignable_type %>)
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Campaign info card -->
+  <%= render partial: 'registration/main/campaign_info',
+             locals: { campaignable_host: @campaignable_host,
+                       assigned: !!@item_succeed,
+                       campaign: @campaign } %>
+
+  <!-- notification banner if campaign has been closed earlier than deadline -->
+  <% if !@campaign.open_for_registrations? && @campaign.registration_deadline < Time.current %>
+    <div class="alert alert-warning py-2 mt-2 mb-3">
+      <span><%= t("registration.closed_before_deadline") %></span>
+    </div>
+  <% end %>
+
+  <!-- Result card -->
+  <%= render partial: 'registration/main/result',
+             locals: { campaign: @campaign,
+                       item_succeed: @item_succeed,
+                       status_items_selected: @status_items_selected,
+                       items_selected: @items_selected } %>
+</div>
