@@ -44,7 +44,11 @@
                       <% groups = component.participant_groups(user) %>
                       <% if groups.any? %>
                         <% groups.each do |group| %>
-                          <span class="badge bg-primary me-1"><%= group.title %></span>
+                          <%= link_to group.title,
+                                      component.group_path(group),
+                                      class: "badge bg-primary me-1 text-decoration-none text-white",
+                                      style: "cursor: pointer;",
+                                      data: { turbo_frame: component.helpers.roster_maintenance_frame_id(component.group_type) } %>
                         <% end %>
                       <% else %>
                         <span class="text-muted small"><%= t("roster.stats.status_unassigned") %></span>

@@ -32,14 +32,19 @@ module Rosters
     end
 
     # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if it is NOT in manual mode AND a campaign is active (pending/running).
     # If manual mode is true, it is never locked.
-    # If manual mode is false, it is unlocked only if no campaign is active.
     def locked?
       return false if manual_roster_mode?
 
-      # If in system mode, it is locked unless it was part of a completed campaign
-      !campaign_completed?
+      if is_a?(Lecture)
+        registration_campaigns
+          .where(planning_only: false)
+          .where.not(status: :completed)
+          .exists?
+      else
+        # If in system mode, it is locked unless it was part of a completed campaign
+        !campaign_completed?
+      end
     end
 
     # Checks if manual mode can be enabled (switched from false to true).
