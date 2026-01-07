@@ -66,9 +66,10 @@
                                   <li>
                                     <%= button_to action[:url],
                                         method: action[:method],
-                                          params: action[:params].merge(active_tab: "participants",
-                                                                      group_type: component.group_type,
-                                                                      frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
+                                        params: action[:params].merge(active_tab: "participants",
+                                                                    group_type: component.group_type,
+                                                                    frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
+                                        data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
                                         class: "dropdown-item d-flex justify-content-between align-items-center" do %>
                                       <span><%= component.helpers.group_title_with_capacity(group) %></span>
                                       <% if action[:method] == :patch %>

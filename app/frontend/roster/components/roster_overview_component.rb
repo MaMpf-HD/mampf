@@ -25,7 +25,11 @@ class RosterOverviewComponent < ViewComponent::Base
     @participants ||= @lecture.lecture_memberships
                               .joins(:user)
                               .includes(:user)
-                              .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+                              .order(
+                                Arel.sql(
+                                  "COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"
+                                )
+                              )
   end
 
   # Checks if a participant is assigned to any functional sub-group (Tutorial or Talk).
@@ -47,28 +51,28 @@ class RosterOverviewComponent < ViewComponent::Base
     reserved_ids = user_memberships[user.id]
 
     all_assignable_groups.reject do |g|
-      g.locked? || reserved_ids.include?(g.id)
+      g.locked? || reserved_ids.include?(group_key(g))
     end
   end
 
   # Returns the groups the user is currently a member of (including Cohorts)
   def participant_groups(user)
     ids = user_memberships[user.id]
-    ids.map { |id| all_groups_map[id] }.compact.sort_by(&:title)
+    ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
   # Determines the appropriate action (Add or Move) for a target group
   def assignment_action(user, target_group)
     # Find current groups of the same type that the user is already in
     # (e.g., if target is Cohort B, find all Cohorts the user is in)
-    current_of_type = participant_groups(user).select { |g| g.class == target_group.class }
+    current_of_type = participant_groups(user).select { |g| g.instance_of?(target_group.class) }
 
     # Heuristic:
     # - If user is in exactly 1 group of this type, we propose "Switch" (Move).
     #   (Matches standard partition logic: Tutorials, Cohorts, etc.)
     # - If user is in 0 groups: "Add".
     # - If user is in >1 groups: "Add" (Move is ambiguous without source selection).
-    if current_of_type.count == 1
+    if current_of_type.one?
       source = current_of_type.first
       {
         url: helpers.public_send("move_member_#{source.class.name.underscore}_path", source, user),
@@ -177,7 +181,11 @@ class RosterOverviewComponent < ViewComponent::Base
     end
 
     def all_groups_map
-      @all_groups_map ||= all_assignable_groups.index_by(&:id)
+      @all_groups_map ||= all_assignable_groups.index_by { |g| group_key(g) }
+    end
+
+    def group_key(group)
+      "#{group.class.name}-#{group.id}"
     end
 
     # Pre-fetches all memberships for the lecture to avoid N+1 queries
@@ -190,21 +198,21 @@ class RosterOverviewComponent < ViewComponent::Base
         if @lecture.tutorials.exists?
           TutorialMembership.where(tutorial: @lecture.tutorials)
                             .pluck(:user_id, :tutorial_id)
-                            .each { |uid, tid| map[uid].add(tid) }
+                            .each { |uid, tid| map[uid].add("Tutorial-#{tid}") }
         end
 
         # Bulk load Talk memberships
         if @lecture.talks.exists?
           SpeakerTalkJoin.where(talk: @lecture.talks)
                          .pluck(:speaker_id, :talk_id)
-                         .each { |uid, tid| map[uid].add(tid) }
+                         .each { |uid, tid| map[uid].add("Talk-#{tid}") }
         end
 
         # Bulk load Cohort memberships
         if @lecture.respond_to?(:cohorts) && @lecture.cohorts.exists?
           CohortMembership.where(cohort: @lecture.cohorts)
                           .pluck(:user_id, :cohort_id)
-                          .each { |uid, cid| map[uid].add(cid) }
+                          .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
         end
 
         map
