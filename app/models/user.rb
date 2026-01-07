@@ -611,6 +611,8 @@ class User < ApplicationRecord
 
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
+    # TODO: find out if this is smart
+    lecture.completions.where(user: self).delete
 
     true
   end
@@ -852,6 +854,10 @@ class User < ApplicationRecord
     end
 
     def archive_user(archive_name)
+      # Early deletion of completions to save storage
+      # TODO: find out if smart
+      completions.where(user: self).delete
+
       User.create(name: archive_name,
                   email: archive_email,
                   password: SecureRandom.base58(12),

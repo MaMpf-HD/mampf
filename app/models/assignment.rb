@@ -154,4 +154,20 @@ class Assignment < ApplicationRecord
   def localized_deletion_date
     deletion_date.strftime(I18n.t("date.formats.concise"))
   end
+
+  def mark_as_completed_by(user)
+    return unless lecture.subscribed_by?(user)
+
+    completions.find_or_create_by(user: user, lecture: lecture, completable: self)
+  end
+
+  def unmark_as_completed_by(user)
+    return unless lecture.subscribed_by?(user)
+
+    completions.where(user: user, lecture: lecture, completable: self).destroy_all
+  end
+
+  def completed_by?(user)
+    completions.exists?(user: user, lecture: lecture, completable: self)
+  end
 end

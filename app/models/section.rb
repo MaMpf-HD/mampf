@@ -221,4 +221,20 @@ class Section < ApplicationRecord
       # actual previous chapter may not have any sections
       chapter.higher_items.find { |c| c.sections.exists? }
     end
+
+    def mark_as_completed_by(user)
+      return unless lecture.subscribed_by?(user)
+
+      completions.find_or_create_by(user: user, lecture: lecture, completable: self)
+    end
+
+    def unmark_as_completed_by(user)
+      return unless lecture.subscribed_by?(user)
+
+      completions.where(user: user, lecture: lecture, completable: self).destroy_all
+    end
+
+    def completed_by?(user)
+      completions.exists?(user: user, lecture: lecture, completable: self)
+    end
 end
