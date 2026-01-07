@@ -141,11 +141,15 @@ module Roster
         # Ensure group_type is formatted correctly (strings/symbols/arrays) for the helper
         group_type = group_type&.to_sym unless group_type.is_a?(Array)
 
+        frame_id = params[:frame_id].presence
+        frame_id = nil unless allowed_roster_frame_ids.include?(frame_id)
+        frame_id ||= view_context.roster_maintenance_frame_id(group_type)
+
         respond_to do |format|
           format.turbo_stream do
             streams = [
               turbo_stream.update(
-                view_context.roster_maintenance_frame_id(group_type),
+                frame_id,
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type,
                                             active_tab: active_tab,
@@ -160,6 +164,16 @@ module Roster
             redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
           end
         end
+      end
+
+      def allowed_roster_frame_ids
+        group_types = [
+          :all,
+          *RosterOverviewComponent::SUPPORTED_TYPES.keys,
+          view_context.roster_group_types(@lecture)
+        ].uniq
+
+        group_types.map { |t| view_context.roster_maintenance_frame_id(t) }
       end
 
       def find_user
