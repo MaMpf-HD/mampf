@@ -79,12 +79,18 @@ The “contract” required by the maintenance service, defining how to read and
 | `materialize_allocation!(user_ids:, campaign:)` | Provided | Implements the allocation materialization from `Registration::Registerable`. |
 | `add_user_to_roster!(user_id)` | Provided (private) | Adds a single user to the roster if not already present. |
 | `remove_user_from_roster!(user_id)` | Provided (private) | Removes a single user from the roster. |
+| `self_materialization_mode` | Provided (enum) | Controls student self-service roster access: `disabled`, `add_only`, `remove_only`, `add_and_remove`. |
+| `can_self_add?(user)` | Provided | Checks if user can join via self-materialization. |
+| `can_self_remove?(user)` | Provided | Checks if user can leave via self-materialization. |
+| `self_add!(user)` | Provided | Student-initiated roster join (with permission check). |
+| `self_remove!(user)` | Provided | Student-initiated roster leave (with permission check). |
 
 ### Behavior Highlights
 - **Explicit Contract:** The concern raises a `NotImplementedError` if an including class fails to override required methods (`#roster_user_ids`, `#replace_roster!`, `#roster_entries`, `#mark_campaign_source!`), ensuring the contract is met.
 - **Idempotent:** Calling `replace_roster!` with the same set of IDs should result in no change.
 - **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
 - **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
+- **Self-Materialization:** Enables student-initiated roster changes as an alternative to campaigns or post-campaign follow-up. Default is `disabled` (staff-only access).
 
 ### Example Implementation
 ```ruby
@@ -92,6 +98,17 @@ The “contract” required by the maintenance service, defining how to read and
 module Roster
   module Rosterable
     extend ActiveSupport::Concern
+
+    included do
+      enum self_materialization_mode: {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, _prefix: :self_mat
+
+      validate :self_materialization_not_during_active_campaign
+    end
 
     def roster_user_ids
       raise NotImplementedError, "#{self.class.name} must implement #roster_user_ids"
@@ -120,6 +137,27 @@ module Roster
       end
     end
 
+    def can_self_add?(user)
+      return false if self_mat_disabled? || self_mat_remove_only?
+      return false if full?
+      !roster_user_ids.include?(user.id)
+    end
+
+    def can_self_remove?(user)
+      return false if self_mat_disabled? || self_mat_add_only?
+      roster_user_ids.include?(user.id)
+    end
+
+    def self_add!(user)
+      raise "Not allowed" unless can_self_add?(user)
+      add_user_to_roster!(user.id)
+    end
+
+    def self_remove!(user)
+      raise "Not allowed" unless can_self_remove?(user)
+      remove_user_from_roster!(user.id)
+    end
+
     private
 
     def add_user_to_roster!(user_id)
@@ -138,6 +176,21 @@ module Roster
 
     def mark_campaign_source!(user_ids, campaign)
       raise NotImplementedError, "#{self.class.name} must implement #mark_campaign_source! for campaign tracking"
+    end
+
+    def self_materialization_not_during_active_campaign
+      return if self_mat_disabled?
+
+      active = Registration::Item.where(registerable: self)
+        .joins(:registration_campaign)
+        .where.not(registration_campaigns: {
+          status: :completed, planning_only: true
+        }).exists?
+
+      if active
+        errors.add(:self_materialization_mode,
+          "cannot be enabled during active campaign")
+      end
     end
   end
 end

@@ -391,7 +391,7 @@ if tutorial.can_self_add?(current_user)
 end
 ```
 
-See `Roster::SelfMaterializable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
+See the `Roster::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
 
 ---
 
