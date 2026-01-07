@@ -243,6 +243,18 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
 ```
 
+```admonish example "PR-5.8 — Turbo Stream Orchestrator"
+- Scope: Extract stream logic from controllers into `Turbo::LectureStreamService`.
+- Pattern: Controllers declare "what happened" (e.g., `roster_changed`); service returns appropriate streams.
+- Refactor: `TutorialsController`, `CohortsController`, `Registration::CampaignsController`, `Roster::MaintenanceController`.
+- Implementation:
+  - `Turbo::LectureStreamService` with methods: `roster_changed`, `campaign_changed`, `enrollment_changed`.
+  - Each method returns array of turbo streams for all dependent UI components.
+  - Controllers call service instead of building streams inline.
+- Refs: [Turbo Streams](https://turbo.hotwired.dev/handbook/streams)
+- Acceptance: Controllers contain no DOM IDs or partial paths; all cross-tab updates centralized in service; adding new dependent views requires editing only the service.
+```
+
 ```admonish abstract
 Grading — Step 6: Foundations (Schema)
 ```
