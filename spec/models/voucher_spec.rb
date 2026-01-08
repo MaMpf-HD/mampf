@@ -105,6 +105,8 @@ RSpec.describe(Voucher, type: :model) do
   describe "class methods" do
     describe ".roles_for_lecture" do
       context "when lecture is a seminar" do
+        after { Flipper.disable(:roster_maintenance) }
+
         context "when roster_maintenance is enabled" do
           before { Flipper.enable(:roster_maintenance) }
 
