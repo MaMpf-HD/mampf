@@ -1,7 +1,8 @@
 <% component.subtables_for(group).each do |subtable| %>
   <% if subtable[:title] %>
-    <div class="bg-light p-2 px-3 border-bottom fw-bold text-secondary small">
+    <div class="bg-light p-2 px-3 border-bottom fw-bold text-dark border-top d-flex align-items-center">
       <%= subtable[:title] %>
+      <%= helpdesk(subtable[:help], false) if subtable[:help] %>
     </div>
   <% end %>
 

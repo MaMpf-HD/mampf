@@ -99,9 +99,9 @@ de:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt.Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
-      cohort_propagate_to_lecture: "Wenn aktiviert, gelten Mitglieder dieser Kohorte als volle Teilnehmende der Veranstaltung (Zugangsgruppe). Wenn deaktiviert, ist diese Kohorte nur eine isolierte Liste (z.B. Warteliste) und Mitglieder erhalten keinen automatischen Zugriff auf Veranstaltungsmaterialien."
-      cohort_already_propagating: "Diese Kohorte gewährt vollen Veranstaltungszugriff. Dies kann nicht geändert werden."
-      cohort_is_sidecar: "Diese Kohorte ist isoliert. Mitglieder erhalten keinen automatischen Veranstaltungszugriff. Dies kann nicht geändert werden."
+      cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
+      cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+      cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
     buttons:
       full_editor: "vollständigen Editor"
     errors:
@@ -124,6 +124,7 @@ de:
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
+      setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "Studierende/r wurde nach %{target} verschoben."
@@ -131,10 +132,13 @@ de:
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
     cohorts:
-      propagate_to_lecture: "Zugriff auf Veranstaltung gewähren"
-      propagates: "Gewährt Zugriff"
-      propagates_short: "Zugriff"
+      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
+      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
+      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
+      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
+      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
+      propagates_short: "Einschreibung"
       propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
-      access_rights: "Zugriffsrechte"
-      access_groups: "Mit Vorlesungseinschreibung"
-      sidecar: "Ohne Vorlesungseinschreibung  "
+      lecture_enrollment: "Veranstaltungseinschreibung"

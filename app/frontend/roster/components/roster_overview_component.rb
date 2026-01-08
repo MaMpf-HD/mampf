@@ -205,12 +205,20 @@ class RosterOverviewComponent < ViewComponent::Base
 
   def subtables_for(group)
     if group[:type] == :cohorts && group[:items].any?
-      access = group[:items].select(&:propagate_to_lecture?)
-      sidecars = group[:items].reject(&:propagate_to_lecture?)
+      with_enrollment = group[:items].select(&:propagate_to_lecture?)
+      without_enrollment = group[:items].reject(&:propagate_to_lecture?)
 
       [
-        { title: I18n.t("roster.cohorts.access_groups"), items: access },
-        { title: I18n.t("roster.cohorts.sidecar"), items: sidecars }
+        {
+          title: I18n.t("roster.cohorts.with_lecture_enrollment_title"),
+          help: I18n.t("roster.cohorts.with_lecture_enrollment_help"),
+          items: with_enrollment
+        },
+        {
+          title: I18n.t("roster.cohorts.without_lecture_enrollment_title"),
+          help: I18n.t("roster.cohorts.without_lecture_enrollment_help"),
+          items: without_enrollment
+        }
       ].select { |p| p[:items].any? }
         .presence || [{ title: nil, items: group[:items] }]
     else

@@ -97,9 +97,9 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
-      cohort_propagate_to_lecture: "If checked, members of this cohort are considered full participants of the lecture (Access Group). If unchecked, this cohort is just a sidecar list (e.g. Waitlist) and members do not get automatic access to lecture materials."
-      cohort_already_propagating: "This cohort grants full lecture access. This cannot be changed."
-      cohort_is_sidecar: "This cohort is isolated. Members do not get automatic lecture access. This cannot be changed."
+      cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
+      cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
+      cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
     buttons:
       full_editor: "vollständigen Editor"
     errors:
@@ -122,6 +122,7 @@ en:
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:
       updated: "Settings updated."
       user_moved: "Student moved to %{target}."
@@ -129,10 +130,13 @@ en:
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
     cohorts:
-      propagate_to_lecture: "Grant lecture access"
-      propagates: "Grants access"
-      propagates_short: "Access"
+      with_lecture_enrollment_title: "With Lecture Enrollment"
+      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
+      without_lecture_enrollment_title: "Without Lecture Enrollment"
+      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      with_lecture_enrollment: "With Lecture Enrollment"
+      without_lecture_enrollment: "Without Lecture Enrollment"
+      propagate_to_lecture: "With automatic lecture enrollment"
+      propagates_short: "Enrollment"
       propagates_hint: "Members of this cohort serve as lecture participants"
-      access_rights: "Access rights"
-      access_groups: "Access Groups (Full Access)"
-      sidecar: 'Without lecture enrollment'
+      lecture_enrollment: "Lecture Enrollment"

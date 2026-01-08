@@ -27,17 +27,20 @@
         <%= f.label :propagate_to_lecture, t("roster.cohorts.propagate_to_lecture"), class: "form-check-label" %>
         <div class="form-text">
           <%= t("roster.hints.cohort_propagate_to_lecture") %>
+          <div class="mt-1 text-danger">
+            <%= t("roster.warnings.setting_cannot_be_changed") %>
+          </div>
         </div>
       </div>
     <% else %>
       <div class="mb-3">
-        <strong><%= t("roster.cohorts.access_rights") %>:</strong>
+        <%= t("roster.cohorts.lecture_enrollment") %>:
         <% if cohort.propagate_to_lecture? %>
-          <span class="badge bg-success"><%= t("roster.cohorts.propagates") %></span>
+          <span class="badge bg-success"><%= t("roster.cohorts.with_lecture_enrollment") %></span>
           <div class="form-text mt-1"><%= t("roster.hints.cohort_already_propagating") %></div>
         <% else %>
-          <span class="badge bg-secondary"><%= t("roster.cohorts.sidecar") %></span>
-          <div class="form-text mt-1"><%= t("roster.hints.cohort_is_sidecar") %></div>
+          <span class="badge bg-secondary"><%= t("roster.cohorts.without_lecture_enrollment") %></span>
+          <div class="form-text mt-1"><%= t("roster.hints.cohort_is_isolated") %></div>
         <% end %>
       </div>
     <% end %>
