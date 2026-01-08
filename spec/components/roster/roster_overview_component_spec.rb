@@ -87,7 +87,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "participants count" do
+  describe "#total_participants" do
     let!(:tutorial) { create(:tutorial, lecture: lecture) }
     let!(:users) { create_list(:user, 3) }
 
@@ -96,7 +96,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     it "returns the total count of participants" do
-      expect(component.participants.count).to eq(3)
+      expect(component.total_participants).to eq(3)
     end
   end
 
@@ -140,7 +140,8 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns talk roster path for a Talk" do
         talk = create(:talk, lecture: lecture)
-        allow(helpers).to receive(:talk_roster_path).with(talk).and_return("/talks/#{talk.id}/roster")
+        allow(helpers).to receive(:talk_roster_path).with(talk)
+                                                    .and_return("/talks/#{talk.id}/roster")
         expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
       end
     end

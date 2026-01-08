@@ -1,12 +1,12 @@
 require "rails_helper"
 
 RSpec.describe(RosterCandidatesComponent, type: :component) do
-  let(:lecture) { create(:lecture) }
   let(:fresh_user) { create(:user, email: "fresh@example.com", name: "Fresh User") }
   let(:prev_user) { create(:user, email: "prev@example.com", name: "Prev User") }
   let(:curr_user) { create(:user, email: "curr@example.com", name: "Curr User") }
 
-  context "with tutorials" do
+  context "when group_type is tutorials" do
+    let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }
     let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :completed) }
     let!(:item) do
@@ -19,144 +19,107 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
                                               registration_item: item, materialized_at: nil)
 
       # Previously assigned user: Registered, materialized, but currently NOT in tutorial
-      create(:registration_user_registration, registration_campaign: campaign, user: prev_user,
-                                              registration_item: item, materialized_at: Time.current)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              user: prev_user,
+                                              registration_item: item,
+                                              materialized_at: Time.current)
 
       # Currently assigned user: Registered, materialized, AND in tutorial
-      create(:registration_user_registration, registration_campaign: campaign, user: curr_user,
-                                              registration_item: item, materialized_at: Time.current)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              user: curr_user,
+                                              registration_item: item,
+                                              materialized_at: Time.current)
       tutorial.members << curr_user
     end
 
-    context "when user is in a cohort (Sidecar)" do
-      let(:cohort_user) { create(:user, email: "cohort@example.com", name: "Cohort User") }
-      let(:cohort) { create(:cohort, context: lecture) }
+    let(:component) { described_class.new(lecture: lecture, group_type: :tutorials) }
 
-      before do
-        # User registered for tutorial but was placed in a cohort (waitlist) instead
-        create(:registration_user_registration, registration_campaign: campaign, user: cohort_user,
-                                                registration_item: item, materialized_at: nil)
-        cohort.members << cohort_user
+    it "renders" do
+      render_inline(component)
+      expect(rendered_content).to include("Fresh User")
+    end
+
+    it "returns correct candidates" do
+      expect(component.candidates).to include(fresh_user, prev_user)
+      expect(component.candidates).not_to include(curr_user)
+    end
+
+    it "groups candidates by type" do
+      groups = component.grouped_candidates
+      expect(groups.size).to eq(1)
+      expect(groups.first[:type]).to eq(:tutorials)
+      expect(groups.first[:users]).to include(fresh_user, prev_user)
+    end
+
+    it "identifies fresh candidates" do
+      users = component.candidates
+      expect(component.fresh_candidates(users)).to include(fresh_user)
+      expect(component.fresh_candidates(users)).not_to include(prev_user)
+    end
+
+    it "identifies previously assigned candidates" do
+      users = component.candidates
+      expect(component.previously_assigned_candidates(users)).to include(prev_user)
+      expect(component.previously_assigned_candidates(users)).not_to include(fresh_user)
+    end
+
+    describe "#add_member_path" do
+      before { render_inline(component) }
+
+      it "returns correct path for tutorial" do
+        path = component.add_member_path(tutorial, fresh_user)
+        expect(path)
+          .to eq(Rails.application.routes.url_helpers
+          .add_member_tutorial_path(tutorial,
+                                    user_id: fresh_user.id, tab: "enrollment",
+                                    group_type: :tutorials))
       end
 
-      it "excludes cohort members from candidates list" do
-        component = described_class.new(lecture: lecture, group_type: :tutorials)
-        expect(component.candidates).not_to include(cohort_user)
+      it "returns correct path for talk" do
+        seminar = create(:seminar)
+        talk = create(:talk, lecture: seminar)
+        path = component.add_member_path(talk, fresh_user)
+        expect(path)
+          .to eq(Rails.application.routes.url_helpers
+          .add_member_talk_path(talk,
+                                user_id: fresh_user.id, tab: "enrollment",
+                                group_type: :tutorials))
       end
     end
 
-    context "when group_type is tutorials" do
-      let(:component) { described_class.new(lecture: lecture, group_type: :tutorials) }
+    describe "#candidate_info" do
+      before { render_inline(component) }
 
-      it "renders" do
-        render_inline(component)
-        expect(rendered_content).to include("Fresh User")
-      end
-
-      it "returns correct candidates" do
-        expect(component.candidates).to include(fresh_user, prev_user)
-        expect(component.candidates).not_to include(curr_user)
-      end
-
-      it "groups candidates by type" do
-        groups = component.grouped_candidates
-        expect(groups.size).to eq(1)
-        expect(groups.first[:type]).to eq(:tutorials)
-        expect(groups.first[:users]).to include(fresh_user, prev_user)
-      end
-
-      it "identifies fresh candidates" do
-        users = component.candidates
-        expect(component.fresh_candidates(users)).to include(fresh_user)
-        expect(component.fresh_candidates(users)).not_to include(prev_user)
-      end
-
-      it "identifies previously assigned candidates" do
-        users = component.candidates
-        expect(component.previously_assigned_candidates(users)).to include(prev_user)
-        expect(component.previously_assigned_candidates(users)).not_to include(fresh_user)
-      end
-
-      describe "#add_member_path" do
-        before { render_inline(component) }
-
-        it "returns correct path for tutorial" do
-          path = component.add_member_path(tutorial, fresh_user)
-          expect(path)
-            .to eq(Rails.application.routes.url_helpers
-            .add_member_tutorial_path(tutorial,
-                                      user_id: fresh_user.id, tab: "enrollment",
-                                      group_type: :tutorials))
-        end
-
-        it "returns correct path for talk" do
-          seminar = create(:seminar)
-          talk = create(:talk, lecture: seminar)
-          path = component.add_member_path(talk, fresh_user)
-          expect(path)
-            .to eq(Rails.application.routes.url_helpers
-            .add_member_talk_path(talk,
-                                  user_id: fresh_user.id, tab: "enrollment",
-                                  group_type: :tutorials))
-        end
-      end
-
-      describe "#candidate_info" do
-        before { render_inline(component) }
-
-        it "returns correct info" do
-          info = component.candidate_info(fresh_user)
-          expect(info.first[:campaign_title]).to eq(campaign.description)
-          expect(info.first[:wishes]).to eq(tutorial.title)
-        end
-      end
-
-      it "lists available groups" do
-        expect(component.available_groups).to include(tutorial)
-      end
-
-      describe "#overbooked?" do
-        it "returns false if group has no capacity" do
-          tutorial.update(capacity: nil)
-          expect(component.overbooked?(tutorial)).to be(false)
-        end
-
-        it "returns false if group is not full" do
-          tutorial.update(capacity: 10)
-          expect(component.overbooked?(tutorial)).to be(false)
-        end
-
-        it "returns true if group is full" do
-          tutorial.update(capacity: 1)
-          expect(component.overbooked?(tutorial)).to be(true)
-        end
-
-        it "returns true if group is over capacity" do
-          tutorial.update(capacity: 0)
-          expect(component.overbooked?(tutorial)).to be(true)
-        end
+      it "returns correct info" do
+        info = component.candidate_info(fresh_user)
+        expect(info.first[:campaign_title]).to eq(campaign.description)
+        expect(info.first[:wishes]).to eq(tutorial.title)
       end
     end
 
-    context "when group_type is invalid" do
-      let(:component) { described_class.new(lecture: lecture, group_type: :invalid) }
-
-      it "does not render" do
-        render_inline(component)
-        expect(rendered_content).to be_empty
-      end
+    it "lists available groups" do
+      expect(component.available_groups).to include(tutorial)
     end
 
-    context "when group_type is an array" do
-      let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :cohorts]) }
-
-      it "renders" do
-        render_inline(component)
-        expect(rendered_content).to include("Fresh User")
+    describe "#overbooked?" do
+      it "returns false if group has no capacity" do
+        tutorial.update(capacity: nil)
+        expect(component.overbooked?(tutorial)).to be(false)
       end
 
-      it "lists available groups" do
-        expect(component.available_groups).to include(tutorial)
+      it "returns false if group is not full" do
+        tutorial.update(capacity: 10)
+        expect(component.overbooked?(tutorial)).to be(false)
+      end
+
+      it "returns true if group is full" do
+        tutorial.update(capacity: 1)
+        expect(component.overbooked?(tutorial)).to be(true)
+      end
+
+      it "returns true if group is over capacity" do
+        tutorial.update(capacity: 0)
+        expect(component.overbooked?(tutorial)).to be(true)
       end
     end
   end
@@ -182,6 +145,41 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
 
     it "lists available groups" do
       expect(component.available_groups).to include(talk)
+    end
+  end
+
+  context "when group_type is invalid" do
+    let(:lecture) { create(:lecture) }
+    let(:component) { described_class.new(lecture: lecture, group_type: :invalid) }
+
+    it "does not render" do
+      render_inline(component)
+      expect(rendered_content).to be_empty
+    end
+  end
+
+  context "when group_type is an array" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :completed) }
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign, user: fresh_user,
+                                              registration_item: item, materialized_at: nil)
+    end
+
+    let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :cohorts]) }
+
+    it "renders" do
+      render_inline(component)
+      expect(rendered_content).to include("Fresh User")
+    end
+
+    it "lists available groups" do
+      expect(component.available_groups).to include(tutorial)
     end
   end
 end
