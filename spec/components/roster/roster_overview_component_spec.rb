@@ -5,93 +5,84 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
   let(:component) { described_class.new(lecture: lecture) }
 
   describe "#groups" do
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-    let!(:talk) { create(:talk, lecture: lecture) }
+    context "with tutorials" do
+      let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
-    context "when group_type is :all" do
-      it "returns both tutorials and talks" do
+      it "returns tutorials when group_type is :all" do
         groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :talks)
+        expect(groups.pluck(:type)).to contain_exactly(:tutorials)
       end
-    end
 
-    context "when group_type is :tutorials" do
-      let(:component) { described_class.new(lecture: lecture, group_type: :tutorials) }
-
-      it "returns only tutorials" do
+      it "returns tutorials when group_type is :tutorials" do
+        component = described_class.new(lecture: lecture, group_type: :tutorials)
         groups = component.groups
         expect(groups.pluck(:type)).to contain_exactly(:tutorials)
       end
     end
 
-    context "when group_type is :talks" do
-      let(:component) { described_class.new(lecture: lecture, group_type: :talks) }
+    context "with talks" do
+      let(:lecture) { create(:seminar) }
+      let!(:talk) { create(:talk, lecture: lecture) }
 
-      it "returns only talks" do
+      it "returns talks when group_type is :all" do
+        groups = component.groups
+        expect(groups.pluck(:type)).to contain_exactly(:talks)
+      end
+
+      it "returns talks when group_type is :talks" do
+        component = described_class.new(lecture: lecture, group_type: :talks)
         groups = component.groups
         expect(groups.pluck(:type)).to contain_exactly(:talks)
       end
     end
 
-    context "when group_type is an array" do
-      let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :talks]) }
-
-      it "returns specified groups" do
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :talks)
-      end
-    end
-
     context "sorting" do
-      let!(:locked_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "A Locked")
-        # Simulate being in a campaign so manual mode cannot be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(true)
-        allow(t).to receive(:manual_roster_mode?).and_return(false)
-        t
-      end
-
-      let!(:manual_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "B Manual", manual_roster_mode: true)
-        # Simulate empty roster so manual mode can be disabled
-        allow(t).to receive(:roster_empty?).and_return(true)
-        t
-      end
-
-      let!(:standard_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "C Standard", manual_roster_mode: false)
-        # Not in campaign, so manual mode can be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(false)
-        t
-      end
-
-      it "sorts locked items first, then switchable items" do
-        groups = component.groups
-        tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
-
-        # Locked items (has_switch = false) come first
-        expect(tutorials.first).to eq(locked_tutorial)
-
-        # Switchable items (has_switch = true) come last, sorted by title
-        # We filter the list to ignore the tutorial created in the outer 'let!' block
-        relevant_tutorials = tutorials.select do |t|
-          [manual_tutorial, standard_tutorial].include?(t)
+      context "tutorials" do
+        let!(:locked_tutorial) do
+          t = create(:tutorial, lecture: lecture, title: "A Locked")
+          allow(t).to receive(:in_real_campaign?).and_return(true)
+          allow(t).to receive(:manual_roster_mode?).and_return(false)
+          t
         end
-        expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+
+        let!(:manual_tutorial) do
+          t = create(:tutorial, lecture: lecture, title: "B Manual", manual_roster_mode: true)
+          allow(t).to receive(:roster_empty?).and_return(true)
+          t
+        end
+
+        let!(:standard_tutorial) do
+          t = create(:tutorial, lecture: lecture, title: "C Standard", manual_roster_mode: false)
+          allow(t).to receive(:in_real_campaign?).and_return(false)
+          t
+        end
+
+        it "sorts locked items first, then switchable items" do
+          groups = component.groups
+          tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
+
+          expect(tutorials.first).to eq(locked_tutorial)
+
+          relevant_tutorials = tutorials.select do |t|
+            [manual_tutorial, standard_tutorial].include?(t)
+          end
+          expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+        end
       end
 
-      it "sorts talks by position" do
-        # Clear existing talks to avoid interference
-        lecture.talks.destroy_all
+      context "talks" do
+        let(:lecture) { create(:seminar) }
 
-        talk1 = create(:talk, lecture: lecture, position: 2)
-        talk2 = create(:talk, lecture: lecture, position: 1)
+        it "sorts talks by position" do
+          talk1 = create(:talk, lecture: lecture, position: 2)
+          talk2 = create(:talk, lecture: lecture, position: 1)
 
-        component = described_class.new(lecture: lecture, group_type: :talks)
-        groups = component.groups
-        talks = groups.find { |g| g[:type] == :talks }[:items]
+          component = described_class.new(lecture: lecture, group_type: :talks)
+          groups = component.groups
+          talks = groups.find { |g| g[:type] == :talks }[:items]
 
-        expect(talks).to eq([talk2, talk1])
+          expect(talks).to eq([talk2, talk1])
+        end
       end
     end
   end
@@ -144,10 +135,14 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
 
-    it "returns talk roster path for a Talk" do
-      talk = create(:talk, lecture: lecture)
-      allow(helpers).to receive(:talk_roster_path).with(talk).and_return("/talks/#{talk.id}/roster")
-      expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
+    context "with seminar" do
+      let(:lecture) { create(:seminar) }
+
+      it "returns talk roster path for a Talk" do
+        talk = create(:talk, lecture: lecture)
+        allow(helpers).to receive(:talk_roster_path).with(talk).and_return("/talks/#{talk.id}/roster")
+        expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
+      end
     end
   end
 

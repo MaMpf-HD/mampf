@@ -1,33 +1,33 @@
 require "rails_helper"
 
 RSpec.describe(RosterCandidatesComponent, type: :component) do
-  let(:lecture) { create(:lecture) }
-  let(:tutorial) { create(:tutorial, lecture: lecture) }
-  let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :completed) }
-  let!(:item) do
-    create(:registration_item, registration_campaign: campaign, registerable: tutorial)
-  end
-
   let(:fresh_user) { create(:user, email: "fresh@example.com", name: "Fresh User") }
   let(:prev_user) { create(:user, email: "prev@example.com", name: "Prev User") }
   let(:curr_user) { create(:user, email: "curr@example.com", name: "Curr User") }
 
-  before do
-    # Fresh user: Registered, never assigned
-    create(:registration_user_registration, registration_campaign: campaign, user: fresh_user,
-                                            registration_item: item, materialized_at: nil)
-
-    # Previously assigned user: Registered, materialized, but currently NOT in tutorial
-    create(:registration_user_registration, registration_campaign: campaign, user: prev_user,
-                                            registration_item: item, materialized_at: Time.current)
-
-    # Currently assigned user: Registered, materialized, AND in tutorial
-    create(:registration_user_registration, registration_campaign: campaign, user: curr_user,
-                                            registration_item: item, materialized_at: Time.current)
-    tutorial.members << curr_user
-  end
-
   context "when group_type is tutorials" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :completed) }
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      # Fresh user: Registered, never assigned
+      create(:registration_user_registration, registration_campaign: campaign, user: fresh_user,
+                                              registration_item: item, materialized_at: nil)
+
+      # Previously assigned user: Registered, materialized, but currently NOT in tutorial
+      create(:registration_user_registration, registration_campaign: campaign, user: prev_user,
+                                              registration_item: item, materialized_at: Time.current)
+
+      # Currently assigned user: Registered, materialized, AND in tutorial
+      create(:registration_user_registration, registration_campaign: campaign, user: curr_user,
+                                              registration_item: item, materialized_at: Time.current)
+      tutorial.members << curr_user
+    end
+
     let(:component) { described_class.new(lecture: lecture, group_type: :tutorials) }
 
     it "renders" do
@@ -72,7 +72,8 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
       end
 
       it "returns correct path for talk" do
-        talk = create(:talk, lecture: lecture)
+        seminar = create(:seminar)
+        talk = create(:talk, lecture: seminar)
         path = component.add_member_path(talk, fresh_user)
         expect(path)
           .to eq(Rails.application.routes.url_helpers
@@ -120,6 +121,7 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
   end
 
   context "when group_type is talks" do
+    let(:lecture) { create(:seminar) }
     let(:talk) { create(:talk, lecture: lecture) }
     let(:component) { described_class.new(lecture: lecture, group_type: :talks) }
 
@@ -143,6 +145,7 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
   end
 
   context "when group_type is invalid" do
+    let(:lecture) { create(:lecture) }
     let(:component) { described_class.new(lecture: lecture, group_type: :invalid) }
 
     it "does not render" do
@@ -152,6 +155,18 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
   end
 
   context "when group_type is an array" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :completed) }
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign, user: fresh_user,
+                                              registration_item: item, materialized_at: nil)
+    end
+
     let(:component) { described_class.new(lecture: lecture, group_type: [:tutorials, :cohorts]) }
 
     it "renders" do
