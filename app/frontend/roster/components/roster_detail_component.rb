@@ -16,7 +16,9 @@ class RosterDetailComponent < ViewComponent::Base
 
   def students
     @students ||=
-      User.where(id: @rosterable.roster_entries.pluck(@rosterable.roster_user_id_column))
+      User.where(id: @rosterable.roster_entries.map do |e|
+        e.public_send(@rosterable.roster_user_id_column)
+      end)
           .order(:name)
           .to_a
   end

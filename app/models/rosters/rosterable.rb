@@ -67,8 +67,36 @@ module Rosters
     end
 
     # Checks if the roster is currently empty.
+    def roster_entries_count
+      association_name = case self
+                         when Tutorial then :tutorial_memberships
+                         when Cohort then :cohort_memberships
+                         when Talk then :speaker_talk_joins
+                         when Lecture then :lecture_memberships
+                         else nil
+      end
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).size
+      else
+        roster_entries.count
+      end
+    end
+
     def roster_empty?
-      !roster_entries.exists?
+      association_name = case self
+                         when Tutorial then :tutorial_memberships
+                         when Cohort then :cohort_memberships
+                         when Talk then :speaker_talk_joins
+                         when Lecture then :lecture_memberships
+                         else nil
+      end
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).empty?
+      else
+        !roster_entries.exists?
+      end
     end
 
     # Checks if the item is associated with any non-planning campaign.
@@ -115,7 +143,11 @@ module Rosters
     # Returns the IDs of users currently in the roster.
     # Required by the Registration::Registerable concern.
     def allocated_user_ids
-      roster_entries.pluck(roster_user_id_column)
+      if roster_entries.loaded?
+        roster_entries.map { |e| e.public_send(roster_user_id_column) }
+      else
+        roster_entries.pluck(roster_user_id_column)
+      end
     end
 
     # Adds a single user to the roster.
@@ -152,7 +184,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count > capacity
+      roster_entries_count > capacity
     end
 
     # Checks if the roster is full (reached or exceeded capacity).
@@ -160,7 +192,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count >= capacity
+      roster_entries_count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).

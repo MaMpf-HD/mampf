@@ -129,6 +129,9 @@ module Roster
       end
 
       def render_roster_update(tab: nil, rosterable: @rosterable)
+        # Ensure lecture is eager loaded and fresh (to include new memberships)
+        @lecture = eager_load_lecture(@lecture.id)
+
         active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
         target_rosterable = active_tab == :enrollment ? nil : rosterable
 
@@ -238,7 +241,7 @@ module Roster
       end
 
       def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
+        @lecture = eager_load_lecture(params[:lecture_id])
         return if @lecture
 
         redirect_to root_path, alert: t("roster.errors.lecture_not_found")
@@ -269,6 +272,16 @@ module Roster
           end
           format.html { redirect_back_or_to fallback_path, alert: message }
         end
+      end
+
+      def eager_load_lecture(id)
+        Lecture.includes(
+          { registration_campaigns: [:user_registrations, :registration_items] },
+          tutorials: [:tutors, :tutorial_memberships,
+                      { registration_items: :registration_campaign }],
+          cohorts: [:cohort_memberships, { registration_items: :registration_campaign }],
+          talks: [:speakers, :speaker_talk_joins, { registration_items: :registration_campaign }]
+        ).find_by(id: id)
       end
 
       def use_lecture_locale

@@ -152,11 +152,12 @@ class RosterCandidatesComponent < ViewComponent::Base
 
     def all_assigned_user_ids
       @all_assigned_user_ids ||= begin
-        ids = []
-        ids += @lecture.tutorials.joins(:members).pluck("users.id")
-        ids += @lecture.talks.joins(:members).pluck("users.id")
-        ids += @lecture.cohorts.joins(:members).pluck("users.id")
-        ids.uniq
+        ids = Set.new
+        # Map over eager-loaded associations to avoid DB queries
+        ids.merge(@lecture.tutorials.flat_map { |t| t.tutorial_memberships.map(&:user_id) })
+        ids.merge(@lecture.talks.flat_map { |t| t.speaker_talk_joins.map(&:speaker_id) })
+        ids.merge(@lecture.cohorts.flat_map { |t| t.cohort_memberships.map(&:user_id) })
+        ids.to_a
       end
     end
 

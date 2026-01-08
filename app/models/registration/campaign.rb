@@ -79,6 +79,8 @@ module Registration
     end
 
     def total_registrations_count
+      return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
+
       user_registrations.distinct.count(:user_id)
     end
 
@@ -151,25 +153,35 @@ module Registration
     def unassigned_users
       return User.none if draft? || planning_only?
 
-      types = registration_items.pluck(:registerable_type).uniq
+      types = if registration_items.loaded?
+        registration_items.map(&:registerable_type).uniq
+      else
+        registration_items.pluck(:registerable_type).uniq
+      end
 
       # Find users already assigned to ANY item of these types in the lecture.
       allocated_user_ids = types.flat_map do |type|
-        klass = type.constantize
-        scope = if type == "Cohort"
-          klass.where(context: campaignable)
+        # Optimization: Use eager-loaded associations on the campaignable logic
+        assoc = type.tableize.to_sym
+        if campaignable.respond_to?(assoc) && campaignable.association(assoc).loaded?
+          campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
         else
-          klass.where(lecture: campaignable)
-        end
+          klass = type.constantize
+          scope = if type == "Cohort"
+            klass.where(context: campaignable)
+          else
+            klass.where(lecture: campaignable)
+          end
 
-        # Optimization: Use direct SQL join if the standard :members association exists.
-        # This avoids N+1 queries on instances.
-        if klass.reflect_on_association(:members)
-          scope.joins(:members).pluck("users.id")
-        else
-          # Fallback: Load instances and use the Rosterable interface.
-          # This is slower but guarantees correctness if the association name differs.
-          scope.flat_map(&:allocated_user_ids)
+          # Optimization: Use direct SQL join if the standard :members association exists.
+          # This avoids N+1 queries on instances.
+          if klass.reflect_on_association(:members)
+            scope.joins(:members).pluck("users.id")
+          else
+            # Fallback: Load instances and use the Rosterable interface.
+            # This is slower but guarantees correctness if the association name differs.
+            scope.flat_map(&:allocated_user_ids)
+          end
         end
       end.uniq
 
@@ -180,7 +192,12 @@ module Registration
     end
 
     def roster_group_type
-      registration_items.first&.registerable_type&.tableize || "tutorials"
+      items = if association(:registration_items).loaded?
+        registration_items
+      else
+        registration_items.limit(1)
+      end
+      items.first&.registerable_type&.tableize || "tutorials"
     end
 
     private

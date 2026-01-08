@@ -48,7 +48,13 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def active_campaign_for(item)
-    item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
+    # Check loaded association first to avoid N+1 and direct DB hits
+    items = if item.association(:registration_items).loaded?
+      item.registration_items
+    else
+      item.registration_items.includes(:registration_campaign)
+    end
+    items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
   def show_campaign_running_badge?(item, campaign)
@@ -112,8 +118,8 @@ class RosterOverviewComponent < ViewComponent::Base
       # Filter for access groups or sidecars if needed,
       # but returning all in one table per user request.
 
-      items = @lecture.cohorts.order(:title)
-                      .includes(registration_items: :registration_campaign)
+      # Use eager loaded associations and sort in memory
+      items = @lecture.cohorts.sort_by(&:title)
 
       # Removed early return to ensure "Add" button is always visible
       # even if no cohorts exist yet.
@@ -130,8 +136,8 @@ class RosterOverviewComponent < ViewComponent::Base
 
     def build_group_data(type)
       config = SUPPORTED_TYPES[type]
+      # Using public_send returns the pre-loaded association target (Array) because we eager loaded it in controller
       items = @lecture.public_send(type)
-                      .includes(config[:includes], registration_items: :registration_campaign)
 
       return nil if items.empty?
 
