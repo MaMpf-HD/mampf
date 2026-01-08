@@ -69,16 +69,27 @@ RSpec.describe(Cohort, type: :model) do
 
   describe "#materialize_allocation!" do
     let(:lecture) { create(:lecture) }
-    let(:cohort) { create(:cohort, context: lecture) }
     let(:campaign) { create(:registration_campaign) }
     let(:user) { create(:confirmed_user) }
 
-    it "does NOT propagate users to the lecture roster (Sidecar behavior)" do
-      expect(lecture.lecture_memberships.where(user: user)).to be_empty
+    context "when cohort is isolated (propagate_to_lecture = false)" do
+      let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
 
-      cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+      it "does NOT propagate users to the lecture roster" do
+        expect(lecture.lecture_memberships.where(user: user)).to be_empty
+        cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+        expect(lecture.lecture_memberships.where(user: user)).not_to exist
+      end
+    end
 
-      expect(lecture.lecture_memberships.where(user: user)).not_to exist
+    context "when cohort propagates (propagate_to_lecture = true)" do
+      let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+
+      it "propagates users to the lecture roster" do
+        expect(lecture.lecture_memberships.where(user: user)).to be_empty
+        cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+        expect(lecture.lecture_memberships.where(user: user)).to exist
+      end
     end
   end
 end

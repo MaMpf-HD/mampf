@@ -308,6 +308,18 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           post(add_member_cohort_path(cohort), params: { email: new_student.email })
         end.to change { cohort.members.count }.by(1)
       end
+
+      context "when cohort propagates to lecture" do
+        let(:cohort) do
+          create(:cohort, context: lecture, manual_roster_mode: true, propagate_to_lecture: true)
+        end
+
+        it "adds the user to the lecture roster" do
+          expect do
+            post(add_member_cohort_path(cohort), params: { email: new_student.email })
+          end.to change { lecture.members.count }.by(1)
+        end
+      end
     end
 
     context "as a student" do

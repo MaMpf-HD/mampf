@@ -106,20 +106,25 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     context "when cascading from lecture" do
       let(:lecture) { create(:lecture) }
       let(:tutorial) { create(:tutorial, lecture: lecture) }
-      let(:cohort) { create(:cohort, context: lecture) }
+      let(:propagating_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+      let(:isolated_cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
 
       before do
         # User is already in tutorial via outer before block
         tutorial.send(:propagate_to_lecture!, [user.id])
-        # Manually add to cohort since auto-propagation is disabled
-        create(:cohort_membership, cohort: cohort, user: user)
+        # Manually add to cohorts
+        create(:cohort_membership, cohort: propagating_cohort, user: user)
+        create(:cohort_membership, cohort: isolated_cohort, user: user)
       end
 
-      it "removes the user from all subgroups" do
+      it "removes the user from propagating subgroups but keeps them in isolated ones" do
         expect do
           subject.remove_user!(user, lecture)
         end.to change { tutorial.members.count }.by(-1)
-                                                .and(change { cohort.members.count }.by(-1))
+                                                .and(change {
+                                                       propagating_cohort.members.count
+                                                     }.by(-1))
+                                                .and(change { isolated_cohort.members.count }.by(0))
       end
     end
   end
