@@ -5,18 +5,19 @@
         <h5 class="card-title mb-0">
           <%= t("roster.tabs.participants") %>
           <span class="badge bg-secondary ms-2"><%= component.participants.count %></span>
+          <%= component.helpers.helpdesk(t("roster.participants_footer_hint"), false) %>
         </h5>
 
         <!-- Filter Toggle Buttons -->
         <div class="btn-group btn-group-sm" role="group">
           <button type="button"
-                  class="btn btn-outline-primary active"
+                  class="btn btn-outline-secondary active"
                   data-roster-filter-target="allButton"
                   data-action="click->roster-filter#showAll">
             <%= t('roster.filters.all') %> (<span data-roster-filter-target="allCount"><%= component.participants.count %></span>)
           </button>
           <button type="button"
-                  class="btn btn-outline-warning"
+                  class="btn btn-outline-secondary"
                   data-roster-filter-target="unassignedButton"
                   data-action="click->roster-filter#showUnassigned">
             <%= t('roster.filters.unassigned') %> (<span data-roster-filter-target="unassignedCount"><%= component.unassigned_participants.count %></span>)
@@ -121,10 +122,6 @@
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div class="card-footer text-muted small">
-        <%= t("roster.participants_footer_hint") %>
       </div>
     </div>
   </div>

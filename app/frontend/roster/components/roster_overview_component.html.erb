@@ -37,7 +37,7 @@
         <% if @rosterable %>
           <%= render RosterDetailComponent.new(rosterable: @rosterable, group_type: @group_type) %>
         <% else %>
-          <%= render "roster/components/groups_tab", groups: groups, total_participants: total_participants, group_type: @group_type, component: self %>
+          <%= render "roster/components/groups_tab", groups: groups, group_type: @group_type, component: self %>
         <% end %>
       </div>
     </div>
