@@ -11,7 +11,6 @@ class CohortsController < ApplicationController
 
   def new
     @cohort = Cohort.new(context: @lecture)
-    # Allow initializing with parameters (e.g. for creating an Access Group vs Sidecar)
     @cohort.assign_attributes(cohort_params) if params[:cohort].present?
     authorize! :new, @cohort
     set_cohort_locale
