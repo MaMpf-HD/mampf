@@ -51,6 +51,9 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def available_groups
+    # Lectures don't transfer to other Lectures
+    return [] if @rosterable.is_a?(Lecture)
+
     # Dynamically fetch the collection (e.g. @lecture.tutorials) based on the type
     # Memoize to avoid re-fetching for every student row in the view if accessed multiple times
     @available_groups ||= begin

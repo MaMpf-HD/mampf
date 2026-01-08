@@ -61,37 +61,74 @@ class RosterOverviewComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
-  # Determines the appropriate action (Add or Move) for a target group
-  def assignment_action(user, target_group)
-    # Find current groups of the same type that the user is already in
-    # (e.g., if target is Cohort B, find all Cohorts the user is in)
+  # Returns all available actions (Add and/or Switch) for a target group
+  # For partition types (Tutorial): Only "Switch" if user is already in one
+  # For multi-membership types (Cohort, Talk): Both "Add" and "Switch" options
+  def assignment_actions(user, target_group)
+    actions = []
     current_of_type = participant_groups(user).select { |g| g.instance_of?(target_group.class) }
 
-    # Heuristic:
-    # - If user is in exactly 1 group of this type, we propose "Switch" (Move).
-    #   (Matches standard partition logic: Tutorials, Cohorts, etc.)
-    # - If user is in 0 groups: "Add".
-    # - If user is in >1 groups: "Add" (Move is ambiguous without source selection).
-    if current_of_type.one?
-      source = current_of_type.first
-      {
-        url: helpers.public_send("move_member_#{source.class.name.underscore}_path", source, user),
-        method: :patch,
-        params: {
-          target_id: target_group.id,
-          target_type: target_group.class.name
-        },
-        label: t("roster.actions.switch_to")
-      }
+    # Only Tutorial is a partition type (mutually exclusive)
+    # Talk and Cohort allow multiple memberships
+    is_partition_type = target_group.is_a?(Tutorial)
+
+    if is_partition_type
+      # For partition types: Only offer "Switch" if already in a group, otherwise "Add"
+      if current_of_type.any?
+        current_of_type.each do |source|
+          actions << {
+            url: helpers.public_send("move_member_#{source.class.name.underscore}_path",
+                                     source, user),
+            method: :patch,
+            params: {
+              target_id: target_group.id,
+              target_type: target_group.class.name
+            },
+            label: t("roster.actions.switch_from_to",
+                     from: source.title,
+                     to: target_group.title),
+            icon: "arrow-left-right"
+          }
+        end
+      else
+        actions << {
+          url: helpers.public_send("add_member_#{target_group.model_name.singular_route_key}_path",
+                                   target_group),
+          method: :post,
+          params: { email: user.email },
+          label: t("roster.actions.add_to", to: target_group.title),
+          icon: "plus-circle"
+        }
+      end
     else
-      {
+      # For multi-membership types: Offer both "Add" and "Switch" options
+      actions << {
         url: helpers.public_send("add_member_#{target_group.model_name.singular_route_key}_path",
                                  target_group),
         method: :post,
         params: { email: user.email },
-        label: t("roster.actions.add")
+        label: t("roster.actions.add_to", to: target_group.title),
+        icon: "plus-circle"
       }
+
+      current_of_type.each do |source|
+        actions << {
+          url: helpers.public_send("move_member_#{source.class.name.underscore}_path",
+                                   source, user),
+          method: :patch,
+          params: {
+            target_id: target_group.id,
+            target_type: target_group.class.name
+          },
+          label: t("roster.actions.switch_from_to",
+                   from: source.title,
+                   to: target_group.title),
+          icon: "arrow-left-right"
+        }
+      end
     end
+
+    actions
   end
 
   # DEPRECATED: Use available_groups_for(user) instead.

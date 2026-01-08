@@ -6,7 +6,7 @@
           <%= t("roster.tabs.participants") %>
           <span class="badge bg-secondary ms-2"><%= component.participants.count %></span>
         </h5>
-        
+
         <!-- Placeholder for Search & Add Interface -->
         <div class="d-flex gap-2">
           <%# render "roster/components/add_user_form", rosterable: lecture %>
@@ -66,23 +66,24 @@
                               <% available.group_by { |g| g.model_name.human(count: 2) }.sort.each do |type, groups| %>
                                 <li><h6 class="dropdown-header"><%= type %></h6></li>
                                 <% groups.each do |group| %>
-                                  <% action = component.assignment_action(user, group) %>
-                                  <li>
-                                    <%= button_to action[:url],
-                                        method: action[:method],
-                                        params: action[:params].merge(active_tab: "participants",
-                                                                    group_type: component.group_type,
-                                                                    frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
-                                        data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
-                                        class: "dropdown-item d-flex justify-content-between align-items-center" do %>
-                                      <span><%= component.helpers.group_title_with_capacity(group) %></span>
-                                      <% if action[:method] == :patch %>
-                                        <span class="badge bg-light text-secondary border ms-2" title="<%= action[:label] %>">
-                                          <i class="bi bi-arrow-left-right"></i>
+                                  <% actions = component.assignment_actions(user, group) %>
+                                  <% actions.each do |action| %>
+                                    <li>
+                                      <%= button_to action[:url],
+                                          method: action[:method],
+                                          params: action[:params].merge(active_tab: "participants",
+                                                                      group_type: component.group_type,
+                                                                      frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
+                                          data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
+                                          class: "dropdown-item d-flex justify-content-between align-items-center" do %>
+                                        <span>
+                                          <i class="bi bi-<%= action[:icon] %> me-1"></i>
+                                          <%= action[:label] %>
                                         </span>
+                                        <small class="text-muted"><%= group.roster_entries.count %>/<%= group.capacity || "∞" %></small>
                                       <% end %>
-                                    <% end %>
-                                  </li>
+                                    </li>
+                                  <% end %>
                                 <% end %>
                               <% end %>
                             <% else %>
@@ -109,7 +110,7 @@
           </table>
         </div>
       </div>
-      
+
       <div class="card-footer text-muted small">
         <%= t("roster.participants_footer_hint") %>
       </div>

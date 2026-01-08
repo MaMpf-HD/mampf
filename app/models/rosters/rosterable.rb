@@ -37,7 +37,11 @@ module Rosters
       return false if manual_roster_mode?
 
       if is_a?(Lecture)
-        registration_campaigns
+        # For Lectures: Only consider campaigns where the Lecture itself is the registerable item
+        # (i.e., enrollment track campaigns), not campaigns for its sub-groups (Tutorials/Talks)
+        Registration::Campaign
+          .joins(:registration_items)
+          .where(registration_items: { registerable_id: id, registerable_type: "Lecture" })
           .where(planning_only: false)
           .where.not(status: :completed)
           .exists?
