@@ -1,15 +1,26 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-3">
+    <div class="card mb-3" data-controller="roster-filter">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
           <%= t("roster.tabs.participants") %>
           <span class="badge bg-secondary ms-2"><%= component.participants.count %></span>
         </h5>
 
-        <!-- Placeholder for Search & Add Interface -->
-        <div class="d-flex gap-2">
-          <%# render "roster/components/add_user_form", rosterable: lecture %>
+        <!-- Filter Toggle Buttons -->
+        <div class="btn-group btn-group-sm" role="group">
+          <button type="button"
+                  class="btn btn-outline-primary active"
+                  data-roster-filter-target="allButton"
+                  data-action="click->roster-filter#showAll">
+            <%= t('roster.filters.all') %> (<span data-roster-filter-target="allCount"><%= component.participants.count %></span>)
+          </button>
+          <button type="button"
+                  class="btn btn-outline-warning"
+                  data-roster-filter-target="unassignedButton"
+                  data-action="click->roster-filter#showUnassigned">
+            <%= t('roster.filters.unassigned') %> (<span data-roster-filter-target="unassignedCount"><%= component.unassigned_participants.count %></span>)
+          </button>
         </div>
       </div>
 
@@ -34,7 +45,8 @@
               <% else %>
                 <% component.participants.each do |membership| %>
                   <% user = membership.user %>
-                  <tr data-cy="participant-row-<%= user.id %>">
+                  <% status = component.participant_status(user) %>
+                  <tr data-roster-filter-target="row" data-status="<%= status %>" data-cy="participant-row-<%= user.id %>">
                     <td>
                       <div class="fw-bold"><%= user.tutorial_name %></div>
                       <small class="text-muted"><%= user.email %></small>

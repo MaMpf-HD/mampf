@@ -45,6 +45,18 @@ class RosterOverviewComponent < ViewComponent::Base
     is_assigned ? :assigned : :unassigned
   end
 
+  # Returns participants who are assigned to at least one functional group
+  def assigned_participants
+    @assigned_participants ||= participants.select { |m| participant_status(m.user) == :assigned }
+  end
+
+  # Returns participants who are not assigned to any functional group
+  def unassigned_participants
+    @unassigned_participants ||= participants.select do |m|
+      participant_status(m.user) == :unassigned
+    end
+  end
+
   # Returns groups compatible for assignment for a specific user
   # Logic: (All Groups) - (Locked Groups) - (User's Current Groups)
   def available_groups_for(user)

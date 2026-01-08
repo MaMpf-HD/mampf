@@ -15,11 +15,16 @@ de:
       overview: 'Übersicht'
     stats:
       total_participants: 'Teilnehmende gesamt'
+      total_enrolled: 'Eingeschrieben'
       capacity_usage: 'von %{count} Plätzen belegt'
       unassigned: 'Nicht zugewiesen'
       status_assigned: 'Zugewiesen'
       status_unassigned: 'Nicht zugewiesen'
       action_required: 'Handlung erforderlich'
+      group_distribution: 'Gruppenverteilung'
+    filters:
+      all: 'Alle'
+      unassigned: 'Nicht zugewiesen'
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'

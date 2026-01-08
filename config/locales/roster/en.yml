@@ -15,11 +15,16 @@ en:
       overview: 'Overview'
     stats:
       total_participants: 'Total Participants'
+      total_enrolled: 'Enrolled'
       capacity_usage: 'of %{count} spots filled'
       unassigned: 'Unassigned'
       status_assigned: 'Assigned'
       status_unassigned: 'Not Assigned'
       action_required: 'Action required'
+      group_distribution: 'Group Distribution'
+    filters:
+      all: 'All'
+      unassigned: 'Unassigned'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
