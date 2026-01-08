@@ -63,20 +63,23 @@ class RosterCandidatesComponent < ViewComponent::Base
   def add_member_path(group, user)
     case group
     when Tutorial
-      helpers.add_member_tutorial_path(group, user_id: user.id, tab: "enrollment",
-                                              active_tab: "enrollment",
-                                              group_type: @group_type,
-                                              frame_id: helpers.roster_maintenance_frame_id(@group_type))
+      helpers.add_member_tutorial_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     when Talk
-      helpers.add_member_talk_path(group, user_id: user.id, tab: "enrollment",
-                                          active_tab: "enrollment",
-                                          group_type: @group_type,
-                                          frame_id: helpers.roster_maintenance_frame_id(@group_type))
+      helpers.add_member_talk_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     when Cohort
-      helpers.add_member_cohort_path(group, user_id: user.id, tab: "enrollment",
-                                            active_tab: "enrollment",
-                                            group_type: @group_type,
-                                            frame_id: helpers.roster_maintenance_frame_id(@group_type))
+      helpers.add_member_cohort_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     end
   end
 
