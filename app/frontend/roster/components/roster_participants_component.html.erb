@@ -4,8 +4,8 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
           <%= t("roster.tabs.participants") %>
-          <span class="badge bg-secondary ms-2"><%= component.participants.count %></span>
-          <%= component.helpers.helpdesk(t("roster.participants_footer_hint"), false) %>
+          <span class="badge bg-secondary ms-2"><%= participants.count %></span>
+          <%= helpers.helpdesk(t("roster.participants_footer_hint"), false) %>
         </h5>
 
         <!-- Filter Toggle Buttons -->
@@ -14,13 +14,13 @@
                   class="btn btn-outline-secondary active"
                   data-roster-filter-target="allButton"
                   data-action="click->roster-filter#showAll">
-            <%= t('roster.filters.all') %> (<span data-roster-filter-target="allCount"><%= component.participants.count %></span>)
+            <%= t('roster.filters.all') %> (<span data-roster-filter-target="allCount"><%= participants.count %></span>)
           </button>
           <button type="button"
                   class="btn btn-outline-secondary"
                   data-roster-filter-target="unassignedButton"
                   data-action="click->roster-filter#showUnassigned">
-            <%= t('roster.filters.unassigned') %> (<span data-roster-filter-target="unassignedCount"><%= component.unassigned_participants.count %></span>)
+            <%= t('roster.filters.unassigned') %> (<span data-roster-filter-target="unassignedCount"><%= unassigned_participants.count %></span>)
           </button>
         </div>
       </div>
@@ -37,16 +37,16 @@
               </tr>
             </thead>
             <tbody>
-              <% if component.participants.empty? %>
+              <% if participants.empty? %>
                 <tr>
                   <td colspan="4" class="text-center py-4 text-muted">
                     <%= t("roster.details.empty") %>
                   </td>
                 </tr>
               <% else %>
-                <% component.participants.each do |membership| %>
+                <% participants.each do |membership| %>
                   <% user = membership.user %>
-                  <% status = component.participant_status(user) %>
+                  <% status = participant_status(user) %>
                   <tr data-roster-filter-target="row" data-status="<%= status %>" data-cy="participant-row-<%= user.id %>">
                     <td>
                       <div class="fw-bold"><%= user.tutorial_name %></div>
@@ -54,14 +54,14 @@
                     </td>
                     <td><%= user.email %></td>
                     <td>
-                      <% groups = component.participant_groups(user) %>
+                      <% groups = participant_groups(user) %>
                       <% if groups.any? %>
                         <% groups.each do |group| %>
                           <%= link_to group.title,
-                                      component.group_path(group),
+                                      group_path(group),
                                       class: "badge bg-primary me-1 text-decoration-none text-white",
                                       style: "cursor: pointer;",
-                                      data: { turbo_frame: component.helpers.roster_maintenance_frame_id(component.group_type) } %>
+                                      data: { turbo_frame: helpers.roster_maintenance_frame_id(group_type) } %>
                         <% end %>
                       <% else %>
                         <span class="text-muted small"><%= t("roster.stats.status_unassigned") %></span>
@@ -74,19 +74,19 @@
                             <%= t('roster.actions.assign') %>
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end">
-                            <% available = component.available_groups_for(user) %>
+                            <% available = available_groups_for(user) %>
                             <% if available.any? %>
                               <% available.group_by { |g| g.model_name.human(count: 2) }.sort.each do |type, groups| %>
                                 <li><h6 class="dropdown-header"><%= type %></h6></li>
                                 <% groups.each do |group| %>
-                                  <% actions = component.assignment_actions(user, group) %>
+                                  <% actions = assignment_actions(user, group) %>
                                   <% actions.each do |action| %>
                                     <li>
                                       <%= button_to action[:url],
                                           method: action[:method],
                                           params: action[:params].merge(active_tab: "participants",
-                                                                      group_type: component.group_type,
-                                                                      frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
+                                                                      group_type: group_type,
+                                                                      frame_id: helpers.roster_maintenance_frame_id(group_type)),
                                           data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
                                           class: "dropdown-item d-flex justify-content-between align-items-center" do %>
                                         <span>
@@ -105,11 +105,11 @@
                           </ul>
                         </div>
 
-                        <%= button_to component.helpers.remove_member_lecture_path(component.lecture, user),
+                        <%= button_to helpers.remove_member_lecture_path(lecture, user),
                                       method: :delete,
                                       params: { active_tab: "participants",
-                                                group_type: component.group_type,
-                                                frame_id: component.helpers.roster_maintenance_frame_id(component.group_type) },
+                                                group_type: group_type,
+                                                frame_id: helpers.roster_maintenance_frame_id(group_type) },
                                       class: "btn btn-sm btn-outline-danger",
                                       data: { turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
                           <i class="bi bi-trash"></i>

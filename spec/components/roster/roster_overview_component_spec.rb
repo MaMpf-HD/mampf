@@ -87,19 +87,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "#participants" do
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-    let!(:users) { create_list(:user, 3) }
-
-    before do
-      users.each { |u| create(:lecture_membership, lecture: lecture, user: u) }
-    end
-
-    it "returns the lecture memberships" do
-      expect(component.participants.size).to eq(3)
-    end
-  end
-
   describe "#group_type_title" do
     it "returns the correct title for tutorials" do
       component = described_class.new(lecture: lecture, group_type: :tutorials)
