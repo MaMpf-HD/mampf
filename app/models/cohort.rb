@@ -11,6 +11,8 @@ class Cohort < ApplicationRecord
   validates :title, presence: true
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
+  attr_readonly :propagate_to_lecture
+
   def roster_entries
     cohort_memberships
   end

@@ -97,6 +97,9 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
+      cohort_propagate_to_lecture: "If checked, members of this cohort are considered full participants of the lecture (Access Group). If unchecked, this cohort is just a sidecar list (e.g. Waitlist) and members do not get automatic access to lecture materials."
+      cohort_already_propagating: "This cohort grants full lecture access. This cannot be changed."
+      cohort_is_sidecar: "This cohort is isolated. Members do not get automatic lecture access. This cannot be changed."
     buttons:
       full_editor: "vollständigen Editor"
     errors:
@@ -125,3 +128,11 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
+    cohorts:
+      propagate_to_lecture: "Grant lecture access"
+      propagates: "Grants access"
+      propagates_short: "Access"
+      propagates_hint: "Members of this cohort serve as lecture participants"
+      access_rights: "Access rights"
+      access_groups: "Access Groups (Full Access)"
+      sidecar: 'Without lecture enrollment'

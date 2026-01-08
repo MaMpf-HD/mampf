@@ -172,9 +172,16 @@ module Rosters
 
       def propagate_to_lecture!(user_ids)
         return if user_ids.empty?
+
+        # COHORT LOGIC CHANGE:
+        # Standard Cohorts are "Sidecars" (Waitlists) and do NOT propagate.
+        # However, "Access Groups" (e.g. Repeaters) specifically opt-in to propagation.
+        # This requires the specific flag to be true.
+        return if is_a?(Cohort) && !(respond_to?(:propagate_to_lecture) && propagate_to_lecture?)
+
         # Cohorts are "Sidecars" and explicit waitlists, so membership in them
         # does NOT imply automatic access rights to the lecture details.
-        return if is_a?(Cohort)
+        return if is_a?(Cohort) && !respond_to?(:propagate_to_lecture?)
         return unless respond_to?(:lecture)
 
         parent = lecture

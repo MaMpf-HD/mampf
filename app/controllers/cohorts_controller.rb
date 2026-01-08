@@ -11,6 +11,8 @@ class CohortsController < ApplicationController
 
   def new
     @cohort = Cohort.new(context: @lecture)
+    # Allow initializing with parameters (e.g. for creating an Access Group vs Sidecar)
+    @cohort.assign_attributes(cohort_params) if params[:cohort].present?
     authorize! :new, @cohort
     set_cohort_locale
 
@@ -133,7 +135,7 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      params.expect(cohort: [:title, :capacity, :description])
+      params.expect(cohort: [:title, :capacity, :description, :propagate_to_lecture])
     end
 
     def create_turbo_streams(group_type)
