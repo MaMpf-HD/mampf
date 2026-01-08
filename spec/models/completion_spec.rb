@@ -34,7 +34,7 @@ RSpec.describe(Completion, type: :model) do
     describe "uniqueness constraints" do
       let(:user) { FactoryBot.create(:user) }
       let(:section) { FactoryBot.create(:section) }
-      let(:assignment) { FactoryBot.create(:assignment) }
+      let(:assignment) { FactoryBot.create(:assignment, :with_lecture) }
 
       it "fails when a user completes the same section twice" do
         FactoryBot.create(:completion, user: user, completable: section)
@@ -44,8 +44,15 @@ RSpec.describe(Completion, type: :model) do
         expect(duplicate).not_to be_valid
       end
 
-      xit "allows a user to complete a section and an assignment for the same lecture" do
-        # TODO: implemment
+      it "allows a user to complete a section and an assignment for the same lecture" do
+        lecture = FactoryBot.create(:lecture)
+
+        FactoryBot.create(:completion, user: user, lecture: lecture, completable: section)
+
+        second_completion = FactoryBot.build(:completion, user: user, lecture: lecture,
+                                                          completable: assignment)
+
+        expect(second_completion).to be_valid
       end
     end
   end
