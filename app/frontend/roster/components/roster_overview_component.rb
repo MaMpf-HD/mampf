@@ -36,25 +36,30 @@ class RosterOverviewComponent < ViewComponent::Base
   # Returns :assigned or :unassigned.
   # Note: Cohorts (Waitlists) do not count as 'assigned' for structure purposes.
   def participant_status(user)
-    # Check if user is in any group that is NOT a Cohort
-    is_assigned = user_memberships[user.id].any? do |group_id|
-      group = all_groups_map[group_id]
-      group && !group.is_a?(Cohort)
-    end
+    assigned_user_ids.include?(user.id) ? :assigned : :unassigned
+  end
 
-    is_assigned ? :assigned : :unassigned
+  # Optimized check that uses loaded associations (size) instead of DB queries (count)
+  def group_full?(group)
+    return false unless group.capacity.present?
+
+    # Access the association directly to use the eager loaded array
+    current_size = case group
+                   when Tutorial then group.tutorial_memberships.size
+                   when Cohort then group.cohort_memberships.size
+                   else group.roster_entries.size # Fallback
+    end
+    current_size >= group.capacity
   end
 
   # Returns participants who are assigned to at least one functional group
   def assigned_participants
-    @assigned_participants ||= participants.select { |m| participant_status(m.user) == :assigned }
+    @assigned_participants ||= participants.select { |m| assigned_user_ids.include?(m.user_id) }
   end
 
   # Returns participants who are not assigned to any functional group
   def unassigned_participants
-    @unassigned_participants ||= participants.select do |m|
-      participant_status(m.user) == :unassigned
-    end
+    @unassigned_participants ||= participants.select { |m| !assigned_user_ids.include?(m.user_id) }
   end
 
   # Returns groups compatible for assignment for a specific user
@@ -178,7 +183,13 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def active_campaign_for(item)
-    item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
+    # Check loaded association first to avoid N+1 and direct DB hits
+    items = if item.association(:registration_items).loaded?
+      item.registration_items
+    else
+      item.registration_items.includes(:registration_campaign)
+    end
+    items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
   def show_campaign_running_badge?(item, campaign)
@@ -228,18 +239,25 @@ class RosterOverviewComponent < ViewComponent::Base
 
   private
 
-    def fetch_assigned_user_ids
-      ids = Set.new
+    def assigned_user_ids
+      @assigned_user_ids ||= begin
+        ids = Set.new
+        # Use map to leverage eager loaded associations (avoids N+1 from pluck/count)
+        if [:tutorials, :all].include?(group_type)
+          lecture.tutorials.each { |t| ids.merge(t.tutorial_memberships.map(&:user_id)) }
+        end
 
-      # Users in tutorials
-      ids.merge(TutorialMembership.where(tutorial: @lecture.tutorials).pluck(:user_id))
+        if [:talks, :all].include?(group_type)
+          lecture.talks.each { |t| ids.merge(t.speaker_talk_joins.map(&:speaker_id)) }
+        end
 
-      # Users in talks (if applicable)
-      if @lecture.talks.exists?
-        ids.merge(SpeakerTalkJoin.where(talk: @lecture.talks).pluck(:speaker_id))
+        ids
       end
+    end
 
-      ids
+    def fetch_assigned_user_ids
+      # DEPRECATED: Logic moved to assigned_user_ids
+      assigned_user_ids
     end
 
     def all_assignable_groups
@@ -267,24 +285,27 @@ class RosterOverviewComponent < ViewComponent::Base
         map = Hash.new { |h, k| h[k] = Set.new }
 
         # Bulk load Tutorial memberships
-        if @lecture.tutorials.exists?
-          TutorialMembership.where(tutorial: @lecture.tutorials)
-                            .pluck(:user_id, :tutorial_id)
-                            .each { |uid, tid| map[uid].add("Tutorial-#{tid}") }
+        if @lecture.tutorials.any?
+          @lecture.tutorials.each do |tutorial|
+            tid = "Tutorial-#{tutorial.id}"
+            tutorial.tutorial_memberships.each { |m| map[m.user_id].add(tid) }
+          end
         end
 
         # Bulk load Talk memberships
-        if @lecture.talks.exists?
-          SpeakerTalkJoin.where(talk: @lecture.talks)
-                         .pluck(:speaker_id, :talk_id)
-                         .each { |uid, tid| map[uid].add("Talk-#{tid}") }
+        if @lecture.talks.any?
+          @lecture.talks.each do |talk|
+            tid = "Talk-#{talk.id}"
+            talk.speaker_talk_joins.each { |join| map[join.speaker_id].add(tid) }
+          end
         end
 
         # Bulk load Cohort memberships
-        if @lecture.respond_to?(:cohorts) && @lecture.cohorts.exists?
-          CohortMembership.where(cohort: @lecture.cohorts)
-                          .pluck(:user_id, :cohort_id)
-                          .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
+        if @lecture.respond_to?(:cohorts) && @lecture.cohorts.any?
+          @lecture.cohorts.each do |cohort|
+            cid = "Cohort-#{cohort.id}"
+            cohort.cohort_memberships.each { |m| map[m.user_id].add(cid) }
+          end
         end
 
         map
@@ -305,8 +326,8 @@ class RosterOverviewComponent < ViewComponent::Base
       # Filter for access groups or sidecars if needed,
       # but returning all in one table per user request.
 
-      items = @lecture.cohorts.order(:title)
-                      .includes(registration_items: :registration_campaign)
+      # Use eager loaded associations and sort in memory
+      items = @lecture.cohorts.sort_by(&:title)
 
       # Removed early return to ensure "Add" button is always visible
       # even if no cohorts exist yet.
@@ -323,8 +344,8 @@ class RosterOverviewComponent < ViewComponent::Base
 
     def build_group_data(type)
       config = SUPPORTED_TYPES[type]
+      # Using public_send returns the pre-loaded association target (Array) because we eager loaded it in controller
       items = @lecture.public_send(type)
-                      .includes(config[:includes], registration_items: :registration_campaign)
 
       return nil if items.empty?
 

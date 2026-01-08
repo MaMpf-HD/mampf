@@ -236,4 +236,24 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       expect(component.toggle_manual_mode_path(item)).to eq("/path/to/roster")
     end
   end
+
+  describe "#participant_status" do
+    let!(:tutorial) { create(:tutorial, lecture: lecture) }
+    let!(:assigned_user) { create(:confirmed_user) }
+    let!(:unassigned_user) { create(:confirmed_user) }
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
+      create(:lecture_membership, lecture: lecture, user: assigned_user)
+      create(:lecture_membership, lecture: lecture, user: unassigned_user)
+    end
+
+    it "returns :assigned for a user in a tutorial" do
+      expect(component.participant_status(assigned_user)).to eq(:assigned)
+    end
+
+    it "returns :unassigned for a user not in any group" do
+      expect(component.participant_status(unassigned_user)).to eq(:unassigned)
+    end
+  end
 end

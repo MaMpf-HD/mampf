@@ -1,6 +1,7 @@
 module RosterHelper
   def group_title_with_capacity(group)
-    "#{group.title} (#{group.roster_entries.count}/#{group.capacity || "∞"})"
+    count = group.respond_to?(:roster_entries_count) ? group.roster_entries_count : group.roster_entries.count
+    "#{group.title} (#{count}/#{group.capacity || "∞"})"
   end
 
   def roster_group_types(lecture)

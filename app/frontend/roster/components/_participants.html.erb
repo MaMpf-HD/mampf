@@ -87,13 +87,13 @@
                                           params: action[:params].merge(active_tab: "participants",
                                                                       group_type: component.group_type,
                                                                       frame_id: component.helpers.roster_maintenance_frame_id(component.group_type)),
-                                          data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
+                                          data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if component.group_full?(group)) },
                                           class: "dropdown-item d-flex justify-content-between align-items-center" do %>
                                         <span>
                                           <i class="bi bi-<%= action[:icon] %> me-1"></i>
                                           <%= action[:label] %>
                                         </span>
-                                        <small class="text-muted"><%= group.roster_entries.count %>/<%= group.capacity || "∞" %></small>
+                                        <small class="text-muted"><%= group.roster_entries.size %>/<%= group.capacity || "∞" %></small>
                                       <% end %>
                                     </li>
                                   <% end %>
