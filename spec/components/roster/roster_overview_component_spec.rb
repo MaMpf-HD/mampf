@@ -140,7 +140,8 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns talk roster path for a Talk" do
         talk = create(:talk, lecture: lecture)
-        allow(helpers).to receive(:talk_roster_path).with(talk).and_return("/talks/#{talk.id}/roster")
+        allow(helpers).to receive(:talk_roster_path).with(talk)
+                                                    .and_return("/talks/#{talk.id}/roster")
         expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
       end
     end

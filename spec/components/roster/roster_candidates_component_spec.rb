@@ -19,12 +19,16 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
                                               registration_item: item, materialized_at: nil)
 
       # Previously assigned user: Registered, materialized, but currently NOT in tutorial
-      create(:registration_user_registration, registration_campaign: campaign, user: prev_user,
-                                              registration_item: item, materialized_at: Time.current)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              user: prev_user,
+                                              registration_item: item,
+                                              materialized_at: Time.current)
 
       # Currently assigned user: Registered, materialized, AND in tutorial
-      create(:registration_user_registration, registration_campaign: campaign, user: curr_user,
-                                              registration_item: item, materialized_at: Time.current)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              user: curr_user,
+                                              registration_item: item,
+                                              materialized_at: Time.current)
       tutorial.members << curr_user
     end
 
