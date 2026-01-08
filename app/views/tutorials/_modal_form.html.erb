@@ -34,6 +34,7 @@
       <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
       <%= f.number_field :capacity,
             class: "form-control",
+            min: 0,
             placeholder: "∞",
             data: { capacity_guard_target: "input" } %>
     </div>
