@@ -74,8 +74,6 @@ module Rosters
       end
 
       def propagate_to_lecture!(user, rosterable)
-        # Cohorts are "Sidecars" (Waitlists) by default, so membership in them
-        # does NOT imply automatic access rights unless explicitly configured (Access Groups).
         return if rosterable.is_a?(Cohort) && !rosterable.propagate_to_lecture?
         return unless rosterable.respond_to?(:lecture)
 
@@ -98,6 +96,8 @@ module Rosters
         end
 
         rosterable.cohorts.find_each do |cohort|
+          next unless cohort.propagate_to_lecture?
+
           cohort.remove_user_from_roster!(user)
         end
       end
