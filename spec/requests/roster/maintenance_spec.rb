@@ -26,6 +26,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials"')
       end
 
+      it "assigns active_tab from params" do
+        get lecture_roster_path(lecture, tab: "enrollment")
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
+      end
+
       it "handles array group_type params" do
         get lecture_roster_path(lecture, group_type: ["tutorials", "cohorts"])
         expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials_cohorts"')
@@ -112,6 +118,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(1)
       end
 
+      it "propagates tutorial roster additions to the lecture roster" do
+        expect do
+          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+        end.to change { lecture.members.count }.by(1)
+      end
+
       it "handles invalid email" do
         post add_member_tutorial_path(tutorial), params: { email: "invalid" }
         expect(flash[:alert]).to be_present
@@ -164,6 +176,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(-1)
       end
 
+      it "does not remove the user from the lecture roster" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        expect do
+          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+        end.not_to(change { lecture.members.count })
+      end
+
       context "when group is locked" do
         let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
         let!(:campaign) do
@@ -212,6 +232,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.to change { source.members.count }.by(-1)
                                               .and(change { target.members.count }.by(1))
+      end
+
+      it "keeps lecture roster membership when moving within tutorials" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        expect do
+          patch(move_member_tutorial_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.not_to(change { lecture.members.count })
       end
 
       it "sets the correct flash message" do
@@ -307,6 +336,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           post(add_member_cohort_path(cohort), params: { email: new_student.email })
         end.to change { cohort.members.count }.by(1)
+      end
+
+      it "does not add the user to the lecture roster by default" do
+        expect do
+          post(add_member_cohort_path(cohort), params: { email: new_student.email })
+        end.not_to(change { lecture.members.count })
       end
 
       context "when cohort propagates to lecture" do

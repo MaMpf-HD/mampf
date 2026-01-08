@@ -92,4 +92,19 @@ RSpec.describe(Cohort, type: :model) do
       end
     end
   end
+
+  describe "propagate_to_lecture immutability" do
+    it "can be set on create" do
+      cohort = create(:cohort, propagate_to_lecture: true)
+      expect(cohort.propagate_to_lecture).to be(true)
+    end
+
+    it "does not change on update" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+      expect { cohort.update!(propagate_to_lecture: true) }
+        .to raise_error(ActiveRecord::ReadonlyAttributeError)
+
+      expect(cohort.reload.propagate_to_lecture).to be(false)
+    end
+  end
 end

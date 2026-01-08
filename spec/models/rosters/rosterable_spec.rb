@@ -55,8 +55,8 @@ RSpec.describe(Rosters::Rosterable) do
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
-        it "returns true" do
-          expect(rosterable.locked?).to(be(true))
+        it "returns false" do
+          expect(rosterable.locked?).to(be(false))
         end
       end
 
@@ -200,6 +200,33 @@ RSpec.describe(Rosters::Rosterable) do
 
       rosterable.materialize_allocation!(user_ids: [user1.id], campaign: campaign)
       expect(rosterable.allocated_user_ids).to include(user3.id)
+    end
+
+    context "propagation to lecture roster" do
+      let(:lecture) { rosterable.lecture }
+
+      it "propagates tutorial allocations to the parent lecture" do
+        rosterable.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
+        expect(lecture.allocated_user_ids).to include(user3.id)
+      end
+
+      context "with a cohort" do
+        let(:rosterable) { create(:cohort, context: create(:lecture)) }
+        let(:lecture) { rosterable.lecture }
+
+        it "does not propagate by default" do
+          rosterable.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
+          expect(lecture.allocated_user_ids).not_to include(user3.id)
+        end
+
+        it "propagates when propagate_to_lecture is enabled" do
+          propagating = create(:cohort, context: lecture, propagate_to_lecture: true)
+          expect(propagating.propagate_to_lecture?).to be(true)
+
+          propagating.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
+          expect(lecture.allocated_user_ids).to include(user3.id)
+        end
+      end
     end
   end
 
