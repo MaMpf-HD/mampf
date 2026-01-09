@@ -128,42 +128,13 @@ module Roster
     private
 
       def setup_participants
-        @participants_filter = params[:filter] || "all"
-        base_scope = @lecture.lecture_memberships
-                             .joins(:user)
-                             .includes(:user)
-                             .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+        query = Rosters::ParticipantQuery.new(@lecture, params).call
 
-        @total_participants_count = base_scope.count
+        @participants_filter = query.filter_mode
+        @total_participants_count = query.total_count
+        @unassigned_participants_count = query.unassigned_count
 
-        # Calculate unassigned scope
-        # Users in tutorial memberships for this lecture
-        # Note: We must NOT select 'id' to allow UNION to work with different primary
-        # keys (UUID vs Integer)
-        tutorial_user_ids = TutorialMembership.joins(:tutorial)
-                                              .where(tutorials: { lecture_id: @lecture.id })
-                                              .select(:user_id)
-
-        # User in talk memberships for this lecture (via talks)
-        talk_user_ids = SpeakerTalkJoin.joins(:talk)
-                                       .where(talks: { lecture_id: @lecture.id })
-                                       .select(:speaker_id)
-
-        # Rails 7+ allows .union but can be finicky with different table structures / primary keys
-        # We manually construct the SQL to be safe regardless of the primary key differences
-        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql})"
-
-        unassigned_scope = base_scope.where.not(user_id: Arel.sql(assigned_ids_sql))
-        @unassigned_participants_count = unassigned_scope.count
-
-        scope = case @participants_filter
-                when "unassigned"
-                  unassigned_scope
-                else
-                  base_scope
-        end
-
-        @pagy, @participants = pagy(scope)
+        @pagy, @participants = pagy(query.scope)
       end
 
       def authorize_lecture
