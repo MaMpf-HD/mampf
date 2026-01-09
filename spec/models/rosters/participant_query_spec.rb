@@ -26,7 +26,6 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
     describe "counts" do
       # We need separate tests or separate lectures for tutorials and talks
       # because a seminar cannot have tutorials, and a lecture cannot have talks
-      # (based on the validation errors received: "Lecture Tutorien können nicht für Seminare erstellt werden")
 
       context "with tutorials" do
         let(:lecture) { create(:lecture) }
