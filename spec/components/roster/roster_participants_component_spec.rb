@@ -6,6 +6,8 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
   # Mock participants passing
   let(:participants) { lecture.lecture_memberships }
   let(:component) do
+    # Ensure association data is fresh for the component instance
+    lecture.reload
     described_class.new(lecture: lecture, group_type: group_type, participants: participants)
   end
 
@@ -167,6 +169,81 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         render_inline(component)
         expect(component.pagination_nav).to be_nil
         expect(rendered_content).not_to include("pagy-series-nav")
+      end
+    end
+  end
+
+  describe "#available_transfer_targets_for" do
+    let(:user) { create(:user) }
+
+    context "when there are tutorials and cohorts" do
+      let!(:tutorial_a) do
+        create(:tutorial, lecture: lecture, title: "A Tutorial", manual_roster_mode: true)
+      end
+      let!(:tutorial_b) do
+        create(:tutorial, lecture: lecture, title: "B Tutorial", manual_roster_mode: true)
+      end
+      let!(:cohort_a) do
+        create(:cohort, context: lecture, title: "A Cohort", manual_roster_mode: true)
+      end
+
+      before do
+        # Enroll user in lecture so they are eligible
+        create(:lecture_membership, lecture: lecture, user: user)
+        # We mock the group retrieval to ensure we work with the exact instances
+        # created above. This isolates the test from DB/Association caching issues
+        # and allows stubbing methods on instances.
+        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial_b,
+                                                                        cohort_a])
+      end
+
+      it "groups and sorts correctly: Tutorials (1) then Cohorts (2)" do
+        targets = component.available_transfer_targets_for(user)
+
+        # Expect 2 groups: Tutorials and Cohorts
+        expect(targets.size).to eq(2)
+
+        # Check first group (Tutorials)
+        # We rely on the content of the groups to identify the section, avoiding brittle string checks on title
+        expect(targets[0][:groups]).to match_array([tutorial_a, tutorial_b])
+        # Check internal sorting (A before B)
+        expect(targets[0][:groups]).to eq([tutorial_a, tutorial_b])
+
+        # Check second group (Cohorts)
+        expect(targets[1][:groups]).to match_array([cohort_a])
+      end
+
+      it "excludes locked groups" do
+        locked_tut = create(:tutorial, lecture: lecture, title: "Locked Tutorial")
+
+        # Update the mock to include the locked tutorial
+        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial_b,
+                                                                        cohort_a, locked_tut])
+        allow(locked_tut).to receive(:locked?).and_return(true)
+
+        targets = component.available_transfer_targets_for(user)
+
+        # Find the group section containing the tutorials
+        tutorial_group = targets.find { |t| t[:groups].first.is_a?(Tutorial) }
+        expect(tutorial_group[:groups]).not_to include(locked_tut)
+        expect(tutorial_group[:groups]).to include(tutorial_a)
+      end
+    end
+
+    context "when user is already in a tutorial" do
+      let!(:tutorial_a) { create(:tutorial, lecture: lecture, title: "A Tutorial") }
+
+      before do
+        create(:lecture_membership, lecture: lecture, user: user)
+        create(:tutorial_membership, tutorial: tutorial_a, user: user)
+        # Mocking to resolve any association/caching issues
+        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a])
+      end
+
+      it "excludes current group from available targets" do
+        targets = component.available_transfer_targets_for(user)
+        # Should return only cohorts or empty if no other groups
+        expect(targets).to be_empty
       end
     end
   end

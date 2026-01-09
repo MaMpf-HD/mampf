@@ -61,6 +61,21 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  def available_transfer_targets_for(user)
+    available = available_groups_for(user)
+    return [] unless available.any?
+
+    grouped = available.group_by(&:class)
+    sorted_groups = grouped.sort_by { |klass, _| klass.name == "Cohort" ? 2 : 1 }
+
+    sorted_groups.map do |klass, groups|
+      {
+        title: I18n.t("registration.item.groups.#{klass.name.underscore.pluralize}"),
+        groups: groups.sort_by(&:title)
+      }
+    end
+  end
+
   # Returns all available actions (Add and/or Switch) for a target group
   def assignment_actions(user, target_group)
     actions = []
