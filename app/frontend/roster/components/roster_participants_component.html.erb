@@ -10,13 +10,13 @@
 
         <!-- Filter Toggle Buttons -->
         <div class="btn-group btn-group-sm" role="group">
-          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :all),
+          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :all, group_type: @group_type),
                       class: "btn btn-outline-secondary #{'active' if @filter_mode == 'all'}",
                       data: { turbo_action: "advance" } do %>
             <%= t('roster.filters.all') %> (<span><%= @counts[:total] || 0 %></span>)
           <% end %>
 
-          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :unassigned),
+          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :unassigned, group_type: @group_type),
                       class: "btn btn-outline-secondary #{'active' if @filter_mode == 'unassigned'}",
                       data: { turbo_action: "advance" } do %>
             <%= t('roster.filters.unassigned') %> (<span><%= @counts[:unassigned] || 0 %></span>)
