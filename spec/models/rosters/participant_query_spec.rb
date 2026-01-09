@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Rosters::ParticipantQuery, type: :model do
+RSpec.describe(Rosters::ParticipantQuery, type: :model) do
   let(:lecture) { create(:lecture) }
   let(:params) { {} }
   subject { described_class.new(lecture, params).call }
@@ -27,9 +27,9 @@ RSpec.describe Rosters::ParticipantQuery, type: :model do
       # We need separate tests or separate lectures for tutorials and talks
       # because a seminar cannot have tutorials, and a lecture cannot have talks
       # (based on the validation errors received: "Lecture Tutorien können nicht für Seminare erstellt werden")
-      
+
       context "with tutorials" do
-        let(:lecture) { create(:lecture) } 
+        let(:lecture) { create(:lecture) }
         let(:tutorial) { create(:tutorial, lecture: lecture) }
 
         before do
@@ -43,9 +43,9 @@ RSpec.describe Rosters::ParticipantQuery, type: :model do
           # expect(subject.unassigned_count).to eq(2)
         end
       end
-      
+
       context "with talks" do
-        let(:lecture) { create(:lecture, :is_seminar) } 
+        let(:lecture) { create(:lecture, :is_seminar) }
         let(:talk) { create(:talk, lecture: lecture) }
 
         before do
@@ -92,7 +92,7 @@ RSpec.describe Rosters::ParticipantQuery, type: :model do
       # user2: Name "Bob", TutName nil -> Sort key "Bob"
       # user3: Name "Charlie", TutName nil -> Sort key "Charlie"
       # Expected order: Bob, Charlie, Alice (Zalice)
-      
+
       it "sorts by name_in_tutorials if present, otherwise name" do
         expected_order = [user2, user3, user1]
         expect(subject.scope.map(&:user)).to eq(expected_order)
