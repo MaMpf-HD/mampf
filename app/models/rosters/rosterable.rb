@@ -73,7 +73,6 @@ module Rosters
                          when Cohort then :cohort_memberships
                          when Talk then :speaker_talk_joins
                          when Lecture then :lecture_memberships
-                         else nil
       end
 
       if association_name && association(association_name).loaded?

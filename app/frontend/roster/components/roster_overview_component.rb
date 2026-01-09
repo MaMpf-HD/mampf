@@ -142,7 +142,8 @@ class RosterOverviewComponent < ViewComponent::Base
 
     def build_group_data(type)
       config = SUPPORTED_TYPES[type]
-      # Using public_send returns the pre-loaded association target (Array) because we eager loaded it in controller
+      # Using public_send returns the pre-loaded association target (Array) because
+      # we eager loaded it in controller
       items = @lecture.public_send(type)
 
       return nil if items.empty?

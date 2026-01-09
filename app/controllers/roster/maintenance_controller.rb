@@ -137,7 +137,8 @@ module Roster
 
         # Calculate unassigned scope
         # Users in tutorial memberships for this lecture
-        # Note: We must NOT select 'id' to allow UNION to work with different primary keys (UUID vs Integer)
+        # Note: We must NOT select 'id' to allow UNION to work with different primary
+        # keys (UUID vs Integer)
         tutorial_user_ids = TutorialMembership.joins(:tutorial)
                                               .where(tutorials: { lecture_id: @lecture.id })
                                               .select(:user_id)
@@ -176,10 +177,13 @@ module Roster
         setup_participants
 
         active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
-        target_rosterable = active_tab == :enrollment ? nil : rosterable
 
-        # If the rosterable is the lecture itself, we want to show the overview/list in the groups tab,
-        # not a "detail view" of the lecture.
+        # Only set target_rosterable if we are in the groups tab, otherwise we risk
+        # changing the hidden groups tab to a detail view unexpectedly.
+        target_rosterable = active_tab == :groups ? rosterable : nil
+
+        # If the rosterable is the lecture itself, we want to show the overview/list
+        # in the groups tab, not a "detail view" of the lecture.
         target_rosterable = nil if target_rosterable.is_a?(Lecture)
 
         group_type = if params[:group_type].is_a?(Array)

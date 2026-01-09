@@ -99,4 +99,52 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
   end
+
+  describe "pagination" do
+    let(:pagy) do
+      # Use a double because Pagy.new behavior is inconsistent in this environment
+      double("Pagy",
+             series: [1, "2", 3],
+             page: 1,
+             pages: 3,
+             next: 2,
+             prev: nil,
+             vars: { page: 1, count: 100, limit: 10 },
+             series_nav: "expected_html") # Mock the series_nav method called by helper
+    end
+    let(:group_type) { :tutorials }
+    let(:component) do
+      described_class.new(lecture: lecture, group_type: group_type, participants: participants,
+                          pagy: pagy)
+    end
+
+    before do
+      # Helper needs to be available for path generation
+      allow_any_instance_of(RosterParticipantsComponent)
+        .to receive(:helpers).and_wrap_original do |original_method, *args|
+        original_method.call(*args)
+      end
+    end
+
+    it "renders pagination links with preserved params" do
+      # Verify that the component calls series_nav with the correct querify logic
+      expect(pagy).to receive(:series_nav).at_least(:once) do |_style, **kwargs|
+        querify = kwargs[:querify]
+        expect(querify).to be_a(Proc)
+
+        # Test the lambda logic: it should inject our params into the hash
+        params = {}
+        querify.call(params)
+        expect(params["tab"]).to eq("participants")
+        expect(params["group_type"]).to eq("tutorials")
+
+        "mocked_pagination_html"
+      end
+
+      html = render_inline(component).to_html
+
+      # The rendered output should include our mocked return value
+      expect(html).to include("mocked_pagination_html")
+    end
+  end
 end
