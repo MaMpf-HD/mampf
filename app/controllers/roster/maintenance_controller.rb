@@ -284,12 +284,32 @@ module Roster
         klass = params[:type].constantize
         param_key = "#{params[:type].underscore}_id"
         id = params[param_key] || params[:id]
-        @rosterable = klass.find_by(id: id)
-        if @rosterable
-          @lecture = @rosterable.lecture
+        rosterable = klass.find_by(id: id)
+
+        if rosterable && rosterable.lecture
+          @lecture = eager_load_lecture(rosterable.lecture.id)
+
+          if @lecture
+            if rosterable.is_a?(Lecture)
+              @rosterable = @lecture
+            else
+              collection = case rosterable
+                           when Tutorial then @lecture.tutorials
+                           when Talk then @lecture.talks
+                           when Cohort then @lecture.cohorts
+              end
+              @rosterable = collection&.find { |r| r.id == rosterable.id } || rosterable
+            end
+          else
+            @rosterable = rosterable
+          end
         else
-          redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
+          @rosterable = rosterable
         end
+
+        return if @rosterable && @lecture
+
+        redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
       end
 
       def respond_with_error(message)
