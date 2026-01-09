@@ -48,11 +48,23 @@ module Rosters
                                        .where(talks: { lecture_id: @lecture.id })
                                        .select(:speaker_id)
 
+        # Users in Access Cohorts (which propagate directly to lecture roster)
+        # Waitlist cohorts do not count as "having a spot", so we treat them as unassigned
+        # unless they are also in a tutorial.
+        # Currently, the `propagate_to_lecture` flag serves as a proxy for "Access Cohort".
+        cohort_user_ids = CohortMembership.joins(:cohort)
+                                          .where(cohorts: {
+                                                   context_id: @lecture.id,
+                                                   context_type: "Lecture",
+                                                   propagate_to_lecture: true
+                                                 })
+                                          .select(:user_id)
+
         # Rails 7+ allows .union but can be finicky with different table structures / primary keys
         # We manually construct the SQL to be safe regardless of the primary key differences
-        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql})"
+        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql}) UNION (#{cohort_user_ids.to_sql})"
 
-        base_scope.where.not(user_id: Arel.sql(assigned_ids_sql))
+        base_scope.where("lecture_memberships.user_id NOT IN (#{assigned_ids_sql})")
       end
   end
 end

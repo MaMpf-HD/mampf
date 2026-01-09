@@ -39,8 +39,7 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
 
         it "calculates correct counts" do
           expect(subject.total_count).to eq(3)
-          # pending "Fix unassigned count calculation later"
-          # expect(subject.unassigned_count).to eq(2)
+          expect(subject.unassigned_count).to eq(2)
         end
       end
 
@@ -55,8 +54,7 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
 
         it "calculates correct counts" do
           expect(subject.total_count).to eq(3)
-          # pending "Fix unassigned count calculation later"
-          # expect(subject.unassigned_count).to eq(2)
+          expect(subject.unassigned_count).to eq(2)
         end
       end
     end
@@ -79,9 +77,8 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
         end
 
         it "returns only unassigned participants" do
-          # pending "Fix unassigned filtering later"
-          # expect(subject.scope.map(&:user)).to contain_exactly(user2, user3)
-          # expect(subject.scope.count).to eq(2)
+          expect(subject.scope.map(&:user)).to contain_exactly(user2, user3)
+          expect(subject.scope.count).to eq(2)
         end
       end
     end
