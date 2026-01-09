@@ -1,33 +1,33 @@
 # Renders the "Participants" tab in the Roster UI.
 # Manages the list of students, their assignment status, and actions to assign/move them.
 class RosterParticipantsComponent < ViewComponent::Base
-  def initialize(lecture:, group_type:)
+  def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
+                 counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
+    @participants = participants
+    @pagy = pagy
+    @filter_mode = filter_mode
+    @counts = counts
   end
 
-  attr_reader :lecture, :group_type
+  attr_reader :lecture, :group_type, :pagy, :filter_mode, :counts
 
   # Returns the officially enrolled participants (Lecture Superset).
   def participants
-    @participants ||= @lecture.lecture_memberships
-                              .joins(:user)
-                              .includes(:user)
-                              .order(
-                                Arel.sql(
-                                  "COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"
-                                )
-                              )
+    @participants ||= []
   end
 
   # Returns participants who are assigned to at least one functional group
   def assigned_participants
+    # Only applicable to current page
     @assigned_participants ||= participants.select { |m| participant_status(m.user) == :assigned }
   end
 
   # Returns participants who are not assigned to any functional group
   def unassigned_participants
+    # Only applicable to current page
     @unassigned_participants ||= participants.select do |m|
       participant_status(m.user) == :unassigned
     end
@@ -162,23 +162,31 @@ class RosterParticipantsComponent < ViewComponent::Base
       @user_memberships ||= begin
         map = Hash.new { |h, k| h[k] = Set.new }
 
+        # OPTIMIZE: Only fetch memberships for users on the current page
+        user_ids = participants.map(&:user_id)
+        return map if user_ids.empty?
+
         # Bulk load Tutorial memberships
         if @lecture.tutorials.exists?
-          TutorialMembership.where(tutorial: @lecture.tutorials)
+          TutorialMembership.joins(:tutorial)
+                            .where(tutorials: { lecture_id: @lecture.id }, user_id: user_ids)
                             .pluck(:user_id, :tutorial_id)
                             .each { |uid, tid| map[uid].add("Tutorial-#{tid}") }
         end
 
         # Bulk load Talk memberships
         if @lecture.talks.exists?
-          SpeakerTalkJoin.where(talk: @lecture.talks)
+          SpeakerTalkJoin.joins(:talk)
+                         .where(talks: { lecture_id: @lecture.id }, speaker_id: user_ids)
                          .pluck(:speaker_id, :talk_id)
                          .each { |uid, tid| map[uid].add("Talk-#{tid}") }
         end
 
         # Bulk load Cohort memberships
         if @lecture.respond_to?(:cohorts) && @lecture.cohorts.exists?
-          CohortMembership.where(cohort: @lecture.cohorts)
+          CohortMembership.joins(:cohort)
+                          .where(cohorts: { context_id: @lecture.id,
+                                            context_type: "Lecture" }, user_id: user_ids)
                           .pluck(:user_id, :cohort_id)
                           .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
         end

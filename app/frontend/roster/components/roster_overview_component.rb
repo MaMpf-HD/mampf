@@ -9,15 +9,21 @@ class RosterOverviewComponent < ViewComponent::Base
     cohorts: { model: "Cohort", association: :cohort_memberships, includes: [] }
   }.freeze
 
-  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil)
+  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil,
+                 participants: nil, pagy: nil, filter_mode: "all", counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
     @active_tab = active_tab
     @rosterable = rosterable
+    @participants = participants
+    @pagy = pagy
+    @filter_mode = filter_mode
+    @counts = counts
   end
 
-  attr_reader :lecture, :active_tab, :rosterable, :group_type
+  attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
+              :counts
 
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }

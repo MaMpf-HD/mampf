@@ -44,7 +44,9 @@
 
     <!-- Participants Tab -->
     <div class="tab-pane fade <%= 'show active' if @active_tab == :participants %>" id="participants-pane" role="tabpanel">
-      <%= render RosterParticipantsComponent.new(lecture: @lecture, group_type: @group_type) %>
+      <%= render RosterParticipantsComponent.new(lecture: @lecture, group_type: @group_type,
+                                                 participants: @participants, pagy: @pagy,
+                                                 filter_mode: @filter_mode, counts: @counts) %>
     </div>
 
     <!-- Candidates Tab -->

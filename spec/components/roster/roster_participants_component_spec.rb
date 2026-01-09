@@ -3,7 +3,11 @@ require "rails_helper"
 RSpec.describe(RosterParticipantsComponent, type: :component) do
   let(:lecture) { create(:lecture) }
   let(:group_type) { :all }
-  let(:component) { described_class.new(lecture: lecture, group_type: group_type) }
+  # Mock participants passing
+  let(:participants) { lecture.lecture_memberships }
+  let(:component) do
+    described_class.new(lecture: lecture, group_type: group_type, participants: participants)
+  end
 
   describe "#participants" do
     let!(:users) { create_list(:user, 3) }
@@ -13,6 +17,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
 
     it "returns the lecture memberships" do
+      # Refresh participants relation
       expect(component.participants.size).to eq(3)
     end
   end

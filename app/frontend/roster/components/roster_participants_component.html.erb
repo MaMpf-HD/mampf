@@ -1,31 +1,36 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-3" data-controller="roster-filter">
+    <div class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">
           <%= t("roster.tabs.participants") %>
-          <span class="badge bg-secondary ms-2"><%= participants.count %></span>
+          <span class="badge bg-secondary ms-2"><%= @counts[:total] || 0 %></span>
           <%= helpers.helpdesk(t("roster.participants_footer_hint"), false) %>
         </h5>
 
         <!-- Filter Toggle Buttons -->
         <div class="btn-group btn-group-sm" role="group">
-          <button type="button"
-                  class="btn btn-outline-secondary active"
-                  data-roster-filter-target="allButton"
-                  data-action="click->roster-filter#showAll">
-            <%= t('roster.filters.all') %> (<span data-roster-filter-target="allCount"><%= participants.count %></span>)
-          </button>
-          <button type="button"
-                  class="btn btn-outline-secondary"
-                  data-roster-filter-target="unassignedButton"
-                  data-action="click->roster-filter#showUnassigned">
-            <%= t('roster.filters.unassigned') %> (<span data-roster-filter-target="unassignedCount"><%= unassigned_participants.count %></span>)
-          </button>
+          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :all),
+                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'all'}",
+                      data: { turbo_action: "advance" } do %>
+            <%= t('roster.filters.all') %> (<span><%= @counts[:total] || 0 %></span>)
+          <% end %>
+
+          <%= link_to lecture_roster_path(@lecture, tab: :participants, filter: :unassigned),
+                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'unassigned'}",
+                      data: { turbo_action: "advance" } do %>
+            <%= t('roster.filters.unassigned') %> (<span><%= @counts[:unassigned] || 0 %></span>)
+          <% end %>
         </div>
       </div>
 
       <div class="card-body p-0">
+        <% if @pagy && @pagy.pages > 1 %>
+          <div class="d-flex justify-content-center py-2 border-bottom">
+            <%== helpers.pagy_series_nav(@pagy, path: helpers.lecture_roster_path(@lecture), querify: ->(p) { p['tab'] = 'participants'; p['filter'] = @filter_mode; p['group_type'] = @group_type.is_a?(Array) ? @group_type.map(&:to_s) : @group_type.to_s }) %>
+          </div>
+        <% end %>
+
         <div class="table-responsive">
           <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
@@ -46,8 +51,7 @@
               <% else %>
                 <% participants.each do |membership| %>
                   <% user = membership.user %>
-                  <% status = participant_status(user) %>
-                  <tr data-roster-filter-target="row" data-status="<%= status %>" data-cy="participant-row-<%= user.id %>">
+                  <tr data-cy="participant-row-<%= user.id %>">
                     <td>
                       <div class="fw-bold"><%= user.tutorial_name %></div>
                       <small class="text-muted"><%= user.email %></small>
@@ -86,6 +90,7 @@
                                           method: action[:method],
                                           params: action[:params].merge(active_tab: "participants",
                                                                       group_type: group_type,
+                                                                      page: @pagy.page,
                                                                       frame_id: helpers.roster_maintenance_frame_id(group_type)),
                                           data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
                                           class: "dropdown-item d-flex justify-content-between align-items-center" do %>
@@ -109,6 +114,7 @@
                                       method: :delete,
                                       params: { active_tab: "participants",
                                                 group_type: group_type,
+                                                page: @pagy.page,
                                                 frame_id: helpers.roster_maintenance_frame_id(group_type) },
                                       class: "btn btn-sm btn-outline-danger",
                                       data: { turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
@@ -123,6 +129,12 @@
           </table>
         </div>
       </div>
+
+      <% if @pagy && @pagy.pages > 1 %>
+        <div class="card-footer d-flex justify-content-center">
+          <%== helpers.pagy_series_nav(@pagy, path: helpers.lecture_roster_path(@lecture), querify: ->(p) { p['tab'] = 'participants'; p['filter'] = @filter_mode; p['group_type'] = @group_type.is_a?(Array) ? @group_type.map(&:to_s) : @group_type.to_s }) %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

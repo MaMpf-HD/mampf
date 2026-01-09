@@ -45,6 +45,8 @@ module Roster
         params[:group_type]&.to_sym || :all
       end
       @active_tab = params[:tab]&.to_sym || :groups
+
+      setup_participants
     end
 
     def enroll
@@ -124,6 +126,44 @@ module Roster
 
     private
 
+      def setup_participants
+        @participants_filter = params[:filter] || "all"
+        base_scope = @lecture.lecture_memberships
+                             .joins(:user)
+                             .includes(:user)
+                             .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+
+        @total_participants_count = base_scope.count
+
+        # Calculate unassigned scope
+        # Users in tutorial memberships for this lecture
+        # Note: We must NOT select 'id' to allow UNION to work with different primary keys (UUID vs Integer)
+        tutorial_user_ids = TutorialMembership.joins(:tutorial)
+                                              .where(tutorials: { lecture_id: @lecture.id })
+                                              .select(:user_id)
+
+        # User in talk memberships for this lecture (via talks)
+        talk_user_ids = SpeakerTalkJoin.joins(:talk)
+                                       .where(talks: { lecture_id: @lecture.id })
+                                       .select(:speaker_id)
+
+        # Rails 7+ allows .union but can be finicky with different table structures / primary keys
+        # We manually construct the SQL to be safe regardless of the primary key differences
+        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql})"
+
+        unassigned_scope = base_scope.where.not(user_id: Arel.sql(assigned_ids_sql))
+        @unassigned_participants_count = unassigned_scope.count
+
+        scope = case @participants_filter
+                when "unassigned"
+                  unassigned_scope
+                else
+                  base_scope
+        end
+
+        @pagy, @participants = pagy(scope)
+      end
+
       def authorize_lecture
         authorize! :edit, @lecture
       end
@@ -132,8 +172,15 @@ module Roster
         # Ensure lecture is eager loaded and fresh (to include new memberships)
         @lecture = eager_load_lecture(@lecture.id)
 
+        # Ensure participants are set up for the view
+        setup_participants
+
         active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
         target_rosterable = active_tab == :enrollment ? nil : rosterable
+
+        # If the rosterable is the lecture itself, we want to show the overview/list in the groups tab,
+        # not a "detail view" of the lecture.
+        target_rosterable = nil if target_rosterable.is_a?(Lecture)
 
         group_type = if params[:group_type].is_a?(Array)
           params[:group_type].map(&:to_sym)
@@ -156,7 +203,12 @@ module Roster
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type,
                                             active_tab: active_tab,
-                                            rosterable: target_rosterable)
+                                            rosterable: target_rosterable,
+                                            participants: @participants,
+                                            pagy: @pagy,
+                                            filter_mode: @participants_filter,
+                                            counts: { total: @total_participants_count,
+                                                      unassigned: @unassigned_participants_count })
               ),
               refresh_campaigns_index_stream(@lecture)
             ]
