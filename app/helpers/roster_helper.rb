@@ -79,13 +79,11 @@ module RosterHelper
     isolating = group.is_a?(Cohort) && !group.propagate_to_lecture?
     # Use secondary (gray) for normal propagating groups to reduce visual noise.
     # Use light/border (ghost) for isolating groups to differentiate them.
-    badge_class = isolating ? "bg-light text-dark border" : "bg-secondary"
+    badge_class = isolating ? "bg-light text-dark border" : "bg-secondary text-white"
 
     link_to(group.title,
             polymorphic_path([group, :roster]),
-            class: "badge #{badge_class} me-1 text-decoration-none #{unless isolating
-                                                                       "text-white"
-                                                                     end}",
+            class: "badge #{badge_class} me-1 text-decoration-none",
             style: "cursor: pointer;",
             data: { turbo_frame: roster_maintenance_frame_id(group_type), turbo_prefetch: false })
   end
