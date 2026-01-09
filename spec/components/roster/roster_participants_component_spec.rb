@@ -100,7 +100,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
-  describe "pagination" do
+  describe "#pagination_nav" do
     let(:pagy) do
       # Use a double because Pagy.new behavior is inconsistent in this environment
       double("Pagy",
@@ -110,7 +110,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
              next: 2,
              prev: nil,
              vars: { page: 1, count: 100, limit: 10 },
-             series_nav: "expected_html") # Mock the series_nav method called by helper
+             series_nav: "expected_html")
     end
     let(:group_type) { :tutorials }
     let(:component) do
@@ -126,25 +126,48 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       end
     end
 
-    it "renders pagination links with preserved params" do
-      # Verify that the component calls series_nav with the correct querify logic
-      expect(pagy).to receive(:series_nav).at_least(:once) do |_style, **kwargs|
-        querify = kwargs[:querify]
-        expect(querify).to be_a(Proc)
+    context "when there are multiple pages" do
+      it "returns pagination HTML with preserved params" do
+        # Verify that the component calls series_nav with the correct querify logic
+        expect(pagy).to receive(:series_nav).at_least(:once) do |_style, **kwargs|
+          querify = kwargs[:querify]
+          expect(querify).to be_a(Proc)
 
-        # Test the lambda logic: it should inject our params into the hash
-        params = {}
-        querify.call(params)
-        expect(params["tab"]).to eq("participants")
-        expect(params["group_type"]).to eq("tutorials")
+          # Test the lambda logic: it should inject our params into the hash
+          params = {}
+          querify.call(params)
+          expect(params["tab"]).to eq("participants")
+          expect(params["group_type"]).to eq("tutorials")
+          expect(params["filter"]).to eq("all")
 
-        "mocked_pagination_html"
+          "mocked_pagination_html"
+        end
+
+        # We use render_inline to ensure the component helpers are setup correctly
+        html = render_inline(component).to_html
+        expect(html).to include("mocked_pagination_html")
       end
+    end
 
-      html = render_inline(component).to_html
+    context "when there is only one page" do
+      let(:pagy) { double("Pagy", pages: 1) }
 
-      # The rendered output should include our mocked return value
-      expect(html).to include("mocked_pagination_html")
+      it "returns nil" do
+        # Ensure we don't try to render pagy
+        render_inline(component)
+        expect(component.pagination_nav).to be_nil
+        expect(rendered_content).not_to include("pagy-series-nav")
+      end
+    end
+
+    context "when pagy is nil" do
+      let(:pagy) { nil }
+
+      it "returns nil" do
+        render_inline(component)
+        expect(component.pagination_nav).to be_nil
+        expect(rendered_content).not_to include("pagy-series-nav")
+      end
     end
   end
 end
