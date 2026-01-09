@@ -87,6 +87,6 @@ module RosterHelper
                                                                        "text-white"
                                                                      end}",
             style: "cursor: pointer;",
-            data: { turbo_frame: roster_maintenance_frame_id(group_type) })
+            data: { turbo_frame: roster_maintenance_frame_id(group_type), turbo_prefetch: false })
   end
 end

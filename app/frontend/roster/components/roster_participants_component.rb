@@ -169,13 +169,14 @@ class RosterParticipantsComponent < ViewComponent::Base
   private
 
     def all_assignable_groups
-      @all_assignable_groups ||= begin
-        groups = []
-        groups.concat(@lecture.tutorials.to_a) if @lecture.respond_to?(:tutorials)
-        groups.concat(@lecture.talks.to_a) if @lecture.respond_to?(:talks)
-        groups.concat(@lecture.cohorts.to_a) if @lecture.respond_to?(:cohorts)
-        groups.sort_by(&:title)
-      end
+      @all_assignable_groups ||=
+        [].concat(@lecture.tutorials.includes(:tutorial_memberships,
+                                              registration_items: :registration_campaign).to_a)
+          .concat(@lecture.talks.includes(:speaker_talk_joins,
+                                          registration_items: :registration_campaign).to_a)
+          .concat(@lecture.cohorts.includes(:cohort_memberships,
+                                            registration_items: :registration_campaign).to_a)
+          .sort_by(&:title)
     end
 
     def all_groups_map
