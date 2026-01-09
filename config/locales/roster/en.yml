@@ -120,7 +120,7 @@ en:
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all gmemberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'

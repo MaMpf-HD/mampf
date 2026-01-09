@@ -129,7 +129,7 @@ de:
           title: "Sonderfälle behandeln"
           intro: "Nutzen Sie parallele Anmeldeverfahren, um Ausnahmen getrennt vom regulären Betrieb zu verwalten."
           planning: "<strong>Bedarfsplanung:</strong> Um Studierende zu erfassen, die Interesse an der Veranstaltung haben, können Sie ein Nur-Planungs-Verfahren dafür einrichten. Dieses ändert die Teilnehmerlisten nicht."
-          repeaters: "<strong>Wiederholende:</strong> Studierende, die in einer Vorlesung mit Tutorien nicht am Übungsbetrieb teilnehmen (z.B. weil sie die Prüfungszulassung bereits haben), aber trotzdem in der Veranstaltung eingeschrieben sein sollen, können über ein parallleles Veranstaltungseinschreibungs-Verfahren erfasst werden."
+          repeaters: "<strong>Wiederholende:</strong> Studierende, die in einer Vorlesung mit Tutorien nicht am Übungsbetrieb teilnehmen (z.B. weil sie die Prüfungszulassung bereits haben), aber trotzdem in der Veranstaltung eingeschrieben sein sollen, können über ein paralleles Veranstaltungseinschreibungs-Verfahren erfasst werden."
           latecomers: "<strong>Wartelisten/Nachrücker:</strong> Studierende, die erfasst werden sollen, aber nicht sofort in die Veranstaltung eingeschrieben werden sollen, können in Sondergruppen erfasst werden. Erstellen Sie diese und richten Sie dafür ein separates Anmeldeverfahren ein. Dieses können Sie zeitlich unbegrenzt offen lassen, um verspätete Anmeldungen strukturiert aufzufangen. Studierende in Sondergruppen können manuell in die Hauptteilnehmerliste übernommen werden."
         labels:
           best_for: "Geeignet für"
