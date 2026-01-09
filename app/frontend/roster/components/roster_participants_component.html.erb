@@ -76,9 +76,9 @@
                           <ul class="dropdown-menu dropdown-menu-end">
                             <% available = available_groups_for(user) %>
                             <% if available.any? %>
-                              <% available.group_by { |g| g.model_name.human(count: 2) }.sort.each do |type, groups| %>
-                                <li><h6 class="dropdown-header"><%= type %></h6></li>
-                                <% groups.each do |group| %>
+                              <% available.group_by(&:class).sort_by { |k, _| k.name == "Cohort" ? 2 : 1 }.each do |klass, groups| %>
+                                <li><h6 class="dropdown-header"><%= t("registration.item.groups.#{klass.name.underscore.pluralize}") %></h6></li>
+                                <% groups.sort_by(&:title).each do |group| %>
                                   <% actions = assignment_actions(user, group) %>
                                   <% actions.each do |action| %>
                                     <li>
