@@ -25,9 +25,9 @@
       </div>
 
       <div class="card-body p-0">
-        <% if @pagy && @pagy.pages > 1 %>
+        <% if (nav = pagination_nav) %>
           <div class="d-flex justify-content-center py-2 border-bottom">
-            <%== helpers.pagy_series_nav(@pagy, path: helpers.lecture_roster_path(@lecture), querify: ->(p) { p['tab'] = 'participants'; p['filter'] = @filter_mode; p['group_type'] = @group_type.is_a?(Array) ? @group_type.map(&:to_s) : @group_type.to_s }) %>
+            <%== nav %>
           </div>
         <% end %>
 
@@ -130,9 +130,9 @@
         </div>
       </div>
 
-      <% if @pagy && @pagy.pages > 1 %>
+      <% if (nav = pagination_nav) %>
         <div class="card-footer d-flex justify-content-center">
-          <%== helpers.pagy_series_nav(@pagy, path: helpers.lecture_roster_path(@lecture), querify: ->(p) { p['tab'] = 'participants'; p['filter'] = @filter_mode; p['group_type'] = @group_type.is_a?(Array) ? @group_type.map(&:to_s) : @group_type.to_s }) %>
+          <%== nav %>
         </div>
       <% end %>
     </div>

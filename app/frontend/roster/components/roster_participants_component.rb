@@ -136,6 +136,21 @@ class RosterParticipantsComponent < ViewComponent::Base
     Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
+  # Returns the HTML for the pagination navigation (top and bottom)
+  # Uses Pagy with custom querify logic to preserve tabs and filters.
+  def pagination_nav
+    return unless @pagy && @pagy.pages > 1
+
+    helpers.pagy_series_nav(@pagy,
+                            path: helpers.lecture_roster_path(@lecture),
+                            querify: lambda { |p|
+                              p["tab"] = "participants"
+                              p["filter"] = @filter_mode
+                              p["group_type"] =
+                                @group_type.is_a?(Array) ? @group_type.map(&:to_s) : @group_type.to_s
+                            })
+  end
+
   private
 
     def all_assignable_groups
