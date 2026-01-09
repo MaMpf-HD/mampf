@@ -34,22 +34,19 @@ class RosterDetailComponent < ViewComponent::Base
   def add_member_path
     route_helper("add_member",
                  group_type: group_type,
-                 active_tab: "groups",
-                 frame_id: helpers.roster_maintenance_frame_id(group_type))
+                 active_tab: "groups")
   end
 
   def remove_member_path(user)
     route_helper("remove_member", user,
                  group_type: group_type,
-                 active_tab: "groups",
-                 frame_id: helpers.roster_maintenance_frame_id(group_type))
+                 active_tab: "groups")
   end
 
   def move_member_path(user)
     route_helper("move_member", user,
                  group_type: group_type,
-                 active_tab: "groups",
-                 frame_id: helpers.roster_maintenance_frame_id(group_type))
+                 active_tab: "groups")
   end
 
   def available_groups

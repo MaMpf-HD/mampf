@@ -167,9 +167,9 @@ module Roster
         # Ensure group_type is formatted correctly (strings/symbols/arrays) for the helper
         group_type = group_type&.to_sym unless group_type.is_a?(Array)
 
-        frame_id = params[:frame_id].presence
-        frame_id = nil unless allowed_roster_frame_ids.include?(frame_id)
-        frame_id ||= view_context.roster_maintenance_frame_id(group_type)
+        # Ensure frame_id matches the group_type to prevent mismatch/targeting issues
+        expected_frame_id = view_context.roster_maintenance_frame_id(group_type)
+        frame_id = expected_frame_id if allowed_roster_frame_ids.include?(expected_frame_id)
 
         respond_to do |format|
           format.turbo_stream do
