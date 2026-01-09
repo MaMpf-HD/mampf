@@ -55,19 +55,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           let(:unassigned_user) { create(:user) }
 
           before do
-            m1 = create(:lecture_membership, lecture: lecture, user: assigned_user)
-            m2 = create(:lecture_membership, lecture: lecture, user: unassigned_user)
-            unless m1.persisted? && m2.persisted?
-              puts "Membership valid? #{m1.valid?}, #{m2.valid?}"
-            end
+            create(:lecture_membership, lecture: lecture, user: assigned_user)
+            create(:lecture_membership, lecture: lecture, user: unassigned_user)
             create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
           end
 
           it "only returns unassigned participants" do
             get lecture_roster_path(lecture, tab: "participants", filter: "unassigned")
             expect(response).to have_http_status(:success)
-            # We can checks if the names are present in the response body or if
-            # the counts are correct
             expect(response.body).to include(unassigned_user.email)
             expect(response.body).not_to include(assigned_user.email)
           end
