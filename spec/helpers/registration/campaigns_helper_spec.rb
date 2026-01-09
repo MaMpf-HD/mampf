@@ -221,4 +221,26 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.planning_only_checkbox_disabled?(campaign)).to be(false)
     end
   end
+
+  describe "#campaign_items_empty?" do
+    let(:campaign) { create(:registration_campaign) }
+
+    it "returns true when empty" do
+      expect(helper.send(:campaign_items_empty?, campaign)).to be(true)
+    end
+
+    context "with items" do
+      let(:campaign) { create(:registration_campaign, :with_items) }
+
+      it "returns false" do
+        expect(helper.send(:campaign_items_empty?, campaign)).to be(false)
+      end
+
+      it "returns false (loaded)" do
+        campaign.registration_items.load
+        expect(campaign.association(:registration_items)).to be_loaded
+        expect(helper.send(:campaign_items_empty?, campaign)).to be(false)
+      end
+    end
+  end
 end
