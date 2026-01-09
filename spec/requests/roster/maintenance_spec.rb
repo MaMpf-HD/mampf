@@ -85,6 +85,26 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     end
   end
 
+  describe "GET /tutorials/:id/roster" do
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get tutorial_roster_path(tutorial)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "includes participants data for component" do
+        get tutorial_roster_path(tutorial)
+        expect(controller.instance_variable_get(:@participants)).not_to be_nil
+        expect(controller.instance_variable_get(:@pagy)).not_to be_nil
+        expect(response.body).to include('id="participants-tab"')
+      end
+    end
+  end
+
   describe "PATCH /tutorials/:id/roster" do
     let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
 

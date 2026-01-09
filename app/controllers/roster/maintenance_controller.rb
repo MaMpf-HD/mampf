@@ -66,6 +66,7 @@ module Roster
 
     def show
       @active_tab = params[:tab] || "roster"
+      setup_participants
     end
 
     def update
