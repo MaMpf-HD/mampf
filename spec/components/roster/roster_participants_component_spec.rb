@@ -204,7 +204,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         expect(targets.size).to eq(2)
 
         # Check first group (Tutorials)
-        # We rely on the content of the groups to identify the section, avoiding brittle string checks on title
         expect(targets[0][:groups]).to match_array([tutorial_a, tutorial_b])
         # Check internal sorting (A before B)
         expect(targets[0][:groups]).to eq([tutorial_a, tutorial_b])

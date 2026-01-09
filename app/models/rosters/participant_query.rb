@@ -10,10 +10,11 @@ module Rosters
     def call
       filter_mode = @params[:filter] || "all"
 
-      base_scope = @lecture.lecture_memberships
-                           .joins(:user)
-                           .includes(:user)
-                           .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+      base_scope =
+        @lecture.lecture_memberships
+                .joins(:user)
+                .includes(:user)
+                .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
 
       total_count = base_scope.count
 
@@ -62,7 +63,8 @@ module Rosters
 
         # Rails 7+ allows .union but can be finicky with different table structures / primary keys
         # We manually construct the SQL to be safe regardless of the primary key differences
-        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql}) UNION (#{cohort_user_ids.to_sql})"
+        assigned_ids_sql = "(#{tutorial_user_ids.to_sql}) UNION (#{talk_user_ids.to_sql}) " \
+                           "UNION (#{cohort_user_ids.to_sql})"
 
         base_scope.where("lecture_memberships.user_id NOT IN (#{assigned_ids_sql})")
       end

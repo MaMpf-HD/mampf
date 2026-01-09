@@ -286,7 +286,7 @@ module Roster
         id = params[param_key] || params[:id]
         rosterable = klass.find_by(id: id)
 
-        if rosterable && rosterable.lecture
+        if rosterable&.lecture
           @lecture = eager_load_lecture(rosterable.lecture.id)
 
           if @lecture

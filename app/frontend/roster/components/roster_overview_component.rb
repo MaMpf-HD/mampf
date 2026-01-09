@@ -9,6 +9,7 @@ class RosterOverviewComponent < ViewComponent::Base
     cohorts: { model: "Cohort", association: :cohort_memberships, includes: [] }
   }.freeze
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil,
                  participants: nil, pagy: nil, filter_mode: "all", counts: {})
     super()
@@ -21,6 +22,7 @@ class RosterOverviewComponent < ViewComponent::Base
     @filter_mode = filter_mode
     @counts = counts
   end
+  # rubocop:enable Metrics/ParameterLists
 
   attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
               :counts

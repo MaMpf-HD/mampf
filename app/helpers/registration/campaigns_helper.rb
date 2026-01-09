@@ -166,12 +166,7 @@ module Registration
     private
 
       def campaign_items_empty?(campaign)
-        if campaign.association(:registration_items).loaded?
-          # Avoid firing SQL query if associated collection is empty in memory
-          campaign.registration_items.size.zero?
-        else
-          campaign.registration_items.empty?
-        end
+        campaign.registration_items.empty?
       end
   end
 end
