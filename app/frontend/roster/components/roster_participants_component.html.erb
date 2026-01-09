@@ -53,8 +53,7 @@
                   <% user = membership.user %>
                   <tr data-cy="participant-row-<%= user.id %>">
                     <td>
-                      <div class="fw-bold"><%= user.tutorial_name %></div>
-                      <small class="text-muted"><%= user.email %></small>
+                      <%= user.tutorial_name %>
                     </td>
                     <td><%= user.email %></td>
                     <td>
