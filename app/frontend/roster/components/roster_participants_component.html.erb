@@ -61,11 +61,7 @@
                       <% groups = participant_groups(user) %>
                       <% if groups.any? %>
                         <% groups.each do |group| %>
-                          <%= link_to group.title,
-                                      group_path(group),
-                                      class: "badge bg-primary me-1 text-decoration-none text-white",
-                                      style: "cursor: pointer;",
-                                      data: { turbo_frame: helpers.roster_maintenance_frame_id(group_type) } %>
+                          <%= helpers.roster_group_badge(group, group_type) %>
                         <% end %>
                       <% else %>
                         <span class="text-muted small"><%= t("roster.stats.status_unassigned") %></span>
@@ -117,7 +113,9 @@
                                                 page: @pagy.page,
                                                 frame_id: helpers.roster_maintenance_frame_id(group_type) },
                                       class: "btn btn-sm btn-outline-danger",
-                                      data: { turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
+                                      title: t('roster.tooltips.kick_from_lecture'),
+                                      data: { bs_toggle: "tooltip",
+                                              turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
                           <i class="bi bi-trash"></i>
                         <% end %>
                       </div>

@@ -2,12 +2,12 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
-    participants_footer_hint: "This list contains all people enrolled in this lecture, regardless of their group assignment."
+    participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
       groups: 'Groups'
-      participants: 'List'
+      participants: 'Enrolled'
       group_maintenance: 'Group Management'
       candidates: 'Candidates'
       enrollment: 'Enrollment'
@@ -90,6 +90,8 @@ en:
     campaign_draft: 'Campaign planned'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
     tooltips:
+      kick_from_lecture: "Removes lecture enrollment and all tutorial and (cohort with enrollment) memberships"
+      kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
       edit_settings: "Edit Settings"
       delete: "Delete"
@@ -118,7 +120,8 @@ en:
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all group memberships that grant lecture access. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all gmemberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
+      confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'

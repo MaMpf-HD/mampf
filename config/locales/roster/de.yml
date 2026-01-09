@@ -2,12 +2,12 @@ de:
   roster:
     title: 'Teilnehmende'
     status: 'Status'
-    participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind, unabhängig von ihrer Gruppenzugehörigkeit."
+    participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
       groups: 'Gruppen'
-      participants: 'Gesamtliste'
+      participants: 'Eingeschriebene'
       group_maintenance: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       enrollment: 'Einschreibung'
@@ -92,6 +92,8 @@ de:
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
     tooltips:
+      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
+      kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
       edit_settings: "Einstellungen bearbeiten"
       delete: "Löschen"
@@ -120,7 +122,8 @@ de:
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
     warnings:
-      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die Veranstaltungszugriff gewähren. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
+      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
+      confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
