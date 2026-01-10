@@ -164,6 +164,66 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
     end
+
+    # Switching Self-Materialization Mode
+    describe "#validate_self_materialization_switch" do
+      let(:rosterable) { create(:tutorial, manual_roster_mode: false) }
+
+      context "when campaign is running" do
+        before do
+          campaign = create(:registration_campaign, campaignable: rosterable.lecture,
+                                                    status: :draft, planning_only: false)
+          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+          campaign.update(status: :open)
+        end
+
+        it "cannot enable add_only" do
+          rosterable.self_materialization_mode = :add_only
+          expect(rosterable).not_to(be_valid)
+          expect(rosterable.errors[:self_materialization_mode])
+            .to(include("cannot be enabled during active campaign"))
+        end
+      end
+
+      context "when campaign is completed" do
+        before do
+          campaign = create(:registration_campaign, campaignable: rosterable.lecture,
+                                                    status: :draft, planning_only: false)
+          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+          campaign.update(status: :completed)
+        end
+
+        it "can enable add_only" do
+          rosterable.self_materialization_mode = :add_only
+          expect(rosterable).to(be_valid)
+        end
+      end
+
+      context "when no campaign exists" do
+        it "can enable add_only" do
+          rosterable.self_materialization_mode = :add_only
+          expect(rosterable).to(be_valid)
+        end
+      end
+
+      context "disabling mode" do
+        before { rosterable.update(self_materialization_mode: :add_only) }
+
+        context "when campaign starts running" do
+          before do
+            campaign = create(:registration_campaign, campaignable: rosterable.lecture,
+                                                      status: :draft, planning_only: false)
+            create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+            campaign.update(status: :open)
+          end
+
+          it "can safely disable self-materialization" do
+            rosterable.self_materialization_mode = :disabled
+            expect(rosterable).to(be_valid)
+          end
+        end
+      end
+    end
   end
 
   describe "#materialize_allocation!" do

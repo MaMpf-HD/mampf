@@ -21,7 +21,15 @@ module Rosters
         :user_id
       end
 
+      enum :self_materialization_mode, {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, prefix: true
+
       validate :validate_manual_mode_switch
+      validate :validate_self_materialization_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
@@ -231,6 +239,25 @@ module Rosters
             errors.add(:manual_roster_mode, I18n.t("roster.errors.roster_not_empty"))
           end
         end
+      end
+
+      def validate_self_materialization_switch
+        return unless self_materialization_mode_changed?
+        return if self_materialization_mode_disabled?
+
+        # Logic: Self-materialization is meant for "Life After Campaign".
+        # It strictly forbids interference with a RUNNING (or Planning) campaign.
+        # It does NOT check history (in_real_campaign?), allowing it after completion.
+        active_campaign =
+          registration_items.joins(:registration_campaign)
+                            .where.not(registration_campaigns: { status: :completed })
+                            .exists?
+
+        return unless active_campaign
+
+        errors.add(:self_materialization_mode,
+                   I18n.t("roster.errors.active_campaign_exists",
+                          default: "cannot be enabled during active campaign"))
       end
 
       def enforce_rosterable_destruction_constraints
