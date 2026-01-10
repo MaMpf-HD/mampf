@@ -103,7 +103,7 @@ en:
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
     buttons:
-      full_editor: "vollständigen Editor"
+      full_editor: "complete editor"
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'

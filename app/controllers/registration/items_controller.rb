@@ -143,6 +143,10 @@ module Registration
 
         if type == "Cohort"
           attributes[:context] = @campaign.campaignable
+          # Handle the checkbox for cohorts.
+          # Checkbox sends "1" or "0", cast to boolean just to be safe.
+          attributes[:propagate_to_lecture] =
+            params[:registration_item][:propagate_to_lecture] == "1"
         else
           attributes[:lecture] = @campaign.campaignable
         end

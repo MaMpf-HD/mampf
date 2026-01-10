@@ -128,7 +128,10 @@
               <%= t("registration.item.add.lecture_unique") %>
             </div>
           <% else %>
-            <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
+            <%= form_with url: registration_campaign_items_path(campaign),
+                          method: :post,
+                          class: "row g-3 align-items-end",
+                          data: { turbo: true, controller: "registerable-type-switch" } do |f| %>
               <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
 
               <div class="col-md-3">
@@ -142,7 +145,11 @@
                                 [t("registration.item.types.cohort"), "Cohort"]]
                              end
                 %>
-                <%= f.select "registration_item[registerable_type]", options, {}, class: "form-select" %>
+                <%= f.select "registration_item[registerable_type]",
+                             options,
+                             {},
+                             class: "form-select",
+                             data: { action: "change->registerable-type-switch#toggle", registerable_type_switch_target: "select" } %>
               </div>
 
               <div class="col-md-5">
@@ -157,6 +164,14 @@
 
               <div class="col-md-2">
                 <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
+              </div>
+
+              <div class="col-12 mt-2 d-none" data-registerable-type-switch-target="cohortSettings">
+                <div class="form-check">
+                  <%= f.check_box "registration_item[propagate_to_lecture]", class: "form-check-input", id: "quick_propagate" %>
+                  <%= f.label "registration_item[propagate_to_lecture]", t("roster.cohorts.propagate_to_lecture"), class: "form-check-label", for: "quick_propagate" %>
+                  <div class="form-text small"><%= t("roster.hints.cohort_propagate_to_lecture") %></div>
+                </div>
               </div>
             <% end %>
           <% end %>
