@@ -80,6 +80,13 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
+    self_materialization:
+      modes:
+        disabled: 'Self-Enrollment Disabled'
+        add_only: 'Join Only'
+        remove_only: 'Leave Only'
+        add_and_remove: 'Join & Leave'
+      label: 'Self-Enrollment'
     manual_mode: 'Manual Mode'
     enable_manual_hint: 'Cannot enable manual mode because this group was part of a campaign.'
     disable_manual_hint: 'Cannot disable manual mode because the roster is not empty.'

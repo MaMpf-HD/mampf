@@ -138,7 +138,8 @@ module Roster
         render turbo_stream: turbo_stream.replace(
           view_context.dom_id(@rosterable, :actions),
           partial: "roster/components/groups_tab/item_actions",
-          locals: { item: @rosterable, component: component, campaign: campaign, group_type: group_type }
+          locals: { item: @rosterable, component: component, campaign: campaign,
+                    group_type: group_type }
         )
       else
         render turbo_stream: turbo_stream.replace(

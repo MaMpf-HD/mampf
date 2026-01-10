@@ -80,6 +80,13 @@ de:
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
+    self_materialization:
+      modes:
+        disabled: 'Selbsteinschreibung deaktiviert'
+        add_only: 'Nur Beitreten'
+        remove_only: 'Nur Verlassen'
+        add_and_remove: 'Beitreten & Verlassen'
+      label: 'Selbsteinschreibung'
     manual_mode: 'Manueller Modus'
     enable_manual_hint: 'Manueller Modus kann nicht aktiviert werden, da diese Gruppe Teil einer Kampagne war.'
     disable_manual_hint: 'Manueller Modus kann nicht deaktiviert werden, da die Liste nicht leer ist.'

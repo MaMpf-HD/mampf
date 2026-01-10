@@ -3,6 +3,22 @@
   <%= roster_edit_button(item, group_type) %>
   <%= roster_destroy_button(item, group_type) %>
 
+  <div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="<%= t('roster.self_materialization.label') %>">
+      <i class="bi bi-person-check"></i>
+    </button>
+    <ul class="dropdown-menu">
+      <% item.class.self_materialization_modes.keys.each do |mode| %>
+        <li>
+          <%= link_to t("roster.self_materialization.modes.#{mode}"),
+                component.update_self_materialization_path(item, mode),
+                class: "dropdown-item #{'active' if item.self_materialization_mode == mode}",
+                data: { turbo_method: :patch } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
   <% if component.show_manual_mode_switch?(item) %>
     <%= form_with model: item, scope: :rosterable,
           url: component.toggle_manual_mode_path(item),

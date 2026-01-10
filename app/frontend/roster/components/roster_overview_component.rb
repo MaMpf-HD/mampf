@@ -87,6 +87,11 @@ class RosterOverviewComponent < ViewComponent::Base
     Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
+  def update_self_materialization_path(item, mode)
+    method_name = "#{item.class.name.underscore}_update_self_materialization_path"
+    Rails.application.routes.url_helpers.public_send(method_name, item, self_materialization_mode: mode)
+  end
+
   def subtables_for(group)
     if group[:type] == :cohorts && group[:items].any?
       with_enrollment = group[:items].select(&:propagate_to_lecture?)
