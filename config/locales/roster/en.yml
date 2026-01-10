@@ -117,6 +117,7 @@ en:
       invalid_type: 'Invalid group type.'
       roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."
       campaign_running: "cannot be disabled while a campaign is running."
+      active_campaign_exists: 'Self-Enrollment cannot be enabled because an active campaign already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."

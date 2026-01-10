@@ -255,7 +255,7 @@ module Rosters
 
         return unless active_campaign
 
-        errors.add(:self_materialization_mode,
+        errors.add(:base,
                    I18n.t("roster.errors.active_campaign_exists",
                           default: "cannot be enabled during active campaign"))
       end

@@ -135,19 +135,29 @@ module Roster
       group_type = @rosterable.class.name.tableize.to_sym
 
       if @rosterable.update(self_materialization_mode: mode)
-        render turbo_stream: turbo_stream.replace(
-          view_context.dom_id(@rosterable, :actions),
-          partial: "roster/components/groups_tab/item_actions",
-          locals: { item: @rosterable, component: component, campaign: campaign,
-                    group_type: group_type }
-        )
+        flash.now[:notice] = t("roster.messages.updated")
+        render turbo_stream: [
+          turbo_stream.replace(
+            view_context.dom_id(@rosterable, :actions),
+            partial: "roster/components/groups_tab/item_actions",
+            locals: { item: @rosterable, component: component, campaign: campaign,
+                      group_type: group_type }
+          ),
+          stream_flash
+        ]
       else
-        render turbo_stream: turbo_stream.replace(
-          view_context.dom_id(@rosterable, :actions),
-          partial: "roster/components/groups_tab/item_actions",
-          locals: { item: @rosterable, error: @rosterable.errors.full_messages.to_sentence,
-                    component: component, campaign: campaign, group_type: group_type }
-        )
+        flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
+        @rosterable.reload
+
+        render turbo_stream: [
+          turbo_stream.replace(
+            view_context.dom_id(@rosterable, :actions),
+            partial: "roster/components/groups_tab/item_actions",
+            locals: { item: @rosterable, component: component, campaign: campaign,
+                      group_type: group_type }
+          ),
+          stream_flash
+        ]
       end
     end
 

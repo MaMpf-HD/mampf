@@ -4,7 +4,7 @@
   <%= roster_destroy_button(item, group_type) %>
 
   <div class="dropdown">
-    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="<%= t('roster.self_materialization.label') %>">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="<%= t('roster.self_materialization.label') %>" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}'>
       <i class="bi bi-person-check"></i>
     </button>
     <ul class="dropdown-menu">

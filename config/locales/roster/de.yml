@@ -119,6 +119,7 @@ de:
       invalid_type: 'Ungültiger Gruppentyp.'
       roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
+      active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."

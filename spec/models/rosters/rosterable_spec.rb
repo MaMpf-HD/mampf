@@ -180,8 +180,8 @@ RSpec.describe(Rosters::Rosterable) do
         it "cannot enable add_only" do
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:self_materialization_mode])
-            .to(include("cannot be enabled during active campaign"))
+          expect(rosterable.errors[:base])
+            .to(include(I18n.t("roster.errors.active_campaign_exists")))
         end
       end
 
