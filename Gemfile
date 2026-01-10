@@ -72,7 +72,7 @@ group :development do
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
-  gem "rubocop", "~> 1.65", require: false
+  gem "rubocop", "1.81.7", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
