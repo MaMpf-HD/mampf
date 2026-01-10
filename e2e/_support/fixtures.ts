@@ -14,7 +14,7 @@ class UserFixture {
 }
 
 type MaMpfFixtures = {
-  _beforeEachTest: Array<unknown>;
+  _forEachTest: Array<void>;
   student: UserFixture;
   student2: UserFixture;
   admin: UserFixture;
@@ -26,11 +26,14 @@ type MaMpfFixtures = {
 export * from "@playwright/test";
 export const test = base.extend<MaMpfFixtures>({
   // https://playwright.dev/docs/test-fixtures#adding-global-beforeeachaftereach-hooks
-  _beforeEachTest: [
-    async ({ browser }) => {
-      const browserContext = await browser.newContext();
+  _forEachTest: [
+    async ({ browser }, use) => {
       // Clean database before every test (brutal, but effective for good test isolation)
+      const browserContext = await browser.newContext();
       await callBackend(browserContext.request, "database_cleaner", {});
+      await browserContext.close();
+
+      await use([]);
     }, { auto: true },
   ],
 
