@@ -1,19 +1,20 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["select", "cohortSettings"]
+  static targets = ["select", "cohortSettings"];
 
   connect() {
-    this.toggle()
+    this.toggle();
   }
 
   toggle() {
-    const type = this.selectTarget.value
+    const type = this.selectTarget.value;
     if (type === "Cohort") {
-      this.cohortSettingsTarget.classList.remove("hidden")
-      this.cohortSettingsTarget.classList.remove("d-none")
-    } else {
-      this.cohortSettingsTarget.classList.add("d-none")
+      this.cohortSettingsTarget.classList.remove("hidden");
+      this.cohortSettingsTarget.classList.remove("d-none");
+    }
+    else {
+      this.cohortSettingsTarget.classList.add("d-none");
     }
   }
 }
