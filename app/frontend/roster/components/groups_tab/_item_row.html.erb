@@ -19,29 +19,23 @@
   <% end %>
   <td><%= item.capacity || "∞" %></td>
   <td>
-    <% if component.show_campaign_running_badge?(item, campaign) %>
-      <% badge = component.campaign_badge_props(campaign) %>
-      <span class="<%= badge[:css_class] %>">
-        <%= badge[:text] %>
-      </span>
-    <% else %>
-      <div class="d-flex align-items-center">
-        <div class="flex-grow-1 me-2">
-          <% if item.capacity %>
-            <%= progress_bar(
-                  item.roster_entries.count,
-                  item.capacity,
-                  classification: :utilization,
-                  height: "6px",
-                  show_label: false,
-                  container_class: "progress"
-                ) %>
-          <% end %>
-        </div>
-        <span class="small text-muted"><%= item.roster_entries.count %></span>
+    <div class="d-flex align-items-center">
+      <div class="flex-grow-1 me-2">
+        <% if item.capacity %>
+          <%= progress_bar(
+                item.roster_entries.count,
+                item.capacity,
+                classification: :utilization,
+                height: "6px",
+                show_label: false,
+                container_class: "progress"
+              ) %>
+        <% end %>
       </div>
-    <% end %>
+      <span class="small text-muted"><%= item.roster_entries.count %></span>
+    </div>
   </td>
+  <%= render "roster/components/groups_tab/status_cell", item: item, campaign: campaign %>
   <td class="text-end">
     <%= render "roster/components/groups_tab/item_actions",
                item: item,

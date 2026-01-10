@@ -74,18 +74,34 @@ de:
       speakers: 'Vortragende'
       capacity: 'Kapazität'
       occupancy: 'Belegung'
+      status: 'Status'
       name: 'Name'
       email: 'E-Mail'
       groups: 'Gruppen'
       preferences: 'Präferenzen'
       actions: 'Aktionen'
+    status_values:
+      manual: "Manuell"
+      campaign: "Anmeldung: %{status}"
+      campaign_statuses:
+        draft: "Entwurf"
+        open: "Offen"
+        closed: "Geschlossen"
+        processing: "Zuweisung läuft"
+        completed: "Abgeschlossen"
+      self_materialization:
+        disabled: "Selbsteinschreibung: Deaktiviert"
+        add_only: "Selbsteinschreibung: Nur Eintragen"
+        remove_only: "Selbsteinschreibung: Nur Austragen"
+        add_and_remove: "Selbsteinschreibung: Ein- & Austragen"
+      actions: 'Aktionen'
     manage: 'Verwalten'
     self_materialization:
       modes:
         disabled: 'Selbsteinschreibung deaktiviert'
-        add_only: 'Nur Beitreten'
-        remove_only: 'Nur Verlassen'
-        add_and_remove: 'Beitreten & Verlassen'
+        add_only: 'Nur Eintragen'
+        remove_only: 'Nur Austragen'
+        add_and_remove: 'Ein- & Austragen'
       label: 'Selbsteinschreibung'
     manual_mode: 'Manueller Modus'
     enable_manual_hint: 'Manueller Modus kann nicht aktiviert werden, da diese Gruppe Teil einer Kampagne war.'

@@ -65,18 +65,6 @@ class RosterOverviewComponent < ViewComponent::Base
     items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
-  def show_campaign_running_badge?(item, campaign)
-    !item.manual_roster_mode? && campaign.present? && item.roster_empty?
-  end
-
-  def campaign_badge_props(campaign)
-    if campaign&.draft?
-      { text: I18n.t("roster.campaign_draft"), css_class: "badge bg-secondary" }
-    else
-      { text: I18n.t("roster.campaign_running"), css_class: "badge bg-info text-dark" }
-    end
-  end
-
   def show_manual_mode_switch?(item)
     (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
       (!item.manual_roster_mode? && item.can_enable_manual_mode?)

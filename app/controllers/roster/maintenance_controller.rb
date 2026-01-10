@@ -143,6 +143,11 @@ module Roster
             locals: { item: @rosterable, component: component, campaign: campaign,
                       group_type: group_type }
           ),
+          turbo_stream.replace(
+            view_context.dom_id(@rosterable, :status),
+            partial: "roster/components/groups_tab/status_cell",
+            locals: { item: @rosterable, campaign: campaign }
+          ),
           stream_flash
         ]
       else
@@ -155,6 +160,11 @@ module Roster
             partial: "roster/components/groups_tab/item_actions",
             locals: { item: @rosterable, component: component, campaign: campaign,
                       group_type: group_type }
+          ),
+          turbo_stream.replace(
+            view_context.dom_id(@rosterable, :status),
+            partial: "roster/components/groups_tab/status_cell",
+            locals: { item: @rosterable, campaign: campaign }
           ),
           stream_flash
         ]

@@ -149,48 +149,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "#show_campaign_running_badge?" do
-    let(:tutorial) { create(:tutorial, lecture: lecture) }
-    let(:campaign) { create(:registration_campaign) }
-
-    it "returns true when conditions are met" do
-      # manual_roster_mode? is false by default (assuming)
-      # roster_empty? is true by default
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(true)
-    end
-
-    it "returns false if manual roster mode" do
-      allow(tutorial).to receive(:manual_roster_mode?).and_return(true)
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
-    end
-
-    it "returns false if campaign is missing" do
-      expect(component.show_campaign_running_badge?(tutorial, nil)).to be(false)
-    end
-
-    it "returns false if roster is not empty" do
-      allow(tutorial).to receive(:roster_empty?).and_return(false)
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
-    end
-  end
-
-  describe "#campaign_badge_props" do
-    let(:draft_campaign) { build(:registration_campaign, status: :draft) }
-    let(:running_campaign) { build(:registration_campaign, status: :open) }
-
-    it "returns draft badge properties for draft campaign" do
-      props = component.campaign_badge_props(draft_campaign)
-      expect(props[:text]).to eq(I18n.t("roster.campaign_draft"))
-      expect(props[:css_class]).to include("bg-secondary")
-    end
-
-    it "returns running badge properties for running campaign" do
-      props = component.campaign_badge_props(running_campaign)
-      expect(props[:text]).to eq(I18n.t("roster.campaign_running"))
-      expect(props[:css_class]).to include("bg-info")
-    end
-  end
-
   describe "#show_manual_mode_switch?" do
     let(:item) { create(:tutorial, lecture: lecture) }
 
