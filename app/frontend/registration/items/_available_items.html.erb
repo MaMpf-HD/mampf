@@ -170,7 +170,12 @@
                 <div class="form-check">
                   <%= f.check_box "registration_item[propagate_to_lecture]", class: "form-check-input", id: "quick_propagate" %>
                   <%= f.label "registration_item[propagate_to_lecture]", t("roster.cohorts.propagate_to_lecture"), class: "form-check-label", for: "quick_propagate" %>
-                  <div class="form-text small"><%= t("roster.hints.cohort_propagate_to_lecture") %></div>
+                  <div class="form-text small">
+                    <%= t("roster.hints.cohort_propagate_to_lecture") %>
+                    <div class="mt-1 text-danger">
+                      <%= t("roster.warnings.setting_cannot_be_changed") %>
+                    </div>
+                  </div>
                 </div>
               </div>
             <% end %>
