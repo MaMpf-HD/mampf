@@ -27,7 +27,12 @@ class TermsController < ApplicationController
     if @term.save
       respond_to do |format|
         format.html { redirect_to terms_path }
-        format.turbo_stream
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend("terms", @term),
+            turbo_stream.update(Term.new, "")
+          ]
+        end
       end
     else
       render :new, status: :unprocessable_content
@@ -46,7 +51,7 @@ class TermsController < ApplicationController
     @term.destroy
     respond_to do |format|
       format.html { redirect_to terms_path }
-      format.turbo_stream
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@term) }
     end
   end
 
