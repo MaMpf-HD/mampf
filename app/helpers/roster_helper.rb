@@ -35,11 +35,13 @@ module RosterHelper
 
     # Always show manage button (disabled when locked)
     buttons << if locked
-      tag.button(class: "btn btn-sm btn-outline-primary disabled opacity-50",
-                 style: "cursor: not-allowed;",
-                 title: t("roster.tooltips.locked_manage"),
-                 data: { bs_toggle: "tooltip" }) do
-        tag.i(class: "bi bi-person-lines-fill")
+      tag.span(title: t("roster.tooltips.locked_manage"),
+               data: { bs_toggle: "tooltip" }) do
+        tag.button(class: "btn btn-sm btn-outline-primary disabled opacity-50",
+                   style: "cursor: not-allowed;",
+                   disabled: true) do
+          tag.i(class: "bi bi-person-lines-fill")
+        end
       end
     else
       link_to(component.group_path(item),
@@ -92,14 +94,10 @@ module RosterHelper
   end
 
   def roster_edit_button(item, group_type)
-    disabled = item.campaign_active?
-    tooltip = disabled ? t("roster.tooltips.edit_disabled_campaign") : t("roster.tooltips.edit_settings")
-
     link_to(edit_polymorphic_path(item, group_type: group_type),
-            class: "btn btn-sm #{disabled ? "btn-outline-primary disabled opacity-50" : "btn-primary"}",
-            style: (disabled ? "cursor: not-allowed;" : nil),
-            title: tooltip,
-            data: { turbo_stream: !disabled, bs_toggle: "tooltip" }.compact) do
+            class: "btn btn-sm btn-primary",
+            title: t("roster.tooltips.edit_settings"),
+            data: { turbo_stream: true, bs_toggle: "tooltip" }) do
       tag.i(class: "bi bi-tools")
     end
   end
@@ -113,12 +111,14 @@ module RosterHelper
     end
 
     if disabled
-      link_to(polymorphic_path(item, group_type: group_type),
-              class: "btn btn-sm btn-outline-danger disabled opacity-50",
-              style: "cursor: not-allowed;",
-              title: tooltip,
-              data: { bs_toggle: "tooltip" }) do
-        tag.i(class: "bi bi-trash")
+      tag.span(title: tooltip, data: { bs_toggle: "tooltip" }) do
+        link_to(polymorphic_path(item, group_type: group_type),
+                class: "btn btn-sm btn-outline-danger disabled opacity-50",
+                style: "cursor: not-allowed;",
+                tabindex: -1,
+                aria: { disabled: true }) do
+          tag.i(class: "bi bi-trash")
+        end
       end
     else
       link_to(polymorphic_path(item, group_type: group_type),

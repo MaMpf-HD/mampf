@@ -12,19 +12,26 @@
                       t('roster.self_materialization.label')
                     end %>
 
-  <div class="dropdown">
-    <button class="btn btn-sm <%= self_mat_disabled ? 'btn-outline-secondary opacity-50' : 'btn-secondary' %>"
-            type="button"
-            style="<%= 'cursor: not-allowed;' if self_mat_disabled %>"
-            data-bs-toggle="<%= self_mat_disabled ? 'tooltip' : 'dropdown' %>"
-            aria-expanded="false"
-            title="<%= tooltip_text %>"
-            data-bs-boundary="viewport"
-            data-bs-popper-config='{"strategy":"fixed"}'
-            <%= 'disabled' if self_mat_disabled %>>
-      <i class="bi bi-person-check"></i>
-    </button>
-    <% unless self_mat_disabled %>
+  <% if self_mat_disabled %>
+    <span title="<%= tooltip_text %>" data-bs-toggle="tooltip">
+      <button class="btn btn-sm btn-outline-secondary opacity-50"
+              type="button"
+              style="cursor: not-allowed;"
+              disabled>
+        <i class="bi bi-person-check"></i>
+      </button>
+    </span>
+  <% else %>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-secondary"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="<%= tooltip_text %>"
+              data-bs-boundary="viewport"
+              data-bs-popper-config='{"strategy":"fixed"}'>
+        <i class="bi bi-person-check"></i>
+      </button>
       <ul class="dropdown-menu">
         <% item.class.self_materialization_modes.keys.each do |mode| %>
           <li>
@@ -35,8 +42,8 @@
           </li>
         <% end %>
       </ul>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   <% # Skip campaigns switch - always visible %>
   <% can_skip = item.can_skip_campaigns? %>
