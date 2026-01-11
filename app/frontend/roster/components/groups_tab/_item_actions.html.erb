@@ -38,10 +38,20 @@
       <ul class="dropdown-menu">
         <% item.class.self_materialization_modes.keys.each do |mode| %>
           <li>
+            <% policy_warning = component.policy_bypass_warning_data(item, mode) if mode != "disabled" %>
+            <%
+              link_data = { turbo_method: :patch }
+              if policy_warning
+                message = t("roster.policy_bypass_warning.message",
+                           campaign_name: policy_warning[:campaign_name],
+                           policy_name: policy_warning[:policy_name])
+                link_data[:turbo_confirm] = message
+              end
+            %>
             <%= link_to t("roster.self_materialization.modes.#{mode}"),
                   component.update_self_materialization_path(item, mode, group_type),
                   class: "dropdown-item #{'active' if item.self_materialization_mode == mode}",
-                  data: { turbo_method: :patch } %>
+                  data: link_data %>
           </li>
         <% end %>
       </ul>

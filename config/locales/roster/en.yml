@@ -20,6 +20,8 @@ en:
       post_campaign: "Post-campaign"
       post_campaign_short: "Post-camp."
       self_enrollment: "Self-enrollment"
+      no_policy_enforcement: "No policy enforcement"
+      gated_by_policies: "Gated by policies: %{policies}"
     participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:
       tutorial_maintenance: 'Coursework'
@@ -120,6 +122,13 @@ en:
         remove_only: 'Leave Only'
         add_and_remove: 'Join & Leave'
       label: 'Self-Enrollment'
+    policy_bypass_warning:
+      title: "Policy Bypass Warning"
+      message: "The last campaign '%{campaign_name}' had a registration policy '%{policy_name}'. Enabling self-enrollment will allow students to join without meeting those requirements."
+      confirm: "Enable anyway"
+      cancel: "Cancel"
+    unknown_policy: "Unknown policy"
+    completed_campaign: "Completed campaign"
     skip_campaigns: 'Skip Campaigns'
     enable_skip_campaigns_hint: 'Cannot skip campaigns because this group was part of a campaign.'
     disable_skip_campaigns_hint: 'Cannot enable campaigns because the roster is not empty.'

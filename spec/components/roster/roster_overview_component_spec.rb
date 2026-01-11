@@ -292,6 +292,19 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
           .to eq("#{I18n.t("roster.status_texts.post_campaign")} " \
                  "(#{I18n.t("roster.status_texts.self_enrollment")})")
       end
+
+      it "returns post-campaign status with self-enrollment and policy warning" do
+        policy = create(:policy, name: "Test Policy")
+        campaign = create(:registration_campaign, campaignable: lecture,
+                                                  status: :completed, policy: policy)
+        create(:registration_item, registerable: item, registration_campaign: campaign)
+        item.update(self_materialization_mode: :add_only)
+
+        expect(component.primary_status(item, nil))
+          .to include(I18n.t("roster.status_texts.post_campaign"))
+          .and(include(I18n.t("roster.status_texts.self_enrollment"))
+          .and(include(I18n.t("roster.status_texts.no_policy_enforcement"))))
+      end
     end
 
     context "with skip_campaigns" do
@@ -317,6 +330,55 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         expect(component.primary_status(item, nil))
           .to eq(I18n.t("roster.status_texts.awaiting_setup"))
       end
+    end
+  end
+
+  describe "#bypasses_campaign_policy?" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns false for disabled target mode" do
+      expect(component.bypasses_campaign_policy?(item, "disabled")).to be(false)
+    end
+
+    it "returns false without completed campaign" do
+      expect(component.bypasses_campaign_policy?(item, "add_only")).to be(false)
+    end
+
+    it "returns false when campaign has no policy" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      expect(component.bypasses_campaign_policy?(item, "add_only")).to be(false)
+    end
+
+    it "returns true when target mode would bypass campaign policy" do
+      policy = create(:policy, name: "Test Policy")
+      campaign = create(:registration_campaign, campaignable: lecture,
+                                                status: :completed, policy: policy)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      expect(component.bypasses_campaign_policy?(item, "add_only")).to be(true)
+    end
+  end
+
+  describe "#policy_bypass_warning_data" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns nil when no policy bypass" do
+      expect(component.policy_bypass_warning_data(item, "disabled")).to be_nil
+    end
+
+    it "returns warning data when bypassing policy" do
+      policy = create(:policy, name: "Test Policy")
+      campaign = create(:registration_campaign, campaignable: lecture,
+                                                status: :completed, policy: policy, name: "Test Campaign")
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      data = component.policy_bypass_warning_data(item, "add_only")
+      expect(data).to include(
+        policy_name: "Test Policy",
+        campaign_name: "Test Campaign"
+      )
     end
   end
 end

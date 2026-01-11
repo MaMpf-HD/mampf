@@ -128,6 +128,9 @@ class RosterOverviewComponent < ViewComponent::Base
       status = I18n.t("roster.status_texts.post_campaign")
       unless item.self_materialization_mode_disabled?
         status += " (#{I18n.t("roster.status_texts.self_enrollment")})"
+        if bypasses_campaign_policy?(item, item.self_materialization_mode)
+          status += " ⚠️ #{I18n.t("roster.status_texts.no_policy_enforcement")}"
+        end
       end
       status
     elsif item.skip_campaigns?
@@ -141,15 +144,99 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def bypasses_campaign_policy?(item, target_mode)
+    return false if target_mode.to_s == "disabled"
+    return false if target_mode.to_s == "remove_only"
+    return false unless item.in_real_campaign?
+
+    last_campaign = item.registration_items
+                        .joins(:registration_campaign)
+                        .merge(::Registration::Campaign.completed)
+                        .order("registration_campaigns.updated_at DESC")
+                        .first&.registration_campaign
+
+    return false unless last_campaign
+
+    last_campaign.registration_policies.exists?
+  end
+
+  def policy_bypass_warning_data(item, target_mode)
+    return nil unless bypasses_campaign_policy?(item, target_mode)
+
+    last_campaign = item.registration_items
+                        .joins(:registration_campaign)
+                        .merge(::Registration::Campaign.completed)
+                        .order("registration_campaigns.updated_at DESC")
+                        .first&.registration_campaign
+
+    policies = last_campaign.registration_policies.active
+    kinds = policies.limit(3).pluck(:kind)
+    policy_names = kinds.map { |k| I18n.t("registration.policy.kinds.#{k}") }.join(", ")
+    policy_names += "..." if policies.count > 3
+
+    {
+      policy_name: policy_names.presence || I18n.t("roster.unknown_policy"),
+      campaign_name: last_campaign.description.presence || I18n.t("roster.completed_campaign")
+    }
+  end
+
+  def campaign_has_policies?(item, campaign)
+    return false unless campaign
+
+    if campaign.association(:registration_policies).loaded?
+      campaign.registration_policies.any?
+    else
+      campaign.registration_policies.exists?
+    end
+  end
+
+  def policy_shield_tooltip(item, campaign)
+    # Check active campaign first
+    target_campaign = campaign
+
+    # If no active campaign, check for completed campaign with policies
+    if target_campaign.nil? && item.in_real_campaign?
+      target_campaign = item.registration_items
+                            .joins(:registration_campaign)
+                            .merge(::Registration::Campaign.completed)
+                            .order("registration_campaigns.updated_at DESC")
+                            .first&.registration_campaign
+    end
+
+    return nil unless campaign_has_policies?(item, target_campaign)
+
+    policies = target_campaign.registration_policies.active
+
+    policy_kinds = if policies.loaded?
+      policies.first(3).map { |p| I18n.t("registration.policy.kinds.#{p.kind}") }.join(", ")
+    else
+      kinds = policies.limit(3).pluck(:kind)
+      kinds.map { |k| I18n.t("registration.policy.kinds.#{k}") }.join(", ")
+    end
+
+    count = policies.loaded? ? policies.size : policies.count
+    policy_kinds += "..." if count > 3
+
+    I18n.t("roster.status_texts.gated_by_policies", policies: policy_kinds)
+  end
+
   def status_badge_data(item, campaign)
     if campaign
       campaign_badge_data(campaign)
     elsif item.in_real_campaign?
+      tooltip_text = I18n.t("roster.status_texts.post_campaign")
+      has_policies = campaign_has_policies_for_item?(item)
+
+      if has_policies
+        policy_tooltip = policy_shield_tooltip(item, nil)
+        tooltip_text += " • #{policy_tooltip}" if policy_tooltip
+      end
+
       {
         icon: "bi-check-circle-fill",
-        text: I18n.t("roster.status_texts.post_campaign_short"),
+        text: I18n.t("roster.status_texts.post_campaign_short") + (has_policies ? " 🛡️" : ""),
         css_class: "bg-light text-secondary border border-secondary",
-        tooltip: I18n.t("roster.status_texts.post_campaign"),
+        tooltip: tooltip_text,
         self_enrollment: !item.self_materialization_mode_disabled?
       }
     elsif item.skip_campaigns?
@@ -195,7 +282,7 @@ class RosterOverviewComponent < ViewComponent::Base
     }
   end
 
-  def self_enrollment_badge_data(item)
+  def self_enrollment_badge_data(item, campaign)
     mode = item.self_materialization_mode
     icon, text = case mode
                  when "add_only"
@@ -208,12 +295,32 @@ class RosterOverviewComponent < ViewComponent::Base
                    ["bi-person", ""]
     end
 
+    has_warning = bypasses_campaign_policy?(item, mode)
+    tooltip_text = I18n.t("roster.self_materialization.modes.#{mode}")
+
+    tooltip_text += " ⚠️ #{I18n.t("roster.status_texts.no_policy_enforcement")}" if has_warning
+
     {
       icon: icon,
       text: text,
       css_class: "bg-light text-success border border-success",
-      tooltip: I18n.t("roster.self_materialization.modes.#{mode}")
+      tooltip: tooltip_text,
+      has_warning: has_warning
     }
+  end
+
+  def campaign_has_policies_for_item?(item)
+    return false unless item.in_real_campaign?
+
+    last_campaign = item.registration_items
+                        .joins(:registration_campaign)
+                        .merge(::Registration::Campaign.completed)
+                        .order("registration_campaigns.updated_at DESC")
+                        .first&.registration_campaign
+
+    return false unless last_campaign
+
+    campaign_has_policies?(item, last_campaign)
   end
 
   private

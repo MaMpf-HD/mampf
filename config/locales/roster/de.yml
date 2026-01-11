@@ -20,6 +20,8 @@ de:
       post_campaign: "Nach Anmeldeverfahren"
       post_campaign_short: "Nach Anmeld."
       self_enrollment: "Selbsteinschreibung"
+      no_policy_enforcement: "Keine Richtliniendurchsetzung"
+      gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
     participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
@@ -121,6 +123,13 @@ de:
         remove_only: 'Nur Austragen'
         add_and_remove: 'Ein- & Austragen'
       label: 'Selbsteinschreibung'
+    policy_bypass_warning:
+      title: "Warnung zur Richtlinienumgehung"
+      message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
+      confirm: "Trotzdem aktivieren"
+      cancel: "Abbrechen"
+    unknown_policy: "Unbekannte Richtlinie"
+    completed_campaign: "Abgeschlossenes Anmeldeverfahren"
     skip_campaigns: 'Anmeldeverfahren überspringen'
     enable_skip_campaigns_hint: 'Anmeldeverfahren können nicht übersprungen werden, da diese Gruppe Teil einer Kampagne war.'
     disable_skip_campaigns_hint: 'Anmeldeverfahren können nicht aktiviert werden, da die Liste nicht leer ist.'

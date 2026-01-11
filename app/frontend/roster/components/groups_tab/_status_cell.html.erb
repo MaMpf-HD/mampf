@@ -8,12 +8,15 @@
   </span>
 
   <% if status_data[:self_enrollment] %>
-    <% self_enroll_data = component.self_enrollment_badge_data(item) %>
+    <% self_enroll_data = component.self_enrollment_badge_data(item, campaign) %>
     <span class="badge <%= self_enroll_data[:css_class] %>"
           data-bs-toggle="tooltip"
           title="<%= self_enroll_data[:tooltip] %>">
       <i class="<%= self_enroll_data[:icon] %>"></i>
       <%= self_enroll_data[:text] %>
+      <% if self_enroll_data[:has_warning] %>
+        <i class="bi bi-exclamation-triangle-fill ms-1 text-warning"></i>
+      <% end %>
     </span>
   <% end %>
 </td>
