@@ -47,19 +47,19 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         t = create(:tutorial, lecture: lecture, title: "A Locked")
         # Simulate being in a campaign so manual mode cannot be enabled
         allow(t).to receive(:in_real_campaign?).and_return(true)
-        allow(t).to receive(:manual_roster_mode?).and_return(false)
+        allow(t).to receive(:skip_campaigns?).and_return(false)
         t
       end
 
       let!(:manual_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "B Manual", manual_roster_mode: true)
+        t = create(:tutorial, lecture: lecture, title: "B Manual", skip_campaigns: true)
         # Simulate empty roster so manual mode can be disabled
         allow(t).to receive(:roster_empty?).and_return(true)
         t
       end
 
       let!(:standard_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "C Standard", manual_roster_mode: false)
+        t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
         # Not in campaign, so manual mode can be enabled
         allow(t).to receive(:in_real_campaign?).and_return(false)
         t
@@ -157,13 +157,13 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     let(:campaign) { create(:registration_campaign) }
 
     it "returns true when conditions are met" do
-      # manual_roster_mode? is false by default (assuming)
+      # skip_campaigns? is false by default (assuming)
       # roster_empty? is true by default
       expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(true)
     end
 
     it "returns false if manual roster mode" do
-      allow(tutorial).to receive(:manual_roster_mode?).and_return(true)
+      allow(tutorial).to receive(:skip_campaigns?).and_return(true)
       expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
     end
 

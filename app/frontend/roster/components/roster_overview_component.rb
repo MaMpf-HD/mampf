@@ -52,7 +52,17 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def show_campaign_running_badge?(item, campaign)
-    !item.manual_roster_mode? && campaign.present? && item.roster_empty?
+    !item.skip_campaigns? && campaign.present? && item.roster_empty?
+  end
+
+  def show_skip_campaigns_switch?(item)
+    (item.skip_campaigns? && item.can_unskip_campaigns?) ||
+      (!item.skip_campaigns? && item.can_skip_campaigns?)
+  end
+
+  def toggle_skip_campaigns_path(item)
+    method_name = "#{item.class.name.underscore}_roster_path"
+    Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
   private
@@ -74,10 +84,10 @@ class RosterOverviewComponent < ViewComponent::Base
 
       return nil if items.empty?
 
-      # Sort items: those with manual mode switch at the bottom
+      # Sort items: those with skip_campaigns switch at the bottom
       sorted_items = items.sort_by do |item|
-        has_switch = (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
-                     (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+        has_switch = (item.skip_campaigns? && item.can_unskip_campaigns?) ||
+                     (!item.skip_campaigns? && item.can_skip_campaigns?)
         [has_switch ? 1 : 0, item.title]
       end
 

@@ -57,25 +57,25 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "PATCH /tutorials/:id/roster" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
 
     context "as an editor" do
       before { sign_in editor }
 
-      it "updates the manual_roster_mode flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { manual_roster_mode: true } }
-        expect(tutorial.reload.manual_roster_mode).to be(true)
+      it "updates the skip_campaigns flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
+        expect(tutorial.reload.skip_campaigns).to be(true)
       end
 
       it "redirects to the roster index" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { manual_roster_mode: true } }
+        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
         expect(response).to redirect_to(lecture_roster_path(lecture, group_type: :tutorials))
       end
 
       context "with turbo stream" do
         it "returns turbo stream response" do
           patch tutorial_roster_path(tutorial),
-                params: { rosterable: { manual_roster_mode: true } },
+                params: { rosterable: { skip_campaigns: true } },
                 as: :turbo_stream
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body)
@@ -88,19 +88,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       before { sign_in student }
 
       it "redirects to root (unauthorized)" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { manual_roster_mode: true } }
+        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
         expect(response).to redirect_to(root_path)
       end
 
-      it "does not update the manual_roster_mode flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { manual_roster_mode: true } }
-        expect(tutorial.reload.manual_roster_mode).to be(false)
+      it "does not update the skip_campaigns flag" do
+        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
+        expect(tutorial.reload.skip_campaigns).to be(false)
       end
     end
   end
 
   describe "POST /tutorials/:id/roster/add_member" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
     let(:new_student) { create(:confirmed_user) }
 
     context "as an editor" do
@@ -118,7 +118,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       context "when group is locked" do
-        let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
+        let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
           create(:registration_campaign, :open,
                  campaignable: lecture,
@@ -150,7 +150,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "DELETE /tutorials/:id/roster/remove_member" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
     let(:member) { create(:confirmed_user) }
 
     before { create(:tutorial_membership, tutorial: tutorial, user: member) }
@@ -165,7 +165,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       context "when group is locked" do
-        let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
+        let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
           create(:registration_campaign, :open,
                  campaignable: lecture,
@@ -197,8 +197,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "PATCH /tutorials/:id/roster/move_member" do
-    let(:source) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
-    let(:target) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+    let(:source) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+    let(:target) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
     let(:member) { create(:confirmed_user) }
 
     before { create(:tutorial_membership, tutorial: source, user: member) }
@@ -221,7 +221,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       context "when target is locked" do
-        let(:target) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
+        let(:target) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
           create(:registration_campaign, :open,
                  campaignable: lecture,
@@ -258,7 +258,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "POST /lectures/:id/roster/enroll" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
     let(:new_student) { create(:confirmed_user) }
 
     context "as an editor" do
@@ -297,7 +297,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "POST /cohorts/:id/roster/add_member" do
-    let(:cohort) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:cohort) { create(:cohort, context: lecture, skip_campaigns: true) }
     let(:new_student) { create(:confirmed_user) }
 
     context "as an editor" do
@@ -327,7 +327,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "DELETE /cohorts/:id/roster/remove_member" do
-    let(:cohort) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:cohort) { create(:cohort, context: lecture, skip_campaigns: true) }
     let(:member) { create(:confirmed_user) }
 
     before { create(:cohort_membership, cohort: cohort, user: member) }
@@ -359,8 +359,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   end
 
   describe "PATCH /cohorts/:id/roster/move_member" do
-    let(:source) { create(:cohort, context: lecture, manual_roster_mode: true) }
-    let(:target) { create(:cohort, context: lecture, manual_roster_mode: true) }
+    let(:source) { create(:cohort, context: lecture, skip_campaigns: true) }
+    let(:target) { create(:cohort, context: lecture, skip_campaigns: true) }
     let(:member) { create(:confirmed_user) }
 
     before { create(:cohort_membership, cohort: source, user: member) }

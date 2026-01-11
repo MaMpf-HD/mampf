@@ -272,7 +272,7 @@ The view uses a **Tabbed Layout** to switch between different management context
 - **Stats:** Shows total participants and unassigned candidates count.
 - **Actions:**
     - **Manage:** Drill down into a specific group's detail view.
-    - **Manual Mode:** Toggle manual management for individual groups (if eligible).
+    - **Skip Campaigns:** Toggle direct management for individual groups (if eligible).
 
 #### 2. Enrollment Tab (Candidates)
 *Focus: Who needs a spot?*

@@ -29,10 +29,10 @@ RSpec.describe(Registration::AvailableItemsService) do
     end
 
     context "when items are manually managed" do
-      let!(:manual_tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
-      let!(:manual_talk) { create(:talk, lecture: lecture, manual_roster_mode: true) }
-      let!(:auto_tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: false) }
-      let!(:auto_talk) { create(:talk, lecture: lecture, manual_roster_mode: false) }
+      let!(:manual_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+      let!(:manual_talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
+      let!(:auto_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+      let!(:auto_talk) { create(:talk, lecture: lecture, skip_campaigns: false) }
 
       it "does not return manually managed tutorials" do
         expect(service.items[:tutorials]).not_to include(manual_tutorial)

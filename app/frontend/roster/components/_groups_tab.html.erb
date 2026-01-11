@@ -108,39 +108,39 @@
                     <% end %>
                   <% end %>
 
-                  <% if item.manual_roster_mode? %>
-                    <% if item.can_disable_manual_mode? %>
+                  <% if item.skip_campaigns? %>
+                    <% if item.can_unskip_campaigns? %>
                       <%= form_with model: item, scope: :rosterable,
                             url: send("#{item.class.name.underscore}_roster_path", item),
                             method: :patch,
                             data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
                         <%= hidden_group_type_field(group_type) %>
-                        <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.manual_mode') %>" data-bs-toggle="tooltip"></i>
+                        <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.skip_campaigns') %>" data-bs-toggle="tooltip"></i>
                         <div class="form-check form-switch mb-0">
-                          <%= f.check_box :manual_roster_mode,
+                          <%= f.check_box :skip_campaigns,
                                 class: "form-check-input",
                                 role: "switch",
-                                id: dom_id(item, :manual_roster_mode),
+                                id: dom_id(item, :skip_campaigns),
                                 checked: true,
-                                aria: { label: t('roster.manual_mode') },
+                                aria: { label: t('roster.skip_campaigns') },
                                 data: { action: "change->auto-submit-form#submit" } %>
                         </div>
                       <% end %>
                     <% end %>
-                  <% elsif item.can_enable_manual_mode? %>
+                  <% elsif item.can_skip_campaigns? %>
                     <%= form_with model: item, scope: :rosterable,
                           url: send("#{item.class.name.underscore}_roster_path", item),
                           method: :patch,
                           data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
                       <%= hidden_group_type_field(group_type) %>
-                      <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.manual_mode') %>" data-bs-toggle="tooltip"></i>
+                      <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.skip_campaigns') %>" data-bs-toggle="tooltip"></i>
                       <div class="form-check form-switch mb-0">
-                        <%= f.check_box :manual_roster_mode,
+                        <%= f.check_box :skip_campaigns,
                               class: "form-check-input",
                               role: "switch",
-                              id: dom_id(item, :manual_roster_mode),
+                              id: dom_id(item, :skip_campaigns),
                               checked: false,
-                              aria: { label: t('roster.manual_mode') },
+                              aria: { label: t('roster.skip_campaigns') },
                               data: { action: "change->auto-submit-form#submit" } %>
                       </div>
                     <% end %>

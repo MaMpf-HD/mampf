@@ -182,10 +182,10 @@ RSpec.describe(Registration::Item, type: :model) do
       let(:campaign) { create(:registration_campaign) }
       let(:tutorial) do
         create(:tutorial, lecture: campaign.campaignable,
-                          manual_roster_mode: true)
+                          skip_campaigns: true)
       end
 
-      it "does not allow creating an item for a manual_roster_mode registerable" do
+      it "does not allow creating an item for a skip_campaigns registerable" do
         item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
         expect(item).not_to be_valid
         expect(item.errors[:base])
@@ -193,8 +193,8 @@ RSpec.describe(Registration::Item, type: :model) do
                              ".registerable_not_managed_by_campaign"))
       end
 
-      it "allows creating an item for a non-manual_roster_mode registerable" do
-        tutorial.update(manual_roster_mode: false)
+      it "allows creating an item for a non-skip_campaigns registerable" do
+        tutorial.update(skip_campaigns: false)
         item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
         expect(item).to be_valid
       end

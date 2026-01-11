@@ -1,0 +1,26 @@
+<div id="<%= dom_id(item, :actions) %>" class="d-flex gap-2 justify-content-end align-items-center">
+  <%= roster_manage_button(item, component, campaign) %>
+  <%= roster_edit_button(item, group_type) %>
+  <%= roster_destroy_button(item, group_type) %>
+
+  <% if component.show_skip_campaigns_switch?(item) %>
+    <%= form_with model: item, scope: :rosterable,
+          url: component.toggle_skip_campaigns_path(item),
+          method: :patch,
+          data: { turbo: true, controller: "auto-submit-form" },
+          class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
+      <%= hidden_group_type_field(group_type) %>
+      <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.skip_campaigns') %>" data-bs-toggle="tooltip"></i>
+      <div class="form-check form-switch mb-0">
+        <%= f.check_box :skip_campaigns,
+              class: "form-check-input",
+              role: "switch",
+              id: dom_id(item, :skip_campaigns),
+              checked: item.skip_campaigns?,
+              aria: { label: t('roster.skip_campaigns') },
+              data: { action: "change->auto-submit-form#submit" } %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+

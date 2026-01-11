@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
-  it "ensures all including models have a manual_roster_mode attribute" do
+  it "ensures all including models have a skip_campaigns attribute" do
     # Eager load the application to ensure all models are loaded and discoverable
     Rails.application.eager_load!
 
@@ -11,22 +11,22 @@ RSpec.describe(Rosters::Rosterable) do
 
     models.each do |model|
       expect(model.new)
-        .to(respond_to(:manual_roster_mode), "#{model} must have a manual_roster_mode attribute")
+        .to(respond_to(:skip_campaigns), "#{model} must have a skip_campaigns attribute")
     end
   end
 
   describe "#locked?" do
-    let(:rosterable) { create(:tutorial, manual_roster_mode: true) }
+    let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
     context "when in manual mode" do
-      # manual_roster_mode: true
+      # skip_campaigns: true
       it "returns false" do
         expect(rosterable.locked?).to(be(false))
       end
     end
 
     context "when in system mode" do
-      before { rosterable.update(manual_roster_mode: false) }
+      before { rosterable.update(skip_campaigns: false) }
 
       context "with no campaigns" do
         it "returns true" do
@@ -47,7 +47,7 @@ RSpec.describe(Rosters::Rosterable) do
       end
 
       context "with a completed planning campaign" do
-        let(:rosterable) { create(:lecture, manual_roster_mode: false) }
+        let(:rosterable) { create(:lecture, skip_campaigns: false) }
 
         before do
           campaign = create(:registration_campaign, status: :completed, planning_only: true,
@@ -73,10 +73,10 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
-  describe "#can_enable_manual_mode?" do
+  describe "#can_skip_campaigns?" do
     # Was can_disable_campaign_management?
     # System -> Manual
-    let(:rosterable) { create(:tutorial, manual_roster_mode: false) }
+    let(:rosterable) { create(:tutorial, skip_campaigns: false) }
 
     context "when campaign is running" do
       before do
@@ -87,38 +87,38 @@ RSpec.describe(Rosters::Rosterable) do
       end
 
       it "returns false" do
-        expect(rosterable.can_enable_manual_mode?).to(be(false))
+        expect(rosterable.can_skip_campaigns?).to(be(false))
       end
     end
 
     context "when no campaign is running" do
       it "returns true" do
-        expect(rosterable.can_enable_manual_mode?).to(be(true))
+        expect(rosterable.can_skip_campaigns?).to(be(true))
       end
     end
   end
 
   describe "validations" do
     context "when creating a new record" do
-      it "allows manual_roster_mode: true" do
-        new_tutorial = build(:tutorial, manual_roster_mode: true)
+      it "allows skip_campaigns: true" do
+        new_tutorial = build(:tutorial, skip_campaigns: true)
         expect(new_tutorial).to be_valid
       end
 
-      it "allows manual_roster_mode: false" do
-        new_tutorial = build(:tutorial, manual_roster_mode: false)
+      it "allows skip_campaigns: false" do
+        new_tutorial = build(:tutorial, skip_campaigns: false)
         expect(new_tutorial).to be_valid
       end
     end
 
     # Switching Manual -> System (enabling managed_by_campaign)
-    # Corresponds to manual_roster_mode: true -> false
-    context "when disabling manual_roster_mode" do
-      let(:rosterable) { create(:tutorial, manual_roster_mode: true) }
+    # Corresponds to skip_campaigns: true -> false
+    context "when disabling skip_campaigns" do
+      let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
       context "when roster is empty" do
         it "is valid" do
-          rosterable.manual_roster_mode = false
+          rosterable.skip_campaigns = false
           expect(rosterable).to(be_valid)
         end
       end
@@ -129,18 +129,18 @@ RSpec.describe(Rosters::Rosterable) do
         end
 
         it "is invalid" do
-          rosterable.manual_roster_mode = false
+          rosterable.skip_campaigns = false
           expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:manual_roster_mode])
+          expect(rosterable.errors[:base])
             .to(include(I18n.t("roster.errors.roster_not_empty")))
         end
       end
     end
 
     # Switching System -> Manual (disabling managed_by_campaign)
-    # Corresponds to manual_roster_mode: false -> true
-    context "when enabling manual_roster_mode" do
-      let(:rosterable) { create(:tutorial, manual_roster_mode: false) }
+    # Corresponds to skip_campaigns: false -> true
+    context "when enabling skip_campaigns" do
+      let(:rosterable) { create(:tutorial, skip_campaigns: false) }
 
       context "when campaign is running" do
         before do
@@ -150,16 +150,16 @@ RSpec.describe(Rosters::Rosterable) do
         end
 
         it "is invalid" do
-          rosterable.manual_roster_mode = true
+          rosterable.skip_campaigns = true
           expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:manual_roster_mode])
+          expect(rosterable.errors[:base])
             .to(include(I18n.t("roster.errors.campaign_associated")))
         end
       end
 
       context "when no campaign is running" do
         it "is valid" do
-          rosterable.manual_roster_mode = true
+          rosterable.skip_campaigns = true
           expect(rosterable).to(be_valid)
         end
       end
