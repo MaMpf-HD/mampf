@@ -18,37 +18,30 @@
     <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
   <% end %>
   <td>
-    <% if component.show_campaign_running_badge?(item, campaign) %>
-      <% badge = component.campaign_badge_props(campaign) %>
-      <span class="<%= badge[:css_class] %>">
-        <%= badge[:text] %>
-      </span>
-    <% else %>
-      <div class="d-flex align-items-center gap-2">
-        <% if item.capacity %>
-          <% overbooked = item.roster_entries.count > item.capacity %>
-          <div class="flex-grow-1" style="min-width: 60px;">
-            <%= progress_bar(item.roster_entries.count,
-                             item.capacity,
-                             classification: :utilization,
-                             height: "6px",
-                             show_label: false,
-                             container_class: "progress"
-                            ) %>
-          </div>
-          <span class="small text-nowrap <%= 'text-danger fw-bold' if overbooked %>">
-            <%= item.roster_entries.count %>/<%= item.capacity %>
-          </span>
-          <% if overbooked %>
-            <i class="bi bi-exclamation-triangle-fill text-danger"
-               data-bs-toggle="tooltip"
-               title="<%= t('roster.overbooked') %>"></i>
-          <% end %>
-        <% else %>
-          <span class="small text-muted"><%= item.roster_entries.count %></span>
+    <div class="d-flex align-items-center gap-2">
+      <% if item.capacity %>
+        <% overbooked = item.roster_entries.count > item.capacity %>
+        <div class="flex-grow-1" style="min-width: 60px;">
+          <%= progress_bar(item.roster_entries.count,
+                           item.capacity,
+                           classification: :utilization,
+                           height: "6px",
+                           show_label: false,
+                           container_class: "progress"
+                          ) %>
+        </div>
+        <span class="small text-nowrap <%= 'text-danger fw-bold' if overbooked %>">
+          <%= item.roster_entries.count %>/<%= item.capacity %>
+        </span>
+        <% if overbooked %>
+          <i class="bi bi-exclamation-triangle-fill text-danger"
+             data-bs-toggle="tooltip"
+             title="<%= t('roster.overbooked') %>"></i>
         <% end %>
-      </div>
-    <% end %>
+      <% else %>
+        <span class="small text-muted"><%= item.roster_entries.count %></span>
+      <% end %>
+    </div>
   </td>
   <%= render "roster/components/groups_tab/status_cell", item: item, campaign: campaign, component: component %>
   <td class="text-end">
