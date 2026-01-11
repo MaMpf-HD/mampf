@@ -123,7 +123,10 @@ en:
       delete: "Delete"
       delete_disabled: "Cannot delete group (has participants or in campaign)"
       self_materialization_disabled_campaign: "Self-enrollment is disabled during active campaigns"
+      self_materialization_disabled_fresh: "Enable skip campaigns first to use self-enrollment"
       create_campaign_disabled: "Cannot create campaign (skip campaigns is enabled)"
+      skip_campaigns_enabled: "Skipping campaigns (click to use campaigns)"
+      skip_campaigns_disabled: "Using campaigns (click to skip campaigns)"
     hints:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."

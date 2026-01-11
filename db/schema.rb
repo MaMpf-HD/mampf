@@ -603,7 +603,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
     t.uuid "registration_campaign_id", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
-    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY ((ARRAY['Tutorial'::character varying, 'Talk'::character varying])::text[]))"
+    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY (ARRAY[('Tutorial'::character varying)::text, ('Talk'::character varying)::text]))"
     t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end

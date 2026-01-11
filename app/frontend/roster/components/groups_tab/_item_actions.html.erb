@@ -5,9 +5,12 @@
 
   <% # Self-materialization dropdown - always visible %>
   <% active_campaign = campaign && !campaign.completed? %>
-  <% self_mat_disabled = active_campaign %>
-  <% tooltip_text = if self_mat_disabled
+  <% # Disable during active campaigns OR for fresh tutorials waiting for mode decision %>
+  <% self_mat_disabled = active_campaign || (!item.skip_campaigns? && !item.in_real_campaign?) %>
+  <% tooltip_text = if active_campaign
                       t('roster.tooltips.self_materialization_disabled_campaign')
+                    elsif !item.skip_campaigns? && !item.in_real_campaign?
+                      t('roster.tooltips.self_materialization_disabled_fresh')
                     else
                       t('roster.self_materialization.label')
                     end %>
@@ -45,36 +48,39 @@
     </div>
   <% end %>
 
-  <% # Skip campaigns switch - always visible %>
+  <% # Skip campaigns toggle - icon-based button %>
   <% can_skip = item.can_skip_campaigns? %>
   <% can_unskip = item.can_unskip_campaigns? %>
-  <% switch_disabled = !(item.skip_campaigns? ? can_unskip : can_skip) %>
-  <% switch_tooltip = if switch_disabled
-                        item.skip_campaigns? ? t('roster.disable_skip_campaigns_hint') : t('roster.enable_skip_campaigns_hint')
-                      else
-                        t('roster.skip_campaigns')
-                      end %>
+  <% toggle_disabled = !(item.skip_campaigns? ? can_unskip : can_skip) %>
+  <% icon_class = item.skip_campaigns? ? "bi-calendar-x" : "bi-calendar-check" %>
+  <% tooltip = if toggle_disabled
+                 item.skip_campaigns? ? t('roster.disable_skip_campaigns_hint') : t('roster.enable_skip_campaigns_hint')
+               else
+                 item.skip_campaigns? ? t('roster.tooltips.skip_campaigns_enabled') : t('roster.tooltips.skip_campaigns_disabled')
+               end %>
 
-  <%= form_with model: item, scope: :rosterable,
-        url: component.toggle_skip_campaigns_path(item),
-        method: :patch,
-        data: { turbo: true, controller: "auto-submit-form" },
-        class: "d-flex align-items-center border rounded-pill px-2 py-1 #{switch_disabled ? 'border-secondary opacity-50' : 'border-secondary'}",
-        style: ("cursor: not-allowed;" if switch_disabled) do |f| %>
-    <%= hidden_group_type_field(group_type) %>
-    <i class="bi bi-pencil me-2 text-muted"
-       title="<%= switch_tooltip %>"
-       data-bs-toggle="tooltip"></i>
-    <div class="form-check form-switch mb-0">
-      <%= f.check_box :skip_campaigns,
-            class: "form-check-input",
-            role: "switch",
-            id: dom_id(item, :skip_campaigns),
-            checked: item.skip_campaigns?,
-            disabled: switch_disabled,
-            aria: { label: t('roster.skip_campaigns') },
-            data: { action: "change->auto-submit-form#submit" } %>
-    </div>
+  <% if toggle_disabled %>
+    <span title="<%= tooltip %>" data-bs-toggle="tooltip">
+      <button class="btn btn-sm btn-outline-secondary opacity-50"
+              style="cursor: not-allowed;"
+              disabled>
+        <i class="<%= icon_class %>"></i>
+      </button>
+    </span>
+  <% else %>
+    <%= form_with model: item, scope: :rosterable,
+          url: component.toggle_skip_campaigns_path(item),
+          method: :patch,
+          data: { turbo_stream: true } do |f| %>
+      <%= f.hidden_field :skip_campaigns, value: !item.skip_campaigns? %>
+      <%= hidden_group_type_field(group_type) %>
+      <%= f.button type: :submit,
+            class: "btn btn-sm btn-secondary",
+            title: tooltip,
+            data: { bs_toggle: "tooltip" } do %>
+        <i class="<%= icon_class %>"></i>
+      <% end %>
+    <% end %>
   <% end %>
 </div>
 

@@ -161,14 +161,13 @@ class RosterOverviewComponent < ViewComponent::Base
 
       return nil if items.empty?
 
-      # Sort items: those with skip_campaigns switch at the bottom
+      # Sort items: completed campaigns first, then others, each subgroup sorted by title
       sorted_items = items.sort_by do |item|
         if type == :talks
           item.position
         else
-          has_switch = (item.skip_campaigns? && item.can_unskip_campaigns?) ||
-                       (!item.skip_campaigns? && item.can_skip_campaigns?)
-          [has_switch ? 1 : 0, item.title]
+          has_completed_campaign = item.in_real_campaign? && !item.campaign_active?
+          [has_completed_campaign ? 0 : 1, item.title.to_s]
         end
       end
 

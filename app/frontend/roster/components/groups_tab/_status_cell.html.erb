@@ -11,10 +11,6 @@
     <span class="badge <%= css_class %>"><%= text %></span>
   <% end %>
 
-  <% if item.skip_campaigns %>
-    <span class="badge bg-light text-dark border border-dark"><%= t("roster.status_values.manual") %></span>
-  <% end %>
-
   <% if !campaign && !item.self_materialization_mode_disabled? %>
     <% mode = item.self_materialization_mode %>
     <% text = t("roster.status_values.self_materialization.#{mode}", default: mode.humanize) %>

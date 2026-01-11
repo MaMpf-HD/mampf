@@ -125,7 +125,10 @@ de:
       delete: "Löschen"
       delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
       self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"
+      self_materialization_disabled_fresh: "Aktiviere zuerst Anmeldeverfahren überspringen um Selbsteinschreibung zu nutzen"
       create_campaign_disabled: "Kann kein Anmeldeverfahren erstellen (Anmeldeverfahren überspringen ist aktiviert)"
+      skip_campaigns_enabled: "Überspringt Anmeldeverfahren (klicken um Anmeldeverfahren zu nutzen)"
+      skip_campaigns_disabled: "Nutzt Anmeldeverfahren (klicken um Anmeldeverfahren zu überspringen)"
     hints:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."

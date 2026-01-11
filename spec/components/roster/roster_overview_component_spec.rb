@@ -37,38 +37,40 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     context "sorting" do
-      let!(:locked_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "A Locked")
-        # Simulate being in a campaign so skip_campaigns cannot be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(true)
-        allow(t).to receive(:skip_campaigns?).and_return(false)
+      let!(:completed_campaign_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "B Completed Campaign")
+        campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
+        create(:registration_item, registerable: t, registration_campaign: campaign)
         t
       end
 
-      let!(:manual_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "B Manual", skip_campaigns: true)
-        # Simulate empty roster so skip_campaigns can be disabled
-        allow(t).to receive(:roster_empty?).and_return(true)
+      let!(:active_campaign_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "A Active Campaign")
+        campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+        create(:registration_item, registerable: t, registration_campaign: campaign)
         t
       end
 
-      let!(:standard_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
-        # Not in campaign, so skip_campaigns can be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(false)
-        t
+      let!(:skip_campaigns_tutorial) do
+        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
       end
 
-      it "sorts locked items first, then switchable items" do
+      let!(:fresh_tutorial) do
+        create(:tutorial, lecture: lecture, title: "C Fresh", skip_campaigns: false)
+      end
+
+      it "sorts completed campaigns first, then others, each subgroup sorted by title" do
         groups = component.groups
         tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
 
-        expect(tutorials.first).to eq(locked_tutorial)
+        expect(tutorials.first).to eq(completed_campaign_tutorial)
 
-        relevant_tutorials = tutorials.select do |t|
-          [manual_tutorial, standard_tutorial].include?(t)
-        end
-        expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+        remaining = tutorials[1..]
+        expect(remaining.map(&:title)).to eq([
+                                               "A Active Campaign",
+                                               "C Fresh",
+                                               "D Skip Campaigns"
+                                             ])
       end
     end
 
