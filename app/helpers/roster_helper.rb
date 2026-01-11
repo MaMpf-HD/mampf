@@ -30,48 +30,104 @@ module RosterHelper
   end
 
   def roster_manage_button(item, component, campaign)
-    if !item.locked?
+    locked = item.locked?
+    buttons = []
+
+    # Always show manage button (disabled when locked)
+    buttons << if locked
+      tag.button(class: "btn btn-sm btn-outline-primary disabled opacity-50",
+                 style: "cursor: not-allowed;",
+                 title: t("roster.tooltips.locked_manage"),
+                 data: { bs_toggle: "tooltip" }) do
+        tag.i(class: "bi bi-person-lines-fill")
+      end
+    else
       link_to(component.group_path(item),
-              class: "btn btn-sm btn-outline-primary",
+              class: "btn btn-sm btn-primary",
               title: t("roster.tooltips.manage_participants"),
               data: { bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-person-lines-fill")
       end
-    elsif campaign
-      link_to(edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
-              class: "btn btn-sm btn-outline-secondary",
-              title: t("roster.view_campaign"),
-              data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+    end
+
+    # Show campaign-related buttons
+    if campaign
+      # Active campaign - show view campaign button
+      buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns",
+                                                              campaign_id: campaign.id),
+                         class: "btn btn-sm btn-secondary",
+                         title: t("roster.view_campaign"),
+                         data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-check")
       end
-    elsif !item.in_real_campaign?
-      link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-              class: "btn btn-sm btn-outline-secondary",
-              title: t("roster.create_campaign"),
-              data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+    elsif item.in_real_campaign?
+      # Has campaign history - show view campaign button for most recent
+      recent_campaign = item.registration_items
+                            .joins(:registration_campaign)
+                            .where(registration_campaigns: { planning_only: false })
+                            .order("registration_campaigns.created_at DESC")
+                            .first
+                            &.registration_campaign
+
+      if recent_campaign
+        buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns",
+                                                                campaign_id: recent_campaign.id),
+                           class: "btn btn-sm btn-secondary",
+                           title: t("roster.view_campaign"),
+                           data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+          tag.i(class: "bi bi-calendar-check")
+        end
+      end
+    elsif locked
+      # Never in campaign but locked - show create campaign button
+      buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+                         class: "btn btn-sm btn-secondary",
+                         title: t("roster.create_campaign"),
+                         data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-plus")
       end
     end
+
+    safe_join(buttons, " ")
   end
 
   def roster_edit_button(item, group_type)
+    disabled = item.campaign_active?
+    tooltip = disabled ? t("roster.tooltips.edit_disabled_campaign") : t("roster.tooltips.edit_settings")
+
     link_to(edit_polymorphic_path(item, group_type: group_type),
-            class: "btn btn-sm btn-outline-primary",
-            title: t("roster.tooltips.edit_settings"),
-            data: { turbo_stream: true, bs_toggle: "tooltip" }) do
+            class: "btn btn-sm #{disabled ? "btn-outline-primary disabled opacity-50" : "btn-primary"}",
+            style: (disabled ? "cursor: not-allowed;" : nil),
+            title: tooltip,
+            data: { turbo_stream: !disabled, bs_toggle: "tooltip" }.compact) do
       tag.i(class: "bi bi-tools")
     end
   end
 
   def roster_destroy_button(item, group_type)
-    return unless item.destructible?
+    disabled = !item.destructible?
+    tooltip = if disabled
+      t("roster.tooltips.delete_disabled")
+    else
+      t("roster.tooltips.delete")
+    end
 
-    link_to(polymorphic_path(item, group_type: group_type),
-            data: { turbo_method: :delete, turbo_confirm: t("confirmation.generic"),
-                    bs_toggle: "tooltip" },
-            title: t("roster.tooltips.delete"),
-            class: "btn btn-sm btn-outline-danger") do
-      tag.i(class: "bi bi-trash")
+    if disabled
+      link_to(polymorphic_path(item, group_type: group_type),
+              class: "btn btn-sm btn-outline-danger disabled opacity-50",
+              style: "cursor: not-allowed;",
+              title: tooltip,
+              data: { bs_toggle: "tooltip" }) do
+        tag.i(class: "bi bi-trash")
+      end
+    else
+      link_to(polymorphic_path(item, group_type: group_type),
+              data: { turbo_method: :delete, turbo_confirm: t("confirmation.generic"),
+                      bs_toggle: "tooltip" },
+              title: tooltip,
+              class: "btn btn-sm btn-danger") do
+        tag.i(class: "bi bi-trash")
+      end
     end
   end
 

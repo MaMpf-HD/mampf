@@ -116,8 +116,12 @@ en:
       kick_from_lecture: "Removes lecture enrollment and all tutorial and (cohort with enrollment) memberships"
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
+      locked_manage: "Roster is locked during active campaign"
       edit_settings: "Edit Settings"
+      edit_disabled_campaign: "Cannot edit settings during active campaign"
       delete: "Delete"
+      delete_disabled: "Cannot delete group (has participants or in campaign)"
+      self_materialization_disabled_campaign: "Self-enrollment is disabled during active campaigns"
     hints:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."

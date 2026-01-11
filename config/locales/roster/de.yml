@@ -118,8 +118,12 @@ de:
       kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
       kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
+      locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
       edit_settings: "Einstellungen bearbeiten"
+      edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
       delete: "Löschen"
+      delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
+      self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"
     hints:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."

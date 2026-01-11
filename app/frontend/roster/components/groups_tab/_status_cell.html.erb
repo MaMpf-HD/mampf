@@ -15,12 +15,10 @@
     <span class="badge bg-light text-dark border border-dark"><%= t("roster.status_values.manual") %></span>
   <% end %>
 
-  <% if !campaign %>
+  <% if !campaign && !item.self_materialization_mode_disabled? %>
     <% mode = item.self_materialization_mode %>
     <% text = t("roster.status_values.self_materialization.#{mode}", default: mode.humanize) %>
-
-    <% css_class = mode == "disabled" ? "bg-light text-secondary border" : "bg-light text-primary border border-primary" %>
-    <span class="badge <%= css_class %>"><%= text %></span>
+    <span class="badge bg-light text-primary border border-primary"><%= text %></span>
   <% end %>
 </td>
 
