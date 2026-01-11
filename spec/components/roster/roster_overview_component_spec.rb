@@ -298,4 +298,61 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         .to eq("/path/to/self_materialization?group_type[]=tutorials&group_type[]=cohorts")
     end
   end
+
+  describe "#primary_status" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    context "with active campaign" do
+      let(:campaign) { build(:registration_campaign, status: :open) }
+
+      it "returns campaign status text" do
+        expect(component.primary_status(item, campaign))
+          .to eq(I18n.t("roster.status_texts.campaign_open"))
+      end
+    end
+
+    context "with completed campaign" do
+      before do
+        campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
+        create(:registration_item, registerable: item, registration_campaign: campaign)
+      end
+
+      it "returns post-campaign status without self-enrollment" do
+        expect(component.primary_status(item, nil))
+          .to eq(I18n.t("roster.status_texts.post_campaign"))
+      end
+
+      it "returns post-campaign status with self-enrollment" do
+        item.update(self_materialization_mode: :add_only)
+        expect(component.primary_status(item, nil))
+          .to eq("#{I18n.t("roster.status_texts.post_campaign")} " \
+                 "(#{I18n.t("roster.status_texts.self_enrollment")})")
+      end
+    end
+
+    context "with skip_campaigns" do
+      before do
+        item.update(skip_campaigns: true)
+      end
+
+      it "returns direct management status without self-enrollment" do
+        expect(component.primary_status(item, nil))
+          .to eq(I18n.t("roster.status_texts.direct_management"))
+      end
+
+      it "returns direct management status with self-enrollment" do
+        item.update(self_materialization_mode: :add_only)
+        expect(component.primary_status(item, nil))
+          .to eq("#{I18n.t("roster.status_texts.direct_management")} " \
+                 "(#{I18n.t("roster.status_texts.self_enrollment")})")
+      end
+    end
+
+    context "brand new item" do
+      it "returns awaiting setup status" do
+        expect(component.primary_status(item, nil))
+          .to eq(I18n.t("roster.status_texts.awaiting_setup"))
+      end
+    end
+  end
 end
