@@ -35,7 +35,12 @@ module RosterHelper
 
     # Always show manage button (disabled when locked)
     buttons << if locked
-      tag.span(title: t("roster.tooltips.locked_manage"),
+      tooltip = if campaign
+        t("roster.tooltips.locked_manage")
+      else
+        t("roster.tooltips.locked_manage_no_campaign")
+      end
+      tag.span(title: tooltip,
                data: { bs_toggle: "tooltip" }) do
         tag.button(class: "btn btn-sm btn-outline-primary disabled opacity-50",
                    style: "cursor: not-allowed;",
@@ -80,13 +85,25 @@ module RosterHelper
           tag.i(class: "bi bi-calendar-check")
         end
       end
-    elsif locked
-      # Never in campaign but locked - show create campaign button
-      buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-                         class: "btn btn-sm btn-secondary",
-                         title: t("roster.create_campaign"),
-                         data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
-        tag.i(class: "bi bi-calendar-plus")
+    else
+      # Never in campaign - show create campaign button (disabled if skip_campaigns is true)
+      can_create = !item.skip_campaigns?
+      buttons << if can_create
+        link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+                class: "btn btn-sm btn-secondary",
+                title: t("roster.create_campaign"),
+                data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+          tag.i(class: "bi bi-calendar-plus")
+        end
+      else
+        tag.span(title: t("roster.tooltips.create_campaign_disabled"),
+                 data: { bs_toggle: "tooltip" }) do
+          tag.button(class: "btn btn-sm btn-outline-secondary disabled opacity-50",
+                     style: "cursor: not-allowed;",
+                     disabled: true) do
+            tag.i(class: "bi bi-calendar-plus")
+          end
+        end
       end
     end
 
