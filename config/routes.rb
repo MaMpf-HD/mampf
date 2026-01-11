@@ -281,7 +281,8 @@ Rails.application.routes.draw do
       get "roster", to: "roster/maintenance#index"
       post "roster/enroll", to: "roster/maintenance#enroll"
       patch "roster/self_materialization",
-            to: "roster/maintenance#update_self_materialization", as: :roster_update_self_materialization
+            to: "roster/maintenance#update_self_materialization",
+            as: :roster_update_self_materialization
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
