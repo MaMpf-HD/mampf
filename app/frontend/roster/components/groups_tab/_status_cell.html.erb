@@ -8,7 +8,7 @@
   </span>
 
   <% if status_data[:self_enrollment] %>
-    <% self_enroll_data = component.self_enrollment_badge_data(item, campaign) %>
+    <% self_enroll_data = component.self_enrollment_badge_data(item) %>
     <span class="badge <%= self_enroll_data[:css_class] %>"
           data-bs-toggle="tooltip"
           title="<%= self_enroll_data[:tooltip] %>">

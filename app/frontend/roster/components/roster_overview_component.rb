@@ -168,7 +168,7 @@ class RosterOverviewComponent < ViewComponent::Base
     }
   end
 
-  def campaign_has_policies?(item, campaign)
+  def campaign_has_policies?(campaign)
     return false unless campaign
 
     if campaign.association(:registration_policies).loaded?
@@ -191,7 +191,7 @@ class RosterOverviewComponent < ViewComponent::Base
                             .first&.registration_campaign
     end
 
-    return nil unless campaign_has_policies?(item, target_campaign)
+    return nil unless campaign_has_policies?(target_campaign)
 
     policies = target_campaign.registration_policies.active
 
@@ -270,7 +270,7 @@ class RosterOverviewComponent < ViewComponent::Base
     }
   end
 
-  def self_enrollment_badge_data(item, campaign)
+  def self_enrollment_badge_data(item)
     mode = item.self_materialization_mode
     icon, text = case mode
                  when "add_only"
@@ -308,7 +308,7 @@ class RosterOverviewComponent < ViewComponent::Base
 
     return false unless last_campaign
 
-    campaign_has_policies?(item, last_campaign)
+    campaign_has_policies?(last_campaign)
   end
 
   private

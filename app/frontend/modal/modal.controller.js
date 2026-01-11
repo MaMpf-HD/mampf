@@ -24,7 +24,7 @@ export default class extends Controller {
         }
         this.modal.dispose();
       }
-      catch (e) {
+      catch {
         // Modal already disposed or element removed
       }
     }

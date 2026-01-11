@@ -345,4 +345,87 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       )
     end
   end
+
+  describe "#campaign_has_policies?" do
+    it "returns false when campaign is nil" do
+      expect(component.campaign_has_policies?(nil)).to be(false)
+    end
+
+    it "returns false when campaign has no policies" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      expect(component.campaign_has_policies?(campaign)).to be(false)
+    end
+
+    it "returns true when campaign has policies" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      expect(component.campaign_has_policies?(campaign)).to be(true)
+    end
+
+    it "works with loaded associations" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+
+      campaign.registration_policies.load
+
+      expect(component.campaign_has_policies?(campaign)).to be(true)
+    end
+  end
+
+  describe "#self_enrollment_badge_data" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns correct data for disabled mode" do
+      item.update(self_materialization_mode: :disabled)
+      data = component.self_enrollment_badge_data(item)
+
+      expect(data[:icon]).to eq("bi-person")
+      expect(data[:text]).to eq("")
+      expect(data[:has_warning]).to be(false)
+    end
+
+    it "returns correct data for add_only mode" do
+      item.update(self_materialization_mode: :add_only)
+      data = component.self_enrollment_badge_data(item)
+
+      expect(data[:icon]).to eq("bi-person-plus-fill")
+      expect(data[:text]).to eq("+")
+      expect(data[:css_class]).to eq("bg-light text-success border border-success")
+      expect(data[:has_warning]).to be(false)
+    end
+
+    it "returns correct data for remove_only mode" do
+      item.update(self_materialization_mode: :remove_only)
+      data = component.self_enrollment_badge_data(item)
+
+      expect(data[:icon]).to eq("bi-person-dash-fill")
+      expect(data[:text]).to eq("−")
+      expect(data[:has_warning]).to be(false)
+    end
+
+    it "returns correct data for add_and_remove mode" do
+      item.update(self_materialization_mode: :add_and_remove)
+      data = component.self_enrollment_badge_data(item)
+
+      expect(data[:icon]).to eq("bi-person-fill-add")
+      expect(data[:text]).to eq("±")
+      expect(data[:has_warning]).to be(false)
+    end
+
+    it "includes warning when bypassing campaign policy" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+      item.update(self_materialization_mode: :add_only)
+
+      data = component.self_enrollment_badge_data(item)
+
+      expect(data[:has_warning]).to be(true)
+      expect(data[:tooltip]).to include(I18n.t("roster.status_texts.no_policy_enforcement"))
+    end
+  end
 end
