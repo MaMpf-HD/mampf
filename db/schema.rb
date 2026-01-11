@@ -160,7 +160,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_000000) do
     t.bigint "context_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "manual_roster_mode", default: false, null: false
+    t.boolean "skip_campaigns", default: false, null: false
     t.boolean "propagate_to_lecture", default: false, null: false
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
   end
@@ -399,7 +399,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_000000) do
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
     t.integer "capacity"
-    t.boolean "manual_roster_mode", default: false, null: false
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -740,7 +740,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_000000) do
     t.text "description"
     t.boolean "display_description", default: false
     t.integer "capacity"
-    t.boolean "manual_roster_mode", default: false, null: false
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -1014,7 +1014,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_08_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "capacity"
-    t.boolean "manual_roster_mode", default: false, null: false
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 

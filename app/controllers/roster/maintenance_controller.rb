@@ -265,7 +265,7 @@ module Roster
       end
 
       def rosterable_params
-        params.expect(rosterable: [:manual_roster_mode])
+        params.expect(rosterable: [:skip_campaigns])
       end
 
       def set_lecture

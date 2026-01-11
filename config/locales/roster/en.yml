@@ -35,8 +35,8 @@ en:
       step_2: "You can create tutorials or talks directly there (quick-create) or select existing ones."
       step_3: "Students register their preferences or sign up directly (depending on mode)."
       step_4: "Spots are allocated automatically. You can fine-tune results here afterwards."
-      manual_method: "Manual Management"
-      manual_desc: "For individual groups, you can enable manual mode to assign students manually from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
+      manual_method: "Direct Management"
+      manual_desc: "For individual groups, you can skip campaigns to assign students directly from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
     actions:
       global_roster: 'Global Roster'
       assign: 'Assign'
@@ -50,7 +50,7 @@ en:
       add_student_label: 'Student Email'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Are you sure you want to remove this student?'
-      enable_manual_management: 'Manual Management'
+      enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
     details:
       participants: 'Participants'
@@ -80,10 +80,10 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
-    manual_mode: 'Manual Mode'
-    enable_manual_hint: 'Cannot enable manual mode because this group was part of a campaign.'
-    disable_manual_hint: 'Cannot disable manual mode because the roster is not empty.'
-    enable_manual_management: 'Enable Manual Management'
+    skip_campaigns: 'Skip Campaigns'
+    enable_skip_campaigns_hint: 'Cannot skip campaigns because this group was part of a campaign.'
+    disable_skip_campaigns_hint: 'Cannot enable campaigns because the roster is not empty.'
+    enable_manual_management: 'Enable Direct Management'
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
