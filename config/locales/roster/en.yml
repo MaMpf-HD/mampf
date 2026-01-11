@@ -4,13 +4,21 @@ en:
     status: 'Status'
     status_texts:
       awaiting_setup: "Awaiting setup"
+      awaiting_setup_short: "Setup"
       direct_management: "Direct management"
+      direct_management_short: "Direct"
       campaign_draft: "Campaign: Draft"
+      campaign_draft_short: "Draft"
       campaign_open: "Campaign: Registration"
+      campaign_open_short: "Registration"
       campaign_closed: "Campaign: Closed"
+      campaign_closed_short: "Closed"
       campaign_processing: "Campaign: Processing"
+      campaign_processing_short: "Processing"
       campaign_completed: "Campaign: Completed"
+      campaign_completed_short: "Completed"
       post_campaign: "Post-campaign"
+      post_campaign_short: "Post-camp."
       self_enrollment: "Self-enrollment"
     participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:

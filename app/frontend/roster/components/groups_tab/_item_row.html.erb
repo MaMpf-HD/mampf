@@ -4,7 +4,7 @@
     <%= item.title %>
   </td>
   <% if group[:type] == :tutorials %>
-    <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
+    <td><%= item.tutor_names %></td>
   <% elsif group[:type] == :cohorts %>
     <td>
       <% if item.description.present? %>

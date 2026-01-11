@@ -4,13 +4,21 @@ de:
     status: 'Status'
     status_texts:
       awaiting_setup: "Wartet auf Einrichtung"
+      awaiting_setup_short: "Setup"
       direct_management: "Direkte Verwaltung"
+      direct_management_short: "Direkt"
       campaign_draft: "Anmeldeverfahren: Entwurf"
+      campaign_draft_short: "Entwurf"
       campaign_open: "Anmeldeverfahren: Anmeldung"
+      campaign_open_short: "Anmeldung"
       campaign_closed: "Anmeldeverfahren: Geschlossen"
+      campaign_closed_short: "Geschlossen"
       campaign_processing: "Anmeldeverfahren: Verarbeitung"
+      campaign_processing_short: "Verarbeitung"
       campaign_completed: "Anmeldeverfahren: Abgeschlossen"
+      campaign_completed_short: "Abgeschlossen"
       post_campaign: "Nach Anmeldeverfahren"
+      post_campaign_short: "Nach Anmeld."
       self_enrollment: "Selbsteinschreibung"
     participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
     tabs:

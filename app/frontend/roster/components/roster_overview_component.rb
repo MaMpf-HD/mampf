@@ -141,6 +141,80 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def status_badge_data(item, campaign)
+    if campaign
+      campaign_badge_data(campaign)
+    elsif item.in_real_campaign?
+      {
+        icon: "bi-check-circle-fill",
+        text: I18n.t("roster.status_texts.post_campaign_short"),
+        css_class: "bg-light text-secondary border border-secondary",
+        tooltip: I18n.t("roster.status_texts.post_campaign"),
+        self_enrollment: !item.self_materialization_mode_disabled?
+      }
+    elsif item.skip_campaigns?
+      {
+        icon: "bi-gear-fill",
+        text: I18n.t("roster.status_texts.direct_management_short"),
+        css_class: "bg-light text-primary border border-primary",
+        tooltip: I18n.t("roster.status_texts.direct_management"),
+        self_enrollment: !item.self_materialization_mode_disabled?
+      }
+    else
+      {
+        icon: "bi-hourglass",
+        text: I18n.t("roster.status_texts.awaiting_setup_short"),
+        css_class: "bg-light text-muted border border-secondary",
+        tooltip: I18n.t("roster.status_texts.awaiting_setup"),
+        self_enrollment: false
+      }
+    end
+  end
+
+  def campaign_badge_data(campaign)
+    icon, css_class = case campaign.status
+                      when "open"
+                        ["bi-calendar-check", "bg-light text-success border border-success"]
+                      when "closed"
+                        ["bi-calendar-x", "bg-light text-warning border border-warning"]
+                      when "processing"
+                        ["bi-arrow-repeat", "bg-light text-primary border border-primary"]
+                      when "completed"
+                        ["bi-calendar-check-fill", "bg-light text-secondary border border-secondary"]
+                      else
+                        ["bi-calendar", "bg-light text-secondary border border-secondary"]
+    end
+
+    {
+      icon: icon,
+      text: I18n.t("roster.status_texts.campaign_#{campaign.status}_short"),
+      css_class: css_class,
+      tooltip: I18n.t("roster.status_texts.campaign_#{campaign.status}"),
+      self_enrollment: false
+    }
+  end
+
+  def self_enrollment_badge_data(item)
+    mode = item.self_materialization_mode
+    icon, text = case mode
+                 when "add_only"
+                   ["bi-person-plus-fill", "+"]
+                 when "remove_only"
+                   ["bi-person-dash-fill", "−"]
+                 when "add_and_remove"
+                   ["bi-person-fill-add", "±"]
+                 else
+                   ["bi-person", ""]
+    end
+
+    {
+      icon: icon,
+      text: text,
+      css_class: "bg-light text-success border border-success",
+      tooltip: I18n.t("roster.self_materialization.modes.#{mode}")
+    }
+  end
+
   private
 
     def target_types
