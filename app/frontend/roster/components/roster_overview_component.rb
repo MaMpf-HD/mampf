@@ -65,18 +65,6 @@ class RosterOverviewComponent < ViewComponent::Base
     items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
-  def show_campaign_running_badge?(item, campaign)
-    !item.skip_campaigns? && campaign.present? && item.roster_empty?
-  end
-
-  def campaign_badge_props(campaign)
-    if campaign&.draft?
-      { text: I18n.t("roster.campaign_draft"), css_class: "badge bg-secondary" }
-    else
-      { text: I18n.t("roster.campaign_running"), css_class: "badge bg-info text-dark" }
-    end
-  end
-
   def show_skip_campaigns_switch?(item)
     (item.skip_campaigns? && item.can_unskip_campaigns?) ||
       (!item.skip_campaigns? && item.can_skip_campaigns?)

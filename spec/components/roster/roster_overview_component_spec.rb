@@ -152,48 +152,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "#show_campaign_running_badge?" do
-    let(:tutorial) { create(:tutorial, lecture: lecture) }
-    let(:campaign) { create(:registration_campaign) }
-
-    it "returns true when conditions are met" do
-      # skip_campaigns? is false by default (assuming)
-      # roster_empty? is true by default
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(true)
-    end
-
-    it "returns false if manual roster mode" do
-      allow(tutorial).to receive(:skip_campaigns?).and_return(true)
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
-    end
-
-    it "returns false if campaign is missing" do
-      expect(component.show_campaign_running_badge?(tutorial, nil)).to be(false)
-    end
-
-    it "returns false if roster is not empty" do
-      allow(tutorial).to receive(:roster_empty?).and_return(false)
-      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
-    end
-  end
-
-  describe "#campaign_badge_props" do
-    let(:draft_campaign) { build(:registration_campaign, status: :draft) }
-    let(:running_campaign) { build(:registration_campaign, status: :open) }
-
-    it "returns draft badge properties for draft campaign" do
-      props = component.campaign_badge_props(draft_campaign)
-      expect(props[:text]).to eq(I18n.t("roster.campaign_draft"))
-      expect(props[:css_class]).to include("bg-secondary")
-    end
-
-    it "returns running badge properties for running campaign" do
-      props = component.campaign_badge_props(running_campaign)
-      expect(props[:text]).to eq(I18n.t("roster.campaign_running"))
-      expect(props[:css_class]).to include("bg-info")
-    end
-  end
-
   describe "#show_skip_campaigns_switch?" do
     let(:item) { create(:tutorial, lecture: lecture) }
 
@@ -294,16 +252,18 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       end
 
       it "returns post-campaign status with self-enrollment and policy warning" do
-        policy = create(:policy, name: "Test Policy")
-        campaign = create(:registration_campaign, campaignable: lecture,
-                                                  status: :completed, policy: policy)
-        create(:registration_item, registerable: item, registration_campaign: campaign)
-        item.update(self_materialization_mode: :add_only)
+        policy_item = create(:tutorial, lecture: lecture)
+        campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign, active: true)
+        campaign.update!(status: :completed)
+        create(:registration_item, registerable: policy_item, registration_campaign: campaign)
+        policy_item.update(self_materialization_mode: :add_only)
 
-        expect(component.primary_status(item, nil))
+        expect(component.primary_status(policy_item, nil))
           .to include(I18n.t("roster.status_texts.post_campaign"))
-          .and(include(I18n.t("roster.status_texts.self_enrollment"))
-          .and(include(I18n.t("roster.status_texts.no_policy_enforcement"))))
+          .and(include(I18n.t("roster.status_texts.self_enrollment")))
+          .and(include(I18n.t("roster.status_texts.no_policy_enforcement")))
       end
     end
 
@@ -352,9 +312,10 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     it "returns true when target mode would bypass campaign policy" do
-      policy = create(:policy, name: "Test Policy")
-      campaign = create(:registration_campaign, campaignable: lecture,
-                                                status: :completed, policy: policy)
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
       create(:registration_item, registerable: item, registration_campaign: campaign)
 
       expect(component.bypasses_campaign_policy?(item, "add_only")).to be(true)
@@ -369,14 +330,17 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     it "returns warning data when bypassing policy" do
-      policy = create(:policy, name: "Test Policy")
       campaign = create(:registration_campaign, campaignable: lecture,
-                                                status: :completed, policy: policy, name: "Test Campaign")
+                                                status: :draft,
+                                                description: "Test Campaign")
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
       create(:registration_item, registerable: item, registration_campaign: campaign)
 
       data = component.policy_bypass_warning_data(item, "add_only")
       expect(data).to include(
-        policy_name: "Test Policy",
+        policy_name: I18n.t("registration.policy.kinds.institutional_email"),
         campaign_name: "Test Campaign"
       )
     end
