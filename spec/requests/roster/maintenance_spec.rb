@@ -384,7 +384,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
       context "when cohort propagates to lecture" do
         let(:cohort) do
-          create(:cohort, context: lecture, manual_roster_mode: true, propagate_to_lecture: true)
+          create(:cohort, context: lecture, skip_campaigns: true, propagate_to_lecture: true)
         end
 
         it "adds the user to the lecture roster" do
