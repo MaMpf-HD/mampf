@@ -75,10 +75,11 @@ class RosterOverviewComponent < ViewComponent::Base
     Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
-  def update_self_materialization_path(item, mode)
+  def update_self_materialization_path(item, mode, group_type_param = nil)
     method_name = "#{item.class.name.underscore}_update_self_materialization_path"
-    Rails.application.routes.url_helpers.public_send(method_name, item,
-                                                     self_materialization_mode: mode)
+    params = { self_materialization_mode: mode }
+    params[:group_type] = group_type_param if group_type_param.present?
+    Rails.application.routes.url_helpers.public_send(method_name, item, params)
   end
 
   def subtables_for(group)

@@ -132,43 +132,34 @@ module Roster
 
       component = RosterOverviewComponent.new(lecture: @lecture)
       campaign = component.active_campaign_for(@rosterable)
-      group_type = @rosterable.class.name.tableize.to_sym
+
+      group_type = if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type]&.to_sym || @rosterable.roster_group_type
+      end
 
       if @rosterable.update(self_materialization_mode: mode)
         flash.now[:notice] = t("roster.messages.updated")
-        render turbo_stream: [
-          turbo_stream.replace(
-            view_context.dom_id(@rosterable, :actions),
-            partial: "roster/components/groups_tab/item_actions",
-            locals: { item: @rosterable, component: component, campaign: campaign,
-                      group_type: group_type }
-          ),
-          turbo_stream.replace(
-            view_context.dom_id(@rosterable, :status),
-            partial: "roster/components/groups_tab/status_cell",
-            locals: { item: @rosterable, campaign: campaign }
-          ),
-          stream_flash
-        ]
       else
         flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
         @rosterable.reload
-
-        render turbo_stream: [
-          turbo_stream.replace(
-            view_context.dom_id(@rosterable, :actions),
-            partial: "roster/components/groups_tab/item_actions",
-            locals: { item: @rosterable, component: component, campaign: campaign,
-                      group_type: group_type }
-          ),
-          turbo_stream.replace(
-            view_context.dom_id(@rosterable, :status),
-            partial: "roster/components/groups_tab/status_cell",
-            locals: { item: @rosterable, campaign: campaign }
-          ),
-          stream_flash
-        ]
       end
+
+      render turbo_stream: [
+        turbo_stream.replace(
+          view_context.dom_id(@rosterable, :actions),
+          partial: "roster/components/groups_tab/item_actions",
+          locals: { item: @rosterable, component: component, campaign: campaign,
+                    group_type: group_type }
+        ),
+        turbo_stream.replace(
+          view_context.dom_id(@rosterable, :status),
+          partial: "roster/components/groups_tab/status_cell",
+          locals: { item: @rosterable, campaign: campaign }
+        ),
+        stream_flash
+      ]
     end
 
     private

@@ -181,4 +181,40 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       expect(component.toggle_manual_mode_path(item)).to eq("/path/to/roster")
     end
   end
+
+  describe "#update_self_materialization_path" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns the correct path without group_type" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only" })
+        .and_return("/path/to/self_materialization")
+
+      expect(component.update_self_materialization_path(item, "add_only"))
+        .to eq("/path/to/self_materialization")
+    end
+
+    it "returns the correct path with group_type parameter" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only", group_type: :tutorials })
+        .and_return("/path/to/self_materialization?group_type=tutorials")
+
+      expect(component.update_self_materialization_path(item, "add_only", :tutorials))
+        .to eq("/path/to/self_materialization?group_type=tutorials")
+    end
+
+    it "returns the correct path with array group_type parameter" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only",
+                      group_type: [:tutorials, :cohorts] })
+        .and_return("/path/to/self_materialization?group_type[]=tutorials&group_type[]=cohorts")
+
+      expect(component.update_self_materialization_path(item, "add_only",
+                                                        [:tutorials, :cohorts]))
+        .to eq("/path/to/self_materialization?group_type[]=tutorials&group_type[]=cohorts")
+    end
+  end
 end
