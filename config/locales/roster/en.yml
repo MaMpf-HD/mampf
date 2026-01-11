@@ -59,7 +59,7 @@ en:
       title: 'Title'
       tutors: 'Tutors'
       speakers: 'Speakers'
-      capacity: 'Capacity'
+      capacity: 'Occupancy'
       occupancy: 'Occupancy'
       name: 'Name'
       email: 'Email'
@@ -74,6 +74,7 @@ en:
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
     campaign_draft: 'Campaign planned'
+    overbooked: 'Overbooked'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
     tooltips:
       manage_participants: "Manage Participants"
