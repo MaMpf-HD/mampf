@@ -90,7 +90,7 @@ de:
       title: 'Titel'
       tutors: 'TutorInnen'
       speakers: 'Vortragende'
-      capacity: 'Kapazität'
+
       occupancy: 'Belegung'
       status: 'Status'
       name: 'Name'
@@ -129,6 +129,7 @@ de:
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'
     campaign_draft: 'Anmeldeverfahren geplant'
+    overbooked: 'Überbucht'
     empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
