@@ -193,33 +193,42 @@ RSpec.describe(Rosters::Rosterable) do
           campaign.update(status: :completed)
         end
 
-        it "can enable add_only" do
+        it "cannot enable add_only due to manual mode lock" do
+          # Enabling self-mat forces manual_roster_mode: true
+          # manual_roster_mode: true is forbidden if in_real_campaign? (even completed)
           rosterable.self_materialization_mode = :add_only
-          expect(rosterable).to(be_valid)
+          expect(rosterable).not_to(be_valid)
+          expect(rosterable.errors[:manual_roster_mode]).to include(I18n.t("roster.errors.campaign_associated"))
         end
       end
 
       context "when no campaign exists" do
-        it "can enable add_only" do
+        it "can enable add_only and forces manual mode" do
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).to(be_valid)
+          expect(rosterable.manual_roster_mode).to be(true)
         end
       end
 
       context "disabling mode" do
-        before { rosterable.update(self_materialization_mode: :add_only) }
+        before { rosterable.update(self_materialization_mode: :add_only, manual_roster_mode: true) }
 
-        context "when campaign starts running" do
-          before do
-            campaign = create(:registration_campaign, campaignable: rosterable.lecture,
-                                                      status: :draft, planning_only: false)
-            create(:registration_item, registration_campaign: campaign, registerable: rosterable)
-            campaign.update(status: :open)
+        it "disables self-materialization when disabling manual mode" do
+          rosterable.manual_roster_mode = false
+          rosterable.valid?
+          expect(rosterable.self_materialization_mode).to eq("disabled")
+        end
+
+        context "when attempting to add to a campaign" do
+          let(:campaign) do
+            create(:registration_campaign, campaignable: rosterable.lecture,
+                                           status: :draft, planning_only: false)
           end
 
-          it "can safely disable self-materialization" do
-            rosterable.self_materialization_mode = :disabled
-            expect(rosterable).to(be_valid)
+          it "prevents adding to campaign because it is in manual mode" do
+            expect do
+              create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+            end.to(raise_error(ActiveRecord::RecordInvalid))
           end
         end
       end

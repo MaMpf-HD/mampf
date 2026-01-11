@@ -28,6 +28,7 @@ module Rosters
         add_and_remove: 3
       }, prefix: true
 
+      before_validation :enforce_consistency_between_modes
       validate :validate_manual_mode_switch
       validate :validate_self_materialization_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
@@ -270,6 +271,20 @@ module Rosters
 
         errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
+      end
+
+      def enforce_consistency_between_modes
+        # 1. If manual roster mode is disabled (System Mode), self-materialization MUST be disabled.
+        # This ensures that switching back to campaign mode cleans up the state.
+        if manual_roster_mode_changed? && !manual_roster_mode?
+          self.self_materialization_mode = :disabled
+        end
+
+        # 2. If self-materialization is active, manual roster mode MUST be true.
+        # This prevents "Campaign Mode" from conflicting with "Self-Enrollment".
+        return if self_materialization_mode_disabled?
+
+        self.manual_roster_mode = true
       end
 
       # Identifies users in the target list who are not yet in the roster and
