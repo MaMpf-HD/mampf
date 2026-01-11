@@ -156,7 +156,7 @@ module Roster
         turbo_stream.replace(
           view_context.dom_id(@rosterable, :status),
           partial: "roster/components/groups_tab/status_cell",
-          locals: { item: @rosterable, campaign: campaign }
+          locals: { item: @rosterable, campaign: campaign, component: component }
         ),
         stream_flash
       ]

@@ -1,20 +1,4 @@
 <td id="<%= dom_id(item, :status) %>" class="text-end">
-  <% if campaign %>
-    <% status_key = campaign.status %>
-    <% status_label = t("roster.status_values.campaign_statuses.#{status_key}", default: status_key.humanize) %>
-    <% text = t("roster.status_values.campaign", status: status_label) %>
-    <% css_class = case status_key
-                     when "open" then "bg-light text-success border border-success"
-                     when "completed" then "bg-light text-info border border-info"
-                     else "bg-light text-secondary border border-secondary"
-                     end %>
-    <span class="badge <%= css_class %>"><%= text %></span>
-  <% end %>
-
-  <% if !campaign && !item.self_materialization_mode_disabled? %>
-    <% mode = item.self_materialization_mode %>
-    <% text = t("roster.status_values.self_materialization.#{mode}", default: mode.humanize) %>
-    <span class="badge bg-light text-primary border border-primary"><%= text %></span>
-  <% end %>
+  <span class="text-muted"><%= component.primary_status(item, campaign) %></span>
 </td>
 

@@ -121,6 +121,26 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def primary_status(item, campaign)
+    if campaign
+      I18n.t("roster.status_texts.campaign_#{campaign.status}")
+    elsif item.in_real_campaign?
+      status = I18n.t("roster.status_texts.post_campaign")
+      unless item.self_materialization_mode_disabled?
+        status += " (#{I18n.t("roster.status_texts.self_enrollment")})"
+      end
+      status
+    elsif item.skip_campaigns?
+      status = I18n.t("roster.status_texts.direct_management")
+      unless item.self_materialization_mode_disabled?
+        status += " (#{I18n.t("roster.status_texts.self_enrollment")})"
+      end
+      status
+    else
+      I18n.t("roster.status_texts.awaiting_setup")
+    end
+  end
+
   private
 
     def target_types

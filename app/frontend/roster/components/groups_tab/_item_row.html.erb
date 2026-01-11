@@ -35,7 +35,7 @@
       <span class="small text-muted"><%= item.roster_entries.count %></span>
     </div>
   </td>
-  <%= render "roster/components/groups_tab/status_cell", item: item, campaign: campaign %>
+  <%= render "roster/components/groups_tab/status_cell", item: item, campaign: campaign, component: component %>
   <td class="text-end">
     <%= render "roster/components/groups_tab/item_actions",
                item: item,

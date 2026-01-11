@@ -2,6 +2,16 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
+    status_texts:
+      awaiting_setup: "Awaiting setup"
+      direct_management: "Direct management"
+      campaign_draft: "Campaign: Draft"
+      campaign_open: "Campaign: Registration"
+      campaign_closed: "Campaign: Closed"
+      campaign_processing: "Campaign: Processing"
+      campaign_completed: "Campaign: Completed"
+      post_campaign: "Post-campaign"
+      self_enrollment: "Self-enrollment"
     participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:
       tutorial_maintenance: 'Coursework'
