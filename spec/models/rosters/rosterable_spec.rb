@@ -198,7 +198,8 @@ RSpec.describe(Rosters::Rosterable) do
           # manual_roster_mode: true is forbidden if in_real_campaign? (even completed)
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:manual_roster_mode]).to include(I18n.t("roster.errors.campaign_associated"))
+          expect(rosterable.errors[:manual_roster_mode])
+            .to include(I18n.t("roster.errors.campaign_associated"))
         end
       end
 
