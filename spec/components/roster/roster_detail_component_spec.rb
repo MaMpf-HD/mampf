@@ -6,9 +6,9 @@ RSpec.describe(RosterDetailComponent, type: :component) do
   let(:other_user) { create(:user, name: "Bob") }
 
   context "with a Tutorial" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, manual_roster_mode: true) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
     let!(:other_tutorial) do
-      create(:tutorial, lecture: lecture, title: "Other Tutorial", manual_roster_mode: true)
+      create(:tutorial, lecture: lecture, title: "Other Tutorial", skip_campaigns: true)
     end
     let(:component) { described_class.new(rosterable: tutorial) }
 
@@ -34,7 +34,7 @@ RSpec.describe(RosterDetailComponent, type: :component) do
     end
 
     it "includes cohorts in available groups" do
-      cohort = create(:cohort, context: lecture, manual_roster_mode: true)
+      cohort = create(:cohort, context: lecture, skip_campaigns: true)
       expect(component.available_groups).to include(cohort)
     end
 
@@ -122,9 +122,9 @@ RSpec.describe(RosterDetailComponent, type: :component) do
   end
 
   context "with a Talk" do
-    let(:talk) { create(:talk, lecture: lecture, manual_roster_mode: true) }
+    let(:talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
     let!(:other_talk) do
-      create(:talk, lecture: lecture, title: "Other Talk", manual_roster_mode: true)
+      create(:talk, lecture: lecture, title: "Other Talk", skip_campaigns: true)
     end
     let(:component) { described_class.new(rosterable: talk) }
 

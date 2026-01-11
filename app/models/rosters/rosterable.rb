@@ -6,7 +6,7 @@ module Rosters
     extend ActiveSupport::Concern
 
     # Models including this concern must:
-    # - Have a `manual_roster_mode` boolean column (default: false)
+    # - Have a `skip_campaigns` boolean column (default: false)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
 
     included do
@@ -21,7 +21,7 @@ module Rosters
         :user_id
       end
 
-      validate :validate_manual_mode_switch
+      validate :validate_skip_campaigns_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
@@ -32,28 +32,28 @@ module Rosters
     end
 
     # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if it is NOT in manual mode AND a campaign is active (pending/running).
-    # If manual mode is true, it is never locked.
-    # If manual mode is false, it is unlocked only if no campaign is active.
+    # A roster is locked if campaigns are NOT skipped AND a campaign is active (pending/running).
+    # If skip_campaigns is true, it is never locked.
+    # If skip_campaigns is false, it is unlocked only if no campaign is active.
     def locked?
-      return false if manual_roster_mode?
+      return false if skip_campaigns?
 
       # If in system mode, it is locked unless it was part of a completed campaign
       !campaign_completed?
     end
 
-    # Checks if manual mode can be enabled (switched from false to true).
+    # Checks if skip_campaigns can be enabled (switched from false to true).
     # This is only allowed if the item has never been part of a real (non-planning) campaign.
-    def can_enable_manual_mode?
+    def can_skip_campaigns?
       !in_real_campaign?
     end
 
-    # Checks if manual mode can be disabled (switched from true to false).
+    # Checks if skip_campaigns can be disabled (switched from true to false).
     # This is generally allowed as long as the roster is empty (to prevent data loss/inconsistency),
-    # but since we enforce "once in campaign, always in campaign" via can_enable_manual_mode?,
+    # but since we enforce "once in campaign, always in campaign" via can_skip_campaigns?,
     # the reverse path is less critical but should still be safe.
     # For now, we allow it if the roster is empty.
-    def can_disable_manual_mode?
+    def can_unskip_campaigns?
       roster_empty?
     end
 
@@ -185,22 +185,18 @@ module Rosters
 
     private
 
-      def validate_manual_mode_switch
+      def validate_skip_campaigns_switch
         return if new_record?
-        return unless manual_roster_mode_changed?
+        return unless skip_campaigns_changed?
 
-        if manual_roster_mode?
-          # Switching from false (System) to true (Manual)
+        if skip_campaigns?
+          # Switching from false (Campaign Mode) to true (Skip Campaigns)
           # Only allowed if never in a real campaign
-          if in_real_campaign?
-            errors.add(:manual_roster_mode, I18n.t("roster.errors.campaign_associated"))
-          end
+          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_real_campaign?
         else
-          # Switching from true (Manual) to false (System)
+          # Switching from true (Skip Campaigns) to false (Campaign Mode)
           # Only allowed if roster is empty (to avoid data inconsistency)
-          unless roster_empty?
-            errors.add(:manual_roster_mode, I18n.t("roster.errors.roster_not_empty"))
-          end
+          errors.add(:base, I18n.t("roster.errors.roster_not_empty")) unless roster_empty?
         end
       end
 
