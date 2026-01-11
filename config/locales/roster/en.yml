@@ -73,6 +73,7 @@ en:
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
+    overbooked: 'Overbooked'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
     errors:
       lecture_not_found: 'Lecture not found.'
