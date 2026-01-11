@@ -180,7 +180,8 @@ class RosterOverviewComponent < ViewComponent::Base
                       when "processing"
                         ["bi-arrow-repeat", "bg-light text-primary border border-primary"]
                       when "completed"
-                        ["bi-calendar-check-fill", "bg-light text-secondary border border-secondary"]
+                        ["bi-calendar-check-fill",
+                         "bg-light text-secondary border border-secondary"]
                       else
                         ["bi-calendar", "bg-light text-secondary border border-secondary"]
     end
