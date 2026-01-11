@@ -58,6 +58,8 @@
     </div>
   <% end %>
 
+  <%= roster_campaign_button(item, component, campaign) %>
+
   <% # Skip campaigns toggle - icon-based button %>
   <% can_skip = item.can_skip_campaigns? %>
   <% can_unskip = item.can_unskip_campaigns? %>

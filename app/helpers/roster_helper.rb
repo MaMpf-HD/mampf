@@ -31,10 +31,8 @@ module RosterHelper
 
   def roster_manage_button(item, component, campaign)
     locked = item.locked?
-    buttons = []
 
-    # Always show manage button (disabled when locked)
-    buttons << if locked
+    if locked
       tooltip = if campaign
         t("roster.tooltips.locked_manage")
       else
@@ -56,16 +54,17 @@ module RosterHelper
         tag.i(class: "bi bi-person-lines-fill")
       end
     end
+  end
 
-    # Show campaign-related buttons
+  def roster_campaign_button(item, component, campaign)
     if campaign
       # Active campaign - show view campaign button
-      buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns",
-                                                              campaign_id: campaign.id),
-                         class: "btn btn-sm btn-secondary",
-                         title: t("roster.view_campaign"),
-                         data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
-        tag.i(class: "bi bi-calendar-check")
+      link_to(edit_lecture_path(component.lecture, tab: "campaigns",
+                                                   campaign_id: campaign.id),
+              class: "btn btn-sm btn-secondary",
+              title: t("roster.view_campaign"),
+              data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+        tag.i(class: "bi bi-calendar-event")
       end
     elsif item.in_real_campaign?
       # Has campaign history - show view campaign button for most recent
@@ -77,18 +76,18 @@ module RosterHelper
                             &.registration_campaign
 
       if recent_campaign
-        buttons << link_to(edit_lecture_path(component.lecture, tab: "campaigns",
-                                                                campaign_id: recent_campaign.id),
-                           class: "btn btn-sm btn-secondary",
-                           title: t("roster.view_campaign"),
-                           data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
-          tag.i(class: "bi bi-calendar-check")
+        link_to(edit_lecture_path(component.lecture, tab: "campaigns",
+                                                     campaign_id: recent_campaign.id),
+                class: "btn btn-sm btn-secondary",
+                title: t("roster.view_campaign"),
+                data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
+          tag.i(class: "bi bi-calendar-event")
         end
       end
     else
       # Never in campaign - show create campaign button (disabled if skip_campaigns is true)
       can_create = !item.skip_campaigns?
-      buttons << if can_create
+      if can_create
         link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
                 class: "btn btn-sm btn-secondary",
                 title: t("roster.create_campaign"),
@@ -106,8 +105,6 @@ module RosterHelper
         end
       end
     end
-
-    safe_join(buttons, " ")
   end
 
   def roster_edit_button(item, group_type)
