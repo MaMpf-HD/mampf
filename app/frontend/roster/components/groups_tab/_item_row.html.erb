@@ -15,7 +15,6 @@
     <td><%= format_talk_dates(item.dates) %></td>
     <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
   <% end %>
-  <td><%= item.capacity || "∞" %></td>
   <td>
     <% if component.show_campaign_running_badge?(item, campaign) %>
       <% badge = component.campaign_badge_props(campaign) %>
