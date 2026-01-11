@@ -11,7 +11,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
 
   def metrics
     # =================================================================
-    # GLOBALE METRIKEN (Datenbank)
+    # GLOBAL METRICS (Database)
     # =================================================================
 
     # User count
@@ -50,7 +50,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     consumptions_count_gauge.observe(Consumption.count)
 
     # =================================================================
-    # WORKER METRIKEN (CPU / RAM pro Worker)
+    # WORKER METRICS (CPU / RAM per Worker)
     # =================================================================
 
     puma_cpu_gauge = PrometheusExporter::Metric::Gauge.new("puma_process_cpu_percent",
@@ -58,12 +58,12 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     puma_ram_gauge = PrometheusExporter::Metric::Gauge.new("puma_process_ram_mb",
                                                            "RAM usage per Puma process in MB")
 
-    # 1. Hole Liste aller Prozesse (Master + Worker)
+    # 1. Get list of all processes (Master + Worker)
     process_stats = collect_detailed_puma_stats
 
-    # 2. Schleife durch JEDEN Worker einzeln
+    # 2. Loop through EACH Worker individually
     process_stats.each do |stat|
-      # Wir hängen Labels an: pid und role (master/worker)
+      # We attach labels: pid and role (master/worker)
       labels = { pid: stat[:pid], role: stat[:role] }
 
       puma_cpu_gauge.observe(stat[:cpu], labels)
@@ -84,7 +84,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
 
   private
 
-    # Die Logik, um Master und Worker PIDs zu finden und auszulesen
+    # The logic to find and read Master and Worker PIDs
     def collect_detailed_puma_stats
       stats = []
       pid_file = Rails.root.join("tmp/pids/server.pid")
@@ -97,25 +97,25 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
 
         master_pid = pid_content.to_i
 
-        # Finde alle KIND-Prozesse (Worker) des Masters
+        # Find all CHILD processes (Worker) of the Master
         worker_pids_str = `pgrep -P #{master_pid} -d,`.strip
 
-        # Baue String aller PIDs (Master + Kinder) für den ps Befehl
+        # Build string of all PIDs (Master + Children) for the ps command
         all_pids = worker_pids_str.empty? ? master_pid.to_s : "#{master_pid},#{worker_pids_str}"
 
-        # ps Befehl: Gibt PID, CPU und RAM (RSS) zurück
+        # ps command: Returns PID, CPU and RAM (RSS)
         output = `ps -p #{all_pids} -o pid=,%cpu=,rss=`.strip
 
         unless output.empty?
           output.each_line do |line|
-            parts = line.split(" ")
+            parts = line.split
             next unless parts.length == 3
 
             current_pid = parts[0].to_i
             cpu = parts[1].to_f
             ram_mb = parts[2].to_f / 1024.0
 
-            # Unterscheidung: Ist es der Master oder ein Worker?
+            # Distinction: Is it the Master or a Worker?
             role = current_pid == master_pid ? "master" : "worker"
 
             stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb }
