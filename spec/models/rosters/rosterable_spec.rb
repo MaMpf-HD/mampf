@@ -18,7 +18,7 @@ RSpec.describe(Rosters::Rosterable) do
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
-    context "when in manual mode" do
+    context "when skip_campaigns is enabled" do
       # skip_campaigns: true
       it "returns false" do
         expect(rosterable.locked?).to(be(false))
