@@ -59,7 +59,7 @@ en:
       title: 'Title'
       tutors: 'Tutors'
       speakers: 'Speakers'
-      capacity: 'Capacity'
+      capacity: 'Occupancy'
       occupancy: 'Occupancy'
       name: 'Name'
       email: 'Email'

@@ -59,7 +59,7 @@ de:
       title: 'Titel'
       tutors: 'TutorInnen'
       speakers: 'Vortragende'
-      capacity: 'Kapazität'
+      capacity: 'Belegung'
       occupancy: 'Belegung'
       name: 'Name'
       email: 'E-Mail'

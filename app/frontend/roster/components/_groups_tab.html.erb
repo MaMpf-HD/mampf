@@ -45,7 +45,6 @@
               <th><%= t('roster.columns.speakers') %></th>
             <% end %>
             <th><%= t('roster.columns.capacity') %></th>
-            <th><%= t('roster.columns.occupancy') %></th>
             <th></th>
           </tr>
         </thead>
@@ -59,16 +58,15 @@
               <% elsif group[:type] == :talks %>
                 <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
               <% end %>
-              <td><%= item.capacity || "∞" %></td>
               <td>
                 <% if component.show_campaign_running_badge?(item, campaign) %>
                   <span class="badge bg-info text-dark">
                     <%= t('roster.campaign_running') %>
                   </span>
                 <% else %>
-                  <div class="d-flex align-items-center">
-                    <div class="flex-grow-1 me-2">
-                      <% if item.capacity %>
+                  <div class="d-flex align-items-center gap-2">
+                    <% if item.capacity %>
+                      <div class="flex-grow-1" style="min-width: 60px;">
                         <%= progress_bar(
                               item.roster_entries.count,
                               item.capacity,
@@ -77,9 +75,11 @@
                               show_label: false,
                               container_class: "progress"
                             ) %>
-                      <% end %>
-                    </div>
-                    <span class="small text-muted"><%= item.roster_entries.count %></span>
+                      </div>
+                      <span class="small text-nowrap"><%= item.roster_entries.count %>/<%= item.capacity %></span>
+                    <% else %>
+                      <span class="small text-muted"><%= item.roster_entries.count %></span>
+                    <% end %>
                   </div>
                 <% end %>
               </td>
