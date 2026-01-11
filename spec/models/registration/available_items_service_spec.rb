@@ -51,8 +51,8 @@ RSpec.describe(Registration::AvailableItemsService) do
         let(:lecture) { create(:seminar) }
         let(:campaign) { create(:registration_campaign, campaignable: lecture) }
         let(:service) { described_class.new(campaign) }
-        let!(:manual_talk) { create(:talk, lecture: lecture, manual_roster_mode: true) }
-        let!(:auto_talk) { create(:talk, lecture: lecture, manual_roster_mode: false) }
+        let!(:manual_talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
+        let!(:auto_talk) { create(:talk, lecture: lecture, skip_campaigns: false) }
 
         it "does not return manually managed talks" do
           expect(service.items[:talks]).not_to include(manual_talk)

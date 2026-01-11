@@ -178,13 +178,13 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
     context "when there are tutorials and cohorts" do
       let!(:tutorial_a) do
-        create(:tutorial, lecture: lecture, title: "A Tutorial", manual_roster_mode: true)
+        create(:tutorial, lecture: lecture, title: "A Tutorial", skip_campaigns: true)
       end
-      let!(:tutorial_b) do
-        create(:tutorial, lecture: lecture, title: "B Tutorial", manual_roster_mode: true)
+      let(:tutorial2) do
+        create(:tutorial, lecture: lecture, title: "B Tutorial", skip_campaigns: true)
       end
-      let!(:cohort_a) do
-        create(:cohort, context: lecture, title: "A Cohort", manual_roster_mode: true)
+      let(:cohort) do
+        create(:cohort, context: lecture, title: "A Cohort", skip_campaigns: true)
       end
 
       before do
@@ -193,8 +193,8 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         # We mock the group retrieval to ensure we work with the exact instances
         # created above. This isolates the test from DB/Association caching issues
         # and allows stubbing methods on instances.
-        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial_b,
-                                                                        cohort_a])
+        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial2,
+                                                                        cohort])
       end
 
       it "groups and sorts correctly: Tutorials (1) then Cohorts (2)" do
@@ -204,20 +204,20 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         expect(targets.size).to eq(2)
 
         # Check first group (Tutorials)
-        expect(targets[0][:groups]).to match_array([tutorial_a, tutorial_b])
+        expect(targets[0][:groups]).to match_array([tutorial_a, tutorial2])
         # Check internal sorting (A before B)
-        expect(targets[0][:groups]).to eq([tutorial_a, tutorial_b])
+        expect(targets[0][:groups]).to eq([tutorial_a, tutorial2])
 
         # Check second group (Cohorts)
-        expect(targets[1][:groups]).to match_array([cohort_a])
+        expect(targets[1][:groups]).to match_array([cohort])
       end
 
       it "excludes locked groups" do
         locked_tut = create(:tutorial, lecture: lecture, title: "Locked Tutorial")
 
         # Update the mock to include the locked tutorial
-        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial_b,
-                                                                        cohort_a, locked_tut])
+        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial2,
+                                                                        cohort, locked_tut])
         allow(locked_tut).to receive(:locked?).and_return(true)
 
         targets = component.available_transfer_targets_for(user)

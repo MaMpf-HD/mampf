@@ -59,32 +59,31 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         t
       end
 
-        it "sorts locked items first, then switchable items" do
-          groups = component.groups
-          tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
+      it "sorts locked items first, then switchable items" do
+        groups = component.groups
+        tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
 
-          expect(tutorials.first).to eq(locked_tutorial)
+        expect(tutorials.first).to eq(locked_tutorial)
 
-          relevant_tutorials = tutorials.select do |t|
-            [manual_tutorial, standard_tutorial].include?(t)
-          end
-          expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+        relevant_tutorials = tutorials.select do |t|
+          [manual_tutorial, standard_tutorial].include?(t)
         end
+        expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
       end
+    end
 
-      context "talks" do
-        let(:lecture) { create(:seminar) }
+    context "talks" do
+      let(:lecture) { create(:seminar) }
 
-        it "sorts talks by position" do
-          talk1 = create(:talk, lecture: lecture, position: 2)
-          talk2 = create(:talk, lecture: lecture, position: 1)
+      it "sorts talks by position" do
+        talk1 = create(:talk, lecture: lecture, position: 2)
+        talk2 = create(:talk, lecture: lecture, position: 1)
 
-          component = described_class.new(lecture: lecture, group_type: :talks)
-          groups = component.groups
-          talks = groups.find { |g| g[:type] == :talks }[:items]
+        component = described_class.new(lecture: lecture, group_type: :talks)
+        groups = component.groups
+        talks = groups.find { |g| g[:type] == :talks }[:items]
 
-          expect(talks).to eq([talk2, talk1])
-        end
+        expect(talks).to eq([talk2, talk1])
       end
     end
   end
