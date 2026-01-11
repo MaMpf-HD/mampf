@@ -35,8 +35,8 @@ de:
       step_2: "Dabei können Sie Tutorien oder Vorträge direkt mit anlegen (Schnell-Erstellung) oder bereits existierende auswählen."
       step_3: "Studierende geben ihre Präferenzen an oder melden sich direkt an (je nach Modus)."
       step_4: "Die Plätze werden automatisch verteilt. Sie können das Ergebnis hier nachträglich anpassen."
-      manual_method: "Manuelle Verwaltung"
-      manual_desc: "Für einzelne Gruppen können Sie den manuellen Modus aktivieren, um Studierende von Anfang an manuell zuzuweisen. Achtung: Dies ist nur möglich, solange die Gruppe noch nicht Bestandteil eines Anmeldeverfahrens war. Sobald Studierende eingetragen sind, ist eine Verwendung in Anmeldeverfahren ausgeschlossen."
+      manual_method: "Direkte Verwaltung"
+      manual_desc: "Für einzelne Gruppen können Sie Anmeldeverfahren überspringen, um Studierende von Anfang an direkt zuzuweisen. Achtung: Dies ist nur möglich, solange die Gruppe noch nicht Bestandteil eines Anmeldeverfahrens war. Sobald Studierende eingetragen sind, ist eine Verwendung in Anmeldeverfahren ausgeschlossen."
     actions:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
@@ -50,7 +50,7 @@ de:
       add_student_label: 'E-Mail des Studierenden'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Sind Sie sicher, dass Sie diesen Studierenden entfernen möchten?'
-      enable_manual_management: 'Manuelle Verwaltung'
+      enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
     details:
       participants: 'Teilnehmende'
@@ -103,10 +103,10 @@ de:
         remove_only: 'Nur Austragen'
         add_and_remove: 'Ein- & Austragen'
       label: 'Selbsteinschreibung'
-    manual_mode: 'Manueller Modus'
-    enable_manual_hint: 'Manueller Modus kann nicht aktiviert werden, da diese Gruppe Teil einer Kampagne war.'
-    disable_manual_hint: 'Manueller Modus kann nicht deaktiviert werden, da die Liste nicht leer ist.'
-    enable_manual_management: 'Manuelle Verwaltung aktivieren'
+    skip_campaigns: 'Anmeldeverfahren überspringen'
+    enable_skip_campaigns_hint: 'Anmeldeverfahren können nicht übersprungen werden, da diese Gruppe Teil einer Kampagne war.'
+    disable_skip_campaigns_hint: 'Anmeldeverfahren können nicht aktiviert werden, da die Liste nicht leer ist.'
+    enable_manual_management: 'Direkte Verwaltung aktivieren'
     view_campaign: 'Anmeldeverfahren ansehen'
     create_campaign: 'Anmeldeverfahren erstellen'
     campaign_running: 'Anmeldeverfahren läuft'

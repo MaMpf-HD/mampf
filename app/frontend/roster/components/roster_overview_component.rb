@@ -65,6 +65,18 @@ class RosterOverviewComponent < ViewComponent::Base
     items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
+  def show_campaign_running_badge?(item, campaign)
+    !item.manual_roster_mode? && campaign.present? && item.roster_empty?
+  end
+
+  def campaign_badge_props(campaign)
+    if campaign&.draft?
+      { text: I18n.t("roster.campaign_draft"), css_class: "badge bg-secondary" }
+    else
+      { text: I18n.t("roster.campaign_running"), css_class: "badge bg-info text-dark" }
+    end
+  end
+
   def show_manual_mode_switch?(item)
     (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
       (!item.manual_roster_mode? && item.can_enable_manual_mode?)
@@ -73,13 +85,6 @@ class RosterOverviewComponent < ViewComponent::Base
   def toggle_manual_mode_path(item)
     method_name = "#{item.class.name.underscore}_roster_path"
     Rails.application.routes.url_helpers.public_send(method_name, item)
-  end
-
-  def update_self_materialization_path(item, mode, group_type_param = nil)
-    method_name = "#{item.class.name.underscore}_update_self_materialization_path"
-    params = { self_materialization_mode: mode }
-    params[:group_type] = group_type_param if group_type_param.present?
-    Rails.application.routes.url_helpers.public_send(method_name, item, params)
   end
 
   def subtables_for(group)
@@ -145,13 +150,13 @@ class RosterOverviewComponent < ViewComponent::Base
 
       return nil if items.empty?
 
-      # Sort items: those with manual mode switch at the bottom
+      # Sort items: those with skip_campaigns switch at the bottom
       sorted_items = items.sort_by do |item|
         if type == :talks
           item.position
         else
-          has_switch = (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
-                       (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+          has_switch = (item.skip_campaigns? && item.can_unskip_campaigns?) ||
+                       (!item.skip_campaigns? && item.can_skip_campaigns?)
           [has_switch ? 1 : 0, item.title]
         end
       end

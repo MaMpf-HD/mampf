@@ -37,25 +37,27 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     context "sorting" do
-      context "tutorials" do
-        let!(:locked_tutorial) do
-          t = create(:tutorial, lecture: lecture, title: "A Locked")
-          allow(t).to receive(:in_real_campaign?).and_return(true)
-          allow(t).to receive(:manual_roster_mode?).and_return(false)
-          t
-        end
+      let!(:locked_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "A Locked")
+        # Simulate being in a campaign so skip_campaigns cannot be enabled
+        allow(t).to receive(:in_real_campaign?).and_return(true)
+        allow(t).to receive(:skip_campaigns?).and_return(false)
+        t
+      end
 
-        let!(:manual_tutorial) do
-          t = create(:tutorial, lecture: lecture, title: "B Manual", manual_roster_mode: true)
-          allow(t).to receive(:roster_empty?).and_return(true)
-          t
-        end
+      let!(:manual_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "B Manual", skip_campaigns: true)
+        # Simulate empty roster so skip_campaigns can be disabled
+        allow(t).to receive(:roster_empty?).and_return(true)
+        t
+      end
 
-        let!(:standard_tutorial) do
-          t = create(:tutorial, lecture: lecture, title: "C Standard", manual_roster_mode: false)
-          allow(t).to receive(:in_real_campaign?).and_return(false)
-          t
-        end
+      let!(:standard_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
+        # Not in campaign, so skip_campaigns can be enabled
+        allow(t).to receive(:in_real_campaign?).and_return(false)
+        t
+      end
 
         it "sorts locked items first, then switchable items" do
           groups = component.groups
@@ -149,36 +151,114 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
   end
 
-  describe "#show_manual_mode_switch?" do
-    let(:item) { create(:tutorial, lecture: lecture) }
+  describe "#show_campaign_running_badge?" do
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
 
-    it "returns true if manual mode can be disabled" do
-      allow(item).to receive(:manual_roster_mode?).and_return(true)
-      allow(item).to receive(:can_disable_manual_mode?).and_return(true)
-      expect(component.show_manual_mode_switch?(item)).to be(true)
+    it "returns true when conditions are met" do
+      # skip_campaigns? is false by default (assuming)
+      # roster_empty? is true by default
+      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(true)
     end
 
-    it "returns true if manual mode can be enabled" do
-      allow(item).to receive(:manual_roster_mode?).and_return(false)
-      allow(item).to receive(:can_enable_manual_mode?).and_return(true)
-      expect(component.show_manual_mode_switch?(item)).to be(true)
+    it "returns false if manual roster mode" do
+      allow(tutorial).to receive(:skip_campaigns?).and_return(true)
+      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
     end
 
-    it "returns false otherwise" do
-      allow(item).to receive(:manual_roster_mode?).and_return(true)
-      allow(item).to receive(:can_disable_manual_mode?).and_return(false)
-      expect(component.show_manual_mode_switch?(item)).to be(false)
+    it "returns false if campaign is missing" do
+      expect(component.show_campaign_running_badge?(tutorial, nil)).to be(false)
+    end
+
+    it "returns false if roster is not empty" do
+      allow(tutorial).to receive(:roster_empty?).and_return(false)
+      expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
     end
   end
 
-  describe "#toggle_manual_mode_path" do
+  describe "#campaign_badge_props" do
+    let(:draft_campaign) { build(:registration_campaign, status: :draft) }
+    let(:running_campaign) { build(:registration_campaign, status: :open) }
+
+    it "returns draft badge properties for draft campaign" do
+      props = component.campaign_badge_props(draft_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_draft"))
+      expect(props[:css_class]).to include("bg-secondary")
+    end
+
+    it "returns running badge properties for running campaign" do
+      props = component.campaign_badge_props(running_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_running"))
+      expect(props[:css_class]).to include("bg-info")
+    end
+  end
+
+  describe "#show_skip_campaigns_switch?" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns true if skip_campaigns can be disabled" do
+      allow(item).to receive(:skip_campaigns?).and_return(true)
+      allow(item).to receive(:can_unskip_campaigns?).and_return(true)
+      expect(component.show_skip_campaigns_switch?(item)).to be(true)
+    end
+
+    it "returns true if skip_campaigns can be enabled" do
+      allow(item).to receive(:skip_campaigns?).and_return(false)
+      allow(item).to receive(:can_skip_campaigns?).and_return(true)
+      expect(component.show_skip_campaigns_switch?(item)).to be(true)
+    end
+
+    it "returns false otherwise" do
+      allow(item).to receive(:skip_campaigns?).and_return(true)
+      allow(item).to receive(:can_unskip_campaigns?).and_return(false)
+      expect(component.show_skip_campaigns_switch?(item)).to be(false)
+    end
+  end
+
+  describe "#toggle_skip_campaigns_path" do
     let(:item) { create(:tutorial, lecture: lecture) }
 
     it "returns the correct path" do
       allow(Rails.application.routes.url_helpers).to receive(:tutorial_roster_path)
         .with(item).and_return("/path/to/roster")
 
-      expect(component.toggle_manual_mode_path(item)).to eq("/path/to/roster")
+      expect(component.toggle_skip_campaigns_path(item)).to eq("/path/to/roster")
+    end
+  end
+
+  describe "#update_self_materialization_path" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns the correct path without group_type" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only" })
+        .and_return("/path/to/self_materialization")
+
+      expect(component.update_self_materialization_path(item, "add_only"))
+        .to eq("/path/to/self_materialization")
+    end
+
+    it "returns the correct path with group_type parameter" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only", group_type: :tutorials })
+        .and_return("/path/to/self_materialization?group_type=tutorials")
+
+      expect(component.update_self_materialization_path(item, "add_only", :tutorials))
+        .to eq("/path/to/self_materialization?group_type=tutorials")
+    end
+
+    it "returns the correct path with array group_type parameter" do
+      allow(Rails.application.routes.url_helpers)
+        .to receive(:tutorial_update_self_materialization_path)
+        .with(item, { self_materialization_mode: "add_only",
+                      group_type: [:tutorials, :cohorts] })
+        .and_return("/path/to/self_materialization?group_type[]=tutorials&group_type[]=cohorts")
+
+      expect(component.update_self_materialization_path(item, "add_only",
+                                                        [:tutorials, :cohorts]))
+        .to eq("/path/to/self_materialization?group_type[]=tutorials&group_type[]=cohorts")
     end
   end
 
