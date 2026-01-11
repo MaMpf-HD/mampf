@@ -231,7 +231,7 @@ module Rosters
 
         if skip_campaigns?
           # Switching from false (Campaign Mode) to true (Skip Campaigns)
-          # Only allowed if never in a real campaign
+          # Only allowed if never in a real campaign (maintains audit trail)
           errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_real_campaign?
         else
           # Switching from true (Skip Campaigns) to false (Campaign Mode)
@@ -255,8 +255,7 @@ module Rosters
         return unless active_campaign
 
         errors.add(:base,
-                   I18n.t("roster.errors.active_campaign_exists",
-                          default: "cannot be enabled during active campaign"))
+                   I18n.t("roster.errors.active_campaign_exists"))
       end
 
       def enforce_rosterable_destruction_constraints
@@ -272,17 +271,21 @@ module Rosters
       end
 
       def enforce_consistency_between_modes
-        # 1. If manual roster mode is disabled (System Mode), self-materialization MUST be disabled.
-        # This ensures that switching back to campaign mode cleans up the state.
-        if manual_roster_mode_changed? && !manual_roster_mode?
+        # If switching back to campaign mode (skip_campaigns: false),
+        # self-materialization MUST be disabled to prevent conflicts.
+        # This ensures that campaign mode has full control.
+        if skip_campaigns_changed? && !skip_campaigns?
           self.self_materialization_mode = :disabled
+          return
         end
 
-        # 2. If self-materialization is active, manual roster mode MUST be true.
-        # This prevents "Campaign Mode" from conflicting with "Self-Enrollment".
-        return if self_materialization_mode_disabled?
+        # If enabling self-materialization on a group that has NEVER been in a campaign,
+        # we must set skip_campaigns=true to prevent it from being added to campaigns.
+        # (This is the "Before Campaign" scenario - direct management from the start)
+        # After-campaign scenarios can keep skip_campaigns=false since they already have history.
+        return unless self_materialization_mode_changed? && !self_materialization_mode_disabled?
 
-        self.manual_roster_mode = true
+        self.skip_campaigns = true unless in_real_campaign?
       end
 
       # Identifies users in the target list who are not yet in the roster and

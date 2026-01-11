@@ -66,7 +66,7 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def show_campaign_running_badge?(item, campaign)
-    !item.manual_roster_mode? && campaign.present? && item.roster_empty?
+    !item.skip_campaigns? && campaign.present? && item.roster_empty?
   end
 
   def campaign_badge_props(campaign)
@@ -77,14 +77,25 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
-  def show_manual_mode_switch?(item)
-    (item.manual_roster_mode? && item.can_disable_manual_mode?) ||
-      (!item.manual_roster_mode? && item.can_enable_manual_mode?)
+  def show_skip_campaigns_switch?(item)
+    (item.skip_campaigns? && item.can_unskip_campaigns?) ||
+      (!item.skip_campaigns? && item.can_skip_campaigns?)
   end
 
-  def toggle_manual_mode_path(item)
+  def toggle_skip_campaigns_path(item)
     method_name = "#{item.class.name.underscore}_roster_path"
     Rails.application.routes.url_helpers.public_send(method_name, item)
+  end
+
+  def update_self_materialization_path(item, mode, group_type_param = nil)
+    method_name = "#{item.class.name.underscore}_update_self_materialization_path"
+    group_type_param ||= @group_type
+    Rails.application.routes.url_helpers.public_send(
+      method_name,
+      item,
+      self_materialization_mode: mode,
+      group_type: group_type_param
+    )
   end
 
   def subtables_for(group)

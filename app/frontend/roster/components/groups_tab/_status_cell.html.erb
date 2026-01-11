@@ -11,7 +11,7 @@
     <span class="badge <%= css_class %>"><%= text %></span>
   <% end %>
 
-  <% if item.manual_roster_mode %>
+  <% if item.skip_campaigns %>
     <span class="badge bg-light text-dark border border-dark"><%= t("roster.status_values.manual") %></span>
   <% end %>
 

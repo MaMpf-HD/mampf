@@ -167,7 +167,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     # Switching Self-Materialization Mode
     describe "#validate_self_materialization_switch" do
-      let(:rosterable) { create(:tutorial, manual_roster_mode: false) }
+      let(:rosterable) { create(:tutorial, skip_campaigns: false) }
 
       context "when campaign is running" do
         before do
@@ -194,11 +194,11 @@ RSpec.describe(Rosters::Rosterable) do
         end
 
         it "cannot enable add_only due to manual mode lock" do
-          # Enabling self-mat forces manual_roster_mode: true
-          # manual_roster_mode: true is forbidden if in_real_campaign? (even completed)
+          # Enabling self-mat forces skip_campaigns: true
+          # skip_campaigns: true is forbidden if in_real_campaign? (even completed)
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:manual_roster_mode])
+          expect(rosterable.errors[:base])
             .to include(I18n.t("roster.errors.campaign_associated"))
         end
       end
@@ -207,15 +207,15 @@ RSpec.describe(Rosters::Rosterable) do
         it "can enable add_only and forces manual mode" do
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).to(be_valid)
-          expect(rosterable.manual_roster_mode).to be(true)
+          expect(rosterable.skip_campaigns).to be(true)
         end
       end
 
       context "disabling mode" do
-        before { rosterable.update(self_materialization_mode: :add_only, manual_roster_mode: true) }
+        before { rosterable.update(self_materialization_mode: :add_only, skip_campaigns: true) }
 
         it "disables self-materialization when disabling manual mode" do
-          rosterable.manual_roster_mode = false
+          rosterable.skip_campaigns = false
           rosterable.valid?
           expect(rosterable.self_materialization_mode).to eq("disabled")
         end
