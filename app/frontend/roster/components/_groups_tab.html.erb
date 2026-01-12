@@ -1,7 +1,7 @@
 <div>
   <%= render "roster/components/groups_tab/workflow_info", component: component %>
 
-  <% groups.each_with_index do |group, index| %>
+  <% component.sections.each_with_index do |group, index| %>
     <%= render "roster/components/groups_tab/group_header",
                group: group,
                component: component,
