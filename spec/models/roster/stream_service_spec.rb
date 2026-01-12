@@ -15,6 +15,7 @@ RSpec.describe Roster::StreamService do
     # Differentiate returns based on target (first arg)
     allow(turbo_stream_builder).to receive(:replace).with("roster_groups", anything).and_return("<replace-roster></replace-roster>")
     allow(turbo_stream_builder).to receive(:replace).with("item_1", anything).and_return("<replace-item></replace-item>")
+    allow(turbo_stream_builder).to receive(:prepend).with("flash-messages", anything).and_return("<prepend-flash></prepend-flash>")
     
     # Fallback for others
     allow(turbo_stream_builder).to receive(:replace).with(no_args).and_return("<turbo-stream action='replace'></turbo-stream>")
@@ -32,6 +33,12 @@ RSpec.describe Roster::StreamService do
       streams = service.roster_changed
 
       expect(streams).to include("<replace-roster></replace-roster>")
+    end
+
+    it "includes flash stream if flash is provided" do
+      streams = service.roster_changed(flash: { notice: "Saved" })
+
+      expect(streams).to include("<prepend-flash></prepend-flash>")
     end
   end
 
