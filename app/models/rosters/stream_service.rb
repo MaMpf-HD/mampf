@@ -1,4 +1,4 @@
-module Roster
+module Rosters
   class StreamService
     def initialize(lecture, view_context)
       @lecture = lecture
@@ -49,10 +49,11 @@ module Roster
 
         @view_context.turbo_stream.replace(
           frame_id,
-          @view_context.turbo_frame_tag(frame_id,
-                                        src: @view_context.lecture_roster_path(@lecture,
-                                                                               group_type: group_type),
-                                        loading: "lazy")
+          @view_context
+          .turbo_frame_tag(frame_id,
+                           src: @view_context.lecture_roster_path(@lecture,
+                                                                  group_type: group_type),
+                           loading: "lazy")
         )
       end
 

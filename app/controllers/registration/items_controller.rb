@@ -48,7 +48,8 @@ module Registration
               stream_flash
             ]
             if @campaign.campaignable.is_a?(Lecture)
-              streams << refresh_roster_groups_list_stream(@campaign.campaignable)
+              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
+                                                        view_context).roster_changed(flash: nil))
             end
             render turbo_stream: streams
           end
@@ -195,7 +196,8 @@ module Registration
               stream_flash
             ]
             if @campaign.campaignable.is_a?(Lecture)
-              streams << refresh_roster_groups_list_stream(@campaign.campaignable)
+              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
+                                                        view_context).roster_changed(flash: nil))
             end
             render turbo_stream: streams
           end

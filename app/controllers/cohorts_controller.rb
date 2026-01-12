@@ -74,16 +74,18 @@ class CohortsController < ApplicationController
         streams = []
 
         if @cohort.errors.empty?
-          streams << update_roster_groups_list_stream(group_type)
+          streams.concat(Rosters::StreamService.new(@lecture, view_context)
+          .item_updated(@cohort,
+                        group_type: group_type, flash: flash))
           streams << refresh_campaigns_index_stream(@cohort.lecture)
           streams << turbo_stream.update("modal-container", "")
         else
           streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                           partial: "cohorts/modal_form",
                                           locals: { cohort: @cohort })
+          streams << stream_flash if flash.present?
         end
 
-        streams << stream_flash if flash.present?
         render turbo_stream: streams, status: @cohort.errors.empty? ? :ok : :unprocessable_content
       end
     end
@@ -100,9 +102,11 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: [update_roster_groups_list_stream(group_type),
-                              refresh_campaigns_index_stream(@cohort.lecture),
-                              stream_flash]
+        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
+          group_type: group_type, flash: flash
+        )
+        streams << refresh_campaigns_index_stream(@cohort.lecture)
+        render turbo_stream: streams
       end
     end
   end
@@ -139,31 +143,19 @@ class CohortsController < ApplicationController
 
     def create_turbo_streams(group_type)
       streams = []
+      service = Rosters::StreamService.new(@lecture, view_context)
 
       if @cohort.persisted?
-        streams << update_roster_groups_list_stream(group_type)
+        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                         partial: "cohorts/modal_form",
                                         locals: { cohort: @cohort })
+        streams << stream_flash if flash.present?
       end
-
-      streams << stream_flash if flash.present?
       streams
-    end
-
-    def update_roster_groups_list_stream(group_type)
-      component = RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type)
-      turbo_stream.update("roster_groups_list",
-                          partial: "roster/components/groups_tab",
-                          locals: {
-                            groups: component.groups,
-                            group_type: group_type,
-                            component: component
-                          })
     end
 
     def parse_group_type

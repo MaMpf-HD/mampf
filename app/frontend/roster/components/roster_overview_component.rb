@@ -350,8 +350,10 @@ class RosterOverviewComponent < ViewComponent::Base
       if cohorts_enabled?
         actions << {
           label: I18n.t("roster.cohorts.kinds.with_enrollment"), # "Group with enrollment"
-          url: Rails.application.routes.url_helpers.new_cohort_path(lecture_id: @lecture.id,
-                                                                    group_type: @group_type, cohort: { propagate_to_lecture: true })
+          url: Rails.application.routes.url_helpers
+                    .new_cohort_path(lecture_id: @lecture.id,
+                                     group_type: @group_type,
+                                     cohort: { propagate_to_lecture: true })
         }
       end
 
@@ -363,8 +365,9 @@ class RosterOverviewComponent < ViewComponent::Base
 
       [{
         label: I18n.t("roster.cohorts.kinds.without_enrollment"), # "Group without enrollment"
-        url: Rails.application.routes.url_helpers.new_cohort_path(lecture_id: @lecture.id,
-                                                                  group_type: @group_type, cohort: { propagate_to_lecture: false })
+        url: Rails.application.routes.url_helpers
+                  .new_cohort_path(lecture_id: @lecture.id,
+                                   group_type: @group_type, cohort: { propagate_to_lecture: false })
       }]
     end
 

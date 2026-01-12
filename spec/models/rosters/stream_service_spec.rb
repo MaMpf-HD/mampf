@@ -1,7 +1,7 @@
 require "rails_helper"
-require_relative "../../../app/models/roster/stream_service"
+require_relative "../../../app/models/rosters/stream_service"
 
-RSpec.describe Roster::StreamService do
+RSpec.describe(Rosters::StreamService) do
   let(:lecture) { create(:lecture) }
   # Mocking view_context to capture turbo streams
   let(:view_context) { double("ViewContext") }
@@ -11,17 +11,25 @@ RSpec.describe Roster::StreamService do
   before do
     # helper for turbo_stream
     allow(view_context).to receive(:turbo_stream).and_return(turbo_stream_builder)
-    
+
     # Differentiate returns based on target (first arg)
-    allow(turbo_stream_builder).to receive(:replace).with("roster_groups", anything).and_return("<replace-roster></replace-roster>")
-    allow(turbo_stream_builder).to receive(:replace).with("item_1", anything).and_return("<replace-item></replace-item>")
-    allow(turbo_stream_builder).to receive(:prepend).with("flash-messages", anything).and_return("<prepend-flash></prepend-flash>")
-    
+    allow(turbo_stream_builder).to receive(:replace).with("roster_groups", anything)
+                                                    .and_return("<replace-roster></replace-roster>")
+    allow(turbo_stream_builder).to receive(:replace).with("item_1",
+                                                          anything)
+                                                    .and_return("<replace-item></replace-item>")
+    allow(turbo_stream_builder).to receive(:prepend).with("flash-messages",
+                                                          anything)
+                                                    .and_return("<prepend-flash></prepend-flash>")
+
     # Fallback for others
-    allow(turbo_stream_builder).to receive(:replace).with(no_args).and_return("<turbo-stream action='replace'></turbo-stream>")
+    allow(turbo_stream_builder)
+      .to receive(:replace).with(no_args)
+                           .and_return("<turbo-stream action='replace'></turbo-stream>")
 
     # helper for lecture_roster_path
-    allow(view_context).to receive(:lecture_roster_path).and_return("/lectures/#{lecture.id}/roster")
+    allow(view_context).to receive(:lecture_roster_path)
+      .and_return("/lectures/#{lecture.id}/roster")
     # helper for dom_id
     allow(ActionView::RecordIdentifier).to receive(:dom_id).and_return("item_1")
     # helper for turbo_frame_tag (mocking simplified output)

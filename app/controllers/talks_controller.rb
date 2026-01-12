@@ -106,12 +106,12 @@ class TalksController < ApplicationController
         format.html { redirect_to edit_talk_path(@talk) }
         format.turbo_stream do
           group_type = parse_group_type
-          render turbo_stream: [
-            update_roster_groups_list_stream(group_type),
-            refresh_campaigns_index_stream(@talk.lecture),
-            turbo_stream.update("modal-container", ""),
-            stream_flash
-          ].compact
+          streams = Rosters::StreamService.new(@talk.lecture, view_context).roster_changed(
+            group_type: group_type, flash: flash
+          )
+          streams << refresh_campaigns_index_stream(@talk.lecture)
+          streams << turbo_stream.update("modal-container", "")
+          render turbo_stream: streams
         end
       end
       return
@@ -146,11 +146,11 @@ class TalksController < ApplicationController
       end
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: [
-          update_roster_groups_list_stream(group_type),
-          refresh_campaigns_index_stream(lecture),
-          stream_flash
-        ].compact
+        streams = Rosters::StreamService.new(@talk.lecture, view_context).roster_changed(
+          group_type: group_type, flash: flash
+        )
+        streams << refresh_campaigns_index_stream(lecture)
+        render turbo_stream: streams
       end
     end
   end
@@ -211,32 +211,21 @@ class TalksController < ApplicationController
 
     def create_turbo_streams(group_type, saved)
       streams = []
+      service = Rosters::StreamService.new(@talk.lecture, view_context)
 
       if saved
         flash.now[:notice] = t("controllers.talks.created")
-        streams << update_roster_groups_list_stream(group_type)
+        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
         streams << refresh_campaigns_index_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(@talk, "form"),
                                         partial: "talks/roster_modal_form",
                                         locals: { talk: @talk })
+        streams << stream_flash if flash.present?
       end
 
-      streams << stream_flash if flash.present?
       streams
-    end
-
-    def update_roster_groups_list_stream(group_type)
-      component = RosterOverviewComponent.new(lecture: @talk.lecture,
-                                              group_type: group_type)
-      turbo_stream.update("roster_groups_list",
-                          partial: "roster/components/groups_tab",
-                          locals: {
-                            groups: component.groups,
-                            group_type: group_type,
-                            component: component
-                          })
     end
 
     def refresh_campaigns_index_stream(lecture)

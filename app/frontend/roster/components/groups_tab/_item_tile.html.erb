@@ -1,5 +1,5 @@
 <% campaign = component.active_campaign_for(item) %>
-<div class="col">
+<div class="col" id="<%= dom_id(item) %>">
   <div class="card h-100 roster-tile rounded-3 <%= 'cohort' if item.is_a?(Cohort) %>">
     <div class="card-body d-flex flex-column">
 

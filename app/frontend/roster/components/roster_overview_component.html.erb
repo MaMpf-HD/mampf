@@ -33,13 +33,13 @@
   <div class="tab-content" id="rosterTabsContent">
     <!-- Groups Tab -->
     <div class="tab-pane fade <%= 'show active' if @active_tab == :groups %>" id="groups-pane" role="tabpanel">
-      <div id="roster_groups_list">
+      <%= helpers.turbo_frame_tag "roster_groups" do %>
         <% if @rosterable %>
           <%= render RosterDetailComponent.new(rosterable: @rosterable, group_type: @group_type) %>
         <% else %>
           <%= render "roster/components/groups_tab", groups: groups, group_type: @group_type, component: self %>
         <% end %>
-      </div>
+      <% end %>
     </div>
 
     <!-- Participants Tab -->
