@@ -1,10 +1,9 @@
-<td id="<%= dom_id(item, :status) %>" class="text-end">
+<div id="<%= dom_id(item, :status) %>" class="d-flex gap-1 justify-content-end">
   <% status_data = component.status_badge_data(item, campaign) %>
   <span class="badge <%= status_data[:css_class] %>"
         data-bs-toggle="tooltip"
         title="<%= status_data[:tooltip] %>">
     <i class="<%= status_data[:icon] %>"></i>
-    <%= status_data[:text] %>
   </span>
 
   <% if status_data[:self_enrollment] %>
@@ -19,5 +18,5 @@
       <% end %>
     </span>
   <% end %>
-</td>
+</div>
 

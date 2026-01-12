@@ -1,0 +1,47 @@
+// Roster Tile Styles
+.roster-tile {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #dee2e6;
+  background: #fff;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    border-color: var(--bs-primary);
+    z-index: 10;
+
+    .tile-actions {
+      opacity: 1;
+    }
+  }
+
+  &.cohort {
+    background-color: #f1f3f5;
+  }
+
+  .tile-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+}
+
+// Ensure actions are visible on touch devices or where hover isn't available
+@media (hover: none) {
+  .roster-tile .tile-actions {
+    opacity: 1;
+  }
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.section-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
