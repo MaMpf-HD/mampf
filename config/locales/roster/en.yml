@@ -193,9 +193,12 @@ en:
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
     cohorts:
-      with_lecture_enrollment_title: "With Lecture Enrollment"
+      kinds:
+        with_enrollment: "Group with enrollment"
+        without_enrollment: "Group without enrollment"
+      with_lecture_enrollment_title: "With Enrollment"
       with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
-      without_lecture_enrollment_title: "Without Lecture Enrollment"
+      without_lecture_enrollment_title: "Without Enrollment"
       without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"

@@ -404,11 +404,7 @@ class RosterOverviewComponent < ViewComponent::Base
     end
 
     def primary_section_title
-      if @lecture.seminar?
-        I18n.t("roster.tabs.talk_maintenance")
-      else
-        I18n.t("roster.tabs.tutorial_maintenance")
-      end
+      I18n.t("roster.cohorts.with_lecture_enrollment_title")
     end
 
     def target_types

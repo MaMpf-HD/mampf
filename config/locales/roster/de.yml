@@ -199,9 +199,9 @@ de:
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
-      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      with_lecture_enrollment_title: "Mit Einschreibung"
       with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
-      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_title: "Ohne Einschreibung"
       without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
       with_lecture_enrollment: "Mit Veranstaltungseinschreibung"

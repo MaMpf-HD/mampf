@@ -2,14 +2,16 @@
   <%= render "roster/components/groups_tab/workflow_info", component: component %>
 
   <% component.sections.each_with_index do |group, index| %>
-    <%= render "roster/components/groups_tab/group_header",
-               group: group,
-               component: component,
-               group_type: group_type %>
+    <div class="card section-card mb-4">
+      <%= render "roster/components/groups_tab/group_header",
+                 group: group,
+                 component: component,
+                 group_type: group_type %>
 
-    <%= render "roster/components/groups_tab/group_table",
-               group: group,
-               component: component,
-               group_type: group_type %>
+      <%= render "roster/components/groups_tab/group_table",
+                 group: group,
+                 component: component,
+                 group_type: group_type %>
+    </div>
   <% end %>
 </div>

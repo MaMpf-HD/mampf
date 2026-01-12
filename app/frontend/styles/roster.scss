@@ -43,5 +43,13 @@
   background: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
   padding: 1.5rem;
-  border-radius: 0.5rem 0.5rem 0 0;
+  // Border radius is handled by the parent card's overflow: hidden
+}
+
+.card.section-card {
+  border: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background-color: #fff;
+  border-radius: 0.5rem; // Restoring to mockup value 0.5rem for consistency
+  overflow: hidden;      // Fix for the border bleeding line
 }

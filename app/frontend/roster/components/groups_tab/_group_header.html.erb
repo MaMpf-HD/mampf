@@ -1,8 +1,8 @@
-<div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
+<div class="section-header d-flex justify-content-between align-items-center">
   <div class="d-flex align-items-center gap-2">
-    <h6 class="mb-0 fw-bold">
+    <h5 class="mb-0 fw-bold text-dark">
       <%= group[:title] %>
-    </h6>
+    </h5>
     <% if group[:help] %>
       <%= helpdesk(group[:help], false) %>
     <% end %>
@@ -11,7 +11,7 @@
     <div class="d-flex gap-2">
       <% group[:actions].each do |action| %>
         <%= link_to action[:path],
-                    class: "btn btn-sm btn-light",
+                    class: "btn btn-sm btn-light border",
                     data: { turbo_method: action[:method], turbo_prefetch: false } do %>
           <i class="bi bi-plus-lg"></i> <%= action[:text] %>
         <% end %>
