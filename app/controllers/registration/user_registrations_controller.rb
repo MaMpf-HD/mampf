@@ -177,8 +177,7 @@ module Registration
       def init_result
         @items_selected = @campaign.registration_items
                                    .includes(:user_registrations)
-                                   .where.not(user_registrations: { id: nil })
-
+                                   .where(user_registrations: { user_id: current_user.id })
         @items_succeed = Rosters::StudentMainResultResolver
                          .new(@campaign, current_user).succeed_items
         @item_succeed = @items_succeed.first || nil
