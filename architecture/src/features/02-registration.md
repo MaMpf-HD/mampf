@@ -48,6 +48,36 @@ We use a unified system with:
 - Student Registration (Index – tabs): [Student index](../mockups/student_registration_index_tabs.html)
 ```
 
+### Usage Scenarios
+- A **`Tutorial`** includes `Registerable` to manage its student roster.
+- A **`Talk`** includes `Registerable` to designate students as its speakers.
+- A **`Lecture`** (acting as a course) includes `Registerable` to manage direct enrollment.
+- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
+- A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
+
+## Configuration Patterns
+
+We recommend that users follow one of these patterns based on their course structure:
+
+### Pattern 1: Group Enrollment (Complex Courses)
+Use this when your lecture has sub-structures (Tutorials or Talks) that need assignment.
+- **Primary Campaign:** Items are **Tutorials** or **Talks**.
+    - *Outcome:* Students get a group spot AND official Lecture Roster access (via propagation).
+- **Sidecar Campaign (Optional):** Item is a **Cohort** (e.g., "Waitlist").
+    - *Outcome:* Students land on a separate waitlist. They **do not** get official access until staff moves them to a group.
+
+### Pattern 2: Lecture Enrollment (Simple Courses)
+Use this when your lecture has no sub-structures (e.g., Advanced Lecture, simple Seminar).
+- **Primary Campaign:** Item is the **Lecture** itself.
+    - *Outcome:* Students are enrolled directly on the Lecture Roster (Status "Unassigned").
+- **Repeaters:** Can be managed via a parallel Lecture Enrollment campaign.
+    - *Outcome:* They merge into the official roster and get access, without needing a tutorial spot.
+
+> **Note:** These patterns can be run concurrently. A Lecture Enrollment campaign can run alongside Group Enrollment to act as a "General Access / Auditor" list, though using Specific Cohorts is often cleaner for waitlist management.
+
+
+
+
 ## Registration::Campaign (ActiveRecord Model)
 **_The Registration Process Orchestrator_**
 
@@ -313,6 +343,58 @@ See also the Campaigns index mockups where the planning-only row appears as
 "Interest Registration" with a note like "Planning only; not materialized".
 ```
 
+---
+
+### Self-Materialization: Direct Roster Access
+
+```admonish info "Beyond Campaigns"
+`Rosterable` models can enable direct student-initiated roster changes,
+either as a complete alternative to campaigns or as a follow-up after
+campaign completion.
+```
+
+**When to use:**
+- **As a complete alternative:** Simple courses where time-bounded orchestration, policies, or preference allocation aren't needed
+- **As a follow-up:** After campaign completion, enable students to self-balance between groups or allow latecomers to join
+
+**Design:**
+
+Each `Rosterable` model gets a `self_materialization_mode` enum:
+- `disabled` (default): Only staff or campaigns modify the roster
+- `add_only`: Students can join (up to capacity)
+- `remove_only`: Students can leave
+- `add_and_remove`: Both actions allowed
+
+**Example Scenarios:**
+
+| Use Case | Campaign? | Self-Materialization Mode | When Enabled |
+|----------|-----------|---------------------------|--------------|
+| Simple open seminar | No | `add_only` | From creation |
+| Tutorial with preference allocation | Yes (preference-based) | `disabled` → `add_and_remove` | After campaign completes |
+| Latecomer waitlist cohort | No | `add_only` | From creation |
+| Lecture with FCFS signup | Yes (FCFS) | `disabled` → `add_only` | After campaign completes |
+| Staff-managed tutorial | No | `disabled` | Never (staff uses maintenance UI) |
+
+**Validation Rules:**
+- Self-materialization must be `disabled` during any non-`planning_only`, non-`completed` campaign targeting this item
+- Capacity is enforced for `add_only`/`add_and_remove`
+- Cannot enable if active campaign exists for this item
+
+**Example Usage:**
+```ruby
+# Enable after campaign finishes
+tutorial.update!(self_materialization_mode: :add_and_remove)
+
+# Student-initiated action (via controller)
+if tutorial.can_self_add?(current_user)
+  tutorial.self_add!(current_user)
+end
+```
+
+See the `Roster::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
+
+---
+
 ## Registration::Campaignable (Concern)
 **_The Campaign Host_**
 
@@ -407,6 +489,7 @@ assigned to.
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.
+- **For a "Cohort Registration" campaign:** A `RegistrationItem` is created for a `Cohort` (e.g., "Repeaters"). The `registerable` association points to the `Cohort` record.
 - **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
 
 ```admonish warning "Registration::Item vs. Registration::Registerable"
@@ -496,6 +579,7 @@ The `allocated_user_ids` method **must be implemented** by each registerable mod
 - A **`Tutorial`** includes `Registerable` to manage its student roster.
 - A **`Talk`** includes `Registerable` to designate students as its speakers.
 - A **`Lecture`** (acting as a seminar) includes `Registerable` to manage direct enrollment.
+- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
 - A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
 
 ---
@@ -625,7 +709,7 @@ The main fields and methods of `Registration::Policy` are:
 
 ### Behavior Highlights
 - Policies are evaluated in ascending `position` order.
-- The `PolicyEngine` short-circuits on the first policy that fails.
+- The `PolicyEngine` short-circuits on the first failure.
 - Returns a structured outcome (`{ pass: true/false, ... }`) for clear feedback.
 - Adding a new rule type involves adding to the `kind` enum and implementing its logic in `evaluate`, with no schema changes required.
 
@@ -1149,6 +1233,60 @@ class Talk < ApplicationRecord
 end
 ```
 
+### Cohort (New Model)
+**_A Generic Registration Target_**
+
+```admonish info "What it represents"
+A lightweight container for students within a specific context (e.g., "Waitlist" in a Lecture).
+```
+
+#### Responsibilities
+- Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate.
+- Acts as a `Rosterable` container for students.
+- **Sidecar Behavior:** Unlike Tutorials, membership in a Cohort does **not** imply automatic membership in the parent Lecture Roster.
+- Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events.
+
+#### Example Implementation
+```ruby
+class Cohort < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  # Context is polymorphic to support both academic (Lecture) and
+  # generic (Grouping) use cases.
+  belongs_to :context, polymorphic: true
+
+  # Rosterable implementation details in Rosters chapter
+  def capacity
+    self[:capacity]
+  end
+
+  def materialize_allocation!(user_ids:, campaign:)
+    # Delegates to Rosterable implementation
+  end
+end
+```
+
+### Generic Registration Groups (Future Extension)
+
+**Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like an "Event Registration" (e.g., Faculty Barbecue).
+
+**Proposed Solution:** Leverage the `Cohort` model (defined above) as the bucket, and introduce a `Grouping` model as the container.
+
+**New Model:**
+1.  **`Grouping` (The Context):**
+    - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
+    - **Attributes:** `title`, `description`.
+    - **Associations:** `has_one :campaign`, `has_many :cohorts, as: :context`.
+    - **Examples:**
+        - **Event:** "Faculty Barbecue" containing cohorts "Meat", "Vegetarian".
+        - **Poll:** "New Building Name" containing cohorts "Turing Hall", "Noether Hall".
+
+**Benefits:**
+- Decouples registration from academic scheduling.
+- Simplifies UI for non-tutorial use cases.
+- Reuses existing `MaintenanceController` and `Allocation` logic.
+
 ---
 
 ## Campaign Lifecycle (State Diagram)
@@ -1156,9 +1294,9 @@ end
 ```mermaid
 stateDiagram-v2
     [*] --> draft
-    draft --> open : open
-    open --> closed : close (manual or at deadline)
-    closed --> completed : finalize! (optional)
+    draft --> open: open
+    open --> closed: close (manual or at deadline)
+    closed --> completed: finalize! (optional)
 
     note right of closed
         Regular FCFS campaigns: finalize to materialize rosters.
@@ -1188,22 +1326,22 @@ stateDiagram-v2
     open --> closed: Admin closes OR deadline reached
     closed --> processing: Allocation runs
     processing --> completed: Admin finalizes
-    
+
     note right of draft
         Admin configures items,
         policies, deadline
     end note
-    
+
     note right of open
         Users submit preferences;
         all status: pending
     end note
-    
+
     note right of processing
         Registration closed;
         run allocation solver
     end note
-    
+
     note right of completed
         Allocation finalized;
         rosters materialized
@@ -1269,26 +1407,26 @@ stateDiagram-v2
     draft --> open: Admin opens campaign
     open --> closed: Admin closes OR deadline reached
     closed --> completed: Admin finalizes (optional)
-    
+
     note right of draft
         Admin configures items,
         policies, deadline
     end note
-    
+
     note right of open
         Users submit registrations;
         immediate confirm/reject
     end note
-    
+
     note right of closed
         Registration closed;
         results visible
     end note
-    
+
     note right of completed
         For planning-only:
         skip finalize!
-        
+
         For materialization:
         finalize! applies to rosters
     end note
@@ -1316,26 +1454,26 @@ sequenceDiagram
     Controller->>Campaign: find(campaign_id)
     Controller->>Campaign: open_for_registrations?
     Campaign-->>Controller: true
-    
+
     Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
     Campaign->>PolicyEngine: eligible?(user, phase: :registration)
     PolicyEngine-->>Campaign: Result(pass: true/false, ...)
     Campaign-->>Controller: Result
-    
+
     alt policies fail
         Controller-->>UI: Ineligible state
         UI-->>Student: Show error: "Not eligible (reason)"
     else policies pass
         Controller-->>UI: Show register buttons
         UI-->>Student: Display available items
-        
+
         Student->>UI: Click "Register for Item X"
         UI->>Controller: POST /campaigns/:id/user_registrations
-        
+
         Controller->>Item: find(item_id)
         Controller->>Item: remaining_capacity
         Item-->>Controller: capacity count
-        
+
         alt capacity available
             Controller->>UserReg: create!(status: :confirmed, ...)
             UserReg-->>Controller: registration record
@@ -1349,9 +1487,9 @@ sequenceDiagram
         end
     end
     end
-    
+
     note over Student,Roster: Later: Admin closes campaign
-    
+
     rect rgb(255, 245, 235)
     note over Student,Roster: View results (processing state)
     Student->>UI: View results
@@ -1361,7 +1499,7 @@ sequenceDiagram
     Controller-->>UI: Show campaign with status
     UI-->>Student: Display confirmed/rejected
     end
-    
+
     rect rgb(245, 255, 235)
     note over Controller,Roster: Optional: Admin finalizes (materialization)
     Controller->>Campaign: finalize!

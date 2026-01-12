@@ -86,7 +86,7 @@ Registration — Step 3: FCFS Mode
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
-- Scope: Manage registerable items within a campaign.
+- Scope: Manage registerable items within a campaign, including cohorts.
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
 - Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
 - UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.
@@ -112,6 +112,21 @@ Registration — Step 3: FCFS Mode
 - UI: Item selection dropdown; Turbo Stream for dynamic item list updates.
 - Refs: [Multi-item campaigns](02-registration.md#multi-item-campaigns)
 - Acceptance: Students can select from available items; capacity per item enforced; switching items updates previous registration.
+```
+
+```admonish example "PR-3.5 — Admin: Campaign Wizard (Pattern Selector)"
+- Scope: "New Campaign" wizard that forces an explicit choice of Registration Pattern.
+- Controllers: `Registration::CampaignsController#new` handles `?pattern=` param.
+- Logic:
+  - **Step 1 (Pattern Selection):** User chooses between:
+    - **Group Track (Pattern 1):** Creates "Group Registration" campaign (Tutorials/Talks) + optional "Special Groups" campaign (Cohorts).
+    - **Enrollment Track (Pattern 2):** Creates "Course Enrollment" campaign (Lecture).
+    - **Mixed Track (Pattern 3):** Creates both (gated by explicit acknowledgement).
+  - **Step 2 (Configuration):**
+    - For Group Track: Select group source (Tutorials vs Talks), optionally add Cohorts.
+    - For Enrollment Track: Confirm Lecture target.
+- UI: Modal with 3 distinct choices; "Mixed Track" is visually distinct/gated.
+- Acceptance: Wizard guides user through pattern selection; correctly creates 1 or 2 campaigns based on choice; enforces acknowledgement for Mixed Track.
 ```
 
 ```admonish abstract
@@ -157,14 +172,54 @@ Registration — Step 5: Roster Maintenance
 ```
 
 ```admonish example "PR-5.1 — Roster maintenance UI (admin)"
-- Scope: Post-allocation roster management.
+- Scope: Post-allocation roster management for Sub-Groups (Tutorial/Cohort).
 - Controllers: `Roster::MaintenanceController` (move/add/remove actions).
-- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks.
+- Logic: Support `Tutorial`, `Talk` and `Cohort` as rosterable types.
+- UI: Roster Overview with detail views for individual groups; candidates panel (unassigned users from campaign); basic capacity enforcement.
 - Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
-- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work.
+- Acceptance: Teachers can move students between tutorials/talks/cohorts; capacity enforced; candidates panel lists unassigned users; manual add/remove works for groups.
 ```
 
-```admonish example "PR-5.2 — Tutor abilities (read-only roster access)"
+```admonish example "PR-5.2 — Lecture Roster Superset (Enrollment Track)"
+- Scope: Implement Lecture Roster as the superset of all sub-groups.
+- Backend:
+  - Implement `Lecture#ensure_roster_membership!`.
+  - Update `Tutorial/Talk/Cohort#materialize_allocation!` to propagate users to Lecture.
+  - Update `Roster::MaintenanceService` to handle Enrollment/Drop logic (cascading delete).
+- UI: "Enrollment" tab in `RosterOverviewComponent` showing all lecture members; "Unassigned" status calculation.
+- Refs: [Superset Model](03-rosters.md#the-core-concept-lecture-roster-as-superset), [Enrollment Track](03-rosters.md#b-the-enrollment-track)
+- Acceptance: Adding user to tutorial adds them to lecture; Removing from lecture removes from tutorial; Enrollment tab lists all students.
+```
+
+```admonish example "PR-5.3 — Self-materialization (backend + admin config)"
+- Scope: Add `self_materialization_mode` enum to `Rosterable`; implement permission methods; admin UI for configuration.
+- Backend:
+  - Migration: Add `self_materialization_mode` enum column to tutorials, talks, cohorts, lectures.
+  - Update `Roster::Rosterable` concern with `can_self_add?`, `can_self_remove?`, `self_add!`, `self_remove!`.
+  - Validation: Block enabling mode during active campaigns (non-planning, non-completed).
+- Admin UI:
+  - Add mode selector dropdown to roster management UI (per-group basis).
+  - Four options: disabled/add_only/remove_only/add_and_remove.
+  - Turbo Frame update on change; validation errors shown inline.
+  - Feature flag: `self_materialization_enabled`.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access),
+  [Rosterable concern](03-rosters.md#rosterrosterable-concern)
+- Acceptance: Backend methods work; validation enforced; admin can configure mode per tutorial/cohort/talk; changes blocked with clear error if campaign active; feature flag gates both backend and UI.
+```
+
+```admonish example "PR-5.4 — Self-materialization UI (student)"
+- Scope: Student-facing join/leave buttons.
+- Controllers: `Roster::SelfMaterializationController` (join/leave actions).
+- UI:
+  - Join/Leave buttons on Tutorial/Cohort/Talk show pages.
+  - Turbo Stream updates for roster list.
+  - Buttons hidden when mode is `disabled`.
+  - Capacity/duplicate guards with error messages.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access)
+- Acceptance: Students can join/leave when enabled; buttons respect mode settings; capacity enforced; clear error messages for violations; feature flag gates UI.
+```
+
+```admonish example "PR-5.5 — Tutor abilities (read-only roster access)"
 - Scope: Tutors can view rosters for their assigned groups.
 - Abilities: Update CanCanCan to allow read-only roster access for tutors.
 - UI: Tutors see Detail view without edit actions.
@@ -172,7 +227,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Tutors can view rosters for their tutorials; cannot edit; exams do not show candidates panel.
 ```
 
-```admonish example "PR-5.3 — Manual add student (from candidates or arbitrary)"
+```admonish example "PR-5.6 — Manual add student (from candidates or arbitrary)"
 - Scope: Add students to rosters manually.
 - Controllers: Extend `Roster::MaintenanceController` with `add_student` action.
 - UI: "Add student" button on Overview; search input for arbitrary student addition.
@@ -180,12 +235,35 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Teachers can add students from candidates or search; capacity enforced; duplicate prevention.
 ```
 
-```admonish example "PR-5.4 — Integrity job (assigned/allocated reconciliation)"
+```admonish example "PR-5.7 — Roster change notifications"
+- Scope: Email notifications for roster changes affecting students.
+- Mailer: `Roster::ChangeMailer` with methods: `added_to_group`, `removed_from_group`, `moved_between_groups`.
+- Triggers: Called from `Roster::MaintenanceService`, `Registration::Campaign#finalize!`, and `Roster::SelfMaterializationController`.
+- Content: Email includes group name, lecture context, action taken, timestamp; for moves, includes both source and target groups.
+- Configuration: Feature flag `roster_notifications_enabled`; teacher toggle per lecture for notification verbosity (all changes vs finalization-only).
+- Background: Deliver via `ActionMailer::DeliveryJob` (async).
+- Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
+- Acceptance: Students receive emails on add/remove/move; emails queued asynchronously; feature flag gates delivery; teachers can configure notification timing per lecture.
+```
+
+```admonish example "PR-5.8 — Integrity job (assigned/allocated reconciliation)"
 - Scope: Background job to verify roster consistency.
 - Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
 - Monitoring: Logs mismatches for admin review.
 - Refs: [Integrity invariants](09-integrity-and-invariants.md#registration-allocation)
 - Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
+```
+
+```admonish example "PR-5.9 — Turbo Stream Orchestrator"
+- Scope: Extract stream logic from controllers into `Turbo::LectureStreamService`.
+- Pattern: Controllers declare "what happened" (e.g., `roster_changed`); service returns appropriate streams.
+- Refactor: `TutorialsController`, `CohortsController`, `Registration::CampaignsController`, `Roster::MaintenanceController`.
+- Implementation:
+  - `Turbo::LectureStreamService` with methods: `roster_changed`, `campaign_changed`, `enrollment_changed`.
+  - Each method returns array of turbo streams for all dependent UI components.
+  - Controllers call service instead of building streams inline.
+- Refs: [Turbo Streams](https://turbo.hotwired.dev/handbook/streams)
+- Acceptance: Controllers contain no DOM IDs or partial paths; all cross-tab updates centralized in service; adding new dependent views requires editing only the service.
 ```
 
 ```admonish abstract

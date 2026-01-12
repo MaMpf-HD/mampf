@@ -7,65 +7,52 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 - **In this context:** It refers to the official list of students enrolled in a tutorial or the list of speakers assigned to a seminar talk.
 ```
 
-## Problem Overview
-- After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
+## The Core Concept: Lecture Roster as Superset
 
-```admonish tip "Related UI mockups"
-- Roster Overview (tutorials): [Overview – tutorials](../mockups/roster_overview.html)
-- Roster Overview (seminar): [Overview – seminar](../mockups/roster_overview_seminar.html)
-- Roster Overview (exam): [Overview – exam](../mockups/roster_overview_exam.html)
-- Roster Detail (tutorial): [Detail – tutorial](../mockups/roster_detail.html)
-- Roster Detail (seminar): [Detail – seminar](../mockups/roster_detail_seminar.html)
-- Roster Detail (exam): [Detail – exam](../mockups/roster_detail_exam.html)
-- Roster Detail (tutor read-only): [Detail – tutor read-only](../mockups/roster_detail_tutor.html)
-```
+**Definition:**
+The **Lecture Roster** (`lecture_memberships`) is the central registry for all students participating in a lecture. It acts as the single source of truth for authorization (who can access Moodle, videos, etc.) and communication.
 
-```admonish tip "Sourcing candidates after allocation"
-When a preference-based campaign completes, some participants may remain
-unassigned. These are students with zero `confirmed` registrations in the
-campaign (pending entries are normalized to rejected on close). You can source
-these candidates directly from the campaign in roster tools without a separate
-waitlist table.
-```
+**The Golden Rule:**
+$$ \text{Members(Tutorials)} \cup \text{Members(Talks)} \subseteq \text{Members(Lecture)} $$
 
-## Managing unassigned candidates
+**Behavioral Invariants:**
+1.  **Upstream Propagation (Addition):**
+    When a student is added to an official sub-group (**Tutorial** or **Talk**), they are **automatically** added to the Lecture Roster.
+2.  **Sticky Membership (Removal from Group):**
+    When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
+3.  **Cascading Deletion (Removal from Lecture):**
+    When a student is removed from the Lecture Roster, they are **automatically** removed from all associated sub-groups.
 
-- View unassigned candidates: from the completed Campaign Show or on the
-  Roster Overview via a right-side panel "Candidates from campaign" showing
-  only users unassigned in that campaign.
-- Inspect context: for preference-based campaigns, show each student's top 3
-  original preferences inline, with a way to view the full list on demand.
-- Actions:
-  - Assign to group: place the student into a specific tutorial if capacity permits.
-  - Move: standard roster operations continue to work across groups.
+### Feature: Sidecar Rosters (Cohorts)
+**Cohorts** function as "Sidecars". Unlike Tutorials or Talks, they satisfy the `Rosterable` interface but **do not** automatically propagate their members to the Lecture Roster.
+- **Purpose:** Waitlists, Latecomer lists, organizational groups.
+- **Access Rights:** Students in a Cohort *do not* receive automatic access rights to the lecture details (Moodle/Videos). They must be promoted to the Lecture Roster or a Tutorial to gain access.
 
-```admonish info "Placement"
-The Candidates panel lives on the Roster Overview to provide capacity context
-across all groups. The Roster Detail focuses on per-group maintenance
-(participants list, remove/move) and has no candidates panel.
-```
+## The Tracks
 
-```admonish tip
-No reason entry is required for remove, move, or add actions in roster
-maintenance. Keep actions fast; capacity constraints still apply.
-```
+### A. The Group Track (Complex Courses)
+*   **Use Case:** Large lectures with tutorials or seminars with multiple talks.
+*   **Workflow:**
+    1.  **Main Campaign:** Students register for Tutorials/Talks. Materialization grants them access via Upstream Propagation.
+    2.  **Sidecars (Optional):** "Waitlist" or "Latecomer" Cohorts collect students separately. These students do not get access until staff manually moves them to a Tutorial.
+*   **Result:** The Lecture Roster is the union of all Tutorials/Talks plus any manually added students.
 
-```admonish note "Data model"
-Unassigned candidates are derived from `Registration::UserRegistration` records.
-No extra table is needed; use campaign-scoped queries to list users with zero
-confirmed entries.
-```
-- Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
-- Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
+### B. The Enrollment Track (Simple Courses)
+*   **Use Case:** Seminars without subgroups, or lectures without tutorials.
+*   **Workflow:**
+    1.  **Main Campaign:** Students register for the **Lecture** directly.
+    2.  **Repeaters:** Can be managed via a parallel Lecture Campaign (effectively merging them into the roster).
+*   **Result:** The Lecture Roster contains the flat list of participants.
 
-## Solution Architecture
-- **Canonical Source:** Domain rosters on registerable models (e.g., `Tutorial.students`, `Talk.speakers`).
-- **Uniform API:** A `Roster::Rosterable` concern provides a consistent interface (`roster_user_ids`, `replace_roster!`, etc.).
-- **Single Service:** A `Roster::MaintenanceService` handles atomic moves, adds, and removals with capacity checks and logging.
-- **Campaign-Independent:** Actions operate directly on `Roster::Rosterable` models; no campaign context is needed for manual changes.
-- **Fast Dashboards:** The maintenance service can update denormalized counters like `Registration::Item.assigned_count` to keep UIs in sync.
-- **Auditing (Future Enhancement):** The service includes a `log()` method as a hook for future auditing. This can be implemented later to write to a dedicated audit trail (e.g., a `RosterChangeEvent` model or using a gem like PaperTrail). This would provide a full history of all manual roster modifications, separate from the immutable record of the initial automated assignment stored in `Registration::UserRegistration`.
-- **Exam-specific finalization:** When materializing exam rosters from a campaign, eligibility is revalidated at finalize-time; registrants who became ineligible are excluded unless an override exists.
+### Concurrent Lecture Campaigns
+
+It is valid and supported to run a **Lecture Campaign** (a campaign targeting the Lecture itself) alongside Group Campaigns (targeting Tutorials/Talks).
+
+*   **Purpose:** This serves to populate the Lecture Roster directly, without assigning students to a specific sub-group.
+*   **Idempotency:** If a student registers for a Tutorial (Group Track) AND a Lecture Campaign (Enrollment Track), they are materialized into the Lecture Roster. The system handles this idempotently; they will simply exist on the roster and in the specific tutorial.
+*   **Result:** These students appear as "Unassigned" in the Group Maintenance view (unless they also secured a group spot), effectively implementing a "Course Auditor" or "Waiting List" pattern.
+
+
 
 ---
 
@@ -92,19 +79,36 @@ The “contract” required by the maintenance service, defining how to read and
 | `materialize_allocation!(user_ids:, campaign:)` | Provided | Implements the allocation materialization from `Registration::Registerable`. |
 | `add_user_to_roster!(user_id)` | Provided (private) | Adds a single user to the roster if not already present. |
 | `remove_user_from_roster!(user_id)` | Provided (private) | Removes a single user from the roster. |
+| `self_materialization_mode` | Provided (enum) | Controls student self-service roster access: `disabled`, `add_only`, `remove_only`, `add_and_remove`. |
+| `can_self_add?(user)` | Provided | Checks if user can join via self-materialization. |
+| `can_self_remove?(user)` | Provided | Checks if user can leave via self-materialization. |
+| `self_add!(user)` | Provided | Student-initiated roster join (with permission check). |
+| `self_remove!(user)` | Provided | Student-initiated roster leave (with permission check). |
 
 ### Behavior Highlights
 - **Explicit Contract:** The concern raises a `NotImplementedError` if an including class fails to override required methods (`#roster_user_ids`, `#replace_roster!`, `#roster_entries`, `#mark_campaign_source!`), ensuring the contract is met.
 - **Idempotent:** Calling `replace_roster!` with the same set of IDs should result in no change.
 - **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
 - **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
-// ...existing code...
+- **Self-Materialization:** Enables student-initiated roster changes as an alternative to campaigns or post-campaign follow-up. Default is `disabled` (staff-only access).
+
 ### Example Implementation
 ```ruby
 # filepath: app/models/concerns/roster/rosterable.rb
 module Roster
   module Rosterable
     extend ActiveSupport::Concern
+
+    included do
+      enum self_materialization_mode: {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, _prefix: :self_mat
+
+      validate :self_materialization_not_during_active_campaign
+    end
 
     def roster_user_ids
       raise NotImplementedError, "#{self.class.name} must implement #roster_user_ids"
@@ -133,6 +137,27 @@ module Roster
       end
     end
 
+    def can_self_add?(user)
+      return false if self_mat_disabled? || self_mat_remove_only?
+      return false if full?
+      !roster_user_ids.include?(user.id)
+    end
+
+    def can_self_remove?(user)
+      return false if self_mat_disabled? || self_mat_add_only?
+      roster_user_ids.include?(user.id)
+    end
+
+    def self_add!(user)
+      raise "Not allowed" unless can_self_add?(user)
+      add_user_to_roster!(user.id)
+    end
+
+    def self_remove!(user)
+      raise "Not allowed" unless can_self_remove?(user)
+      remove_user_from_roster!(user.id)
+    end
+
     private
 
     def add_user_to_roster!(user_id)
@@ -151,6 +176,21 @@ module Roster
 
     def mark_campaign_source!(user_ids, campaign)
       raise NotImplementedError, "#{self.class.name} must implement #mark_campaign_source! for campaign tracking"
+    end
+
+    def self_materialization_not_during_active_campaign
+      return if self_mat_disabled?
+
+      active = Registration::Item.where(registerable: self)
+        .joins(:registration_campaign)
+        .where.not(registration_campaigns: {
+          status: :completed, planning_only: true
+        }).exists?
+
+      if active
+        errors.add(:self_materialization_mode,
+          "cannot be enabled during active campaign")
+      end
     end
   end
 end
@@ -377,11 +417,59 @@ end
 ```
 
 The `speaker_talk_joins` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each speaker assignment.
+
 ---
+
+### Cohort (Rosterable Implementation)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+A generic group of students, managed via `cohort_memberships`.
+```
+
+#### Rosterable Implementation
+The `Cohort` model includes the `Roster::Rosterable` concern.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `user_id`s from the `cohort_memberships` join table. |
+| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones. |
+
+#### Example Implementation
+```ruby
+class Cohort < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  belongs_to :context, polymorphic: true
+  has_many :cohort_memberships, dependent: :destroy
+  has_many :members, through: :cohort_memberships, source: :user
+
+  def roster_user_ids
+    cohort_memberships.pluck(:user_id)
+  end
+
+  def replace_roster!(user_ids:)
+    CohortMembership.transaction do
+      cohort_memberships.delete_all
+      user_ids.each { |uid| cohort_memberships.create!(user_id: uid) }
+    end
+  end
+
+  def roster_entries
+    cohort_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    cohort_memberships.where(user_id: user_ids)
+                      .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
 
 ## ERD for Roster Implementations
 
-This diagram shows the concrete database relationships for the two example `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
+This diagram shows the concrete database relationships for the `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
 
 ```mermaid
 erDiagram
@@ -390,6 +478,12 @@ erDiagram
 
     TALK ||--o{ SPEAKER_TALK_JOIN : "has (existing)"
     SPEAKER_TALK_JOIN }o--|| USER : "links to"
+
+    COHORT ||--o{ COHORT_MEMBERSHIP : "has (new)"
+    COHORT_MEMBERSHIP }o--|| USER : "links to"
+
+    LECTURE ||--o{ LECTURE_MEMBERSHIP : "has (existing)"
+    LECTURE_MEMBERSHIP }o--|| USER : "links to"
 ```
 
 ---
@@ -457,6 +551,7 @@ The roster system doesn't introduce new database tables. Instead, it provides a 
 
 - `tutorial_memberships` (to be created) - Join table for tutorial student rosters
 - `speaker_talk_joins` (existing) - Join table for talk speaker assignments
+- `cohort_memberships` (to be created) - Join table for cohort student memberships
 
 ```admonish note
 The `Roster::Rosterable` concern provides a uniform interface (`roster_user_ids`, `replace_roster!`) regardless of the underlying table structure. Column details are shown in the example implementations above.

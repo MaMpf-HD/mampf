@@ -16,7 +16,7 @@
 
             <!-- Organizational -->
             <% if lecture.organizational %>
-              <% path = organizational_path(lecture) %>
+              <% path = lecture_organizational_path(lecture) %>
               <% active_class = get_class_for_path(path) %>
               <% is_disabled = !lecture || !lecture.organizational %>
               <a href="<%= url_for(path)%>"
