@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(Tutorial, type: :model) do
-  it_behaves_like "a registerable model"
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
   it "has a valid factory" do
     expect(FactoryBot.build(:tutorial)).to be_valid
@@ -36,11 +42,5 @@ RSpec.describe(Tutorial, type: :model) do
       tutorial = FactoryBot.build(:tutorial, :with_tutors, tutors_count: 3)
       expect(tutorial.tutors.size).to eq(3)
     end
-  end
-
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:tutorial) }
-
-    it_behaves_like "a registerable model"
   end
 end
