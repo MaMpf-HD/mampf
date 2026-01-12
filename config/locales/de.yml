@@ -3246,7 +3246,7 @@ de:
       preferences_saved: "Ihre Einstellungen wurden gespeichert."
       withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
       dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
-      cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden. Alle Veranstaltungen sind derzeit voll."
+      cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden."
       course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
   package:
     no_zip: Die Datei ist kein .zip-Archiv.

@@ -175,38 +175,16 @@ module Registration
       end
 
       def init_result
-        type_register = @campaign.registration_items.first&.registration_type
-        case type_register
-        when "Tutorial"
-          membership = TutorialMembership.where(source_campaign_id: 42).first
-          @item_succeed = Registration::Item.where(registerable_type: "Tutorial",
-                                                   registerable_id: membership.tutorial_id,
-                                                   campaign_id: membership.source_campaign_id)
-                                            .first
-        when "Cohort"
-          membership = CohortMembership.where(source_campaign_id: 42).first
-          @item_succeed = Registration::Item.where(registerable_type: "Cohort",
-                                                   registerable_id: membership.cohort_id,
-                                                   campaign_id: membership.source_campaign_id)
-                                            .first
-        when "Talk"
-          membership = SpeakerTalkJoin.where(source_campaign_id: 42).first
-          @item_succeed = Registration::Item.where(registerable_type: "Talk",
-                                                   registerable_id: membership.talk_id,
-                                                   campaign_id: membership.source_campaign_id)
-                                            .first
-        when "Lecture"
-          membership = LectureMembership.where(source_campaign_id: 42).first
-          @item_succeed = Registration::Item.where(registerable_type: "Lecture",
-                                                   registerable_id: membership.lecture_id,
-                                                   campaign_id: membership.source_campaign_id)
-                                            .first
-        else
-          @item_succeed = nil
-        end
-        @status_items_selected = @items_selected.index_with do |i|
-          UserRegistration.where(registration_campaign_id: @campaign.id, user_id: current_user.id,
-                                 registration_item_id: i.id).first&.status
+        @items_selected = @campaign.registration_items
+                                   .includes(:user_registrations)
+                                   .where.not(user_registrations: { id: nil })
+
+        @items_succeed = Rosters::StudentMainResultResolver
+                         .new(@campaign, current_user).succeed_items
+        @item_succeed = @items_succeed.first || nil
+        succeed_ids = @items_succeed.pluck(:id)
+        @status_items_selected = @items_selected.each_with_object({}) do |i, hash|
+          hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
         end
         @campaignable_host = @campaign.campaignable
         init_preferences if @campaign.preference_based?
