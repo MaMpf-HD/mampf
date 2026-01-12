@@ -47,7 +47,7 @@ module Rosters
 
     class Talk < BaseResolver
       def succeed_items
-        memberships = SpeakerTalkJoin.where(source_campaign_id: @campaign.id, user_id: @user.id)
+        memberships = SpeakerTalkJoin.where(source_campaign_id: @campaign.id, speaker_id: @user.id)
         return [] unless memberships.any?
 
         Registration::Item.where(

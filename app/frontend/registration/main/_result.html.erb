@@ -39,6 +39,13 @@
                           }.join(", ").html_safe %><br>
                     <% end %>
 
+                    <% if item_succeed.registerable.try(:speakers).present? %>
+                      <%= t("basics.speaker") %>:
+                      <%= item_succeed.registerable.speakers.map { |e|
+                            link_to "#{e.name_in_tutorials.presence || e.name} (#{e.email})", teacher_path(e)
+                          }.join(", ").html_safe %><br>
+                    <% end %>
+
                     <% if item_succeed.registerable.try(:position).present? %>
                       <%= t("basics.position") %>: <%= item_succeed.registerable.position %>
                     <% end %>
@@ -105,7 +112,7 @@
 
                     <!-- Status badge -->
                     <div class="col-3 d-flex justify-content-end align-items-center">
-                      <%= confirm_status_badge(status_items_selected[item]) %>
+                      <%= confirm_status_badge(status_items_selected[item.id]) %>
                     </div>
 
                   </div>
