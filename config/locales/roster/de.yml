@@ -196,6 +196,9 @@ de:
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
     cohorts:
+      kinds:
+        with_enrollment: "Gruppe mit Einschreibung"
+        without_enrollment: "Gruppe ohne Einschreibung"
       with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
       with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
       without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
