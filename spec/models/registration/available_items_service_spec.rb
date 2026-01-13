@@ -22,10 +22,6 @@ RSpec.describe(Registration::AvailableItemsService) do
       it "returns all available cohorts" do
         expect(service.items[:cohorts]).to include(cohort)
       end
-
-      it "returns the lecture itself" do
-        expect(service.items[:lecture]).to include(lecture)
-      end
     end
 
     context "when campaign has tutorial items" do
@@ -49,10 +45,6 @@ RSpec.describe(Registration::AvailableItemsService) do
       it "does not return cohorts" do
         create(:cohort, context: lecture)
         expect(service.items[:cohorts]).to be_nil
-      end
-
-      it "does not return lecture" do
-        expect(service.items[:lecture]).to be_nil
       end
     end
 

@@ -93,37 +93,12 @@
                 </div>
               </div>
             <% end %>
-
-            <% if available_items[:lecture].present? %>
-              <div class="col-12">
-                <h6><%= t("registration.item.groups.general") %></h6>
-                <div class="list-group">
-                  <% available_items[:lecture].each do |lecture| %>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                        <%= t("registration.item.types.lecture_signup") %>
-                      </div>
-                      <%= button_to t("basics.add"),
-                                    registration_campaign_items_path(campaign),
-                                    params: { registration_item: { registerable_id: lecture.id, registerable_type: "Lecture" } },
-                                    class: "btn btn-sm btn-primary",
-                                    data: { turbo: true } %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
           </div>
         <% end %>
       </div>
       <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
         <% existing_type = campaign.registration_items.first&.registerable_type %>
-        <% if existing_type == "Lecture" %>
-          <div class="alert alert-info mt-3">
-            <%= t("registration.item.add.lecture_unique") %>
-          </div>
-        <% else %>
-            <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
+        <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
               <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
 
               <div class="col-md-3">
@@ -154,7 +129,6 @@
                 <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
               </div>
             <% end %>
-        <% end %>
       </div>
     </div>
   </div>

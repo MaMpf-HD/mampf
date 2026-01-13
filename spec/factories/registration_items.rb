@@ -15,9 +15,5 @@ FactoryBot.define do
     trait :for_talk do
       registerable { association(:talk, lecture: lecture) }
     end
-
-    trait :for_lecture do
-      registerable { lecture }
-    end
   end
 end

@@ -55,28 +55,6 @@ RSpec.describe(Registration::Item, type: :model) do
                                ".mixed_types"))
         end
       end
-
-      context "when existing item is a lecture" do
-        let!(:lecture_item) do
-          create(:registration_item, :for_lecture, registration_campaign: campaign)
-        end
-
-        it "does not allow adding another lecture item" do
-          new_item = build(:registration_item, :for_lecture, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".lecture_unique"))
-        end
-
-        it "does not allow adding an item of a different type" do
-          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".lecture_unique"))
-        end
-      end
     end
 
     describe "#validate_capacity_frozen" do
