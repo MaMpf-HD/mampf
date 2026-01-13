@@ -372,7 +372,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_26_000002) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "capacity"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -556,7 +555,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_26_000002) do
     t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
-    t.boolean "planning_only", default: false, null: false
     t.datetime "registration_deadline", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
