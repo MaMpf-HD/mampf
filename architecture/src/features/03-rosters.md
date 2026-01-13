@@ -13,44 +13,64 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 The **Lecture Roster** (`lecture_memberships`) is the central registry for all students participating in a lecture. It acts as the single source of truth for authorization (who can access Moodle, videos, etc.) and communication.
 
 **The Golden Rule:**
-$$ \text{Members(Tutorials)} \cup \text{Members(Talks)} \subseteq \text{Members(Lecture)} $$
+$$ \text{Current Group Members} \subseteq \text{Lecture Roster} $$
+
+More precisely, the Lecture Roster contains **all current and former group members** due to sticky membership:
+$$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text{Groups}) $$
 
 **Behavioral Invariants:**
 1.  **Upstream Propagation (Addition):**
-    When a student is added to an official sub-group (**Tutorial** or **Talk**), they are **automatically** added to the Lecture Roster.
+    When a student is added to a group that propagates (**Tutorial**, **Talk**, or **Cohort with `propagate_to_lecture: true`**), they are **automatically** added to the Lecture Roster.
 2.  **Sticky Membership (Removal from Group):**
     When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
 3.  **Cascading Deletion (Removal from Lecture):**
     When a student is removed from the Lecture Roster, they are **automatically** removed from all associated sub-groups.
 
-### Feature: Sidecar Rosters (Cohorts)
-**Cohorts** function as "Sidecars". Unlike Tutorials or Talks, they satisfy the `Rosterable` interface but **do not** automatically propagate their members to the Lecture Roster.
-- **Purpose:** Waitlists, Latecomer lists, organizational groups.
-- **Access Rights:** Students in a Cohort *do not* receive automatic access rights to the lecture details (Moodle/Videos). They must be promoted to the Lecture Roster or a Tutorial to gain access.
+### Cohort Propagation
+**Cohorts** are flexible groups with configurable propagation via the `propagate_to_lecture` flag:
+- **Propagating Cohorts** (`propagate_to_lecture: true`): Behave like Tutorials/Talks. Membership grants lecture access.
+  - Example: Enrollment cohorts (`purpose: :enrollment`) for simple courses.
+- **Non-Propagating Cohorts** (`propagate_to_lecture: false`): Act as "sidecars". Membership does NOT grant lecture access.
+  - Example: Waitlists, planning cohorts (`purpose: :planning`).
 
-## The Tracks
+**Purpose-Driven Behavior:**
+- **Enrollment** (`purpose: :enrollment`): Must propagate. Acts as main enrollment path for simple courses.
+- **General** (`purpose: :general`): Propagation configurable. Used for waitlists, special groups.
+- **Planning** (`purpose: :planning`): Must not propagate. Used for demand surveys.
 
-### A. The Group Track (Complex Courses)
+## The Unified Model: All Materialization Flows Through Groups
+
+**Core Principle:** Every student enters the lecture roster via a **Group** (Tutorial, Talk, or Cohort). There is no direct lecture enrollment—simple courses use an **Enrollment Cohort** (`purpose: :enrollment`, `propagate_to_lecture: true`).
+
+### Pattern 1: Complex Courses (Tutorials/Talks)
 *   **Use Case:** Large lectures with tutorials or seminars with multiple talks.
 *   **Workflow:**
     1.  **Main Campaign:** Students register for Tutorials/Talks. Materialization grants them access via Upstream Propagation.
-    2.  **Sidecars (Optional):** "Waitlist" or "Latecomer" Cohorts collect students separately. These students do not get access until staff manually moves them to a Tutorial.
-*   **Result:** The Lecture Roster is the union of all Tutorials/Talks plus any manually added students.
+    2.  **Sidecars (Optional):** "Waitlist" or "Latecomer" Cohorts (`propagate_to_lecture: false`) collect students separately. These students do not get access until staff manually moves them to a Tutorial.
+*   **Result:** The Lecture Roster is the union of all Tutorials/Talks plus any students from propagating cohorts.
 
-### B. The Enrollment Track (Simple Courses)
-*   **Use Case:** Seminars without subgroups, or lectures without tutorials.
+### Pattern 2: Simple Courses (Enrollment Cohort)
+*   **Use Case:** Lectures without tutorials (e.g., advanced seminars, standalone courses).
 *   **Workflow:**
-    1.  **Main Campaign:** Students register for the **Lecture** directly.
-    2.  **Repeaters:** Can be managed via a parallel Lecture Campaign (effectively merging them into the roster).
-*   **Result:** The Lecture Roster contains the flat list of participants.
+    1.  **Main Campaign:** Students register for an **Enrollment Cohort** (`purpose: :enrollment`, `propagate_to_lecture: true`).
+    2.  **Quick-Create:** Teacher creates this cohort via "Enable Simple Enrollment" button in Roster Overview.
+*   **Result:** The Lecture Roster contains members of the enrollment cohort. Technically identical to Pattern 1 with one group.
 
-### Concurrent Lecture Campaigns
+### Pattern 3: Demand Forecasting (Planning Cohort)
+*   **Use Case:** Gauge interest before the semester without granting access.
+*   **Workflow:**
+    1.  **Survey Campaign:** Students register for a **Planning Cohort** (`purpose: :planning`, `propagate_to_lecture: false`).
+    2.  **Repeatable:** Multiple planning cohorts allowed per lecture (e.g., "Oct Survey", "Nov Survey").
+*   **Result:** Cohort roster is materialized but doesn't propagate to lecture. Used for staffing decisions.
 
-It is valid and supported to run a **Lecture Campaign** (a campaign targeting the Lecture itself) alongside Group Campaigns (targeting Tutorials/Talks).
+### Mixing Patterns
 
-*   **Purpose:** This serves to populate the Lecture Roster directly, without assigning students to a specific sub-group.
-*   **Idempotency:** If a student registers for a Tutorial (Group Track) AND a Lecture Campaign (Enrollment Track), they are materialized into the Lecture Roster. The system handles this idempotently; they will simply exist on the roster and in the specific tutorial.
-*   **Result:** These students appear as "Unassigned" in the Group Maintenance view (unless they also secured a group spot), effectively implementing a "Course Auditor" or "Waiting List" pattern.
+It is valid to mix groups in one campaign:
+*   **Tutorial + Waitlist Cohort:** Main allocation to tutorials, overflow to non-propagating waitlist.
+*   **Talk + Audit Cohort:** Talk selection with audit listener option (non-propagating).
+*   **Enrollment Cohort + Late Registration Cohort:** Multiple cohorts feeding into the same lecture.
+
+**Key:** Propagation flag determines behavior. System handles idempotency automatically.
 
 
 
