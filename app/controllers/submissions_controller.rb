@@ -63,6 +63,15 @@ class SubmissionsController < ApplicationController
     @submission.update(last_modification_by_users_at: Time.zone.now)
     return unless @submission.manuscript
 
+    Completion.find_or_create_by!(
+      user: current_user,
+      completable: @submission.assignment,
+      lecture: @lecture
+    ) do |c|
+      c.created_at = Time.zone.now
+      c.updated_at = Time.zone.now
+    end
+
     send_upload_email(User.where(id: current_user.id))
   end
 
@@ -138,7 +147,9 @@ class SubmissionsController < ApplicationController
       return
     end
     @submission.users.delete(current_user)
-    send_leave_email
+    Completion.where(user: current_user, completable: @submission.assignment).destroy_all
+
+    send_leave_emailq
   end
 
   def cancel_edit
@@ -404,6 +415,16 @@ class SubmissionsController < ApplicationController
       @join.save
       if @join.valid?
         @submission.update(last_modification_by_users_at: Time.zone.now)
+
+        Completion.find_or_create_by!(
+          user: current_user,
+          completable: @submission.assignment,
+          lecture: @lecture
+        ) do |c|
+          c.created_at = Time.zone.now
+          c.updated_at = Time.zone.now
+        end
+
         send_join_email
         remove_invitee_status
       else

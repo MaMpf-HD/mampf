@@ -13,7 +13,8 @@
 
         <%= button_to toggle_completion_section_path(section), 
               method: :post, 
-              class: "btn btn-sm flex-shrink-0 #{is_completed ? 'btn-success' : 'btn-outline-secondary'}" do %>
+              class: "btn btn-sm flex-shrink-0 #{is_completed ? 'btn-success' : 'btn-outline-secondary'}",
+              data: { testid: "toggle-completion-button" } do %>
           <% if is_completed %>
             <i class="fas fa-check-circle"></i> Completed
           <% else %>

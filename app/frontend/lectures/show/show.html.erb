@@ -35,7 +35,11 @@
     </h4>
 
     <% progress_value = @lecture.section_completion_for_user current_user%>
-    <div class="progress mb-3 mt-3" style="height: 25px; position: relative;">
+    <div 
+        class="progress mb-3 mt-3" 
+        style="height: 25px; position: relative;" 
+        data-testid="progress-bar"
+    >
       <% if progress_value == 0 %>
         <span style="position: absolute; width: 100%; text-align: center; line-height: 25px; color: #6c757d;">
         Lecture Completion
