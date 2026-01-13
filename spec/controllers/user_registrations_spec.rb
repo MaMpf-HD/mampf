@@ -95,6 +95,49 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     end
   end
 
+  context "tutorial PB campaign open" do
+    let(:campaign) do
+      FactoryBot.create(
+        :registration_campaign,
+        :open,
+        :preference_based
+      )
+    end
+    let(:item) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+    let(:item3) { campaign.registration_items.third }
+    let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item2, 1) }
+    let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item, 2) }
+    let(:pref_from_fe3) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item3, 3) }
+    let(:pref_items_json) do
+      [{ item: item2, rank: 1 }, { item: item, rank: 2 }, { item: item3, rank: 3 }].to_json
+    end
+    describe "calls LecturePreferenceEditService for update action" do
+      it "POST update" do
+        service_double = instance_double(Registration::UserRegistration::LecturePreferenceEditService)
+        expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
+          .with(campaign, an_instance_of(User))
+          .and_return(service_double)
+        expect(service_double).to receive(:update!).and_return(stub_success)
+
+        post :update, params: { campaign_id: campaign.id, preferences_json: pref_items_json }
+      end
+    end
+
+    describe "should delegate preferences action to correct service" do
+      let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
+      [:up, :down, :add, :remove].each do |action|
+        it "POST #{action}" do
+          expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(action).and_return(stub_success)
+
+          post action, params: { item_id: item.id, preferences_json: pref_items_json }
+        end
+      end
+    end
+  end
+
   context "talk FCFS campaign open" do
     let(:campaign) do
       FactoryBot.create(

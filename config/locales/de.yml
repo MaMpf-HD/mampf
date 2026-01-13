@@ -3218,6 +3218,7 @@ de:
     course_code: "Kurscode"
     campaign_main: "Kampagne: Hauptanmeldung"
     eligibility_title: "Ihre Berechtigung"
+    preferences_title: Ihre ausgewählten Einstellungen
     eligible: "Berechtigt"
     not_eligible: "Nicht berechtigt"
     prerequisite_campaign: "Voraussetzungskampagne"
@@ -3225,6 +3226,7 @@ de:
     registered: "Registriert"
     not_registered: "Nicht registriert"
     register_now: "Jetzt registrieren"
+    need_save: Sie haben ungespeicherte Änderungen. Klicken Sie auf "Speichern", um Ihre Einstellungen zu aktualisieren.
     currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe zurückziehen."
     withdraw: "Zurückziehen"
     closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Sie Fragen zu dieser Änderung haben, wenden Sie sich bitte an die Kursverwaltung.
@@ -3241,6 +3243,7 @@ de:
       already_registered: "Sie sind bereits für diese Kampagne registriert."
       no_slots: "Keine Plätze verfügbar."
       requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
+      preferences_saved: "Ihre Einstellungen wurden gespeichert."
       withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
       dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
       cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden. Alle Veranstaltungen sind derzeit voll."
@@ -3602,6 +3605,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3812,6 +3816,8 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

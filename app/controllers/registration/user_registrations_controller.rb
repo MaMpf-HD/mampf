@@ -14,8 +14,9 @@ module Registration
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
     before_action :set_locale
-    before_action :set_campaign, only: [:registrations_for_campaign, :create]
-    before_action :set_item, only: [:create, :destroy]
+    before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
+                                        :update]
+    before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.all
@@ -34,7 +35,8 @@ module Registration
                     notice: I18n.t("registration.messages.campaign_unavailable")
       when :lecture_details
         init_details
-        render template: "registration/main/show_main_campaign", layout: "application_no_sidebar"
+        render template: "registration/main/show_main_campaign",
+               layout: "application_no_sidebar"
       when :exam_details
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       when :lecture_result
@@ -55,10 +57,33 @@ module Registration
                  .new(@campaign, current_user, @item).register!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.registration_success")
+                      notice: I18n.t("registration.messages.registration_success")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")
+        end
+      elsif @campaign.exam_based?
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
+
+    def update
+      if @campaign.lecture_based?
+        pref_items =
+          UserRegistration::PreferencesHandler
+          .new
+          .pref_item_build_for_save(params[:preferences_json])
+        result = Registration::UserRegistration::LecturePreferenceEditService
+                 .new(@campaign, current_user).update!(pref_items)
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      notice: I18n.t("registration.messages.preferences_saved")
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+          )
         end
       elsif @campaign.exam_based?
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
@@ -75,7 +100,7 @@ module Registration
                  .new(@campaign, current_user, @item).withdraw!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.withdrawn")
+                      notice: I18n.t("registration.messages.withdrawn")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")
@@ -87,6 +112,28 @@ module Registration
 
     def render_not_found(exception)
       render json: { error: exception.message }, status: :unprocessable_content
+    end
+
+    def up
+      handle_preference_action(:up)
+    end
+
+    def down
+      handle_preference_action(:down)
+    end
+
+    def add
+      handle_preference_action(:add)
+    end
+
+    def remove
+      handle_preference_action(:remove)
+    end
+
+    def reset_preferences
+      @items = @campaign.registration_items.includes(:user_registrations)
+      init_preferences
+      rerender_preferences
     end
 
     private
@@ -124,6 +171,7 @@ module Registration
                                                             phase_scope: :registration).call
         @items = @campaign.registration_items.includes(:user_registrations)
         @campaignable_host = @campaign.campaignable
+        init_preferences if @campaign.preference_based?
       end
 
       def init_result
@@ -141,6 +189,27 @@ module Registration
                                  registration_item_id: i.id).first&.status
         end
         @campaignable_host = @campaign.campaignable
+        init_preferences if @campaign.preference_based?
+      end
+
+      def init_preferences
+        @item_preferences = UserRegistration::PreferencesHandler.new
+                                                                .preferences_info(@campaign,
+                                                                                  current_user)
+      end
+
+      def handle_preference_action(action)
+        @campaign = @item.registration_campaign
+        @items = @campaign.registration_items.includes(:user_registrations)
+        handler = UserRegistration::PreferencesHandler.new
+        @item_preferences = handler.public_send(action, params[:item_id],
+                                                params[:preferences_json])
+        rerender_preferences
+      end
+
+      def rerender_preferences
+        render partial: "registration/main/pb/preferences_workspace",
+               locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
       end
   end
 end
