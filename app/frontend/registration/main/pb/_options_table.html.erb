@@ -41,7 +41,7 @@
                                     border-0 bg-transparent p-0 m-0"
                                     data-action="touched-check#mark"
                                     data-bs-toggle="tooltip"
-                                    <%= "disabled" if items_selected.include?(item.id)%>
+                                    <%= "disabled" if items_selected.include?(item.id) || !campaign.open_for_registrations?%>
                                     title="<%= t('buttons.add_to_list') %>"
                                     formaction="<%= add_preference_path(item.id) %>">
                               playlist_add

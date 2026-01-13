@@ -58,12 +58,15 @@
                 arrow_downward
           </button>
 
-          <button type="submit" class="material-icons clickable playlist_remove w-auto
-                            border-0 bg-transparent p-0 m-0" data-action="touched-check#mark" data-bs-toggle="tooltip"
-            <%="disabled" if !campaign.open_for_registrations?%>
-            title="<%= t('buttons.remove_from_list') %>"
-              formaction="<%= remove_preference_path(item.id) %>">
-                playlist_remove
+          <button type="submit" 
+                  class="material-icons clickable playlist_remove w-auto
+                        border-0 bg-transparent p-0 m-0" 
+                  data-action="touched-check#mark" 
+                  data-bs-toggle="tooltip"
+                  <%="disabled" if !campaign.open_for_registrations?%>
+                  title="<%= t('buttons.remove_from_list') %>"
+                  formaction="<%= remove_preference_path(item.id) %>">
+            playlist_remove
           </button>
         </div>
         </div>
