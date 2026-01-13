@@ -69,6 +69,7 @@ FactoryBot.define do
       transient do
         self_registerable { false }
         capacity { nil }
+        for_cohorts { false }
       end
       after(:create) do |campaign, evaluator|
         lecture = campaign.campaignable
@@ -78,13 +79,24 @@ FactoryBot.define do
         if self_registerable
           create(:registration_item,
                  registration_campaign: campaign,
+                 registerable_type: "Lecture",
                  registerable: lecture)
+
+        elsif evaluator.for_cohorts
+          cohorts = create_list(:cohort, 3, context: lecture)
+          cohorts.each do |cohort|
+            create(:registration_item,
+                   registration_campaign: campaign,
+                   registerable_type: "Cohort",
+                   registerable: cohort)
+          end
 
         elsif lecture.seminar?
           talks = create_list(:talk, 3, lecture: lecture)
           talks.each do |talk|
             create(:registration_item,
                    registration_campaign: campaign,
+                   registerable_type: "Talk",
                    registerable: talk)
           end
         else
@@ -93,6 +105,7 @@ FactoryBot.define do
           tutorials.each do |tutorial|
             create(:registration_item,
                    registration_campaign: campaign,
+                   registerable_type: "Tutorial",
                    registerable: tutorial)
           end
         end
@@ -161,6 +174,33 @@ FactoryBot.define do
                registration_item: item,
                registration_campaign: campaign,
                user: user)
+      end
+    end
+
+    trait :with_first_item_allocated do
+      transient do
+        user_id { nil }
+      end
+      after(:create) do |campaign, evaluator|
+        item = campaign.registration_items.first
+        user = User.find(evaluator.user_id) if evaluator.user_id
+        case item.registerable_type
+        when "Tutorial"
+          create(:tutorial_membership,
+                 tutorial: item.registerable,
+                 user: user,
+                 source_campaign_id: campaign.id)
+        when "Talk"
+          create(:speaker_talk_join,
+                 talk: item.registerable,
+                 speaker: user,
+                 source_campaign_id: campaign.id)
+        when "Cohort"
+          create(:cohort_membership,
+                 cohort: item.registerable,
+                 user: user,
+                 source_campaign_id: campaign.id)
+        end
       end
     end
 

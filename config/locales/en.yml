@@ -3039,7 +3039,7 @@ en:
       withdrawn: "You have withdrawn your registration."
       preferences_saved: "Your preferences have been saved."
       dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"
-      cannot_secure_slot: "Unfortunately, none of your selected options could be assigned. All sessions are currently full."
+      cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
       course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
   package:
     no_zip: This file is not a .zip archive.

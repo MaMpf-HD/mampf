@@ -124,6 +124,9 @@ module Registration
       when "rejected"
         content_tag(:span, I18n.t("basics.rejected"),
                     class: "badge rounded-pill w-auto text-bg-danger")
+      when "dismissed"
+        content_tag(:span, I18n.t("basics.dismissed"),
+                    class: "badge rounded-pill w-auto text-bg-danger")
       else
         content_tag(:span, "")
       end
@@ -145,9 +148,9 @@ module Registration
 
     def status_campaign_style(status)
       case status
-      when "open"
+      when "open", "completed"
         "bg-success-subtle text-success"
-      when "closed", "completed", "processing"
+      when "closed", "processing"
         "bg-secondary-subtle text-secondary"
       else
         "bg-info-subtle text-info"

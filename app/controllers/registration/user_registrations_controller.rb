@@ -175,18 +175,15 @@ module Registration
       end
 
       def init_result
-        # TODO: Pull final allocation results from rosterable.roster_entries (tutorial_memberships).
-        # TODO: Determine the successful item using roster data instead of confirmed registrations.
-        @item_succeed = @campaign.registration_items
-                                 .includes(:user_registrations)
-                                 .where(user_registrations: { status: :confirmed })
-                                 .first
         @items_selected = @campaign.registration_items
                                    .includes(:user_registrations)
-                                   .where.not(user_registrations: { id: nil })
-        @status_items_selected = @items_selected.index_with do |i|
-          UserRegistration.where(registration_campaign_id: @campaign.id, user_id: current_user.id,
-                                 registration_item_id: i.id).first&.status
+                                   .where(user_registrations: { user_id: current_user.id })
+        @items_succeed = Rosters::StudentMainResultResolver
+                         .new(@campaign, current_user).succeed_items
+        @item_succeed = @items_succeed.first || nil
+        succeed_ids = @items_succeed.pluck(:id)
+        @status_items_selected = @items_selected.each_with_object({}) do |i, hash|
+          hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
         end
         @campaignable_host = @campaign.campaignable
         init_preferences if @campaign.preference_based?

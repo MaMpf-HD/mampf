@@ -39,42 +39,39 @@ test.describe("given processing lecture campaign", () => {
   });
 });
 
-// TODO: when rosterization logic being implemented -> logic checking completed will be replaced -> need to change logic here
 test.describe("given completed campaign", () => {
-  test("with user registration, when user visits, then assigned status is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed", "with_first_item_registered"], { user_id: student["user"]["id"], self_registerable: true });
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
-    await expect(student.page.getByText("Completed")).toBeVisible();
-    await expect(student.page.getByText("Assigned")).toBeVisible();
-  });
-
-  test("without user registration, when user visits, then dismissed status is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed"], { self_registerable: true });
+  test("without roster result, when user visits, then dismissed status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "with_items"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
     await expect(student.page.getByText("Completed")).toBeVisible();
     await expect(student.page.getByText("Dismissed")).toBeVisible();
-    await expect(student.page.getByText("none of")).toBeVisible();
+  });
+
+  test("with roster result, when user visits, then assigned status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "with_items", "with_first_item_registered", "with_first_item_allocated"], { user_id: student["user"]["id"] });
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Assigned")).toBeVisible();
   });
 });
 
 test.describe("given completed campaign, preference based", () => {
-  test("with user registration, when user visits, then assigned status is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_first_item_registered_preference"], { user_id: student["user"]["id"], self_registerable: true });
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
-    await expect(student.page.getByText("Completed")).toBeVisible();
-    await expect(student.page.getByText("Assigned")).toBeVisible();
-  });
-
-  test("without user registration, when user visits, then dismissed status is shown", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["completed", "preference_based"], { self_registerable: true });
+  test("without roster result, when user visits, then dismissed status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_items"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
     await expect(student.page.getByText("Completed")).toBeVisible();
     await expect(student.page.getByText("Dismissed")).toBeVisible();
-    await expect(student.page.getByText("none of")).toBeVisible();
+  });
+
+  test("with roster result, when user visits, then assigned status is shown", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_items", "with_first_item_registered_preference", "with_first_item_allocated"], { user_id: student["user"]["id"] });
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+    await expect(student.page.getByText("Completed")).toBeVisible();
+    await expect(student.page.getByText("Assigned")).toBeVisible();
   });
 });
 

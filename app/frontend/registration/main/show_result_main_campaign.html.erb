@@ -12,10 +12,12 @@
   </nav>
 
   <!-- Campaign info card -->
+  <div class="mt-3 mb-4">
   <%= render partial: 'registration/main/campaign_info',
              locals: { campaignable_host: @campaignable_host,
                        assigned: !!@item_succeed,
                        campaign: @campaign } %>
+  </div>
 
   <!-- notification banner if campaign has been closed earlier than deadline -->
   <% if !@campaign.open_for_registrations? && @campaign.registration_deadline < Time.current %>
