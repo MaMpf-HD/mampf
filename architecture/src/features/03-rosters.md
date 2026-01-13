@@ -38,6 +38,14 @@ $$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text
 - **General** (`purpose: :general`): Propagation configurable. Used for waitlists, special groups.
 - **Planning** (`purpose: :planning`): Must not propagate. Used for demand surveys.
 
+**Implementation Mechanism:**
+Propagation is implemented via database triggers or callbacks on the cohort membership table:
+1. **On Insert to `cohort_memberships`:** If `cohort.propagate_to_lecture` is true, automatically insert into `lecture_memberships` (idempotent).
+2. **On Delete from `cohort_memberships`:** No action (sticky membership preserved).
+3. **On Toggle of `propagate_to_lecture`:** When changed from false to true, bulk-insert all current cohort members into lecture roster. When changed from true to false, no removal (sticky membership).
+
+This ensures Cohorts seamlessly integrate with the Superset Model without requiring manual service calls.
+
 ## The Unified Model: All Materialization Flows Through Groups
 
 **Core Principle:** Every student enters the lecture roster via a **Group** (Tutorial, Talk, or Cohort). There is no direct lecture enrollment—simple courses use an **Enrollment Cohort** (`purpose: :enrollment`, `propagate_to_lecture: true`).
@@ -204,7 +212,7 @@ module Roster
       active = Registration::Item.where(registerable: self)
         .joins(:registration_campaign)
         .where.not(registration_campaigns: {
-          status: :completed, planning_only: true
+          status: :completed
         }).exists?
 
       if active
@@ -487,30 +495,117 @@ class Cohort < ApplicationRecord
 end
 ```
 
+---
+
+### Lecture (Enhanced)
+**_The Central Roster Hub_**
+
+```admonish info "What it represents"
+The lecture roster is the authoritative list of all students with access to lecture materials, Moodle, videos, etc. It serves as the **superset** that all sub-group rosters (Tutorials, Talks, Cohorts) propagate into.
+```
+
+#### Rosterable Implementation
+The `Lecture` model includes the `Roster::Rosterable` concern to manage the central student roster.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `user_id`s from the `lecture_memberships` join table (existing). |
+| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones in a transaction. |
+
+#### Behavioral Notes
+- **Never Materialized Directly:** Lectures do NOT include `Registration::Registerable`. They only receive students via **Upstream Propagation** from sub-groups.
+- **Sticky Membership:** Students remain in the lecture roster even after leaving all sub-groups. Manual removal via `Roster::MaintenanceService` is required.
+- **Cascading Deletion:** When a student is removed from the lecture roster, they are automatically removed from all sub-groups (Tutorials, Talks, Cohorts).
+
+#### Example Implementation
+```ruby
+class Lecture < ApplicationRecord
+  include Registration::Campaignable
+  include Roster::Rosterable
+
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :students, through: :lecture_memberships, source: :user
+
+  has_many :tutorials
+  has_many :talks
+  has_many :cohorts, as: :context
+
+  def roster_user_ids
+    lecture_memberships.pluck(:user_id)
+  end
+
+  def replace_roster!(user_ids:)
+    LectureMembership.transaction do
+      lecture_memberships.delete_all
+      user_ids.each { |uid| lecture_memberships.create!(user_id: uid) }
+    end
+  end
+
+  def roster_entries
+    lecture_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    lecture_memberships.where(user_id: user_ids)
+                       .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
+
+The `lecture_memberships` table should include a `source_campaign_id` column (nullable) to track which campaign initially granted access (via which sub-group).
+
+```admonish warning "Cascading Deletion Hook"
+The `Lecture` model should implement an `after_destroy` callback on `lecture_memberships` to cascade deletions to all sub-group rosters:
+
+~~~ruby
+after_destroy :cascade_to_subgroups, if: :will_save_change_to_user_id?
+
+def cascade_to_subgroups
+  tutorials.each { |t| t.roster_entries.where(user_id: user_id).destroy_all }
+  talks.each { |t| t.roster_entries.where(user_id: user_id).destroy_all }
+  cohorts.each { |c| c.roster_entries.where(user_id: user_id).destroy_all }
+end
+~~~
+```
+
+---
+
 ## ERD for Roster Implementations
 
 This diagram shows the concrete database relationships for the `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
 
 ```mermaid
 erDiagram
+    LECTURE ||--o{ LECTURE_MEMBERSHIP : "has (existing)"
+    LECTURE_MEMBERSHIP }o--|| USER : "links to"
+
+    LECTURE ||--o{ TUTORIAL : "has many"
     TUTORIAL ||--o{ TUTORIAL_MEMBERSHIP : "has (to be created)"
     TUTORIAL_MEMBERSHIP }o--|| USER : "links to"
 
+    LECTURE ||--o{ TALK : "has many"
     TALK ||--o{ SPEAKER_TALK_JOIN : "has (existing)"
     SPEAKER_TALK_JOIN }o--|| USER : "links to"
 
+    LECTURE ||--o{ COHORT : "has many (context)"
     COHORT ||--o{ COHORT_MEMBERSHIP : "has (new)"
     COHORT_MEMBERSHIP }o--|| USER : "links to"
-
-    LECTURE ||--o{ LECTURE_MEMBERSHIP : "has (existing)"
-    LECTURE_MEMBERSHIP }o--|| USER : "links to"
+    COHORT {
+        boolean propagate_to_lecture "Triggers upstream propagation"
+        int purpose "general=0, enrollment=1, planning=2"
+    }
 ```
+
+**Propagation Rules:**
+- **Tutorials & Talks:** Always propagate to Lecture roster (automatic)
+- **Cohorts:** Propagate only if `propagate_to_lecture: true` (configurable)
+- **Sticky Membership:** Removal from sub-group does NOT remove from Lecture roster
 
 ---
 
 ## Sequence Diagram
 
-This diagram shows the two distinct phases: the initial, automated materialization of the roster, followed by ongoing manual maintenance by staff.
+This diagram shows the two distinct phases: the initial, automated materialization of the roster, followed by ongoing manual maintenance by staff. It also illustrates the upstream propagation from sub-groups to the lecture roster.
 
 ```mermaid
 sequenceDiagram
@@ -518,28 +613,41 @@ sequenceDiagram
     participant Campaign as Registration::Campaign
     participant Materializer as Registration::AllocationMaterializer
     participant RosterService as Roster::MaintenanceService
-    participant Rosterable as Roster::Rosterable (e.g., Tutorial)
+    participant SubGroup as Roster::Rosterable (e.g., Tutorial)
+    participant Lecture as Lecture Roster
 
     rect rgb(235, 245, 255)
-    note over Campaign,Rosterable: Phase 1: Automated Materialization
+    note over Campaign,Lecture: Phase 1: Automated Materialization
     Campaign->>Materializer: new(campaign).materialize!
-    Materializer->>Rosterable: materialize_allocation!(user_ids:, campaign:)
-    note right of Rosterable: From Registration::Registerable
-    Rosterable->>Rosterable: 1. Query current roster_user_ids
-    Rosterable->>Rosterable: 2. Identify campaign-sourced entries
-    Rosterable->>Rosterable: 3. Merge with new user_ids
-    Rosterable->>Rosterable: 4. Call replace_roster!(merged_ids)
-    Rosterable->>Rosterable: 5. Mark new entries with source_campaign_id
+    Materializer->>SubGroup: materialize_allocation!(user_ids:, campaign:)
+    note right of SubGroup: From Registration::Registerable
+    SubGroup->>SubGroup: 1. Query current roster_user_ids
+    SubGroup->>SubGroup: 2. Identify campaign-sourced entries
+    SubGroup->>SubGroup: 3. Merge with new user_ids
+    SubGroup->>SubGroup: 4. Call replace_roster!(merged_ids)
+    SubGroup->>SubGroup: 5. Mark new entries with source_campaign_id
+    
+    alt Tutorial or Talk (always propagates)
+        SubGroup->>Lecture: Trigger: Add users to lecture roster
+        note right of Lecture: Upstream Propagation (automatic)
+    else Cohort with propagate_to_lecture: true
+        SubGroup->>Lecture: Trigger: Add users to lecture roster
+        note right of Lecture: Upstream Propagation (configured)
+    else Cohort with propagate_to_lecture: false
+        note right of SubGroup: No propagation (planning/waitlist)
+    end
     end
 
-    note over Admin, Rosterable: ... time passes ...
+    note over Admin, Lecture: ... time passes ...
 
     rect rgb(255, 245, 235)
-    note over Admin,Rosterable: Phase 2: Manual Roster Maintenance
+    note over Admin,Lecture: Phase 2: Manual Roster Maintenance
     Admin->>RosterService: new(actor: admin).move_user!(...)
-    RosterService->>Rosterable: from.remove_user_from_roster!(user_id)
-    RosterService->>Rosterable: to.add_user_to_roster!(user_id)
-    note right of Rosterable: Uses private methods from Roster::Rosterable concern
+    RosterService->>SubGroup: from.remove_user_from_roster!(user_id)
+    RosterService->>SubGroup: to.add_user_to_roster!(user_id)
+    note right of SubGroup: Uses private methods from Roster::Rosterable concern
+    SubGroup->>Lecture: Trigger: Add user to lecture roster (if propagates)
+    note right of Lecture: Sticky membership preserved
     end
 ```
 

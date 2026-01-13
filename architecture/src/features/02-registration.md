@@ -1153,33 +1153,20 @@ end
 ```
 
 ### Lecture (Enhanced)
-**_The Primary Host and Seminar Target_**
+**_The Primary Campaign Host_**
 
 ```admonish info "What it represents"
-- Existing MaMpf lecture model that can both host campaigns and be registered for.
+- Existing MaMpf lecture model that hosts registration campaigns.
 ```
 
-#### Dual Role
-- **As `Registration::Campaignable`**: Can organize tutorial registration or talk selection campaigns.
-- **As `Registration::Registerable`**: Students can register for the lecture itself (common for seminars).
+#### Role
+- **As `Registration::Campaignable`**: Can organize tutorial registration, talk selection, or cohort enrollment campaigns.
 
 #### Example Implementation
 ```ruby
 class Lecture < ApplicationRecord
-  include Registration::Campaignable      # Can host campaigns for tutorials/talks
-  include Registration::Registerable      # Can be registered for (seminar enrollment)
+  include Registration::Campaignable      # Can host campaigns for tutorials/talks/cohorts
     # ... existing code ...
-
-    # Implements the contract from the Registerable concern
-    def materialize_allocation!(user_ids:, campaign:)
-        # This method is the hand-off point to the roster management system.
-        # Its responsibility is to take the final list of user IDs and
-        # persist them as the official roster for this lecture (seminar),
-        # sourced from this specific campaign.
-        #
-        # The concrete implementation using the Roster::Rosterable concern is detailed
-        # in the "Allocation & Rosters" chapter.
-    end
 end
 ```
 
