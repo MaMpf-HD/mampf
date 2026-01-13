@@ -62,6 +62,14 @@ module Rosters
       end
     end
 
+    def allow_self_add?
+      ["add_only", "add_and_remove"].include?(self_materialization_mode)
+    end
+
+    def allow_self_remove?
+      ["remove_only", "add_and_remove"].include?(self_materialization_mode)
+    end
+
     # Checks if skip_campaigns can be enabled (switched from false to true).
     # This is only allowed if the item has never been part of a real (non-planning) campaign.
     def can_skip_campaigns?

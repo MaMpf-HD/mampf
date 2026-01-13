@@ -1,0 +1,136 @@
+module Roster
+  class SelfMaterializationController < ApplicationController
+    class RosterLockedError < StandardError; end
+    class SelfAddNotAllowedError < StandardError; end
+    class SelfRemoveNotAllowedError < StandardError; end
+    class UserNotFoundError < StandardError; end
+
+    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
+
+    before_action :set_rosterable, only: [:self_add, :self_remove]
+    before_action :authorize_lecture
+    before_action :use_lecture_locale
+
+    rescue_from "Rosters::UserAlreadyInBundleError" do |e|
+      respond_with_error(t("roster.errors.user_already_in_bundle",
+                           group: e.conflicting_group.title))
+    end
+
+    rescue_from "Rosters::MaintenanceService::CapacityExceededError" do
+      respond_with_error(t("roster.errors.capacity_exceeded"))
+    end
+
+    rescue_from RosterLockedError do
+      respond_with_error(t("roster.errors.item_locked"))
+    end
+
+    rescue_from SelfAddNotAllowedError do
+      respond_with_error(t("roster.errors.self_add_not_allowed",
+                           type: @rosterable.class.model_name.human))
+    end
+
+    rescue_from SelfRemoveNotAllowedError do
+      respond_with_error(t("roster.errors.self_remove_not_allowed",
+                           type: @rosterable.class.model_name.human))
+    end
+
+    def current_ability
+      @current_ability ||= LectureAbility.new(current_user)
+    end
+
+    # TODO: will need to have an API to get self materialization posibility info
+    # or can use self_materialization_mode and ensure_rosterable_unlocked! in the front-end to check if the rosterable can be modified
+    # 
+    # TODO: add buttons in the front-end to call these actions
+    # TODO: define routes 
+    # TODO: add tests
+
+    def self_add
+      ensure_rosterable_unlocked!
+      ensure_rosterable_allow_self_add!
+
+      user = current_user
+      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: false)
+
+      flash.now[:notice] = t("roster.messages.user_added")
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
+
+      render_roster_update(tab: params[:active_tab])
+    end
+
+    def self_remove
+      ensure_rosterable_unlocked!
+      ensure_rosterable_allow_self_remove!
+
+      user = current_user
+      Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
+
+      flash.now[:notice] = t("roster.messages.user_removed")
+      render_roster_update(tab: params[:active_tab])
+    end
+
+    private
+
+      def authorize_lecture
+        authorize! :edit, @lecture
+      end
+
+      def ensure_rosterable_unlocked!
+        raise(RosterLockedError) if @rosterable.locked?
+      end
+
+      def ensure_rosterable_allow_self_add!
+        raise(SelfAddNotAllowedError) unless @rosterable.allow_self_add?
+      end
+
+      def ensure_rosterable_allow_self_remove!
+        raise(SelfRemoveNotAllowedError) unless @rosterable.allow_self_remove?
+      end
+
+      def respond_with_error(message)
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
+          end
+          format.html { redirect_back_or_to fallback_path, alert: message }
+        end
+      end
+
+      def set_rosterable
+        unless ALLOWED_ROSTERABLE_TYPES.include?(params[:type])
+          redirect_to root_path, alert: t("roster.errors.invalid_type")
+          return
+        end
+
+        klass = params[:type].constantize
+        param_key = "#{params[:type].underscore}_id"
+        id = params[param_key] || params[:id]
+        rosterable = klass.find_by(id: id)
+
+        if rosterable&.lecture
+          @lecture = Lecture.find_by(id: rosterable.lecture.id)
+
+          case rosterable
+          when Lecture
+            @rosterable = @lecture
+          when Tutorial
+            @rosterable = @lecture.tutorials.find_by(id: rosterable.id) || rosterable
+          when Talk
+            @rosterable = @lecture.talks.find_by(id: rosterable.id) || rosterable
+          when Cohort
+            @rosterable = @lecture.cohorts.find_by(id: rosterable.id) || rosterable
+          end
+        end
+
+        return if @rosterable && @lecture
+
+        redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
+      end
+
+      def use_lecture_locale
+        locale = @lecture&.locale_with_inheritance || I18n.default_locale
+        I18n.locale = locale
+      end
+  end
+end
