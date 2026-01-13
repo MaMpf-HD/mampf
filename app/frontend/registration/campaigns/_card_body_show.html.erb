@@ -28,7 +28,7 @@
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: campaign.planning_only? ? t("registration.campaign.confirmations.open_planning") : t("registration.campaign.confirmations.open") },
+                      data: { confirm: t("registration.campaign.confirmations.open") },
                       class: "btn btn-success" %>
       <% end %>
 

@@ -51,16 +51,6 @@
     </div>
   </div>
 
-  <div class="mb-3 form-check">
-    <%= f.check_box :planning_only, class: "form-check-input", disabled: !campaign.draft? %>
-    <%= f.label :planning_only, t("registration.campaign.form.planning_only"), class: "form-check-label" %>
-    <% if campaign.draft? %>
-      <%= helpdesk(t("registration.campaign.helpdesk.planning_only"), false) %>
-    <% else %>
-      <%= helpdesk(t("registration.campaign.helpdesk.planning_only_frozen"), false) %>
-    <% end %>
-  </div>
-
   <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary" %>
   <%= link_to t("buttons.cancel"),
               campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),

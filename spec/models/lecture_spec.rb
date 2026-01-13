@@ -243,10 +243,4 @@ RSpec.describe(Lecture, type: :model) do
       expect(campaign.campaignable).to eq(lecture)
     end
   end
-
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:lecture) }
-
-    it_behaves_like "a registerable model"
-  end
 end

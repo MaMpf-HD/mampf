@@ -5,7 +5,6 @@ FactoryBot.define do
     allocation_mode { :first_come_first_served }
     registration_deadline { 2.weeks.from_now }
     status { :draft }
-    planning_only { false }
 
     trait :first_come_first_served do
       allocation_mode { :first_come_first_served }
@@ -32,10 +31,6 @@ FactoryBot.define do
     trait :completed do
       status { :completed }
       registration_deadline { 2.weeks.ago }
-    end
-
-    trait :planning_only do
-      planning_only { true }
     end
 
     trait :with_items do
