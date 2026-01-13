@@ -176,39 +176,10 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
         .to eq(I18n.t("registration.campaign.confirmations.open"))
     end
 
-    it "returns planning confirmation for planning campaign" do
-      campaign.planning_only = true
-      expect(helper.campaign_open_confirmation(campaign))
-        .to eq(I18n.t("registration.campaign.confirmations.open_planning"))
-    end
-
     it "appends warning for unlimited items" do
       create(:registration_item, registration_campaign: campaign, capacity: nil)
       expect(helper.campaign_open_confirmation(campaign))
         .to include(I18n.t("registration.campaign.warnings.unlimited_items"))
-    end
-  end
-
-  describe "#planning_only_disabled_reason" do
-    let(:lecture) { create(:lecture) }
-    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
-
-    context "when campaign can be planning only" do
-      it "returns nil" do
-        expect(helper.planning_only_disabled_reason(campaign)).to be_nil
-      end
-    end
-
-    context "when campaign cannot be planning only" do
-      before do
-        create(:registration_item, registration_campaign: campaign,
-                                   registerable: create(:tutorial, lecture: lecture))
-      end
-
-      it "returns the translated reason" do
-        expect(helper.planning_only_disabled_reason(campaign))
-          .to eq(I18n.t("registration.campaign.planning_only_disabled"))
-      end
     end
   end
 end

@@ -127,74 +127,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    describe "#planning_only" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
-
-      context "when campaign has no items" do
-        it "is valid" do
-          expect(campaign).to be_valid
-        end
-      end
-
-      context "when campaign has lecture item" do
-        before do
-          create(:registration_item, registration_campaign: campaign, registerable: lecture)
-        end
-
-        it "is valid" do
-          expect(campaign).to be_valid
-        end
-      end
-
-      context "when campaign has tutorial items" do
-        let(:campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: false)
-        end
-
-        before do
-          create(:registration_item, registration_campaign: campaign,
-                                     registerable: create(:tutorial, lecture: lecture))
-          campaign.planning_only = true
-        end
-
-        it "is invalid" do
-          expect(campaign).not_to be_valid
-          expect(campaign.errors[:planning_only])
-            .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
-                               ".planning_only.incompatible_items"))
-        end
-      end
-    end
-
     describe "#validate_real_campaign_uniqueness" do
       let(:lecture) { create(:lecture) }
 
-      context "when a standard campaign already exists" do
-        let!(:existing_campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: false)
-        end
-
-        it "allows creating another standard campaign (uniqueness is enforced by items)" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
-          expect(new_campaign).to be_valid
-        end
-      end
-
-      context "when a planning_only campaign already exists" do
-        let!(:existing_campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: true)
-        end
-
-        it "allows creating a standard campaign" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
-          expect(new_campaign).to be_valid
-        end
-
-        it "allows creating another planning_only campaign" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
-          expect(new_campaign).to be_valid
-        end
+      it "allows creating multiple campaigns for the same lecture" do
+        create(:registration_campaign, campaignable: lecture)
+        new_campaign = build(:registration_campaign, campaignable: lecture)
+        expect(new_campaign).to be_valid
       end
     end
   end

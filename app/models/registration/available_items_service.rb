@@ -31,8 +31,6 @@ module Registration
       end
 
       def type_allowed?(type)
-        return false if @campaign.planning_only? && type != "Lecture"
-
         @existing_type.nil? || @existing_type == type
       end
 
@@ -57,15 +55,6 @@ module Registration
       def add_lecture(groups)
         ids = @registered_ids["Lecture"] || []
         return if ids.include?(@lecture.id)
-
-        unless @campaign.planning_only?
-          is_used_in_real = Registration::Item.joins(:registration_campaign)
-                                              .where(registerable_type: "Lecture",
-                                                     registerable_id: @lecture.id)
-                                              .exists?(registration_campaigns:
-                                              { planning_only: false })
-          return if is_used_in_real
-        end
 
         groups[:lecture] = [@lecture]
       end

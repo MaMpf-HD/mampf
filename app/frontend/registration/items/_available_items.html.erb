@@ -117,17 +117,12 @@
         <% end %>
       </div>
       <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
-        <% if campaign.planning_only? %>
+        <% existing_type = campaign.registration_items.first&.registerable_type %>
+        <% if existing_type == "Lecture" %>
           <div class="alert alert-info mt-3">
-            <%= t("registration.item.add.planning_only_restriction") %>
+            <%= t("registration.item.add.lecture_unique") %>
           </div>
         <% else %>
-          <% existing_type = campaign.registration_items.first&.registerable_type %>
-          <% if existing_type == "Lecture" %>
-            <div class="alert alert-info mt-3">
-              <%= t("registration.item.add.lecture_unique") %>
-            </div>
-          <% else %>
             <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
               <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
 
@@ -159,7 +154,6 @@
                 <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
               </div>
             <% end %>
-          <% end %>
         <% end %>
       </div>
     </div>

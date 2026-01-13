@@ -92,24 +92,6 @@ RSpec.describe(Registration::AvailableItemsService) do
       end
     end
 
-    context "when campaign is planning only" do
-      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
-      let!(:tutorial) { create(:tutorial, lecture: lecture) }
-      let!(:talk) { create(:talk, lecture: lecture) }
-
-      it "does not return tutorials" do
-        expect(service.items[:tutorials]).to be_nil
-      end
-
-      it "does not return talks" do
-        expect(service.items[:talks]).to be_nil
-      end
-
-      it "returns the lecture itself" do
-        expect(service.items[:lecture]).to include(lecture)
-      end
-    end
-
     context "when campaign has cohort items" do
       let!(:cohort1) { create(:cohort, context: lecture) }
       let!(:cohort2) { create(:cohort, context: lecture) }

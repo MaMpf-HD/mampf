@@ -1,7 +1,6 @@
 de:
   registration:
     campaign:
-      planning_only: "Nur Planung"
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       updated: "Anmeldeverfahren erfolgreich aktualisiert."
@@ -13,7 +12,6 @@ de:
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
-      planning_only_disabled: "Diese Option ist deaktiviert, da das Anmeldeverfahren bereits Elemente enthält, die keine Vorlesung sind."
       not_found: "Anmeldeverfahren nicht gefunden."
       lecture_not_found: "Veranstaltung nicht gefunden."
       helpdesk:
@@ -161,7 +159,6 @@ de:
         new: "Neue erstellen"
         none_available: "Keine Elemente verfügbar."
         lecture_unique: "Dieses Anmeldeverfahren enthält bereits eine Vorlesung. Es können keine weiteren Elemente hinzugefügt werden."
-        planning_only_restriction: "Im Planungsmodus können Sie nur die Vorlesung selbst als Element hinzufügen. Das Erstellen neuer Tutorien oder Vorträge ist deaktiviert."
       columns:
         title: "Titel"
         capacity: "Kapazität"
@@ -208,8 +205,6 @@ de:
               cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
-            planning_only:
-              incompatible_items: "kann nicht aktiviert werden, da das Anmeldeverfahren bereits Elemente enthält, die keine Vorlesung sind."
         registration/policy:
           attributes:
             base:
@@ -224,8 +219,6 @@ de:
               lecture_unique: "Ein Anmeldeverfahren kann nur eine Vorlesung enthalten."
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
-              planning_only_allows_only_lecture: "Im Planungsmodus kann nur die Vorlesung selbst hinzugefügt werden."
-              planning_only_allows_single_item: "Im Planungsmodus kann nur ein einziges Element (die Vorlesung) hinzugefügt werden."
               already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."
         registration/user_registration:
           attributes:
