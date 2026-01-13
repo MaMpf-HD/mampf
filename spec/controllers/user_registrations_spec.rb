@@ -114,7 +114,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
           .and_return(service_double)
         expect(service_double).to receive(:succeed_items).and_return(stub_succeed_items)
 
-        get :registrations_for_campaign, params: { campaign_id: campaign.id}
+        get :registrations_for_campaign, params: { campaign_id: campaign.id }
       end
     end
   end
