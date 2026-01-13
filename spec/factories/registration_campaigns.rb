@@ -177,6 +177,33 @@ FactoryBot.define do
       end
     end
 
+    trait :with_first_item_allocated do
+      transient do
+        user_id { nil }
+      end
+      after(:create) do |campaign, evaluator|
+        item = campaign.registration_items.first
+        user = User.find(evaluator.user_id) if evaluator.user_id
+        case item.registerable_type
+        when "Tutorial"
+          create(:tutorial_membership,
+                 tutorial: item.registerable,
+                 user: user,
+                 source_campaign_id: campaign.id)
+        when "Talk"
+          create(:speaker_talk_join,
+                 talk: item.registerable,
+                 speaker: user,
+                 source_campaign_id: campaign.id)
+        when "Cohort"
+          create(:cohort_membership,
+                 cohort: item.registerable,
+                 user: user,
+                 source_campaign_id: campaign.id)
+        end
+      end
+    end
+
     trait :with_first_item_registered_preference do
       transient do
         user_id { nil }
