@@ -72,6 +72,7 @@ class SubmissionsController < ApplicationController
       c.updated_at = Time.zone.now
     end
 
+    @progress_value = @lecture.assignment_completion_for_user(current_user)
     send_upload_email(User.where(id: current_user.id))
   end
 
@@ -109,6 +110,8 @@ class SubmissionsController < ApplicationController
   def destroy
     return if @too_late
 
+    Completion.where(user: current_user, completable: @submission.assignment).destroy_all
+    @progress_value = @lecture.assignment_completion_for_user(current_user)
     @submission.destroy
   end
 
@@ -148,6 +151,7 @@ class SubmissionsController < ApplicationController
     end
     @submission.users.delete(current_user)
     Completion.where(user: current_user, completable: @submission.assignment).destroy_all
+    @progress_value = @lecture.assignment_completion_for_user(current_user)
 
     send_leave_emailq
   end
@@ -425,6 +429,7 @@ class SubmissionsController < ApplicationController
           c.updated_at = Time.zone.now
         end
 
+        @progress_value = @lecture.assignment_completion_for_user(current_user)
         send_join_email
         remove_invitee_status
       else
