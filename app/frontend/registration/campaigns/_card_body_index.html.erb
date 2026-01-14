@@ -1,9 +1,4 @@
   <% if lecture.registration_campaigns.any? %>
-    <div class="collapse mb-3" id="campaignInfo">
-      <%= render "registration/campaigns/about_campaigns" %>
-      <%= render "registration/campaigns/patterns_info", lecture: lecture %>
-    </div>
-
     <table class="table table-hover">
       <thead>
         <tr>
@@ -49,8 +44,5 @@
       </tbody>
     </table>
   <% else %>
-    <div class="collapse show" id="campaignInfo">
-      <%= render "registration/campaigns/about_campaigns" %>
-      <%= render "registration/campaigns/patterns_info", lecture: lecture %>
-    </div>
+    <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
   <% end %>

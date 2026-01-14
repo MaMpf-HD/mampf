@@ -47,6 +47,9 @@ window.Stimulus.register("cohort-purpose", CohortPurposeController);
 import CampaignActionController from "~/registration/campaign_action.controller.js";
 window.Stimulus.register("campaign-action", CampaignActionController);
 
+import CollapseController from "~/registration/collapse.controller.js";
+window.Stimulus.register("collapse", CollapseController);
+
 import BsPopoverController from "~/controllers/bs_popover_controller.js";
 window.Stimulus.register("bs-popover", BsPopoverController);
 
