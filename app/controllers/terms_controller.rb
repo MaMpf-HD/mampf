@@ -1,6 +1,5 @@
 class TermsController < ApplicationController
   before_action :set_term, except: [:index, :new, :create, :set_active]
-  layout "administration"
   authorize_resource except: [:index, :new, :create, :set_active]
   layout "administration"
 
