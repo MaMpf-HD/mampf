@@ -15,9 +15,15 @@ class TermsController < ApplicationController
   def new
     @term = Term.new
     authorize! :new, @term
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def create
