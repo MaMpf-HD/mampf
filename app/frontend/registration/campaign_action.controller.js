@@ -4,7 +4,7 @@ export default class extends Controller {
   static values = {
     confirmMessage: String,
     warningMessage: String,
-    campaignId: String
+    campaignId: String,
   };
 
   async confirm(event) {
@@ -18,9 +18,9 @@ export default class extends Controller {
         `/campaigns/${this.campaignIdValue}/check_unlimited_items`,
         {
           headers: {
-            Accept: "application/json"
-          }
-        }
+            Accept: "application/json",
+          },
+        },
       );
 
       if (response.ok) {
@@ -29,7 +29,8 @@ export default class extends Controller {
           message += "\n\n" + this.warningMessageValue;
         }
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to check unlimited items:", error);
     }
 

@@ -24,7 +24,11 @@ module Registration
         if cohort.propagate_to_lecture
           base_type
         else
-          "#{base_type} <i class='bi bi-person-x ms-1' style='color: #495057;' data-bs-toggle='tooltip' title='#{t("registration.item.hints.no_propagation")}'></i>".html_safe
+          icon = tag.i(class: "bi bi-person-x ms-1",
+                       style: "color: #495057;",
+                       data: { bs_toggle: "tooltip",
+                               bs_title: t("registration.item.hints.no_propagation") })
+          safe_join([base_type, " ", icon])
         end
       end
     end
