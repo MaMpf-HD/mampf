@@ -105,19 +105,19 @@ de:
         intro: "Wählen Sie die Gruppenarten, die zu Ihrer Veranstaltungsstruktur passen. Sie können mehrere Arten in einem Anmeldeverfahren kombinieren."
         tutorials:
           title: "Tutorien"
-          description: "Wöchentliche Übungsgruppen. Studierende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
+          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
         talks:
           title: "Vorträge"
-          description: "Seminarvorträge. Vortragende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
+          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
         enrollment:
           title: "Anmeldungsgruppe"
-          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
+          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
         planning:
           title: "Planungsgruppe"
-          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende erscheinen nicht in der Teilnehmerliste der Veranstaltung."
+          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Teilnehmerliste der Veranstaltung übernommen."
         other:
           title: "Flexible Gruppen"
-          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie entscheiden, ob Studierende automatisch in der Teilnehmerliste der Veranstaltungerscheinen."
+          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
         note: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
     policy:
       helpdesk:
