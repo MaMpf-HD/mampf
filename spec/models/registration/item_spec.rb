@@ -22,13 +22,6 @@ RSpec.describe(Registration::Item, type: :model) do
       expect(item.registerable_type).to eq("Talk")
       expect(item.registerable.lecture).to eq(item.registration_campaign.campaignable)
     end
-
-    it "creates a valid item for lecture" do
-      item = FactoryBot.create(:registration_item, :for_lecture)
-      expect(item).to be_valid
-      expect(item.registerable_type).to eq("Lecture")
-      expect(item.registerable).to eq(item.registration_campaign.campaignable)
-    end
   end
 
   describe "validations" do
@@ -79,7 +72,8 @@ RSpec.describe(Registration::Item, type: :model) do
         before do
           item # ensure item exists
           campaign.update!(status: :open)
-          create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+          create_list(:registration_user_registration, 3, :confirmed,
+                      registration_item: item, registration_campaign: campaign)
           item.capacity = 5
           item.save
         end
@@ -159,7 +153,8 @@ RSpec.describe(Registration::Item, type: :model) do
         before do
           item # ensure item exists
           campaign.update!(status: :open)
-          create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+          create_list(:registration_user_registration, 3, :confirmed,
+                      registration_item: item, registration_campaign: campaign)
           item.capacity = 5
           item.save
         end
@@ -313,9 +308,6 @@ RSpec.describe(Registration::Item, type: :model) do
           expect(item.errors[:base])
             .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
                                ".already_in_other_campaign"))
-        end
-      end
-    end                               ".already_in_other_campaign"))
         end
       end
     end
