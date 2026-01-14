@@ -60,15 +60,5 @@ module Registration
       key = campaign.registration_deadline > Time.current ? "close_early" : "close"
       t("registration.campaign.confirmations.#{key}")
     end
-
-    def campaign_open_confirmation(campaign)
-      msg = t("registration.campaign.confirmations.open")
-
-      if campaign.registration_items.any? { |i| i.capacity.nil? }
-        msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
-      end
-
-      msg
-    end
   end
 end

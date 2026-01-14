@@ -167,19 +167,4 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
         .to eq(I18n.t("registration.campaign.confirmations.close"))
     end
   end
-
-  describe "#campaign_open_confirmation" do
-    let(:campaign) { build(:registration_campaign) }
-
-    it "returns standard confirmation for regular campaign" do
-      expect(helper.campaign_open_confirmation(campaign))
-        .to eq(I18n.t("registration.campaign.confirmations.open"))
-    end
-
-    it "appends warning for unlimited items" do
-      create(:registration_item, registration_campaign: campaign, capacity: nil)
-      expect(helper.campaign_open_confirmation(campaign))
-        .to include(I18n.t("registration.campaign.warnings.unlimited_items"))
-    end
-  end
 end
