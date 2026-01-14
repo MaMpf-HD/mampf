@@ -37,7 +37,6 @@ module Registration
                 scope: [:registration_campaign_id, :registerable_type]
               }
 
-    validate :registerable_type_consistency, on: :create
     validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
     validate :validate_uniqueness_constraints
@@ -100,19 +99,6 @@ module Registration
 
         confirmed_count = user_registrations.confirmed.count
         errors.add(:base, :capacity_too_low, count: confirmed_count)
-      end
-
-      def registerable_type_consistency
-        # We use where.not(id: nil) to ensure we only look at persisted items
-        # and ignore the current item (which is not yet persisted) or other
-        # items currently being built in the same transaction/request.
-        existing_item = registration_campaign.registration_items.where.not(id: nil).first
-        return unless existing_item
-
-        existing_type = existing_item.registerable_type
-        return unless registerable_type != existing_type
-
-        errors.add(:base, :mixed_types)
       end
 
       def ensure_campaign_is_draft

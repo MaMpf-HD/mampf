@@ -214,7 +214,6 @@ en:
               taken: "is already part of another campaign."
               taken_by_real_campaign: "is already part of another active campaign."
             base:
-              mixed_types: "All items must be of the same type."
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
               already_in_other_campaign: "This item is already part of another standard registration campaign."

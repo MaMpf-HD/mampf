@@ -214,7 +214,6 @@ de:
               taken: "ist bereits Teil eines anderen Anmeldeverfahrens."
               taken_by_real_campaign: "ist bereits Teil eines anderen aktiven Anmeldeverfahrens."
             base:
-              mixed_types: "Alle Elemente müssen vom gleichen Typ sein."
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
               already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."

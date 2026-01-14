@@ -34,29 +34,6 @@ RSpec.describe(Registration::Item, type: :model) do
   describe "validations" do
     subject { create(:registration_item) }
 
-    describe "#registerable_type_consistency" do
-      let(:campaign) { create(:registration_campaign) }
-
-      context "when existing item is a tutorial" do
-        let!(:tutorial_item) do
-          create(:registration_item, :for_tutorial, registration_campaign: campaign)
-        end
-
-        it "allows adding another item of the same type" do
-          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
-          expect(new_item).to be_valid
-        end
-
-        it "does not allow adding an item of a different type" do
-          new_item = build(:registration_item, :for_talk, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".mixed_types"))
-        end
-      end
-    end
-
     describe "#validate_capacity_frozen" do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }

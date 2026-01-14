@@ -1,8 +1,8 @@
 module Registration
-  # Identifies registerable items (Tutorials, Talks, or the Lecture itself)
-  # from the parent lecture that are not yet part of the campaign and enforces
-  # type homogeneity by restricting results to the type of existing items,
-  # ensuring a campaign contains only one category of registerables.
+  # Identifies registerable items (Tutorials, Talks, or Cohorts)
+  # from the parent lecture that are not yet part of the campaign.
+  # Filters based on lecture type: seminars show Talks, regular lectures show Tutorials.
+  # Cohorts are available for all lecture types.
   class AvailableItemsService
     def initialize(campaign)
       @campaign = campaign
@@ -12,26 +12,14 @@ module Registration
     def items
       return {} unless @lecture.is_a?(Lecture)
 
-      prepare_registered_data
-
       groups = {}
-      add_tutorials(groups) if type_allowed?("Tutorial")
-      add_talks(groups) if type_allowed?("Talk")
-      add_cohorts(groups) if type_allowed?("Cohort")
+      add_tutorials(groups) unless @lecture.seminar?
+      add_talks(groups) if @lecture.seminar?
+      add_cohorts(groups)
       groups
     end
 
     private
-
-      def prepare_registered_data
-        pairs = @campaign.registration_items.pluck(:registerable_type, :registerable_id)
-        @existing_type = pairs.first&.first
-        @registered_ids = pairs.group_by(&:first).transform_values { |list| list.map(&:last) }
-      end
-
-      def type_allowed?(type)
-        @existing_type.nil? || @existing_type == type
-      end
 
       def add_tutorials(groups)
         used_ids = Registration::Item.where(registerable_type: "Tutorial").pluck(:registerable_id)
