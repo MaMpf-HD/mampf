@@ -40,7 +40,10 @@ class TermsController < ApplicationController
         end
       end
     else
-      render :new, status: :unprocessable_content
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
+             status: :unprocessable_content
     end
   end
 
@@ -48,7 +51,10 @@ class TermsController < ApplicationController
     if @term.update(term_params)
       redirect_to terms_path
     else
-      render :edit, status: :unprocessable_content
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
+             status: :unprocessable_content
     end
   end
 
