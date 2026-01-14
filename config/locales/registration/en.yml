@@ -82,8 +82,8 @@ en:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
       patterns:
-        title: "What can students register for?"
-        intro: "Choose the type(s) that match your course structure. You can combine multiple types in one campaign."
+        title: "Which group types are available?"
+        intro: "Choose the group types that match your course structure. You can combine multiple types in one registration campaign."
         tutorials:
           title: "Tutorials"
           description: "Weekly practice sessions. Students automatically appear on the course roster."
@@ -91,15 +91,15 @@ en:
           title: "Talks"
           description: "Seminar presentations. Speakers automatically appear on the course roster."
         enrollment:
-          title: "Course Enrollment"
-          description: "Direct enrollment without sub-groups. Use this for courses without tutorials or talks."
+          title: "Enrollment Group"
+          description: "Enrollment for courses without tutorials or talks. Students automatically appear on the course roster."
         planning:
-          title: "Demand Survey"
-          description: "Pre-term interest check. Does not grant course access—used for planning only."
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students do not appear on the course roster."
         other:
-          title: "Other Groups"
-          description: "Flexible groups (waitlists, special projects, audit listeners). You decide whether students appear on the course roster."
-        note: "Students always join the course roster via a group—there is no standalone 'lecture enrollment'. Use Course Enrollment groups for simple courses."
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You decide whether students automatically appear on the course roster."
+        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -142,17 +142,17 @@ en:
         finalization: "Finalization"
         both: "Both"
     item:
-      not_found: "Registration item not found."
+      not_found: "Group not found."
       index:
-        title: "Items"
-        none: "No items added yet."
+        title: "Groups"
+        none: "No groups added yet."
       add:
-        title: "Add Items"
+        title: "Add Groups"
         existing: "Add Existing"
         new: "Create New"
-        none_available: "No items available to add."
+        none_available: "No groups available to add."
       columns:
-        type: "Type"
+        type: "Group Type"
         title: "Title"
         capacity: "Capacity"
         registrations: "Registrations"
@@ -166,9 +166,9 @@ en:
         tutorial: "Tutorial"
         talk: "Talk"
         cohort: "Special Group"
-        enrollment_group: "Course Enrollment"
-        planning_survey: "Demand Survey"
-        other_group: "Other Group"
+        enrollment_group: "Enrollment Group"
+        planning_survey: "Planning Group"
+        other_group: "Flexible Group"
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
@@ -183,18 +183,18 @@ en:
       confirm_delete: "Are you sure you want to remove this item?"
       confirm_remove: "Are you sure you want to remove this item from the campaign?"
       confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
-      select_type: "Select a type..."
+      select_type: "Select a group type..."
       attributes:
         capacity_optional: "Capacity (optional)"
         propagate_to_lecture: "Students appear in the course roster"
       hints:
         no_propagation: "Students in this group do not appear in the course roster"
       help:
-        tutorial: "Weekly practice sessions with fixed time slots. Students work on exercises, tutors grade them and can enter and manage points in MaMpf. Students who receive a tutorial spot after the registration process concludes are automatically added to the course roster. In particular, it is not necessary to create a separate course enrollment process."
-        talk: "Seminar presentations where students present topics. Grades for seminar talks can be managed in MaMpf. Students who receive a talk spot after the registration process concludes are automatically added to the course roster. In particular, it is not necessary to create a separate course enrollment process."
-        enrollment: "If the course has no tutorials or talks to be assigned, course enrollment can be used. Students who receive a spot after the registration process concludes are automatically added to the course roster."
+        tutorial: "Weekly practice sessions with fixed time slots. Students work on exercises, tutors grade them and can enter and manage points in MaMpf. Students who receive a tutorial spot after the registration process concludes are automatically added to the course roster."
+        talk: "Seminar presentations where students present topics. Grades for seminar talks can be managed in MaMpf. Students who receive a talk spot after the registration process concludes are automatically added to the course roster."
+        enrollment: "If the course has no tutorials or talks, an enrollment group can be used. Students who receive a spot after the registration process concludes are automatically added to the course roster."
         planning: "Interest survey (typically before the semester begins) to gauge demand. No transfer to course rosters takes place."
-        other: "Flexible groups that can be used, for example, for waitlists or special projects. You determine whether students appear in the course roster."
+        other: "Flexible groups for waitlists, special projects, or audit listeners. You determine whether students appear in the course roster."
         propagate_to_lecture: "If enabled, students in this group will automatically be added to the course roster. Disable this for pure waitlists that are not connected to course enrollment."
   activerecord:
     errors:

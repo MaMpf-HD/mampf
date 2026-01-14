@@ -82,8 +82,8 @@ de:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
       patterns:
-        title: "Wofür können sich Studierende anmelden?"
-        intro: "Wählen Sie die Typen, die zu Ihrer Veranstaltungsstruktur passen. Sie können mehrere Typen in einer Kampagne kombinieren."
+        title: "Welche Gruppenarten gibt es?"
+        intro: "Wählen Sie die Gruppenarten, die zu Ihrer Veranstaltungsstruktur passen. Sie können mehrere Arten in einem Anmeldeverfahren kombinieren."
         tutorials:
           title: "Tutorien"
           description: "Wöchentliche Übungsgruppen. Studierende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
@@ -91,15 +91,15 @@ de:
           title: "Vorträge"
           description: "Seminarvorträge. Vortragende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
         enrollment:
-          title: "Veranstaltungsanmeldung"
-          description: "Direkte Einschreibung ohne Untergruppen. Nutzen Sie dies für Veranstaltungen ohne Tutorien oder Vorträge."
+          title: "Anmeldungsgruppe"
+          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende erscheinen automatisch in der Teilnehmerliste der Veranstaltung."
         planning:
-          title: "Bedarfserfassung"
-          description: "Interessensumfrage vor Semesterbeginn. Gewährt keinen Veranstaltungszugang—nur für Planung."
+          title: "Planungsgruppe"
+          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende erscheinen nicht in der Teilnehmerliste der Veranstaltung."
         other:
-          title: "Sonstige Gruppen"
-          description: "Flexible Gruppen (Wartelisten, Sonderprojekte, Gasthörer). Sie entscheiden, ob Studierende in der Teilnehmerliste erscheinen."
-        note: "Studierende treten der Veranstaltung immer über eine Gruppe bei—es gibt keine eigenständige 'Vorlesungseinschreibung'. Nutzen Sie Veranstaltungsanmeldung für einfache Veranstaltungen."
+          title: "Flexible Gruppen"
+          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie entscheiden, ob Studierende automatisch in der Teilnehmerliste der Veranstaltungerscheinen."
+        note: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
@@ -142,17 +142,17 @@ de:
         finalization: "Finalisierung"
         both: "Beide"
     item:
-      not_found: "Registrierungselement nicht gefunden."
+      not_found: "Gruppe nicht gefunden."
       index:
-        title: "Elemente"
-        none: "Noch keine Elemente hinzugefügt."
+        title: "Gruppen"
+        none: "Noch keine Gruppen hinzugefügt."
       add:
-        title: "Elemente hinzufügen"
+        title: "Gruppen hinzufügen"
         existing: "Vorhandene hinzufügen"
         new: "Neue erstellen"
-        none_available: "Keine Elemente verfügbar."
+        none_available: "Keine Gruppen verfügbar."
       columns:
-        type: "Typ"
+        type: "Gruppenart"
         title: "Titel"
         capacity: "Kapazität"
         registrations: "Anmeldungen"
@@ -166,9 +166,9 @@ de:
         tutorial: "Tutorium"
         talk: "Vortrag"
         cohort: "Sondergruppe"
-        enrollment_group: "Veranstaltungsanmeldung"
-        planning_survey: "Bedarfserfassung"
-        other_group: "Sonstige Gruppe"
+        enrollment_group: "Anmeldungsgruppe"
+        planning_survey: "Planungsgruppe"
+        other_group: "Flexible Gruppe"
         lecture: "Vorlesung"
         lecture_signup: "Vorlesungseinschreibung"
       actions:
@@ -183,18 +183,18 @@ de:
       confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
       confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
       confirm_delete_registerable: "Sind Sie sicher, dass Sie dieses %{type} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
-      select_type: "Typ auswählen..."
+      select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
         propagate_to_lecture: "Studierende erscheinen in der Teilnehmerliste der Veranstaltung"
       hints:
         no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnehmerliste der Veranstaltung"
       help:
-        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten.Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen. Insbesondere isat es nicht notwendig, ein zusätzliches Veranstaltungsanmeldeverfahren zu erstellen."
-        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen. Insbesondere ist es nicht notwendig, ein zusätzliches Veranstaltungsanmeldeverfahren zu erstellen."
-        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, die zugewiesen werden sollen, kann die Veranstaltungsanmeldung verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        planning: "Interessensumfrage (typischerweise vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt." 
-        other: "Flexible Gruppen, die z.B. für Wartelisten oder Sonderprojekte verwendet werden können. Sie bestimmen, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
+        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt." 
+        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Sie bestimmen, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktivieren Sie dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
   activerecord:
     errors:
