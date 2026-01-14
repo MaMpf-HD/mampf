@@ -1,10 +1,13 @@
-<% if @announcements.present? %>
-  <div class="alert alert-secondary"
-       role="alert">
-    <%= @announcements.html_safe %>
-  </div>
-<% end %>
-<div class="accordion" id="subscriptionsAccordion">
+<%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column; padding-left: 1em; padding-right: 1em;">
+  <% if @announcements.present? %>
+    <div class="alert alert-secondary"
+         role="alert">
+      <%= @announcements.html_safe %>
+    </div>
+  <% end %>
+  <div class="accordion" id="subscriptionsAccordion" style="flex: 1;">
   <% if Term.active %>
     <div class="accordion-item">
       <div class="accordion-header">
@@ -147,7 +150,7 @@
               aria-controls="collapseLectureSearch">
         <h4 class="text-dark"
             id="lectureSearchLink">
-          <%= t('profile.lecture_search') %>
+          <%= t('basics.lecture_search') %>
         </h4>
       </button>
     </div>
@@ -157,7 +160,7 @@
       <div class="accordion-body">
         <%= render partial: 'search/lecture_search_form',
                    locals: { results_as_list: false } %>
-        <div id="lecture-search-results">
+        <div id="lecture-search-results-old">
         </div>
       </div>
     </div>
@@ -188,5 +191,17 @@
       </div>
     </div>
   </div>
+  </div>
+
+  <a href="#lecture-search" id="go-to-lecture-search">
+    <span style="font-size: 0.9em; font-weight: 500;">
+      <%= t("lecture.search.go_to_search") %>
+    </span>
+    <div id="arrow-go-to-lecture-wrapper" style="transition: transform 0.3s ease;">
+      <i class="fas fa-chevron-down" id="arrow-go-to-lecture"></i>
+    </div>
+  </a>
 </div>
+
 <%= render partial: 'profile/subscription_modal' %>
+<%= render partial: "lectures/search/search" %>

@@ -36,7 +36,7 @@ gem "kramdown-parser-gfm", "~> 1.1"
 gem "mini_magick", "~> 4.13"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
-gem "pagy", "~> 9.4"
+gem "pagy", "~> 43.2"
 gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
 gem "pg_search", "~> 2.3"
@@ -72,7 +72,7 @@ group :development do
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
-  gem "rubocop", "~> 1.65", require: false
+  gem "rubocop", "1.81.7", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
