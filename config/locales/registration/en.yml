@@ -179,7 +179,7 @@ en:
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
-        cohorts: "Special Groups"
+        cohorts: "Other Groups"
         general: "General"
       types:
         tutorial: "Tutorial"
