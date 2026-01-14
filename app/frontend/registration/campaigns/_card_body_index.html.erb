@@ -5,7 +5,7 @@
       </button>
     </div>
     <div class="collapse mb-3" id="registrationPatterns">
-      <%= render "registration/campaigns/patterns_info" %>
+      <%= render "registration/campaigns/patterns_info", lecture: lecture %>
     </div>
 
     <table class="table table-hover">
@@ -53,7 +53,7 @@
       </tbody>
     </table>
   <% else %>
-    <%= render "registration/campaigns/patterns_info" %>
+    <%= render "registration/campaigns/patterns_info", lecture: lecture %>
     <div class="alert alert-secondary text-center mt-3">
       <%= t("registration.campaign.index.none") %>
     </div>

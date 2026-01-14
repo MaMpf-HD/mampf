@@ -82,31 +82,24 @@ en:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
       patterns:
-        title: "Configuration Patterns"
-        group_track:
-          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
-          description: "Use this when your lecture has groups (Tutorials or Talks)."
-          primary_label: "Primary Registration Campaign:"
-          primary_text: "Items are Tutorials or Talks."
-          secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
-          secondary_label: "Secondary Campaign (Optional):"
-          secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
-          logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
-        enrollment_track:
-          title: "Pattern 2: The \"Enrollment Track\""
-          description: "Use this when you do not need groups for your lecture."
-          primary_label: "Registration Campaign:"
-          primary_text: "Sole item is the lecture itself."
-          logic: "Roster Logic: The Lecture Roster is the list of registered students."
-        mixed_track:
-          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
-          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
-          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
-        notes:
-          title: "Important Notes"
-          assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
-          item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
-          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
+        title: "What can students register for?"
+        intro: "Choose the type(s) that match your course structure. You can combine multiple types in one campaign."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice sessions. Students automatically appear on the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers automatically appear on the course roster."
+        enrollment:
+          title: "Course Enrollment"
+          description: "Direct enrollment without sub-groups. Use this for courses without tutorials or talks."
+        planning:
+          title: "Demand Survey"
+          description: "Pre-term interest check. Does not grant course access—used for planning only."
+        other:
+          title: "Other Groups"
+          description: "Flexible groups (waitlists, special projects, audit listeners). You decide whether students appear on the course roster."
+        note: "Students always join the course roster via a group—there is no standalone 'lecture enrollment'. Use Course Enrollment groups for simple courses."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -159,6 +152,7 @@ en:
         new: "Create New"
         none_available: "No items available to add."
       columns:
+        type: "Type"
         title: "Title"
         capacity: "Capacity"
         registrations: "Registrations"
@@ -193,6 +187,8 @@ en:
       attributes:
         capacity_optional: "Capacity (optional)"
         propagate_to_lecture: "Students appear in the course roster"
+      hints:
+        no_propagation: "Students in this group do not appear in the course roster"
       help:
         tutorial: "Weekly practice sessions with fixed time slots. Students work on exercises, tutors grade them and can enter and manage points in MaMpf. Students who receive a tutorial spot after the registration process concludes are automatically added to the course roster. In particular, it is not necessary to create a separate course enrollment process."
         talk: "Seminar presentations where students present topics. Grades for seminar talks can be managed in MaMpf. Students who receive a talk spot after the registration process concludes are automatically added to the course roster. In particular, it is not necessary to create a separate course enrollment process."

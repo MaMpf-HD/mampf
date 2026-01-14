@@ -1,9 +1,9 @@
 <tr id="<%= dom_id(item) %>">
     <td>
+      <%= item_display_type(item) %>
+    </td>
+    <td>
       <%= item.title %>
-      <div class="text-muted small">
-        <%= t("registration.item.types.#{item.registerable_type.underscore}") %>
-      </div>
     </td>
     <td>
       <% unless item.capacity_editable? %>
