@@ -8,7 +8,15 @@ module Registration
     REGISTERABLE_CLASSES = {
       "Tutorial" => Tutorial,
       "Talk" => Talk,
-      "Cohort" => Cohort
+      "Enrollment Group" => Cohort,
+      "Planning Survey" => Cohort,
+      "Other Group" => Cohort
+    }.freeze
+
+    COHORT_TYPE_TO_PURPOSE = {
+      "Enrollment Group" => :enrollment,
+      "Planning Survey" => :planning,
+      "Other Group" => :general
     }.freeze
 
     def current_ability
@@ -131,18 +139,33 @@ module Registration
       end
 
       def build_registerable(type)
+        klass = REGISTERABLE_CLASSES[type]
+
         attributes = {
           title: params[:registration_item][:title],
           capacity: params[:registration_item][:capacity]
         }
 
-        if type == "Cohort"
+        if klass == Cohort
           attributes[:context] = @campaign.campaignable
+          attributes[:purpose] = COHORT_TYPE_TO_PURPOSE[type]
+          attributes[:propagate_to_lecture] = determine_propagate_flag(type)
         else
           attributes[:lecture] = @campaign.campaignable
         end
 
-        REGISTERABLE_CLASSES[type].new(attributes)
+        klass.new(attributes)
+      end
+
+      def determine_propagate_flag(type)
+        case COHORT_TYPE_TO_PURPOSE[type]
+        when :enrollment
+          true
+        when :planning
+          false
+        when :general
+          params[:registration_item][:propagate_to_lecture] == "1"
+        end
       end
 
       def persist_registerable_and_item(registerable, type)
@@ -164,9 +187,15 @@ module Registration
       end
 
       def build_and_authorize_item(registerable, type)
+        registerable_type = if COHORT_TYPE_TO_PURPOSE.key?(type)
+          "Cohort"
+        else
+          type
+        end
+
         @item = @campaign.registration_items.build(
           registerable: registerable,
-          registerable_type: type
+          registerable_type: registerable_type
         )
         authorize! :create, @item
       end

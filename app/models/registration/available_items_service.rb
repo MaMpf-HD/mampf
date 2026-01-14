@@ -25,7 +25,9 @@ module Registration
       types = []
       types << "Tutorial" unless @lecture.seminar?
       types << "Talk" if @lecture.seminar?
-      types << "Cohort"
+      types << "Enrollment Group"
+      types << "Planning Survey"
+      types << "Other Group"
       types
     end
 

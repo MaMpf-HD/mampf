@@ -172,6 +172,9 @@ de:
         tutorial: "Tutorium"
         talk: "Vortrag"
         cohort: "Sondergruppe"
+        enrollment_group: "Veranstaltungsanmeldung"
+        planning_survey: "Bedarfserfassung"
+        other_group: "Sonstige Gruppe"
         lecture: "Vorlesung"
         lecture_signup: "Vorlesungseinschreibung"
       actions:
@@ -186,6 +189,17 @@ de:
       confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
       confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
       confirm_delete_registerable: "Sind Sie sicher, dass Sie dieses %{type} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+      select_type: "Typ auswählen..."
+      attributes:
+        capacity_optional: "Kapazität (optional)"
+        propagate_to_lecture: "Studierende erscheinen in der Teilnehmerliste der Veranstaltung"
+      help:
+        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten.Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen. Insbesondere isat es nicht notwendig, ein zusätzliches Veranstaltungsanmeldeverfahren zu erstellen."
+        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen. Insbesondere ist es nicht notwendig, ein zusätzliches Veranstaltungsanmeldeverfahren zu erstellen."
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, die zugewiesen werden sollen, kann die Veranstaltungsanmeldung verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
+        planning: "Interessensumfrage (typischerweise vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt." 
+        other: "Flexible Gruppen, die z.B. für Wartelisten oder Sonderprojekte verwendet werden können. Sie bestimmen, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktivieren Sie dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
   activerecord:
     errors:
       models:

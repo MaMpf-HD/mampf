@@ -38,6 +38,12 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 
+import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
+window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
+
+import CohortPurposeController from "~/registration/cohort_purpose.controller.js";
+window.Stimulus.register("cohort-purpose", CohortPurposeController);
+
 import BsPopoverController from "~/controllers/bs_popover_controller.js";
 window.Stimulus.register("bs-popover", BsPopoverController);
 
