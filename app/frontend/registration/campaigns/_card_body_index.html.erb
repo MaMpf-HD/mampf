@@ -1,10 +1,6 @@
   <% if lecture.registration_campaigns.any? %>
-    <div class="mb-3 text-end">
-      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#registrationPatterns" aria-expanded="false" aria-controls="registrationPatterns">
-        <%= t("registration.campaign.patterns.title") %>
-      </button>
-    </div>
-    <div class="collapse mb-3" id="registrationPatterns">
+    <div class="collapse mb-3" id="campaignInfo">
+      <%= render "registration/campaigns/about_campaigns" %>
       <%= render "registration/campaigns/patterns_info", lecture: lecture %>
     </div>
 
@@ -53,8 +49,8 @@
       </tbody>
     </table>
   <% else %>
-    <%= render "registration/campaigns/patterns_info", lecture: lecture %>
-    <div class="alert alert-secondary text-center mt-3">
-      <%= t("registration.campaign.index.none") %>
+    <div class="collapse show" id="campaignInfo">
+      <%= render "registration/campaigns/about_campaigns" %>
+      <%= render "registration/campaigns/patterns_info", lecture: lecture %>
     </div>
   <% end %>

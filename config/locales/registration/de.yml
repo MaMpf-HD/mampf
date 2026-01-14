@@ -81,6 +81,25 @@ de:
       warnings:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
+      about:
+        toggle: "Was sind Anmeldeverfahren?"
+        title: "Anmeldeverfahren: Wann verwenden?"
+        intro: "Ein Anmeldeverfahren orchestriert die Einschreibung in Gruppen über einen festgelegten Zeitraum. Für einfache Fälle können Sie Anmeldeverfahren überspringen und Selbstanmeldung aktivieren."
+        when_to_use_campaign:
+          title: "Verwenden Sie ein Anmeldeverfahren, wenn..."
+          benefits:
+            - "Sie Registrierungen vor der Finalisierung prüfen möchten"
+            - "Zulassungsregeln notwendig sind (z.B. Leistungsnachweis, institutionelle E-Mail)"
+            - "Studierende Präferenzen abgeben sollen (bevorzugte Tutorien/Vorträge)"
+            - "Sie eine zeitlich begrenzte Anmeldephase benötigen"
+        when_to_use_self:
+          title: "Verwenden Sie Selbstanmeldung, wenn..."
+          benefits:
+            - "Keine Zulassungsprüfungen erforderlich sind"
+            - "First-Come-First-Served ausreicht (keine Präferenzen)"
+            - "Studierende jederzeit beitreten/verlassen können sollen"
+            - "Die Verwaltung möglichst einfach sein soll"
+        note: "Selbstanmeldung kann nach Abschluss eines Anmeldeverfahrens aktiviert werden, um Nachzügler oder Gruppenwechsel zu ermöglichen."
       patterns:
         title: "Welche Gruppenarten gibt es?"
         intro: "Wählen Sie die Gruppenarten, die zu Ihrer Veranstaltungsstruktur passen. Sie können mehrere Arten in einem Anmeldeverfahren kombinieren."

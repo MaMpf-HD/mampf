@@ -81,6 +81,25 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+      about:
+        toggle: "What are registration campaigns?"
+        title: "Registration Campaigns: When to Use?"
+        intro: "A registration campaign orchestrates enrollment into groups over a defined timeframe. For simple cases, you can skip campaigns and enable self-enrollment instead."
+        when_to_use_campaign:
+          title: "Use a registration campaign when..."
+          benefits:
+            - "You want to review registrations before finalization"
+            - "Eligibility rules are required (e.g., performance check, institutional email)"
+            - "Students should rank preferences (preferred tutorials/talks)"
+            - "You need a time-bounded registration window"
+        when_to_use_self:
+          title: "Use self-enrollment when..."
+          benefits:
+            - "No eligibility checks are needed"
+            - "First-come-first-served is sufficient (no preferences)"
+            - "Students should be able to join/leave anytime"
+            - "You want minimal administrative overhead"
+        note: "Self-enrollment can be enabled after a campaign completes to allow latecomers or group changes."
       patterns:
         title: "Which group types are available?"
         intro: "Choose the group types that match your course structure. You can combine multiple types in one registration campaign."
