@@ -68,7 +68,7 @@
                             class: "dropdown-item text-danger",
                             data: { confirm: t("registration.item.confirm_remove"), turbo: true } %>
             </li>
-            <% if ["Tutorial", "Talk"].include?(item.registerable_type) && can?(:destroy, item.registerable) %>
+            <% if can?(:destroy, item.registerable) %>
               <li><hr class="dropdown-divider"></li>
               <li>
                 <%= button_to t("registration.item.actions.delete_registerable", type: t("registration.item.types.#{item.registerable_type.underscore}")),
