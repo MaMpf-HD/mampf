@@ -11,7 +11,7 @@ A registration system manages time-bounded processes where users sign up for cou
 MaMpf needs a flexible registration system to handle:
 - **Regular courses:** Students register for tutorials within a lecture
 - **Seminars:** Students register for talks within a seminar (special type of lecture)
-- **Mixed scenarios:** Combining lecture enrollment with tutorial/talk assignment via a chained process
+- **Simple courses:** Students enroll via a special cohort that propagates to the lecture roster
 
 ## Solution Architecture
 We use a unified system with:
@@ -51,8 +51,7 @@ We use a unified system with:
 ### Usage Scenarios
 - A **`Tutorial`** includes `Registerable` to manage its student roster.
 - A **`Talk`** includes `Registerable` to designate students as its speakers.
-- A **`Lecture`** (acting as a course) includes `Registerable` to manage direct enrollment.
-- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
+- A **`Cohort`** includes `Registerable` to manage enrollment, waitlists, planning surveys, and special groups.
 - A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
 
 ## Configuration Patterns
@@ -63,17 +62,24 @@ We recommend that users follow one of these patterns based on their course struc
 Use this when your lecture has sub-structures (Tutorials or Talks) that need assignment.
 - **Primary Campaign:** Items are **Tutorials** or **Talks**.
     - *Outcome:* Students get a group spot AND official Lecture Roster access (via propagation).
-- **Sidecar Campaign (Optional):** Item is a **Cohort** (e.g., "Waitlist").
+- **Sidecar Campaign (Optional):** Item is a **Cohort** with `purpose: :general` (e.g., "Waitlist").
     - *Outcome:* Students land on a separate waitlist. They **do not** get official access until staff moves them to a group.
 
-### Pattern 2: Lecture Enrollment (Simple Courses)
+### Pattern 2: Enrollment Cohort (Simple Courses)
 Use this when your lecture has no sub-structures (e.g., Advanced Lecture, simple Seminar).
-- **Primary Campaign:** Item is the **Lecture** itself.
-    - *Outcome:* Students are enrolled directly on the Lecture Roster (Status "Unassigned").
-- **Repeaters:** Can be managed via a parallel Lecture Enrollment campaign.
-    - *Outcome:* They merge into the official roster and get access, without needing a tutorial spot.
+- **Primary Campaign:** Item is an **Enrollment Cohort** (`purpose: :enrollment`, `propagate_to_lecture: true`).
+    - *Outcome:* Students join the cohort AND get official Lecture Roster access (via propagation).
+- **Quick-Create:** Use the "Enable Simple Enrollment" button in Roster Overview or campaign item creation.
+    - *Outcome:* Creates the enrollment cohort automatically with correct settings.
 
-> **Note:** These patterns can be run concurrently. A Lecture Enrollment campaign can run alongside Group Enrollment to act as a "General Access / Auditor" list, though using Specific Cohorts is often cleaner for waitlist management.
+### Pattern 3: Planning Cohorts (Demand Forecasting)
+Use this to gauge interest before the semester starts without granting access.
+- **Primary Campaign:** Item is a **Planning Cohort** (`purpose: :planning`, `propagate_to_lecture: false`).
+    - *Outcome:* Students signal interest. No lecture access granted. Results used for staffing decisions.
+- **Repeatable:** Multiple planning cohorts can exist per lecture (unlike enrollment cohorts).
+    - *Outcome:* Run surveys in October, November, etc. without conflicts.
+
+> **Note:** These patterns can be mixed in one campaign. Tutorial + Waitlist Cohort, or Talk + Audit Cohort are valid combinations.
 
 
 
@@ -98,7 +104,6 @@ The main fields and methods of `Registration::Campaign` are:
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
 | `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_served` or `preference_based`                            |
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
-| `planning_only`           | DB column (Bool)  | Planning/reporting only; prevents materialization/finalization (default: false)              |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
 | `user_registrations`      | Association       | User registrations (registration requests) for this campaign                                 |
@@ -150,10 +155,10 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
   Used to lock the window early or when the deadline passes automatically.
 - **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
   FCFS campaigns skip this step (results already determined).
-- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
+- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`. All campaigns materialize—planning cohorts simply don't propagate to the lecture roster.
   - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
-- **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
-- **Lecture performance completeness checks:**
+- **Planning surveys:** Planning cohorts (with `propagate_to_lecture: false` and `purpose: :planning`) are used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
+- **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
   - **Campaign finalize:** Hard-fails if any confirmed registrants have missing/pending certifications (finalization or both phase); auto-rejects students with failed certifications
@@ -193,7 +198,6 @@ Campaigns transition through several states to ensure data integrity and fair us
 | `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
 | `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
 | `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
-| `planning_only` | After `draft` | Cannot change once opened. Changing the nature of the registration (binding vs non-binding) after students have participated is unfair. |
 
 ##### Policies
 
@@ -281,7 +285,6 @@ module Registration
     end
 
     def finalize!
-      return false if planning_only?
       return false unless closed? || processing?
       Registration::FinalizationGuard.new(self).check!
       Registration::AllocationMaterializer.new(self).materialize!
@@ -296,7 +299,6 @@ module Registration
     end
 
     def allocate_and_finalize!
-      return false if planning_only?
       return false unless allocate!
       finalize!
     end
@@ -319,31 +321,82 @@ Student Registration index.
 
 - A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (Admin UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html); Student UI: [Show – preference-based](../mockups/student_registration.html), [Confirmation](../mockups/student_registration_confirmation.html))
 - A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_served` and assigns talk slots. Items point to `Talk`.
-- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_served` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_served` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_served` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Enrollment Campaign" ** is created for a `Lecture` (simple courses without tutorials). It's typically `first_come_first_served` and enrolls students via an enrollment cohort (`purpose: :enrollment`, propagates to lecture). (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- A **"Demand Survey" campaign** is created for a `Lecture` before the term to gauge interest. Items point to a planning cohort (`purpose: :planning`, `propagate_to_lecture: false`). Campaign finalizes normally, but cohort membership doesn't grant lecture access. Results used for staffing decisions. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
 - An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `student_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `student_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
 
-### Planning-only campaigns (Interest Registration)
+### Planning Cohorts (Demand Forecasting)
 
-```admonish example "Planning-only Interest Registration"
+```admonish example "Planning Cohort for Demand Survey"
 Goal: Measure demand before a lecture starts to plan staffing (e.g., hire
-tutors) without changing any rosters.
+tutors) without granting lecture access.
 
 - Host: `Lecture` (campaignable).
-- Items: Single item pointing to the `Lecture` (registerable).
+- Items: Planning cohort with `purpose: :planning`, `propagate_to_lecture: false`.
 - Mode: `first_come_first_served`.
 - Capacity: Very high (effectively unlimited) to capture demand signal.
 - Timing: Open well before the term; close before main registrations.
-- Finalization: Do not invoke `finalize!`. No domain materialization occurs.
-- Reporting: Use counts from `Registration::UserRegistration` (e.g.,
-  confirmed) for planning and exports.
+- Finalization: Campaign finalizes normally. Cohort roster is materialized but doesn't propagate to lecture.
+- Reporting: Query `cohort.cohort_memberships` for confirmed participants.
+- Cleanup: Planning cohorts can be deleted after export (collapsed by default in roster UI).
+- Repeatable: Multiple planning cohorts allowed per lecture (e.g., "Oct Survey", "Nov Survey").
 
-See also the Campaigns index mockups where the planning-only row appears as
-"Interest Registration" with a note like "Planning only; not materialized".
+See the Roster chapter for how planning cohorts appear collapsed in the "Without Enrollment" section.
 ```
+
+---
+
+### Self-Materialization: Direct Roster Access
+
+```admonish info "Beyond Campaigns"
+`Rosterable` models can enable direct student-initiated roster changes,
+either as a complete alternative to campaigns or as a follow-up after
+campaign completion.
+```
+
+**When to use:**
+- **As a complete alternative:** Simple courses where time-bounded orchestration, policies, or preference allocation aren't needed
+- **As a follow-up:** After campaign completion, enable students to self-balance between groups or allow latecomers to join
+
+**Design:**
+
+Each `Rosterable` model gets a `self_materialization_mode` enum:
+- `disabled` (default): Only staff or campaigns modify the roster
+- `add_only`: Students can join (up to capacity)
+- `remove_only`: Students can leave
+- `add_and_remove`: Both actions allowed
+
+**Example Scenarios:**
+
+| Use Case | Campaign? | Self-Materialization Mode | When Enabled |
+|----------|-----------|---------------------------|--------------|
+| Simple open seminar | No | `add_only` | From creation |
+| Tutorial with preference allocation | Yes (preference-based) | `disabled` → `add_and_remove` | After campaign completes |
+| Latecomer waitlist cohort | No | `add_only` | From creation |
+| Lecture with FCFS signup | Yes (FCFS) | `disabled` → `add_only` | After campaign completes |
+| Staff-managed tutorial | No | `disabled` | Never (staff uses maintenance UI) |
+
+**Validation Rules:**
+- Self-materialization must be `disabled` during any non-`completed` campaign targeting this item
+- Capacity is enforced for `add_only`/`add_and_remove`
+- Cannot enable if active campaign exists for this item
+
+**Example Usage:**
+```ruby
+# Enable after campaign finishes
+tutorial.update!(self_materialization_mode: :add_and_remove)
+
+# Student-initiated action (via controller)
+if tutorial.can_self_add?(current_user)
+  tutorial.self_add!(current_user)
+end
+```
+
+See the `Roster::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
+
+---
 
 ## Registration::Campaignable (Concern)
 **_The Campaign Host_**
@@ -431,21 +484,16 @@ end
 
 ### Uniqueness Constraints
 
-To ensure data integrity and prevent double-booking, the following constraints apply:
+To ensure data integrity and prevent double-booking, the following constraint applies:
 
-1.  **Planning-Only Campaigns:**
-    -   There are campaigns designated as `planning_only` (e.g., for interest polls).
-    -   Currently, only `Lecture`s qualify for these campaigns.
-
-2.  **Global Uniqueness:**
-    -   Any registerable (e.g., `Tutorial`, `Talk`, or `Lecture`) can be in **at most one** `Registration::Campaign`.
-    -   `planning_only` campaigns do not count towards this limit.
+- **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
 
 ### Usage Scenarios
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
-- **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.
-- **For a "Cohort Registration" campaign:** A `RegistrationItem` is created for a `Cohort` (e.g., "Repeaters"). The `registerable` association points to the `Cohort` record.
+- **For an "Enrollment Campaign" (simple courses):** A `RegistrationItem` is created for an enrollment cohort (`purpose: :enrollment`). The cohort propagates to the lecture roster automatically.
+- **For a "Demand Survey" campaign:** A `RegistrationItem` is created for a planning cohort (`purpose: :planning`). The cohort does not propagate to the lecture roster.
+- **For a "Waitlist" or special group:** A `RegistrationItem` is created for a general cohort (`purpose: :general`). Propagation is configurable.
 - **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
 
 ```admonish warning "Registration::Item vs. Registration::Registerable"
@@ -534,8 +582,7 @@ The `allocated_user_ids` method **must be implemented** by each registerable mod
 #### Usage Scenarios
 - A **`Tutorial`** includes `Registerable` to manage its student roster.
 - A **`Talk`** includes `Registerable` to designate students as its speakers.
-- A **`Lecture`** (acting as a seminar) includes `Registerable` to manage direct enrollment.
-- A **`Cohort`** includes `Registerable` to manage subgroups like "Repeaters".
+- A **`Cohort`** includes `Registerable` to manage enrollment, waitlists, planning surveys, and special groups.
 - A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
 
 ---
@@ -1135,33 +1182,20 @@ end
 ```
 
 ### Lecture (Enhanced)
-**_The Primary Host and Seminar Target_**
+**_The Primary Campaign Host_**
 
 ```admonish info "What it represents"
-- Existing MaMpf lecture model that can both host campaigns and be registered for.
+- Existing MaMpf lecture model that hosts registration campaigns.
 ```
 
-#### Dual Role
-- **As `Registration::Campaignable`**: Can organize tutorial registration or talk selection campaigns.
-- **As `Registration::Registerable`**: Students can register for the lecture itself (common for seminars).
+#### Role
+- **As `Registration::Campaignable`**: Can organize tutorial registration, talk selection, or cohort enrollment campaigns.
 
 #### Example Implementation
 ```ruby
 class Lecture < ApplicationRecord
-  include Registration::Campaignable      # Can host campaigns for tutorials/talks
-  include Registration::Registerable      # Can be registered for (seminar enrollment)
+  include Registration::Campaignable      # Can host campaigns for tutorials/talks/cohorts
     # ... existing code ...
-
-    # Implements the contract from the Registerable concern
-    def materialize_allocation!(user_ids:, campaign:)
-        # This method is the hand-off point to the roster management system.
-        # Its responsibility is to take the final list of user IDs and
-        # persist them as the official roster for this lecture (seminar),
-        # sourced from this specific campaign.
-        #
-        # The concrete implementation using the Roster::Rosterable concern is detailed
-        # in the "Allocation & Rosters" chapter.
-    end
 end
 ```
 
@@ -1216,17 +1250,41 @@ end
 ```
 
 ### Cohort (New Model)
-**_A Generic Registration Target_**
+**_A Generic Registration Target with Semantic Purpose_**
 
 ```admonish info "What it represents"
-A lightweight container for students within a specific context (e.g., "Waitlist" in a Lecture).
+A flexible container for students within a specific context (e.g., enrollment, waitlist, planning survey).
 ```
 
 #### Responsibilities
-- Acts as a `Registerable` target for campaigns where `Tutorial` is not appropriate.
+- Acts as a `Registerable` target for campaigns where `Tutorial`/`Talk` are not appropriate.
 - Acts as a `Rosterable` container for students.
-- **Sidecar Behavior:** Unlike Tutorials, membership in a Cohort does **not** imply automatic membership in the parent Lecture Roster.
+- **Purpose-Driven Behavior:** Three semantic types via `purpose` enum:
+  - `:enrollment` — Main entry point for simple courses (replaces direct lecture enrollment). Must propagate.
+  - `:general` — Waitlists, special groups, audit listeners. Propagation configurable.
+  - `:planning` — Demand surveys. Must not propagate.
+- **Propagation Control:** `propagate_to_lecture` flag determines if cohort membership grants lecture access.
 - Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events.
+
+#### Schema
+```ruby
+create_table :cohorts do |t|
+  t.references :context, polymorphic: true, null: false
+  t.string :title, null: false
+  t.integer :purpose, default: 0, null: false # 0: general, 1: enrollment, 2: planning
+  t.boolean :propagate_to_lecture, default: true, null: false
+  t.integer :capacity
+  t.timestamps
+end
+
+add_check_constraint :cohorts,
+  "NOT (purpose = 2 AND propagate_to_lecture = true)",
+  name: "planning_cohorts_must_not_propagate"
+
+add_check_constraint :cohorts,
+  "NOT (purpose = 1 AND propagate_to_lecture = false)",
+  name: "enrollment_cohorts_must_propagate"
+```
 
 #### Example Implementation
 ```ruby
@@ -1234,17 +1292,32 @@ class Cohort < ApplicationRecord
   include Registration::Registerable
   include Roster::Rosterable
 
-  # Context is polymorphic to support both academic (Lecture) and
-  # generic (Grouping) use cases.
   belongs_to :context, polymorphic: true
 
-  # Rosterable implementation details in Rosters chapter
+  enum :purpose, { general: 0, enrollment: 1, planning: 2 }
+
+  validates :propagate_to_lecture, inclusion: {
+    in: [false],
+    if: :planning?,
+    message: "must be false for planning cohorts"
+  }
+
+  validates :propagate_to_lecture, inclusion: {
+    in: [true],
+    if: :enrollment?,
+    message: "must be true for enrollment cohorts"
+  }
+
+  scope :operational, -> { where.not(purpose: :planning) }
+  scope :planning, -> { where(purpose: :planning) }
+
   def capacity
     self[:capacity]
   end
 
   def materialize_allocation!(user_ids:, campaign:)
     # Delegates to Rosterable implementation
+    # If propagate_to_lecture is true, also calls context.ensure_roster_membership!(user_ids)
   end
 end
 ```
@@ -1281,8 +1354,8 @@ stateDiagram-v2
     closed --> completed: finalize! (optional)
 
     note right of closed
-        Regular FCFS campaigns: finalize to materialize rosters.
-        Planning-only: stay in closed, skip finalize.
+        All campaigns can be finalized.
+        Planning cohorts simply don't propagate to lecture.
     end note
 ```
 
@@ -1406,11 +1479,9 @@ stateDiagram-v2
     end note
 
     note right of completed
-        For planning-only:
-        skip finalize!
-
-        For materialization:
-        finalize! applies to rosters
+        Finalize applies allocations to rosters.
+        Planning cohorts materialize but don't
+        propagate to lecture roster.
     end note
 ```
 

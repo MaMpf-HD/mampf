@@ -47,12 +47,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.status).to eq("completed")
     end
 
-    it "creates a valid planning_only campaign" do
-      campaign = FactoryBot.create(:registration_campaign, :planning_only)
-      expect(campaign).to be_valid
-      expect(campaign.planning_only).to be(true)
-    end
-
     it "creates campaign with items for regular lecture" do
       campaign = FactoryBot.create(:registration_campaign, :with_items)
       expect(campaign).to be_valid
@@ -133,46 +127,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    describe "#planning_only" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
-
-      context "when campaign has no items" do
-        it "is valid" do
-          expect(campaign).to be_valid
-        end
-      end
-
-      context "when campaign has lecture item" do
-        before do
-          create(:registration_item, registration_campaign: campaign, registerable: lecture)
-        end
-
-        it "is valid" do
-          expect(campaign).to be_valid
-        end
-      end
-
-      context "when campaign has tutorial items" do
-        let(:campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: false)
-        end
-
-        before do
-          create(:registration_item, registration_campaign: campaign,
-                                     registerable: create(:tutorial, lecture: lecture))
-          campaign.planning_only = true
-        end
-
-        it "is invalid" do
-          expect(campaign).not_to be_valid
-          expect(campaign.errors[:planning_only])
-            .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
-                               ".planning_only.incompatible_items"))
-        end
-      end
-    end
-
     describe "#ensure_editable" do
       let(:campaign) { create(:registration_campaign, :completed) }
 
@@ -198,31 +152,10 @@ RSpec.describe(Registration::Campaign, type: :model) do
     describe "#validate_real_campaign_uniqueness" do
       let(:lecture) { create(:lecture) }
 
-      context "when a standard campaign already exists" do
-        let!(:existing_campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: false)
-        end
-
-        it "allows creating another standard campaign (uniqueness is enforced by items)" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
-          expect(new_campaign).to be_valid
-        end
-      end
-
-      context "when a planning_only campaign already exists" do
-        let!(:existing_campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: true)
-        end
-
-        it "allows creating a standard campaign" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: false)
-          expect(new_campaign).to be_valid
-        end
-
-        it "allows creating another planning_only campaign" do
-          new_campaign = build(:registration_campaign, campaignable: lecture, planning_only: true)
-          expect(new_campaign).to be_valid
-        end
+      it "allows creating multiple campaigns for the same lecture" do
+        create(:registration_campaign, campaignable: lecture)
+        new_campaign = build(:registration_campaign, campaignable: lecture)
+        expect(new_campaign).to be_valid
       end
     end
   end
@@ -260,13 +193,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign.status = :draft
       expect(campaign).not_to be_valid
       expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
-    end
-
-    it "prevents changing planning_only if not draft" do
-      # campaign is open (planning_only: false by default factory)
-      campaign.planning_only = true
-      expect(campaign).not_to be_valid
-      expect(campaign.errors.added?(:planning_only, :frozen)).to be(true)
     end
 
     it "allows changing allocation_mode if draft" do
@@ -488,38 +414,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.user_registrations.confirmed.count).to eq(1)
     end
 
-    context "when campaign is planning_only" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) do
-        create(:registration_campaign, campaignable: lecture, planning_only: true,
-                                       status: :processing)
-      end
-      let!(:item) do
-        create(:registration_item, registration_campaign: campaign, registerable: lecture)
-      end
-
-      it "updates status to completed" do
-        expect do
-          campaign.finalize!
-        end.to change(campaign, :status).from("processing").to("completed")
-      end
-
-      it "does not call AllocationMaterializer" do
-        expect_any_instance_of(Registration::AllocationMaterializer).not_to receive(:materialize!)
-        campaign.finalize!
-      end
-
-      it "does not reject pending registrations" do
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                registration_item: item, status: :pending)
-
-        campaign.finalize!
-
-        expect(campaign.user_registrations.pending.count).to eq(1)
-        expect(campaign.user_registrations.rejected.count).to eq(0)
-      end
-    end
-
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield
@@ -593,20 +487,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       it "returns empty relation if campaign is draft" do
         campaign.update(status: :draft)
         expect(campaign.unassigned_users).to be_empty
-      end
-
-      it "returns empty relation if campaign is planning_only" do
-        planning_campaign = create(:registration_campaign, campaignable: lecture,
-                                                           planning_only: true, status: :draft)
-        # Add item so it can be opened (planning_only requires item to be the campaignable itself)
-        item = create(:registration_item, registration_campaign: planning_campaign,
-                                          registerable: lecture)
-        planning_campaign.update!(status: :open)
-
-        create(:registration_user_registration, registration_campaign: planning_campaign,
-                                                user: unassigned_user, registration_item: item)
-
-        expect(planning_campaign.unassigned_users).to be_empty
       end
 
       it "returns users who are registered but not assigned to any item of the " \

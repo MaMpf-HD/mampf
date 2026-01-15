@@ -279,7 +279,7 @@ Rails.application.routes.draw do
   resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
-      post "roster/enroll", to: "roster/maintenance#enroll"
+      post "roster/add_to_group", to: "roster/maintenance#enroll", as: :roster_add_to_group
     end
 
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
@@ -299,6 +299,7 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
+        get :check_unlimited_items
       end
       resource :allocation,
                controller: "registration/allocations",

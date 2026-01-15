@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roster Maintenance (Tiles)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+      .roster-tile {
+        transition: all 0.2s ease-in-out;
+        border: 1px solid #dee2e6;
+      }
+      .roster-tile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        border-color: var(--bs-primary);
+      }
+      .roster-tile .tile-actions {
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+      .roster-tile:hover .tile-actions {
+        opacity: 1;
+      }
+      /* Show actions on touch devices always or handled via tapping */
+      @media (hover: none) {
+        .roster-tile .tile-actions { opacity: 1; }
+      }
+      .text-truncate-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="bg-light p-4">
+    <div class="container-fluid" style="max-width: 1200px;">
+      <!-- Main Content Area -->
+        <div class="card border-top-0 shadow-sm">
+            <!-- Workflow Info -->
+            <div class="card-body bg-light border-bottom">
+            <details>
+                <summary class="text-muted" style="cursor: pointer;">
+                <i class="bi bi-info-circle me-1"></i> Wie funktioniert die Platzvergabe?
+                </summary>
+                <div class="mt-3 text-muted">
+                <p class="mb-1 fw-bold">Standard-Ablauf (Anmeldeverfahren):</p>
+                <ol class="ps-3 mb-2">
+                    <li>Wechseln Sie zum Reiter <a href="#">Anmeldeverfahren</a>...</li>
+                    <li>Dabei können Sie Tutorien ...</li>
+                    <li>Studierende geben ihre Präferenzen an...</li>
+                    <li>Die Plätze werden automatisch verteilt...</li>
+                </ol>
+                </div>
+            </details>
+            </div>
+
+            <!-- Tutorials Section -->
+            <div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">Tutorien</h6>
+                <button class="btn btn-sm btn-light"><i class="bi bi-plus-lg"></i> Anlegen</button>
+            </div>
+
+            <div class="p-3 bg-light border-bottom">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+                    <!-- Tutorial 1 (Overbooked) -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Tutorial 1">Tutorial 1</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-secondary border border-secondary" title="Nach Anmeldeverfahren"><i class="bi-check-circle-fill"></i></span>
+                                        <span class="badge bg-light text-success border border-success" title="Nur Eintragen"><i class="bi-person-plus-fill"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <i class="bi bi-person me-1"></i> TBA
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span class="text-danger fw-bold">
+                                            20 / 18 <i class="bi bi-exclamation-triangle-fill text-danger" title="Überbucht"></i>
+                                        </span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-primary" title="Teilnehmende verwalten"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Selbsteinschreibung"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutorial 2 (Normal) -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Tutorial 2">Tutorial 2</h6>
+                                    <div class="d-flex gap-1">
+                                         <span class="badge bg-light text-secondary border border-secondary" title="Nach Anmeldeverfahren"><i class="bi-check-circle-fill"></i></span>
+                                         <span class="badge bg-light text-success border border-success" title="Ein- & Austragen"><i class="bi-person-fill-add"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <i class="bi bi-person me-1"></i> TBA
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>14 / 18</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 77%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                     <button class="btn btn-sm btn-primary" title="Teilnehmende verwalten"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Selbsteinschreibung"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                     <!-- Tutorial 3 (Full) -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Tutorial 3">Tutorial 3</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-secondary border border-secondary" title="Nach Anmeldeverfahren"><i class="bi-check-circle-fill"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <i class="bi bi-person me-1"></i> TBA
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>10 / 10</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-primary" title="Teilnehmende verwalten"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Selbsteinschreibung"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutorial 4 (Smaller) -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Tutorial 4">Tutorial 4</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-secondary border border-secondary" title="Nach Anmeldeverfahren"><i class="bi-check-circle-fill"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <i class="bi bi-person me-1"></i> TBA
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>5 / 5</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-primary" title="Teilnehmende verwalten"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Selbsteinschreibung"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                     <!-- Mo 14-16 (Direct) -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Mo 14-16">Mo 14-16</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-primary border border-primary" title="Direkte Verwaltung"><i class="bi-gear-fill"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <i class="bi bi-person me-1"></i> Benjamin Tutor
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>1</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                         <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"></div> <!-- undefined capacity -->
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-primary" title="Teilnehmende verwalten"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Selbsteinschreibung"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Kann kein Anmeldeverfahren erstellen"><i class="bi bi-calendar-plus"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren können nicht aktiviert werden"><i class="bi bi-calendar-x"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cohorts Section -->
+             <div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">Sondergruppen</h6>
+                <button class="btn btn-sm btn-light"><i class="bi bi-plus-lg"></i> Anlegen</button>
+            </div>
+             <div class="bg-white p-2 px-3 border-bottom fw-bold text-dark border-top d-flex align-items-center">
+                Ohne Veranstaltungseinschreibung
+                <i class="bi bi-question-circle ms-2 text-muted" title="Info"></i>
+            </div>
+             <div class="p-3 bg-light">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+                     <!-- Pref Cohort 1 -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Pref Cohort 1">Pref Cohort 1</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-success border border-success" title="Anmeldung"><i class="bi-calendar-check"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <div class="text-truncate-3" title="If you failed last year's exam...">If you failed last year's exam and don't want to go through tutorials again...</div>
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>0 / 10</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-outline-primary disabled" title="Gesperrt"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Selbsteinschreibung gesperrt"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Pref Cohort 2 -->
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm roster-tile">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title fw-bold mb-0 text-truncate" title="Pref Cohort 2">Pref Cohort 2</h6>
+                                    <div class="d-flex gap-1">
+                                        <span class="badge bg-light text-success border border-success" title="Anmeldung"><i class="bi-calendar-check"></i></span>
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-3 flex-grow-1">
+                                    <div class="text-truncate-3" title="If you failed last year's exam...">If you failed last year's exam and don't want to go through tutorials again...</div>
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between font-monospace small mb-1">
+                                        <span>Belegung</span>
+                                        <span>0 / 10</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="tile-actions mt-3 pt-2 border-top d-flex justify-content-end gap-1">
+                                    <button class="btn btn-sm btn-outline-primary disabled" title="Gesperrt"><i class="bi bi-person-lines-fill"></i></button>
+                                    <button class="btn btn-sm btn-primary" title="Bearbeiten"><i class="bi bi-tools"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger disabled" title="Löschen nicht möglich"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Selbsteinschreibung gesperrt"><i class="bi bi-person-check"></i></button>
+                                    <button class="btn btn-sm btn-secondary" title="Anmeldeverfahren ansehen"><i class="bi bi-calendar-event"></i></button>
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Anmeldeverfahren überspringen nicht möglich"><i class="bi bi-calendar-check"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+  </body>
+</html>
