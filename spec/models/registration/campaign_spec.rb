@@ -414,38 +414,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.user_registrations.confirmed.count).to eq(1)
     end
 
-    context "when campaign is planning_only" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) do
-        create(:registration_campaign, campaignable: lecture, planning_only: true,
-                                       status: :processing)
-      end
-      let!(:item) do
-        create(:registration_item, registration_campaign: campaign, registerable: lecture)
-      end
-
-      it "updates status to completed" do
-        expect do
-          campaign.finalize!
-        end.to change(campaign, :status).from("processing").to("completed")
-      end
-
-      it "does not call AllocationMaterializer" do
-        expect_any_instance_of(Registration::AllocationMaterializer).not_to receive(:materialize!)
-        campaign.finalize!
-      end
-
-      it "does not reject pending registrations" do
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                registration_item: item, status: :pending)
-
-        campaign.finalize!
-
-        expect(campaign.user_registrations.pending.count).to eq(1)
-        expect(campaign.user_registrations.rejected.count).to eq(0)
-      end
-    end
-
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield

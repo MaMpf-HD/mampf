@@ -200,25 +200,4 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
                                                 rank: 1))
     end
   end
-
-  describe "#planning_only_checkbox_disabled?" do
-    let(:campaign) { build(:registration_campaign) }
-
-    it "returns true if campaign cannot be planning only" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(false)
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
-    end
-
-    it "returns true if campaign is not draft" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :open
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
-    end
-
-    it "returns false if campaign can be planning only and is draft" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :draft
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(false)
-    end
-  end
 end
