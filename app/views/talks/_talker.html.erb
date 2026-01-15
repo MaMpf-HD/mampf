@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "talk_user" do %>
+  <strong>
+    <%= t('admin.talk.speakers') %>:
+  </strong>
+  <%= speaker_list(talk) %>
+  <%= link_to self_add_talk_path(
+      talk,
+      type: "Talk",
+      partial: "talks/talker",
+      variable: "talk",
+      turbo_frame: "talk_user"
+    ),
+    data: { turbo_method: :post },
+    class: "btn btn-sm btn-outline-success" do %>
+    <i class="bi bi-plus"></i>
+  <% end %>
+
+  <%= link_to self_remove_talk_path(
+      talk,
+      type: "Talk",
+      partial: "talks/talker",
+      variable: "talk",
+      turbo_frame: "talk_user"
+    ),
+    data: { turbo_method: :delete },
+    class: "btn btn-sm btn-outline-danger" do %>
+    <i class="bi bi-subtract"></i>
+  <% end %>
+<% end %>

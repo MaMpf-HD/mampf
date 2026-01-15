@@ -55,7 +55,9 @@ module Roster
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       # need to re-render the roster partial to show the updated roster
-      render_roster_update(tab: params[:active_tab])
+      render_user_update(params[:turbo_frame],
+                         params[:partial],
+                         { params[:variable].to_sym => @rosterable })
     end
 
     def self_remove
@@ -67,8 +69,9 @@ module Roster
 
       flash.now[:notice] = t("roster.messages.user_removed")
 
-      # need to re-render the roster partial to show the updated roster
-      render_roster_update(tab: params[:active_tab])
+      render_user_update(params[:turbo_frame],
+                         params[:partial],
+                         { params[:variable].to_sym => @rosterable })
     end
 
     private
@@ -90,6 +93,18 @@ module Roster
           format.turbo_stream do
             flash.now[:alert] = message
             render turbo_stream: stream_flash
+          end
+        end
+      end
+
+      def render_user_update(turbo_frame, partial, locals = {})
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              turbo_frame,
+              partial: partial,
+              locals: locals
+            )
           end
         end
       end
