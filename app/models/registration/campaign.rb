@@ -112,13 +112,6 @@ module Registration
     end
 
     def finalize!
-      if planning_only?
-        return true if completed?
-
-        update!(status: :completed)
-        return true
-      end
-
       # Protect against concurrent finalization attempts via locking
       with_lock do
         return if completed?

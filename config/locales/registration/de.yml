@@ -246,6 +246,41 @@ de:
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+    allocation:
+      started: "Zuteilung wurde berechnet."
+      conflicts:
+        title: "Konfligierende Registrierungen"
+        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Sie die Zuteilung durchführen, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
+        currently_in: "aktuell in %{tutorial}"
+      dashboard:
+        title: "Zuteilungs-Dashboard"
+        last_updated: "Stand: %{time}"
+        unassigned_students: "Nicht zugewiesene Studierende"
+        no_unassigned: "Alle Studierenden wurden zugewiesen!"
+        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."
+        workflow_info_fcfs: "Überprüfen Sie die Liste der registrierten Studierenden. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
+        workflow_info_planning: "Überprüfen Sie die Statistiken. Da dies ein Nur-Planungs-Verfahren ist, werden keine Änderungen an Teilnehmerlisten vorgenommen. Wenn Sie zufrieden sind, klicken Sie auf 'Planung abschließen', um den aktuellen Stand zu speichern."
+        item_capacities: "Auslastung"
+      stats:
+        total_registrations: "Bewerbungen Gesamt"
+        assigned: "Zugewiesen"
+        unassigned: "Nicht zugewiesen"
+        happiness_distribution: "Präferenzverteilung"
+        rank: "Präferenzrang"
+        count: "Anzahl"
+        percentage: "Prozent"
+        rank_label: "Wahl #%{rank}"
+        forced: "Zwangszuweisung"
+        capacity: "Kapazität"
+        utilization: "Auslastung"
+      errors:
+        already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
+        planning_only: "Nur Planung"
+        wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
+        policy_violation_title: "Richtlinienverstöße erkannt"
+        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        failed: "Zuteilung fehlgeschlagen: %{error}"
   activerecord:
     errors:
       models:

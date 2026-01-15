@@ -246,6 +246,41 @@ en:
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from campaign"
+    allocation:
+      started: "Allocation has been calculated."
+      conflicts:
+        title: "Conflicting Registrations"
+        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{tutorial}"
+      dashboard:
+        title: "Allocation Dashboard"
+        last_updated: "Last updated: %{time}"
+        unassigned_students: "Unassigned Students"
+        no_unassigned: "All students have been assigned!"
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
+        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
+        item_capacities: "Tutorial Capacities"
+      stats:
+        total_registrations: "Total Applicants"
+        assigned: "Assigned"
+        unassigned: "Unassigned"
+        happiness_distribution: "Preference Distribution"
+        rank: "Preference Rank"
+        count: "Count"
+        percentage: "Percentage"
+        rank_label: "Choice #%{rank}"
+        forced: "Forced Assignment"
+        capacity: "Capacity"
+        utilization: "Utilization"
+      errors:
+        already_completed: "Campaign is already completed."
+        planning_only: "Planning only"
+        wrong_status: "Campaign has wrong status for this action."
+        policy_violation: "Policy violations detected. Please review details below."
+        policy_violation_title: "Policy Violations Detected"
+        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        failed: "Allocation failed: %{error}"
   activerecord:
     errors:
       models:
