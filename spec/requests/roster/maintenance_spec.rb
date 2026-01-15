@@ -272,7 +272,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "handles invalid group selection" do
-        post lecture_roster_enroll_path(lecture),
+        post lecture_roster_add_to_group_path(lecture),
              params: { email: new_student.email, rosterable_id: "Invalid-1" }
         expect(flash[:alert]).to be_present
       end

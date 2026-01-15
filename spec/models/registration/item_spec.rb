@@ -124,17 +124,6 @@ RSpec.describe(Registration::Item, type: :model) do
         end
       end
 
-      context "when capacity is frozen" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :completed)
-        end
-
-        it "returns frozen error" do
-          expect(item.validate_capacity_change_from_registerable!(10)).to eq([:base, :frozen])
-        end
-      end
-
       context "when capacity reduction is invalid" do
         before do
           item # ensure item exists

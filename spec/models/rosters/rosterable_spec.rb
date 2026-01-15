@@ -295,7 +295,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a real campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -321,7 +321,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a real campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
