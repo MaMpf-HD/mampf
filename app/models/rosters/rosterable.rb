@@ -67,8 +67,8 @@ module Rosters
     end
 
     # guard in FE for self-assignment possibility
-    def allow_self_add?
-      config_allow_self_add? && !locked?
+    def allow_self_add?(user)
+      config_allow_self_add? && !locked? && allocated_user_ids.exclude?(user.id) && !full?
     end
 
     def config_allow_self_remove?
@@ -76,8 +76,8 @@ module Rosters
     end
 
     # guard in FE for self-removal possibility
-    def allow_self_remove?
-      config_allow_self_remove? && !locked?
+    def allow_self_remove?(user)
+      config_allow_self_remove? && !locked? && allocated_user_ids.include?(user.id)
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).

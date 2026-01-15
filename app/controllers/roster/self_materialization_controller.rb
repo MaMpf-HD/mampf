@@ -1,6 +1,7 @@
 module Roster
   class SelfMaterializationController < ApplicationController
     class RosterLockedError < StandardError; end
+    class RosterFullError < StandardError; end
     class SelfAddNotAllowedError < StandardError; end
     class SelfRemoveNotAllowedError < StandardError; end
     class UserNotFoundError < StandardError; end
@@ -20,7 +21,11 @@ module Roster
     end
 
     rescue_from RosterLockedError do
-      respond_with_error(t("roster.errors.item_locked"))
+      respond_with_error(t("roster.errors.capacity_exceeded"))
+    end
+
+    rescue_from RosterFullError do
+      respond_with_error(t("roster.errors.item_full"))
     end
 
     rescue_from SelfAddNotAllowedError do
@@ -78,6 +83,10 @@ module Roster
 
       def ensure_rosterable_unlocked!
         raise(RosterLockedError) if @rosterable.locked?
+      end
+
+      def ensure_rosterable_not_full!
+        raise(RosterLockedError) if @rosterable.full?
       end
 
       def ensure_rosterable_allow_self_add!

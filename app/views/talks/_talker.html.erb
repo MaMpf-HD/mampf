@@ -3,7 +3,9 @@
     <%= t('admin.talk.speakers') %>:
   </strong>
   <%= speaker_list(talk) %>
-  <%= link_to self_add_talk_path(
+  
+  <% if talk.allow_self_add?(current_user) %>
+    <%= link_to self_add_talk_path(
       talk,
       type: "Talk",
       partial: "talks/talker",
@@ -12,10 +14,16 @@
     ),
     data: { turbo_method: :post },
     class: "btn btn-sm btn-outline-success" do %>
-    <i class="bi bi-plus"></i>
+      <i class="bi bi-plus"></i>
+    <% end %>
+  <% else %>
+    <button class="btn btn-sm btn-outline-secondary" disabled> 
+      <i class="bi bi-plus"></i> 
+    </button>
   <% end %>
 
-  <%= link_to self_remove_talk_path(
+  <% if talk.allow_self_remove?(current_user) %>
+    <%= link_to self_remove_talk_path(
       talk,
       type: "Talk",
       partial: "talks/talker",
@@ -24,6 +32,11 @@
     ),
     data: { turbo_method: :delete },
     class: "btn btn-sm btn-outline-danger" do %>
-    <i class="bi bi-subtract"></i>
+      <i class="bi bi-subtract"></i>
+    <% end %>
+  <% else %>
+    <button class="btn btn-sm btn-outline-secondary" disabled> 
+      <i class="bi bi-subtract"></i> 
+    </button>
   <% end %>
 <% end %>
