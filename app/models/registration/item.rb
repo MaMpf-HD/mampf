@@ -143,6 +143,8 @@ module Registration
         errors.add(:base, :already_in_other_campaign)
       end
 
+      # Registerables that have the skip_campaigns flag set are excluded from
+      # becoming items in campaigns.
       def validate_registerable_allows_campaigns
         return unless registerable
         return unless registerable.respond_to?(:skip_campaigns?)
