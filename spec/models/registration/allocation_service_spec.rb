@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe(Registration::AllocationService) do
   let(:lecture) { create(:lecture) }
-  let(:campaign) { create(:registration_campaign, :preference_based, campaignable: lecture, :preference_based) }
+  let(:campaign) { create(:registration_campaign, :preference_based, campaignable: lecture) }
   let(:item1) { create(:registration_item, registration_campaign: campaign) }
   let(:item2) { create(:registration_item, registration_campaign: campaign) }
   let(:user1) { create(:user) }
@@ -124,7 +124,7 @@ RSpec.describe(Registration::AllocationService) do
           service.allocate!
         end.to change(Registration::UserRegistration, :count).by(1)
 
-        reg = Registration::UserRegistration.last
+        reg = user3.user_registrations.find_by(registration_campaign: campaign)
         expect(reg.user).to eq(user3)
         expect(reg.registration_item).to eq(item2)
         expect(reg.preference_rank).to be_nil
