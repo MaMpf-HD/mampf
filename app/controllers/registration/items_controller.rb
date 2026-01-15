@@ -5,20 +5,6 @@ module Registration
     before_action :set_item, only: [:destroy, :update]
     authorize_resource class: "Registration::Item", except: [:create]
 
-    REGISTERABLE_CLASSES = {
-      "Tutorial" => Tutorial,
-      "Talk" => Talk,
-      "Enrollment Group" => Cohort,
-      "Planning Survey" => Cohort,
-      "Other Group" => Cohort
-    }.freeze
-
-    COHORT_TYPE_TO_PURPOSE = {
-      "Enrollment Group" => :enrollment,
-      "Planning Survey" => :planning,
-      "Other Group" => :general
-    }.freeze
-
     def current_ability
       @current_ability ||= begin
         ability = RegistrationItemAbility.new(current_user)
@@ -120,7 +106,7 @@ module Registration
 
       def create_new_registerable
         type = params[:registration_item][:registerable_type]
-        unless REGISTERABLE_CLASSES.key?(type)
+        unless Registration::Item::REGISTERABLE_CLASSES.key?(type)
           return respond_with_error(t("registration.item.invalid_type"))
         end
 
@@ -139,7 +125,7 @@ module Registration
       end
 
       def build_registerable(type)
-        klass = REGISTERABLE_CLASSES[type]
+        klass = Registration::Item::REGISTERABLE_CLASSES[type]
 
         attributes = {
           title: params[:registration_item][:title],
@@ -148,7 +134,7 @@ module Registration
 
         if klass == Cohort
           attributes[:context] = @campaign.campaignable
-          attributes[:purpose] = COHORT_TYPE_TO_PURPOSE[type]
+          attributes[:purpose] = Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
           attributes[:propagate_to_lecture] = determine_propagate_flag(type)
         else
           attributes[:lecture] = @campaign.campaignable
@@ -158,7 +144,7 @@ module Registration
       end
 
       def determine_propagate_flag(type)
-        case COHORT_TYPE_TO_PURPOSE[type]
+        case Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
         when :enrollment
           true
         when :planning
@@ -187,7 +173,7 @@ module Registration
       end
 
       def build_and_authorize_item(registerable, type)
-        registerable_type = if COHORT_TYPE_TO_PURPOSE.key?(type)
+        registerable_type = if Registration::Item::COHORT_TYPE_TO_PURPOSE.key?(type)
           "Cohort"
         else
           type
