@@ -22,62 +22,10 @@ RSpec.describe(Registration::Item, type: :model) do
       expect(item.registerable_type).to eq("Talk")
       expect(item.registerable.lecture).to eq(item.registration_campaign.campaignable)
     end
-
-    it "creates a valid item for lecture" do
-      item = FactoryBot.create(:registration_item, :for_lecture)
-      expect(item).to be_valid
-      expect(item.registerable_type).to eq("Lecture")
-      expect(item.registerable).to eq(item.registration_campaign.campaignable)
-    end
   end
 
   describe "validations" do
     subject { create(:registration_item) }
-
-    describe "#registerable_type_consistency" do
-      let(:campaign) { create(:registration_campaign) }
-
-      context "when existing item is a tutorial" do
-        let!(:tutorial_item) do
-          create(:registration_item, :for_tutorial, registration_campaign: campaign)
-        end
-
-        it "allows adding another item of the same type" do
-          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
-          expect(new_item).to be_valid
-        end
-
-        it "does not allow adding an item of a different type" do
-          new_item = build(:registration_item, :for_talk, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".mixed_types"))
-        end
-      end
-
-      context "when existing item is a lecture" do
-        let!(:lecture_item) do
-          create(:registration_item, :for_lecture, registration_campaign: campaign)
-        end
-
-        it "does not allow adding another lecture item" do
-          new_item = build(:registration_item, :for_lecture, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".lecture_unique"))
-        end
-
-        it "does not allow adding an item of a different type" do
-          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
-          expect(new_item).not_to be_valid
-          expect(new_item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".lecture_unique"))
-        end
-      end
-    end
 
     describe "#validate_capacity_frozen" do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
@@ -362,54 +310,12 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
-    describe "#validate_planning_only_compliance" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) { create(:registration_campaign, campaignable: lecture, planning_only: true) }
-
-      context "when campaign is planning only" do
-        it "allows adding lecture item" do
-          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
-          expect(item).to be_valid
-        end
-
-        it "does not allow adding tutorial item" do
-          item = build(:registration_item, registration_campaign: campaign,
-                                           registerable: create(:tutorial, lecture: lecture))
-          expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".planning_only_allows_only_lecture"))
-        end
-
-        it "does not allow adding multiple items" do
-          create(:registration_item, registration_campaign: campaign, registerable: lecture)
-          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
-          expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".planning_only_allows_single_item"))
-        end
-      end
-
-      context "when campaign is not planning only" do
-        let(:campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: false)
-        end
-
-        it "allows adding tutorial item" do
-          item = build(:registration_item, registration_campaign: campaign,
-                                           registerable: create(:tutorial, lecture: lecture))
-          expect(item).to be_valid
-        end
-      end
-    end
-
     describe "#validate_uniqueness_constraints" do
       let(:lecture) { create(:lecture) }
       let(:tutorial) { create(:tutorial, lecture: lecture) }
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
 
-      context "with a tutorial (strict global uniqueness)" do
+      context "with registerables (strict global uniqueness)" do
         let(:other_lecture) { create(:lecture) }
         let(:other_campaign) { create(:registration_campaign, campaignable: other_lecture) }
 
@@ -417,37 +323,8 @@ RSpec.describe(Registration::Item, type: :model) do
           create(:registration_item, registration_campaign: other_campaign, registerable: tutorial)
         end
 
-        it "is invalid if already in another standard campaign" do
+        it "is invalid if already in another campaign" do
           item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
-          expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".already_in_other_campaign"))
-        end
-      end
-
-      context "with a lecture (planning_only exception)" do
-        let(:planning_campaign) do
-          create(:registration_campaign, campaignable: lecture, planning_only: true)
-        end
-
-        before do
-          create(:registration_item, registration_campaign: planning_campaign,
-                                     registerable: lecture)
-        end
-
-        it "allows adding to a standard campaign if currently only in planning_only" do
-          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
-          expect(item).to be_valid
-        end
-
-        it "is invalid if already in another standard campaign" do
-          # Create another standard campaign (needs different campaignable to exist)
-          other_lecture = create(:lecture)
-          other_campaign = create(:registration_campaign, campaignable: other_lecture)
-          create(:registration_item, registration_campaign: other_campaign, registerable: lecture)
-
-          item = build(:registration_item, registration_campaign: campaign, registerable: lecture)
           expect(item).not_to be_valid
           expect(item.errors[:base])
             .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \

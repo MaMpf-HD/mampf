@@ -12,6 +12,12 @@ RSpec.describe(Cohort, type: :model) do
       expect(cohort.errors[:title]).to be_present
     end
 
+    it "is invalid without a purpose" do
+      cohort = build(:cohort, purpose: nil)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
+    end
+
     it "is invalid with a negative capacity" do
       cohort = build(:cohort, capacity: -1)
       expect(cohort).not_to be_valid
@@ -21,6 +27,50 @@ RSpec.describe(Cohort, type: :model) do
     it "is valid with a nil capacity" do
       cohort = build(:cohort, capacity: nil)
       expect(cohort).to be_valid
+    end
+  end
+
+  describe "purpose enum" do
+    it "supports general purpose" do
+      cohort = create(:cohort, :general)
+      expect(cohort.general?).to be(true)
+    end
+
+    it "supports enrollment purpose" do
+      cohort = create(:cohort, :enrollment)
+      expect(cohort.enrollment?).to be(true)
+    end
+
+    it "supports planning purpose" do
+      cohort = create(:cohort, :planning)
+      expect(cohort.planning?).to be(true)
+    end
+  end
+
+  describe "propagate_to_lecture immutability" do
+    it "cannot be changed after creation" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+
+      expect { cohort.propagate_to_lecture = true }.to raise_error(ActiveRecord::ReadonlyAttributeError)
+    end
+  end
+
+  describe "database constraints" do
+    it "prevents planning cohorts from propagating" do
+      expect do
+        create(:cohort, purpose: :planning, propagate_to_lecture: true)
+      end.to raise_error(ActiveRecord::StatementInvalid, /planning_cohorts_must_not_propagate/)
+    end
+
+    it "enforces enrollment cohorts must propagate" do
+      expect do
+        create(:cohort, purpose: :enrollment, propagate_to_lecture: false)
+      end.to raise_error(ActiveRecord::StatementInvalid, /enrollment_cohorts_must_propagate/)
+    end
+
+    it "allows general cohorts with either propagation setting" do
+      expect(create(:cohort, purpose: :general, propagate_to_lecture: false)).to be_valid
+      expect(create(:cohort, purpose: :general, propagate_to_lecture: true)).to be_valid
     end
   end
 
