@@ -481,15 +481,9 @@ end
 
 ### Uniqueness Constraints
 
-To ensure data integrity and prevent double-booking, the following constraints apply:
+To ensure data integrity and prevent double-booking, the following constraint applies:
 
-1.  **Planning-Only Campaigns:**
-    -   There are campaigns designated as `planning_only` (e.g., for interest polls).
-    -   Currently, only `Lecture`s qualify for these campaigns.
-
-2.  **Global Uniqueness:**
-    -   Any registerable (e.g., `Tutorial`, `Talk`, or `Lecture`) can be in **at most one** `Registration::Campaign`.
-    -   `planning_only` campaigns do not count towards this limit.
+- **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
 
 ### Usage Scenarios
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
