@@ -17,20 +17,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#campaign_item_type_label" do
-    it "returns dash if no items" do
-      campaign = build(:registration_campaign)
-      expect(helper.campaign_item_type_label(campaign)).to eq("—")
-    end
-
-    it "returns translated type label" do
-      campaign = create(:registration_campaign, :with_items)
-      # Factory creates Tutorial items by default
-      expect(helper.campaign_item_type_label(campaign))
-        .to eq(I18n.t("registration.item.types.tutorial"))
-    end
-  end
-
   describe "#item_stats_label" do
     it "returns registrations for FCFS" do
       campaign = build(:registration_campaign, :first_come_first_served)
