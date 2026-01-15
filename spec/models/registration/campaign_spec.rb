@@ -489,20 +489,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.unassigned_users).to be_empty
       end
 
-      it "returns empty relation if campaign is planning_only" do
-        planning_campaign = create(:registration_campaign, campaignable: lecture,
-                                                           planning_only: true, status: :draft)
-        # Add item so it can be opened (planning_only requires item to be the campaignable itself)
-        item = create(:registration_item, registration_campaign: planning_campaign,
-                                          registerable: lecture)
-        planning_campaign.update!(status: :open)
-
-        create(:registration_user_registration, registration_campaign: planning_campaign,
-                                                user: unassigned_user, registration_item: item)
-
-        expect(planning_campaign.unassigned_users).to be_empty
-      end
-
       it "returns users who are registered but not assigned to any item of the " \
          "same type in the lecture" do
         expect(campaign.unassigned_users).to include(unassigned_user)

@@ -45,36 +45,30 @@ RSpec.describe(Registration::AvailableItemsService) do
     end
 
     context "when items are manually managed" do
-      let!(:manual_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
-      let!(:manual_talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
-      let!(:auto_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
-      let!(:auto_talk) { create(:talk, lecture: lecture, skip_campaigns: false) }
+      context "for regular lecture with tutorials" do
+        let(:lecture) { create(:lecture, sort: "lecture") }
+        let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+        let(:service) { described_class.new(campaign) }
+        let!(:manual_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+        let!(:auto_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
 
-      it "does not return manually managed tutorials" do
-        expect(service.items[:tutorials]).not_to include(manual_tutorial)
-        expect(service.items[:tutorials]).to include(auto_tutorial)
+        it "does not return manually managed tutorials" do
+          expect(service.items[:tutorials]).not_to include(manual_tutorial)
+          expect(service.items[:tutorials]).to include(auto_tutorial)
+        end
       end
 
-      it "does not return manually managed talks" do
-        expect(service.items[:talks]).not_to include(manual_talk)
-        expect(service.items[:talks]).to include(auto_talk)
-      end
-    end
+      context "for seminar with talks" do
+        let(:lecture) { create(:lecture, :is_seminar) }
+        let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+        let(:service) { described_class.new(campaign) }
+        let!(:manual_talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
+        let!(:auto_talk) { create(:talk, lecture: lecture, skip_campaigns: false) }
 
-    context "when items are manually managed" do
-      let!(:manual_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
-      let!(:manual_talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
-      let!(:auto_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
-      let!(:auto_talk) { create(:talk, lecture: lecture, skip_campaigns: false) }
-
-      it "does not return manually managed tutorials" do
-        expect(service.items[:tutorials]).not_to include(manual_tutorial)
-        expect(service.items[:tutorials]).to include(auto_tutorial)
-      end
-
-      it "does not return manually managed talks" do
-        expect(service.items[:talks]).not_to include(manual_talk)
-        expect(service.items[:talks]).to include(auto_talk)
+        it "does not return manually managed talks" do
+          expect(service.items[:talks]).not_to include(manual_talk)
+          expect(service.items[:talks]).to include(auto_talk)
+        end
       end
     end
 
