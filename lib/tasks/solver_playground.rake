@@ -407,7 +407,7 @@ namespace :solver do
       puts "Subscribed teacher to seminar"
     end
 
-    # 2. Create Campaign 1 (Planning-only)
+    # 2. Create Campaign 1 (Planning Survey via Planning Cohort)
     campaign1 = Registration::Campaign.find_by(campaignable: seminar,
                                                description: "Stage 1: Planning")
     if campaign1
@@ -416,16 +416,23 @@ namespace :solver do
       campaign1 = FactoryBot.create(:registration_campaign,
                                     campaignable: seminar,
                                     status: :draft,
-                                    planning_only: true,
+                                    allocation_mode: :first_come_first_served,
                                     description: "Stage 1: Planning",
                                     registration_deadline: 1.week.ago)
 
-      # Add a single "Planning" item
+      # Create a planning cohort (purpose: planning, propagate_to_lecture: false)
+      planning_cohort = FactoryBot.create(:cohort,
+                                          context: seminar,
+                                          title: "Interest Survey",
+                                          purpose: :planning,
+                                          propagate_to_lecture: false,
+                                          capacity: nil)
+
       FactoryBot.create(:registration_item,
                         registration_campaign: campaign1,
-                        registerable: seminar)
+                        registerable: planning_cohort)
 
-      puts "Created Campaign 1 (Planning)"
+      puts "Created Campaign 1 (Planning Survey with Planning Cohort)"
     end
 
     # Register 12 students to Campaign 1
@@ -439,7 +446,7 @@ namespace :solver do
 
       next if campaign1.user_registrations.exists?(user: user)
 
-      # For planning campaigns, we just register them to the single item
+      # Register them to the planning cohort
       item = campaign1.registration_items.first
       FactoryBot.create(:registration_user_registration,
                         user: user,
@@ -448,9 +455,12 @@ namespace :solver do
                         status: :confirmed)
     end
 
-    # Close Campaign 1
-    campaign1.update!(status: :completed) unless campaign1.completed?
-    puts "Campaign 1 is Closed/Completed."
+    # Close and finalize Campaign 1
+    unless campaign1.completed?
+      campaign1.update!(status: :closed)
+      # campaign1.finalize!
+    end
+    puts "Campaign 1 is completed (planning cohort materialized, no roster propagation)."
 
     # 3. Create Campaign 2 (Preference-based)
     campaign2 = Registration::Campaign.find_by(campaignable: seminar,
