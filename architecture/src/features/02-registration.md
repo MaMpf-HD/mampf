@@ -211,10 +211,12 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 ##### Capacity Constraints
 
-| Mode | Freeze Point | Modification Rules |
-|------|--------------|-------------------|
-| FCFS | After `completed` | Can increase anytime while active. Can decrease only if `new_capacity >= confirmed_count` for that item. Freezes once `completed` (rosters materialized). |
-| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `processing` or `completed` (results published). |
+| Mode | Modification Rules |
+|------|-------------------|
+| FCFS | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+| Preference-based | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+
+During solver execution (~1 second), capacity modification is prevented via database row-level locks. See "Solver Execution Protection" above.
 
 #### Implementation Notes
 
