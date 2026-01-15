@@ -26,6 +26,15 @@ At the start of the semester, staff configures the basic teaching structure.
 Assign students to tutorial groups or seminar talks
 ```
 
+```admonish tip "Registration Patterns"
+The system supports three registration patterns:
+- **Pattern 1 (Complex Courses):** Register for Tutorials/Talks (this phase)
+- **Pattern 2 (Simple Courses):** Register for an Enrollment Cohort (`purpose: :enrollment`, `propagate_to_lecture: true`) - creates a single cohort that automatically propagates to lecture roster
+- **Pattern 3 (Demand Forecasting):** Register for Planning Cohort (`purpose: :planning`, `propagate_to_lecture: false`) - for surveys without granting access
+
+See [Registration Patterns](02-registration.md#registration-patterns) for details.
+```
+
 **Staff Actions:**
 
 | Action | Details |
@@ -89,11 +98,23 @@ Apply confirmed registrations to domain model rosters
 
 | Model | Effect |
 |-------|--------|
-| `Tutorial` | Student rosters updated |
-| `Talk` | Speaker assignments updated |
+| `Tutorial` | Student rosters updated → **Upstream Propagation:** Students automatically added to lecture roster |
+| `Talk` | Speaker assignments updated → **Upstream Propagation:** Speakers automatically added to lecture roster |
+| `Cohort` | Members roster updated → **Conditional Propagation:** If `propagate_to_lecture: true`, members added to lecture roster. If `propagate_to_lecture: false` (e.g., planning/waitlist), no lecture access granted |
+| `Lecture` | Lecture roster populated via upstream propagation from sub-groups (Tutorials/Talks/Cohorts) |
 | `Exam` | Before writing roster, eligibility is revalidated; ineligible users are excluded |
 | Authority | Rosters are now the authoritative source for course operations |
 | Idempotency | Same inputs produce same results (can be re-run safely) |
+
+```admonish info "Lecture Roster as Superset"
+The lecture roster is the **union of all sub-group rosters** that propagate:
+- All Tutorial members are automatically added
+- All Talk speakers are automatically added  
+- Cohort members are added **only if** `propagate_to_lecture: true`
+- **Sticky Membership:** Students remain in lecture roster even after leaving sub-groups
+
+See [Rosters](03-rosters.md#the-core-concept-lecture-roster-as-superset) for details.
+```
 
 ---
 
@@ -270,26 +291,6 @@ Allow eligible students to register for the exam (FCFS).
 For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 ```
 
-**Campaign Setup:**
-
-| Step | Action |
-|------|--------|
-| 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
-| 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
-| 3. Attach Policy | Add a `Registration::Policy` with `kind: :student_performance`. |
-| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
-| 5. Open | The campaign opens for registrations. |
-
-## Phase 9: Exam Registration Campaign
-
-```admonish success "Goal"
-Allow eligible students to register for the exam (FCFS).
-```
-
-```admonish info "Complete Exam Documentation"
-For full details on the Exam model, see [Exam Model](05a-exam-model.md).
-```
-
 **Pre-Flight Checks:**
 
 ```admonish warning "Campaign Cannot Open Without Complete Certifications"
@@ -304,11 +305,12 @@ Before staff can transition a campaign to `open` status:
 | Step | Action |
 |------|--------|
 | 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
-| 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
-| 3. Attach Policy | Add a `Registration::Policy` with `kind: :student_performance`, `phase: :registration`. |
-| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
-| 5. Pre-Flight Check | System validates certification completeness. |
-| 6. Open | The campaign opens for registrations (only if pre-flight passes). |
+| 2. Create Campaign | Staff creates a `Registration::Campaign` with the **Lecture** as campaignable (host). |
+| 3. Add Exam Item | Creates a `Registration::Item` with the **Exam** as registerable. |
+| 4. Attach Policy | Add a `Registration::Policy` with `kind: :student_performance`, `phase: :registration`. |
+| 5. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
+| 6. Pre-Flight Check | System validates certification completeness. |
+| 7. Open | The campaign opens for registrations (only if pre-flight passes). |
 
 **Student Experience:**
 - Students see their eligibility status based on their `Certification.status`
@@ -435,45 +437,6 @@ For exams with multiple choice components requiring legal compliance, see the [M
 
 ---
 
-## Phase 11: Exam Grading & Grade Schemes
-
-```admonish success "Goal"
-Record exam scores and assign final grades
-```
-
-**Grading Setup:**
-
-| Step | Action |
-|------|--------|
-| 1. Create Assessment | After exam is administered, create `Assessment::Assessment` for the exam |
-| 2. Seed Participations | From confirmed exam registrants |
-| 3. Define Tasks | Create `Assessment::Task` records for each exam problem |
-| 4. Enter Points | Tutors enter points via grading interface |
-| 5. Aggregate | Points aggregate to `Participation#points_total` |
-
-**Grade Scheme Application:**
-
-```admonish note "Converting Points to Grades"
-Staff analyzes score distribution (histogram, percentiles), then creates and applies a `GradeScheme::Scheme`.
-```
-
-| Step | Process |
-|------|---------|
-| Analyze | View distribution statistics and histogram |
-| Configure | Create `GradeScheme::Scheme` with absolute point bands or percentage cutoffs |
-| Apply | Call `GradeScheme::Applier.apply!(scheme)` |
-| Result | Service computes `grade_value` for each participation based on points |
-| Override | Manual adjustments possible for exceptional cases |
-
-```admonish note "Multiple Choice Exam Extension"
-For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter for the two-stage grading workflow.
-```
-
-**Final Result:**
-- Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_value`)
-
----
-
 ## Phase 12: Late Adjustments & Recomputation
 
 ```admonish warning "Scenario"
@@ -488,28 +451,6 @@ A student's coursework grade changes after the initial bulk computation.
 | Update | The factual data (`points_total`, `achievements_met`) in the student's `StudentPerformance::Record` is updated. |
 | Preserve | Any manual `override_status` on the record remains untouched. |
 | Effect | The next time the student's eligibility is checked (e.g., on the overview screen or during an exam registration attempt), the `Evaluator` will use the new factual data, providing an up-to-date status. |
-
----
-
-## Phase 12: Late Adjustments & Recomputation
-
-```admonish warning "Scenario"
-A student's coursework grade changes after certifications have been created.
-```
-
-**System Response:**
-
-| Trigger | Action |
-|---------|--------|
-| Grade Change | The system automatically triggers `StudentPerformance::Service.compute_and_upsert_record_for(user)`. |
-| Update | The factual data (`points_total`, `achievements_met`) in the student's `StudentPerformance::Record` is updated. |
-| Mark Stale | The associated `Certification` is marked for review (e.g., `needs_review: true` flag). |
-| Notify | System alerts staff that certifications need re-review. |
-| Re-Certify | Staff must review and re-certify before any new campaigns can open. |
-
-```admonish note "Certification Stability"
-Once a certification is created, it remains valid until explicitly updated by staff, even if the underlying Record changes. This ensures consistency during active registration campaigns.
-```
 
 ---
 
@@ -536,24 +477,6 @@ Ongoing monitoring and data integrity
 ```admonish warning "System Constraints"
 These constraints are maintained across all phases to ensure data integrity.
 ```
-
----
-
-## Phase 13: Reporting & Administration
-
-```admonish success "Goal"
-Ongoing monitoring and data integrity
-```
-
-**Ongoing Activities:**
-
-| Activity | Source |
-|----------|--------|
-| Participation Reports | `Assessment::Participation` data |
-| Eligibility Export | `StudentPerformance::Certification` |
-| Registration Audit | `Registration::UserRegistration` |
-| Roster Adjustments | `Roster::MaintenanceService` as needed |
-| Data Integrity | Background jobs monitoring consistency |
 
 ---
 

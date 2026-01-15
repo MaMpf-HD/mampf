@@ -60,25 +60,5 @@ module Registration
       key = campaign.registration_deadline > Time.current ? "close_early" : "close"
       t("registration.campaign.confirmations.#{key}")
     end
-
-    def campaign_open_confirmation(campaign)
-      msg = if campaign.planning_only?
-        t("registration.campaign.confirmations.open_planning")
-      else
-        t("registration.campaign.confirmations.open")
-      end
-
-      if campaign.registration_items.any? { |i| i.capacity.nil? }
-        msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
-      end
-
-      msg
-    end
-
-    def planning_only_disabled_reason(campaign)
-      return if campaign.can_be_planning_only?
-
-      t("registration.campaign.planning_only_disabled")
-    end
   end
 end

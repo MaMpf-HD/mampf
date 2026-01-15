@@ -1,13 +1,4 @@
   <% if lecture.registration_campaigns.any? %>
-    <div class="mb-3 text-end">
-      <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#registrationPatterns" aria-expanded="false" aria-controls="registrationPatterns">
-        <%= t("registration.campaign.patterns.title") %>
-      </button>
-    </div>
-    <div class="collapse mb-3" id="registrationPatterns">
-      <%= render "registration/campaigns/patterns_info" %>
-    </div>
-
     <table class="table table-hover">
       <thead>
         <tr>
@@ -47,19 +38,11 @@
               <span class="badge bg-<%= campaign_badge_color(campaign) %>">
                 <%= t("registration.campaign.status.#{campaign.status}") %>
               </span>
-              <% if campaign.planning_only? %>
-                <span class="badge bg-info text-dark ms-1">
-                  <%= t("registration.campaign.planning_only") %>
-                </span>
-              <% end %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   <% else %>
-    <%= render "registration/campaigns/patterns_info" %>
-    <div class="alert alert-secondary text-center mt-3">
-      <%= t("registration.campaign.index.none") %>
-    </div>
+    <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
   <% end %>
