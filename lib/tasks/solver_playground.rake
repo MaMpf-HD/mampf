@@ -245,9 +245,9 @@ namespace :solver do
     puts "Done. Created registrations for #{registered_count} students."
   end
 
-  desc "Generate a FCFS campaign for cohorts with email policy"
-  task create_cohort_fcfs_campaign: :environment do
-    puts "Creating Cohort FCFS campaign..."
+  desc "Generate a mixed FCFS campaign (tutorials + cohorts) with email policy"
+  task create_mixed_fcfs_campaign: :environment do
+    puts "Creating Mixed FCFS campaign..."
 
     lecture = Lecture.find_by(id: 1)
     unless lecture
@@ -281,28 +281,76 @@ namespace :solver do
       puts "Added institutional email policy (example.com)"
     end
 
-    # Create FCFS Cohorts
-    # Total Cap: 40 (2 * 20)
-    2.times do |i|
-      title = "FCFS Cohort #{i + 1}"
-      cohort = Cohort.find_by(context_type: Lecture, context_id: lecture.id, title: title)
+    # Create FCFS Tutorials (disjoint from other campaigns)
+    # Tutorial IDs 5-7 (other campaigns use 1-4)
+    [12, 10, 8].each_with_index do |cap, i|
+      title = "FCFS Tutorial #{i + 5}"
+      tutorial = Tutorial.find_by(lecture: lecture, title: title)
 
-      if cohort
+      if tutorial
         puts "#{title} already exists"
+        tutorial.update!(capacity: cap)
       else
-        cohort = FactoryBot.create(:cohort,
-                                   context: lecture,
-                                   title: title,
-                                   capacity: 20)
-        puts "Created #{title}"
+        tutorial = FactoryBot.create(:tutorial,
+                                     lecture: lecture,
+                                     title: title,
+                                     capacity: cap)
+        puts "Created #{title} with capacity #{cap}"
       end
 
-      next if Registration::Item.exists?(registration_campaign: campaign, registerable: cohort)
+      next if Registration::Item.exists?(registration_campaign: campaign, registerable: tutorial)
 
       FactoryBot.create(:registration_item,
                         registration_campaign: campaign,
-                        registerable: cohort)
+                        registerable: tutorial)
       puts "Added #{title} to campaign"
+    end
+
+    # Create Repeaters Cohort (propagates to lecture)
+    repeaters_title = "Repeaters"
+    repeaters = Cohort.find_by(context_type: Lecture, context_id: lecture.id,
+                               title: repeaters_title)
+
+    if repeaters
+      puts "#{repeaters_title} cohort already exists"
+    else
+      repeaters = FactoryBot.create(:cohort,
+                                    context: lecture,
+                                    title: repeaters_title,
+                                    capacity: 15,
+                                    propagate_to_lecture: true,
+                                    purpose: :general)
+      puts "Created #{repeaters_title} cohort (propagates to lecture)"
+    end
+
+    unless Registration::Item.exists?(registration_campaign: campaign, registerable: repeaters)
+      FactoryBot.create(:registration_item,
+                        registration_campaign: campaign,
+                        registerable: repeaters)
+      puts "Added #{repeaters_title} to campaign"
+    end
+
+    # Create Waitlist Cohort (does NOT propagate to lecture)
+    waitlist_title = "Waitlist"
+    waitlist = Cohort.find_by(context_type: Lecture, context_id: lecture.id, title: waitlist_title)
+
+    if waitlist
+      puts "#{waitlist_title} cohort already exists"
+    else
+      waitlist = FactoryBot.create(:cohort,
+                                   context: lecture,
+                                   title: waitlist_title,
+                                   capacity: 20,
+                                   propagate_to_lecture: false,
+                                   purpose: :general)
+      puts "Created #{waitlist_title} cohort (does NOT propagate to lecture)"
+    end
+
+    unless Registration::Item.exists?(registration_campaign: campaign, registerable: waitlist)
+      FactoryBot.create(:registration_item,
+                        registration_campaign: campaign,
+                        registerable: waitlist)
+      puts "Added #{waitlist_title} to campaign"
     end
 
     if campaign.draft?
@@ -311,8 +359,8 @@ namespace :solver do
     end
   end
 
-  desc "Generate registrations for FCFS campaign"
-  task create_cohort_fcfs_registrations: :environment do
+  desc "Generate registrations for mixed FCFS campaign"
+  task create_mixed_fcfs_registrations: :environment do
     campaign = Registration::Campaign.where(description: "FCFS Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_fcfs_campaign first."
@@ -322,32 +370,63 @@ namespace :solver do
     puts "Cleaning up old registrations..."
     campaign.user_registrations.destroy_all
 
-    items = campaign.registration_items.to_a
-    # Total capacity is 40. We want "most students" to be registered.
-    # Let's register 35 students.
-    num_users = 35
+    # Separate tutorials from cohorts
+    tutorials = campaign.registration_items.includes(:registerable)
+                        .where(registerable_type: "Tutorial").to_a
+    repeaters_item = campaign.registration_items.find_by(
+      registerable_type: "Cohort",
+      registerable: Cohort.find_by(title: "Repeaters")
+    )
+    waitlist_item = campaign.registration_items.find_by(
+      registerable_type: "Cohort",
+      registerable: Cohort.find_by(title: "Waitlist")
+    )
 
-    puts "Creating registrations for #{num_users} users..."
-    puts "Scenario: FCFS Rush."
-    puts "- Policy: Must have @example.com email"
-    puts "- 35 students registering for 40 spots"
+    tutorial_capacity = tutorials.sum { |i| i.registerable.capacity }
+    repeaters_capacity = repeaters_item.registerable.capacity
+    waitlist_capacity = waitlist_item.registerable.capacity
+    total_capacity = tutorial_capacity + repeaters_capacity + waitlist_capacity
+
+    puts "Campaign structure:"
+    puts "- Tutorials: #{tutorials.count} (capacity #{tutorial_capacity})"
+    puts "- Repeaters cohort: capacity #{repeaters_capacity} (propagates to lecture)"
+    puts "- Waitlist cohort: capacity #{waitlist_capacity} (does NOT propagate)"
+    puts "- Total capacity: #{total_capacity}"
+
+    # Create enough registrations to fill tutorials completely
+    # and partially fill cohorts
+    target_repeaters = 5
+    target_waitlist = 12
+    num_users = tutorial_capacity + target_repeaters + target_waitlist
+    # This means: tutorials full (30), repeaters partial (5/15), waitlist partial (12/20)
+
+    puts "\nCreating registrations for #{num_users} users..."
+    puts "Scenario: Tutorials full, repeaters partially filled, waitlist has more"
 
     registered_count = 0
+    repeaters_count = 0
+    waitlist_count = 0
 
     num_users.times do |i|
       email = "cohort_user_#{i}@example.com"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user, email: email, name: "Cohort User #{i}")
 
-      # In FCFS, users pick ONE item (usually).
-      # Or they can pick multiple? The model allows multiple rows per user.
-      # But usually FCFS implies "I take this spot".
-      # Let's assume they pick one available spot.
+      # Try tutorials first
+      item = tutorials.find do |t|
+        t.confirmed_registrations_count < t.registerable.capacity
+      end
 
-      # Find an item with available capacity
-      # We need to manually track capacity here since we are seeding
-      item = items.find do |j|
-        j.confirmed_registrations_count < j.registerable.capacity
+      # If tutorials full, try repeaters (but limit to target)
+      if !item && repeaters_count < target_repeaters
+        item = repeaters_item
+        repeaters_count += 1
+      end
+
+      # If repeaters at target, try waitlist
+      if !item && waitlist_count < target_waitlist
+        item = waitlist_item
+        waitlist_count += 1
       end
 
       unless item
@@ -359,18 +438,19 @@ namespace :solver do
                         user: user,
                         registration_campaign: campaign,
                         registration_item: item,
-                        status: :confirmed) # FCFS is immediately confirmed if open
+                        status: :confirmed)
 
-      # Manually increment counter because FactoryBot might bypass some logic
-      # or we want to be sure for the loop check above.
-      # Actually, the model has after_create :increment_confirmed_counter, so it should be fine.
-      # But we need to reload the item to see the new count in the next iteration.
       item.reload
-
       registered_count += 1
     end
 
-    puts "Done. Created registrations for #{registered_count} students."
+    puts "\nDone. Created registrations for #{registered_count} students."
+    puts "Final distribution:"
+    tutorials.each do |t|
+      puts "  #{t.registerable.title}: #{t.confirmed_registrations_count}/#{t.registerable.capacity}"
+    end
+    puts "  Repeaters: #{repeaters_item.confirmed_registrations_count}/#{repeaters_capacity}"
+    puts "  Waitlist: #{waitlist_item.confirmed_registrations_count}/#{waitlist_capacity}"
   end
 
   desc "Generate a two-stage seminar campaign (Planning -> Allocation)"
