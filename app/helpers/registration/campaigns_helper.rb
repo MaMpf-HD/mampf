@@ -108,23 +108,13 @@ module Registration
     end
 
     def campaign_open_confirmation(campaign)
-      msg = if campaign.planning_only?
-        t("registration.campaign.confirmations.open_planning")
-      else
-        t("registration.campaign.confirmations.open")
-      end
+      msg = t("registration.campaign.confirmations.open")
 
       if campaign.registration_items.any? { |i| i.capacity.nil? }
         msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
 
       msg
-    end
-
-    def planning_only_disabled_reason(campaign)
-      return if campaign.can_be_planning_only?
-
-      t("registration.campaign.planning_only_disabled")
     end
 
     def finalize_campaign_button(campaign)
@@ -187,10 +177,6 @@ module Registration
                 method: :patch,
                 data: { confirm: t("registration.campaign.confirmations.reopen") },
                 class: "btn btn-success")
-    end
-
-    def planning_only_checkbox_disabled?(campaign)
-      !campaign.draft? || !campaign.can_be_planning_only? || campaign.completed?
     end
 
     private

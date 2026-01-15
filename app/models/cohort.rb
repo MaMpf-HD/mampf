@@ -7,7 +7,16 @@ class Cohort < ApplicationRecord
   has_many :cohort_memberships, dependent: :destroy
   has_many :users, through: :cohort_memberships
 
+  enum :purpose, {
+    general: 0,
+    enrollment: 1,
+    planning: 2
+  }
+
+  attr_readonly :propagate_to_lecture
+
   validates :title, presence: true
+  validates :purpose, presence: true
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
   def roster_entries

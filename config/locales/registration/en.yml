@@ -3,7 +3,6 @@ en:
     campaign:
       errors:
         already_finalized: "Campaign is already finalized."
-      planning_only: "Planning only"
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
       updated: "Campaign updated successfully."
@@ -16,7 +15,6 @@ en:
       reopened: "Campaign reopened."
       finalized: "Campaign finalized successfully."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
-      planning_only_disabled: "This option is disabled because the campaign already contains items that are not the lecture itself."
       not_found: "Registration campaign not found."
       lecture_not_found: "Lecture not found."
       helpdesk:
@@ -24,8 +22,6 @@ en:
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
         allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
-        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed. This option is only available for campaigns that contain only the lecture itself as an item. It cannot be changed once the campaign has been opened."
-        planning_only_frozen: "Cannot be changed because the campaign has already been opened."
         allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
         first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
       index:
@@ -52,7 +48,6 @@ en:
         allocation_mode: "Allocation Mode"
         registration_opens_at: "Registration Opens At"
         registration_deadline: "Registration Deadline"
-        planning_only: "Planning Only"
         submit: "Save"
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
@@ -77,7 +72,6 @@ en:
         complete_planning: "Complete Planning"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
-        open_planning: "Are you sure? This opens the campaign for students. Since this is a planning-only campaign, no allocations to official rosters will be made. The 'Planning Only' option cannot be changed after opening."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
@@ -101,67 +95,44 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+      about:
+        toggle: "What are registration campaigns?"
+        title: "Registration Campaigns: When to Use?"
+        intro: "A registration campaign orchestrates enrollment into groups over a defined timeframe. For simple cases, you can skip campaigns and enable self-enrollment instead."
+        when_to_use_campaign:
+          title: "Use a registration campaign when..."
+          benefits:
+            - "You want to review registrations before finalization"
+            - "Eligibility rules are required (e.g., performance check, institutional email)"
+            - "Students should rank preferences (preferred tutorials/talks)"
+            - "You need a time-bounded registration window"
+        when_to_use_self:
+          title: "Use self-enrollment when..."
+          benefits:
+            - "No eligibility checks are needed"
+            - "First-come-first-served is sufficient (no preferences)"
+            - "Students should be able to join/leave anytime"
+            - "You want minimal administrative overhead"
+        note: "Self-enrollment can be enabled after a campaign completes to allow latecomers or group changes."
       patterns:
-        title: "Configuration Patterns"
-        group_track:
-          title: "Pattern 1: The \"Group Track\" ((Almost) like in MÜSLI)"
-          description: "Use this when your lecture has groups (Tutorials or Talks)."
-          primary_label: "Primary Registration Campaign:"
-          primary_text: "Items are Tutorials or Talks."
-          secondary_description: "Often, in addition to regular groups, there are special groups (e.g. for repeaters) that do not run in the regular tutorial schedule. These can be mapped via a second, optional registration campaign."
-          secondary_label: "Secondary Campaign (Optional):"
-          secondary_text: " \"Special Groups\" (Item: Cohort \"Repeaters\")."
-          logic: "Roster Logic: The Lecture Roster is the union of all Group members and Cohort members."
-        enrollment_track:
-          title: "Pattern 2: The \"Enrollment Track\""
-          description: "Use this when you do not need groups for your lecture."
-          primary_label: "Registration Campaign:"
-          primary_text: "Sole item is the lecture itself."
-          logic: "Roster Logic: The Lecture Roster is the list of registered students."
-        mixed_track:
-          title: "Pattern 3: The \"Mixed Track\" (Possible, but not recommended)"
-          description: "It is possible to have \"Group Registration Campaign(s)\" and a \"Lecture Registration Campaign\" simultaneously."
-          implication: "Implication: This creates  separate rosters that might not necessarily be related to each other."
-        notes:
-          title: "Important Notes"
-          assessments: "Points for assessments are managed via tutorials. If you need that, use the \"Group Track\" even if you have only one group."
-          item_types: "In one campaign there can be only one type of items (no mixing). For example, you cannot have tutorials and the lecture itself in the same campaign."
-          planning: "In order to measure demand for a lecture beforehand it is possible to use a planning-only campaign for the lecture (as only item). The result of this campaign is not materialized. Such a campaign can therefore also be used without problems as a supplement to the \"Group Track\"."
-    allocation:
-      started: "Allocation has been calculated."
-      conflicts:
-        title: "Conflicting Registrations"
-        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
-        currently_in: "currently in %{tutorial}"
-      dashboard:
-        title: "Allocation Dashboard"
-        last_updated: "Last updated: %{time}"
-        unassigned_students: "Unassigned Students"
-        no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
-        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
-        workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
-        item_capacities: "Tutorial Capacities"
-      stats:
-        total_registrations: "Total Applicants"
-        assigned: "Assigned"
-        unassigned: "Unassigned"
-        happiness_distribution: "Preference Distribution"
-        rank: "Preference Rank"
-        count: "Count"
-        percentage: "Percentage"
-        rank_label: "Choice #%{rank}"
-        forced: "Forced Assignment"
-        capacity: "Capacity"
-        utilization: "Utilization"
-      errors:
-        already_completed: "Campaign is already completed."
-        planning_only: "Planning only"
-        wrong_status: "Campaign has wrong status for this action."
-        policy_violation: "Policy violations detected. Please review details below."
-        policy_violation_title: "Policy Violations Detected"
-        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
-        failed: "Allocation failed: %{error}"
+        title: "Which group types are available?"
+        intro: "Choose the group types that match your course structure. You can combine multiple types in one registration campaign."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice groups. Students are automatically added to the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers are automatically added to the course roster."
+        enrollment:
+          title: "Enrollment Group"
+          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
+        planning:
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
+        other:
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -204,19 +175,18 @@ en:
         finalization: "Finalization"
         both: "Both"
     item:
-      not_found: "Registration item not found."
+      not_found: "Group not found."
       one: "Item"
       index:
-        title: "Items"
-        none: "No items added yet."
+        title: "Groups"
+        none: "No groups added yet."
       add:
-        title: "Add Items"
+        title: "Add Groups"
         existing: "Add Existing"
         new: "Create New"
-        none_available: "No items available to add."
-        lecture_unique: "This campaign already has a lecture item. You cannot add more items."
-        planning_only_restriction: "In planning mode, you can only add the lecture itself as an item. Creating new tutorials or talks is disabled."
+        none_available: "No groups available to add."
       columns:
+        type: "Group Type"
         title: "Title"
         capacity: "Capacity"
         registrations: "Registrations"
@@ -224,12 +194,15 @@ en:
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
-        cohorts: "Special Groups"
+        cohorts: "Other Groups"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
         cohort: "Special Group"
+        enrollment_group: "Enrollment Group"
+        planning_survey: "Planning Group"
+        other_group: "Flexible Group"
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
@@ -244,6 +217,19 @@ en:
       confirm_delete: "Are you sure you want to remove this item?"
       confirm_remove: "Are you sure you want to remove this item from the campaign?"
       confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
+      select_type: "Select a group type..."
+      attributes:
+        capacity_optional: "Capacity (optional)"
+        propagate_to_lecture: "Students appear in the course roster"
+      hints:
+        no_propagation: "Students in this group do not appear in the course roster"
+      help:
+        tutorial: "Weekly practice sessions with fixed time slots. Students work on exercises, tutors grade them and can enter and manage points in MaMpf. Students who receive a tutorial spot after the registration process concludes are automatically added to the course roster."
+        talk: "Seminar presentations where students present topics. Grades for seminar talks can be managed in MaMpf. Students who receive a talk spot after the registration process concludes are automatically added to the course roster."
+        enrollment: "If the course has no tutorials or talks, an enrollment group can be used. Students who receive a spot after the registration process concludes are automatically added to the course roster."
+        planning: "Interest survey (typically before the semester begins) to gauge demand. No transfer to course rosters takes place."
+        other: "Flexible groups for waitlists, special projects, or audit listeners. You determine whether students appear in the course roster."
+        propagate_to_lecture: "If enabled, students in this group will automatically be added to the course roster. Disable this for pure waitlists that are not connected to course enrollment."
     user_registration:
       forced_assignment: "Forced Assignment"
       index:
@@ -279,8 +265,6 @@ en:
               cannot_revert_to_draft: "cannot be reverted to draft once opened"
             allocation_mode:
               frozen: "cannot be changed after campaign is opened"
-            planning_only:
-              incompatible_items: "cannot be enabled because the campaign already contains items that are not the lecture itself."
         registration/policy:
           attributes:
             base:
@@ -291,12 +275,8 @@ en:
               taken: "is already part of another campaign."
               taken_by_real_campaign: "is already part of another active campaign."
             base:
-              mixed_types: "All items must be of the same type."
-              lecture_unique: "A campaign can only have one lecture item."
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
-              planning_only_allows_only_lecture: "In planning mode, only the lecture itself can be added."
-              planning_only_allows_single_item: "In planning mode, only a single item (the lecture) can be added."
               already_in_other_campaign: "This item is already part of another standard registration campaign."
         registration/user_registration:
           attributes:

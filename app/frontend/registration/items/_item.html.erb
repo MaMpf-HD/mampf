@@ -1,9 +1,9 @@
 <tr id="<%= dom_id(item) %>">
     <td>
+      <%= item_display_type(item) %>
+    </td>
+    <td>
       <%= item.title %>
-      <div class="text-muted small">
-        <%= t("registration.item.types.#{item.registerable_type.underscore}") %>
-      </div>
     </td>
     <td>
       <% unless item.capacity_editable? %>
@@ -67,7 +67,7 @@
                             class: "dropdown-item text-danger",
                             data: { confirm: t("registration.item.confirm_remove"), turbo: true } %>
             </li>
-            <% if ["Tutorial", "Talk"].include?(item.registerable_type) && can?(:destroy, item.registerable) %>
+            <% if can?(:destroy, item.registerable) %>
               <li><hr class="dropdown-divider"></li>
               <li>
                 <%= button_to t("registration.item.actions.delete_registerable", type: t("registration.item.types.#{item.registerable_type.underscore}")),

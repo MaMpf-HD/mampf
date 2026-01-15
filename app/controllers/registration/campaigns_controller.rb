@@ -122,6 +122,14 @@ module Registration
       update_status(:open, t("registration.campaign.reopened"))
     end
 
+    def check_unlimited_items
+      has_unlimited = @campaign.registration_items.any? { |i| i.capacity.nil? }
+
+      respond_to do |format|
+        format.json { render json: { has_unlimited_items: has_unlimited } }
+      end
+    end
+
     private
 
       def set_lecture
@@ -149,7 +157,7 @@ module Registration
       def campaign_params
         params.expect(
           registration_campaign: [:description, :allocation_mode,
-                                  :registration_deadline, :planning_only]
+                                  :registration_deadline]
         )
       end
 
