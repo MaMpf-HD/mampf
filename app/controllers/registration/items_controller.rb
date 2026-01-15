@@ -5,12 +5,6 @@ module Registration
     before_action :set_item, only: [:destroy, :update]
     authorize_resource class: "Registration::Item", except: [:create]
 
-    REGISTERABLE_CLASSES = {
-      "Tutorial" => Tutorial,
-      "Talk" => Talk,
-      "Cohort" => Cohort
-    }.freeze
-
     def current_ability
       @current_ability ||= begin
         ability = RegistrationItemAbility.new(current_user)
@@ -112,7 +106,7 @@ module Registration
 
       def create_new_registerable
         type = params[:registration_item][:registerable_type]
-        unless REGISTERABLE_CLASSES.key?(type)
+        unless Registration::Item::REGISTERABLE_CLASSES.key?(type)
           return respond_with_error(t("registration.item.invalid_type"))
         end
 
@@ -131,18 +125,33 @@ module Registration
       end
 
       def build_registerable(type)
+        klass = Registration::Item::REGISTERABLE_CLASSES[type]
+
         attributes = {
           title: params[:registration_item][:title],
           capacity: params[:registration_item][:capacity]
         }
 
-        if type == "Cohort"
+        if klass == Cohort
           attributes[:context] = @campaign.campaignable
+          attributes[:purpose] = Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
+          attributes[:propagate_to_lecture] = determine_propagate_flag(type)
         else
           attributes[:lecture] = @campaign.campaignable
         end
 
-        REGISTERABLE_CLASSES[type].new(attributes)
+        klass.new(attributes)
+      end
+
+      def determine_propagate_flag(type)
+        case Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
+        when :enrollment
+          true
+        when :planning
+          false
+        when :general
+          params[:registration_item][:propagate_to_lecture] == "1"
+        end
       end
 
       def persist_registerable_and_item(registerable, type)
@@ -164,9 +173,15 @@ module Registration
       end
 
       def build_and_authorize_item(registerable, type)
+        registerable_type = if Registration::Item::COHORT_TYPE_TO_PURPOSE.key?(type)
+          "Cohort"
+        else
+          type
+        end
+
         @item = @campaign.registration_items.build(
           registerable: registerable,
-          registerable_type: type
+          registerable_type: registerable_type
         )
         authorize! :create, @item
       end

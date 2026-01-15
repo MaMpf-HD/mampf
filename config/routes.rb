@@ -294,6 +294,7 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
+        get :check_unlimited_items
       end
       resources :policies,
                 controller: "registration/policies",

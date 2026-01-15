@@ -4,7 +4,8 @@ class RegistrationCampaignAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:index, :new, :create, :show, :edit, :update, :destroy, :open, :close, :reopen],
+    can [:index, :new, :create, :show, :edit, :update, :destroy, :open, :close, :reopen,
+         :check_unlimited_items],
         Registration::Campaign do |campaign|
       user.can_edit?(campaign.campaignable)
     end

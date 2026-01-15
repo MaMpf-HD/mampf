@@ -1,4 +1,4 @@
-<% service = Registration::AvailableItemsService.new(campaign) %>
+<% service = registration_items_service(campaign) %>
 <% available_items = service.items %>
 
 <div class="card mb-4">
@@ -93,73 +93,83 @@
                 </div>
               </div>
             <% end %>
-
-            <% if available_items[:lecture].present? %>
-              <div class="col-12">
-                <h6><%= t("registration.item.groups.general") %></h6>
-                <div class="list-group">
-                  <% available_items[:lecture].each do |lecture| %>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                        <%= t("registration.item.types.lecture_signup") %>
-                      </div>
-                      <%= button_to t("basics.add"),
-                                    registration_campaign_items_path(campaign),
-                                    params: { registration_item: { registerable_id: lecture.id, registerable_type: "Lecture" } },
-                                    class: "btn btn-sm btn-primary",
-                                    data: { turbo: true } %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
           </div>
         <% end %>
       </div>
       <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
-        <% if campaign.planning_only? %>
-          <div class="alert alert-info mt-3">
-            <%= t("registration.item.add.planning_only_restriction") %>
-          </div>
-        <% else %>
-          <% existing_type = campaign.registration_items.first&.registerable_type %>
-          <% if existing_type == "Lecture" %>
-            <div class="alert alert-info mt-3">
-              <%= t("registration.item.add.lecture_unique") %>
+        <%
+          options = service.creatable_types.map do |type|
+            [t("registration.item.types.#{type.parameterize.underscore}"), type]
+          end
+        %>
+        <%= form_with url: registration_campaign_items_path(campaign), 
+                      method: :post, 
+                      data: { 
+                        turbo: true,
+                        controller: "registerable-type-help cohort-purpose",
+                        registerable_type_help_tutorial_help_value: t("registration.item.help.tutorial"),
+                        registerable_type_help_talk_help_value: t("registration.item.help.talk"),
+                        registerable_type_help_enrollment_help_value: t("registration.item.help.enrollment"),
+                        registerable_type_help_planning_help_value: t("registration.item.help.planning"),
+                        registerable_type_help_other_help_value: t("registration.item.help.other")
+                      } do |f| %>
+          <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
+
+          <div class="row g-3">
+            <div class="col-md-12">
+              <%= f.label "registration_item[registerable_type]", t("basics.type"), class: "form-label" %>
+              <%= f.select "registration_item[registerable_type]", 
+                          options, 
+                          { prompt: t("registration.item.select_type") }, 
+                          class: "form-select",
+                          data: { 
+                            registerable_type_help_target: "select",
+                            cohort_purpose_target: "typeSelect",
+                            action: "change->registerable-type-help#updateHelp change->cohort-purpose#togglePurpose"
+                          } %>
+              <small class="form-text text-muted mt-2" 
+                     data-registerable-type-help-target="helpText"
+                     style="display: none;"></small>
             </div>
-          <% else %>
-            <%= form_with url: registration_campaign_items_path(campaign), method: :post, class: "row g-3 align-items-end", data: { turbo: true } do |f| %>
-              <%= f.hidden_field "registration_item[new_registerable]", value: "true" %>
+          </div>
 
-              <div class="col-md-3">
-                <%= f.label "registration_item[registerable_type]", t("basics.type"), class: "form-label" %>
-                <%
-                   options = if existing_type
-                               [[t("registration.item.types.#{existing_type.underscore}"), existing_type]]
-                             else
-                               [[t("registration.item.types.tutorial"), "Tutorial"],
-                                [t("registration.item.types.talk"), "Talk"],
-                                [t("registration.item.types.cohort"), "Cohort"]]
-                             end
-                %>
-                <%= f.select "registration_item[registerable_type]", options, {}, class: "form-select" %>
-              </div>
+          <%= f.hidden_field "registration_item[purpose]", 
+                            data: { cohort_purpose_target: "purposeField" } %>
 
-              <div class="col-md-5">
-                <%= f.label "registration_item[title]", t("basics.title"), class: "form-label" %>
-                <%= f.text_field "registration_item[title]", class: "form-control", required: true %>
+          <div class="row g-3 mt-2" 
+               data-cohort-purpose-target="propagateContainer"
+               style="display: none;">
+            <div class="col-md-12">
+              <div class="form-check">
+                <%= f.check_box "registration_item[propagate_to_lecture]", 
+                                class: "form-check-input",
+                                checked: true,
+                                data: { cohort_purpose_target: "propagateCheckbox" } %>
+                <%= f.label "registration_item[propagate_to_lecture]", 
+                            t("registration.item.attributes.propagate_to_lecture"),
+                            class: "form-check-label" %>
               </div>
+              <small class="form-text text-muted">
+                <%= t("registration.item.help.propagate_to_lecture") %>
+              </small>
+            </div>
+          </div>
 
-              <div class="col-md-2">
-                <%= f.label "registration_item[capacity]", t("registration.item.columns.capacity"), class: "form-label" %>
-                <%= f.number_field "registration_item[capacity]", class: "form-control", min: 1, placeholder: "∞" %>
-              </div>
+          <div class="row g-3 mt-2">
+            <div class="col-md-6">
+              <%= f.label "registration_item[title]", t("basics.title"), class: "form-label" %>
+              <%= f.text_field "registration_item[title]", class: "form-control", required: true %>
+            </div>
 
-              <div class="col-md-2">
-                <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
-              </div>
-            <% end %>
-          <% end %>
+            <div class="col-md-4">
+              <%= f.label "registration_item[capacity]", t("registration.item.attributes.capacity_optional"), class: "form-label" %>
+              <%= f.number_field "registration_item[capacity]", class: "form-control", min: 1, placeholder: "∞" %>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+              <%= f.submit t("buttons.create"), class: "btn btn-primary w-100" %>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>

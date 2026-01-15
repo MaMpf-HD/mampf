@@ -28,7 +28,15 @@
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: campaign_open_confirmation(campaign) },
+                      form: {
+                        data: {
+                          controller: "campaign-action",
+                          "campaign-action-campaign-id-value": campaign.id,
+                          "campaign-action-confirm-message-value": t("registration.campaign.confirmations.open"),
+                          "campaign-action-warning-message-value": t("registration.campaign.warnings.unlimited_items"),
+                          action: "submit->campaign-action#confirm"
+                        }
+                      },
                       class: "btn btn-success" %>
       <% end %>
 
