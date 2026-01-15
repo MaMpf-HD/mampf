@@ -10,26 +10,26 @@
                     url: registration_campaign_item_path(item.registration_campaign, item),
                     method: :patch,
                     data: { turbo: true }) do |f| %>
-          <div class="input-group input-group-sm" style="max-width: 150px;">
-            <%= f.number_field :capacity,
-                               class: "form-control",
-                               min: 0,
-                               placeholder: "∞" %>
-            <button class="btn btn-outline-success" type="submit">
-              <i class="bi bi-check-lg"></i>
-            </button>
+        <div class="input-group input-group-sm" style="max-width: 150px;">
+          <%= f.number_field :capacity,
+                             class: "form-control",
+                             min: 0,
+                             placeholder: "∞" %>
+          <button class="btn btn-outline-success" type="submit">
+            <i class="bi bi-check-lg"></i>
+          </button>
+        </div>
+        <% if item.errors[:base].any? %>
+          <div class="text-danger small mt-1">
+            <%= item.errors[:base].join(", ") %>
           </div>
-          <% if item.errors[:base].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.errors[:base].join(", ") %>
-            </div>
-          <% end %>
-          <% if item.registerable.errors[:capacity].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.registerable.errors[:capacity].join(", ") %>
-            </div>
-          <% end %>
         <% end %>
+        <% if item.registerable.errors[:capacity].any? %>
+          <div class="text-danger small mt-1">
+            <%= item.registerable.errors[:capacity].join(", ") %>
+          </div>
+        <% end %>
+      <% end %>
     </td>
     <% unless item.registration_campaign.draft? %>
       <td>
