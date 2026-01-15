@@ -157,8 +157,8 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
   FCFS campaigns skip this step (results already determined).
 - **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`. All campaigns materialize—planning cohorts simply don't propagate to the lecture roster.
   - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
-- **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
-- **Lecture performance completeness checks:**
+- **Planning surveys:** Planning cohorts (with `propagate_to_lecture: false` and `purpose: :planning`) are used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
+- **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
   - **Campaign finalize:** Hard-fails if any confirmed registrants have missing/pending certifications (finalization or both phase); auto-rejects students with failed certifications

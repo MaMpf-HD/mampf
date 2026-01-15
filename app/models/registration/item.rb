@@ -94,6 +94,20 @@ module Registration
       user_registrations.where(preference_rank: 1).count
     end
 
+    # Determines if this item materializes to actual rosters.
+    # Tutorials and Talks always materialize.
+    # Cohorts only materialize if propagate_to_lecture is true.
+    def materializes_to_roster?
+      case registerable_type
+      when "Tutorial", "Talk"
+        true
+      when "Cohort"
+        registerable.propagate_to_lecture?
+      else
+        false
+      end
+    end
+
     private
 
       def valid_capacity_reduction?(new_capacity)
