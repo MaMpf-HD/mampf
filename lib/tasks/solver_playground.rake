@@ -447,10 +447,10 @@ namespace :solver do
     puts "\nDone. Created registrations for #{registered_count} students."
     puts "Final distribution:"
     tutorials.each do |t|
-      puts "  #{t.registerable.title}: #{t.confirmed_registrations_count}/#{t.registerable.capacity}"
+      puts " #{t.registerable.title}: #{t.confirmed_registrations_count}/#{t.registerable.capacity}"
     end
-    puts "  Repeaters: #{repeaters_item.confirmed_registrations_count}/#{repeaters_capacity}"
-    puts "  Waitlist: #{waitlist_item.confirmed_registrations_count}/#{waitlist_capacity}"
+    puts " Repeaters: #{repeaters_item.confirmed_registrations_count}/#{repeaters_capacity}"
+    puts " Waitlist: #{waitlist_item.confirmed_registrations_count}/#{waitlist_capacity}"
   end
 
   desc "Generate a two-stage seminar campaign (Planning -> Allocation)"
