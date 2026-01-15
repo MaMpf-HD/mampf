@@ -827,6 +827,10 @@ Rails.application.routes.draw do
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
         end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
       end
     end
   end
@@ -876,6 +880,10 @@ Rails.application.routes.draw do
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
         end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Tutorial" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
       end
     end
   end
@@ -896,6 +904,10 @@ Rails.application.routes.draw do
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
         end
       end
     end

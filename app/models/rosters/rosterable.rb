@@ -62,12 +62,22 @@ module Rosters
       end
     end
 
-    def allow_self_add?
+    def config_allow_self_add?
       ["add_only", "add_and_remove"].include?(self_materialization_mode)
     end
 
-    def allow_self_remove?
+    # guard in FE for self-assignment possibility
+    def allow_self_add?
+      config_allow_self_add? && !locked?
+    end
+
+    def config_allow_self_remove?
       ["remove_only", "add_and_remove"].include?(self_materialization_mode)
+    end
+
+    # guard in FE for self-removal possibility
+    def allow_self_remove?
+      config_allow_self_remove? && !locked?
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).

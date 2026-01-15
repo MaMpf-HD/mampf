@@ -3,6 +3,11 @@
     <%= t('admin.talk.speakers') %>:
   </strong>
   <%= speaker_list(talk) %>
+  <%= button_to self_add_talk_path(talk, type: "Talk"),
+                                  method: :post,
+                                  class: "btn btn-sm btn-outline-success" do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
 </p>
 <p>
   <strong>

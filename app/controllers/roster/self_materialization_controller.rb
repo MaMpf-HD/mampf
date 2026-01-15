@@ -8,7 +8,6 @@ module Roster
     ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
 
     before_action :set_rosterable, only: [:self_add, :self_remove]
-    before_action :authorize_lecture
     before_action :use_lecture_locale
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
@@ -40,9 +39,9 @@ module Roster
 
     # TODO: will need to have an API to get self materialization posibility info
     # or can use self_materialization_mode and ensure_rosterable_unlocked! in the front-end to check if the rosterable can be modified
-    # 
+    #
     # TODO: add buttons in the front-end to call these actions
-    # TODO: define routes 
+    # TODO: define routes
     # TODO: add tests
 
     def self_add
@@ -55,6 +54,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
+      # need to re-render the roster partial to show the updated roster
       render_roster_update(tab: params[:active_tab])
     end
 
@@ -66,25 +66,23 @@ module Roster
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
       flash.now[:notice] = t("roster.messages.user_removed")
+
+      # need to re-render the roster partial to show the updated roster
       render_roster_update(tab: params[:active_tab])
     end
 
     private
-
-      def authorize_lecture
-        authorize! :edit, @lecture
-      end
 
       def ensure_rosterable_unlocked!
         raise(RosterLockedError) if @rosterable.locked?
       end
 
       def ensure_rosterable_allow_self_add!
-        raise(SelfAddNotAllowedError) unless @rosterable.allow_self_add?
+        raise(SelfAddNotAllowedError) unless @rosterable.config_allow_self_add?
       end
 
       def ensure_rosterable_allow_self_remove!
-        raise(SelfRemoveNotAllowedError) unless @rosterable.allow_self_remove?
+        raise(SelfRemoveNotAllowedError) unless @rosterable.config_allow_self_remove?
       end
 
       def respond_with_error(message)
@@ -93,7 +91,6 @@ module Roster
             flash.now[:alert] = message
             render turbo_stream: stream_flash
           end
-          format.html { redirect_back_or_to fallback_path, alert: message }
         end
       end
 
