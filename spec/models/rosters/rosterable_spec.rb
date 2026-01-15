@@ -346,6 +346,99 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe "allow self materialization checks" do
+    let(:rosterable) { create(:tutorial) }
+    let(:user) { create(:user) }
+    before do
+      allow(rosterable).to receive(:capacity).and_return(2)
+    end
+
+    describe "#allow_self_add?" do
+      context "when self-add is allowed, not locked, not full, and user not allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns true" do
+          expect(rosterable.allow_self_add?(user)).to be(true)
+        end
+      end
+      context "when self-add is not allowed" do
+        before do
+          rosterable.update(self_materialization_mode: :disabled)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when locked" do
+        before do
+          allow(rosterable).to receive(:locked?).and_return(true)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when full" do
+        before do
+          create_list(:tutorial_membership, 2, tutorial: rosterable)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when user already allocated" do
+        before do
+          rosterable.add_user_to_roster!(user)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+    end
+
+    describe "#allow_self_remove?" do
+      context "when self-remove is allowed, not locked, and user is allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns true" do
+          expect(rosterable.allow_self_remove?(user)).to be(true)
+        end
+      end
+      context "when self-remove is not allowed" do
+        before do
+          rosterable.update(self_materialization_mode: :add_only)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
+      end
+      context "when locked" do
+        before do
+          allow(rosterable).to receive(:locked?).and_return(true)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
+      end
+      context "when user not allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
+      end
+    end
+  end
+
   describe "roster management" do
     let(:rosterable) { create(:tutorial) }
     let(:user) { create(:user) }

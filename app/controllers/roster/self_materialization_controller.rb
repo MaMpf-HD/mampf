@@ -21,11 +21,11 @@ module Roster
     end
 
     rescue_from RosterLockedError do
-      respond_with_error(t("roster.errors.capacity_exceeded"))
+      respond_with_error(t("roster.errors.item_locked"))
     end
 
     rescue_from RosterFullError do
-      respond_with_error(t("roster.errors.item_full"))
+      respond_with_error(t("roster.errors.capacity_exceeded"))
     end
 
     rescue_from SelfAddNotAllowedError do
@@ -41,13 +41,6 @@ module Roster
     def current_ability
       @current_ability ||= LectureAbility.new(current_user)
     end
-
-    # TODO: will need to have an API to get self materialization posibility info
-    # or can use self_materialization_mode and ensure_rosterable_unlocked! in the front-end to check if the rosterable can be modified
-    #
-    # TODO: add buttons in the front-end to call these actions
-    # TODO: define routes
-    # TODO: add tests
 
     def self_add
       ensure_rosterable_unlocked!
