@@ -27,40 +27,6 @@ RSpec.describe(Registration::Item, type: :model) do
   describe "validations" do
     subject { create(:registration_item) }
 
-    describe "#validate_capacity_frozen" do
-      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
-      let(:item) { create(:registration_item, registration_campaign: campaign) }
-
-      context "when campaign is completed" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :completed)
-        end
-
-        it "prevents changing capacity" do
-          item.capacity = 10
-          expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".frozen"))
-        end
-      end
-
-      context "when campaign is processing (preference based)" do
-        let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
-
-        before do
-          item # ensure item exists
-          campaign.update!(status: :processing)
-        end
-
-        it "allows changing capacity" do
-          item.capacity = 10
-          expect(item).to be_valid
-        end
-      end
-    end
-
     describe "#validate_capacity_reduction" do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
@@ -152,20 +118,9 @@ RSpec.describe(Registration::Item, type: :model) do
       let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
 
-      context "when capacity is editable" do
+      context "when capacity change is valid" do
         it "returns nil" do
           expect(item.validate_capacity_change_from_registerable!(10)).to be_nil
-        end
-      end
-
-      context "when capacity is frozen" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :completed)
-        end
-
-        it "returns frozen error" do
-          expect(item.validate_capacity_change_from_registerable!(10)).to eq([:base, :frozen])
         end
       end
 
@@ -230,65 +185,6 @@ RSpec.describe(Registration::Item, type: :model) do
         allow(item.registerable).to receive(:registration_title).and_return(nil)
         allow(item.registerable).to receive(:title).and_return("Original Title")
         expect(item.title).to eq("Original Title")
-      end
-    end
-
-    describe "#capacity_editable?" do
-      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
-      let(:item) { create(:registration_item, registration_campaign: campaign) }
-
-      context "when campaign is draft" do
-        it "returns true" do
-          expect(item.capacity_editable?).to be(true)
-        end
-      end
-
-      context "when campaign is open" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :open)
-        end
-
-        it "returns true" do
-          expect(item.capacity_editable?).to be(true)
-        end
-      end
-
-      context "when campaign is completed" do
-        before do
-          item # ensure item exists
-          campaign.update!(status: :completed)
-        end
-
-        it "returns false" do
-          expect(item.capacity_editable?).to be(false)
-        end
-      end
-
-      context "when campaign is processing" do
-        context "and preference based" do
-          let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
-
-          before do
-            item # ensure item exists
-            campaign.update!(status: :processing)
-          end
-
-          it "returns true" do
-            expect(item.capacity_editable?).to be(true)
-          end
-        end
-
-        context "and FCFS" do
-          before do
-            item # ensure item exists
-            campaign.update!(status: :processing)
-          end
-
-          it "returns true" do
-            expect(item.capacity_editable?).to be(true)
-          end
-        end
       end
     end
 
