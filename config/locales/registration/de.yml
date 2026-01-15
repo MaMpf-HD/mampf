@@ -278,7 +278,6 @@ de:
         utilization: "Auslastung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
-        planning_only: "Nur Planung"
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"

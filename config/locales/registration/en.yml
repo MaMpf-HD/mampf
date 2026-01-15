@@ -278,7 +278,6 @@ en:
         utilization: "Utilization"
       errors:
         already_completed: "Campaign is already completed."
-        planning_only: "Planning only"
         wrong_status: "Campaign has wrong status for this action."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
