@@ -10,13 +10,6 @@ module Registration
       }[campaign.status.to_sym]
     end
 
-    def campaign_item_type_label(campaign)
-      return "—" if campaign.registration_items.empty?
-
-      type = campaign.registration_items.first.registerable_type
-      t("registration.item.types.#{type.underscore}")
-    end
-
     def item_stats_label(campaign)
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         t("registration.item.columns.registrations")
