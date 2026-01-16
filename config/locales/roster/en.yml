@@ -83,7 +83,7 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
-      purpose_readonly: "The type cannot be changed after creation."
+      purpose_change_constrained_by_propagate: "The available types depend on whether students are added to the course roster. This setting cannot be changed."
     buttons:
       full_editor: "vollständigen Editor"
     errors:

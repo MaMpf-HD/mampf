@@ -136,8 +136,8 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      permitted = [:title, :capacity, :description]
-      permitted += [:purpose, :propagate_to_lecture] unless @cohort&.persisted?
+      permitted = [:title, :capacity, :description, :purpose]
+      permitted << :propagate_to_lecture unless @cohort&.persisted?
       params.expect(cohort: permitted)
     end
 

@@ -86,7 +86,7 @@ de:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
-      purpose_readonly: "Der Typ kann nach dem Erstellen nicht mehr geändert werden."
+      purpose_change_constrained_by_propagate: "Die verfügbaren Typen hängen davon ab, ob Studierende in die Teilnehmerliste übernommen werden. Diese Einstellung kann nicht geändert werden."
     buttons:
       full_editor: "vollständigen Editor"
     errors:

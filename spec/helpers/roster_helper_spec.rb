@@ -166,6 +166,32 @@ RSpec.describe(RosterHelper, type: :helper) do
 
       expect(actual_types).to match_array(expected_types)
     end
+
+    it "filters options for persisted cohorts with propagate=true" do
+      cohort = create(:cohort, propagate_to_lecture: true)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Enrollment Group", "Other Group")
+      expect(types).not_to include("Planning Survey")
+    end
+
+    it "filters options for persisted cohorts with propagate=false" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Planning Survey", "Other Group")
+      expect(types).not_to include("Enrollment Group")
+    end
+
+    it "returns all options for new cohorts" do
+      cohort = build(:cohort)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to match_array(Cohort::TYPE_TO_PURPOSE.keys)
+    end
   end
 
   describe "#cohort_type_from_purpose" do

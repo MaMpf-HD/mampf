@@ -17,22 +17,17 @@
     <div class="mb-3">
       <%= f.label :purpose, t("basics.type"), class: "form-label" %>
       <%= f.select :cohort_type,
-                   cohort_type_options,
+                   cohort_type_options(cohort),
                    { selected: cohort_type_from_purpose(cohort.purpose) },
                    class: "form-select",
-                   disabled: cohort.persisted?,
                    data: {
                      cohort_purpose_target: "typeSelect",
                      registerable_type_help_target: "select",
                      action: "change->cohort-purpose#togglePurpose change->registerable-type-help#updateHelp"
                    } %>
-      <% if cohort.persisted? %>
-        <small class="form-text text-muted"><%= t("roster.hints.purpose_readonly") %></small>
-      <% else %>
-        <small class="form-text text-muted mt-2"
-               data-registerable-type-help-target="helpText"
-               style="display: none;"></small>
-      <% end %>
+      <small class="form-text text-muted mt-2"
+             data-registerable-type-help-target="helpText"
+             style="display: none;"></small>
     </div>
 
     <%= f.hidden_field :purpose, data: { cohort_purpose_target: "purposeField" } %>
@@ -54,6 +49,11 @@
         <div class="alert alert-warning mt-2 mb-0 py-2">
           <i class="bi bi-exclamation-triangle me-1"></i>
           <%= t("roster.warnings.propagate_readonly_after_creation") %>
+        </div>
+      <% else %>
+        <div class="alert alert-info mt-2 mb-0 py-2">
+          <i class="bi bi-info-circle me-1"></i>
+          <%= t("roster.hints.purpose_change_constrained_by_propagate") %>
         </div>
       <% end %>
     </div>

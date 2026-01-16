@@ -55,6 +55,63 @@ RSpec.describe(Cohort, type: :model) do
     end
   end
 
+  describe "purpose change validation" do
+    context "when changing to enrollment purpose" do
+      it "is valid if propagate_to_lecture is true" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: true)
+        cohort.purpose = :enrollment
+
+        expect(cohort).to be_valid
+      end
+
+      it "is invalid if propagate_to_lecture is false" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.purpose = :enrollment
+
+        expect(cohort).not_to be_valid
+        expect(cohort.errors[:purpose]).to be_present
+      end
+    end
+
+    context "when changing to planning purpose" do
+      it "is valid if propagate_to_lecture is false" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.purpose = :planning
+
+        expect(cohort).to be_valid
+      end
+
+      it "is invalid if propagate_to_lecture is true" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: true)
+        cohort.purpose = :planning
+
+        expect(cohort).not_to be_valid
+        expect(cohort.errors[:purpose]).to be_present
+      end
+    end
+
+    context "when changing to general purpose" do
+      it "is always valid regardless of propagate_to_lecture" do
+        cohort_with_propagate = create(:cohort, purpose: :enrollment, propagate_to_lecture: true)
+        cohort_with_propagate.purpose = :general
+        expect(cohort_with_propagate).to be_valid
+
+        cohort_without_propagate = create(:cohort, purpose: :planning, propagate_to_lecture: false)
+        cohort_without_propagate.purpose = :general
+        expect(cohort_without_propagate).to be_valid
+      end
+    end
+
+    context "when purpose is not changed" do
+      it "does not run validation" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.title = "New Title"
+
+        expect(cohort).to be_valid
+      end
+    end
+  end
+
   describe "database constraints" do
     it "prevents planning cohorts from propagating" do
       expect do
