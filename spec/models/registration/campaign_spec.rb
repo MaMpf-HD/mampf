@@ -118,6 +118,28 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
+    describe "#ensure_editable" do
+      let(:campaign) { create(:registration_campaign, :completed) }
+
+      it "prevents updates if campaign is completed" do
+        campaign.description = "New description"
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
+      end
+
+      it "allows updates if status is changing (re-opening)" do
+        campaign.status = :open
+        campaign.registration_deadline = 1.day.from_now
+        expect(campaign).to be_valid
+      end
+
+      it "allows updates if status is changing (finalizing)" do
+        campaign = create(:registration_campaign, :processing)
+        campaign.status = :completed
+        expect(campaign).to be_valid
+      end
+    end
+
     describe "#validate_real_campaign_uniqueness" do
       let(:lecture) { create(:lecture) }
 
@@ -358,6 +380,71 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.rejected_count).to eq(0)
         expect(campaign.total_registrations_count).to eq(1)
       end
+    end
+  end
+
+  describe "#finalize!" do
+    let(:campaign) { create(:registration_campaign, :with_items, status: :processing) }
+
+    it "delegates to AllocationMaterializer and updates status" do
+      expect_any_instance_of(Registration::AllocationMaterializer).to receive(:materialize!)
+
+      expect do
+        campaign.finalize!
+      end.to change(campaign, :status).from("processing").to("completed")
+    end
+
+    it "updates pending registrations to rejected" do
+      create(:registration_user_registration, registration_campaign: campaign, status: :pending)
+      create(:registration_user_registration, registration_campaign: campaign, status: :confirmed)
+
+      campaign.finalize!
+
+      expect(campaign.user_registrations.pending).to be_empty
+      expect(campaign.user_registrations.rejected.count).to eq(1)
+      expect(campaign.user_registrations.confirmed.count).to eq(1)
+    end
+
+    context "concurrency protection" do
+      it "executes within a database lock" do
+        expect(campaign).to receive(:with_lock).and_yield
+        campaign.finalize!
+      end
+
+      it "aborts if campaign becomes completed while waiting for the lock" do
+        # 1. Simulate acquiring the lock
+        allow(campaign).to receive(:with_lock).and_yield
+
+        # 2. Simulate that another process finished the job while we were waiting
+        #    (The record is reloaded inside with_lock, so it sees the new status)
+        allow(campaign).to receive(:completed?).and_return(true)
+
+        # 3. Expect that we do NOT run the materialization logic again
+        expect_any_instance_of(Registration::AllocationMaterializer).not_to receive(:materialize!)
+
+        campaign.finalize!
+      end
+    end
+  end
+
+  describe "#user_registrations_grouped_by_user" do
+    let(:campaign) { create(:registration_campaign, :with_items) }
+    let(:user1) { create(:confirmed_user, name: "Alice") }
+    let(:user2) { create(:confirmed_user, name: "Bob") }
+    let(:user3) { create(:confirmed_user, name: "Charlie") }
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign, user: user2)
+      create(:registration_user_registration, registration_campaign: campaign, user: user3)
+      create(:registration_user_registration, registration_campaign: campaign, user: user1)
+    end
+
+    it "returns registrations grouped by user and ordered by user name" do
+      grouped = campaign.user_registrations_grouped_by_user
+      expect(grouped.keys.map(&:name)).to eq(["Alice", "Bob", "Charlie"])
+      expect(grouped[user1].count).to eq(1)
+      expect(grouped[user2].count).to eq(1)
+      expect(grouped[user3].count).to eq(1)
     end
   end
 end

@@ -3253,6 +3253,7 @@ en:
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
     mail_noun: 'email'
+    name: 'Name'
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
@@ -3270,6 +3271,7 @@ en:
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'
+    confirm: 'Are you sure?'
     basics: 'Basics'
     action: 'Action'
     actions: 'Actions'
@@ -3864,6 +3866,12 @@ en:
               taken: >
                 This tutorium title is already taken for this event series.
               blank: You need to giv a title.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                There is already a tutorial membership for this user in this
+                lecture.
         user:
           attributes:
             courses:

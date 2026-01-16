@@ -59,5 +59,37 @@ RSpec.describe(Tutorial, type: :model) do
       expect(lecture.lecture_memberships.where(user: user)).to exist
       expect(lecture.lecture_memberships.where(user: user2)).to exist
     end
+
+    context "when user is in another tutorial of the same lecture" do
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+
+      before do
+        create(:tutorial_membership, user: user, tutorial: other_tutorial)
+      end
+
+      it "removes the user from other tutorials in the same lecture" do
+        expect(other_tutorial.members).to include(user)
+
+        tutorial.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+        expect(other_tutorial.reload.members).not_to include(user)
+        expect(tutorial.reload.members).to include(user)
+      end
+    end
+
+    context "when user is in a tutorial of another lecture" do
+      let(:other_lecture) { create(:lecture) }
+      let(:other_lecture_tutorial) { create(:tutorial, lecture: other_lecture) }
+
+      before do
+        create(:tutorial_membership, user: user, tutorial: other_lecture_tutorial)
+      end
+
+      it "does not remove the user from tutorials in other lectures" do
+        tutorial.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+        expect(other_lecture_tutorial.reload.members).to include(user)
+      end
+    end
   end
 end

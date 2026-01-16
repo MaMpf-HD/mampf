@@ -13,6 +13,7 @@ module Rosters
       end
 
       rosterable.add_user_to_roster!(user)
+      update_registration_materialization(user, rosterable)
     end
 
     def remove_user!(user, rosterable)
@@ -37,6 +38,15 @@ module Rosters
         return true if rosterable.capacity.nil?
 
         rosterable.roster_entries.count < rosterable.capacity
+      end
+
+      def update_registration_materialization(user, rosterable)
+        Registration::Item.where(registerable: rosterable).find_each do |item|
+          # rubocop:disable Rails/SkipsModelValidations
+          item.user_registrations.where(user: user)
+              .update_all(materialized_at: Time.current)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
       end
   end
 end

@@ -36,7 +36,8 @@ RSpec.describe(Registration::Item, type: :model) do
           item # ensure item exists
           campaign.update!(status: :open)
           create_list(:registration_user_registration, 3, :confirmed,
-                      registration_item: item, registration_campaign: campaign)
+                      registration_item: item,
+                      registration_campaign: campaign)
           item.capacity = 5
           item.save
         end
@@ -106,7 +107,8 @@ RSpec.describe(Registration::Item, type: :model) do
           item # ensure item exists
           campaign.update!(status: :open)
           create_list(:registration_user_registration, 3, :confirmed,
-                      registration_item: item, registration_campaign: campaign)
+                      registration_item: item,
+                      registration_campaign: campaign)
           item.capacity = 5
           item.save
         end

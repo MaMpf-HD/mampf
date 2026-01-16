@@ -13,31 +13,24 @@
     <% end %>
     <div class="d-flex gap-2">
       <% if campaign.open? %>
-        <%= button_to t("registration.campaign.actions.close"),
-                      close_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: { confirm: campaign_close_confirmation(campaign) },
-                      class: "btn btn-warning" %>
+        <%= close_campaign_button(campaign) %>
       <% elsif campaign.closed? %>
-        <%= button_to t("registration.campaign.actions.reopen"),
-                      reopen_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.reopen") },
-                      class: "btn btn-success" %>
+        <%= reopen_campaign_button(campaign) %>
+
+        <% if campaign.preference_based? %>
+          <%= allocate_campaign_button(campaign) %>
+        <% else %>
+          <%# FCFS: Go to dashboard for review instead of direct finalize %>
+          <%= review_and_finalize_button(campaign) %>
+        <% end %>
+      <% elsif campaign.processing? %>
+        <%= review_and_finalize_button(campaign) %>
+
+        <% if campaign.preference_based? %>
+          <%= allocate_campaign_button(campaign) %>
+        <% end %>
       <% elsif campaign.draft? %>
-        <%= button_to t("registration.campaign.actions.open"),
-                      open_registration_campaign_path(campaign),
-                      method: :patch,
-                      form: {
-                        data: {
-                          controller: "campaign-action",
-                          "campaign-action-campaign-id-value": campaign.id,
-                          "campaign-action-confirm-message-value": t("registration.campaign.confirmations.open"),
-                          "campaign-action-warning-message-value": t("registration.campaign.warnings.unlimited_items"),
-                          action: "submit->campaign-action#confirm"
-                        }
-                      },
-                      class: "btn btn-success" %>
+        <%= open_campaign_button(campaign) %>
       <% end %>
 
       <% if campaign.can_be_deleted? %>
@@ -74,6 +67,14 @@
         </span>
       </button>
     </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'registrations' %>" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="<%= tab == 'registrations' %>">
+        <%= t("registration.user_registration.index.title", default: "Registrations") %>
+        <span class="badge rounded-pill bg-secondary ms-1" id="registrations-tab-count">
+          <%= campaign.user_registrations.distinct.count(:user_id) %>
+        </span>
+      </button>
+    </li>
   </ul>
 
   <div class="tab-content" id="campaignTabsContent">
@@ -91,5 +92,9 @@
 
     <div class="tab-pane fade <%= 'show active' if tab == 'policies' %>" id="policies" role="tabpanel" aria-labelledby="policies-tab">
       <%= render "registration/policies/index" %>
+    </div>
+
+    <div class="tab-pane fade <%= 'show active' if tab == 'registrations' %>" id="registrations" role="tabpanel" aria-labelledby="registrations-tab">
+      <%= render "registration/user_registrations/index", campaign: campaign %>
     </div>
   </div>

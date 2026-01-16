@@ -3469,6 +3469,7 @@ de:
     mail_noun: 'E-Mail'
     seats: 'Plätze'
     add: 'Hinzufügen'
+    name: 'Name'
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3484,6 +3485,7 @@ de:
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'
+    confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
     action: 'Aktion'
     actions: 'Aktionen'
@@ -4098,6 +4100,12 @@ de:
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
+                Veranstaltung.
         user:
           attributes:
             courses:

@@ -38,14 +38,13 @@
             <%= item_stats_count(item) %>
           </div>
           <% if show_item_capacity_progress?(item) %>
-            <div class="progress" style="height: 6px; width: 60px;">
-              <div class="progress-bar bg-<%= item_capacity_progress_color(item) %>"
-                   role="progressbar"
-                   style="width: <%= item_capacity_percentage(item) %>%;"
-                   aria-valuenow="<%= item_capacity_percentage(item) %>"
-                   aria-valuemin="0"
-                   aria-valuemax="100"></div>
-            </div>
+            <%= registration_progress_bar(item.confirmed_registrations_count,
+                                          item.capacity,
+                                          classification: :utilization,
+                                          label: "",
+                                          height: "6px",
+                                          container_class: "progress",
+                                          style: "width: 60px;") %>
           <% end %>
         </div>
       </td>

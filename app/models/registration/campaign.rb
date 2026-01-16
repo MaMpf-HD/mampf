@@ -41,6 +41,7 @@ module Registration
 
     validate :allocation_mode_frozen, on: :update
     validate :cannot_revert_to_draft, on: :update
+    validate :ensure_editable, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
@@ -103,7 +104,37 @@ module Registration
                         .count(:user_id)
     end
 
+    def user_registrations_grouped_by_user
+      user_registrations.includes(:user, :registration_item)
+                        .joins(:user)
+                        .order("users.name")
+                        .group_by(&:user)
+    end
+
+    def finalize!
+      # Protect against concurrent finalization attempts via locking
+      with_lock do
+        return if completed?
+
+        Registration::AllocationMaterializer.new(self).materialize!
+
+        # Reject all remaining pending registrations so the state is explicit
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.pending.update_all(status: :rejected)
+        # rubocop:enable Rails/SkipsModelValidations
+
+        update!(status: :completed)
+      end
+    end
+
     private
+
+      def ensure_editable
+        return unless completed?
+        return unless changed?
+
+        errors.add(:base, :already_finalized) unless status_changed?
+      end
 
       def prerequisites_not_draft
         prereq_ids = registration_policies.select { |p| p.kind == "prerequisite_campaign" }

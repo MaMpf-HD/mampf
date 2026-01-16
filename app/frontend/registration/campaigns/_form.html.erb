@@ -11,7 +11,7 @@
   <div class="mb-3">
     <%= f.label :description, t("registration.campaign.form.description"), class: "form-label" %>
     <%= helpdesk(t("registration.campaign.helpdesk.description"), false) %>
-    <%= f.text_field :description, class: "form-control" %>
+    <%= f.text_field :description, class: "form-control", disabled: campaign.completed? %>
   </div>
 
   <div class="mb-3">
@@ -38,11 +38,13 @@
                        class: "form-control td-input",
                        data: { td_target: "#registration-deadline-picker" },
                        value: campaign.registration_deadline&.strftime("%Y-%m-%d %H:%M"),
-                       autocomplete: "off" %>
+                       autocomplete: "off",
+                       disabled: campaign.completed? %>
       <span class="input-group-text td-picker-button"
             role="button"
             data-td-target="#registration-deadline-picker"
-            data-td-toggle="datetimepicker">
+            data-td-toggle="datetimepicker"
+            <%= "disabled" if campaign.completed? %>>
         <i class="bi bi-calendar-fill"></i>
       </span>
       <div class="invalid-feedback td-error"

@@ -63,6 +63,18 @@ module Registration
       registerable&.registration_title || registerable&.title
     end
 
+    def confirmed_user_ids
+      user_registrations.confirmed.pluck(:user_id)
+    end
+
+    def capacity_editable?
+      return true if registration_campaign.draft?
+
+      return false if registration_campaign.completed?
+
+      true
+    end
+
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
     # in the tutorial GUI) is permissible under the current campaign rules.
     def validate_capacity_change_from_registerable!(new_capacity)

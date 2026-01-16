@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      errors:
+        already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       updated: "Anmeldeverfahren erfolgreich aktualisiert."
@@ -11,6 +13,7 @@ de:
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
+      finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       not_found: "Anmeldeverfahren nicht gefunden."
       lecture_not_found: "Veranstaltung nicht gefunden."
@@ -60,11 +63,22 @@ de:
         open: "Anmeldung starten"
         close: "Anmeldung beenden"
         reopen: "Anmeldung wiedereröffnen"
+        finalize: "Zuteilung durchführen"
+        force_finalize: "Finalisierung erzwingen (Fehler ignorieren)"
+        allocate: "Zuteilung berechnen"
+        reallocate: "Zuteilung neu berechnen"
+        view_allocation: "Zuteilung ansehen"
+        review_and_finalize: "Prüfen & Abschließen"
+        complete_planning: "Planung abschließen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
         reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
+        finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
+        force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
+        complete_planning: "Sind Sie sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -162,6 +176,7 @@ de:
         both: "Beide"
     item:
       not_found: "Gruppe nicht gefunden."
+      one: "Element"
       index:
         title: "Gruppen"
         none: "Noch keine Gruppen hinzugefügt."
@@ -212,9 +227,60 @@ de:
         tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
         talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
         enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt." 
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt."
         other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Sie bestimmen, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktivieren Sie dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
+    user_registration:
+      forced_assignment: "Zwangszuweisung"
+      index:
+        title: "Anmeldungen"
+      status:
+        pending: "Ausstehend"
+        confirmed: "Bestätigt"
+        rejected: "Abgelehnt"
+      rank: "Rang"
+      destroyed: "Anmeldung erfolgreich entfernt."
+      destroyed_all_for_user: "%{count} Anmeldungen für Benutzer entfernt."
+      destroy_failed: "Anmeldungen konnten nicht entfernt werden."
+      none: "Keine Anmeldungen gefunden."
+      preferences: "Präferenzen"
+      actions:
+        remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+    allocation:
+      started: "Zuteilung wurde berechnet."
+      conflicts:
+        title: "Konfligierende Registrierungen"
+        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Sie die Zuteilung durchführen, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
+        currently_in: "aktuell in %{tutorial}"
+      dashboard:
+        title: "Zuteilungs-Dashboard"
+        last_updated: "Stand: %{time}"
+        unassigned_students: "Nicht zugewiesene Studierende"
+        no_unassigned: "Alle Studierenden wurden zugewiesen!"
+        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend über die Teilnehmerverwaltung manuell in Gruppen nachverteilt werden."
+        workflow_info_fcfs: "Überprüfen Sie die Liste der registrierten Studierenden. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
+        workflow_info_planning: "Überprüfen Sie die Statistiken. Da dies ein Nur-Planungs-Verfahren ist, werden keine Änderungen an Teilnehmerlisten vorgenommen. Wenn Sie zufrieden sind, klicken Sie auf 'Planung abschließen', um den aktuellen Stand zu speichern."
+        item_capacities: "Auslastung"
+      stats:
+        total_registrations: "Bewerbungen Gesamt"
+        assigned: "Zugewiesen"
+        unassigned: "Nicht zugewiesen"
+        happiness_distribution: "Präferenzverteilung"
+        rank: "Präferenzrang"
+        count: "Anzahl"
+        percentage: "Prozent"
+        rank_label: "Wahl #%{rank}"
+        forced: "Zwangszuweisung"
+        capacity: "Kapazität"
+        utilization: "Auslastung"
+      errors:
+        already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
+        planning_only: "Nur Planung"
+        wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
+        policy_violation_title: "Richtlinienverstöße erkannt"
+        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        failed: "Zuteilung fehlgeschlagen: %{error}"
   activerecord:
     errors:
       models:
@@ -222,6 +288,7 @@ de:
           attributes:
             base:
               frozen: "Die Anmeldeverfahrenskonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
+              already_finalized: "Das Anmeldeverfahren ist bereits abgeschlossen."
               cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
