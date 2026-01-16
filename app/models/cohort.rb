@@ -27,8 +27,6 @@ class Cohort < ApplicationRecord
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validate :validate_purpose_propagate_compatibility, on: :update
 
-  attr_readonly :propagate_to_lecture
-
   def roster_entries
     cohort_memberships
   end
