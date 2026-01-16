@@ -38,19 +38,7 @@ module Rosters
     def locked?
       return false if skip_campaigns?
 
-      if is_a?(Lecture)
-        # For Lectures: Only consider campaigns where the Lecture itself is the registerable item
-        # (i.e., enrollment track campaigns), not campaigns for its sub-groups (Tutorials/Talks)
-        Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: "Lecture" })
-          .where(planning_only: false)
-          .where.not(status: :completed)
-          .exists?
-      else
-        # If in system mode, it is locked unless it was part of a completed campaign
-        !campaign_completed?
-      end
+      !campaign_completed?
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
@@ -123,6 +111,8 @@ module Rosters
 
     # Checks if an active (non-completed) campaign exists for this item.
     def campaign_active?
+      return false unless respond_to?(:registration_items)
+
       if association(:registration_items).loaded?
         registration_items.any? do |item|
           !item.registration_campaign.completed? && item.materializes_to_roster?
@@ -150,6 +140,8 @@ module Rosters
 
     # Checks if the item is associated with a completed campaign that materializes to rosters.
     def campaign_completed?
+      return false unless respond_to?(:registration_items)
+
       if association(:registration_items).loaded?
         registration_items.any? do |item|
           item.registration_campaign.completed? && item.materializes_to_roster?
