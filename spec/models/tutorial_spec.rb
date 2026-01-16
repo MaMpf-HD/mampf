@@ -43,4 +43,21 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.tutors.size).to eq(3)
     end
   end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+    let(:user2) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: [user, user2])).to be_empty
+
+      tutorial.materialize_allocation!(user_ids: [user.id, user2.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+      expect(lecture.lecture_memberships.where(user: user2)).to exist
+    end
+  end
 end
