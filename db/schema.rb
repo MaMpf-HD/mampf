@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_25_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -262,6 +262,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
+  create_table "flipper_features", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_flipper_features_on_key", unique: true
+  end
+
+  create_table "flipper_gates", force: :cascade do |t|
+    t.string "feature_key", null: false
+    t.string "key", null: false
+    t.text "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -345,7 +361,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "capacity"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -526,10 +541,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
   create_table "registration_campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
-    t.string "title", null: false
+    t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
-    t.boolean "planning_only", default: false, null: false
     t.datetime "registration_deadline", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -561,7 +575,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.index ["active"], name: "index_registration_policies_on_active"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
-    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_uniqueness", unique: true
+    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 

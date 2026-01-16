@@ -233,7 +233,7 @@ RSpec.describe(Lecture, type: :model) do
 
     it "can create a registration_campaign" do
       campaign = lecture.registration_campaigns.create(
-        title: "Test Campaign",
+        description: "Test Campaign",
         allocation_mode: :first_come_first_served,
         status: :draft,
         registration_deadline: 1.week.from_now
@@ -242,11 +242,5 @@ RSpec.describe(Lecture, type: :model) do
       expect(campaign).to be_persisted
       expect(campaign.campaignable).to eq(lecture)
     end
-  end
-
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:lecture) }
-
-    it_behaves_like "a registerable model"
   end
 end

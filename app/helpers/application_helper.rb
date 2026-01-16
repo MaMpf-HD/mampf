@@ -269,10 +269,13 @@ module ApplicationHelper
   def helpdesk(text, html, title = t("info"))
     tag.i(class: "far fa-question-circle helpdesk ms-2",
           tabindex: -1,
-          "data-bs-toggle": "popover",
-          "data-bs-trigger": "focus",
-          "data-bs-content": text,
-          "data-bs-html": html,
+          data: {
+            controller: "bs-popover",
+            "bs-toggle": "popover",
+            "bs-trigger": "focus",
+            "bs-content": text,
+            "bs-html": html
+          },
           title: title)
   end
 

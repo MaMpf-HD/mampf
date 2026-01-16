@@ -1,7 +1,141 @@
 de:
+  registration:
+    campaign:
+      created: "Anmeldeverfahren erfolgreich erstellt."
+      create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
+      updated: "Anmeldeverfahren erfolgreich aktualisiert."
+      update_failed: "Anmeldeverfahren konnte nicht aktualisiert werden."
+      destroyed: "Anmeldeverfahren erfolgreich gelöscht."
+      cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
+      confirm_delete: "Sind Sie sicher, dass Sie dieses Anmeldeverfahren löschen wollen?"
+      opened: "Anmeldung geöffnet."
+      closed: "Anmeldung geschlossen."
+      reopened: "Anmeldung wiedereröffnet."
+      cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
+      not_found: "Anmeldeverfahren nicht gefunden."
+      lecture_not_found: "Veranstaltung nicht gefunden."
+      helpdesk:
+        campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
+        description: "Eine kurze Beschreibung des Anmeldeverfahrens (max. 100 Zeichen). Diese wird in Übersichten und Tabellen angezeigt."
+        allocation_mode: "Bestimmt den Ablauf der Registrierung. 'Direktanmeldung': Nutzer melden sich für einen Termin an und erhalten sofort eine Zusage oder Absage. 'Präferenzbasiert': Nutzer geben Präferenzen für mehrere Termine an. Die Verteilung erfolgt nach Fristende global."
+        registration_deadline: "Der Zeitpunkt, an dem die Registrierungsphase endet. Danach sind für Studierende keine Anmeldungen oder Änderungen mehr möglich."
+        allocation_mode_frozen: "Der Zuteilungsmodus kann nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
+      index:
+        title: "Anmeldungen"
+        card_title: "Anmeldeverfahren"
+        new_campaign: "Neues Anmeldeverfahren"
+        none: "Keine Anmeldeverfahren vorhanden."
+        columns:
+          description: "Kurzbeschreibung"
+          mode: "Zuteilungsmodus"
+          opens_at: "Registrierungsbeginn"
+          deadline: "Registrierungsende"
+          status: "Status"
+      new:
+        title: "Neues Anmeldeverfahren"
+      edit:
+        title: "Anmeldeverfahren bearbeiten"
+      form:
+        new_title: "Neues Anmeldeverfahren"
+        edit_title: "Anmeldeverfahren bearbeiten"
+        description: "Kurzbeschreibung"
+        allocation_mode: "Zuteilungsmodus"
+        registration_opens_at: "Registrierungsbeginn"
+        registration_deadline: "Registrierungsende"
+        submit: "Speichern"
+      allocation_mode:
+        first_come_first_served: "Direktanmeldung"
+        preference_based: "Präferenzbasiert"
+      status:
+        draft: "Entwurf"
+        open: "Offen"
+        processing: "In Bearbeitung"
+        completed: "Erledigt"
+        closed: "Geschlossen"
+        planning: "Planung"
+      actions:
+        open: "Anmeldung starten"
+        close: "Anmeldung beenden"
+        reopen: "Anmeldung wiedereröffnen"
+      confirmations:
+        open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
+        close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
+        close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
+        reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
+      overview:
+        registrations: "Anmeldungen"
+        total: "Gesamt"
+        confirmed_count:
+          one: "Bestätigt %{count}"
+          other: "Bestätigt %{count}"
+        pending_count:
+          one: "Ausstehend %{count}"
+          other: "Ausstehend %{count}"
+        rejected_count:
+          one: "Abgelehnt %{count}"
+          other: "Abgelehnt %{count}"
+        items: "Elemente"
+    policy:
+      helpdesk:
+        policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
+        policies_frozen: "Richtlinien können nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
+        kind: "Die Art der Regel. Zum Beispiel verlangt 'Institutionelle E-Mail', dass Nutzer eine E-Mail-Adresse einer bestimmten Domain haben."
+        phase: "Wann die Regel geprüft wird. 'Registrierung': Prüfung bei der Anmeldung. 'Finalisierung': Prüfung bei der endgültigen Zuteilung (nachdem die Registrierungsfrist abgelaufen ist). 'Beide': Prüfung zu beiden Zeitpunkten."
+        allowed_domains: "Geben Sie die Hauptdomains an (z.B. 'uni-heidelberg.de'). Subdomains (wie 'stud.uni-heidelberg.de') sind automatisch eingeschlossen. Trennen Sie mehrere Domains durch Kommas."
+      index:
+        title: "Richtlinien"
+        add: "Richtlinie hinzufügen"
+        none: "Keine Richtlinien konfiguriert."
+      new:
+        title: "Neue Richtlinie"
+      edit:
+        title: "Richtlinie bearbeiten"
+      kind: "Typ"
+      phase: "Phase"
+      config: "Konfiguration"
+      position: "Position"
+      created: "Richtlinie erfolgreich erstellt."
+      updated: "Richtlinie erfolgreich aktualisiert."
+      destroyed: "Richtlinie erfolgreich gelöscht."
+      not_found: "Registrierungsrichtlinie nicht gefunden."
+      errors:
+        missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
+        missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
+        prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
+      configs:
+        allowed_domains: "Erlaubte Domains"
+        prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
+        lecture_id: "Veranstaltung"
+      hints:
+        allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
+      kinds:
+        institutional_email: "Institutionelle E-Mail"
+        prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
+        student_performance: "Studierendenleistung"
+      phases:
+        registration: "Registrierung"
+        finalization: "Finalisierung"
+        both: "Beide"
   activerecord:
     errors:
       models:
+        registration/campaign:
+          attributes:
+            base:
+              frozen: "Die Kampagnenkonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
+              cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
+              referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
+              prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
+            registration_deadline:
+              must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+            status:
+              cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
+            allocation_mode:
+              frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
+        registration/policy:
+          attributes:
+            base:
+              frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
         registration/user_registration:
           attributes:
             registration_item:

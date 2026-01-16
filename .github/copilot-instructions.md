@@ -19,7 +19,7 @@ Müsli is a system previously used to handle tutorial groups for lectures & to a
 
 ## Testing
 
-- RSpec (Ruby)
+- RSpec (Ruby). Always run specs with: `VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec ...`. NEVER EVER run specs with: `bundle exec rspec ...` alone, this will wipe the development database.
 - Cypress (JS)
 
 ## Linting

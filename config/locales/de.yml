@@ -3571,6 +3571,8 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    details: 'Details'
+    settings: 'Einstellungen'
     status: 'Status'
     sponsors: 'Gefördert durch'
     since: 'seit'
@@ -3656,6 +3658,8 @@ de:
     discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    move_up: 'Nach oben'
+    move_down: 'Nach unten'
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Veranstaltung'
