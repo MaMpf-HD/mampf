@@ -16,22 +16,9 @@
   <div class="modal-body">
     <div class="mb-3">
       <%= f.label :purpose, t("basics.type"), class: "form-label" %>
-      <%
-        purpose_options = [
-          [t("registration.item.types.enrollment_group"), "Enrollment Group"],
-          [t("registration.item.types.planning_survey"), "Planning Survey"],
-          [t("registration.item.types.other_group"), "Other Group"]
-        ]
-        selected_type = case cohort.purpose&.to_sym
-                        when :enrollment then "Enrollment Group"
-                        when :planning then "Planning Survey"
-                        when :general then "Other Group"
-                        else "Other Group"
-                        end
-      %>
       <%= f.select :cohort_type,
-                   purpose_options,
-                   { selected: selected_type },
+                   cohort_type_options,
+                   { selected: cohort_type_from_purpose(cohort.purpose) },
                    class: "form-select",
                    disabled: cohort.persisted?,
                    data: {

@@ -147,4 +147,50 @@ RSpec.describe(RosterHelper, type: :helper) do
       end
     end
   end
+
+  describe "#cohort_type_options" do
+    it "returns array of translated type options" do
+      result = helper.cohort_type_options
+
+      expect(result).to be_an(Array)
+      expect(result.length).to eq(3)
+      expect(result).to all(be_an(Array).and(have_attributes(length: 2)))
+
+      types = result.map(&:last)
+      expect(types).to contain_exactly("Enrollment Group", "Planning Survey", "Other Group")
+    end
+
+    it "derives options from Registration::Item::COHORT_TYPE_TO_PURPOSE" do
+      expected_types = Registration::Item::COHORT_TYPE_TO_PURPOSE.keys
+      actual_types = helper.cohort_type_options.map(&:last)
+
+      expect(actual_types).to match_array(expected_types)
+    end
+  end
+
+  describe "#cohort_type_from_purpose" do
+    it "returns 'Enrollment Group' for :enrollment purpose" do
+      expect(helper.cohort_type_from_purpose(:enrollment)).to eq("Enrollment Group")
+    end
+
+    it "returns 'Planning Survey' for :planning purpose" do
+      expect(helper.cohort_type_from_purpose(:planning)).to eq("Planning Survey")
+    end
+
+    it "returns 'Other Group' for :general purpose" do
+      expect(helper.cohort_type_from_purpose(:general)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for nil purpose" do
+      expect(helper.cohort_type_from_purpose(nil)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for unknown purpose" do
+      expect(helper.cohort_type_from_purpose(:unknown)).to eq("Other Group")
+    end
+
+    it "handles string purpose values" do
+      expect(helper.cohort_type_from_purpose("enrollment")).to eq("Enrollment Group")
+    end
+  end
 end
