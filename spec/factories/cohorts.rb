@@ -4,7 +4,7 @@ FactoryBot.define do
     description do
       "If you failed last year's exam and don't want to go through tutorials again, register here."
     end
-    capacity { 20 }
+    capacity { nil }
     purpose { :general }
     propagate_to_lecture { false }
     association :context, factory: :lecture

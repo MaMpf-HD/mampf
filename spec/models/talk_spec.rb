@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(Talk, type: :model) do
-  it_behaves_like "a registerable model"
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_talk)).to be_valid
@@ -233,5 +239,20 @@ RSpec.describe(Talk, type: :model) do
     subject { FactoryBot.create(:valid_talk) }
 
     it_behaves_like "a registerable model"
+  end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:seminar) }
+    let(:talk) { create(:talk, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: user)).to be_empty
+
+      talk.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+    end
   end
 end

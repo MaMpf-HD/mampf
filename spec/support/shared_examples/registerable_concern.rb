@@ -18,20 +18,6 @@ RSpec.shared_examples("a registerable model") do
     it "has nil capacity by default" do
       expect(subject.capacity).to be_nil
     end
-
-    it "raises NotImplementedError for allocated_user_ids" do
-      expect do
-        subject.allocated_user_ids
-      end.to raise_error(NotImplementedError,
-                         "Registerable must implement #allocated_user_ids")
-    end
-
-    it "raises NotImplementedError for materialize_allocation!" do
-      expect do
-        subject.materialize_allocation!(user_ids: [1, 2], campaign: campaign)
-      end.to raise_error(NotImplementedError,
-                         "Registerable must implement #materialize_allocation!")
-    end
   end
 
   describe "capacity validation via items" do
@@ -58,7 +44,10 @@ RSpec.shared_examples("a registerable model") do
     context "when capacity reduction is invalid" do
       before do
         campaign.update!(status: :open)
-        create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+        # Ensure the item belongs to the campaign
+        item.update!(registration_campaign: campaign)
+        create_list(:registration_user_registration, 3, :confirmed, registration_item: item,
+                                                                    registration_campaign: campaign)
         registerable.update!(capacity: 5)
       end
 

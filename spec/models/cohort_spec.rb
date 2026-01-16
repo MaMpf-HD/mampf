@@ -82,20 +82,25 @@ RSpec.describe(Cohort, type: :model) do
   end
 
   describe "Registerable interface" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosterable interface" do
+    it_behaves_like "a rosterable model"
+  end
+
+  describe "Registerable interface" do
     it "includes Registration::Registerable" do
       expect(Cohort.ancestors).to include(Registration::Registerable)
     end
 
-    it "raises NotImplementedError for allocated_user_ids" do
-      cohort = build(:cohort)
-      expect { cohort.allocated_user_ids }.to raise_error(NotImplementedError)
+    it "includes Rosters::Rosterable" do
+      expect(Cohort.ancestors).to include(Rosters::Rosterable)
     end
 
-    it "raises NotImplementedError for materialize_allocation!" do
+    it "implements roster_entries" do
       cohort = build(:cohort)
-      expect do
-        cohort.materialize_allocation!(user_ids: [], campaign: nil)
-      end.to raise_error(NotImplementedError)
+      expect(cohort).to respond_to(:roster_entries)
     end
   end
 
@@ -109,6 +114,47 @@ RSpec.describe(Cohort, type: :model) do
     it "returns nil for lecture if context is not a Lecture" do
       cohort = build(:cohort, context: nil)
       expect(cohort.lecture).to be_nil
+    end
+  end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+
+    context "when cohort is isolated (propagate_to_lecture = false)" do
+      let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+      it "does NOT propagate users to the lecture roster" do
+        expect(lecture.lecture_memberships.where(user: user)).to be_empty
+        cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+        expect(lecture.lecture_memberships.where(user: user)).not_to exist
+      end
+    end
+
+    context "when cohort propagates (propagate_to_lecture = true)" do
+      let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+
+      it "propagates users to the lecture roster" do
+        expect(lecture.lecture_memberships.where(user: user)).to be_empty
+        cohort.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+        expect(lecture.lecture_memberships.where(user: user)).to exist
+      end
+    end
+  end
+
+  describe "propagate_to_lecture immutability" do
+    it "can be set on create" do
+      cohort = create(:cohort, propagate_to_lecture: true)
+      expect(cohort.propagate_to_lecture).to be(true)
+    end
+
+    it "does not change on update" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+      expect { cohort.update!(propagate_to_lecture: true) }
+        .to raise_error(ActiveRecord::ReadonlyAttributeError)
+
+      expect(cohort.reload.propagate_to_lecture).to be(false)
     end
   end
 end

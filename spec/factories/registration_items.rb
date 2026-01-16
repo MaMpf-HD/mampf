@@ -15,5 +15,9 @@ FactoryBot.define do
     trait :for_talk do
       registerable { association(:talk, lecture: lecture) }
     end
+
+    trait :for_cohort do
+      registerable { association(:cohort, context: lecture) }
+    end
   end
 end

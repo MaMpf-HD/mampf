@@ -2,6 +2,7 @@
 class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
+  include Rosters::Rosterable
 
   belongs_to :course
 
@@ -58,6 +59,10 @@ class Lecture < ApplicationRecord
   # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
+
+  # Roster associations
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :members, through: :lecture_memberships, source: :user
 
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
@@ -789,6 +794,26 @@ class Lecture < ApplicationRecord
     touch
   end
 
+  def ensure_roster_membership!(user_ids)
+    # Efficiently insert missing memberships using upsert (ignoring duplicates)
+    # Note: Requires a unique index on [:user_id, :lecture_id]
+    attributes = user_ids.map do |uid|
+      { user_id: uid, lecture_id: id, created_at: Time.current,
+        updated_at: Time.current }
+    end
+
+    return if attributes.empty?
+
+    # Skipping validations for performance; ensure data integrity via unique index
+    # rubocop:disable Rails/SkipsModelValidations
+    LectureMembership.upsert_all(
+      attributes,
+      unique_by: [:user_id, :lecture_id],
+      record_timestamps: false # Timestamps handled manually above
+    )
+    # rubocop:enable Rails/SkipsModelValidations
+  end
+
   def eligible_as_tutors
     (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
@@ -836,6 +861,10 @@ class Lecture < ApplicationRecord
 
   def vignettes?
     vignettes_questionnaires.any?
+  end
+
+  def roster_entries
+    lecture_memberships
   end
 
   private

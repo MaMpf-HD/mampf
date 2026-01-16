@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(Tutorial, type: :model) do
-  it_behaves_like "a registerable model"
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
   it "has a valid factory" do
     expect(FactoryBot.build(:tutorial)).to be_valid
@@ -38,9 +44,20 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:tutorial) }
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+    let(:user2) { create(:confirmed_user) }
 
-    it_behaves_like "a registerable model"
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: [user, user2])).to be_empty
+
+      tutorial.materialize_allocation!(user_ids: [user.id, user2.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+      expect(lecture.lecture_memberships.where(user: user2)).to exist
+    end
   end
 end

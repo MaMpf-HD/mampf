@@ -1,7 +1,11 @@
 class Cohort < ApplicationRecord
   include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :context, polymorphic: true
+
+  has_many :cohort_memberships, dependent: :destroy
+  has_many :users, through: :cohort_memberships
 
   enum :purpose, {
     general: 0,
@@ -15,12 +19,8 @@ class Cohort < ApplicationRecord
   validates :purpose, presence: true
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
-  def allocated_user_ids
-    raise(NotImplementedError, "Cohort must implement #allocated_user_ids")
-  end
-
-  def materialize_allocation!(user_ids:, campaign:)
-    raise(NotImplementedError, "Cohort must implement #materialize_allocation!")
+  def roster_entries
+    cohort_memberships
   end
 
   def lecture
