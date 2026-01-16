@@ -39,7 +39,10 @@ class CohortsController < ApplicationController
   end
 
   def create
-    @cohort = Cohort.new(cohort_params)
+    cohort_attributes = cohort_params
+    cohort_attributes = map_cohort_type_to_purpose(cohort_attributes)
+
+    @cohort = Cohort.new(cohort_attributes)
     @cohort.context = @lecture
     authorize! :create, @cohort
     set_cohort_locale
@@ -133,7 +136,29 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      params.expect(cohort: [:title, :capacity, :description])
+      permitted = [:title, :capacity, :description]
+      permitted += [:purpose, :propagate_to_lecture] unless @cohort&.persisted?
+      params.expect(cohort: permitted)
+    end
+
+    def map_cohort_type_to_purpose(attributes)
+      return attributes unless attributes[:purpose].present?
+
+      purpose_mapping = {
+        "enrollment" => { purpose: :enrollment, propagate_to_lecture: true },
+        "planning" => { purpose: :planning, propagate_to_lecture: false },
+        "general" => { purpose: :general }
+      }
+
+      config = purpose_mapping[attributes[:purpose]]
+      return attributes unless config
+
+      attributes[:purpose] = config[:purpose]
+      if config.key?(:propagate_to_lecture)
+        attributes[:propagate_to_lecture] =
+          config[:propagate_to_lecture]
+      end
+      attributes
     end
 
     def create_turbo_streams(group_type)
