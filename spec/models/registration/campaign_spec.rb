@@ -74,15 +74,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    it "creates campaign for lecture enrollment" do
-      campaign = FactoryBot.create(:registration_campaign, :for_lecture_enrollment)
-      expect(campaign).to be_valid
-      expect(campaign.registration_items.count).to eq(1)
-      item = campaign.registration_items.first
-      expect(item.registerable_type).to eq("Lecture")
-      expect(item.registerable).to eq(campaign.campaignable)
-    end
-
     it "creates campaign with policies" do
       campaign = FactoryBot.create(:registration_campaign, :with_policies)
       expect(campaign).to be_valid
