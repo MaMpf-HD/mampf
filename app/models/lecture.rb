@@ -798,7 +798,8 @@ class Lecture < ApplicationRecord
     # Efficiently insert missing memberships using upsert (ignoring duplicates)
     # Note: Requires a unique index on [:user_id, :lecture_id]
     attributes = user_ids.map do |uid|
-      { user_id: uid, lecture_id: id, created_at: Time.current, updated_at: Time.current }
+      { user_id: uid, lecture_id: id, created_at: Time.current,
+        updated_at: Time.current }
     end
 
     return if attributes.empty?
