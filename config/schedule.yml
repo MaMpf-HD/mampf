@@ -26,3 +26,9 @@ altcha_solutions_cleaner_job:
   cron: "0 0 */2 * *"
   class: "AltchaSolutionsCleaner"
   queue: critical
+
+activity_streak_resetter_job:
+  # every sunday at midnight
+  cron: "0 0 * * 0"
+  class: "ActivityStreakResetter"
+  queue: critical
