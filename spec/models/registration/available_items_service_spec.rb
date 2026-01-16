@@ -7,7 +7,6 @@ RSpec.describe(Registration::AvailableItemsService) do
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
       let(:service) { described_class.new(campaign) }
       let!(:tutorial) { create(:tutorial, lecture: lecture) }
-      let!(:talk) { create(:talk, lecture: lecture) }
       let!(:cohort) { create(:cohort, context: lecture) }
 
       it "returns tutorials" do
@@ -27,7 +26,6 @@ RSpec.describe(Registration::AvailableItemsService) do
       let(:lecture) { create(:lecture, :is_seminar) }
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
       let(:service) { described_class.new(campaign) }
-      let!(:tutorial) { create(:tutorial, lecture: lecture) }
       let!(:talk) { create(:talk, lecture: lecture) }
       let!(:cohort) { create(:cohort, context: lecture) }
 
