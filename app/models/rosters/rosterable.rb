@@ -159,41 +159,63 @@ module Rosters
     end
 
     # Updates the roster based on the target list of users and the source campaign.
-    # - Adds users from the list who are not currently in the roster.
-    # - Removes users who are in the roster *via this campaign* but not in the list.
-    # - Leaves manual entries (source_campaign_id: nil) or entries from other campaigns untouched.
+    # - Synchronizes the local roster (bulk adds/removes users for this campaign).
+    # - Propagates new members to the parent lecture roster (if applicable).
     def materialize_allocation!(user_ids:, campaign:)
-      current_roster_user_ids = roster_entries.pluck(roster_user_id_column)
-      target_user_ids = user_ids.uniq
+      transaction do
+        current_ids = roster_entries.pluck(roster_user_id_column)
+        target_ids = user_ids.uniq
 
-      # Bulk Insert
-      # We use insert_all to avoid N+1 inserts. This skips callbacks, which is acceptable
-      # for bulk allocations where we just want to sync the state.
-      users_to_add_ids = target_user_ids - current_roster_user_ids
-      if users_to_add_ids.any?
-        # insert_all does not automatically apply the association scope (e.g. foreign keys).
-        # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
-        scope_attrs = roster_entries.scope_attributes
-
-        attributes = users_to_add_ids.map do |uid|
-          {
-            roster_user_id_column => uid,
-            :source_campaign_id => campaign.id,
-            :created_at => Time.current,
-            :updated_at => Time.current
-          }.merge(scope_attrs)
-        end
-        # insert_all on the association automatically scopes to the parent (e.g. tutorial_id)
-        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+        add_missing_users!(target_ids, current_ids, campaign)
+        remove_excess_users!(target_ids, campaign)
+        propagate_to_lecture!(target_ids)
       end
+    end
 
-      # Bulk Delete
-      # Remove users who are in the roster via THIS campaign but not in the target list
-      # We use delete_all to avoid instantiating objects.
-      entries_to_remove = roster_entries.where(source_campaign: campaign)
-                                        .where.not(roster_user_id_column => target_user_ids)
+    def propagate_to_lecture!(user_ids)
+      return if user_ids.empty?
 
-      entries_to_remove.delete_all
+      return if is_a?(Cohort) && !propagate_to_lecture
+
+      return unless respond_to?(:lecture)
+
+      parent = lecture
+      return unless parent.is_a?(Lecture)
+      return if parent == self
+
+      parent.ensure_roster_membership!(user_ids)
+    end
+
+    # Identifies users in the target list who are not yet in the roster and
+    # performs a bulk insert to add them efficiently, associating them with
+    # the given campaign.
+    def add_missing_users!(target_ids, current_ids, campaign)
+      users_to_add = target_ids - current_ids
+      return if users_to_add.empty?
+
+      # insert_all does not automatically apply the association scope (e.g. foreign keys).
+      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
+      scope_attrs = roster_entries.scope_attributes
+
+      attributes = users_to_add.map do |uid|
+        {
+          roster_user_id_column => uid,
+          :source_campaign_id => campaign.id,
+          :created_at => Time.current,
+          :updated_at => Time.current
+        }.merge(scope_attrs)
+      end
+      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    # Identifies users currently in the roster associated with this specific
+    # campaign but not in the target list, and removes them. This cleans up
+    # allocations from the same campaign that are no longer valid,
+    # without touching members added manually or by other campaigns.
+    def remove_excess_users!(target_ids, campaign)
+      roster_entries.where(source_campaign: campaign)
+                    .where.not(roster_user_id_column => target_ids)
+                    .delete_all
     end
 
     # Checks if the roster is over capacity.
