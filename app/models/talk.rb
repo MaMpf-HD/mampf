@@ -45,6 +45,10 @@ class Talk < ApplicationRecord
     "#{to_label} (#{speakers.map(&:tutorial_name).join(", ")})"
   end
 
+  def registration_title
+    to_label_with_speakers
+  end
+
   def long_title
     title_for_viewers
   end

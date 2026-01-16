@@ -211,10 +211,12 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 ##### Capacity Constraints
 
-| Mode | Freeze Point | Modification Rules |
-|------|--------------|-------------------|
-| FCFS | Constrained | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. Cannot revoke confirmed spots. |
-| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `completed` (results published). |
+| Mode | Modification Rules |
+|------|-------------------|
+| FCFS | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+| Preference-based | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+
+During solver execution (~1 second), capacity modification is prevented via database row-level locks. See "Solver Execution Protection" above.
 
 #### Implementation Notes
 
@@ -479,13 +481,19 @@ module Registration
 end
 ```
 
+### Uniqueness Constraints
+
+To ensure data integrity and prevent double-booking, the following constraints apply:
+
+1.  **Planning-Only Campaigns:**
+    -   There are campaigns designated as `planning_only` (e.g., for interest polls).
+    -   Currently, only `Lecture`s qualify for these campaigns.
+
+2.  **Global Uniqueness:**
+    -   Any registerable (e.g., `Tutorial`, `Talk`, or `Lecture`) can be in **at most one** `Registration::Campaign`.
+    -   `planning_only` campaigns do not count towards this limit.
+
 ### Usage Scenarios
-
-Each scenario below is the item-side view of the campaign types listed
-earlier. The `Registration::Item` belongs to the associated campaign and
-wraps the concrete `registerable` record that users ultimately get
-assigned to.
-
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For an "Enrollment Campaign" (simple courses):** A `RegistrationItem` is created for an enrollment cohort (`purpose: :enrollment`). The cohort propagates to the lecture roster automatically.

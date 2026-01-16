@@ -1,0 +1,81 @@
+<tr id="<%= dom_id(item) %>">
+    <td>
+      <%= item_display_type(item) %>
+    </td>
+    <td>
+      <%= item.title %>
+    </td>
+    <td>
+      <%= form_with(model: item,
+                    url: registration_campaign_item_path(item.registration_campaign, item),
+                    method: :patch,
+                    data: { turbo: true }) do |f| %>
+          <div class="input-group input-group-sm" style="max-width: 150px;">
+            <%= f.number_field :capacity,
+                               class: "form-control",
+                               min: 0,
+                               placeholder: "∞" %>
+            <button class="btn btn-outline-success" type="submit">
+              <i class="bi bi-check-lg"></i>
+            </button>
+          </div>
+          <% if item.errors[:base].any? %>
+            <div class="text-danger small mt-1">
+              <%= item.errors[:base].join(", ") %>
+            </div>
+          <% end %>
+          <% if item.registerable.errors[:capacity].any? %>
+            <div class="text-danger small mt-1">
+              <%= item.registerable.errors[:capacity].join(", ") %>
+            </div>
+          <% end %>
+      <% end %>
+    </td>
+    <% unless item.registration_campaign.draft? %>
+      <td>
+        <div class="d-flex align-items-center">
+          <div class="<%= 'me-2' if show_item_capacity_progress?(item) %>">
+            <%= item_stats_count(item) %>
+          </div>
+          <% if show_item_capacity_progress?(item) %>
+            <div class="progress" style="height: 6px; width: 60px;">
+              <div class="progress-bar bg-<%= item_capacity_progress_color(item) %>"
+                   role="progressbar"
+                   style="width: <%= item_capacity_percentage(item) %>%;"
+                   aria-valuenow="<%= item_capacity_percentage(item) %>"
+                   aria-valuemin="0"
+                   aria-valuemax="100"></div>
+            </div>
+          <% end %>
+        </div>
+      </td>
+    <% end %>
+    <% if item.registration_campaign.draft? %>
+      <td class="text-end">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}'>
+            <i class="bi bi-gear"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <%= button_to t("registration.item.actions.remove_from_campaign"),
+                            registration_campaign_item_path(item.registration_campaign, item),
+                            method: :delete,
+                            class: "dropdown-item text-danger",
+                            data: { confirm: t("registration.item.confirm_remove"), turbo: true } %>
+            </li>
+            <% if can?(:destroy, item.registerable) %>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <%= button_to t("registration.item.actions.delete_registerable", type: t("registration.item.types.#{item.registerable_type.underscore}")),
+                              registration_campaign_item_path(item.registration_campaign, item, cascade: true),
+                              method: :delete,
+                              class: "dropdown-item text-danger fw-bold",
+                              data: { confirm: t("registration.item.confirm_delete_registerable", type: t("registration.item.types.#{item.registerable_type.underscore}")), turbo: true } %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </td>
+    <% end %>
+  </tr>

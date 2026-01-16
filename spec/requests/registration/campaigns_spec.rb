@@ -62,7 +62,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end.to change(Registration::Campaign, :count).by(1)
 
         new_campaign = Registration::Campaign.order(created_at: :desc).first
-        expect(response).to redirect_to(registration_campaign_path(new_campaign))
+        expect(response).to redirect_to(registration_campaign_path(new_campaign,
+                                                                   tab: "items"))
       end
     end
 
@@ -93,9 +94,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     context "when campaign is open" do
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
       before do
         sign_in editor
-        campaign.update!(status: :open)
       end
 
       it "prevents updating frozen attributes (allocation_mode)" do
@@ -135,7 +137,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
   describe "Lifecycle Actions" do
     describe "PATCH /campaigns/:id/open" do
       context "as an editor" do
-        before { sign_in editor }
+        before do
+          sign_in editor
+          create(:registration_item, registration_campaign: campaign)
+        end
 
         it "changes status from draft to open" do
           patch open_registration_campaign_path(campaign)
@@ -157,7 +162,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     describe "PATCH /campaigns/:id/close" do
-      before { campaign.update!(status: :open, registration_deadline: 1.week.from_now) }
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
       context "as an editor" do
         before { sign_in editor }
@@ -215,7 +220,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
 
       context "when campaign is open" do
-        before { campaign.update!(status: :open) }
+        let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
         it "does not destroy the campaign" do
           expect do
@@ -289,7 +294,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
   end
 
   describe "PATCH /campaigns/:id/reopen" do
-    before { campaign.update!(status: :closed) }
+    let!(:campaign) do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              registration_deadline: 1.week.from_now)
+    end
 
     context "as an editor" do
       before { sign_in editor }
@@ -321,6 +329,60 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
       it "redirects to root (unauthorized)" do
         patch reopen_registration_campaign_path(campaign)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /campaigns/:id/check_unlimited_items" do
+    before { sign_in editor }
+
+    context "when campaign has items with unlimited capacity" do
+      before do
+        create(:registration_item, registration_campaign: campaign, capacity: nil)
+        create(:registration_item, registration_campaign: campaign, capacity: 30)
+      end
+
+      it "returns true" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to match(a_string_including("application/json"))
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(true)
+      end
+    end
+
+    context "when campaign has no items with unlimited capacity" do
+      before do
+        create(:registration_item, registration_campaign: campaign, capacity: 25)
+        create(:registration_item, registration_campaign: campaign, capacity: 30)
+      end
+
+      it "returns false" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(false)
+      end
+    end
+
+    context "when campaign has no items" do
+      it "returns false" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
         expect(response).to redirect_to(root_path)
       end
     end

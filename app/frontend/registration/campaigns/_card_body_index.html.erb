@@ -4,6 +4,7 @@
         <tr>
           <th><%= t("registration.campaign.index.columns.description") %></th>
           <th><%= t("registration.campaign.index.columns.mode") %></th>
+          <th><%= t("registration.campaign.index.columns.registrations") %></th>
           <th><%= t("registration.campaign.index.columns.deadline") %></th>
           <th><%= t("basics.status") %></th>
         </tr>
@@ -23,6 +24,13 @@
               <% end %>
             </td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
+            <td>
+              <% if campaign.draft? %>
+                <span class="text-muted">&mdash;</span>
+              <% else %>
+                <%= campaign.total_registrations_count %>
+              <% end %>
+            </td>
             <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
             <td>
               <span class="badge bg-<%= campaign_badge_color(campaign) %>">
@@ -34,5 +42,5 @@
       </tbody>
     </table>
   <% else %>
-    <p class="text-muted"><%= t("registration.campaign.index.none", default: "No items found") %></p>
+    <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
   <% end %>

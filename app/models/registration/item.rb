@@ -18,19 +18,102 @@ module Registration
   # with different capacities or properties within the same campaign or
   # across different campaigns is possible, if needed, in the future
   class Item < ApplicationRecord
+    # Maps user-facing type names to their corresponding model classes.
+    # Used when creating new registerable entities through the item creation flow.
+    REGISTERABLE_CLASSES = {
+      "Tutorial" => Tutorial,
+      "Talk" => Talk,
+      "Enrollment Group" => Cohort,
+      "Planning Survey" => Cohort,
+      "Other Group" => Cohort
+    }.freeze
+
+    # Maps user-facing cohort type names to their corresponding purpose enum values.
+    # Only relevant for Cohort registerables, determines the semantic meaning of the group.
+    COHORT_TYPE_TO_PURPOSE = {
+      "Enrollment Group" => :enrollment,
+      "Planning Survey" => :planning,
+      "Other Group" => :general
+    }.freeze
+
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items
 
-    belongs_to :registerable, polymorphic: true
+    belongs_to :registerable, polymorphic: true, autosave: true
+
+    delegate :capacity, :capacity=, to: :registerable, allow_nil: true
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
-             dependent: :destroy
+             foreign_key: :registration_item_id,
+             dependent: :destroy,
+             inverse_of: :registration_item
 
     validates :registerable_id,
               uniqueness: {
                 scope: [:registration_campaign_id, :registerable_type]
               }
+
+    validate :validate_capacity_reduction, on: :update
+    validate :validate_uniqueness_constraints
+    before_destroy :ensure_campaign_is_draft
+
+    def title
+      registerable&.registration_title || registerable&.title
+    end
+
+    # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
+    # in the tutorial GUI) is permissible under the current campaign rules.
+    def validate_capacity_change_from_registerable!(new_capacity)
+      unless valid_capacity_reduction?(new_capacity)
+        confirmed_count = user_registrations.confirmed.count
+        return [:base, :capacity_too_low, { count: confirmed_count }]
+      end
+
+      nil
+    end
+
+    def first_choice_count
+      user_registrations.where(preference_rank: 1).count
+    end
+
+    private
+
+      def valid_capacity_reduction?(new_capacity)
+        return true if registration_campaign.draft?
+        return true unless registration_campaign.first_come_first_served?
+        return true if new_capacity.nil?
+
+        confirmed_count = user_registrations.confirmed.count
+        new_capacity >= confirmed_count
+      end
+
+      def validate_capacity_reduction
+        return unless registerable&.will_save_change_to_capacity?
+
+        return if valid_capacity_reduction?(capacity)
+
+        confirmed_count = user_registrations.confirmed.count
+        errors.add(:base, :capacity_too_low, count: confirmed_count)
+      end
+
+      def ensure_campaign_is_draft
+        return if registration_campaign.draft?
+
+        errors.add(:base, :frozen)
+        throw(:abort)
+      end
+
+      def validate_uniqueness_constraints
+        return unless registerable
+
+        scope = Registration::Item.where(registerable: registerable)
+        scope = scope.where.not(id: id) if persisted?
+
+        return unless scope.exists?
+
+        errors.add(:base, :already_in_other_campaign)
+      end
   end
 end
