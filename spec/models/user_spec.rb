@@ -19,6 +19,20 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
+  it "is invalid if the activity_streak is negative" do
+    user = FactoryBot.build(:confirmed_user)
+    user.activity_streak = -3
+
+    expect(user).not_to be_valid
+  end
+
+  it "is invalid if the last_activity is in the future" do
+    user = FactoryBot.build(:confirmed_user)
+    user.last_activity = Time.zone.now.next_day
+
+    expect(user).not_to be_valid
+  end
+
   # test traits and subfactories
 
   describe "confirmed user" do
@@ -187,6 +201,28 @@ RSpec.describe(User, type: :model) do
                         registration_campaign: campaign)
 
       expect(user.registration_campaigns).to include(campaign)
+    end
+  end
+
+  describe "Activity Streaks" do
+    it "does not update streak if activity is reported in same week" do
+      user = FactoryBot.build(:confirmed_user)
+      user.last_activity = Time.zone.now.beginning_of_week
+      user.activity_streak = 3
+      user.save
+
+      user.increment_streak
+      expect(user.activity_streak).to eq(3)
+    end
+
+    it "updates streak if last activity is not in same week" do
+      user = FactoryBot.build(:confirmed_user)
+      user.last_activity = Time.zone.now.prev_week
+      user.activity_streak = 3
+      user.save
+
+      user.increment_streak
+      expect(user.activity_streak).to eq(4)
     end
   end
 end

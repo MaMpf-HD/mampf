@@ -105,6 +105,10 @@ class User < ApplicationRecord
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
 
+  # streaks can only be positive, and activities in the past
+  validates :activity_streak, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :last_activity, inclusion: { in: (..Time.zone.now) }
+
   # set some default values before saving if they are not set
   before_save :set_defaults
 
@@ -798,6 +802,13 @@ class User < ApplicationRecord
                      visible_for_teacher: true)
   end
 
+  def increment_streak
+    return if activity_this_week?
+
+    new_streak = activity_streak + 1
+    update(activity_streak: new_streak)
+  end
+
   private
 
     def set_defaults
@@ -860,5 +871,9 @@ class User < ApplicationRecord
     def medium_ids_of_lectures_or_edited_lectures
       lectures = given_lectures + edited_lectures
       lectures.flat_map(&:media_with_inheritance).pluck(:id)
+    end
+
+    def activity_this_week?
+      last_activity >= Time.zone.now.beginning_of_week
     end
 end
