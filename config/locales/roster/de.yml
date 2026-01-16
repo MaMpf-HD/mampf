@@ -52,6 +52,14 @@ de:
       confirm_remove: 'Sind Sie sicher, dass Sie diesen Studierenden entfernen möchten?'
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
+    cohorts:
+      attributes:
+        propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
+      help:
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende werden automatisch in die Veranstaltung eingeschrieben."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Veranstaltung eingeschrieben."
+        other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Sie bestimmen, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
+        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktivieren Sie dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
     details:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'

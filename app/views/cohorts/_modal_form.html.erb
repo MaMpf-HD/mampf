@@ -7,9 +7,9 @@
                 capacity_guard_current_count_value: cohort.members.count,
                 capacity_guard_original_capacity_value: cohort.capacity || 0,
                 capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction"),
-                registerable_type_help_enrollment_help_value: t("registration.item.help.enrollment"),
-                registerable_type_help_planning_help_value: t("registration.item.help.planning"),
-                registerable_type_help_other_help_value: t("registration.item.help.other")
+                registerable_type_help_enrollment_help_value: t("roster.cohorts.help.enrollment"),
+                registerable_type_help_planning_help_value: t("roster.cohorts.help.planning"),
+                registerable_type_help_other_help_value: t("roster.cohorts.help.other")
               } do |f| %>
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
@@ -39,11 +39,11 @@
                         disabled: cohort.persisted?,
                         data: { cohort_purpose_target: "propagateCheckbox" } %>
         <%= f.label :propagate_to_lecture,
-                    t("registration.item.attributes.propagate_to_lecture"),
+                    t("roster.cohorts.attributes.propagate_to_lecture"),
                     class: "form-check-label" %>
       </div>
       <small class="form-text text-muted">
-        <%= t("registration.item.help.propagate_to_lecture") %>
+        <%= t("roster.cohorts.help.propagate_to_lecture") %>
       </small>
       <% unless cohort.persisted? %>
         <div class="alert alert-warning mt-2 mb-0 py-2">

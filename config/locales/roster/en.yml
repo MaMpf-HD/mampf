@@ -52,6 +52,14 @@ en:
       confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
+    cohorts:
+      attributes:
+        propagate_to_lecture: "Students are automatically enrolled in the course"
+      help:
+        enrollment: "If the course has no tutorials or talks, a registration cohort can be used. Students are automatically enrolled in the course."
+        planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
+        other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
+        propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'
