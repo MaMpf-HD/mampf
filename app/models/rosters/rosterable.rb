@@ -165,74 +165,72 @@ module Rosters
       end
     end
 
-    private
+    def propagate_to_lecture!(user_ids)
+      return if user_ids.empty?
 
-      def propagate_to_lecture!(user_ids)
-        return if user_ids.empty?
+      return if is_a?(Cohort) && !propagate_to_lecture
 
-        return if is_a?(Cohort) && !propagate_to_lecture
+      return unless respond_to?(:lecture)
 
-        return unless respond_to?(:lecture)
+      parent = lecture
+      return unless parent.is_a?(Lecture)
+      return if parent == self
 
-        parent = lecture
-        return unless parent.is_a?(Lecture)
-        return if parent == self
+      parent.ensure_roster_membership!(user_ids)
+    end
 
-        parent.ensure_roster_membership!(user_ids)
+    # Identifies users in the target list who are not yet in the roster and
+    # performs a bulk insert to add them efficiently, associating them with
+    # the given campaign.
+    def add_missing_users!(target_ids, current_ids, campaign)
+      users_to_add = target_ids - current_ids
+      return if users_to_add.empty?
+
+      # insert_all does not automatically apply the association scope (e.g. foreign keys).
+      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
+      scope_attrs = roster_entries.scope_attributes
+
+      attributes = users_to_add.map do |uid|
+        {
+          roster_user_id_column => uid,
+          :source_campaign_id => campaign.id,
+          :created_at => Time.current,
+          :updated_at => Time.current
+        }.merge(scope_attrs)
       end
+      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+    end
 
-      # Identifies users in the target list who are not yet in the roster and
-      # performs a bulk insert to add them efficiently, associating them with
-      # the given campaign.
-      def add_missing_users!(target_ids, current_ids, campaign)
-        users_to_add = target_ids - current_ids
-        return if users_to_add.empty?
+    # Identifies users currently in the roster associated with this specific
+    # campaign but not in the target list, and removes them. This cleans up
+    # allocations from the same campaign that are no longer valid,
+    # without touching members added manually or by other campaigns.
+    def remove_excess_users!(target_ids, campaign)
+      roster_entries.where(source_campaign: campaign)
+                    .where.not(roster_user_id_column => target_ids)
+                    .delete_all
+    end
 
-        # insert_all does not automatically apply the association scope (e.g. foreign keys).
-        # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
-        scope_attrs = roster_entries.scope_attributes
+    # Checks if the roster is over capacity.
+    def over_capacity?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
 
-        attributes = users_to_add.map do |uid|
-          {
-            roster_user_id_column => uid,
-            :source_campaign_id => campaign.id,
-            :created_at => Time.current,
-            :updated_at => Time.current
-          }.merge(scope_attrs)
-        end
-        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
-      end
+      roster_entries.count > capacity
+    end
 
-      # Identifies users currently in the roster associated with this specific
-      # campaign but not in the target list, and removes them. This cleans up
-      # allocations from the same campaign that are no longer valid,
-      # without touching members added manually or by other campaigns.
-      def remove_excess_users!(target_ids, campaign)
-        roster_entries.where(source_campaign: campaign)
-                      .where.not(roster_user_id_column => target_ids)
-                      .delete_all
-      end
+    # Checks if the roster is full (reached or exceeded capacity).
+    def full?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
 
-      # Checks if the roster is over capacity.
-      def over_capacity?
-        return false unless respond_to?(:capacity)
-        return false if capacity.nil?
+      roster_entries.count >= capacity
+    end
 
-        roster_entries.count > capacity
-      end
-
-      # Checks if the roster is full (reached or exceeded capacity).
-      def full?
-        return false unless respond_to?(:capacity)
-        return false if capacity.nil?
-
-        roster_entries.count >= capacity
-      end
-
-      # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
-      def roster_group_type
-        self.class.name.tableize.to_sym
-      end
+    # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
+    def roster_group_type
+      self.class.name.tableize.to_sym
+    end
 
     private
 
