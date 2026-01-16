@@ -218,6 +218,12 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 During solver execution (~1 second), capacity modification is prevented via database row-level locks. See "Solver Execution Protection" above.
 
+```admonish info "Solver Execution Protection"
+During solver execution (~1 second), all registerables (tutorials/talks/cohorts) are locked via row-level database locks to prevent concurrent capacity modifications. This ensures the solver operates on consistent data. The `AllocationService` wraps the solver call in a transaction that acquires these locks before running the algorithm.
+
+**Philosophy**: "Hands off while the solver is running" - capacity edits are blocked for the brief window when allocation is being computed.
+```
+
 #### Implementation Notes
 
 **Validation Example:**
