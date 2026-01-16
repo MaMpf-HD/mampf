@@ -158,10 +158,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.integer "capacity"
     t.string "context_type", null: false
     t.bigint "context_id", null: false
+    t.integer "purpose", default: 0, null: false
+    t.boolean "propagate_to_lecture", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "skip_campaigns", default: false, null: false
+    t.index ["context_type", "context_id", "purpose"], name: "index_cohorts_on_context_type_and_context_id_and_purpose"
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
+    t.check_constraint "NOT (purpose = 1 AND propagate_to_lecture = false)", name: "enrollment_cohorts_must_propagate"
+    t.check_constraint "NOT (purpose = 2 AND propagate_to_lecture = true)", name: "planning_cohorts_must_not_propagate"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -397,7 +402,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "capacity"
     t.boolean "skip_campaigns", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
@@ -582,7 +586,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
-    t.boolean "planning_only", default: false, null: false
     t.datetime "registration_deadline", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -600,7 +603,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.uuid "registration_campaign_id", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
-    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_tutorial_or_talk", unique: true, where: "((registerable_type)::text = ANY ((ARRAY['Tutorial'::character varying, 'Talk'::character varying])::text[]))"
+    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end

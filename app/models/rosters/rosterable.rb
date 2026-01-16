@@ -62,15 +62,25 @@ module Rosters
       !roster_entries.exists?
     end
 
-    # Checks if the item is associated with any non-planning campaign.
+    # Checks if the item is associated with any campaign that materializes to rosters.
+    # Tutorials and Talks always materialize. Cohorts only if propagate_to_lecture is true.
     def in_real_campaign?
       return false unless respond_to?(:registration_items)
 
       if association(:registration_items).loaded?
-        registration_items.any? { |item| !item.registration_campaign.planning_only? }
+        registration_items.any?(&:materializes_to_roster?)
       else
-        registration_items.joins(:registration_campaign)
-                          .exists?(registration_campaigns: { planning_only: false })
+        # Check if item is Tutorial or Talk (always materialize)
+        tutorial_or_talk = registration_items
+                           .exists?(registerable_type: ["Tutorial", "Talk"])
+
+        return true if tutorial_or_talk
+
+        # Check if item is Cohort with propagate_to_lecture = true
+        registration_items
+          .where(registerable_type: "Cohort")
+          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
+          .exists?("cohorts.propagate_to_lecture = true")
       end
     end
 
@@ -78,28 +88,52 @@ module Rosters
     def campaign_active?
       if association(:registration_items).loaded?
         registration_items.any? do |item|
-          !item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+          !item.registration_campaign.completed? && item.materializes_to_roster?
         end
       else
+        # Tutorials and Talks in non-completed campaigns
+        tutorial_or_talk = Registration::Campaign
+                           .joins(:registration_items)
+                           .where(registration_items: { registerable_id: id,
+                                                        registerable_type: ["Tutorial", "Talk"] })
+                           .where.not(status: :completed)
+                           .exists?
+
+        return true if tutorial_or_talk
+
+        # Cohorts with propagate_to_lecture in non-completed campaigns
         Registration::Campaign
           .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
+          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
+          .where(registration_items: { registerable_id: id, registerable_type: "Cohort" })
           .where.not(status: :completed)
-          .exists?(planning_only: false)
+          .exists?("cohorts.propagate_to_lecture = true")
       end
     end
 
-    # Checks if the item is associated with a completed non-planning campaign.
+    # Checks if the item is associated with a completed campaign that materializes to rosters.
     def campaign_completed?
       if association(:registration_items).loaded?
         registration_items.any? do |item|
-          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
+          item.registration_campaign.completed? && item.materializes_to_roster?
         end
       else
+        # Tutorials and Talks in completed campaigns
+        tutorial_or_talk = Registration::Campaign
+                           .joins(:registration_items)
+                           .where(registration_items: { registerable_id: id,
+                                                        registerable_type: ["Tutorial", "Talk"] })
+                           .exists?(status: :completed)
+
+        return true if tutorial_or_talk
+
+        # Cohorts with propagate_to_lecture in completed campaigns
         Registration::Campaign
           .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-          .exists?(status: :completed, planning_only: false)
+          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
+          .where(registration_items: { registerable_id: id, registerable_type: "Cohort" })
+          .where(status: :completed)
+          .exists?("cohorts.propagate_to_lecture = true")
       end
     end
 

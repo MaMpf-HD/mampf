@@ -132,25 +132,6 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
-
-    context "when enabling planning_only with incompatible items" do
-      let!(:tutorial) { create(:tutorial, lecture: lecture) }
-      let!(:item) do
-        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
-      end
-
-      before { sign_in editor }
-
-      it "fails validation and shows error" do
-        patch registration_campaign_path(campaign),
-              params: { registration_campaign: { planning_only: true } }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body)
-          .to include(I18n.t("activerecord.errors.models.registration/campaign.attributes" \
-                             ".planning_only.incompatible_items"))
-      end
-    end
   end
 
   describe "Lifecycle Actions" do
@@ -348,6 +329,60 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
       it "redirects to root (unauthorized)" do
         patch reopen_registration_campaign_path(campaign)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /campaigns/:id/check_unlimited_items" do
+    before { sign_in editor }
+
+    context "when campaign has items with unlimited capacity" do
+      before do
+        create(:registration_item, registration_campaign: campaign, capacity: nil)
+        create(:registration_item, registration_campaign: campaign, capacity: 30)
+      end
+
+      it "returns true" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to match(a_string_including("application/json"))
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(true)
+      end
+    end
+
+    context "when campaign has no items with unlimited capacity" do
+      before do
+        create(:registration_item, registration_campaign: campaign, capacity: 25)
+        create(:registration_item, registration_campaign: campaign, capacity: 30)
+      end
+
+      it "returns false" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(false)
+      end
+    end
+
+    context "when campaign has no items" do
+      it "returns false" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
+
+        expect(response).to have_http_status(:success)
+        json_response = JSON.parse(response.body)
+        expect(json_response["has_unlimited_items"]).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get check_unlimited_items_registration_campaign_path(campaign), as: :json
         expect(response).to redirect_to(root_path)
       end
     end

@@ -36,7 +36,7 @@ RSpec.describe(Rosters::Rosterable) do
 
       context "with an open campaign" do
         before do
-          campaign = create(:registration_campaign, status: :draft, planning_only: false)
+          campaign = create(:registration_campaign, status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :open)
         end
@@ -46,12 +46,14 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
 
-      context "with a completed planning campaign" do
-        let(:rosterable) { create(:lecture, skip_campaigns: false) }
+      context "with a completed planning cohort campaign" do
+        let(:rosterable) do
+          create(:cohort, skip_campaigns: false, propagate_to_lecture: false, purpose: :planning)
+        end
 
         before do
-          campaign = create(:registration_campaign, status: :completed, planning_only: true,
-                                                    campaignable: rosterable)
+          campaign = create(:registration_campaign, status: :completed,
+                                                    campaignable: rosterable.context)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -60,9 +62,9 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
 
-      context "with a completed non-planning campaign" do
+      context "with a completed campaign" do
         before do
-          campaign = create(:registration_campaign, status: :completed, planning_only: false)
+          campaign = create(:registration_campaign, status: :completed)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -80,8 +82,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when campaign is running" do
       before do
-        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :draft,
-                                                  planning_only: false)
+        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -145,7 +146,7 @@ RSpec.describe(Rosters::Rosterable) do
       context "when campaign is running" do
         before do
           campaign = create(:registration_campaign, campaignable: rosterable.lecture,
-                                                    status: :draft, planning_only: false)
+                                                    status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -294,7 +295,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a real campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -320,7 +321,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a real campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end

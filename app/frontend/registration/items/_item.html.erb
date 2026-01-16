@@ -1,37 +1,33 @@
 <tr id="<%= dom_id(item) %>">
     <td>
-      <%= item.title %>
-      <div class="text-muted small">
-        <%= t("registration.item.types.#{item.registerable_type.underscore}") %>
-      </div>
+      <%= item_display_type(item) %>
     </td>
     <td>
-      <% if item.registration_campaign.completed? && item.registration_campaign.planning_only? %>
-        <%= item.capacity || "∞" %>
-      <% else %>
-        <%= form_with(model: item,
-                      url: registration_campaign_item_path(item.registration_campaign, item),
-                      method: :patch,
-                      data: { turbo: true }) do |f| %>
-          <div class="input-group input-group-sm" style="max-width: 150px;">
-            <%= f.number_field :capacity,
-                               class: "form-control",
-                               min: 0,
-                               placeholder: "∞" %>
-            <button class="btn btn-outline-success" type="submit">
-              <i class="bi bi-check-lg"></i>
-            </button>
+      <%= item.title %>
+    </td>
+    <td>
+      <%= form_with(model: item,
+                    url: registration_campaign_item_path(item.registration_campaign, item),
+                    method: :patch,
+                    data: { turbo: true }) do |f| %>
+        <div class="input-group input-group-sm" style="max-width: 150px;">
+          <%= f.number_field :capacity,
+                             class: "form-control",
+                             min: 0,
+                             placeholder: "∞" %>
+          <button class="btn btn-outline-success" type="submit">
+            <i class="bi bi-check-lg"></i>
+          </button>
+        </div>
+        <% if item.errors[:base].any? %>
+          <div class="text-danger small mt-1">
+            <%= item.errors[:base].join(", ") %>
           </div>
-          <% if item.errors[:base].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.errors[:base].join(", ") %>
-            </div>
-          <% end %>
-          <% if item.registerable.errors[:capacity].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.registerable.errors[:capacity].join(", ") %>
-            </div>
-          <% end %>
+        <% end %>
+        <% if item.registerable.errors[:capacity].any? %>
+          <div class="text-danger small mt-1">
+            <%= item.registerable.errors[:capacity].join(", ") %>
+          </div>
         <% end %>
       <% end %>
     </td>
@@ -67,7 +63,7 @@
                             class: "dropdown-item text-danger",
                             data: { confirm: t("registration.item.confirm_remove"), turbo: true } %>
             </li>
-            <% if ["Tutorial", "Talk"].include?(item.registerable_type) && can?(:destroy, item.registerable) %>
+            <% if can?(:destroy, item.registerable) %>
               <li><hr class="dropdown-divider"></li>
               <li>
                 <%= button_to t("registration.item.actions.delete_registerable", type: t("registration.item.types.#{item.registerable_type.underscore}")),

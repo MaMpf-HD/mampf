@@ -39,17 +39,14 @@ module Registration
                     completed: 4 }
 
     validates :registration_deadline, :allocation_mode, :status, presence: true
-    validates :planning_only, inclusion: { in: [true, false] }
     validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
-    validate :planning_only_frozen, on: :update
     validate :cannot_revert_to_draft, on: :update
     validate :ensure_editable, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
-    validate :planning_only_constraints, if: :planning_only
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -116,19 +113,7 @@ module Registration
                         .group_by(&:user)
     end
 
-    def can_be_planning_only?
-      registration_items.empty? ||
-        (registration_items.size == 1 && registration_items.first.registerable == campaignable)
-    end
-
     def finalize!
-      if planning_only?
-        return true if completed?
-
-        update!(status: :completed)
-        return true
-      end
-
       # Protect against concurrent finalization attempts via locking
       with_lock do
         return if completed?
@@ -149,7 +134,7 @@ module Registration
     # This respects the materialization logic: if a user is assigned via another campaign
     # (or manually), they are considered "assigned" and thus not a candidate here.
     def unassigned_users
-      return User.none if draft? || planning_only?
+      return User.none if draft?
 
       types = registration_items.pluck(:registerable_type).uniq
 
@@ -230,12 +215,6 @@ module Registration
         errors.add(:allocation_mode, :frozen)
       end
 
-      def planning_only_frozen
-        return unless planning_only_changed? && status_was != "draft"
-
-        errors.add(:planning_only, :frozen)
-      end
-
       def cannot_revert_to_draft
         return unless status_changed? && draft?
 
@@ -256,12 +235,6 @@ module Registration
         return unless registration_items.empty?
 
         errors.add(:base, :no_items)
-      end
-
-      def planning_only_constraints
-        return if can_be_planning_only?
-
-        errors.add(:planning_only, :incompatible_items)
       end
 
       def policy_engine

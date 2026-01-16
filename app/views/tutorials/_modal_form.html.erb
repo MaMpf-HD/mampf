@@ -5,6 +5,7 @@
                 controller: "capacity-guard",
                 action: "submit->capacity-guard#submit",
                 capacity_guard_current_count_value: tutorial.members.count,
+                capacity_guard_original_capacity_value: tutorial.capacity || 0,
                 capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
               } do |f| %>
   <div class="modal-body">

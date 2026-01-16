@@ -18,6 +18,16 @@ module Registration
   # with different capacities or properties within the same campaign or
   # across different campaigns is possible, if needed, in the future
   class Item < ApplicationRecord
+    # Maps user-facing type names to their corresponding model classes.
+    # Used when creating new registerable entities through the item creation flow.
+    REGISTERABLE_CLASSES = {
+      "Tutorial" => Tutorial,
+      "Talk" => Talk,
+      "Enrollment Group" => Cohort,
+      "Planning Survey" => Cohort,
+      "Other Group" => Cohort
+    }.freeze
+
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items
@@ -37,11 +47,8 @@ module Registration
                 scope: [:registration_campaign_id, :registerable_type]
               }
 
-    validate :registerable_type_consistency, on: :create
     validate :validate_registerable_allows_campaigns, on: :create
-    validate :validate_capacity_frozen, on: :update
     validate :validate_capacity_reduction, on: :update
-    validate :validate_planning_only_compliance
     validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
 
@@ -56,10 +63,6 @@ module Registration
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
     # in the tutorial GUI) is permissible under the current campaign rules.
     def validate_capacity_change_from_registerable!(new_capacity)
-      if registration_campaign.completed? && registration_campaign.planning_only?
-        return [:base, :frozen]
-      end
-
       unless valid_capacity_reduction?(new_capacity)
         confirmed_count = user_registrations.confirmed.count
         return [:base, :capacity_too_low, { count: confirmed_count }]
@@ -70,6 +73,20 @@ module Registration
 
     def first_choice_count
       user_registrations.where(preference_rank: 1).count
+    end
+
+    # Determines if this item materializes to actual rosters.
+    # Tutorials and Talks always materialize.
+    # Cohorts only materialize if propagate_to_lecture is true.
+    def materializes_to_roster?
+      case registerable_type
+      when "Tutorial", "Talk"
+        true
+      when "Cohort"
+        registerable.propagate_to_lecture?
+      else
+        false
+      end
     end
 
     private
@@ -85,14 +102,6 @@ module Registration
         new_capacity >= confirmed_count
       end
 
-      def validate_capacity_frozen
-        return unless registerable&.will_save_change_to_capacity?
-
-        return unless registration_campaign.completed? && registration_campaign.planning_only?
-
-        errors.add(:base, :frozen)
-      end
-
       def validate_capacity_reduction
         return unless registerable&.will_save_change_to_capacity?
 
@@ -102,25 +111,6 @@ module Registration
         errors.add(:base, :capacity_too_low, count: confirmed_count)
       end
 
-      def registerable_type_consistency
-        # We use where.not(id: nil) to ensure we only look at persisted items
-        # and ignore the current item (which is not yet persisted) or other
-        # items currently being built in the same transaction/request.
-        existing_item = registration_campaign.registration_items.where.not(id: nil).first
-        return unless existing_item
-
-        existing_type = existing_item.registerable_type
-
-        if existing_type == "Lecture"
-          errors.add(:base, :lecture_unique)
-          return
-        end
-
-        return unless registerable_type != existing_type
-
-        errors.add(:base, :mixed_types)
-      end
-
       def ensure_campaign_is_draft
         return if registration_campaign.draft?
 
@@ -128,30 +118,10 @@ module Registration
         throw(:abort)
       end
 
-      def validate_planning_only_compliance
-        return unless registration_campaign&.planning_only?
-
-        if registerable != registration_campaign.campaignable
-          errors.add(:base, :planning_only_allows_only_lecture)
-        end
-
-        return unless registration_campaign.registration_items.where.not(id: id).any?
-
-        errors.add(:base, :planning_only_allows_single_item)
-      end
-
       def validate_uniqueness_constraints
         return unless registerable
 
-        # If this is a planning campaign, we don't enforce uniqueness against other campaigns.
-        # (Multiple planning campaigns for the same registerable are allowed).
-        return if registration_campaign&.planning_only?
-
-        # If this is a real campaign, ensure the registerable is not in any OTHER real campaign.
-        scope = Registration::Item.joins(:registration_campaign)
-                                  .where(registerable: registerable)
-                                  .where(registration_campaigns: { planning_only: false })
-
+        scope = Registration::Item.where(registerable: registerable)
         scope = scope.where.not(id: id) if persisted?
 
         return unless scope.exists?
@@ -159,6 +129,8 @@ module Registration
         errors.add(:base, :already_in_other_campaign)
       end
 
+      # Registerables that have the skip_campaigns flag set are excluded from
+      # becoming items in campaigns.
       def validate_registerable_allows_campaigns
         return unless registerable
         return unless registerable.respond_to?(:skip_campaigns?)
