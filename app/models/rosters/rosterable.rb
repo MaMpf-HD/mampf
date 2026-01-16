@@ -38,7 +38,11 @@ module Rosters
     def locked?
       return false if skip_campaigns?
 
-      !campaign_completed?
+      if is_a?(Lecture)
+        false
+      else
+        !campaign_completed?
+      end
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
