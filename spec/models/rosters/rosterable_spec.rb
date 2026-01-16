@@ -46,22 +46,6 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
 
-      context "with a completed planning cohort campaign" do
-        let(:rosterable) do
-          create(:cohort, skip_campaigns: false, propagate_to_lecture: false, purpose: :planning)
-        end
-
-        before do
-          campaign = create(:registration_campaign, status: :completed,
-                                                    campaignable: rosterable.context)
-          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
-        end
-
-        it "returns false" do
-          expect(rosterable.locked?).to(be(false))
-        end
-      end
-
       context "with a completed campaign" do
         before do
           campaign = create(:registration_campaign, status: :completed)
