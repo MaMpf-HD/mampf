@@ -160,8 +160,8 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(types).to contain_exactly("Enrollment Group", "Planning Survey", "Other Group")
     end
 
-    it "derives options from Registration::Item::COHORT_TYPE_TO_PURPOSE" do
-      expected_types = Registration::Item::COHORT_TYPE_TO_PURPOSE.keys
+    it "derives options from Cohort::TYPE_TO_PURPOSE" do
+      expected_types = Cohort::TYPE_TO_PURPOSE.keys
       actual_types = helper.cohort_type_options.map(&:last)
 
       expect(actual_types).to match_array(expected_types)

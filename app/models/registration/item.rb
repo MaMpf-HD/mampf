@@ -28,14 +28,6 @@ module Registration
       "Other Group" => Cohort
     }.freeze
 
-    # Maps user-facing cohort type names to their corresponding purpose enum values.
-    # Only relevant for Cohort registerables, determines the semantic meaning of the group.
-    COHORT_TYPE_TO_PURPOSE = {
-      "Enrollment Group" => :enrollment,
-      "Planning Survey" => :planning,
-      "Other Group" => :general
-    }.freeze
-
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items

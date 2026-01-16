@@ -142,22 +142,20 @@ class CohortsController < ApplicationController
     end
 
     def map_cohort_type_to_purpose(attributes)
-      return attributes unless attributes[:purpose].present?
+      return attributes if attributes[:purpose].blank?
 
-      purpose_mapping = {
-        "enrollment" => { purpose: :enrollment, propagate_to_lecture: true },
-        "planning" => { purpose: :planning, propagate_to_lecture: false },
-        "general" => { purpose: :general }
-      }
+      type_key = Cohort::TYPE_TO_PURPOSE.key(attributes[:purpose].to_sym)
+      return attributes unless type_key
 
-      config = purpose_mapping[attributes[:purpose]]
-      return attributes unless config
+      attributes[:purpose] = Cohort::TYPE_TO_PURPOSE[type_key]
 
-      attributes[:purpose] = config[:purpose]
-      if config.key?(:propagate_to_lecture)
-        attributes[:propagate_to_lecture] =
-          config[:propagate_to_lecture]
+      case attributes[:purpose]
+      when :enrollment
+        attributes[:propagate_to_lecture] = true
+      when :planning
+        attributes[:propagate_to_lecture] = false
       end
+
       attributes
     end
 

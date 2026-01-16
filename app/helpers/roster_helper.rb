@@ -71,12 +71,12 @@ module RosterHelper
   end
 
   def cohort_type_options
-    Registration::Item::COHORT_TYPE_TO_PURPOSE.keys.map do |type|
-      [t("registration.item.types.#{type.parameterize.underscore}"), type]
+    Cohort::TYPE_TO_PURPOSE.keys.map do |type|
+      [t("registration.item.types.#{type.parameterize(separator: "_")}"), type]
     end
   end
 
   def cohort_type_from_purpose(purpose)
-    Registration::Item::COHORT_TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
+    Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
   end
 end

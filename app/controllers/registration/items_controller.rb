@@ -139,7 +139,7 @@ module Registration
 
         if klass == Cohort
           attributes[:context] = @campaign.campaignable
-          attributes[:purpose] = Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
+          attributes[:purpose] = Cohort::TYPE_TO_PURPOSE[type]
           attributes[:propagate_to_lecture] = determine_propagate_flag(type)
         else
           attributes[:lecture] = @campaign.campaignable
@@ -149,7 +149,7 @@ module Registration
       end
 
       def determine_propagate_flag(type)
-        case Registration::Item::COHORT_TYPE_TO_PURPOSE[type]
+        case Cohort::TYPE_TO_PURPOSE[type]
         when :enrollment
           true
         when :planning
@@ -178,7 +178,7 @@ module Registration
       end
 
       def build_and_authorize_item(registerable, type)
-        registerable_type = if Registration::Item::COHORT_TYPE_TO_PURPOSE.key?(type)
+        registerable_type = if Cohort::TYPE_TO_PURPOSE.key?(type)
           "Cohort"
         else
           type
