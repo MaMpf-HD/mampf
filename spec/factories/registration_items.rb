@@ -22,9 +22,5 @@ FactoryBot.define do
     trait :for_cohort do
       registerable { association(:cohort, context: lecture) }
     end
-
-    trait :for_lecture do
-      registerable { lecture }
-    end
   end
 end

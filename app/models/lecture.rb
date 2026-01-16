@@ -2,7 +2,6 @@
 class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
-  include Registration::Registerable
   include Rosters::Rosterable
 
   belongs_to :course

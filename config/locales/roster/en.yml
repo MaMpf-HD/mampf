@@ -99,6 +99,7 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
+      purpose_change_constrained_by_propagate: "The available types depend on whether students are added to the course roster. This setting cannot be changed."
       cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
@@ -125,6 +126,7 @@ en:
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
       setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:
       updated: "Settings updated."

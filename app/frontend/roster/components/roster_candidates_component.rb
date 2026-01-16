@@ -125,12 +125,25 @@ class RosterCandidatesComponent < ViewComponent::Base
       return [] unless render?
 
       # Find all campaigns for this lecture that handle this item type
-      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed,
-                                               planning_only: false)
+      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed)
                                         .joins(:registration_items)
                                         .where(registration_items:
-                                        { registerable_type: klass_name })
+                                                 { registerable_type: klass_name })
                                         .distinct
+
+      # Filter to only campaigns with items that materialize to rosters
+      campaigns = campaigns.select do |campaign|
+        campaign.registration_items.where(registerable_type: klass_name).any? do |item|
+          case klass_name
+          when "Tutorial", "Talk"
+            true
+          when "Cohort"
+            item.registerable.propagate_to_lecture?
+          else
+            false
+          end
+        end
+      end
 
       # Aggregate unassigned users from all relevant campaigns.
       # The campaign model handles the logic of checking global allocations

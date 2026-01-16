@@ -2,14 +2,62 @@
               id: dom_id(cohort, "form"),
               data: {
                 turbo: true,
-                controller: "capacity-guard",
+                controller: "capacity-guard cohort-purpose registerable-type-help",
                 action: "submit->capacity-guard#submit",
                 capacity_guard_current_count_value: cohort.members.count,
-                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+                capacity_guard_original_capacity_value: cohort.capacity || 0,
+                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction"),
+                registerable_type_help_enrollment_help_value: t("registration.item.help.enrollment"),
+                registerable_type_help_planning_help_value: t("registration.item.help.planning"),
+                registerable_type_help_other_help_value: t("registration.item.help.other")
               } do |f| %>
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
   <div class="modal-body">
+    <div class="mb-3">
+      <%= f.label :purpose, t("basics.type"), class: "form-label" %>
+      <%= f.select :cohort_type,
+                   cohort_type_options(cohort),
+                   { selected: cohort_type_from_purpose(cohort.purpose) },
+                   class: "form-select",
+                   data: {
+                     cohort_purpose_target: "typeSelect",
+                     registerable_type_help_target: "select",
+                     action: "change->cohort-purpose#togglePurpose change->registerable-type-help#updateHelp"
+                   } %>
+      <small class="form-text text-muted mt-2"
+             data-registerable-type-help-target="helpText"
+             style="display: none;"></small>
+    </div>
+
+    <%= f.hidden_field :purpose, data: { cohort_purpose_target: "purposeField" } %>
+
+    <div class="mb-3" data-cohort-purpose-target="propagateContainer" style="display: none;">
+      <div class="form-check">
+        <%= f.check_box :propagate_to_lecture,
+                        class: "form-check-input",
+                        disabled: cohort.persisted?,
+                        data: { cohort_purpose_target: "propagateCheckbox" } %>
+        <%= f.label :propagate_to_lecture,
+                    t("registration.item.attributes.propagate_to_lecture"),
+                    class: "form-check-label" %>
+      </div>
+      <small class="form-text text-muted">
+        <%= t("registration.item.help.propagate_to_lecture") %>
+      </small>
+      <% unless cohort.persisted? %>
+        <div class="alert alert-warning mt-2 mb-0 py-2">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          <%= t("roster.warnings.propagate_readonly_after_creation") %>
+        </div>
+      <% else %>
+        <div class="alert alert-info mt-2 mb-0 py-2">
+          <i class="bi bi-info-circle me-1"></i>
+          <%= t("roster.hints.purpose_change_constrained_by_propagate") %>
+        </div>
+      <% end %>
+    </div>
+
     <div class="mb-3">
       <%= f.label :title, t("basics.title"), class: "form-label" %>
       <%= f.text_field :title, class: "form-control" %>

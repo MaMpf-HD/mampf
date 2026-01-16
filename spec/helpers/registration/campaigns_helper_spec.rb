@@ -16,20 +16,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#campaign_item_type_label" do
-    it "returns dash if no items" do
-      campaign = build(:registration_campaign)
-      expect(helper.campaign_item_type_label(campaign)).to eq("—")
-    end
-
-    it "returns translated type label" do
-      campaign = create(:registration_campaign, :with_items)
-      # Factory creates Tutorial items by default
-      expect(helper.campaign_item_type_label(campaign))
-        .to eq(I18n.t("registration.item.types.tutorial"))
-    end
-  end
-
   describe "#item_stats_label" do
     it "returns registrations for FCFS" do
       campaign = build(:registration_campaign, :first_come_first_served)
@@ -146,50 +132,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#campaign_open_confirmation" do
-    let(:campaign) { build(:registration_campaign) }
-
-    it "returns standard confirmation for regular campaign" do
-      expect(helper.campaign_open_confirmation(campaign))
-        .to eq(I18n.t("registration.campaign.confirmations.open"))
-    end
-
-    it "returns planning confirmation for planning campaign" do
-      campaign.planning_only = true
-      expect(helper.campaign_open_confirmation(campaign))
-        .to eq(I18n.t("registration.campaign.confirmations.open_planning"))
-    end
-
-    it "appends warning for unlimited items" do
-      create(:registration_item, registration_campaign: campaign, capacity: nil)
-      expect(helper.campaign_open_confirmation(campaign))
-        .to include(I18n.t("registration.campaign.warnings.unlimited_items"))
-    end
-  end
-
-  describe "#planning_only_disabled_reason" do
-    let(:lecture) { create(:lecture) }
-    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
-
-    context "when campaign can be planning only" do
-      it "returns nil" do
-        expect(helper.planning_only_disabled_reason(campaign)).to be_nil
-      end
-    end
-
-    context "when campaign cannot be planning only" do
-      before do
-        create(:registration_item, registration_campaign: campaign,
-                                   registerable: create(:tutorial, lecture: lecture))
-      end
-
-      it "returns the translated reason" do
-        expect(helper.planning_only_disabled_reason(campaign))
-          .to eq(I18n.t("registration.campaign.planning_only_disabled"))
-      end
-    end
-  end
-
   describe "#rank_label" do
     it "returns forced label for :forced" do
       expect(helper.rank_label(:forced)).to eq(I18n.t("registration.allocation.stats.forced"))
@@ -198,49 +140,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     it "returns rank label for numbers" do
       expect(helper.rank_label(1)).to eq(I18n.t("registration.allocation.stats.rank_label",
                                                 rank: 1))
-    end
-  end
-
-  describe "#planning_only_checkbox_disabled?" do
-    let(:campaign) { build(:registration_campaign) }
-
-    it "returns true if campaign cannot be planning only" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(false)
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
-    end
-
-    it "returns true if campaign is not draft" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :open
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(true)
-    end
-
-    it "returns false if campaign can be planning only and is draft" do
-      allow(campaign).to receive(:can_be_planning_only?).and_return(true)
-      campaign.status = :draft
-      expect(helper.planning_only_checkbox_disabled?(campaign)).to be(false)
-    end
-  end
-
-  describe "#campaign_items_empty?" do
-    let(:campaign) { create(:registration_campaign) }
-
-    it "returns true when empty" do
-      expect(helper.send(:campaign_items_empty?, campaign)).to be(true)
-    end
-
-    context "with items" do
-      let(:campaign) { create(:registration_campaign, :with_items) }
-
-      it "returns false" do
-        expect(helper.send(:campaign_items_empty?, campaign)).to be(false)
-      end
-
-      it "returns false (loaded)" do
-        campaign.registration_items.load
-        expect(campaign.association(:registration_items)).to be_loaded
-        expect(helper.send(:campaign_items_empty?, campaign)).to be(false)
-      end
     end
   end
 end
