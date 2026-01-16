@@ -108,6 +108,7 @@ de:
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
+      propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "Studierende/r wurde nach %{target} verschoben."

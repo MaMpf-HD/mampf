@@ -50,6 +50,12 @@
       <small class="form-text text-muted">
         <%= t("registration.item.help.propagate_to_lecture") %>
       </small>
+      <% unless cohort.persisted? %>
+        <div class="alert alert-warning mt-2 mb-0 py-2">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          <%= t("roster.warnings.propagate_readonly_after_creation") %>
+        </div>
+      <% end %>
     </div>
 
     <div class="mb-3">

@@ -105,6 +105,7 @@ en:
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
     messages:
       updated: "Settings updated."
       user_moved: "Student moved to %{target}."
