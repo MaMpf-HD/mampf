@@ -53,6 +53,16 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
     cohorts:
+      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
+      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
+      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
+      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
+      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
+      propagates_short: "Einschreibung"
+      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
+      lecture_enrollment: "Veranstaltungseinschreibung"
       attributes:
         propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
       help:
@@ -145,14 +155,3 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
-    cohorts:
-      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
-      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
-      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
-      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
-      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
-      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
-      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
-      propagates_short: "Einschreibung"
-      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
-      lecture_enrollment: "Veranstaltungseinschreibung"

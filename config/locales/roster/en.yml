@@ -53,6 +53,16 @@ en:
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
     cohorts:
+      with_lecture_enrollment_title: "With Lecture Enrollment"
+      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
+      without_lecture_enrollment_title: "Without Lecture Enrollment"
+      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      with_lecture_enrollment: "With Lecture Enrollment"
+      without_lecture_enrollment: "Without Lecture Enrollment"
+      propagate_to_lecture: "With automatic lecture enrollment"
+      propagates_short: "Enrollment"
+      propagates_hint: "Members of this cohort serve as lecture participants"
+      lecture_enrollment: "Lecture Enrollment"
       attributes:
         propagate_to_lecture: "Students are automatically enrolled in the course"
       help:
@@ -142,14 +152,4 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
-    cohorts:
-      with_lecture_enrollment_title: "With Lecture Enrollment"
-      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
-      without_lecture_enrollment_title: "Without Lecture Enrollment"
-      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
-      with_lecture_enrollment: "With Lecture Enrollment"
-      without_lecture_enrollment: "Without Lecture Enrollment"
-      propagate_to_lecture: "With automatic lecture enrollment"
-      propagates_short: "Enrollment"
-      propagates_hint: "Members of this cohort serve as lecture participants"
-      lecture_enrollment: "Lecture Enrollment"
+
