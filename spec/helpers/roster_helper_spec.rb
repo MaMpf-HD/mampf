@@ -69,4 +69,154 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(helper.hidden_group_type_field([:tutorials, :cohorts])).to eq(expected)
     end
   end
+
+  describe "#roster_manage_button" do
+    let(:lecture) { create(:lecture) }
+    let(:component) { double("RosterOverviewComponent", lecture: lecture) }
+    let(:item) { create(:tutorial, lecture: lecture) }
+    let(:campaign) { nil }
+
+    before do
+      allow(component).to receive(:group_path).with(item).and_return("/tutorials/#{item.id}/roster")
+    end
+
+    context "when item is not locked" do
+      before { allow(item).to receive(:locked?).and_return(false) }
+
+      it "renders manage participants button" do
+        result = helper.roster_manage_button(item, component, campaign)
+        expect(result).to include("href=\"/tutorials/#{item.id}/roster\"")
+        expect(result).to include("bi-person-lines-fill")
+      end
+    end
+
+    context "when item is locked" do
+      before { allow(item).to receive(:locked?).and_return(true) }
+
+      context "with campaign" do
+        let(:campaign) { create(:registration_campaign) }
+
+        it "renders view campaign button" do
+          result = helper.roster_manage_button(item, component, campaign)
+          expect(result).to include("campaign_id=#{campaign.id}")
+          expect(result).to include("bi-calendar-check")
+        end
+      end
+
+      context "without campaign and not in campaign" do
+        before { allow(item).to receive(:in_campaign?).and_return(false) }
+
+        it "renders create campaign button" do
+          result = helper.roster_manage_button(item, component, campaign)
+          expect(result).to include("new_campaign=true")
+          expect(result).to include("bi-calendar-plus")
+        end
+      end
+    end
+  end
+
+  describe "#roster_edit_button" do
+    let(:item) { create(:tutorial) }
+
+    it "renders edit button" do
+      result = helper.roster_edit_button(item, :tutorials)
+      expect(result).to include("href=\"/tutorials/#{item.id}/edit?group_type=tutorials\"")
+      expect(result).to include("bi-tools")
+    end
+  end
+
+  describe "#roster_destroy_button" do
+    let(:item) { create(:tutorial) }
+
+    context "when item is destructible" do
+      before { allow(item).to receive(:destructible?).and_return(true) }
+
+      it "renders delete button" do
+        result = helper.roster_destroy_button(item, :tutorials)
+        expect(result).to include("href=\"/tutorials/#{item.id}?group_type=tutorials\"")
+        expect(result).to include("data-turbo-method=\"delete\"")
+        expect(result).to include("bi-trash")
+      end
+    end
+
+    context "when item is not destructible" do
+      before { allow(item).to receive(:destructible?).and_return(false) }
+
+      it "returns nil" do
+        expect(helper.roster_destroy_button(item, :tutorials)).to be_nil
+      end
+    end
+  end
+
+  describe "#cohort_type_options" do
+    it "returns array of translated type options" do
+      result = helper.cohort_type_options
+
+      expect(result).to be_an(Array)
+      expect(result.length).to eq(3)
+      expect(result).to all(be_an(Array).and(have_attributes(length: 2)))
+
+      types = result.map(&:last)
+      expect(types).to contain_exactly("Enrollment Group", "Planning Survey", "Other Group")
+    end
+
+    it "derives options from Cohort::TYPE_TO_PURPOSE" do
+      expected_types = Cohort::TYPE_TO_PURPOSE.keys
+      actual_types = helper.cohort_type_options.map(&:last)
+
+      expect(actual_types).to match_array(expected_types)
+    end
+
+    it "filters options for persisted cohorts with propagate=true" do
+      cohort = create(:cohort, propagate_to_lecture: true)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Enrollment Group", "Other Group")
+      expect(types).not_to include("Planning Survey")
+    end
+
+    it "filters options for persisted cohorts with propagate=false" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Planning Survey", "Other Group")
+      expect(types).not_to include("Enrollment Group")
+    end
+
+    it "returns all options for new cohorts" do
+      cohort = build(:cohort)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to match_array(Cohort::TYPE_TO_PURPOSE.keys)
+    end
+  end
+
+  describe "#cohort_type_from_purpose" do
+    it "returns 'Enrollment Group' for :enrollment purpose" do
+      expect(helper.cohort_type_from_purpose(:enrollment)).to eq("Enrollment Group")
+    end
+
+    it "returns 'Planning Survey' for :planning purpose" do
+      expect(helper.cohort_type_from_purpose(:planning)).to eq("Planning Survey")
+    end
+
+    it "returns 'Other Group' for :general purpose" do
+      expect(helper.cohort_type_from_purpose(:general)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for nil purpose" do
+      expect(helper.cohort_type_from_purpose(nil)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for unknown purpose" do
+      expect(helper.cohort_type_from_purpose(:unknown)).to eq("Other Group")
+    end
+
+    it "handles string purpose values" do
+      expect(helper.cohort_type_from_purpose("enrollment")).to eq("Enrollment Group")
+    end
+  end
 end

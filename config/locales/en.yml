@@ -3232,6 +3232,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    capacity: 'Capacity'
     division: 'Division'
     error: Error
     course: 'Course'
@@ -3443,6 +3444,10 @@ en:
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
+    create_tutorial: 'Create Tutorial'
+    edit_tutorial: 'Edit Tutorial'
+    create_cohort: 'Create Cohort'
+    edit_cohort: 'Edit Cohort'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3648,6 +3653,7 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
+    no_cohort: 'There is no cohort with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
@@ -3672,11 +3678,26 @@ en:
     become_speaker_success: >
       Your speaker status has been updated.
     tutorials:
+      created: 'Tutorial successfully created.'
+      updated: 'Tutorial successfully updated.'
+      destroyed: 'Tutorial successfully deleted.'
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
         submissions for it that include uploaded files.
       bulk_download_failed: >
         An error happened in the creation of the zip archive: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Cannot be deleted because there are submissions.'
+    cohorts:
+      created: 'Cohort successfully created.'
+      updated: 'Cohort successfully updated.'
+      destroyed: 'Cohort successfully deleted.'
+      destruction_failed: 'Cohort could not be deleted.'
+    talks:
+      created: 'Talk successfully created.'
+      updated: 'Talk successfully updated.'
+      destroyed: 'Talk successfully deleted.'
+      destruction_failed: 'Talk could not be deleted.'
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
@@ -3725,6 +3746,11 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
+              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
         course:
           attributes:
             title:

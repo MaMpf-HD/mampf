@@ -1,0 +1,93 @@
+<%= form_with model: talk,
+              id: dom_id(talk, "form"),
+              data: {
+                turbo: true,
+                controller: "capacity-guard",
+                action: "submit->capacity-guard#submit",
+                capacity_guard_current_count_value: talk.speakers.count,                capacity_guard_original_capacity_value: talk.capacity || 0,                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+              } do |f| %>
+  <div class="modal-body">
+    <%= f.hidden_field :lecture_id %>
+    <%= hidden_group_type_field(params[:group_type]) %>
+
+    <div class="mb-3">
+      <%= f.label :title, t('basics.title'), class: "form-label" %>
+      <%= f.text_field :title, class: "form-control", placeholder: t('basics.title') %>
+    </div>
+
+    <!-- 📅 Dates -->
+    <div class="mb-3">
+      <%= f.label :date, t('basics.date'), class: "form-label" %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-talk-date-button"
+         data-bs-toggle="tooltip"
+         data-index="<%= talk.dates.size + 1 %>"
+         title="<%= t('admin.tag.create') %>">
+      </a>
+
+      <div id="talk-dates">
+        <% talk.dates.each_with_index do |date, i| %>
+          <%= f.fields_for :dates, index: i do |date_form| %>
+            <%= render partial: "date_field",
+                       locals: { date_form: date_form, date: date } %>
+          <% end %>
+        <% end %>
+        <%= render partial: "date_field_template", locals: { f: f } %>
+      </div>
+      <div class="invalid-feedback" id="talk-date-error"></div>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
+      <%= f.number_field :capacity,
+            class: "form-control",
+            placeholder: "∞",
+            min: 0,
+            data: { capacity_guard_target: "input" } %>
+    </div>
+
+    <% if talk.lecture.talks.exists? %>
+      <div class="mb-3">
+        <%= f.label :predecessor,
+                    t('admin.chapter.position',
+                    chapter_name: t('basics.talk')),
+                    class: "form-label" %>
+        <% if talk.new_record? %>
+          <%= f.select :predecessor,
+                       options_for_select([[t('basics.at_the_beginning'), 0]] +
+                                          talk.lecture.select_talks,
+                                          talk.lecture.last_talk_by_position&.position),
+                       {},
+                       { class: 'form-select' } %>
+        <% else %>
+          <%= f.select :predecessor,
+                       options_for_select(talk_positions_for_select(talk),
+                                          talk.position - 1),
+                       {},
+                       { class: 'form-select' } %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if talk.persisted? %>
+      <div class="alert alert-info mt-3 mb-0 small">
+        <i class="fas fa-info-circle me-2"></i>
+        <%= t('roster.hints.talk_content_html',
+              link: link_to(t('roster.buttons.full_editor'),
+                            edit_talk_path(talk),
+                            class: "alert-link",
+                            data: { turbo: false })) %>
+      </div>
+    <% else %>
+      <div class="alert alert-info mt-3 mb-0 small">
+        <i class="fas fa-info-circle me-2"></i>
+        <%= t('roster.hints.talk_content_new') %>
+      </div>
+    <% end %>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
+    <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
+  </div>
+<% end %>

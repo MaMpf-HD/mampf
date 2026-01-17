@@ -102,9 +102,9 @@
             [t("registration.item.types.#{type.parameterize.underscore}"), type]
           end
         %>
-        <%= form_with url: registration_campaign_items_path(campaign), 
-                      method: :post, 
-                      data: { 
+        <%= form_with url: registration_campaign_items_path(campaign),
+                      method: :post,
+                      data: {
                         turbo: true,
                         controller: "registerable-type-help cohort-purpose",
                         registerable_type_help_tutorial_help_value: t("registration.item.help.tutorial"),
@@ -118,40 +118,44 @@
           <div class="row g-3">
             <div class="col-md-12">
               <%= f.label "registration_item[registerable_type]", t("basics.type"), class: "form-label" %>
-              <%= f.select "registration_item[registerable_type]", 
-                          options, 
-                          { prompt: t("registration.item.select_type") }, 
+              <%= f.select "registration_item[registerable_type]",
+                          options,
+                          { prompt: t("registration.item.select_type") },
                           class: "form-select",
-                          data: { 
+                          data: {
                             registerable_type_help_target: "select",
                             cohort_purpose_target: "typeSelect",
                             action: "change->registerable-type-help#updateHelp change->cohort-purpose#togglePurpose"
                           } %>
-              <small class="form-text text-muted mt-2" 
+              <small class="form-text text-muted mt-2"
                      data-registerable-type-help-target="helpText"
                      style="display: none;"></small>
             </div>
           </div>
 
-          <%= f.hidden_field "registration_item[purpose]", 
+          <%= f.hidden_field "registration_item[purpose]",
                             data: { cohort_purpose_target: "purposeField" } %>
 
-          <div class="row g-3 mt-2" 
+          <div class="row g-3 mt-2"
                data-cohort-purpose-target="propagateContainer"
                style="display: none;">
             <div class="col-md-12">
               <div class="form-check">
-                <%= f.check_box "registration_item[propagate_to_lecture]", 
+                <%= f.check_box "registration_item[propagate_to_lecture]",
                                 class: "form-check-input",
                                 checked: true,
                                 data: { cohort_purpose_target: "propagateCheckbox" } %>
-                <%= f.label "registration_item[propagate_to_lecture]", 
+                <%= f.label "registration_item[propagate_to_lecture]",
                             t("registration.item.attributes.propagate_to_lecture"),
                             class: "form-check-label" %>
               </div>
               <small class="form-text text-muted">
                 <%= t("registration.item.help.propagate_to_lecture") %>
               </small>
+              <div class="alert alert-warning mt-2 mb-0 py-2">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                <%= t("roster.warnings.propagate_readonly_after_creation") %>
+              </div>
             </div>
           </div>
 

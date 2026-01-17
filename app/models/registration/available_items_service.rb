@@ -47,7 +47,7 @@ module Registration
 
       def add_cohorts(groups)
         used_ids = Registration::Item.where(registerable_type: "Cohort").pluck(:registerable_id)
-        cohorts = @lecture.cohorts.where.not(id: used_ids)
+        cohorts = @lecture.cohorts.where(skip_campaigns: false).where.not(id: used_ids)
         groups[:cohorts] = cohorts if cohorts.any?
       end
   end

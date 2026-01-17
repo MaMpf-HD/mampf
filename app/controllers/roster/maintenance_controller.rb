@@ -144,7 +144,8 @@ module Roster
                                             group_type: group_type,
                                             active_tab: active_tab,
                                             rosterable: target_rosterable)
-              )
+              ),
+              refresh_campaigns_index_stream(@lecture)
             ]
             streams << stream_flash if flash.present?
             render turbo_stream: streams

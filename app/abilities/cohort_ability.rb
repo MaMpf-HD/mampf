@@ -8,11 +8,7 @@ class CohortAbility
       context = cohort.context
       next false unless context
 
-      if context.is_a?(Lecture)
-        user.can_edit?(context)
-      else
-        false
-      end
+      user.can_edit?(context)
     end
   end
 end

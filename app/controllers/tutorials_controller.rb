@@ -1,5 +1,7 @@
 # TutorialsController
 class TutorialsController < ApplicationController
+  helper RosterHelper
+
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
                                       :bulk_download_submissions,
                                       :bulk_download_corrections,
@@ -55,9 +57,34 @@ class TutorialsController < ApplicationController
     set_tutorial_locale
     @tutorial.lecture = @lecture
     authorize! :new, @tutorial
+
+    respond_to do |format|
+      format.js
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def edit
+    authorize! :edit, @tutorial
+
+    respond_to do |format|
+      format.js
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def create
@@ -65,18 +92,67 @@ class TutorialsController < ApplicationController
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
     set_tutorial_locale
-    @tutorial.save
+    flash.now[:notice] = t("controllers.tutorials.created") if @tutorial.save
     @errors = @tutorial.errors
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = parse_group_type
+
+        streams = create_turbo_streams(group_type)
+        render turbo_stream: streams, status: @tutorial.persisted? ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def update
-    @tutorial.update(tutorial_params)
-    @errors = @tutorial.errors
-    nil if @errors.present?
+    authorize! :update, @tutorial
+
+    if @tutorial.update(tutorial_params)
+      flash.now[:notice] = t("controllers.tutorials.updated")
+    else
+      @errors = @tutorial.errors
+    end
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = parse_group_type
+        streams = []
+
+        if @tutorial.errors.empty?
+          streams << update_roster_groups_list_stream(group_type)
+          streams << refresh_campaigns_index_stream(@tutorial.lecture)
+          streams << turbo_stream.update("modal-container", "")
+        else
+          streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                          partial: "tutorials/modal_form",
+                                          locals: { tutorial: @tutorial })
+        end
+
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams, status: @tutorial.errors.empty? ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def destroy
-    @tutorial.destroy
+    if @tutorial.destroy
+      flash.now[:notice] = t("controllers.tutorials.destroyed")
+    else
+      flash.now[:alert] = t("controllers.tutorials.destruction_failed")
+    end
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        group_type = parse_group_type
+        render turbo_stream: [update_roster_groups_list_stream(group_type),
+                              refresh_campaigns_index_stream(@tutorial.lecture),
+                              stream_flash]
+      end
+    end
   end
 
   def cancel_edit
@@ -169,7 +245,7 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, { tutor_ids: [] }])
+      params.expect(tutorial: [:title, :lecture_id, :capacity, { tutor_ids: [] }])
     end
 
     def bulk_params
@@ -202,5 +278,43 @@ class TutorialsController < ApplicationController
                             .correction_upload_email.deliver_later
         end
       end
+    end
+
+    def parse_group_type
+      if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type].presence&.to_sym || :tutorials
+      end
+    end
+
+    def create_turbo_streams(group_type)
+      streams = []
+
+      if @tutorial.persisted?
+        streams << update_roster_groups_list_stream(group_type)
+        streams << refresh_campaigns_index_stream(@lecture)
+        streams << turbo_stream.update("modal-container", "")
+      else
+        streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                        partial: "tutorials/modal_form",
+                                        locals: { tutorial: @tutorial })
+      end
+
+      streams << stream_flash if flash.present?
+      streams
+    end
+
+    def update_roster_groups_list_stream(group_type)
+      component = RosterOverviewComponent.new(lecture: @lecture,
+                                              group_type: group_type)
+      turbo_stream.update("roster_groups_list",
+                          partial: "roster/components/groups_tab",
+                          locals: {
+                            groups: component.groups,
+                            total_participants: component.total_participants,
+                            group_type: group_type,
+                            component: component
+                          })
     end
 end

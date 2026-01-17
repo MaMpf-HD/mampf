@@ -363,4 +363,12 @@ module ApplicationHelper
       return truncated.length < length ? truncated : "#{truncated}..."
     end
   end
+
+  def format_talk_dates(dates)
+    return "" if dates.blank?
+
+    dates.sort.map do |date|
+      tag.span(l(date, format: :long), class: "badge bg-light text-dark border me-1")
+    end.join.html_safe
+  end
 end

@@ -864,7 +864,7 @@ Rails.application.routes.draw do
 
   # cohorts routes
 
-  resources :cohorts, only: [:create, :update, :destroy] do
+  resources :cohorts, only: [:new, :create, :edit, :update, :destroy] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Cohort" }

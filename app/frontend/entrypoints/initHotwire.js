@@ -62,8 +62,14 @@ window.Stimulus.register("datetimepicker", DatetimepickerController);
 import RosterEnrollmentController from "~/roster/roster_enrollment_controller.js";
 window.Stimulus.register("roster-enrollment", RosterEnrollmentController);
 
+import CapacityGuardController from "~/roster/capacity_guard_controller.js";
+window.Stimulus.register("capacity-guard", CapacityGuardController);
+
 import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import SelectizeController from "~/controllers/selectize_controller.js";
+window.Stimulus.register("selectize", SelectizeController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
