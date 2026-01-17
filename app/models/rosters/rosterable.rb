@@ -8,8 +8,11 @@ module Rosters
     TYPES = ["Tutorial", "Talk", "Cohort"].freeze
 
     # Models including this concern must:
-    # - Have a `skip_campaigns` boolean column (default: false)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
+    #
+    # Models that are also Registerable should additionally:
+    # - Have a `skip_campaigns` boolean column (default: false)
+    #   (This allows switching between campaign-managed and manual roster management)
 
     included do
       # Abstract method to retrieve the roster entries (e.g., memberships or joins)
