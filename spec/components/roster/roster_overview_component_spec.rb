@@ -46,7 +46,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let!(:locked_tutorial) do
         t = create(:tutorial, lecture: lecture, title: "A Locked")
         # Simulate being in a campaign so manual mode cannot be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(true)
+        allow(t).to receive(:in_campaign?).and_return(true)
         allow(t).to receive(:skip_campaigns?).and_return(false)
         t
       end
@@ -61,7 +61,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let!(:standard_tutorial) do
         t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
         # Not in campaign, so manual mode can be enabled
-        allow(t).to receive(:in_real_campaign?).and_return(false)
+        allow(t).to receive(:in_campaign?).and_return(false)
         t
       end
 

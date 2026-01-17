@@ -32,16 +32,16 @@ module Rosters
       return false unless respond_to?(:skip_campaigns)
       return false if skip_campaigns?
 
-      !campaign_completed?
+      !in_completed_campaign?
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
-    # This is only allowed if the item has never been part of a real (non-planning) campaign.
+    # This is only allowed if the item has never been part of any campaign.
     # Models without skip_campaigns always return false.
     def can_skip_campaigns?
       return false unless respond_to?(:skip_campaigns)
 
-      !in_real_campaign?
+      !in_campaign?
     end
 
     # Checks if skip_campaigns can be disabled (switched from true to false).
@@ -61,79 +61,22 @@ module Rosters
       !roster_entries.exists?
     end
 
-    # Checks if the item is associated with any campaign that materializes to rosters.
-    # Tutorials and Talks always materialize. Cohorts only if propagate_to_lecture is true.
-    def in_real_campaign?
+    # Checks if the item is associated with any campaign.
+    def in_campaign?
       return false unless respond_to?(:registration_items)
 
-      if association(:registration_items).loaded?
-        registration_items.any?(&:materializes_to_roster?)
-      else
-        # Check if item is Tutorial or Talk (always materialize)
-        tutorial_or_talk = registration_items
-                           .exists?(registerable_type: ["Tutorial", "Talk"])
-
-        return true if tutorial_or_talk
-
-        # Check if item is Cohort with propagate_to_lecture = true
-        registration_items
-          .where(registerable_type: "Cohort")
-          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
-          .exists?("cohorts.propagate_to_lecture = true")
-      end
+      registration_items.exists?
     end
 
-    # Checks if an active (non-completed) campaign exists for this item.
-    def campaign_active?
-      if association(:registration_items).loaded?
-        registration_items.any? do |item|
-          !item.registration_campaign.completed? && item.materializes_to_roster?
-        end
-      else
-        # Tutorials and Talks in non-completed campaigns
-        tutorial_or_talk = Registration::Campaign
-                           .joins(:registration_items)
-                           .where(registration_items: { registerable_id: id,
-                                                        registerable_type: ["Tutorial", "Talk"] })
-                           .where.not(status: :completed)
-                           .exists?
+    # Checks if the item is associated with a completed campaign.
+    def in_completed_campaign?
+      return false unless respond_to?(:registration_items)
 
-        return true if tutorial_or_talk
-
-        # Cohorts with propagate_to_lecture in non-completed campaigns
-        Registration::Campaign
-          .joins(:registration_items)
-          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
-          .where(registration_items: { registerable_id: id, registerable_type: "Cohort" })
-          .where.not(status: :completed)
-          .exists?("cohorts.propagate_to_lecture = true")
-      end
-    end
-
-    # Checks if the item is associated with a completed campaign that materializes to rosters.
-    def campaign_completed?
-      if association(:registration_items).loaded?
-        registration_items.any? do |item|
-          item.registration_campaign.completed? && item.materializes_to_roster?
-        end
-      else
-        # Tutorials and Talks in completed campaigns
-        tutorial_or_talk = Registration::Campaign
-                           .joins(:registration_items)
-                           .where(registration_items: { registerable_id: id,
-                                                        registerable_type: ["Tutorial", "Talk"] })
-                           .exists?(status: :completed)
-
-        return true if tutorial_or_talk
-
-        # Cohorts with propagate_to_lecture in completed campaigns
-        Registration::Campaign
-          .joins(:registration_items)
-          .joins("INNER JOIN cohorts ON cohorts.id = registration_items.registerable_id")
-          .where(registration_items: { registerable_id: id, registerable_type: "Cohort" })
-          .where(status: :completed)
-          .exists?("cohorts.propagate_to_lecture = true")
-      end
+      Registration::Campaign
+        .joins(:registration_items)
+        .where(registration_items: { registerable_id: id,
+                                     registerable_type: self.class.name })
+        .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.
@@ -241,13 +184,14 @@ module Rosters
     private
 
       def validate_skip_campaigns_switch
+        return unless respond_to?(:skip_campaigns)
         return if new_record?
         return unless skip_campaigns_changed?
 
         if skip_campaigns?
           # Switching from false (Campaign Mode) to true (Skip Campaigns)
-          # Only allowed if never in a real campaign
-          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_real_campaign?
+          # Only allowed if never in any campaign
+          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_campaign?
         else
           # Switching from true (Skip Campaigns) to false (Campaign Mode)
           # Only allowed if roster is empty (to avoid data inconsistency)
