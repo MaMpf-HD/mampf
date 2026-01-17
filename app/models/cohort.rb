@@ -46,15 +46,9 @@ class Cohort < ApplicationRecord
 
       case purpose
       when "enrollment"
-        unless propagate_to_lecture?
-          errors.add(:purpose, :incompatible_with_propagate,
-                     message: "Enrollment groups must propagate to lecture")
-        end
+        errors.add(:purpose, :enrollment_must_propagate) unless propagate_to_lecture?
       when "planning"
-        if propagate_to_lecture?
-          errors.add(:purpose, :incompatible_with_propagate,
-                     message: "Planning surveys cannot propagate to lecture")
-        end
+        errors.add(:purpose, :planning_cannot_propagate) if propagate_to_lecture?
       end
     end
 end
