@@ -25,7 +25,7 @@ class Cohort < ApplicationRecord
   validates :title, presence: true
   validates :purpose, presence: true
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-  validate :validate_purpose_propagate_compatibility, on: :update
+  validate :validate_purpose_propagate_compatibility
 
   def roster_entries
     cohort_memberships
