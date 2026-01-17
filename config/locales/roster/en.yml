@@ -195,7 +195,7 @@ en:
       user_not_found: "Student not found."
       user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
-      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+      campaign_associated: "Self-enrollment is not available because this group is part of a registration campaign."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."

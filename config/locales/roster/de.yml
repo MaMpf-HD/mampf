@@ -198,7 +198,7 @@ de:
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
-      campaign_associated: "Diese Gruppe ist Teil eines Anmeldeverfahrens und kann nicht manuell verwaltet werden."
+      campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
