@@ -103,8 +103,8 @@ RSpec.describe(RosterHelper, type: :helper) do
         end
       end
 
-      context "without campaign and not in real campaign" do
-        before { allow(item).to receive(:in_real_campaign?).and_return(false) }
+      context "without campaign and not in campaign" do
+        before { allow(item).to receive(:in_campaign?).and_return(false) }
 
         it "renders create campaign button" do
           result = helper.roster_manage_button(item, component, campaign)

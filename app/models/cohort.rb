@@ -25,7 +25,7 @@ class Cohort < ApplicationRecord
   validates :title, presence: true
   validates :purpose, presence: true
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-  validate :validate_purpose_propagate_compatibility, on: :update
+  validate :validate_purpose_propagate_compatibility
 
   def roster_entries
     cohort_memberships
@@ -46,15 +46,9 @@ class Cohort < ApplicationRecord
 
       case purpose
       when "enrollment"
-        unless propagate_to_lecture?
-          errors.add(:purpose, :incompatible_with_propagate,
-                     message: "Enrollment groups must propagate to lecture")
-        end
+        errors.add(:purpose, :enrollment_must_propagate) unless propagate_to_lecture?
       when "planning"
-        if propagate_to_lecture?
-          errors.add(:purpose, :incompatible_with_propagate,
-                     message: "Planning surveys cannot propagate to lecture")
-        end
+        errors.add(:purpose, :planning_cannot_propagate) if propagate_to_lecture?
       end
     end
 end

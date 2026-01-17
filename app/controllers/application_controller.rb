@@ -73,28 +73,15 @@ class ApplicationController < ActionController::Base
   end
 
   # Helper to refresh the campaigns tab content via Turbo Stream
+  # NOTE: This should be moved to a better place once we refactor the
+  # whole streaming logic for campaigns and rosters (e.g. the StreamOrchestrator,
+  # see the docs).
   def refresh_campaigns_index_stream(lecture)
     return nil unless lecture
 
     turbo_stream.update("campaigns_container",
                         partial: "registration/campaigns/card_body_index",
                         locals: { lecture: lecture })
-  end
-
-  # Helper to refresh the roster groups list via Turbo Stream
-  def refresh_roster_groups_list_stream(lecture, group_type = :all)
-    return nil unless lecture
-
-    component = RosterOverviewComponent.new(lecture: lecture,
-                                            group_type: group_type)
-    turbo_stream.update("roster_groups_list",
-                        partial: "roster/components/groups_tab",
-                        locals: {
-                          groups: component.groups,
-                          total_participants: component.total_participants,
-                          group_type: group_type,
-                          component: component
-                        })
   end
 
   protected

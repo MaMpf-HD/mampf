@@ -259,5 +259,20 @@ module Registration
           registration_campaign_path(@campaign, tab: "items")
         end
       end
+
+      def refresh_roster_groups_list_stream(lecture, group_type = :all)
+        return nil unless lecture
+
+        component = RosterOverviewComponent.new(lecture: lecture,
+                                                group_type: group_type)
+        turbo_stream.update("roster_groups_list",
+                            partial: "roster/components/groups_tab",
+                            locals: {
+                              groups: component.groups,
+                              total_participants: component.total_participants,
+                              group_type: group_type,
+                              component: component
+                            })
+      end
   end
 end

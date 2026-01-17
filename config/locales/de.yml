@@ -10,6 +10,11 @@ de:
   activerecord:
     errors:
       models:
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
+              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
         lecture:
           attributes:
             teacher:

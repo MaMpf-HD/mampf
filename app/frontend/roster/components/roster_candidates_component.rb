@@ -122,20 +122,6 @@ class RosterCandidatesComponent < ViewComponent::Base
                                                  { registerable_type: klass_name })
                                         .distinct
 
-      # Filter to only campaigns with items that materialize to rosters
-      campaigns = campaigns.select do |campaign|
-        campaign.registration_items.where(registerable_type: klass_name).any? do |item|
-          case klass_name
-          when "Tutorial", "Talk"
-            true
-          when "Cohort"
-            item.registerable.propagate_to_lecture?
-          else
-            false
-          end
-        end
-      end
-
       # Aggregate unassigned users from all relevant campaigns.
       # The campaign model handles the logic of checking global allocations
       # to ensure we don't list students who are already assigned (e.g. via another campaign).
