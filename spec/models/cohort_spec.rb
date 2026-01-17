@@ -113,21 +113,47 @@ RSpec.describe(Cohort, type: :model) do
   end
 
   describe "database constraints" do
-    it "prevents planning cohorts from propagating" do
-      expect do
-        create(:cohort, purpose: :planning, propagate_to_lecture: true)
-      end.to raise_error(ActiveRecord::StatementInvalid, /planning_cohorts_must_not_propagate/)
+    it "prevents planning cohorts from propagating (via validation)" do
+      cohort = build(:cohort, purpose: :planning, propagate_to_lecture: true)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
     end
 
-    it "enforces enrollment cohorts must propagate" do
-      expect do
-        create(:cohort, purpose: :enrollment, propagate_to_lecture: false)
-      end.to raise_error(ActiveRecord::StatementInvalid, /enrollment_cohorts_must_propagate/)
+    it "enforces enrollment cohorts must propagate (via validation)" do
+      cohort = build(:cohort, purpose: :enrollment, propagate_to_lecture: false)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
     end
 
     it "allows general cohorts with either propagation setting" do
-      expect(create(:cohort, purpose: :general, propagate_to_lecture: false)).to be_valid
-      expect(create(:cohort, purpose: :general, propagate_to_lecture: true)).to be_valid
+      expect(build(:cohort, purpose: :general, propagate_to_lecture: false)).to be_valid
+      expect(build(:cohort, purpose: :general, propagate_to_lecture: true)).to be_valid
+    end
+
+    context "when validation is bypassed" do
+      it "database constraint prevents planning cohorts from propagating" do
+        expect do
+          cohort = Cohort.new(
+            title: "Test",
+            purpose: :planning,
+            propagate_to_lecture: true,
+            context: create(:lecture)
+          )
+          cohort.save(validate: false)
+        end.to raise_error(ActiveRecord::StatementInvalid, /planning_cohorts_must_not_propagate/)
+      end
+
+      it "database constraint enforces enrollment cohorts must propagate" do
+        expect do
+          cohort = Cohort.new(
+            title: "Test",
+            purpose: :enrollment,
+            propagate_to_lecture: false,
+            context: create(:lecture)
+          )
+          cohort.save(validate: false)
+        end.to raise_error(ActiveRecord::StatementInvalid, /enrollment_cohorts_must_propagate/)
+      end
     end
   end
 

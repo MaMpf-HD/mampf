@@ -1,13 +1,5 @@
 en:
   mampf: 'MaMpf'
-  activerecord:
-    errors:
-      models:
-        cohort:
-          attributes:
-            purpose:
-              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
-              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
   views:
     pagination:
       first: "&laquo; First"
@@ -3754,6 +3746,11 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
+              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
         course:
           attributes:
             title:
