@@ -402,7 +402,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.boolean "skip_campaigns", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
