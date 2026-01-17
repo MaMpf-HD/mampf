@@ -62,3 +62,35 @@
         color: #ffe5ed;
     }
 }
+
+.nav-item.streak {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1em;
+}
+
+.streak-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.streak-icon .fa-fire {
+    font-size: 1.6rem;
+}
+
+.streak-count {
+    position: absolute;
+    bottom: -2px;
+    right: -4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #000;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 8px;
+    line-height: 1;
+    min-width: 1.4em;
+    text-align: center;
+}

@@ -115,6 +115,14 @@
                             class: 'form-control me-sm-2',
                             placeholder: t('navbar.search') %>
       <% end %>
+
+      <li class="nav-item streak">
+        <span class="streak-icon">
+          <i class="fas fa-fire"></i>
+          <span class="streak-count"><%= current_user.activity_streak %></span>
+        </span>
+      </li>
+
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"
       style="display: none;">
