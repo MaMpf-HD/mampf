@@ -125,11 +125,10 @@ class RosterCandidatesComponent < ViewComponent::Base
       return [] unless render?
 
       # Find all campaigns for this lecture that handle this item type
-      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed,
-                                               planning_only: false)
+      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed)
                                         .joins(:registration_items)
                                         .where(registration_items:
-                                        { registerable_type: klass_name })
+                                                 { registerable_type: klass_name })
                                         .distinct
 
       # Aggregate unassigned users from all relevant campaigns.

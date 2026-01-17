@@ -46,15 +46,15 @@ RSpec.describe(ApplicationHelper, type: :helper) do
 
   describe "#utilization_color" do
     it "returns success for low usage" do
-      expect(helper.utilization_color(40)).to eq("bg-success")
+      expect(helper.send(:utilization_color, 40)).to eq("bg-success")
     end
 
     it "returns warning for medium usage" do
-      expect(helper.utilization_color(85)).to eq("bg-warning")
+      expect(helper.send(:utilization_color, 85)).to eq("bg-warning")
     end
 
     it "returns danger for high usage" do
-      expect(helper.utilization_color(110)).to eq("bg-danger")
+      expect(helper.send(:utilization_color, 110)).to eq("bg-danger")
     end
   end
 

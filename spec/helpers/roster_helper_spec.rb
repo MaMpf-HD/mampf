@@ -103,8 +103,8 @@ RSpec.describe(RosterHelper, type: :helper) do
         end
       end
 
-      context "without campaign and not in real campaign" do
-        before { allow(item).to receive(:in_real_campaign?).and_return(false) }
+      context "without campaign and not in campaign" do
+        before { allow(item).to receive(:in_campaign?).and_return(false) }
 
         it "renders create campaign button" do
           result = helper.roster_manage_button(item, component, campaign)
@@ -145,6 +145,78 @@ RSpec.describe(RosterHelper, type: :helper) do
       it "returns nil" do
         expect(helper.roster_destroy_button(item, :tutorials)).to be_nil
       end
+    end
+  end
+
+  describe "#cohort_type_options" do
+    it "returns array of translated type options" do
+      result = helper.cohort_type_options
+
+      expect(result).to be_an(Array)
+      expect(result.length).to eq(3)
+      expect(result).to all(be_an(Array).and(have_attributes(length: 2)))
+
+      types = result.map(&:last)
+      expect(types).to contain_exactly("Enrollment Group", "Planning Survey", "Other Group")
+    end
+
+    it "derives options from Cohort::TYPE_TO_PURPOSE" do
+      expected_types = Cohort::TYPE_TO_PURPOSE.keys
+      actual_types = helper.cohort_type_options.map(&:last)
+
+      expect(actual_types).to match_array(expected_types)
+    end
+
+    it "filters options for persisted cohorts with propagate=true" do
+      cohort = create(:cohort, propagate_to_lecture: true)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Enrollment Group", "Other Group")
+      expect(types).not_to include("Planning Survey")
+    end
+
+    it "filters options for persisted cohorts with propagate=false" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to include("Planning Survey", "Other Group")
+      expect(types).not_to include("Enrollment Group")
+    end
+
+    it "returns all options for new cohorts" do
+      cohort = build(:cohort)
+      options = helper.cohort_type_options(cohort)
+      types = options.map(&:last)
+
+      expect(types).to match_array(Cohort::TYPE_TO_PURPOSE.keys)
+    end
+  end
+
+  describe "#cohort_type_from_purpose" do
+    it "returns 'Enrollment Group' for :enrollment purpose" do
+      expect(helper.cohort_type_from_purpose(:enrollment)).to eq("Enrollment Group")
+    end
+
+    it "returns 'Planning Survey' for :planning purpose" do
+      expect(helper.cohort_type_from_purpose(:planning)).to eq("Planning Survey")
+    end
+
+    it "returns 'Other Group' for :general purpose" do
+      expect(helper.cohort_type_from_purpose(:general)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for nil purpose" do
+      expect(helper.cohort_type_from_purpose(nil)).to eq("Other Group")
+    end
+
+    it "returns 'Other Group' for unknown purpose" do
+      expect(helper.cohort_type_from_purpose(:unknown)).to eq("Other Group")
+    end
+
+    it "handles string purpose values" do
+      expect(helper.cohort_type_from_purpose("enrollment")).to eq("Enrollment Group")
     end
   end
 

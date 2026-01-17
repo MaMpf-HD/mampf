@@ -66,11 +66,10 @@ module RosterHelper
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-event")
       end
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       # Has campaign history - show view campaign button for most recent
       recent_campaign = item.registration_items
                             .joins(:registration_campaign)
-                            .where(registration_campaigns: { planning_only: false })
                             .order("registration_campaigns.created_at DESC")
                             .first
                             &.registration_campaign
@@ -143,6 +142,31 @@ module RosterHelper
         tag.i(class: "bi bi-trash")
       end
     end
+  end
+
+  def cohort_type_options(cohort = nil)
+    available_types = if cohort&.persisted?
+      Cohort::TYPE_TO_PURPOSE.select do |_type, purpose|
+        case purpose
+        when :enrollment
+          cohort.propagate_to_lecture?
+        when :planning
+          !cohort.propagate_to_lecture?
+        when :general
+          true
+        end
+      end.keys
+    else
+      Cohort::TYPE_TO_PURPOSE.keys
+    end
+
+    available_types.map do |type|
+      [t("registration.item.types.#{type.parameterize(separator: "_")}"), type]
+    end
+  end
+
+  def cohort_type_from_purpose(purpose)
+    Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
   end
 
   def roster_group_badge(group, group_type)

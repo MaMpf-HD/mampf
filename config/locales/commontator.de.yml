@@ -79,7 +79,7 @@ de:
             benachrichtigt, wenn ein neuer Beitrag gepostet wird.
           unsubscribe: >
             Wenn Du das Abonnement beendest, erhältst Du keine
-            Email-Benachrichtigungen mwhr, wenn ein neuer Beitrag gepostet wird.
+            Email-Benachrichtigungen mehr, wenn ein neuer Beitrag gepostet wird.
       errors:
         already_subscribed: Sie erhalten zu der Diskussion bereits Aktualisierungen
         not_subscribed: Sie erhalten zu der Diskussion keine Nachrichten.
