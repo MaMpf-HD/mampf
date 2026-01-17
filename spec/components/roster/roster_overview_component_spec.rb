@@ -37,11 +37,10 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     end
 
     context "sorting" do
-      let!(:locked_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "A Locked")
-        # Simulate being in a campaign so skip_campaigns cannot be enabled
-        allow(t).to receive(:in_campaign?).and_return(true)
-        allow(t).to receive(:skip_campaigns?).and_return(false)
+      let!(:completed_campaign_tutorial) do
+        t = create(:tutorial, lecture: lecture, title: "B Completed Campaign")
+        campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
+        create(:registration_item, registerable: t, registration_campaign: campaign)
         t
       end
 
@@ -52,11 +51,12 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         t
       end
 
-      let!(:standard_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
-        # Not in campaign, so skip_campaigns can be enabled
-        allow(t).to receive(:in_campaign?).and_return(false)
-        t
+      let!(:fresh_tutorial) do
+        create(:tutorial, lecture: lecture, title: "C Fresh", skip_campaigns: false)
+      end
+
+      let!(:skip_campaigns_tutorial) do
+        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
       end
 
       it "sorts completed campaigns first, then others, each subgroup sorted by title" do
@@ -381,7 +381,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :disabled)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("")
       expect(data[:has_warning]).to be(false)
     end
@@ -390,7 +390,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-plus-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("+")
       expect(data[:css_class]).to eq("bg-light text-success border border-success")
       expect(data[:has_warning]).to be(false)
@@ -400,7 +400,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :remove_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-dash-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("−")
       expect(data[:has_warning]).to be(false)
     end
@@ -409,7 +409,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_and_remove)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-fill-add")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("±")
       expect(data[:has_warning]).to be(false)
     end
