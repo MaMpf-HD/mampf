@@ -63,14 +63,23 @@ class RosterCandidatesComponent < ViewComponent::Base
   def add_member_path(group, user)
     case group
     when Tutorial
-      helpers.add_member_tutorial_path(group, user_id: user.id, tab: "enrollment",
-                                              group_type: @group_type)
+      helpers.add_member_tutorial_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     when Talk
-      helpers.add_member_talk_path(group, user_id: user.id, tab: "enrollment",
-                                          group_type: @group_type)
+      helpers.add_member_talk_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     when Cohort
-      helpers.add_member_cohort_path(group, user_id: user.id, tab: "enrollment",
-                                            group_type: @group_type)
+      helpers.add_member_cohort_path(
+        group, user_id: user.id, tab: "enrollment", active_tab: "enrollment",
+               group_type: @group_type,
+               frame_id: helpers.roster_maintenance_frame_id(@group_type)
+      )
     end
   end
 
@@ -127,11 +136,28 @@ class RosterCandidatesComponent < ViewComponent::Base
       # to ensure we don't list students who are already assigned (e.g. via another campaign).
       candidate_ids = campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq
 
+      # The campaign model only checks for assignments to groups of the SAME type.
+      # However, in the roster management context, moving a student to a 'Sidecar' (Cohort)
+      # should be considered a resolution of their unassigned status.
+      # Therefore, we filter out users who are valid members of ANY group in this lecture.
+      candidate_ids -= all_assigned_user_ids
+
       # Preload registrations to display preferences and source campaign
       User.where(id: candidate_ids)
           .includes(user_registrations: [:registration_campaign,
                                          { registration_item: :registerable }])
           .order(:name, :email)
+    end
+
+    def all_assigned_user_ids
+      @all_assigned_user_ids ||= begin
+        ids = Set.new
+        # Map over eager-loaded associations to avoid DB queries
+        ids.merge(@lecture.tutorials.flat_map { |t| t.tutorial_memberships.map(&:user_id) })
+        ids.merge(@lecture.talks.flat_map { |t| t.speaker_talk_joins.map(&:speaker_id) })
+        ids.merge(@lecture.cohorts.flat_map { |t| t.cohort_memberships.map(&:user_id) })
+        ids.to_a
+      end
     end
 
     def format_wishes(registrations)

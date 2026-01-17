@@ -16,7 +16,9 @@ class RosterDetailComponent < ViewComponent::Base
 
   def students
     @students ||=
-      User.where(id: @rosterable.roster_entries.pluck(@rosterable.roster_user_id_column))
+      User.where(id: @rosterable.roster_entries.map do |e|
+        e.public_send(@rosterable.roster_user_id_column)
+      end)
           .order(:name)
           .to_a
   end
@@ -30,18 +32,30 @@ class RosterDetailComponent < ViewComponent::Base
   end
 
   def add_member_path
-    route_helper("add_member", group_type: @group_type)
+    route_helper("add_member",
+                 group_type: group_type,
+                 active_tab: "groups",
+                 frame_id: "roster_maintenance_#{group_type}")
   end
 
   def remove_member_path(user)
-    route_helper("remove_member", user, group_type: @group_type)
+    route_helper("remove_member", user,
+                 group_type: group_type,
+                 active_tab: "groups",
+                 frame_id: "roster_maintenance_#{group_type}")
   end
 
   def move_member_path(user)
-    route_helper("move_member", user, group_type: @group_type)
+    route_helper("move_member", user,
+                 group_type: group_type,
+                 active_tab: "groups",
+                 frame_id: "roster_maintenance_#{group_type}")
   end
 
   def available_groups
+    # Lectures don't transfer to other Lectures
+    return [] if @rosterable.is_a?(Lecture)
+
     # Dynamically fetch the collection (e.g. @lecture.tutorials) based on the type
     # Memoize to avoid re-fetching for every student row in the view if accessed multiple times
     @available_groups ||= begin

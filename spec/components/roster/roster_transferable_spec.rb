@@ -41,6 +41,9 @@ RSpec.describe(RosterTransferable) do
     before do
       # Mock the human method on the model_name to return the pluralized name
       allow(Tutorial.model_name).to receive(:human).with(count: 2).and_return("Tutorials")
+      # Mock I18n translation for the group title
+      allow(I18n).to receive(:t).and_call_original
+      allow(I18n).to receive(:t).with("registration.item.groups.tutorials").and_return("Tutorials")
     end
 
     it "returns a list of hashes grouped by type" do

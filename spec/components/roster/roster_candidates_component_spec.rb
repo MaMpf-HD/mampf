@@ -72,7 +72,9 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
           .to eq(Rails.application.routes.url_helpers
           .add_member_tutorial_path(tutorial,
                                     user_id: fresh_user.id, tab: "enrollment",
-                                    group_type: :tutorials))
+                                    active_tab: "enrollment",
+                                    group_type: :tutorials,
+                                    frame_id: "roster_maintenance_tutorials"))
       end
 
       it "returns correct path for talk" do
@@ -83,7 +85,9 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
           .to eq(Rails.application.routes.url_helpers
           .add_member_talk_path(talk,
                                 user_id: fresh_user.id, tab: "enrollment",
-                                group_type: :tutorials))
+                                active_tab: "enrollment",
+                                group_type: :tutorials,
+                                frame_id: "roster_maintenance_tutorials"))
       end
     end
 

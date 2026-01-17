@@ -5,7 +5,7 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
@@ -24,6 +24,12 @@ module Rosters
       # Override this method if the foreign key for the user in the roster entry is not :user_id
       def roster_user_id_column
         :user_id
+      end
+
+      # Override this method if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{self.class.name.underscore}_memberships"
       end
 
       validate :validate_skip_campaigns_switch
@@ -68,32 +74,56 @@ module Rosters
     end
 
     # Checks if the roster is currently empty.
+    def roster_entries_count
+      association_name = roster_association_name
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).size
+      else
+        roster_entries.count
+      end
+    end
+
     def roster_empty?
-      !roster_entries.exists?
+      association_name = roster_association_name
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).empty?
+      else
+        !roster_entries.exists?
+      end
     end
 
     # Checks if the item is associated with any campaign.
     def in_campaign?
       return false unless respond_to?(:registration_items)
 
-      registration_items.exists?
+      return @in_campaign if defined?(@in_campaign)
+
+      @in_campaign = registration_items.exists?
     end
 
     # Checks if the item is associated with a completed campaign.
     def in_completed_campaign?
       return false unless respond_to?(:registration_items)
 
-      Registration::Campaign
-        .joins(:registration_items)
-        .where(registration_items: { registerable_id: id,
-                                     registerable_type: self.class.name })
-        .exists?(status: :completed)
+      return @in_completed_campaign if defined?(@in_completed_campaign)
+
+      @in_completed_campaign = Registration::Campaign
+                               .joins(:registration_items)
+                               .where(registration_items: { registerable_id: id,
+                                                            registerable_type: self.class.name })
+                               .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.
     # Required by the Registration::Registerable concern.
     def allocated_user_ids
-      roster_entries.pluck(roster_user_id_column)
+      if roster_entries.loaded?
+        roster_entries.map { |e| e.public_send(roster_user_id_column) }
+      else
+        roster_entries.pluck(roster_user_id_column)
+      end
     end
 
     # Adds a single user to the roster.
@@ -176,7 +206,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count > capacity
+      roster_entries_count > capacity
     end
 
     # Checks if the roster is full (reached or exceeded capacity).
@@ -184,7 +214,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count >= capacity
+      roster_entries_count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).

@@ -63,19 +63,22 @@ class Tutorial < ApplicationRecord
   end
 
   def materialize_allocation!(user_ids:, campaign:)
-    # Enforce uniqueness: A student can only be in one tutorial per lecture.
-    # If we are about to add a student to this tutorial, remove them from any other
-    # tutorial in the same lecture.
-    TutorialMembership.joins(:tutorial)
-                      .where(tutorials: { lecture_id: lecture_id })
-                      .where.not(tutorial_id: id)
-                      .where(user_id: user_ids)
-                      .delete_all
-
+    enforce_lecture_uniqueness!(user_ids)
     super
   end
 
   private
+
+    def enforce_lecture_uniqueness!(user_ids)
+      # Enforce uniqueness: A student can only be in one tutorial per lecture.
+      # If we are about to add a student to this tutorial, remove them from any other
+      # tutorial in the same lecture.
+      TutorialMembership.joins(:tutorial)
+                        .where(tutorials: { lecture_id: lecture_id })
+                        .where.not(tutorial_id: id)
+                        .where(user_id: user_ids)
+                        .delete_all
+    end
 
     def check_destructibility
       return unless Submission.where(tutorial: self).proper.any?

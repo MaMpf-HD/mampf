@@ -1,6 +1,11 @@
 module RosterHelper
   def group_title_with_capacity(group)
-    "#{group.title} (#{group.roster_entries.count}/#{group.capacity || "∞"})"
+    count = if group.respond_to?(:roster_entries_count)
+      group.roster_entries_count
+    else
+      group.roster_entries.count
+    end
+    "#{group.title} (#{count}/#{group.capacity || "∞"})"
   end
 
   def roster_group_types(lecture)
@@ -93,5 +98,18 @@ module RosterHelper
 
   def cohort_type_from_purpose(purpose)
     Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
+  end
+
+  def roster_group_badge(group, group_type)
+    isolating = group.is_a?(Cohort) && !group.propagate_to_lecture?
+    # Use secondary (gray) for normal propagating groups to reduce visual noise.
+    # Use light/border (ghost) for isolating groups to differentiate them.
+    badge_class = isolating ? "bg-light text-dark border" : "bg-secondary text-white"
+
+    link_to(group.title,
+            polymorphic_path([group, :roster]),
+            class: "badge #{badge_class} me-1 text-decoration-none",
+            style: "cursor: pointer;",
+            data: { turbo_frame: roster_maintenance_frame_id(group_type), turbo_prefetch: false })
   end
 end

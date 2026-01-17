@@ -219,4 +219,36 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(helper.cohort_type_from_purpose("enrollment")).to eq("Enrollment Group")
     end
   end
+
+  describe "#roster_group_badge" do
+    let(:group_type) { :tutorials }
+    let(:tutorial) { create(:tutorial, title: "Tut 1") }
+    let(:active_cohort) { create(:cohort, title: "Active", propagate_to_lecture: true) }
+    let(:isolated_cohort) { create(:cohort, title: "Isolated", propagate_to_lecture: false) }
+
+    it "renders primary badge for tutorial" do
+      badge = helper.roster_group_badge(tutorial, group_type)
+      expect(badge).to include("bg-secondary")
+      expect(badge).to include("Tut 1")
+    end
+
+    it "renders primary badge for propagating cohort" do
+      badge = helper.roster_group_badge(active_cohort, group_type)
+      expect(badge).to include("bg-secondary")
+      expect(badge).to include("Active")
+    end
+
+    it "renders secondary badge for isolated cohort" do
+      badge = helper.roster_group_badge(isolated_cohort, group_type)
+      expect(badge).to include("bg-light")
+      expect(badge).to include("text-dark")
+      expect(badge).to include("Isolated")
+    end
+
+    it "sets turbo frame data attribute" do
+      badge = helper.roster_group_badge(tutorial, group_type)
+      # Check key parts of the turbo frame attribute
+      expect(badge).to include('data-turbo-frame="roster_maintenance_tutorials"')
+    end
+  end
 end

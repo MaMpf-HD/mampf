@@ -234,7 +234,6 @@ class TalksController < ApplicationController
                           partial: "roster/components/groups_tab",
                           locals: {
                             groups: component.groups,
-                            total_participants: component.total_participants,
                             group_type: group_type,
                             component: component
                           })
