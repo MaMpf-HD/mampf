@@ -197,7 +197,12 @@ module Roster
         group_type = if params[:group_type].is_a?(Array)
           params[:group_type].map(&:to_sym)
         else
-          params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
+          fallback = if @rosterable.is_a?(Lecture)
+            :all
+          else
+            @rosterable&.roster_group_type || :all
+          end
+          params[:group_type]&.to_sym || fallback
         end
 
         group_type.is_a?(Array) ? group_type : group_type&.to_sym
