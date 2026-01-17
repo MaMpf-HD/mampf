@@ -5,8 +5,6 @@ module Roster
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
-    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort"].freeze
-
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
     before_action :authorize_lecture
@@ -175,7 +173,7 @@ module Roster
       def set_rosterable_from_composite_id
         type, id = params[:rosterable_id].split("-")
 
-        unless ALLOWED_ROSTERABLE_TYPES.include?(type)
+        unless Rosters::Rosterable::TYPES.include?(type)
           respond_with_error(t("roster.errors.invalid_type"))
           return
         end
@@ -200,7 +198,7 @@ module Roster
       def find_target_rosterable(id)
         target_type = params[:target_type]
 
-        return nil if target_type.present? && ALLOWED_ROSTERABLE_TYPES.exclude?(target_type)
+        return nil if target_type.present? && Rosters::Rosterable::TYPES.exclude?(target_type)
 
         target_type ||= @rosterable.class.name
         klass = target_type.constantize
@@ -226,7 +224,7 @@ module Roster
       end
 
       def set_rosterable
-        unless ALLOWED_ROSTERABLE_TYPES.include?(params[:type])
+        unless Rosters::Rosterable::TYPES.include?(params[:type])
           redirect_to root_path, alert: t("roster.errors.invalid_type")
           return
         end

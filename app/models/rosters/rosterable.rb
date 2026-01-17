@@ -5,6 +5,8 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
+    TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+
     # Models including this concern must:
     # - Have a `skip_campaigns` boolean column (default: false)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
