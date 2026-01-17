@@ -252,10 +252,18 @@ module Rosters
       def validate_self_materialization_switch
         return unless self_materialization_mode_changed?
 
-        return unless is_a?(Lecture) && !self_materialization_mode_disabled?
+        if is_a?(Lecture) && !self_materialization_mode_disabled?
+          errors.add(:self_materialization_mode,
+                     I18n.t("roster.errors.lecture_cannot_self_materialize"))
+          return
+        end
 
-        errors.add(:self_materialization_mode,
-                   I18n.t("roster.errors.lecture_cannot_self_materialize"))
+        return if self_materialization_mode_disabled?
+        return unless respond_to?(:skip_campaigns)
+
+        return unless in_campaign?
+
+        errors.add(:base, I18n.t("roster.errors.campaign_associated"))
       end
 
       def enforce_rosterable_destruction_constraints
@@ -271,6 +279,8 @@ module Rosters
       end
 
       def enforce_consistency_between_modes
+        return unless respond_to?(:skip_campaigns)
+
         # If switching back to campaign mode (skip_campaigns: false),
         # self-materialization MUST be disabled to prevent conflicts.
         # This ensures that campaign mode has full control.
