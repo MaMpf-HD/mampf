@@ -73,6 +73,9 @@ class ApplicationController < ActionController::Base
   end
 
   # Helper to refresh the campaigns tab content via Turbo Stream
+  # NOTE: This should be moved to a better place once we refactor the
+  # whole streaming logic for campaigns and rosters (e.g. the StreamOrchestrator,
+  # see the docs).
   def refresh_campaigns_index_stream(lecture)
     return nil unless lecture
 

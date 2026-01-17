@@ -44,7 +44,7 @@ module RosterHelper
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-check")
       end
-    elsif !item.in_real_campaign?
+    elsif !item.in_campaign?
       link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
               class: "btn btn-sm btn-outline-secondary",
               title: t("roster.create_campaign"),
