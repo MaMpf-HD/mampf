@@ -35,7 +35,9 @@ module Rosters
     # A roster is locked if campaigns are NOT skipped AND a campaign is active (pending/running).
     # If skip_campaigns is true, it is never locked.
     # If skip_campaigns is false, it is unlocked only if no campaign is active.
+    # Models without skip_campaigns (e.g., Lecture) are never locked.
     def locked?
+      return false unless respond_to?(:skip_campaigns)
       return false if skip_campaigns?
 
       if is_a?(Lecture)
@@ -47,7 +49,10 @@ module Rosters
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
     # This is only allowed if the item has never been part of a real (non-planning) campaign.
+    # Models without skip_campaigns always return false.
     def can_skip_campaigns?
+      return false unless respond_to?(:skip_campaigns)
+
       !in_real_campaign?
     end
 
@@ -56,7 +61,10 @@ module Rosters
     # but since we enforce "once in campaign, always in campaign" via can_skip_campaigns?,
     # the reverse path is less critical but should still be safe.
     # For now, we allow it if the roster is empty.
+    # Models without skip_campaigns always return false.
     def can_unskip_campaigns?
+      return false unless respond_to?(:skip_campaigns)
+
       roster_empty?
     end
 
