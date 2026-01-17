@@ -5,7 +5,7 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
