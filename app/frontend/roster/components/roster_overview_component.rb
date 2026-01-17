@@ -272,15 +272,16 @@ class RosterOverviewComponent < ViewComponent::Base
 
   def self_enrollment_badge_data(item)
     mode = item.self_materialization_mode
-    icon, text = case mode
-                 when "add_only"
-                   ["bi-person-plus-fill", "+"]
-                 when "remove_only"
-                   ["bi-person-dash-fill", "−"]
-                 when "add_and_remove"
-                   ["bi-person-fill-add", "±"]
-                 else
-                   ["bi-person", ""]
+    icon = "bi-person-fill"
+    text = case mode
+           when "add_only"
+             "+"
+           when "remove_only"
+             "−"
+           when "add_and_remove"
+             "±"
+           else
+             ""
     end
 
     has_warning = bypasses_campaign_policy?(item, mode)
