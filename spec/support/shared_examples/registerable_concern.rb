@@ -7,6 +7,10 @@ RSpec.shared_examples("a registerable model") do
       expect(subject).to respond_to(:capacity)
     end
 
+    it "responds to skip_campaigns" do
+      expect(subject).to respond_to(:skip_campaigns)
+    end
+
     it "responds to allocated_user_ids" do
       expect(subject).to respond_to(:allocated_user_ids)
     end
@@ -17,6 +21,10 @@ RSpec.shared_examples("a registerable model") do
 
     it "has nil capacity by default" do
       expect(subject.capacity).to be_nil
+    end
+
+    it "has skip_campaigns set to false by default" do
+      expect(subject.skip_campaigns).to be(false)
     end
   end
 
