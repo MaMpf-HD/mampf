@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -163,6 +163,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0
     t.index ["context_type", "context_id", "purpose"], name: "index_cohorts_on_context_type_and_context_id_and_purpose"
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
     t.check_constraint "NOT (purpose = 1 AND propagate_to_lecture = false)", name: "enrollment_cohorts_must_propagate"
@@ -402,6 +403,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.integer "self_materialization_mode", default: 0
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -742,6 +744,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.boolean "display_description", default: false
     t.integer "capacity"
     t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -1016,6 +1019,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
     t.datetime "updated_at", null: false
     t.integer "capacity"
     t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 

@@ -32,7 +32,16 @@ module Rosters
         :"#{self.class.name.underscore}_memberships"
       end
 
+      enum :self_materialization_mode, {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, prefix: true
+
+      before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
+      validate :validate_self_materialization_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
@@ -240,6 +249,23 @@ module Rosters
         end
       end
 
+      def validate_self_materialization_switch
+        return unless self_materialization_mode_changed?
+
+        if is_a?(Lecture) && !self_materialization_mode_disabled?
+          errors.add(:self_materialization_mode,
+                     I18n.t("roster.errors.lecture_cannot_self_materialize"))
+          return
+        end
+
+        return if self_materialization_mode_disabled?
+        return unless respond_to?(:skip_campaigns)
+
+        return unless in_campaign?
+
+        errors.add(:base, I18n.t("roster.errors.campaign_associated"))
+      end
+
       def enforce_rosterable_destruction_constraints
         if in_campaign?
           errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
@@ -250,6 +276,26 @@ module Rosters
 
         errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
+      end
+
+      def enforce_consistency_between_modes
+        return unless respond_to?(:skip_campaigns)
+
+        # If switching back to campaign mode (skip_campaigns: false),
+        # self-materialization MUST be disabled to prevent conflicts.
+        # This ensures that campaign mode has full control.
+        if skip_campaigns_changed? && !skip_campaigns?
+          self.self_materialization_mode = :disabled
+          return
+        end
+
+        # If enabling self-materialization on a group that has NEVER been in a campaign,
+        # we must set skip_campaigns=true to prevent it from being added to campaigns.
+        # (This is the "Before Campaign" scenario - direct management from the start)
+        # After-campaign scenarios can keep skip_campaigns=false since they already have history.
+        return unless self_materialization_mode_changed? && !self_materialization_mode_disabled?
+
+        self.skip_campaigns = true unless in_campaign?
       end
   end
 end

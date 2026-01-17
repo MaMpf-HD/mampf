@@ -17,7 +17,16 @@ export default class extends Controller {
 
   disconnect() {
     if (this.modal) {
-      this.modal.dispose();
+      try {
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          backdrop.remove();
+        }
+        this.modal.dispose();
+      }
+      catch {
+        // Modal already disposed or element removed
+      }
     }
   }
 
@@ -26,6 +35,14 @@ export default class extends Controller {
 
     if (this.modal) {
       this.element.querySelector("form")?.reset();
+
+      this.element.addEventListener("hidden.bs.modal", () => {
+        const container = document.getElementById("modal-container");
+        if (container) {
+          container.innerHTML = "";
+        }
+      }, { once: true });
+
       this.modal.hide();
     }
   }
