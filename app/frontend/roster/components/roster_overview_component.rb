@@ -356,7 +356,7 @@ class RosterOverviewComponent < ViewComponent::Base
         if type == :talks
           item.position
         else
-          has_completed_campaign = item.in_campaign? && !item.campaign_active?
+          has_completed_campaign = item.in_completed_campaign?
           [has_completed_campaign ? 0 : 1, item.title.to_s]
         end
       end
