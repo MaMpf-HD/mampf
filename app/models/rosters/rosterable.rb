@@ -21,6 +21,12 @@ module Rosters
         :user_id
       end
 
+      # Override this method if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{self.class.name.underscore}_memberships"
+      end
+
       validate :validate_skip_campaigns_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
@@ -65,12 +71,7 @@ module Rosters
 
     # Checks if the roster is currently empty.
     def roster_entries_count
-      association_name = case self
-                         when Tutorial then :tutorial_memberships
-                         when Cohort then :cohort_memberships
-                         when Talk then :speaker_talk_joins
-                         when Lecture then :lecture_memberships
-      end
+      association_name = roster_association_name
 
       if association_name && association(association_name).loaded?
         public_send(association_name).size
@@ -80,12 +81,7 @@ module Rosters
     end
 
     def roster_empty?
-      association_name = case self
-                         when Tutorial then :tutorial_memberships
-                         when Cohort then :cohort_memberships
-                         when Talk then :speaker_talk_joins
-                         when Lecture then :lecture_memberships
-      end
+      association_name = roster_association_name
 
       if association_name && association(association_name).loaded?
         public_send(association_name).empty?
