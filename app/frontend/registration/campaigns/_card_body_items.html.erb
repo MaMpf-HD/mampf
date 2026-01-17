@@ -2,7 +2,7 @@
   <div class="mb-4">
     <h5><%= t("registration.item.index.title") %></h5>
 
-    <% if campaign.completed? && campaign.campaignable.is_a?(Lecture) %>
+    <% if campaign.completed? %>
       <div class="alert alert-light border">
         <div class="d-flex align-items-center">
           <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
