@@ -31,20 +31,15 @@ module Rosters
       !in_real_campaign? && roster_empty?
     end
 
-    # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if campaigns are NOT skipped AND a campaign is active (pending/running).
-    # If skip_campaigns is true, it is never locked.
-    # If skip_campaigns is false, it is unlocked only if no campaign is active.
+    # Checks if the roster is locked for manual modifications.
     # Models without skip_campaigns (e.g., Lecture) are never locked.
+    # A roster is locked if campaigns are NOT skipped AND no campaign
+    # has been completed yet.
     def locked?
       return false unless respond_to?(:skip_campaigns)
       return false if skip_campaigns?
 
-      if is_a?(Lecture)
-        false
-      else
-        !campaign_completed?
-      end
+      !campaign_completed?
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
