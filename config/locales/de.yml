@@ -7,18 +7,6 @@ de:
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
       truncate: "Abkürzen"
-  activerecord:
-    errors:
-      models:
-        cohort:
-          attributes:
-            purpose:
-              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
-              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
-        lecture:
-          attributes:
-            teacher:
-              required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
     lesson_material:
       singular: 'Lektion'
@@ -3977,6 +3965,11 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
+              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
         course:
           attributes:
             title:
