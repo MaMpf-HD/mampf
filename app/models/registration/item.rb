@@ -55,6 +55,7 @@ module Registration
                 scope: [:registration_campaign_id, :registerable_type]
               }
 
+    validate :validate_registerable_allows_campaigns, on: :create
     validate :validate_capacity_reduction, on: :update
     validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
@@ -126,6 +127,16 @@ module Registration
         return unless scope.exists?
 
         errors.add(:base, :already_in_other_campaign)
+      end
+
+      # Registerables that have the skip_campaigns flag set are excluded from
+      # becoming items in campaigns.
+      def validate_registerable_allows_campaigns
+        return unless registerable
+        return unless registerable.respond_to?(:skip_campaigns?)
+        return unless registerable.skip_campaigns?
+
+        errors.add(:base, :registerable_not_managed_by_campaign)
       end
   end
 end

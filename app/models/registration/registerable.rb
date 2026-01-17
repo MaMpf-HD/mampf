@@ -13,6 +13,7 @@ module Registration
 
     # Models including this concern must:
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
+    # - Have a `skip_campaigns` boolean column (default: false, allows manual-only management)
     # - Implement #allocated_user_ids (returns array of user IDs)
     # - Implement #materialize_allocation!(user_ids:, campaign:)
     #

@@ -74,6 +74,11 @@ class LecturesController < ApplicationController
 
   def edit
     eager_load_stuff
+    if params[:campaign_id]
+      @campaign = @lecture.registration_campaigns.find_by(id: params[:campaign_id])
+    elsif params[:new_campaign]
+      @new_campaign = @lecture.registration_campaigns.build
+    end
     render template: "lectures/edit/edit"
   end
 

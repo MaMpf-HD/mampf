@@ -176,10 +176,29 @@ module Registration
       end
 
       def render_turbo_update(partial, locals)
-        render turbo_stream: [
+        lecture = locals[:lecture] || @lecture || @campaign&.campaignable
+        streams = [
           turbo_stream.update("campaigns_container", partial: partial, locals: locals),
           stream_flash
-        ].compact
+        ]
+        streams += refresh_roster_streams(lecture)
+        render turbo_stream: streams.compact
+      end
+
+      def refresh_roster_streams(lecture)
+        return [] unless lecture
+
+        group_type = view_context.roster_group_types(lecture)
+        frame_id = view_context.roster_maintenance_frame_id(group_type)
+
+        [
+          turbo_stream.replace(frame_id,
+                               view_context.turbo_frame_tag(frame_id,
+                                                            src: view_context.lecture_roster_path(
+                                                              lecture, group_type: group_type
+                                                            ),
+                                                            loading: "lazy"))
+        ]
       end
 
       def respond_with_success(message, tab: nil)

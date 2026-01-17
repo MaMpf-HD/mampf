@@ -447,4 +447,116 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(grouped[user3].count).to eq(1)
     end
   end
+
+  describe "#unassigned_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:assigned_user) { create(:user) }
+    let(:unassigned_user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    context "with tutorials" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      end
+
+      before do
+        # Register users
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: assigned_user)
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: unassigned_user)
+
+        # Assign one user to the tutorial
+        create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
+
+        # Open the campaign now that items are present
+        campaign.update(status: :open)
+      end
+
+      it "returns empty relation if campaign is draft" do
+        campaign.update(status: :draft)
+        expect(campaign.unassigned_users).to be_empty
+      end
+
+      it "returns users who are registered but not assigned to any item of the " \
+         "same type in the lecture" do
+        expect(campaign.unassigned_users).to include(unassigned_user)
+        expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+
+      it "does not include users who are not registered in the campaign" do
+        # other_user is not registered
+        expect(campaign.unassigned_users).not_to include(other_user)
+      end
+
+      context "with multiple tutorials in the lecture" do
+        let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+        let(:user_assigned_elsewhere) { create(:user) }
+
+        before do
+          # Register user
+          create(:registration_user_registration, registration_campaign: campaign,
+                                                  user: user_assigned_elsewhere)
+          # Assign to a tutorial that is NOT in the campaign items (but is in the lecture)
+          create(:tutorial_membership, tutorial: other_tutorial, user: user_assigned_elsewhere)
+        end
+
+        it "considers users assigned to other tutorials in the lecture as assigned" do
+          expect(campaign.unassigned_users).not_to include(user_assigned_elsewhere)
+        end
+      end
+    end
+
+    context "with cohorts" do
+      let(:cohort) { create(:cohort, context: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: cohort)
+      end
+
+      before do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: assigned_user, registration_item: item)
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: unassigned_user, registration_item: item)
+
+        # Assign one user to the cohort
+        create(:cohort_membership, cohort: cohort, user: assigned_user)
+
+        campaign.update(status: :open)
+      end
+
+      it "returns users who are registered but not assigned to any cohort in the lecture" do
+        expect(campaign.unassigned_users).to include(unassigned_user)
+        expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+    end
+  end
+
+  describe "#roster_group_type" do
+    let(:campaign) { build(:registration_campaign) }
+
+    it "returns 'tutorials' by default" do
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'tutorials' when items are tutorials" do
+      tutorial = create(:tutorial)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'talks' when items are talks" do
+      talk = create(:talk)
+      create(:registration_item, registration_campaign: campaign, registerable: talk)
+      expect(campaign.roster_group_type).to eq("talks")
+    end
+
+    it "returns 'cohorts' when items are cohorts" do
+      cohort = create(:cohort)
+      create(:registration_item, registration_campaign: campaign, registerable: cohort)
+      expect(campaign.roster_group_type).to eq("cohorts")
+    end
+  end
 end

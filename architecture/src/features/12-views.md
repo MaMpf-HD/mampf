@@ -252,6 +252,52 @@ Student “Show”.
 | Confirmation (result)                  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show       | After submit/close                    | Shows assignment and summary |
 | Fulfill requirements (policy)          | —                                                                                      | Policy-configured flow | External or internal                  | Follow instructions to satisfy policy, then retry |
 
+## Roster Maintenance
+
+The **Roster Maintenance** view is the central hub for managing group allocations. It provides both a high-level overview of all groups in a lecture and detailed management for individual groups.
+
+### Placement & Access
+- **Location:** Accessible via the `Roster::MaintenanceController#index` action.
+- **Route:** `/lectures/:id/roster`
+- **Entry Points:**
+    - **Lecture Settings:** From the "Participants" tab in `Lecture#edit`.
+    - **Navigation:** (Future) Direct link from the lecture dashboard.
+
+### Architecture
+The view uses a **Tabbed Layout** to switch between different management contexts.
+
+#### 1. Groups Tab (Overview)
+*Focus: How are students distributed?*
+- **List View:** Displays all groups (Tutorials, Talks) with their current occupancy and capacity.
+- **Stats:** Shows total participants and unassigned candidates count.
+- **Actions:**
+    - **Manage:** Drill down into a specific group's detail view.
+    - **Skip Campaigns:** Toggle direct management for individual groups (if eligible).
+
+#### 2. Enrollment Tab (Candidates)
+*Focus: Who needs a spot?*
+- **Candidates List:** Displays students who registered via a campaign but are currently unassigned.
+- **Context:** Shows the student's original preferences (top 3) to aid in placement.
+- **Actions:**
+    - **Assign:** Directly assign a candidate to a specific group (checks capacity).
+
+#### 3. Performance Tab (Future)
+*Focus: How are they doing?*
+- Placeholder for future gradebook integration.
+
+### Detail View (Single Group)
+When selecting "Manage" on a group, the view updates (via Turbo Frame) to show the details for that specific group.
+
+- **Participants List:** Table of all students in the group.
+- **Actions:**
+    - **Add Member:** Manually add a student by email.
+    - **Move:** Move a student to another group (dropdown with capacity checks).
+    - **Remove:** Remove a student from the group.
+- **Navigation:** "Back" button returns to the Groups overview.
+
+### Integration in Lecture Settings
+The roster maintenance view is integrated directly into the `Lecture#edit` page as a tab, allowing seamless management without leaving the settings context. It uses Turbo Frames to load lazily and handle updates without full page reloads.
+
 ## Rosters
 
 #### Flow

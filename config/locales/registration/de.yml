@@ -16,6 +16,9 @@ de:
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       not_found: "Anmeldeverfahren nicht gefunden."
+      completed_title: "Anmeldeverfahren abgeschlossen"
+      completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
+      go_to_roster: "Zur Gruppenverwaltung"
       lecture_not_found: "Veranstaltung nicht gefunden."
       helpdesk:
         campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
@@ -25,7 +28,7 @@ de:
         allocation_mode_frozen: "Der Zuteilungsmodus kann nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
         first_choice: "Zeigt die Anzahl der Studierenden, die dieses Element als erste Priorität gewählt haben. Dies hilft, die Nachfrage abzuschätzen, bevor die endgültige Zuteilung berechnet wird."
       index:
-        title: "Anmeldungen"
+        title: "Anmeldeverfahren"
         card_title: "Anmeldeverfahren"
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."
@@ -275,7 +278,6 @@ de:
         utilization: "Auslastung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
-        planning_only: "Nur Planung"
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"
@@ -313,6 +315,7 @@ de:
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
               already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."
+              registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
         registration/user_registration:
           attributes:
             registration_item:

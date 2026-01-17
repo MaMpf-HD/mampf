@@ -1,0 +1,46 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title mb-0">
+      <%= t('roster.manual_enrollment.title') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <p class="card-text text-muted small mb-3">
+      <%= t('roster.manual_enrollment.description') %>
+    </p>
+    <%= form_with url: lecture_roster_add_to_group_path(lecture, group_type: group_type), method: :post, class: "row g-3 align-items-end",
+                  data: { controller: "roster-enrollment",
+                          roster_enrollment_confirm_message_value: t('roster.warnings.confirm_overbooking') } do |f| %>
+      <div class="col-md-5">
+        <%= f.label :email, t('roster.manual_enrollment.student'), class: "form-label" %>
+        <%= f.email_field :email, class: "form-control", placeholder: t('roster.actions.add_student_placeholder'), required: true %>
+      </div>
+      <div class="col-md-5">
+        <%= f.label :rosterable_id, t('roster.manual_enrollment.group'), class: "form-label" %>
+        <% if groups.any? %>
+          <%= f.select :rosterable_id, [], { include_blank: t('roster.manual_enrollment.choose_group') }, { class: "form-select", required: true } do %>
+            <% groups.each do |group| %>
+              <optgroup label="<%= group[:title] %>">
+                <% group[:items].each do |item| %>
+                  <% next if item.locked? %>
+                  <option value="<%= "#{item.class.name}-#{item.id}" %>" data-overbooked="<%= item.full? %>">
+                    <%= group_title_with_capacity(item) %>
+                  </option>
+                <% end %>
+              </optgroup>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= f.select :rosterable_id, [], { include_blank: t('roster.details.empty') }, { class: "form-select", disabled: true } %>
+        <% end %>
+      </div>
+      <div class="col-md-2">
+        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100", disabled: groups.empty? %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div id="roster_candidates_list">
+  <%= render RosterCandidatesComponent.new(lecture: lecture, group_type: group_type) %>
+</div>

@@ -130,6 +130,32 @@ Requires conditional UI logic to show the "Add Policy" button but restrict the f
 - Automatic load balancing (heuristic-based)
 - Enhanced change history UI
 
+### Generic Registration Groups (Lightweight Rosterables)
+
+**Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like "Lecture Admission" (where no tutorials exist) or "Event Registration" (e.g., Faculty Barbecue).
+
+**Proposed Solution:** Introduce a `Cohort` model (contained within a generic `Grouping`) that acts as a lightweight container.
+
+**New Models:**
+1.  **`Cohort` (The Bucket):**
+    - **Concerns:** `Registration::Registerable`, `Rosters::Rosterable`.
+    - **Attributes:** `capacity`, `title`.
+    - **Polymorphic Parent:** Belongs to `context` (Lecture, Offering, etc.).
+    - **No Scheduling:** No tutors, rooms, or time slots.
+
+2.  **`Grouping` (The Context):**
+    - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
+    - **Attributes:** `title`, `description`.
+    - **Associations:** `has_one :campaign`, `has_many :cohorts`.
+    - **Examples:**
+        - **Event:** "Faculty Barbecue" containing cohorts "Meat", "Vegetarian".
+        - **Poll:** "New Building Name" containing cohorts "Turing Hall", "Noether Hall".
+
+**Benefits:**
+- Decouples registration from academic scheduling.
+- Simplifies UI for non-tutorial use cases.
+- Reuses existing `MaintenanceController` and `Allocation` logic.
+
 ---
 
 ## 4. Assessment & Grading

@@ -18,36 +18,6 @@ module Registration
       end
     end
 
-    # rubocop:disable Metrics/ParameterLists
-    def registration_progress_bar(value, max, classification: :neutral, label: nil,
-                                  height: "1.5rem", show_label: true,
-                                  container_class: "progress mb-2", style: nil)
-      # rubocop:enable Metrics/ParameterLists
-      percentage = max.to_i.positive? ? (value.to_f / max * 100).clamp(0, 100) : 0
-
-      color_class = case classification
-                    when :utilization
-                      utilization_color(percentage)
-                    when :time
-                      "bg-info"
-                    when :neutral
-                      "bg-primary"
-                    else
-                      "bg-#{classification}"
-      end
-
-      tag.div(class: container_class, style: [style, "height: #{height}"].compact.join("; ")) do
-        tag.div(class: "progress-bar #{color_class}",
-                role: "progressbar",
-                style: "width: #{percentage}%",
-                "aria-valuenow": value,
-                "aria-valuemin": 0,
-                "aria-valuemax": max) do
-          label || "#{percentage.round}%" if show_label
-        end
-      end
-    end
-
     def sorted_preference_counts(stats)
       stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }
     end
