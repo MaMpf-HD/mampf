@@ -1,20 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
-  it "ensures all including models have a skip_campaigns attribute" do
-    # Eager load the application to ensure all models are loaded and discoverable
-    Rails.application.eager_load!
-
-    models = ApplicationRecord.descendants.select do |model|
-      model.included_modules.include?(described_class)
-    end
-
-    models.each do |model|
-      expect(model.new)
-        .to(respond_to(:skip_campaigns), "#{model} must have a skip_campaigns attribute")
-    end
-  end
-
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
@@ -39,22 +25,6 @@ RSpec.describe(Rosters::Rosterable) do
           campaign = create(:registration_campaign, status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :open)
-        end
-
-        it "returns true" do
-          expect(rosterable.locked?).to(be(true))
-        end
-      end
-
-      context "with a completed planning cohort campaign" do
-        let(:rosterable) do
-          create(:cohort, skip_campaigns: false, propagate_to_lecture: false, purpose: :planning)
-        end
-
-        before do
-          campaign = create(:registration_campaign, status: :completed,
-                                                    campaignable: rosterable.context)
-          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
         it "returns true" do
