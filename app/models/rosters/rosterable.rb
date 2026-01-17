@@ -249,6 +249,15 @@ module Rosters
         end
       end
 
+      def validate_self_materialization_switch
+        return unless self_materialization_mode_changed?
+
+        return unless is_a?(Lecture) && !self_materialization_mode_disabled?
+
+        errors.add(:self_materialization_mode,
+                   I18n.t("roster.errors.lecture_cannot_self_materialize"))
+      end
+
       def enforce_rosterable_destruction_constraints
         if in_campaign?
           errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
@@ -276,7 +285,7 @@ module Rosters
         # After-campaign scenarios can keep skip_campaigns=false since they already have history.
         return unless self_materialization_mode_changed? && !self_materialization_mode_disabled?
 
-        self.skip_campaigns = true unless in_real_campaign?
+        self.skip_campaigns = true unless in_campaign?
       end
   end
 end

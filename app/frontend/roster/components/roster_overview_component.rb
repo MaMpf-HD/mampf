@@ -112,7 +112,7 @@ class RosterOverviewComponent < ViewComponent::Base
   def primary_status(item, campaign)
     if campaign
       I18n.t("roster.status_texts.campaign_#{campaign.status}")
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       status = I18n.t("roster.status_texts.post_campaign")
       unless item.self_materialization_mode_disabled?
         status += " (#{I18n.t("roster.status_texts.self_enrollment")})"
@@ -135,7 +135,7 @@ class RosterOverviewComponent < ViewComponent::Base
   def bypasses_campaign_policy?(item, target_mode)
     return false if target_mode.to_s == "disabled"
     return false if target_mode.to_s == "remove_only"
-    return false unless item.in_real_campaign?
+    return false unless item.in_campaign?
 
     last_campaign = item.registration_items
                         .joins(:registration_campaign)
@@ -183,7 +183,7 @@ class RosterOverviewComponent < ViewComponent::Base
     target_campaign = campaign
 
     # If no active campaign, check for completed campaign with policies
-    if target_campaign.nil? && item.in_real_campaign?
+    if target_campaign.nil? && item.in_campaign?
       target_campaign = item.registration_items
                             .joins(:registration_campaign)
                             .merge(::Registration::Campaign.completed)
@@ -211,7 +211,7 @@ class RosterOverviewComponent < ViewComponent::Base
   def status_badge_data(item, campaign)
     if campaign
       campaign_badge_data(campaign)
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       tooltip_text = I18n.t("roster.status_texts.post_campaign")
       has_policies = campaign_has_policies_for_item?(item)
 
@@ -298,7 +298,7 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def campaign_has_policies_for_item?(item)
-    return false unless item.in_real_campaign?
+    return false unless item.in_campaign?
 
     last_campaign = item.registration_items
                         .joins(:registration_campaign)
@@ -356,7 +356,7 @@ class RosterOverviewComponent < ViewComponent::Base
         if type == :talks
           item.position
         else
-          has_completed_campaign = item.in_real_campaign? && !item.campaign_active?
+          has_completed_campaign = item.in_campaign? && !item.campaign_active?
           [has_completed_campaign ? 0 : 1, item.title.to_s]
         end
       end

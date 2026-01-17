@@ -6,10 +6,10 @@
   <% # Self-materialization dropdown - always visible %>
   <% active_campaign = campaign && !campaign.completed? %>
   <% # Disable during active campaigns OR for fresh tutorials waiting for mode decision %>
-  <% self_mat_disabled = active_campaign || (!item.skip_campaigns? && !item.in_real_campaign?) %>
+  <% self_mat_disabled = active_campaign || (!item.skip_campaigns? && !item.in_campaign?) %>
   <% tooltip_text = if active_campaign
                       t('roster.tooltips.self_materialization_disabled_campaign')
-                    elsif !item.skip_campaigns? && !item.in_real_campaign?
+                    elsif !item.skip_campaigns? && !item.in_campaign?
                       t('roster.tooltips.self_materialization_disabled_fresh')
                     else
                       t('roster.self_materialization.label')

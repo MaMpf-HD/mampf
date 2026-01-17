@@ -166,7 +166,7 @@ RSpec.describe(Rosters::Rosterable) do
 
         it "cannot enable add_only due to manual mode lock" do
           # Enabling self-mat forces skip_campaigns: true
-          # skip_campaigns: true is forbidden if in_real_campaign? (even completed)
+          # skip_campaigns: true is forbidden if in_campaign? (even completed)
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).not_to(be_valid)
           expect(rosterable.errors[:base])
