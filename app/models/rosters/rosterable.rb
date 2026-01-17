@@ -31,9 +31,8 @@ module Rosters
     end
 
     # Checks if the item can be safely destroyed.
-    # By default, it must not be in a real campaign and must have an empty roster.
     def destructible?
-      !in_real_campaign? && roster_empty?
+      !in_campaign? && roster_empty?
     end
 
     # Checks if the roster is locked for manual modifications.
@@ -212,7 +211,7 @@ module Rosters
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_real_campaign?
+        if in_campaign?
           errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
           throw(:abort)
         end

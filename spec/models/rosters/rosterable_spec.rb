@@ -290,7 +290,7 @@ RSpec.describe(Rosters::Rosterable) do
       end
     end
 
-    context "when in a real campaign" do
+    context "when in a campaign" do
       before do
         campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
@@ -316,7 +316,7 @@ RSpec.describe(Rosters::Rosterable) do
   describe "#enforce_rosterable_destruction_constraints" do
     let(:rosterable) { create(:tutorial) }
 
-    context "when in a real campaign" do
+    context "when in a campaign" do
       before do
         campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
