@@ -3431,6 +3431,7 @@ en:
     speaker: Speaker
     speakers: Speakers
     unlimited: unlimited
+    personnel: Personnel
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3877,6 +3878,8 @@ en:
               invalid: 'The input is invalid.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Talks can only be created for seminars."
             title:
               blank: You need to give a title.
         term:
@@ -3888,6 +3891,8 @@ en:
               taken: 'This term already exists.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorials cannot be created for seminars."
             title:
               taken: >
                 This tutorium title is already taken for this event series.

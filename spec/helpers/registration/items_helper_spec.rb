@@ -25,7 +25,7 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
     end
 
     context "for Talk" do
-      let(:item) { create(:registration_item, :for_talk, registration_campaign: campaign) }
+      let(:item) { create(:registration_item, :for_talk) }
 
       it "returns talk type label" do
         expect(helper.item_display_type(item))

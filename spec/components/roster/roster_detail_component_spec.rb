@@ -122,6 +122,7 @@ RSpec.describe(RosterDetailComponent, type: :component) do
   end
 
   context "with a Talk" do
+    let(:lecture) { create(:seminar) }
     let(:talk) { create(:talk, lecture: lecture, skip_campaigns: true) }
     let!(:other_talk) do
       create(:talk, lecture: lecture, title: "Other Talk", skip_campaigns: true)

@@ -13,6 +13,7 @@ class Talk < ApplicationRecord
   has_many :claims, as: :claimable, dependent: :destroy
 
   validates :title, presence: true
+  validate :lecture_must_be_seminar
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
@@ -143,5 +144,12 @@ class Talk < ApplicationRecord
 
     def remove_duplicate_dates
       dates.uniq! # TODO: replace dates array by a set to avoid this
+    end
+
+    def lecture_must_be_seminar
+      return unless lecture
+      return if lecture.seminar?
+
+      errors.add(:lecture, :must_be_seminar)
     end
 end

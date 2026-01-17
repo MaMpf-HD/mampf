@@ -31,6 +31,15 @@ RSpec.describe(Tutorial, type: :model) do
     expect(new_tutorial).to be_invalid
   end
 
+  it "is invalid if lecture is a seminar" do
+    lecture = FactoryBot.create(:seminar)
+    tutorial = FactoryBot.build(:tutorial, lecture: lecture)
+    expect(tutorial).to be_invalid
+    expect(tutorial.errors[:lecture])
+      .to include(I18n.t("activerecord.errors.models.tutorial.attributes." \
+                         "lecture.must_not_be_seminar"))
+  end
+
   # test traits
 
   describe "with tutors" do
