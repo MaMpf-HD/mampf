@@ -43,9 +43,9 @@ en:
       participants: 'Participants'
       empty: 'No participants in this group.'
     candidates:
-      title: 'Unassigned Candidates'
-      help: 'Students who registered via a completed campaign but are not currently assigned to any group.'
-      empty: 'No unassigned candidates found.'
+      title: 'Unallocated Candidates'
+      help: 'Students who registered via a completed campaign but are not currently allocated to any group.'
+      empty: 'No unallocated candidates found.'
       no_prefs: 'No preferences'
       previously_assigned_tooltip: 'Previously assigned'
       show_previously_assigned: 'Show %{count} previously assigned candidates'
