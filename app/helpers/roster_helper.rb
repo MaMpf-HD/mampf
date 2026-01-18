@@ -125,11 +125,10 @@ module RosterHelper
 
     if disabled
       tag.span(title: tooltip, data: { bs_toggle: "tooltip" }) do
-        link_to(polymorphic_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-danger disabled opacity-50",
-                style: "cursor: not-allowed;",
-                tabindex: -1,
-                aria: { disabled: true }) do
+        tag.button(class: "btn btn-sm btn-outline-danger opacity-50",
+                   style: "cursor: not-allowed;",
+                   disabled: true,
+                   type: "button") do
           tag.i(class: "bi bi-trash")
         end
       end
