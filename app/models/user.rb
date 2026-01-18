@@ -806,7 +806,6 @@ class User < ApplicationRecord
     return if activity_this_week?
 
     new_streak = activity_streak + 1
-    # Time.zone.now is a little flaky with the validation
     update(activity_streak: new_streak, last_activity: Time.zone.now)
   end
 

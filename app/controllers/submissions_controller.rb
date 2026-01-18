@@ -63,6 +63,7 @@ class SubmissionsController < ApplicationController
     @submission.update(last_modification_by_users_at: Time.zone.now)
     return unless @submission.manuscript
 
+    current_user.increment_streak
     send_upload_email(User.where(id: current_user.id))
   end
 
@@ -404,6 +405,7 @@ class SubmissionsController < ApplicationController
       @join.save
       if @join.valid?
         @submission.update(last_modification_by_users_at: Time.zone.now)
+        current_user.increment_streak
         send_join_email
         remove_invitee_status
       else

@@ -261,6 +261,7 @@ class MediaController < ApplicationController
     I18n.locale = @medium.locale_with_inheritance
     @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
+    current_user.increment_streak
     render layout: "thyme"
   end
 
@@ -270,6 +271,7 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
+    current_user.increment_streak
     if params[:destination].present?
       redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
                   allow_other_host: true
@@ -525,6 +527,12 @@ class MediaController < ApplicationController
     I18n.locale = @medium.locale_with_inheritance
     @time = params[:time]
     render layout: "feedback"
+  end
+
+  def view_and_track
+    @medium = Medium.find_by(id: params[:id])
+    current_user.increment_streak
+    redirect_to display_medium_path(@medium)
   end
 
   private

@@ -37,6 +37,7 @@ class QuizzesController < ApplicationController
 
   def take
     I18n.locale = @quiz.locale_with_inheritance
+    current_user.increment_streak
     render layout: "quiz"
   end
 
