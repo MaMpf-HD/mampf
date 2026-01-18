@@ -69,8 +69,14 @@
       </div>
 
       <div class="alert alert-info mt-3 mb-0" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        <%= t('roster.roster_help.group_types.note') %>
+        <div>
+          <strong><i class="bi bi-diagram-3 me-2"></i><%= t('roster.roster_help.group_types.superset_principle.title') %></strong>
+          <p class="mb-0 mt-2"><%= t('roster.roster_help.group_types.superset_principle.description') %></p>
+        </div>
+        <div class="mt-3">
+          <strong><i class="bi bi-pin-angle me-2"></i><%= t('roster.roster_help.group_types.sticky_enrollment.title') %></strong>
+          <p class="mb-0 mt-2"><%= t('roster.roster_help.group_types.sticky_enrollment.description') %></p>
+        </div>
       </div>
     </div>
   </div>

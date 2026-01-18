@@ -2,7 +2,7 @@ de:
   roster:
     title: 'Teilnehmende'
     status: 'Status'
-    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als ohne Gruppe gelten Personen, die keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören."
+    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
@@ -51,7 +51,12 @@ de:
         other:
           title: "Flexible Gruppen"
           description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
-        note: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+        superset_principle:
+          title: "Obermengenprinzip"
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+        sticky_enrollment:
+          title: "Feste Einschreibung"
+          description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwenden Sie die Entfernen-Aktion im Tab 'Eingeschriebene'."
       phase1:
         title: "1. Wählen Sie Ihre Einrichtungsmethode"
         campaigns:

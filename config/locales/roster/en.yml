@@ -2,7 +2,7 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
-    participants_hint: "This list contains all people enrolled in this lecture. People without group are enrolled but not member of any tutorial or cohort with lecture enrollment."
+    participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
@@ -51,7 +51,12 @@ en:
         other:
           title: "Flexible Groups"
           description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
-        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+        superset_principle:
+          title: "Superset Principle"
+          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+        sticky_enrollment:
+          title: "Sticky Enrollment"
+          description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
       phase1:
         title: "1. Choose Your Setup Method"
         campaigns:
