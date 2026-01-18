@@ -261,7 +261,7 @@ module Rosters
         return if self_materialization_mode_disabled?
         return unless respond_to?(:skip_campaigns)
 
-        return unless in_campaign?
+        return unless locked?
 
         errors.add(:base, I18n.t("roster.errors.campaign_associated"))
       end
