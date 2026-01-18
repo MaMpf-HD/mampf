@@ -2,7 +2,7 @@ de:
   roster:
     title: 'Teilnehmende'
     status: 'Status'
-    participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
+    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'

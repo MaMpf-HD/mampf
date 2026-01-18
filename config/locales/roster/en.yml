@@ -2,7 +2,7 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
-    participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
+    participants_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
