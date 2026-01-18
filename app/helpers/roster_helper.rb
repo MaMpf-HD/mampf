@@ -165,9 +165,15 @@ module RosterHelper
     icon_class = item.skip_campaigns? ? "bi-calendar-x" : "bi-calendar-check"
 
     tooltip = if disabled
-      item.skip_campaigns? ? t("roster.disable_skip_campaigns_hint") : t("roster.enable_skip_campaigns_hint")
+      if item.skip_campaigns?
+        t("roster.disable_skip_campaigns_hint")
+      else
+        t("roster.enable_skip_campaigns_hint")
+      end
+    elsif item.skip_campaigns?
+      t("roster.tooltips.skip_campaigns_enabled")
     else
-      item.skip_campaigns? ? t("roster.tooltips.skip_campaigns_enabled") : t("roster.tooltips.skip_campaigns_disabled")
+      t("roster.tooltips.skip_campaigns_disabled")
     end
 
     { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
