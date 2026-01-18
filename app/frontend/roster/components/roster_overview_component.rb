@@ -25,12 +25,6 @@ class RosterOverviewComponent < ViewComponent::Base
     @groups ||= target_types.filter_map { |type| build_group_data(type) }
   end
 
-  def total_participants
-    groups.sum do |group|
-      group[:items].sum { |item| item.roster_entries.size }
-    end
-  end
-
   def group_type_title
     if @group_type.is_a?(Array) || @group_type == :all
       I18n.t("roster.tabs.group_maintenance")

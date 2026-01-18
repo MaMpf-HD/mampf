@@ -1,8 +1,7 @@
-<div class="card border-top-0">
-  <%= render "roster/components/groups_tab/workflow_info",
-             total_participants: total_participants,
-             component: component %>
+<%= render "roster/components/workflow_help" %>
+<%= render "roster/components/group_types_help", lecture: component.lecture %>
 
+<div class="card border-top-0">
   <% groups.each_with_index do |group, index| %>
     <%= render "roster/components/groups_tab/group_header",
                group: group,
