@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -624,6 +624,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
+  create_table "streaks", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "streakable_type", null: false
+    t.bigint "streakable_id", null: false
+    t.integer "streak_counter", default: 0, null: false
+    t.datetime "last_activity", default: "2026-01-04 23:00:00", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["streakable_type", "streakable_id"], name: "index_streaks_on_streakable"
+    t.index ["user_id", "streakable_type", "streakable_id"], name: "index_streaks_on_user_id_and_streakable_type_and_streakable_id", unique: true
+    t.index ["user_id"], name: "index_streaks_on_user_id"
+  end
+
   create_table "subject_translations", force: :cascade do |t|
     t.bigint "subject_id", null: false
     t.string "locale", null: false
@@ -1221,6 +1234,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
   add_foreign_key "registration_user_registrations", "users"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "streaks", "users"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

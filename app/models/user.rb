@@ -94,6 +94,8 @@ class User < ApplicationRecord
   # a user has redemptions of vouchers
   has_many :redemptions, dependent: :destroy
 
+  has_many :streaks, dependent: :destroy
+
   include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
