@@ -2,7 +2,7 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
-    participants_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
+    participants_hint: "This list contains all people enrolled in this lecture. People without group are enrolled but not member of any tutorial or cohort with lecture enrollment."
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
@@ -17,14 +17,14 @@ en:
       total_participants: 'Total Participants'
       total_enrolled: 'Enrolled'
       capacity_usage: 'of %{count} spots filled'
-      unassigned: 'Unassigned'
+      unassigned: 'Without group'
       status_assigned: 'Assigned'
-      status_unassigned: 'Not Assigned'
+      status_unassigned: 'Without group'
       action_required: 'Action required'
       group_distribution: 'Group Distribution'
     filters:
       all: 'All'
-      unassigned: 'Unassigned'
+      unassigned: 'Without group'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
