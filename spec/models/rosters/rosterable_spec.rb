@@ -190,12 +190,15 @@ RSpec.describe(Rosters::Rosterable) do
           expect(rosterable.self_materialization_mode).to eq("disabled")
         end
 
-        it "raises error when trying to change both skip_campaigns and self_materialization_mode conflictingly" do
+        it "raises error when trying to change both skip_campaigns and " \
+           "self_materialization_mode conflictingly" do
           rosterable.skip_campaigns = false
           rosterable.self_materialization_mode = :add_and_remove
           expect(rosterable).not_to(be_valid)
           expect(rosterable.errors[:base])
-            .to(include(I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization")))
+            .to(include(
+                  I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization")
+                ))
         end
 
         it "allows disabling self_materialization while switching to campaign mode" do

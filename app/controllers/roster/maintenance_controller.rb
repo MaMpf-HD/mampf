@@ -389,11 +389,14 @@ module Roster
 
       def eager_load_lecture(id)
         Lecture.includes(
-          { registration_campaigns: [:user_registrations, :registration_items] },
+          { registration_campaigns: [:user_registrations, :registration_items,
+                                     :registration_policies] },
           tutorials: [:tutors, :tutorial_memberships,
-                      { registration_items: :registration_campaign }],
-          cohorts: [:cohort_memberships, { registration_items: :registration_campaign }],
-          talks: [:speakers, :speaker_talk_joins, { registration_items: :registration_campaign }]
+                      { registration_items: { registration_campaign: :registration_policies } }],
+          cohorts: [:cohort_memberships,
+                    { registration_items: { registration_campaign: :registration_policies } }],
+          talks: [:speakers, :speaker_talk_joins,
+                  { registration_items: { registration_campaign: :registration_policies } }]
         ).find_by(id: id)
       end
 

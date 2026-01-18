@@ -320,6 +320,30 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       expect(component.bypasses_campaign_policy?(item, "add_only")).to be(true)
     end
+
+    it "caches campaign lookups to avoid N+1 queries" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      # First call should populate the cache
+      result1 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result1).to be(true)
+
+      # Verify the cache was populated
+      cache_key = "#{item.class.name}-#{item.id}"
+      expect(component.instance_variable_get(:@last_campaign_cache)).to have_key(cache_key)
+
+      # Second call should use the cached value and return same result
+      result2 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result2).to eq(result1)
+
+      # Cache should still contain the same campaign object
+      cached_campaign = component.instance_variable_get(:@last_campaign_cache)[cache_key]
+      expect(cached_campaign).to eq(campaign)
+    end
   end
 
   describe "#policy_bypass_warning_data" do
