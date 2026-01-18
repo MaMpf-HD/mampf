@@ -48,25 +48,21 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
-# ======================================================================================
-# # Prometheus Exporter Instrumentation for testing with clustered mode
-# ======================================================================================
-# if ENV["RAILS_ENV"] != "test"
-#   require "prometheus_exporter/instrumentation"
+if ENV["RAILS_ENV"] != "test"
+  require "prometheus_exporter/instrumentation"
 
-#   on_worker_boot do
-#     PrometheusExporter::Instrumentation::Process.start(type: "puma_worker")
-#   end
+  on_worker_boot do
+    PrometheusExporter::Instrumentation::Process.start(type: "puma_worker")
+  end
 
-#   on_booted do
-#     require "prometheus_exporter/instrumentation/puma"
+  on_booted do
+    require "prometheus_exporter/instrumentation/puma"
 
-#     PrometheusExporter::Instrumentation::Process.start(
-#       type: "puma_master",
-#       frequency: 15
-#     )
+    PrometheusExporter::Instrumentation::Process.start(
+      type: "puma_master",
+      frequency: 15
+    )
 
-#     PrometheusExporter::Instrumentation::Puma.start
-#   end
-# end
-# ======================================================================================
+    PrometheusExporter::Instrumentation::Puma.start
+  end
+end
