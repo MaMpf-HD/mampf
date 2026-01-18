@@ -166,6 +166,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
     t.integer "self_materialization_mode", default: 0
     t.index ["context_type", "context_id", "purpose"], name: "index_cohorts_on_context_type_and_context_id_and_purpose"
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
+    t.index ["self_materialization_mode"], name: "index_cohorts_on_self_materialization_mode"
     t.check_constraint "NOT (purpose = 1 AND propagate_to_lecture = false)", name: "enrollment_cohorts_must_propagate"
     t.check_constraint "NOT (purpose = 2 AND propagate_to_lecture = true)", name: "planning_cohorts_must_not_propagate"
   end
@@ -746,6 +747,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
     t.boolean "skip_campaigns", default: false, null: false
     t.integer "self_materialization_mode", default: 0
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
+    t.index ["self_materialization_mode"], name: "index_talks_on_self_materialization_mode"
   end
 
   create_table "terms", force: :cascade do |t|
@@ -1021,6 +1023,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
     t.boolean "skip_campaigns", default: false, null: false
     t.integer "self_materialization_mode", default: 0
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
+    t.index ["self_materialization_mode"], name: "index_tutorials_on_self_materialization_mode"
   end
 
   create_table "user_favorite_lecture_joins", force: :cascade do |t|
