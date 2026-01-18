@@ -807,6 +807,7 @@ class User < ApplicationRecord
 
     new_streak = activity_streak + 1
     update(activity_streak: new_streak, last_activity: Time.zone.now)
+    broadcast_update_to("user_#{id}_streak", target: "streak-count", html: new_streak.to_s)
   end
 
   private

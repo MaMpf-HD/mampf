@@ -116,10 +116,11 @@
                             placeholder: t('navbar.search') %>
       <% end %>
 
+      <%= turbo_stream_from "user_#{current_user.id}_streak" %>
       <li class="nav-item streak">
         <span class="streak-icon">
           <i class="fas fa-fire"></i>
-          <span class="streak-count"><%= current_user.activity_streak %></span>
+          <span id="streak-count" class="streak-count"><%= current_user.activity_streak %></span>
         </span>
       </li>
 
