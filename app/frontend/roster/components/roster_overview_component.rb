@@ -382,7 +382,7 @@ class RosterOverviewComponent < ViewComponent::Base
           item.position
         else
           # Use campaign_completed? which is more direct
-          has_completed_campaign = item.campaign_completed?
+          has_completed_campaign = item.in_completed_campaign?
           [has_completed_campaign ? 0 : 1, item.title.to_s]
         end
       end
