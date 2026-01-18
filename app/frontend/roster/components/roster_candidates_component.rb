@@ -1,5 +1,5 @@
-# Renders a list of unassigned candidates for a given group type.
-# Candidates are users who have registered in a campaign but are not assigned to any group.
+# Renders a list of unallocated candidates for a given group type.
+# Candidates are users who have registered in a campaign but are not allocated to any group.
 class RosterCandidatesComponent < ViewComponent::Base
   include RosterTransferable
 
