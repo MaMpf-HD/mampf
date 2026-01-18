@@ -117,25 +117,6 @@ de:
             - "Studierende jederzeit beitreten/verlassen können sollen"
             - "Die Verwaltung möglichst einfach sein soll"
         note: "Selbstanmeldung kann nach Abschluss eines Anmeldeverfahrens aktiviert werden, um Nachzügler oder Gruppenwechsel zu ermöglichen."
-      patterns:
-        title: "Welche Gruppenarten gibt es?"
-        intro: "Wählen Sie die Gruppenarten, die zu Ihrer Veranstaltungsstruktur passen. Sie können mehrere Arten in einem Anmeldeverfahren kombinieren."
-        tutorials:
-          title: "Tutorien"
-          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        talks:
-          title: "Vorträge"
-          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        enrollment:
-          title: "Anmeldungsgruppe"
-          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        planning:
-          title: "Planungsgruppe"
-          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Teilnehmerliste der Veranstaltung übernommen."
-        other:
-          title: "Flexible Gruppen"
-          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
-        note: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."
