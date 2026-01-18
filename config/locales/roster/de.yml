@@ -18,15 +18,45 @@ de:
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
-    workflow:
-      title: "Wie funktioniert die Platzvergabe?"
-      standard_method: "Standard-Ablauf (Anmeldeverfahren)"
-      step_1_html: "Wechseln Sie zum Reiter %{link} und erstellen Sie ein neues Verfahren."
-      step_2: "Dabei können Sie Tutorien oder Vorträge direkt mit anlegen (Schnell-Erstellung) oder bereits existierende auswählen."
-      step_3: "Studierende geben ihre Präferenzen an oder melden sich direkt an (je nach Modus)."
-      step_4: "Die Plätze werden automatisch verteilt. Sie können das Ergebnis hier nachträglich anpassen."
-      manual_method: "Direkte Verwaltung"
-      manual_desc: "Für einzelne Gruppen können Sie Anmeldeverfahren überspringen, um Studierende von Anfang an direkt zuzuweisen. Achtung: Dies ist nur möglich, solange die Gruppe noch nicht Bestandteil eines Anmeldeverfahrens war. Sobald Studierende eingetragen sind, ist eine Verwendung in Anmeldeverfahren ausgeschlossen."
+    roster_help:
+      title: "Arbeitsablauf Gruppenverwaltung"
+      toggle: "Arbeitsablauf"
+      intro: "Diese Anleitung zeigt Ihnen, wie Sie Gruppenlisten befüllen und welche Optionen in jeder Phase verfügbar sind."
+      group_types:
+        toggle: "Gruppentypen"
+        title: "Verfügbare Gruppentypen"
+        intro: "Verschiedene Gruppentypen dienen unterschiedlichen Zwecken in Ihrer Veranstaltungsstruktur."
+      phase1:
+        title: "1. Wählen Sie Ihre Einrichtungsmethode"
+        campaigns:
+          title: "Anmeldeverfahren"
+          description: "Automatische Zuteilung mit Zulassungsregel- und Präferenzunterstützung"
+          benefits:
+            - "Registrierungen vor Finalisierung prüfen"
+            - "Zulassungsregeln (z.B. Leistungsnachweis, E-Mail-Verifizierung)"
+            - "Studierende geben Präferenzen für Gruppen an"
+            - "Zeitlich begrenzte Anmeldephase"
+        skip_campaigns:
+          title: "Anmeldeverfahren überspringen"
+          description: "Manuelle Verwaltung oder Selbsteinschreibung von Anfang an"
+          benefits:
+            - "Manuelle Verwaltung: Studierende jederzeit direkt hinzufügen/entfernen"
+            - "Selbsteinschreibung: Studierende wählen Gruppen selbst"
+            - "Keine Zulassungsüberprüfung oder Präferenz-Ranking"
+            - "Gut für kleine Gruppen oder einfache Einschreibung"
+
+      phase2:
+        title: "2. Was passiert als Nächstes"
+        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
+        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
+        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
+      phase3:
+        title: "3. Jederzeit verfügbar (nach Verfahren)"
+        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
+        options:
+          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
+          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Zuteilungen nach Bedarf feinabstimmen"
     actions:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
