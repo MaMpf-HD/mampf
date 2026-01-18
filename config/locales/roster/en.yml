@@ -26,6 +26,22 @@ en:
         toggle: "Group Types"
         title: "Available Group Types"
         intro: "Different group types serve different purposes in your course structure."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice groups. Students are automatically added to the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers are automatically added to the course roster."
+        enrollment:
+          title: "Enrollment Group"
+          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
+        planning:
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
+        other:
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
       phase1:
         title: "1. Choose Your Setup Method"
         campaigns:
