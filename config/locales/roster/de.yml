@@ -51,9 +51,9 @@ de:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
     candidates:
-      title: 'Nicht zugewiesene Kandidaten'
-      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
-      empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
+      title: 'Nicht zugeteilte Kandidaten'
+      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugeteilt sind.'
+      empty: 'Keine nicht zugeteilten Kandidaten gefunden.'
       no_prefs: 'Keine Präferenzen'
       previously_assigned_tooltip: 'War bereits zugewiesen'
       show_previously_assigned: '%{count} ehemals zugewiesene Kandidaten anzeigen'
