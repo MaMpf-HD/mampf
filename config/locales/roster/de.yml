@@ -22,7 +22,7 @@ de:
       self_enrollment: "Selbsteinschreibung"
       no_policy_enforcement: "Keine Richtliniendurchsetzung"
       gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
-    participants_footer_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als nicht zugewiesen gelten Personen, die keinem Tutorium und keiner Sondergruppe mit Einschreibung angehören."
+    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Als ohne Gruppe gelten Personen, die keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören."
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
@@ -37,14 +37,14 @@ de:
       total_participants: 'Teilnehmende gesamt'
       total_enrolled: 'Eingeschrieben'
       capacity_usage: 'von %{count} Plätzen belegt'
-      unassigned: 'Nicht zugewiesen'
+      unassigned: 'Ohne Gruppe'
       status_assigned: 'Zugewiesen'
-      status_unassigned: 'Nicht zugewiesen'
+      status_unassigned: 'Ohne Gruppe'
       action_required: 'Handlung erforderlich'
       group_distribution: 'Gruppenverteilung'
     filters:
       all: 'Alle'
-      unassigned: 'Nicht zugewiesen'
+      unassigned: 'Ohne Gruppe'
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
@@ -94,9 +94,9 @@ de:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
     candidates:
-      title: 'Nicht zugewiesene Kandidaten'
-      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugewiesen sind.'
-      empty: 'Keine nicht zugewiesenen Kandidaten gefunden.'
+      title: 'Nicht zugeteilte Kandidaten'
+      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugeteilt sind.'
+      empty: 'Keine nicht zugeteilten Kandidaten gefunden.'
       no_prefs: 'Keine Präferenzen'
       previously_assigned_tooltip: 'War bereits zugewiesen'
       show_previously_assigned: '%{count} ehemals zugewiesene Kandidaten anzeigen'
