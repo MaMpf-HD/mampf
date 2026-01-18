@@ -67,9 +67,9 @@ class LecturesController < ApplicationController
       @lecture.annotations_status = 0
     end
 
-    respond_to do |format|
-      format.js { render template: "lectures/new/new" }
-    end
+    render template: "lectures/new/_new",
+           locals: { lecture: @lecture, from: @from },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
@@ -85,31 +85,46 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
-    @lecture.save
 
-    if @lecture.valid?
+    if @lecture.save
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
       set_organizational_defaults
       # set language to default language
       set_language
-      # depending on where the create action was triggered from, return
-      # to admin index view or edit course view
-      unless params[:lecture][:from] == "course"
-        redirect_to administration_path,
-                    notice: I18n.t("controllers.created_lecture_success",
-                                   lecture: @lecture.title_with_teacher)
-        return
-      end
-      redirect_to edit_course_path(@lecture.course),
-                  notice: I18n.t("controllers.created_lecture_success",
-                                 lecture: @lecture.title_with_teacher)
-      return
-    end
 
-    @errors = @lecture.errors
-    respond_to do |format|
-      format.js { render template: "lectures/create/create" }
+      flash.now[:notice] = I18n.t("controllers.created_lecture_success",
+                                  lecture: @lecture.title_with_teacher)
+
+      streams = []
+
+      streams << if params.dig(:lecture, :from) == "course"
+        turbo_stream.update("course_lectures",
+                            partial: "courses/lectures_list",
+                            locals: { course: @lecture.course })
+      else
+        turbo_stream.update("lectures",
+                            partial: "administration/index/lectures_list")
+      end
+
+      streams << turbo_stream.update(Lecture.new, "")
+      streams << turbo_stream.prepend("flash-messages",
+                                      partial: "flash/message")
+
+      render turbo_stream: streams
+    else
+      # Error case: Display validation errors
+      @errors = @lecture.errors
+      @from = params[:lecture][:from]
+
+      render turbo_stream: [
+        turbo_stream.update("new-lecture-course-error",
+                            @errors[:course].present? ? @errors[:course].join(" ") : ""),
+        turbo_stream.update("new-lecture-term-error",
+                            @errors[:term].present? ? @errors[:term].join(" ") : ""),
+        turbo_stream.update("lecture-teacher-error",
+                            @errors[:teacher].present? ? @errors[:teacher].join(" ") : "")
+      ], status: :unprocessable_content
     end
   end
 

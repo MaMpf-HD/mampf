@@ -91,37 +91,15 @@
                                                course: course.id }),
                     class: 'fas fa-plus-circle text-dark',
                     id: 'new-lecture-button',
-                    data: { remote: true,
-                            toggle: 'tooltip',
+                    data: { turbo_frame: 'new_lecture',
+                            bs_toggle: 'tooltip',
                             testid: 'new-lecture-button-admin-index' },
                     title: t('buttons.create_lecture') %>
       <% end %>
     </div>
     <div class="col-12">
-      <% if course.lectures.exists? %>
-        <ul>
-          <% course.lectures_by_date.each do |l| %>
-            <li>
-              <%= link_to l.term_teacher_info,
-                          edit_lecture_path(l),
-                          class: lectures_color(l)  %>
-            </li>
-          <% end %>
-        </ul>
-        <% if course.term_independent %>
-          <%= t('admin.course.term_independence') %>
-          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
-        <% end %>
-      <% else %>
-        <%= t('admin.course.no_lectures') %>
-        <div class="form-check">
-          <%= f.check_box :term_independent,
-                          class: 'form-check-input' %>
-          <%= f.label :term_independent,
-                      t('admin.course.term_independent'),
-                      { class: 'form-check-label' } %>
-          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
-        </div>
+      <%= turbo_frame_tag "course_lectures" do %>
+        <%= render 'lectures_list', course: course, f: f %>
       <% end %>
     </div>
   </div>

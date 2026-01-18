@@ -150,3 +150,11 @@ $(document).on("turbo:before-cache", function () {
 $(document).on("turbo:load", function () {
   fillOptionsByAjax($(".selectize"));
 });
+
+$(document).on("turbo:frame-load", function (event) {
+  // Don't auto-initialize selects inside modals - the modal controller handles that
+  const frame = event.target;
+  if (frame.closest(".modal")) return;
+
+  fillOptionsByAjax($(frame).find(".selectize"));
+});
