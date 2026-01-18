@@ -10,13 +10,6 @@ module Registration
       }[campaign.status.to_sym]
     end
 
-    def campaign_item_type_label(campaign)
-      return "—" if campaign_items_empty?(campaign)
-
-      type = campaign.roster_group_type.singularize
-      t("registration.item.types.#{type}")
-    end
-
     def item_stats_label(campaign)
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         t("registration.item.columns.registrations")
@@ -78,23 +71,13 @@ module Registration
     end
 
     def campaign_open_confirmation(campaign)
-      msg = if campaign.planning_only?
-        t("registration.campaign.confirmations.open_planning")
-      else
-        t("registration.campaign.confirmations.open")
-      end
+      msg = t("registration.campaign.confirmations.open")
 
       if campaign.registration_items.any? { |i| i.capacity.nil? }
         msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
 
       msg
-    end
-
-    def planning_only_disabled_reason(campaign)
-      return if campaign.can_be_planning_only?
-
-      t("registration.campaign.planning_only_disabled")
     end
 
     def finalize_campaign_button(campaign)
@@ -159,14 +142,16 @@ module Registration
                 class: "btn btn-success")
     end
 
-    def planning_only_checkbox_disabled?(campaign)
-      !campaign.draft? || !campaign.can_be_planning_only? || campaign.completed?
-    end
-
     private
 
-      def campaign_items_empty?(campaign)
-        campaign.registration_items.empty?
+      def utilization_color(percentage)
+        if percentage >= 100
+          "bg-danger"
+        elsif percentage >= 80
+          "bg-warning"
+        else
+          "bg-success"
+        end
       end
   end
 end

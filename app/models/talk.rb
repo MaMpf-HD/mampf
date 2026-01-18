@@ -131,6 +131,10 @@ class Talk < ApplicationRecord
     :speaker_id
   end
 
+  def roster_association_name
+    :speaker_talk_joins
+  end
+
   private
 
     def touch_lecture

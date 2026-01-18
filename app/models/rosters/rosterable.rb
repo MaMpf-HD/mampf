@@ -5,9 +5,14 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
+    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
+
     # Models including this concern must:
-    # - Have a `skip_campaigns` boolean column (default: false)
     # - Implement #roster_entries (returns ActiveRecord::Relation)
+    #
+    # Models that are also Registerable should additionally:
+    # - Have a `skip_campaigns` boolean column (default: false)
+    #   (This allows switching between campaign-managed and manual roster management)
 
     included do
       # Abstract method to retrieve the roster entries (e.g., memberships or joins)
@@ -19,6 +24,12 @@ module Rosters
       # Override this method if the foreign key for the user in the roster entry is not :user_id
       def roster_user_id_column
         :user_id
+      end
+
+      # Override this method if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{self.class.name.underscore}_memberships"
       end
 
       enum :self_materialization_mode, {
@@ -35,37 +46,28 @@ module Rosters
     end
 
     # Checks if the item can be safely destroyed.
-    # By default, it must not be in a real campaign and must have an empty roster.
     def destructible?
-      !in_real_campaign? && roster_empty?
+      !in_campaign? && roster_empty?
     end
 
-    # Checks if the roster is currently locked for manual modifications.
-    # A roster is locked if campaigns are NOT skipped AND a campaign is active (pending/running).
-    # If skip_campaigns is true, it is never locked.
-    # If skip_campaigns is false, it is unlocked only if no campaign is active.
+    # Checks if the roster is locked for manual modifications.
+    # Models without skip_campaigns (e.g., Lecture) are never locked.
+    # A roster is locked if campaigns are NOT skipped AND no campaign
+    # has been completed yet.
     def locked?
+      return false unless respond_to?(:skip_campaigns)
       return false if skip_campaigns?
 
-      if is_a?(Lecture)
-        # For Lectures: Only consider campaigns where the Lecture itself is the registerable item
-        # (i.e., enrollment track campaigns), not campaigns for its sub-groups (Tutorials/Talks)
-        Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: "Lecture" })
-          .where(planning_only: false)
-          .where.not(status: :completed)
-          .exists?
-      else
-        # If in system mode, it is locked unless it was part of a completed campaign
-        !campaign_completed?
-      end
+      !in_completed_campaign?
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
-    # This is only allowed if the item has never been part of a real (non-planning) campaign.
+    # This is only allowed if the item has never been part of any campaign.
+    # Models without skip_campaigns always return false.
     def can_skip_campaigns?
-      !in_real_campaign?
+      return false unless respond_to?(:skip_campaigns)
+
+      !in_campaign?
     end
 
     # Checks if skip_campaigns can be disabled (switched from true to false).
@@ -73,18 +75,16 @@ module Rosters
     # but since we enforce "once in campaign, always in campaign" via can_skip_campaigns?,
     # the reverse path is less critical but should still be safe.
     # For now, we allow it if the roster is empty.
+    # Models without skip_campaigns always return false.
     def can_unskip_campaigns?
+      return false unless respond_to?(:skip_campaigns)
+
       roster_empty?
     end
 
     # Checks if the roster is currently empty.
     def roster_entries_count
-      association_name = case self
-                         when Tutorial then :tutorial_memberships
-                         when Cohort then :cohort_memberships
-                         when Talk then :speaker_talk_joins
-                         when Lecture then :lecture_memberships
-      end
+      association_name = roster_association_name
 
       if association_name && association(association_name).loaded?
         public_send(association_name).size
@@ -94,12 +94,7 @@ module Rosters
     end
 
     def roster_empty?
-      association_name = case self
-                         when Tutorial then :tutorial_memberships
-                         when Cohort then :cohort_memberships
-                         when Talk then :speaker_talk_joins
-                         when Lecture then :lecture_memberships
-      end
+      association_name = roster_association_name
 
       if association_name && association(association_name).loaded?
         public_send(association_name).empty?
@@ -108,45 +103,26 @@ module Rosters
       end
     end
 
-    # Checks if the item is associated with any non-planning campaign.
-    def in_real_campaign?
+    # Checks if the item is associated with any campaign.
+    def in_campaign?
       return false unless respond_to?(:registration_items)
 
-      if association(:registration_items).loaded?
-        registration_items.any? { |item| !item.registration_campaign.planning_only? }
-      else
-        registration_items.joins(:registration_campaign)
-                          .exists?(registration_campaigns: { planning_only: false })
-      end
+      return @in_campaign if defined?(@in_campaign)
+
+      @in_campaign = registration_items.exists?
     end
 
-    # Checks if an active (non-completed) campaign exists for this item.
-    def campaign_active?
-      if association(:registration_items).loaded?
-        registration_items.any? do |item|
-          !item.registration_campaign.completed? && !item.registration_campaign.planning_only?
-        end
-      else
-        Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-          .where.not(status: :completed)
-          .exists?(planning_only: false)
-      end
-    end
+    # Checks if the item is associated with a completed campaign.
+    def in_completed_campaign?
+      return false unless respond_to?(:registration_items)
 
-    # Checks if the item is associated with a completed non-planning campaign.
-    def campaign_completed?
-      if association(:registration_items).loaded?
-        registration_items.any? do |item|
-          item.registration_campaign.completed? && !item.registration_campaign.planning_only?
-        end
-      else
-        Registration::Campaign
-          .joins(:registration_items)
-          .where(registration_items: { registerable_id: id, registerable_type: self.class.name })
-          .exists?(status: :completed, planning_only: false)
-      end
+      return @in_completed_campaign if defined?(@in_completed_campaign)
+
+      @in_completed_campaign = Registration::Campaign
+                               .joins(:registration_items)
+                               .where(registration_items: { registerable_id: id,
+                                                            registerable_type: self.class.name })
+                               .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.
@@ -188,6 +164,52 @@ module Rosters
       end
     end
 
+    def propagate_to_lecture!(user_ids)
+      return if user_ids.empty?
+
+      return if is_a?(Cohort) && !propagate_to_lecture
+
+      return unless respond_to?(:lecture)
+
+      parent = lecture
+      return unless parent.is_a?(Lecture)
+      return if parent == self
+
+      parent.ensure_roster_membership!(user_ids)
+    end
+
+    # Identifies users in the target list who are not yet in the roster and
+    # performs a bulk insert to add them efficiently, associating them with
+    # the given campaign.
+    def add_missing_users!(target_ids, current_ids, campaign)
+      users_to_add = target_ids - current_ids
+      return if users_to_add.empty?
+
+      # insert_all does not automatically apply the association scope (e.g. foreign keys).
+      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
+      scope_attrs = roster_entries.scope_attributes
+
+      attributes = users_to_add.map do |uid|
+        {
+          roster_user_id_column => uid,
+          :source_campaign_id => campaign.id,
+          :created_at => Time.current,
+          :updated_at => Time.current
+        }.merge(scope_attrs)
+      end
+      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    # Identifies users currently in the roster associated with this specific
+    # campaign but not in the target list, and removes them. This cleans up
+    # allocations from the same campaign that are no longer valid,
+    # without touching members added manually or by other campaigns.
+    def remove_excess_users!(target_ids, campaign)
+      roster_entries.where(source_campaign: campaign)
+                    .where.not(roster_user_id_column => target_ids)
+                    .delete_all
+    end
+
     # Checks if the roster is over capacity.
     def over_capacity?
       return false unless respond_to?(:capacity)
@@ -211,28 +233,15 @@ module Rosters
 
     private
 
-      def propagate_to_lecture!(user_ids)
-        return if user_ids.empty?
-
-        return if is_a?(Cohort) && !propagate_to_lecture
-
-        return unless respond_to?(:lecture)
-
-        parent = lecture
-        return unless parent.is_a?(Lecture)
-        return if parent == self
-
-        parent.ensure_roster_membership!(user_ids)
-      end
-
       def validate_skip_campaigns_switch
+        return unless respond_to?(:skip_campaigns)
         return if new_record?
         return unless skip_campaigns_changed?
 
         if skip_campaigns?
           # Switching from false (Campaign Mode) to true (Skip Campaigns)
-          # Only allowed if never in a real campaign (maintains audit trail)
-          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_real_campaign?
+          # Only allowed if never in any campaign
+          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_campaign?
         else
           # Switching from true (Skip Campaigns) to false (Campaign Mode)
           # Only allowed if roster is empty (to avoid data inconsistency)
@@ -242,24 +251,23 @@ module Rosters
 
       def validate_self_materialization_switch
         return unless self_materialization_mode_changed?
+
+        if is_a?(Lecture) && !self_materialization_mode_disabled?
+          errors.add(:self_materialization_mode,
+                     I18n.t("roster.errors.lecture_cannot_self_materialize"))
+          return
+        end
+
         return if self_materialization_mode_disabled?
+        return unless respond_to?(:skip_campaigns)
 
-        # Logic: Self-materialization is meant for "Life After Campaign".
-        # It strictly forbids interference with a RUNNING (or Planning) campaign.
-        # It does NOT check history (in_real_campaign?), allowing it after completion.
-        active_campaign =
-          registration_items.joins(:registration_campaign)
-                            .where.not(registration_campaigns: { status: :completed })
-                            .exists?
+        return unless locked?
 
-        return unless active_campaign
-
-        errors.add(:base,
-                   I18n.t("roster.errors.active_campaign_exists"))
+        errors.add(:base, I18n.t("roster.errors.campaign_associated"))
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_real_campaign?
+        if in_campaign?
           errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
           throw(:abort)
         end
@@ -271,53 +279,29 @@ module Rosters
       end
 
       def enforce_consistency_between_modes
-        # If switching back to campaign mode (skip_campaigns: false),
-        # self-materialization MUST be disabled to prevent conflicts.
-        # This ensures that campaign mode has full control.
-        if skip_campaigns_changed? && !skip_campaigns?
+        return unless respond_to?(:skip_campaigns)
+
+        # Detect conflicting user intent - both changed in same request
+        if skip_campaigns_changed? && self_materialization_mode_changed? &&
+           !skip_campaigns? && !self_materialization_mode_disabled?
+          errors.add(:base,
+                     I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization"))
+          return
+        end
+
+        # Auto-disable self-materialization when switching to campaign mode
+        # (only if user didn't explicitly change self_materialization_mode)
+        if skip_campaigns_changed? && !skip_campaigns? && !self_materialization_mode_changed?
           self.self_materialization_mode = :disabled
           return
         end
 
-        # If enabling self-materialization on a group that has NEVER been in a campaign,
-        # we must set skip_campaigns=true to prevent it from being added to campaigns.
-        # (This is the "Before Campaign" scenario - direct management from the start)
-        # After-campaign scenarios can keep skip_campaigns=false since they already have history.
-        return unless self_materialization_mode_changed? && !self_materialization_mode_disabled?
-
-        self.skip_campaigns = true unless in_real_campaign?
-      end
-
-      # Identifies users in the target list who are not yet in the roster and
-      # performs a bulk insert to add them efficiently, associating them with
-      # the given campaign.
-      def add_missing_users!(target_ids, current_ids, campaign)
-        users_to_add = target_ids - current_ids
-        return if users_to_add.empty?
-
-        # insert_all does not automatically apply the association scope (e.g. foreign keys).
-        # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
-        scope_attrs = roster_entries.scope_attributes
-
-        attributes = users_to_add.map do |uid|
-          {
-            roster_user_id_column => uid,
-            :source_campaign_id => campaign.id,
-            :created_at => Time.current,
-            :updated_at => Time.current
-          }.merge(scope_attrs)
+        # Auto-enable skip_campaigns when enabling self-materialization
+        # (only if user didn't explicitly change skip_campaigns)
+        if self_materialization_mode_changed? && !self_materialization_mode_disabled? &&
+           !skip_campaigns_changed? && !in_campaign?
+          self.skip_campaigns = true
         end
-        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
-      end
-
-      # Identifies users currently in the roster associated with this specific
-      # campaign but not in the target list, and removes them. This cleans up
-      # allocations from the same campaign that are no longer valid,
-      # without touching members added manually or by other campaigns.
-      def remove_excess_users!(target_ids, campaign)
-        roster_entries.where(source_campaign: campaign)
-                      .where.not(roster_user_id_column => target_ids)
-                      .delete_all
       end
   end
 end

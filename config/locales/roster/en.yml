@@ -22,7 +22,7 @@ en:
       self_enrollment: "Self-enrollment"
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
-    participants_footer_hint: "This list contains all people enrolled in this lecture. Unassigned people are enrolled but not member of any tutorial or cohort with lecture enrollment."
+    participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
@@ -37,26 +37,76 @@ en:
       total_participants: 'Total Participants'
       total_enrolled: 'Enrolled'
       capacity_usage: 'of %{count} spots filled'
-      unassigned: 'Unassigned'
+      unassigned: 'Without group'
       status_assigned: 'Assigned'
-      status_unassigned: 'Not Assigned'
+      status_unassigned: 'Without group'
       action_required: 'Action required'
       group_distribution: 'Group Distribution'
     filters:
       all: 'All'
-      unassigned: 'Unassigned'
+      unassigned: 'Without group'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
-    workflow:
-      title: "How does the assignment process work?"
-      standard_method: "Standard Workflow (Registration Campaigns)"
-      step_1_html: "Switch to the %{link} tab and create a new campaign."
-      step_2: "You can create tutorials or talks directly there (quick-create) or select existing ones."
-      step_3: "Students register their preferences or sign up directly (depending on mode)."
-      step_4: "Spots are allocated automatically. You can fine-tune results here afterwards."
-      manual_method: "Direct Management"
-      manual_desc: "For individual groups, you can skip campaigns to assign students directly from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
+    roster_help:
+      title: "Roster Management Workflow"
+      toggle: "Workflow"
+      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      group_types:
+        toggle: "Group Types"
+        title: "Available Group Types"
+        intro: "Different group types serve different purposes in your course structure."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice groups. Students are automatically added to the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers are automatically added to the course roster."
+        enrollment:
+          title: "Enrollment Group"
+          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
+        planning:
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
+        other:
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+        superset_principle:
+          title: "Superset Principle"
+          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+        sticky_enrollment:
+          title: "Sticky Enrollment"
+          description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
+      phase1:
+        title: "1. Choose Your Setup Method"
+        campaigns:
+          title: "Registration Campaigns"
+          description: "Automated allocation with eligibility rules and preference support"
+          benefits:
+            - "Review registrations before finalization"
+            - "Eligibility rules (e.g., performance check, email verification)"
+            - "Students rank preferences for groups"
+            - "Time-bounded registration window"
+        skip_campaigns:
+          title: "Skip Campaigns"
+          description: "Manual control or self-enrollment from the start"
+          benefits:
+            - "Manual management: Add/remove students directly anytime"
+            - "Self-materialization: Students pick groups themselves"
+            - "No eligibility checks or preference ranking"
+            - "Good for small groups or simple enrollment"
+      phase2:
+        title: "2. What Happens Next"
+        campaigns_during: "Adding/removing members: Locked during campaign"
+        campaigns_after: "Adding/removing members: Unlocked after completion"
+        direct_always: "Adding/removing members: Always editable"
+      phase3:
+        title: "3. Available Anytime (After Campaigns)"
+        description: "Once campaigns complete, both paths have the same options:"
+        options:
+          - "Manual adjustments: Add or remove individual students"
+          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Fine-tune allocations as needed"
     actions:
       global_roster: 'Global Roster'
       assign: 'Assign'
@@ -72,16 +122,32 @@ en:
       confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
+    cohorts:
+      with_lecture_enrollment_title: "With Lecture Enrollment"
+      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
+      without_lecture_enrollment_title: "Without Lecture Enrollment"
+      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      with_lecture_enrollment: "With Lecture Enrollment"
+      without_lecture_enrollment: "Without Lecture Enrollment"
+      propagate_to_lecture: "With automatic lecture enrollment"
+      propagates_short: "Enrollment"
+      propagates_hint: "Members of this cohort serve as lecture participants"
+      lecture_enrollment: "Lecture Enrollment"
+      attributes:
+        propagate_to_lecture: "Students are automatically enrolled in the course"
+      help:
+        enrollment: "If the course has no tutorials or talks, a registration cohort can be used. Students are automatically enrolled in the course."
+        planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
+        other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
+        propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'
     candidates:
-      title: 'Unassigned Candidates'
-      help: 'Students who registered via a completed campaign but are not currently assigned to any group.'
-      empty: 'No unassigned candidates found.'
+      title: 'Unallocated Registrations'
+      help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
+      empty: 'No unallocated registrations found.'
       no_prefs: 'No preferences'
-      previously_assigned_tooltip: 'Previously assigned'
-      show_previously_assigned: 'Show %{count} previously assigned candidates'
     manual_enrollment:
       title: 'Manual Enrollment'
       description: 'Manually add a student to a group. This is useful for late-comers.'
@@ -98,21 +164,6 @@ en:
       email: 'Email'
       groups: 'Groups'
       preferences: 'Preferences'
-      actions: 'Actions'
-    status_values:
-      manual: "Manual"
-      campaign: "Campaign: %{status}"
-      campaign_statuses:
-        draft: "Draft"
-        open: "Open"
-        closed: "Closed"
-        processing: "Allocating"
-        completed: "Active"
-      self_materialization:
-        disabled: "Self-Enrollment: Disabled"
-        add_only: "Self-Enrollment: Add Only"
-        remove_only: "Self-Enrollment: Remove Only"
-        add_and_remove: "Self-Enrollment: Add & Remove"
       actions: 'Actions'
     manage: 'Manage'
     self_materialization:
@@ -158,6 +209,7 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
+      purpose_change_constrained_by_propagate: "The available types depend on whether students are added to the course roster. This setting cannot be changed."
       cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
@@ -176,15 +228,18 @@ en:
       user_not_found: "Student not found."
       user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
-      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+      campaign_associated: "Self-enrollment is not available because this group is part of a registration campaign."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
+      lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
+      cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to campaign mode. Please disable self-enrollment first or keep skip campaigns enabled."
     warnings:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
       setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:
       updated: "Settings updated."

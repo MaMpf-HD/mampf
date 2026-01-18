@@ -1,7 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="lecture-pane-header mb-0">
     <%= t("registration.campaign.index.card_title") %>
-    <%= helpdesk(t("registration.campaign.helpdesk.campaigns"), false) %>
   </h3>
   <%= link_to t("registration.campaign.index.new_campaign"),
               new_lecture_registration_campaign_path(lecture),
@@ -9,6 +8,7 @@
               role: "button",
               data: { turbo_stream: true } %>
 </div>
+
 <div id="campaigns_container">
   <% if local_assigns[:new_campaign] %>
     <%= render "registration/campaigns/card_body_form", campaign: new_campaign, lecture: lecture %>

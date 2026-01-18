@@ -12,6 +12,12 @@ RSpec.describe(Cohort, type: :model) do
       expect(cohort.errors[:title]).to be_present
     end
 
+    it "is invalid without a purpose" do
+      cohort = build(:cohort, purpose: nil)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
+    end
+
     it "is invalid with a negative capacity" do
       cohort = build(:cohort, capacity: -1)
       expect(cohort).not_to be_valid
@@ -21,6 +27,133 @@ RSpec.describe(Cohort, type: :model) do
     it "is valid with a nil capacity" do
       cohort = build(:cohort, capacity: nil)
       expect(cohort).to be_valid
+    end
+  end
+
+  describe "purpose enum" do
+    it "supports general purpose" do
+      cohort = create(:cohort, :general)
+      expect(cohort.general?).to be(true)
+    end
+
+    it "supports enrollment purpose" do
+      cohort = create(:cohort, :enrollment)
+      expect(cohort.enrollment?).to be(true)
+    end
+
+    it "supports planning purpose" do
+      cohort = create(:cohort, :planning)
+      expect(cohort.planning?).to be(true)
+    end
+  end
+
+  describe "propagate_to_lecture immutability" do
+    it "cannot be changed after creation" do
+      cohort = create(:cohort, propagate_to_lecture: false)
+
+      expect { cohort.propagate_to_lecture = true }.to raise_error(ActiveRecord::ReadonlyAttributeError)
+    end
+  end
+
+  describe "purpose change validation" do
+    context "when changing to enrollment purpose" do
+      it "is valid if propagate_to_lecture is true" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: true)
+        cohort.purpose = :enrollment
+
+        expect(cohort).to be_valid
+      end
+
+      it "is invalid if propagate_to_lecture is false" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.purpose = :enrollment
+
+        expect(cohort).not_to be_valid
+        expect(cohort.errors[:purpose]).to be_present
+      end
+    end
+
+    context "when changing to planning purpose" do
+      it "is valid if propagate_to_lecture is false" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.purpose = :planning
+
+        expect(cohort).to be_valid
+      end
+
+      it "is invalid if propagate_to_lecture is true" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: true)
+        cohort.purpose = :planning
+
+        expect(cohort).not_to be_valid
+        expect(cohort.errors[:purpose]).to be_present
+      end
+    end
+
+    context "when changing to general purpose" do
+      it "is always valid regardless of propagate_to_lecture" do
+        cohort_with_propagate = create(:cohort, purpose: :enrollment, propagate_to_lecture: true)
+        cohort_with_propagate.purpose = :general
+        expect(cohort_with_propagate).to be_valid
+
+        cohort_without_propagate = create(:cohort, purpose: :planning, propagate_to_lecture: false)
+        cohort_without_propagate.purpose = :general
+        expect(cohort_without_propagate).to be_valid
+      end
+    end
+
+    context "when purpose is not changed" do
+      it "does not run validation" do
+        cohort = create(:cohort, purpose: :general, propagate_to_lecture: false)
+        cohort.title = "New Title"
+
+        expect(cohort).to be_valid
+      end
+    end
+  end
+
+  describe "database constraints" do
+    it "prevents planning cohorts from propagating (via validation)" do
+      cohort = build(:cohort, purpose: :planning, propagate_to_lecture: true)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
+    end
+
+    it "enforces enrollment cohorts must propagate (via validation)" do
+      cohort = build(:cohort, purpose: :enrollment, propagate_to_lecture: false)
+      expect(cohort).not_to be_valid
+      expect(cohort.errors[:purpose]).to be_present
+    end
+
+    it "allows general cohorts with either propagation setting" do
+      expect(build(:cohort, purpose: :general, propagate_to_lecture: false)).to be_valid
+      expect(build(:cohort, purpose: :general, propagate_to_lecture: true)).to be_valid
+    end
+
+    context "when validation is bypassed" do
+      it "database constraint prevents planning cohorts from propagating" do
+        expect do
+          cohort = Cohort.new(
+            title: "Test",
+            purpose: :planning,
+            propagate_to_lecture: true,
+            context: create(:lecture)
+          )
+          cohort.save(validate: false)
+        end.to raise_error(ActiveRecord::StatementInvalid, /planning_cohorts_must_not_propagate/)
+      end
+
+      it "database constraint enforces enrollment cohorts must propagate" do
+        expect do
+          cohort = Cohort.new(
+            title: "Test",
+            purpose: :enrollment,
+            propagate_to_lecture: false,
+            context: create(:lecture)
+          )
+          cohort.save(validate: false)
+        end.to raise_error(ActiveRecord::StatementInvalid, /enrollment_cohorts_must_propagate/)
+      end
     end
   end
 

@@ -1,6 +1,7 @@
-<div>
-  <%= render "roster/components/groups_tab/workflow_info", component: component %>
+<%= render "roster/components/workflow_help" %>
+<%= render "roster/components/group_types_help", lecture: component.lecture %>
 
+<div>
   <% component.sections.each_with_index do |group, index| %>
     <div class="card section-card mb-4">
       <%= render "roster/components/groups_tab/group_header",

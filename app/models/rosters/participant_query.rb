@@ -1,4 +1,5 @@
 module Rosters
+  # Service object to query participants of a Lecture with filtering options.
   class ParticipantQuery
     Result = Struct.new(:scope, :total_count, :unassigned_count, :filter_mode, keyword_init: true)
 
