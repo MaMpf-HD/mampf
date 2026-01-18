@@ -165,21 +165,6 @@ en:
       groups: 'Groups'
       preferences: 'Preferences'
       actions: 'Actions'
-    status_values:
-      manual: "Manual"
-      campaign: "Campaign: %{status}"
-      campaign_statuses:
-        draft: "Draft"
-        open: "Open"
-        closed: "Closed"
-        processing: "Allocating"
-        completed: "Active"
-      self_materialization:
-        disabled: "Self-Enrollment: Disabled"
-        add_only: "Self-Enrollment: Add Only"
-        remove_only: "Self-Enrollment: Remove Only"
-        add_and_remove: "Self-Enrollment: Add & Remove"
-      actions: 'Actions'
     manage: 'Manage'
     self_materialization:
       modes:

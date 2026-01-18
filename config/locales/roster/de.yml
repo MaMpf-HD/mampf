@@ -167,21 +167,6 @@ de:
       groups: 'Gruppen'
       preferences: 'Präferenzen'
       actions: 'Aktionen'
-    status_values:
-      manual: "Manuell"
-      campaign: "Anmeldung: %{status}"
-      campaign_statuses:
-        draft: "Entwurf"
-        open: "Offen"
-        closed: "Geschlossen"
-        processing: "Zuweisung läuft"
-        completed: "Abgeschlossen"
-      self_materialization:
-        disabled: "Selbsteinschreibung: Deaktiviert"
-        add_only: "Selbsteinschreibung: Nur Eintragen"
-        remove_only: "Selbsteinschreibung: Nur Austragen"
-        add_and_remove: "Selbsteinschreibung: Ein- & Austragen"
-      actions: 'Aktionen'
     manage: 'Verwalten'
     self_materialization:
       modes:
