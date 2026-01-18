@@ -18,15 +18,60 @@ en:
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
-    workflow:
-      title: "How does the assignment process work?"
-      standard_method: "Standard Workflow (Registration Campaigns)"
-      step_1_html: "Switch to the %{link} tab and create a new campaign."
-      step_2: "You can create tutorials or talks directly there (quick-create) or select existing ones."
-      step_3: "Students register their preferences or sign up directly (depending on mode)."
-      step_4: "Spots are allocated automatically. You can fine-tune results here afterwards."
-      manual_method: "Direct Management"
-      manual_desc: "For individual groups, you can skip campaigns to assign students directly from the start. Note: This is only possible as long as the group has not been part of a registration campaign. Once students are added, the group can no longer be used for registration campaigns."
+    roster_help:
+      title: "Roster Management Workflow"
+      toggle: "Workflow"
+      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      group_types:
+        toggle: "Group Types"
+        title: "Available Group Types"
+        intro: "Different group types serve different purposes in your course structure."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice groups. Students are automatically added to the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers are automatically added to the course roster."
+        enrollment:
+          title: "Enrollment Group"
+          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
+        planning:
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
+        other:
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+      phase1:
+        title: "1. Choose Your Setup Method"
+        campaigns:
+          title: "Registration Campaigns"
+          description: "Automated allocation with eligibility rules and preference support"
+          benefits:
+            - "Review registrations before finalization"
+            - "Eligibility rules (e.g., performance check, email verification)"
+            - "Students rank preferences for groups"
+            - "Time-bounded registration window"
+        skip_campaigns:
+          title: "Skip Campaigns"
+          description: "Manual control or self-enrollment from the start"
+          benefits:
+            - "Manual management: Add/remove students directly anytime"
+            - "Self-materialization: Students pick groups themselves"
+            - "No eligibility checks or preference ranking"
+            - "Good for small groups or simple enrollment"
+      phase2:
+        title: "2. What Happens Next"
+        campaigns_during: "Adding/removing members: Locked during campaign"
+        campaigns_after: "Adding/removing members: Unlocked after completion"
+        direct_always: "Adding/removing members: Always editable"
+      phase3:
+        title: "3. Available Anytime (After Campaigns)"
+        description: "Once campaigns complete, both paths have the same options:"
+        options:
+          - "Manual adjustments: Add or remove individual students"
+          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Fine-tune allocations as needed"
     actions:
       global_roster: 'Global Roster'
       assign: 'Assign'
@@ -51,12 +96,10 @@ en:
       participants: 'Participants'
       empty: 'No participants in this group.'
     candidates:
-      title: 'Unallocated Candidates'
-      help: 'Students who registered via a completed campaign but are not currently allocated to any group.'
-      empty: 'No unallocated candidates found.'
+      title: 'Unallocated Registrations'
+      help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
+      empty: 'No unallocated registrations found.'
       no_prefs: 'No preferences'
-      previously_assigned_tooltip: 'Previously assigned'
-      show_previously_assigned: 'Show %{count} previously assigned candidates'
     manual_enrollment:
       title: 'Manual Enrollment'
       description: 'Manually add a student to a group. This is useful for late-comers.'

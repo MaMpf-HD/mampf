@@ -35,28 +35,34 @@ RSpec.describe(RosterCandidatesComponent, type: :component) do
       expect(rendered_content).to include("Fresh User")
     end
 
-    it "returns correct candidates" do
-      expect(component.candidates).to include(fresh_user, prev_user)
-      expect(component.candidates).not_to include(curr_user)
+    it "returns only fresh candidates (never materialized, not on lecture roster)" do
+      expect(component.candidates).to include(fresh_user)
+      expect(component.candidates).not_to include(prev_user, curr_user)
     end
 
-    it "groups candidates by type" do
-      groups = component.grouped_candidates
-      expect(groups.size).to eq(1)
-      expect(groups.first[:type]).to eq(:tutorials)
-      expect(groups.first[:users]).to include(fresh_user, prev_user)
+    it "excludes users already on lecture roster" do
+      # Add fresh_user to lecture roster manually
+      lecture.members << fresh_user
+
+      # Should no longer appear in candidates
+      expect(component.candidates).not_to include(fresh_user)
     end
 
-    it "identifies fresh candidates" do
-      users = component.candidates
-      expect(component.fresh_candidates(users)).to include(fresh_user)
-      expect(component.fresh_candidates(users)).not_to include(prev_user)
-    end
+    it "excludes users allocated to non-propagating cohorts" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+      cohort_item = create(:registration_item, registration_campaign: campaign,
+                                               registerable: cohort)
+      cohort_user = create(:user, email: "cohort@example.com", name: "Cohort User")
 
-    it "identifies previously assigned candidates" do
-      users = component.candidates
-      expect(component.previously_assigned_candidates(users)).to include(prev_user)
-      expect(component.previously_assigned_candidates(users)).not_to include(fresh_user)
+      # User registered and was allocated to non-propagating cohort
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              user: cohort_user,
+                                              registration_item: cohort_item,
+                                              materialized_at: Time.current)
+      cohort.members << cohort_user
+
+      # Should not appear in candidates (materialized_at is set)
+      expect(component.candidates).not_to include(cohort_user)
     end
 
     describe "#add_member_path" do

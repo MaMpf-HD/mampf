@@ -1,0 +1,77 @@
+<div class="collapse mb-3" id="roster-group-types-collapse">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title mb-3"><%= t('roster.roster_help.group_types.title') %></h5>
+      <p class="text-muted mb-3"><%= t('roster.roster_help.group_types.intro') %></p>
+
+      <div class="row g-3">
+        <% unless lecture.seminar? %>
+          <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+              <h6 class="fw-bold mb-2">
+                <i class="bi bi-person-lines-fill me-2"></i>
+                <%= t("roster.roster_help.group_types.tutorials.title") %>
+              </h6>
+              <p class="mb-0 text-muted small">
+                <%= t("roster.roster_help.group_types.tutorials.description") %>
+              </p>
+            </div>
+          </div>
+        <% else %>
+          <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+              <h6 class="fw-bold mb-2">
+                <i class="bi bi-mic-fill me-2"></i>
+                <%= t("roster.roster_help.group_types.talks.title") %>
+              </h6>
+              <p class="mb-0 text-muted small">
+                <%= t("roster.roster_help.group_types.talks.description") %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-box-arrow-in-right me-2"></i>
+              <%= t("roster.roster_help.group_types.enrollment.title") %>
+            </h6>
+            <p class="mb-0 text-muted small">
+              <%= t("roster.roster_help.group_types.enrollment.description") %>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-clipboard-data me-2"></i>
+              <%= t("roster.roster_help.group_types.planning.title") %>
+            </h6>
+            <p class="mb-0 text-muted small">
+              <%= t("roster.roster_help.group_types.planning.description") %>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-collection me-2"></i>
+              <%= t("roster.roster_help.group_types.other.title") %>
+            </h6>
+            <p class="mb-0 text-muted small">
+              <%= t("roster.roster_help.group_types.other.description") %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info mt-3 mb-0" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <%= t('roster.roster_help.group_types.note') %>
+      </div>
+    </div>
+  </div>
+</div>
