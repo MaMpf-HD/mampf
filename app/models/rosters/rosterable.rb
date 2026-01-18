@@ -281,21 +281,27 @@ module Rosters
       def enforce_consistency_between_modes
         return unless respond_to?(:skip_campaigns)
 
-        # If switching back to campaign mode (skip_campaigns: false),
-        # self-materialization MUST be disabled to prevent conflicts.
-        # This ensures that campaign mode has full control.
-        if skip_campaigns_changed? && !skip_campaigns?
+        # Detect conflicting user intent - both changed in same request
+        if skip_campaigns_changed? && self_materialization_mode_changed? &&
+           !skip_campaigns? && !self_materialization_mode_disabled?
+          errors.add(:base,
+                     I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization"))
+          return
+        end
+
+        # Auto-disable self-materialization when switching to campaign mode
+        # (only if user didn't explicitly change self_materialization_mode)
+        if skip_campaigns_changed? && !skip_campaigns? && !self_materialization_mode_changed?
           self.self_materialization_mode = :disabled
           return
         end
 
-        # If enabling self-materialization on a group that has NEVER been in a campaign,
-        # we must set skip_campaigns=true to prevent it from being added to campaigns.
-        # (This is the "Before Campaign" scenario - direct management from the start)
-        # After-campaign scenarios can keep skip_campaigns=false since they already have history.
-        return unless self_materialization_mode_changed? && !self_materialization_mode_disabled?
-
-        self.skip_campaigns = true unless in_campaign?
+        # Auto-enable skip_campaigns when enabling self-materialization
+        # (only if user didn't explicitly change skip_campaigns)
+        if self_materialization_mode_changed? && !self_materialization_mode_disabled? &&
+           !skip_campaigns_changed? && !in_campaign?
+          self.skip_campaigns = true
+        end
       end
   end
 end

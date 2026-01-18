@@ -247,6 +247,7 @@ en:
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
+      cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to campaign mode. Please disable self-enrollment first or keep skip campaigns enabled."
     warnings:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'

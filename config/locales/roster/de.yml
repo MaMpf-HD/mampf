@@ -251,6 +251,7 @@ de:
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
+      cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktivieren Sie zuerst die Selbsteinschreibung oder behalten Sie 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
