@@ -137,11 +137,13 @@ module Roster
         params[:group_type]&.to_sym || @rosterable.roster_group_type
       end
 
-      if @rosterable.update(self_materialization_mode: mode)
-        flash.now[:notice] = t("roster.messages.updated")
-      else
-        flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
-        @rosterable.reload
+      ActiveRecord::Base.transaction do
+        if @rosterable.update(self_materialization_mode: mode)
+          flash.now[:notice] = t("roster.messages.updated")
+        else
+          flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
+          @rosterable.reload
+        end
       end
 
       render turbo_stream: [
