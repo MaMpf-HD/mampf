@@ -43,12 +43,10 @@ de:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
     candidates:
-      title: 'Nicht zugeteilte Kandidaten'
-      help: 'Studierende, die sich über ein abgeschlossenes Anmeldeverfahren angemeldet haben, aber aktuell keiner Gruppe zugeteilt sind.'
-      empty: 'Keine nicht zugeteilten Kandidaten gefunden.'
+      title: 'Unzugeteilte Anmeldungen'
+      help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
+      empty: 'Keine unzugeteilten Anmeldungen gefunden.'
       no_prefs: 'Keine Präferenzen'
-      previously_assigned_tooltip: 'War bereits zugewiesen'
-      show_previously_assigned: '%{count} ehemals zugewiesene Kandidaten anzeigen'
     manual_enrollment:
       title: 'Manuelle Einschreibung'
       description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'

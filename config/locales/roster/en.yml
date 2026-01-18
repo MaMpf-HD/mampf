@@ -43,12 +43,10 @@ en:
       participants: 'Participants'
       empty: 'No participants in this group.'
     candidates:
-      title: 'Unallocated Candidates'
-      help: 'Students who registered via a completed campaign but are not currently allocated to any group.'
-      empty: 'No unallocated candidates found.'
+      title: 'Unallocated Registrations'
+      help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
+      empty: 'No unallocated registrations found.'
       no_prefs: 'No preferences'
-      previously_assigned_tooltip: 'Previously assigned'
-      show_previously_assigned: 'Show %{count} previously assigned candidates'
     manual_enrollment:
       title: 'Manual Enrollment'
       description: 'Manually add a student to a group. This is useful for late-comers.'
