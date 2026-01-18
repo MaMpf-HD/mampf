@@ -107,7 +107,7 @@ class User < ApplicationRecord
 
   # streaks can only be positive, and activities in the past
   validates :activity_streak, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :last_activity, inclusion: { in: (..Time.zone.now) }
+  validates :last_activity, inclusion: { in: (..5.minutes.from_now) }
 
   # set some default values before saving if they are not set
   before_save :set_defaults
@@ -806,7 +806,8 @@ class User < ApplicationRecord
     return if activity_this_week?
 
     new_streak = activity_streak + 1
-    update(activity_streak: new_streak)
+    # Time.zone.now is a little flaky with the validation
+    update(activity_streak: new_streak, last_activity: Time.zone.now)
   end
 
   private
