@@ -143,6 +143,36 @@ module RosterHelper
     end
   end
 
+  def self_materialization_state(item, campaign)
+    active_campaign = campaign && !campaign.completed?
+    disabled = active_campaign || (!item.skip_campaigns? && !item.in_campaign?)
+
+    tooltip = if active_campaign
+      t("roster.tooltips.self_materialization_disabled_campaign")
+    elsif !item.skip_campaigns? && !item.in_campaign?
+      t("roster.tooltips.self_materialization_disabled_fresh")
+    else
+      t("roster.self_materialization.label")
+    end
+
+    { disabled: disabled, tooltip: tooltip }
+  end
+
+  def skip_campaigns_state(item)
+    can_skip = item.can_skip_campaigns?
+    can_unskip = item.can_unskip_campaigns?
+    disabled = !(item.skip_campaigns? ? can_unskip : can_skip)
+    icon_class = item.skip_campaigns? ? "bi-calendar-x" : "bi-calendar-check"
+
+    tooltip = if disabled
+      item.skip_campaigns? ? t("roster.disable_skip_campaigns_hint") : t("roster.enable_skip_campaigns_hint")
+    else
+      item.skip_campaigns? ? t("roster.tooltips.skip_campaigns_enabled") : t("roster.tooltips.skip_campaigns_disabled")
+    end
+
+    { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
+  end
+
   def cohort_type_options(cohort = nil)
     available_types = if cohort&.persisted?
       Cohort::TYPE_TO_PURPOSE.select do |_type, purpose|
