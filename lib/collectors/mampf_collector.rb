@@ -103,15 +103,17 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
         # Build string of all PIDs (Master + Children) for the ps command
         all_pids = worker_pids_str.empty? ? master_pid.to_s : "#{master_pid},#{worker_pids_str}"
 
-        # ps command: Returns PID, CPU and RAM (RSS)
-        output = `ps -p #{all_pids} -o pid=,%cpu=,rss=`.strip
+        # ps command: Returns PID, CPU, RAM (RSS) and COMMAND
+        output = `ps -p #{all_pids} -o pid=,%cpu=,rss=,comm=`.strip
 
         unless output.empty?
           output.each_line do |line|
             parts = line.split
-            next unless parts.length == 3
+            next unless parts.length >= 4
 
             current_pid = parts[0].to_i
+            next if parts[3] == "tee"
+
             cpu = parts[1].to_f
             ram_mb = parts[2].to_f / 1024.0
 
