@@ -44,13 +44,13 @@ module Roster
 
     def self_add
       ensure_rosterable_unlocked!
+      ensure_rosterable_not_full!
       ensure_rosterable_allow_self_add!
 
       user = current_user
       Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: false)
 
       flash.now[:notice] = t("roster.messages.user_added")
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       # need to re-render the roster partial to show the updated roster
       render_user_update(params[:turbo_frame],
