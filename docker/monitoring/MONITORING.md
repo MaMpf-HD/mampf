@@ -13,16 +13,15 @@ Standard MaMpf Login
 
 ### TODOO
 
-1. Cleanup legende dashbord
-2. Cleanup Docker Networking fragments?
-3. users ubennenen zu registered users
-4. add online users
-5. Mimir Datenbank
-6. add other metrices:
+- Cleanup legende dashbord
+- users ubennenen zu registered users
+- add online users
+- Mimir Datenbank
+- add other metrices:
     - http metrics
     - request duration
     - alerts
     - error rate
     - singnups...
     - ...
-7. Node exporter?
+-  Node exporter?

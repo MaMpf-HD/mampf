@@ -131,7 +131,3 @@ volumes:
   sprockets-cache:
   bundle_cache:
   
-# networks:
-#   default:
-#     name: mampf_development
-#     driver: bridge
