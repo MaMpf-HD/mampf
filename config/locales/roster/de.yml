@@ -124,9 +124,12 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
     cohorts:
-      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      kinds:
+        with_enrollment: "Gruppe mit Einschreibung"
+        without_enrollment: "Gruppe ohne Einschreibung"
+      with_lecture_enrollment_title: "Mit Einschreibung"
       with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
-      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_title: "Ohne Einschreibung"
       without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
       with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
@@ -134,6 +137,13 @@ de:
       propagates_short: "Einschreibung"
       propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
       lecture_enrollment: "Veranstaltungseinschreibung"
+      attributes:
+        propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
+      help:
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende werden automatisch in die Veranstaltung eingeschrieben."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Veranstaltung eingeschrieben."
+        other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Sie bestimmen, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
+        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktivieren Sie dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
       attributes:
         propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
       help:
@@ -251,17 +261,3 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
-    cohorts:
-      kinds:
-        with_enrollment: "Gruppe mit Einschreibung"
-        without_enrollment: "Gruppe ohne Einschreibung"
-      with_lecture_enrollment_title: "Mit Einschreibung"
-      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
-      without_lecture_enrollment_title: "Ohne Einschreibung"
-      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
-      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
-      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
-      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
-      propagates_short: "Einschreibung"
-      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
-      lecture_enrollment: "Veranstaltungseinschreibung"
