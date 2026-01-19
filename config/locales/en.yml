@@ -3553,6 +3553,8 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    self_register_talk: Register for this talk
+    self_remove_talk: Unregister from this talk
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
