@@ -40,8 +40,8 @@
 }
 
 .section-header {
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
+  background: linear-gradient(to right, #e7f1ff, #f0f4ff);
+  border-bottom: 2px solid #dee2e6;
   padding: 1.5rem;
   // Border radius is handled by the parent card's overflow: hidden
 }
