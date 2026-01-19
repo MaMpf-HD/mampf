@@ -35,13 +35,17 @@
 
     <div class="mb-3" data-cohort-purpose-target="propagateContainer" style="display: none;">
       <div class="form-check">
+        <% is_locked = params.dig(:cohort, :propagate_to_lecture).present? %>
         <%= f.check_box :propagate_to_lecture,
                         class: "form-check-input",
-                        disabled: cohort.persisted?,
+                        disabled: cohort.persisted? || is_locked,
                         data: { cohort_purpose_target: "propagateCheckbox" } %>
         <%= f.label :propagate_to_lecture,
                     t("roster.cohorts.attributes.propagate_to_lecture"),
                     class: "form-check-label" %>
+        <% if is_locked %>
+          <%= f.hidden_field :propagate_to_lecture %>
+        <% end %>
       </div>
       <small class="form-text text-muted">
         <%= t("roster.cohorts.help.propagate_to_lecture") %>

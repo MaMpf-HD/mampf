@@ -171,7 +171,6 @@ class CohortsController < ApplicationController
       if @cohort.persisted?
         streams.concat(service.roster_changed(group_type: group_type, flash: flash))
         streams << refresh_campaigns_index_stream(@lecture)
-        streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                         partial: "cohorts/modal_form",
