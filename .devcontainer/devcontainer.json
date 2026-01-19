@@ -15,6 +15,7 @@
     "name": "MaMpf",
     "dockerComposeFile": [
         "../docker/development/compose.yml",
+        "../docker/monitoring/docker-compose.yml",
         "compose.devcontainer.yml"
     ],
     "service": "app",

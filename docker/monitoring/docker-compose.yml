@@ -3,31 +3,32 @@ version: "3.8"
 services:
   prometheus:
     image: prom/prometheus
-    container_name: prometheus
     ports:
       - "9090:9090"
-    networks:
-      - mampf_development
+    # networks:
+    #   - mampf_development
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
     restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
 
   grafana:
-      image: grafana/grafana
-      volumes:
-        - ./grafana/provisioning:/etc/grafana/provisioning
-        - ./grafana/dashboards:/var/lib/grafana/dashboards
-      container_name: grafana
-      ports:
-        - "2345:2345"
-      networks:
-        - mampf_development
-      environment:
-        - GF_SERVER_HTTP_PORT=2345
-      restart: unless-stopped
+    image: grafana/grafana
+    volumes:
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "2345:2345"
+    # networks:
+    #   - mampf_development
+    environment:
+      - GF_SERVER_HTTP_PORT=2345
+    restart: unless-stopped
 
-networks:
-  mampf_development:
-    external: true
+# networks:
+#   mampf_development:
+#     external: true
