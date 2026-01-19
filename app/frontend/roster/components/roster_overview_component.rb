@@ -338,22 +338,25 @@ class RosterOverviewComponent < ViewComponent::Base
         label = @lecture.seminar? ? Talk.model_name.human : Tutorial.model_name.human
         url = if @lecture.seminar?
           Rails.application.routes.url_helpers.new_talk_path(lecture_id: @lecture.id,
-                                                             group_type: @group_type)
+                                                             group_type: @group_type,
+                                                             format: :turbo_stream)
         else
           Rails.application.routes.url_helpers.new_tutorial_path(lecture_id: @lecture.id,
-                                                                 group_type: @group_type)
+                                                                 group_type: @group_type,
+                                                                 format: :turbo_stream)
         end
-        actions << { label: label, url: url }
+        actions << { text: label, path: url }
       end
 
       # 2. Cohort (Enrolled) Action
       if cohorts_enabled?
         actions << {
-          label: I18n.t("roster.cohorts.kinds.with_enrollment"), # "Group with enrollment"
-          url: Rails.application.routes.url_helpers
-                    .new_cohort_path(lecture_id: @lecture.id,
-                                     group_type: @group_type,
-                                     cohort: { propagate_to_lecture: true })
+          text: I18n.t("roster.cohorts.kinds.with_enrollment"), # "Group with enrollment"
+          path: Rails.application.routes.url_helpers
+                     .new_cohort_path(lecture_id: @lecture.id,
+                                      group_type: @group_type,
+                                      format: :turbo_stream,
+                                      cohort: { propagate_to_lecture: true })
         }
       end
 
@@ -364,10 +367,12 @@ class RosterOverviewComponent < ViewComponent::Base
       return [] unless cohorts_enabled?
 
       [{
-        label: I18n.t("roster.cohorts.kinds.without_enrollment"), # "Group without enrollment"
-        url: Rails.application.routes.url_helpers
-                  .new_cohort_path(lecture_id: @lecture.id,
-                                   group_type: @group_type, cohort: { propagate_to_lecture: false })
+        text: I18n.t("roster.cohorts.kinds.without_enrollment"), # "Group without enrollment"
+        path: Rails.application.routes.url_helpers
+                   .new_cohort_path(lecture_id: @lecture.id,
+                                    group_type: @group_type,
+                                    format: :turbo_stream,
+                                    cohort: { propagate_to_lecture: false })
       }]
     end
 
