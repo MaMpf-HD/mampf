@@ -227,6 +227,7 @@ module Roster
 
       def determine_target_rosterable(active_tab, rosterable)
         return nil if active_tab == :enrollment
+        return nil if active_tab == :participants
         return nil if rosterable.is_a?(Lecture)
 
         rosterable
