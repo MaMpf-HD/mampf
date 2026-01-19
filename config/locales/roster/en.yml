@@ -48,10 +48,45 @@ en:
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
+    lifecycle_help:
+      title: "Roster Lifecycle"
+      toggle: "Lifecycle"
+      intro: "Follow these steps to set up and manage your course roster."
+      phase1:
+        title: "Group Creation"
+        description_html: "Create your %{link} using the dashboard below."
+        link_text: "groups"
+      phase2:
+        title: "Enrollment"
+        description_html: "Choose one of the %{link} to decide how students join your groups."
+        link_text: "Enrollment Strategies"
+      phase3:
+        title: "Management"
+        description_html: "Manage your rosters manually throughout the semester. See %{link} for details."
+        link_text: "Management"
+    management_help:
+      title: "Management"
+      toggle: "Management"
+      intro: "Information about lock periods and flexible group settings."
+      phase1:
+        title: "Lock Periods"
+        with_campaign: "With Registration Campaign"
+        without_campaign: "Without Registration Campaign"
+        campaigns_during: "Add/Remove Students: Locked during campaign"
+        campaigns_after: "Add/Remove Students: Unlocked after completion"
+        direct_always: "Add/Remove Students: Always possible"
+      phase2:
+        title: "Settings & Exceptions"
+        description: "After campaigns complete, both paths offer the same options:"
+        options:
+          - "Manual Adjustments: Add or remove individual students"
+          - "Self-Enrollment: Students choose their own group from available spots"
+          - "Fine-tune allocations as needed"
     roster_help:
-      title: "Roster Management Workflow"
-      toggle: "Workflow"
-      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      title: "Enrollment Strategies"
+      toggle: "Enrollment Strategies"
+      intro: "This guide compares the different ways to populate your groups."
+      mode_hint: "When using a registration campaign, simply add all relevant groups to it. It is possible to have multiple campaigns, but each group can only belong to one campaign. You can decide per group whether to use a campaign or manual/self-enrollment."
       group_types:
         toggle: "Group Types"
         title: "Available Group Types"
@@ -81,20 +116,20 @@ en:
         title: "1. Choose Your Setup Method"
         campaigns:
           title: "Registration Campaigns"
-          description: "Automated allocation with eligibility rules and preference support"
+          description: "Time-bounded process with rules"
           benefits:
-            - "Review registrations before finalization"
-            - "Eligibility rules (e.g., performance check, email verification)"
-            - "Students rank preferences for groups"
-            - "Time-bounded registration window"
+            - "Allocation via Preferences or FCFS"
+            - "Enforce eligibility rules (e.g. grades)"
+            - "Review registrations before allocation"
+            - "Roster entry after deadline"
         skip_campaigns:
           title: "Skip Campaigns"
-          description: "Manual control or self-enrollment from the start"
+          description: "Immediate, direct access"
           benefits:
-            - "Manual management: Add/remove students directly anytime"
-            - "Self-materialization: Students pick groups themselves"
-            - "No eligibility checks or preference ranking"
-            - "Good for small groups or simple enrollment"
+            - "Direct join only (FCFS)"
+            - "No eligibility checks"
+            - "Changes take effect immediately"
+            - "Immediate roster entry"
       phase2:
         title: "2. What Happens Next"
         campaigns_during: "Adding/removing members: Locked during campaign"
@@ -105,7 +140,7 @@ en:
         description: "Once campaigns complete, both paths have the same options:"
         options:
           - "Manual adjustments: Add or remove individual students"
-          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Control whether students can join or leave groups themselves"
           - "Fine-tune allocations as needed"
     actions:
       global_roster: 'Global Roster'
