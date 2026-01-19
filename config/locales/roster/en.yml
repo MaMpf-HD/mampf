@@ -209,6 +209,7 @@ en:
       skip_campaigns_enabled: "Skipping campaigns (click to use campaigns)"
       skip_campaigns_disabled: "Using campaigns (click to skip campaigns)"
     hints:
+      superset_exists: "Your course already involves tutorials or talks, so students are enrolled automatically. A separate enrollment group is usually not needed."
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
@@ -216,6 +217,8 @@ en:
       cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
+    empty_state_help: "No groups created yet. Use the 'Add' button to create one."
+    empty_state_links_html: "Need help? Read the %{workflow_link} or learn about %{group_types_link}."
     buttons:
       full_editor: "complete editor"
     errors:

@@ -220,6 +220,7 @@ de:
       skip_campaigns_enabled: "Überspringt Anmeldeverfahren (klicken um Anmeldeverfahren zu nutzen)"
       skip_campaigns_disabled: "Nutzt Anmeldeverfahren (klicken um Anmeldeverfahren zu überspringen)"
     hints:
+      superset_exists: "Ihre Veranstaltung beinhaltet bereits Tutorien oder Vorträge, wodurch Studierende automatisch eingeschrieben werden. Eine separate Anmeldungsgruppe ist meist nicht nötig."
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
@@ -227,6 +228,8 @@ de:
       cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
       cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
       cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+    empty_state_help: "Noch keine Gruppen erstellt. Nutzen Sie den 'Hinzufügen'-Button für neue Gruppen."
+    empty_state_links_html: "Hilfe benötigt? Lesen Sie den %{workflow_link} oder informieren Sie sich über %{group_types_link}."
     buttons:
       full_editor: "vollständigen Editor"
     errors:

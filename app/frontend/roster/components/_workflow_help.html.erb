@@ -1,4 +1,5 @@
-<div class="collapse mb-3" id="roster-workflow-collapse">
+<% show = local_assigns[:show_initially] || false %>
+<div class="collapse mb-3 <%= 'show' if show %>" id="roster-workflow-collapse">
   <div class="card">
     <div class="card-body">
       <h5 class="card-title mb-3"><%= t('roster.roster_help.title') %></h5>

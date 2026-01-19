@@ -315,6 +315,10 @@ class RosterOverviewComponent < ViewComponent::Base
     campaign_has_policies?(last_campaign)
   end
 
+  def all_groups_empty?
+    @lecture.tutorials.empty? && @lecture.talks.empty? && @lecture.cohorts.empty?
+  end
+
   private
 
     # Cached lookup for the last completed campaign of an item
