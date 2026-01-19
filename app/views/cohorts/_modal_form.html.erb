@@ -20,6 +20,7 @@
                    cohort_type_options(cohort),
                    { selected: cohort_type_from_purpose(cohort.purpose) },
                    class: "form-select",
+                   disabled: params.dig(:cohort, :purpose).present?,
                    data: {
                      cohort_purpose_target: "typeSelect",
                      registerable_type_help_target: "select",
