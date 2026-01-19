@@ -1,13 +1,13 @@
-<% component.subtables_for(group).each do |subtable| %>
-  <% if subtable[:title] %>
-    <div class="bg-light p-2 px-3 border-bottom fw-bold text-dark border-top d-flex align-items-center">
-      <%= subtable[:title] %>
-      <%= helpdesk(subtable[:help], false) if subtable[:help] %>
-    </div>
-  <% end %>
+<% if group[:items].any? %>
+  <% component.subtables_for(group).each do |subtable| %>
+    <% if subtable[:title] %>
+      <div class="bg-light p-2 px-3 border-bottom fw-bold text-dark border-top d-flex align-items-center">
+        <%= subtable[:title] %>
+        <%= helpdesk(subtable[:help], false) if subtable[:help] %>
+      </div>
+    <% end %>
 
-  <% if group[:items].any? %>
-  <div class="table-responsive">
+    <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
@@ -35,7 +35,7 @@
         </tbody>
       </table>
     </div>
-<% end %>
+  <% end %>
 <% else %>
   <div class="text-center text-muted p-4">
     <p class="mb-2"><%= t("roster.empty_state_help") %></p>
