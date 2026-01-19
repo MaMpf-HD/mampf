@@ -1,0 +1,69 @@
+<div class="collapse mb-3" id="roster-management-collapse">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title mb-3"><%= t('roster.management_help.title') %></h5>
+      <p class="text-muted mb-4"><%= t('roster.management_help.intro') %></p>
+
+      <!-- Phase 1: Lock Periods (Was Phase 2) -->
+      <div class="mb-4 text-center">
+        <h6 class="fw-bold text-secondary mb-3">
+          <i class="bi bi-lock me-2"></i>
+          <%= t('roster.management_help.phase1.title') %>
+        </h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="border border-primary rounded p-3 h-100">
+              <h6 class="fw-bold mb-3 text-primary"><%= t('roster.management_help.phase1.with_campaign') %></h6>
+              <div class="mb-2">
+                <span class="badge bg-warning text-dark">
+                  <i class="bi bi-lock me-1"></i>
+                  <%= t('roster.management_help.phase1.campaigns_during') %>
+                </span>
+              </div>
+              <div class="text-center fs-4 my-2 text-muted">↓</div>
+              <div>
+                <span class="badge bg-success">
+                  <i class="bi bi-unlock me-1"></i>
+                  <%= t('roster.management_help.phase1.campaigns_after') %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="border border-success rounded p-3 h-100">
+              <h6 class="fw-bold mb-3 text-success"><%= t('roster.management_help.phase1.without_campaign') %></h6>
+              <div class="d-flex align-items-center justify-content-center h-50 pt-4">
+                <span class="badge bg-success">
+                  <i class="bi bi-check-circle me-1"></i>
+                  <%= t('roster.management_help.phase1.direct_always') %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2: Exceptions (Was Phase 3) -->
+      <div class="mb-3">
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div class="border-top flex-grow-1"></div>
+          <i class="bi bi-sliders mx-3 text-muted fs-4"></i>
+          <div class="border-top flex-grow-1"></div>
+        </div>
+        <h6 class="fw-bold text-success mb-3">
+          <i class="bi bi-check2-square me-2"></i>
+          <%= t('roster.management_help.phase2.title') %>
+        </h6>
+        <div class="border border-success rounded p-3">
+          <p class="small mb-2"><%= t('roster.management_help.phase2.description') %></p>
+          <ul class="mb-0 small">
+            <% t('roster.management_help.phase2.options').each do |option| %>
+              <li><%= option %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

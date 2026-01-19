@@ -14,7 +14,7 @@
         </div>
 
         <!-- Phase 1: Structure -->
-        <div class="col-12 col-md-6 col-lg-3 position-relative" style="z-index: 1;">
+        <div class="col-12 col-md-6 col-lg-4 position-relative" style="z-index: 1;">
           <div class="card h-100 shadow-sm border-0">
             <div class="card-body text-center p-3">
               <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Phase 2: Enrollment -->
-        <div class="col-12 col-md-6 col-lg-3 position-relative" style="z-index: 1;">
+        <div class="col-12 col-md-6 col-lg-4 position-relative" style="z-index: 1;">
           <div class="card h-100 shadow-sm border-0">
             <div class="card-body text-center p-3">
               <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
@@ -41,40 +41,30 @@
               </div>
               <h6 class="fw-bold"><%= t('roster.lifecycle_help.phase2.title') %></h6>
               <p class="small text-muted mb-1">
-                <%= t('roster.lifecycle_help.phase2.description', link: "") %>
+                <%= t('roster.lifecycle_help.phase2.description_html',
+                      link: link_to(t('roster.lifecycle_help.phase2.link_text'),
+                                    "#roster-workflow-collapse",
+                                    data: { bs_toggle: "collapse" },
+                                    class: "fw-bold text-decoration-underline")) %>
               </p>
-              <a href="#roster-workflow-collapse" data-bs-toggle="collapse" class="small fw-bold text-decoration-underline stretched-link">
-                <%= t('roster.lifecycle_help.phase2.link_text') %>
-              </a>
             </div>
           </div>
         </div>
 
         <!-- Phase 3: Management -->
-        <div class="col-12 col-md-6 col-lg-3 position-relative" style="z-index: 1;">
+        <div class="col-12 col-md-6 col-lg-4 position-relative" style="z-index: 1;">
           <div class="card h-100 shadow-sm border-0">
             <div class="card-body text-center p-3">
-              <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
-                <i class="bi bi-lock fs-5"></i>
-              </div>
-              <h6 class="fw-bold"><%= t('roster.lifecycle_help.phase3.title') %></h6>
-              <p class="small text-muted mb-0">
-                <%= t('roster.lifecycle_help.phase3.description') %>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Phase 4: Exceptions -->
-        <div class="col-12 col-md-6 col-lg-3 position-relative" style="z-index: 1;">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="card-body text-center p-3">
-              <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+              <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
                 <i class="bi bi-sliders fs-5"></i>
               </div>
-              <h6 class="fw-bold"><%= t('roster.lifecycle_help.phase4.title') %></h6>
-              <p class="small text-muted mb-0">
-                <%= t('roster.lifecycle_help.phase4.description') %>
+              <h6 class="fw-bold"><%= t('roster.lifecycle_help.phase3.title') %></h6>
+              <p class="small text-muted mb-1">
+                <%= t('roster.lifecycle_help.phase3.description_html',
+                      link: link_to(t('roster.lifecycle_help.phase3.link_text'),
+                                    "#roster-management-collapse",
+                                    data: { bs_toggle: "collapse" },
+                                    class: "fw-bold text-decoration-underline")) %>
               </p>
             </div>
           </div>

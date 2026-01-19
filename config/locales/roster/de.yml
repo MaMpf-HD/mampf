@@ -28,18 +28,35 @@ de:
         link_text: "Gruppen"
       phase2:
         title: "Einschreibung"
-        description: "Entscheiden Sie, wie Studierende Ihren Gruppen beitreten. Siehe %{link} für Details."
+        description_html: "Wählen Sie eine der %{link}, um zu entscheiden, wie Studierende beitreten."
         link_text: "Einschreibemethoden"
       phase3:
         title: "Verwaltung"
-        description: "Gruppen in aktiven Kampagnen sind gesperrt. Sie werden danach automatisch zur manuellen Verwaltung freigegeben."
-      phase4:
-        title: "Ausnahmen"
-        description: "Einstellungen gelten pro Gruppe. Sie können 'Selbsteinschreibung' für einzelne Gruppen aktivieren (z.B. Nachzügler), auch wenn global eine strikte Kampagne läuft."
+        description_html: "Verwalten Sie Ihre Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        link_text: "Verwaltung"
+    management_help:
+      title: "Verwaltung"
+      toggle: "Verwaltung"
+      intro: "Informationen zu Sperrzeiten und flexiblen Gruppeneinstellungen."
+      phase1:
+        title: "Sperrzeiten"
+        with_campaign: "Mit Anmeldeverfahren"
+        without_campaign: "Ohne Anmeldeverfahren"
+        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
+        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
+        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
+      phase2:
+        title: "Einstellungen & Ausnahmen"
+        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
+        options:
+          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
+          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Zuteilungen nach Bedarf feinabstimmen"
     roster_help:
       title: "Einschreibemethoden"
       toggle: "Einschreibemethoden"
       intro: "Dieser Leitfaden vergleicht die verschiedenen Möglichkeiten, Ihre Gruppen zu füllen."
+      mode_hint: "Hinweis: Sie können für jede Gruppe entscheiden, ob ein Anmeldeverfahren oder manuelle Einschreibung/Selbsteinschreibung genutzt wird. Für die meisten Veranstaltungen empfehlen wir jedoch eine einheitliche Strategie."
       group_types:
         toggle: "Gruppentypen"
         title: "Verfügbare Gruppentypen"

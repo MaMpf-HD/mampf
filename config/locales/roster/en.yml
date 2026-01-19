@@ -28,18 +28,35 @@ en:
         link_text: "groups"
       phase2:
         title: "Enrollment"
-        description: "Decide how students join your groups. See %{link} for details."
+        description_html: "Choose one of the %{link} to decide how students join your groups."
         link_text: "Enrollment Strategies"
       phase3:
         title: "Management"
-        description: "Groups in active campaigns are locked. They unlock automatically for manual management afterwards."
-      phase4:
-        title: "Exceptions"
-        description: "Settings are per-group. You can enable 'Self-enrollment' for specific groups (e.g. late joiners) even if a strict campaign is running globally."
+        description_html: "Manage your rosters manually throughout the semester. See %{link} for details."
+        link_text: "Management"
+    management_help:
+      title: "Management"
+      toggle: "Management"
+      intro: "Information about lock periods and flexible group settings."
+      phase1:
+        title: "Lock Periods"
+        with_campaign: "With Registration Campaign"
+        without_campaign: "Without Registration Campaign"
+        campaigns_during: "Add/Remove Students: Locked during campaign"
+        campaigns_after: "Add/Remove Students: Unlocked after completion"
+        direct_always: "Add/Remove Students: Always possible"
+      phase2:
+        title: "Settings & Exceptions"
+        description: "After campaigns complete, both paths offer the same options:"
+        options:
+          - "Manual Adjustments: Add or remove individual students"
+          - "Self-Enrollment: Students choose their own group from available spots"
+          - "Fine-tune allocations as needed"
     roster_help:
       title: "Enrollment Strategies"
       toggle: "Enrollment Strategies"
       intro: "This guide compares the different ways to populate your groups."
+      mode_hint: "Note: You can decide per group whether to use a registration campaign or manual enrollment/self-enrollment. However, for most courses, we recommend choosing one consistent strategy."
       group_types:
         toggle: "Group Types"
         title: "Available Group Types"

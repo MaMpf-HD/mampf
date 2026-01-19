@@ -6,10 +6,6 @@
 
       <!-- Phase 1: Choose Setup Method -->
       <div class="mb-4">
-        <h6 class="fw-bold text-primary mb-3">
-          <i class="bi bi-1-circle me-2"></i>
-          <%= t('roster.roster_help.phase1.title') %>
-        </h6>
         <div class="row g-3">
           <div class="col-md-6">
             <div class="border border-primary rounded p-3 h-100">
@@ -43,65 +39,10 @@
         </div>
       </div>
 
-      <!-- Phase 2: What Happens Next -->
-      <div class="mb-4 text-center">
-        <div class="d-flex align-items-center justify-content-center mb-3">
-          <div class="border-top flex-grow-1"></div>
-          <i class="bi bi-arrow-down-circle mx-3 text-muted fs-4"></i>
-          <div class="border-top flex-grow-1"></div>
-        </div>
-        <h6 class="fw-bold text-secondary mb-3">
-          <i class="bi bi-2-circle me-2"></i>
-          <%= t('roster.roster_help.phase2.title') %>
-        </h6>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="border border-primary rounded p-3">
-              <div class="mb-2">
-                <span class="badge bg-warning text-dark">
-                  <i class="bi bi-lock me-1"></i>
-                  <%= t('roster.roster_help.phase2.campaigns_during') %>
-                </span>
-              </div>
-              <div class="text-center fs-4 my-2 text-muted">↓</div>
-              <div>
-                <span class="badge bg-success">
-                  <i class="bi bi-unlock me-1"></i>
-                  <%= t('roster.roster_help.phase2.campaigns_after') %>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="border border-success rounded p-3">
-              <span class="badge bg-success">
-                <i class="bi bi-check-circle me-1"></i>
-                <%= t('roster.roster_help.phase2.direct_always') %>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Phase 3: Available Anytime -->
-      <div class="mb-3">
-        <div class="d-flex align-items-center justify-content-center mb-3">
-          <div class="border-top flex-grow-1"></div>
-          <i class="bi bi-arrow-down-circle mx-3 text-muted fs-4"></i>
-          <div class="border-top flex-grow-1"></div>
-        </div>
-        <h6 class="fw-bold text-success mb-3">
-          <i class="bi bi-3-circle me-2"></i>
-          <%= t('roster.roster_help.phase3.title') %>
-        </h6>
-        <div class="border border-success rounded p-3">
-          <p class="small mb-2"><%= t('roster.roster_help.phase3.description') %></p>
-          <ul class="mb-0 small">
-            <% t('roster.roster_help.phase3.options').each do |option| %>
-              <li><%= option %></li>
-            <% end %>
-          </ul>
+      <div class="alert alert-light border d-flex align-items-center mb-0 fade show" role="alert">
+        <i class="bi bi-info-circle text-primary fs-4 me-3"></i>
+        <div>
+           <%= t('roster.roster_help.mode_hint') %>
         </div>
       </div>
     </div>
