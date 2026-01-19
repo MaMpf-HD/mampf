@@ -56,7 +56,7 @@ en:
       title: "Enrollment Strategies"
       toggle: "Enrollment Strategies"
       intro: "This guide compares the different ways to populate your groups."
-      mode_hint: "Note: You can decide per group whether to use a registration campaign or manual enrollment/self-enrollment. However, for most courses, we recommend choosing one consistent strategy."
+      mode_hint: "When using a registration campaign, simply add all relevant groups to it. It is possible to have multiple campaigns, but each group can only belong to one campaign. You can decide per group whether to use a campaign or manual/self-enrollment."
       group_types:
         toggle: "Group Types"
         title: "Available Group Types"
@@ -81,20 +81,20 @@ en:
         title: "1. Choose Your Setup Method"
         campaigns:
           title: "Registration Campaigns"
-          description: "Automated allocation with eligibility rules and preference support"
+          description: "Time-bounded process with rules"
           benefits:
-            - "Review registrations before finalization"
-            - "Eligibility rules (e.g., performance check, email verification)"
-            - "Students rank preferences for groups"
-            - "Time-bounded registration window"
+            - "Allocation via Preferences or FCFS"
+            - "Enforce eligibility rules (e.g. grades)"
+            - "Review registrations before allocation"
+            - "Roster entry after deadline"
         skip_campaigns:
           title: "Skip Campaigns"
-          description: "Manual control or self-enrollment from the start"
+          description: "Immediate, direct access"
           benefits:
-            - "Manual management: Add/remove students directly anytime"
-            - "Self-materialization: Students pick groups themselves"
-            - "No eligibility checks or preference ranking"
-            - "Good for small groups or simple enrollment"
+            - "Direct join only (FCFS)"
+            - "No eligibility checks"
+            - "Changes take effect immediately"
+            - "Immediate roster entry"
       phase2:
         title: "2. What Happens Next"
         campaigns_during: "Adding/removing members: Locked during campaign"
@@ -105,7 +105,7 @@ en:
         description: "Once campaigns complete, both paths have the same options:"
         options:
           - "Manual adjustments: Add or remove individual students"
-          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Control whether students can join or leave groups themselves"
           - "Fine-tune allocations as needed"
     actions:
       global_roster: 'Global Roster'

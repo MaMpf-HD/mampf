@@ -56,7 +56,7 @@ de:
       title: "Einschreibemethoden"
       toggle: "Einschreibemethoden"
       intro: "Dieser Leitfaden vergleicht die verschiedenen Möglichkeiten, Ihre Gruppen zu füllen."
-      mode_hint: "Hinweis: Sie können für jede Gruppe entscheiden, ob ein Anmeldeverfahren oder manuelle Einschreibung/Selbsteinschreibung genutzt wird. Für die meisten Veranstaltungen empfehlen wir jedoch eine einheitliche Strategie."
+      mode_hint: "Wenn Sie ein Anmeldeverfahren nutzen, fügen Sie diesem einfach alle benötigten Gruppen hinzu. Es können zwar mehrere Anmeldeverfahren parallel existieren, jede Gruppe kann jedoch nur Teil eines einzigen Verfahrens sein. Sie können für jede Gruppe individuell entscheiden, ob ein Anmeldeverfahren oder manuelle Einschreibung/Selbsteinschreibung genutzt wird."
       group_types:
         toggle: "Gruppentypen"
         title: "Verfügbare Gruppentypen"
@@ -81,20 +81,20 @@ de:
         title: "1. Wählen Sie Ihre Einrichtungsmethode"
         campaigns:
           title: "Anmeldeverfahren"
-          description: "Automatische Zuteilung mit Zulassungsregel- und Präferenzunterstützung"
+          description: "Zeitlich begrenzter Prozess mit Regeln"
           benefits:
-            - "Registrierungen vor Finalisierung prüfen"
-            - "Zulassungsregeln (z.B. Leistungsnachweis, E-Mail-Verifizierung)"
-            - "Studierende geben Präferenzen für Gruppen an"
-            - "Zeitlich begrenzte Anmeldephase"
+            - "Verteilung nach Präferenzen oder Eingang (FCFS)"
+            - "Einhaltung von Zulassungsregeln (z.B. Testat)"
+            - "Registrierungen vor Zuteilung prüfen"
+            - "Aufnahme in Liste erst nach Abschluss"
         skip_campaigns:
           title: "Anmeldeverfahren überspringen"
-          description: "Manuelle Verwaltung oder Selbsteinschreibung von Anfang an"
+          description: "Sofortiger, direkter Zugang"
           benefits:
-            - "Manuelle Verwaltung: Studierende jederzeit direkt hinzufügen/entfernen"
-            - "Selbsteinschreibung: Studierende wählen Gruppen selbst"
-            - "Keine Zulassungsüberprüfung oder Präferenz-Ranking"
-            - "Gut für kleine Gruppen oder einfache Einschreibung"
+            - "Nur direkter Beitritt (FCFS)"
+            - "Keine Prüfung von Zulassungsregeln"
+            - "Änderungen sind sofort wirksam"
+            - "Sofortige Aufnahme in die Liste"
 
       phase2:
         title: "2. Was passiert als Nächstes"
@@ -106,7 +106,7 @@ de:
         description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
         options:
           - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
-          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Steuern Sie, ob Studierende Gruppen selbst beitreten oder verlassen können"
           - "Zuteilungen nach Bedarf feinabstimmen"
     actions:
       global_roster: 'Gesamtliste'
