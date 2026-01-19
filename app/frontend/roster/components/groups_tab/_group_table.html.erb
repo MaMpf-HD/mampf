@@ -1,24 +1,31 @@
+<% if group[:items].any? %>
+  <% component.subtables_for(group).each do |subtable| %>
+    <% if subtable[:title] %>
+      <div class="bg-light p-2 px-3 border-bottom fw-bold text-dark border-top d-flex align-items-center">
+        <%= subtable[:title] %>
+        <%= helpdesk(subtable[:help], false) if subtable[:help] %>
+      </div>
+    <% end %>
 
-    <div class="card-body p-4">
-      <% if group[:items].any? %>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
-          <% group[:items].each do |item| %>
-            <%= render "roster/components/groups_tab/item_tile",
-                       item: item,
-                       group: group,
-                       component: component,
-                       group_type: group_type %>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="text-center text-muted col-12 py-3">
-          <p class="mb-2"><%= t("roster.empty_state_help") %></p>
-          <small>
-            <%= t("roster.empty_state_links_html",
-                  workflow_link: link_to(t("roster.roster_help.toggle"), "#roster-workflow-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline"),
-                  group_types_link: link_to(t("roster.roster_help.group_types.toggle"), "#roster-group-types-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline")) %>
-          </small>
-        </div>
-      <% end %>
+    <div class="p-3">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+        <% subtable[:items].each do |item| %>
+          <%= render "roster/components/groups_tab/item_tile",
+                     item: item,
+                     group: group,
+                     component: component,
+                     group_type: group_type %>
+        <% end %>
+      </div>
     </div>
-
+  <% end %>
+<% else %>
+  <div class="text-center text-muted p-4">
+    <p class="mb-2"><%= t("roster.empty_state_help") %></p>
+    <small>
+      <%= t("roster.empty_state_links_html",
+            workflow_link: link_to(t("roster.lifecycle_help.toggle"), "#roster-lifecycle-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline"),
+            group_types_link: link_to(t("roster.roster_help.group_types.toggle"), "#roster-group-types-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline")) %>
+    </small>
+  </div>
+<% end %>
