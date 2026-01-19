@@ -186,7 +186,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
         end
 
-        it("allows a user to self-add to a tutorial when allowed") do
+        it("allows a user to self-remove from a tutorial when allowed") do
           tutorial.reload
           delete self_remove_tutorial_path(tutorial,
                                            type: "Tutorial",
