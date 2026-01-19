@@ -83,6 +83,7 @@ module Rosters
         return if lecture == rosterable
 
         lecture.ensure_roster_membership!([user.id])
+        # TODO: consider add mail noti here as well
       end
 
       def cascade_removal_from_subgroups!(user, rosterable)
@@ -104,7 +105,7 @@ module Rosters
       end
 
       def send_added_notification_email(user, rosterable)
-        Roster::RosterNotificationMailer.with(
+        RosterNotificationMailer.with(
           rosterable: rosterable,
           recipient: user,
           sender: DefaultSetting::PROJECT_EMAIL
