@@ -24,6 +24,7 @@ module Rosters
       end
 
       rosterable.add_user_to_roster!(user)
+      send_added_notification_email(user, rosterable)
       propagate_to_lecture!(user, rosterable)
       update_registration_materialization(user, rosterable)
     end
@@ -100,6 +101,14 @@ module Rosters
 
           cohort.remove_user_from_roster!(user)
         end
+      end
+
+      def send_added_notification_email(user, rosterable)
+        Roster::RosterNotificationMailer.with(
+          rosterable: rosterable,
+          recipient: user,
+          sender: DefaultSetting::PROJECT_EMAIL
+        ).added_to_group_email.deliver_now
       end
   end
 end

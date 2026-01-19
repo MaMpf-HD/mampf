@@ -1,7 +1,5 @@
 <%= t('mailer.roster_added_to_group_email_body',
-      campaignable_type: @item.registration_campaign.campaignable_type,
-      campaignable_title: @item.registration_campaign.campaignable.title,
-      rosterable_type: @item.registerable_type,
-      rosterable_title: @item.registerable.title,
+      rosterable_type: @rosterable.class.name,
+      rosterable_title: @rosterable.title,
       rosterable_link: link_to(t('basics.link'),
                     @rosterable_link)) %>

@@ -4,15 +4,14 @@ module Roster
     # into/from a rosterable object
 
     def added_to_group_email
-      @item = params[:item]
-      @rosterable_link = url_for(@item.registerable)
+      @rosterable = params[:rosterable]
+      @rosterable_link = url_for(@rosterable)
       @username = @recipient.tutorial_name
 
       mail(from: @sender,
            to: @recipient.email,
            subject: t("mailer.roster_added_to_group_email_subject",
-                      rosterable_title: @item.registerable.title,
-                      campaignable_title: @item.registration_campaign.campaignable.title))
+                      rosterable_title: @rosterable.title))
     end
 
     def url_for(rosterable)

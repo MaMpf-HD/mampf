@@ -3145,11 +3145,11 @@ en:
       have been automatically deleted.
     roster_added_to_group_email_body: >
       Hello %{name},<br><br>
-      You have been added to the group the %{rosterable_type} %{rosterable_title} in the %{campaignable_type} %{campaignable_title}.<br>
+      You have been added to the group the %{rosterable_type} %{rosterable_title}.<br>
       You can access the %{rosterable_type} here: %{rosterable_link}<br><br>
       With kind regards,<br>
       Your MaMpf-Team
-    roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{campaignable_title}'
+    roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
     hash_mail_subject: Email address verification
     hash_mail_body: >
       Hello, %{name}!

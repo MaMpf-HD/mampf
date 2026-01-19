@@ -3359,11 +3359,11 @@ de:
       Löschdatum %{deletion_date} automatisch gelöscht.
     roster_added_to_group_email_body: >
       Hallo %{name},<br><br>
-      Sie wurden der Gruppe %{rosterable_type} %{rosterable_title} in %{campaignable_type} %{campaignable_title} hinzugefügt.<br>
+      Sie wurden der Gruppe %{rosterable_type} %{rosterable_title} hinzugefügt.<br>
       Sie können auf %{rosterable_type} hier zugreifen: %{rosterable_link}<br><br>
       Mit freundlichen Grüßen,<br>
       Ihr MaMpf‑Team
-    roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{campaignable_title} hinzugefügt'
+    roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
 
     hash_mail_subject: Überprüfung der Emailadresse
     hash_mail_body: >
