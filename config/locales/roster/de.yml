@@ -18,10 +18,28 @@ de:
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
+    lifecycle_help:
+      title: "Lebenszyklus"
+      toggle: "Lebenszyklus"
+      intro: "Folgen Sie diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      phase1:
+        title: "Gruppenerstellung"
+        description_html: "Erstellen Sie Ihre %{link} über das Dashboard unten."
+        link_text: "Gruppen"
+      phase2:
+        title: "Einschreibung"
+        description: "Entscheiden Sie, wie Studierende Ihren Gruppen beitreten. Siehe %{link} für Details."
+        link_text: "Einschreibemethoden"
+      phase3:
+        title: "Verwaltung"
+        description: "Gruppen in aktiven Kampagnen sind gesperrt. Sie werden danach automatisch zur manuellen Verwaltung freigegeben."
+      phase4:
+        title: "Ausnahmen"
+        description: "Einstellungen gelten pro Gruppe. Sie können 'Selbsteinschreibung' für einzelne Gruppen aktivieren (z.B. Nachzügler), auch wenn global eine strikte Kampagne läuft."
     roster_help:
-      title: "Arbeitsablauf Gruppenverwaltung"
-      toggle: "Arbeitsablauf"
-      intro: "Diese Anleitung zeigt Ihnen, wie Sie Gruppenlisten befüllen und welche Optionen in jeder Phase verfügbar sind."
+      title: "Einschreibemethoden"
+      toggle: "Einschreibemethoden"
+      intro: "Dieser Leitfaden vergleicht die verschiedenen Möglichkeiten, Ihre Gruppen zu füllen."
       group_types:
         toggle: "Gruppentypen"
         title: "Verfügbare Gruppentypen"

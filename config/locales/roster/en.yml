@@ -18,10 +18,28 @@ en:
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
+    lifecycle_help:
+      title: "Roster Lifecycle"
+      toggle: "Lifecycle"
+      intro: "Follow these steps to set up and manage your course roster."
+      phase1:
+        title: "Group Creation"
+        description_html: "Create your %{link} using the dashboard below."
+        link_text: "groups"
+      phase2:
+        title: "Enrollment"
+        description: "Decide how students join your groups. See %{link} for details."
+        link_text: "Enrollment Strategies"
+      phase3:
+        title: "Management"
+        description: "Groups in active campaigns are locked. They unlock automatically for manual management afterwards."
+      phase4:
+        title: "Exceptions"
+        description: "Settings are per-group. You can enable 'Self-enrollment' for specific groups (e.g. late joiners) even if a strict campaign is running globally."
     roster_help:
-      title: "Roster Management Workflow"
-      toggle: "Workflow"
-      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      title: "Enrollment Strategies"
+      toggle: "Enrollment Strategies"
+      intro: "This guide compares the different ways to populate your groups."
       group_types:
         toggle: "Group Types"
         title: "Available Group Types"
