@@ -28,10 +28,45 @@ de:
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
+    lifecycle_help:
+      title: "Lebenszyklus"
+      toggle: "Lebenszyklus"
+      intro: "Folgen Sie diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      phase1:
+        title: "Gruppenerstellung"
+        description_html: "Erstellen Sie Ihre %{link} über das Dashboard unten."
+        link_text: "Gruppen"
+      phase2:
+        title: "Einschreibung"
+        description_html: "Wählen Sie eine der %{link}, um zu entscheiden, wie Studierende beitreten."
+        link_text: "Einschreibemethoden"
+      phase3:
+        title: "Verwaltung"
+        description_html: "Verwalten Sie Ihre Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        link_text: "Verwaltung"
+    management_help:
+      title: "Verwaltung"
+      toggle: "Verwaltung"
+      intro: "Informationen zu Sperrzeiten und flexiblen Gruppeneinstellungen."
+      phase1:
+        title: "Sperrzeiten"
+        with_campaign: "Mit Anmeldeverfahren"
+        without_campaign: "Ohne Anmeldeverfahren"
+        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
+        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
+        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
+      phase2:
+        title: "Einstellungen & Ausnahmen"
+        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
+        options:
+          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
+          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Zuteilungen nach Bedarf feinabstimmen"
     roster_help:
-      title: "Arbeitsablauf Gruppenverwaltung"
-      toggle: "Arbeitsablauf"
-      intro: "Diese Anleitung zeigt Ihnen, wie Sie Gruppenlisten befüllen und welche Optionen in jeder Phase verfügbar sind."
+      title: "Einschreibemethoden"
+      toggle: "Einschreibemethoden"
+      intro: "Dieser Leitfaden vergleicht die verschiedenen Möglichkeiten, Ihre Gruppen zu füllen."
+      mode_hint: "Wenn Sie ein Anmeldeverfahren nutzen, fügen Sie diesem einfach alle benötigten Gruppen hinzu. Es können zwar mehrere Anmeldeverfahren parallel existieren, jede Gruppe kann jedoch nur Teil eines einzigen Verfahrens sein. Sie können für jede Gruppe individuell entscheiden, ob ein Anmeldeverfahren oder manuelle Einschreibung/Selbsteinschreibung genutzt wird."
       group_types:
         toggle: "Gruppentypen"
         title: "Verfügbare Gruppentypen"
@@ -61,20 +96,20 @@ de:
         title: "1. Wählen Sie Ihre Einrichtungsmethode"
         campaigns:
           title: "Anmeldeverfahren"
-          description: "Automatische Zuteilung mit Zulassungsregel- und Präferenzunterstützung"
+          description: "Zeitlich begrenzter Prozess mit Regeln"
           benefits:
-            - "Registrierungen vor Finalisierung prüfen"
-            - "Zulassungsregeln (z.B. Leistungsnachweis, E-Mail-Verifizierung)"
-            - "Studierende geben Präferenzen für Gruppen an"
-            - "Zeitlich begrenzte Anmeldephase"
+            - "Verteilung nach Präferenzen oder Eingang (FCFS)"
+            - "Einhaltung von Zulassungsregeln (z.B. Testat)"
+            - "Registrierungen vor Zuteilung prüfen"
+            - "Aufnahme in Liste erst nach Abschluss"
         skip_campaigns:
           title: "Anmeldeverfahren überspringen"
-          description: "Manuelle Verwaltung oder Selbsteinschreibung von Anfang an"
+          description: "Sofortiger, direkter Zugang"
           benefits:
-            - "Manuelle Verwaltung: Studierende jederzeit direkt hinzufügen/entfernen"
-            - "Selbsteinschreibung: Studierende wählen Gruppen selbst"
-            - "Keine Zulassungsüberprüfung oder Präferenz-Ranking"
-            - "Gut für kleine Gruppen oder einfache Einschreibung"
+            - "Nur direkter Beitritt (FCFS)"
+            - "Keine Prüfung von Zulassungsregeln"
+            - "Änderungen sind sofort wirksam"
+            - "Sofortige Aufnahme in die Liste"
 
       phase2:
         title: "2. Was passiert als Nächstes"
@@ -86,7 +121,7 @@ de:
         description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
         options:
           - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
-          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Steuern Sie, ob Studierende Gruppen selbst beitreten oder verlassen können"
           - "Zuteilungen nach Bedarf feinabstimmen"
     actions:
       global_roster: 'Gesamtliste'
