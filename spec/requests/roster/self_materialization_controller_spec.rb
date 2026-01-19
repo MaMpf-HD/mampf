@@ -217,7 +217,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
         end
 
-        it("allows a user to self-add to a cohort if not full") do
+        it("allows a user to self-remove from a cohort when allowed") do
           delete self_remove_cohort_path(cohort,
                                          params: { type: "Cohort",
                                                    partial: "cohorts/cohort_user",
