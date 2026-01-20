@@ -179,31 +179,6 @@ module RosterHelper
     { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
   end
 
-  def cohort_type_options(cohort = nil)
-    available_types = if cohort&.persisted?
-      Cohort::TYPE_TO_PURPOSE.select do |_type, purpose|
-        case purpose
-        when :enrollment
-          cohort.propagate_to_lecture?
-        when :planning
-          !cohort.propagate_to_lecture?
-        when :general
-          true
-        end
-      end.keys
-    else
-      Cohort::TYPE_TO_PURPOSE.keys
-    end
-
-    available_types.map do |type|
-      [t("registration.item.types.#{type.parameterize(separator: "_")}"), type]
-    end
-  end
-
-  def cohort_type_from_purpose(purpose)
-    Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
-  end
-
   def roster_group_badge(group, group_type)
     isolating = group.is_a?(Cohort) && !group.propagate_to_lecture?
     # Use secondary (gray) for normal propagating groups to reduce visual noise.

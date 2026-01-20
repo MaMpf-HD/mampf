@@ -41,7 +41,6 @@ class CohortsController < ApplicationController
 
   def create
     cohort_attributes = cohort_params
-    cohort_attributes = map_cohort_type_to_purpose(cohort_attributes)
     cohort_attributes = parse_special_purpose_checkbox(cohort_attributes)
 
     @cohort = Cohort.new(cohort_attributes)
@@ -150,27 +149,12 @@ class CohortsController < ApplicationController
       params.expect(cohort: permitted)
     end
 
-    def map_cohort_type_to_purpose(attributes)
-      return attributes if attributes[:purpose].blank?
-
-      type_key = Cohort::TYPE_TO_PURPOSE.key(attributes[:purpose].to_sym)
-      return attributes unless type_key
-
-      attributes[:purpose] = Cohort::TYPE_TO_PURPOSE[type_key]
-
-      case attributes[:purpose]
-      when :enrollment
-        attributes[:propagate_to_lecture] = true
-      when :planning
-        attributes[:propagate_to_lecture] = false
-      end
-
-      attributes
-    end
-
     def parse_special_purpose_checkbox(attributes)
-      propagate_value = attributes[:propagate_to_lecture]
-      propagate_value = @cohort.propagate_to_lecture? if @cohort&.persisted?
+      propagate_value = if @cohort&.persisted?
+        @cohort.propagate_to_lecture?
+      else
+        attributes[:propagate_to_lecture].to_s == "true"
+      end
 
       attributes[:purpose] = if params[:has_special_purpose] == "1"
         propagate_value ? :enrollment : :planning
