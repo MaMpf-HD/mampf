@@ -130,4 +130,3 @@ volumes:
   pgadmin:
   sprockets-cache:
   bundle_cache:
-  
