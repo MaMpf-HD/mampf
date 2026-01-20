@@ -25,6 +25,7 @@ de:
       self_enrollment: "Selbsteinschreibung"
       no_policy_enforcement: "Keine Richtliniendurchsetzung"
       gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
+      enforced_policies: "Richtlinien im Verfahren: %{policies}"
     participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'

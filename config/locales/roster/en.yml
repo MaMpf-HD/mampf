@@ -25,6 +25,7 @@ en:
       self_enrollment: "Self-enrollment"
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
+      enforced_policies: "Campaign enforced: %{policies}"
     participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'

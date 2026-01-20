@@ -213,7 +213,9 @@ class RosterOverviewComponent < ViewComponent::Base
     count = policies.loaded? ? policies.size : policies.count
     policy_kinds += "..." if count > MAX_DISPLAYED_POLICIES
 
-    I18n.t("roster.status_texts.gated_by_policies", policies: policy_kinds)
+    # Use past tense for completed campaigns, present tense for active ones
+    key = campaign.present? ? "gated_by_policies" : "enforced_policies"
+    I18n.t("roster.status_texts.#{key}", policies: policy_kinds)
   end
 
   def status_badge_data(item, campaign)

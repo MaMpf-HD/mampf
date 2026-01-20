@@ -16,8 +16,13 @@
   }
 
   &.cohort {
-    background: linear-gradient(135deg, #e7f0f7 0%, #dce6f0 100%);
-    border-color: #c5d5e4;
+    background: linear-gradient(135deg, #faf7f0 0%, #f2ede3 100%);
+    border-color: #ddd6c8;
+
+    .progress {
+      background-color: #d9d3c5;
+      border: 1px solid #c4bdb0;
+    }
   }
 
   .tile-actions {
@@ -41,8 +46,8 @@
 }
 
 .section-header {
-  background: linear-gradient(to right, #e7f1ff, #f0f4ff);
-  border-bottom: 2px solid #dee2e6;
+  background: linear-gradient(135deg, #d4e4f7 0%, #e8f0fa 50%, #f5f9fd 100%);
+  border-bottom: 2px solid #a8c5e6;
   padding: 1.5rem;
   // Border radius is handled by the parent card's overflow: hidden
 }
@@ -50,7 +55,7 @@
 .card.section-card {
   border: none !important;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  background-color: #fff;
-  border-radius: 0.5rem; // Restoring to mockup value 0.5rem for consistency
-  overflow: hidden;      // Fix for the border bleeding line
+  background-color: #eef4f9;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
