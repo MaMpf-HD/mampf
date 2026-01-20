@@ -365,7 +365,8 @@ class RosterOverviewComponent < ViewComponent::Base
         }
 
         # Flexible Group (With Enrollment)
-        label = "#{I18n.t("registration.item.types.other_group")} (#{I18n.t("roster.cohorts.with_lecture_enrollment_title")})"
+        label = "#{I18n.t("registration.item.types.other_group")} " \
+                "(#{I18n.t("roster.cohorts.with_lecture_enrollment_title")})"
         actions << {
           text: label,
           path: Rails.application.routes.url_helpers
@@ -392,7 +393,8 @@ class RosterOverviewComponent < ViewComponent::Base
                                       cohort: { purpose: "planning", propagate_to_lecture: false })
         },
         {
-          text: "#{I18n.t("registration.item.types.other_group")} (#{I18n.t("roster.cohorts.without_lecture_enrollment_title")})",
+          text: "#{I18n.t("registration.item.types.other_group")} " \
+                "(#{I18n.t("roster.cohorts.without_lecture_enrollment_title")})",
           path: Rails.application.routes.url_helpers
                      .new_cohort_path(lecture_id: @lecture.id,
                                       group_type: @group_type,
