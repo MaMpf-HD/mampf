@@ -1,0 +1,39 @@
+<% if group[:items].any? %>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th><%= t('roster.columns.title') %></th>
+          <% if group[:type] == :tutorials %>
+            <th><%= t('roster.columns.tutors') %></th>
+          <% elsif group[:type] == :cohorts %>
+            <th><%= t('basics.description') %></th>
+          <% elsif group[:type] == :talks %>
+            <th><%= t('basics.date') %></th>
+            <th><%= t('roster.columns.speakers') %></th>
+          <% end %>
+          <th><%= t('roster.columns.occupancy') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% group[:items].each do |item| %>
+          <%= render "roster/components/groups_tab/item_row",
+                    item: item,
+                    group: group,
+                    component: component,
+                    group_type: group_type %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-center text-muted p-4">
+    <p class="mb-2"><%= t("roster.empty_state_help") %></p>
+    <small>
+      <%= t("roster.empty_state_links_html",
+            workflow_link: link_to(t("roster.lifecycle_help.toggle"), "#roster-lifecycle-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline"),
+            group_types_link: link_to(t("roster.roster_help.group_types.toggle"), "#roster-group-types-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline")) %>
+    </small>
+  </div>
+<% end %>

@@ -1,134 +1,18 @@
-<%= render "roster/components/workflow_help" %>
+<%= render "roster/components/lifecycle_help" %>
 <%= render "roster/components/group_types_help", lecture: component.lecture %>
+<%= render "roster/components/workflow_help" %>
+<%= render "roster/components/management_help" %>
 
 <div class="card border-top-0">
   <% groups.each_with_index do |group, index| %>
-    <div class="card-header bg-secondary text-white mt-3">
-      <h6 class="mb-0 fw-bold"><%= t("registration.item.groups.#{group[:type]}") %></h6>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th><%= t('roster.columns.title') %></th>
-            <% if group[:type] == :tutorials %>
-              <th><%= t('roster.columns.tutors') %></th>
-            <% elsif group[:type] == :talks %>
-              <th><%= t('roster.columns.speakers') %></th>
-            <% end %>
-            <th><%= t('roster.columns.capacity') %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% group[:items].each do |item| %>
-            <% campaign = component.active_campaign_for(item) %>
-            <tr>
-              <td class="fw-medium"><%= item.title %></td>
-              <% if group[:type] == :tutorials %>
-                <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
-              <% elsif group[:type] == :talks %>
-                <td><%= item.respond_to?(:speakers) ? item.speakers.map(&:name).join(", ") : "" %></td>
-              <% end %>
-              <td>
-                <% if component.show_campaign_running_badge?(item, campaign) %>
-                  <span class="badge bg-info text-dark">
-                    <%= t('roster.campaign_running') %>
-                  </span>
-                <% else %>
-                  <div class="d-flex align-items-center gap-2">
-                    <% if item.capacity %>
-                      <% overbooked = item.roster_entries.count > item.capacity %>
-                      <div class="flex-grow-1" style="min-width: 60px;">
-                        <%= progress_bar(
-                              item.roster_entries.count,
-                              item.capacity,
-                              classification: :utilization,
-                              height: "6px",
-                              show_label: false,
-                              container_class: "progress"
-                            ) %>
-                      </div>
-                      <span class="small text-nowrap <%= 'text-danger fw-bold' if overbooked %>"><%= item.roster_entries.count %>/<%= item.capacity %></span>
-                      <% if overbooked %>
-                        <i class="bi bi-exclamation-triangle-fill text-danger"
-                           data-bs-toggle="tooltip"
-                           title="<%= t('roster.overbooked') %>"></i>
-                      <% end %>
-                    <% else %>
-                      <span class="small text-muted"><%= item.roster_entries.count %></span>
-                    <% end %>
-                  </div>
-                <% end %>
-              </td>
-              <td class="text-end">
-                <div class="d-flex gap-2 justify-content-end align-items-center">
-                  <% if !item.locked? %>
-                    <%= link_to component.group_path(item),
-                                class: "btn btn-sm btn-outline-primary",
-                                title: t('roster.manage'),
-                                data: { bs_toggle: "tooltip" } do %>
-                      <i class="bi bi-person-lines-fill"></i>
-                    <% end %>
-                  <% elsif campaign %>
-                    <%= link_to edit_lecture_path(component.lecture, tab: "campaigns", campaign_id: campaign.id),
-                                class: "btn btn-sm btn-outline-secondary",
-                                title: t('roster.view_campaign'),
-                                data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-                      <i class="bi bi-calendar-check"></i>
-                    <% end %>
-                  <% elsif !item.in_campaign? %>
-                    <%= link_to edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
-                                class: "btn btn-sm btn-outline-secondary",
-                                title: t('roster.create_campaign'),
-                                data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-                      <i class="bi bi-calendar-plus"></i>
-                    <% end %>
-                  <% end %>
+    <%= render "roster/components/groups_tab/group_header",
+               group: group,
+               component: component,
+               group_type: group_type %>
 
-                  <% if item.skip_campaigns? %>
-                    <% if item.can_unskip_campaigns? %>
-                      <%= form_with model: item, scope: :rosterable,
-                            url: send("#{item.class.name.underscore}_roster_path", item),
-                            method: :patch,
-                            data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
-                        <%= hidden_group_type_field(group_type) %>
-                        <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.skip_campaigns') %>" data-bs-toggle="tooltip"></i>
-                        <div class="form-check form-switch mb-0">
-                          <%= f.check_box :skip_campaigns,
-                                class: "form-check-input",
-                                role: "switch",
-                                id: dom_id(item, :skip_campaigns),
-                                checked: true,
-                                aria: { label: t('roster.skip_campaigns') },
-                                data: { action: "change->auto-submit-form#submit" } %>
-                        </div>
-                      <% end %>
-                    <% end %>
-                  <% elsif item.can_skip_campaigns? %>
-                    <%= form_with model: item, scope: :rosterable,
-                          url: send("#{item.class.name.underscore}_roster_path", item),
-                          method: :patch,
-                          data: { turbo: true, controller: "auto-submit-form" }, class: "d-flex align-items-center border border-secondary rounded-pill px-2 py-1" do |f| %>
-                      <%= hidden_group_type_field(group_type) %>
-                      <i class="bi bi-pencil me-2 text-muted" title="<%= t('roster.skip_campaigns') %>" data-bs-toggle="tooltip"></i>
-                      <div class="form-check form-switch mb-0">
-                        <%= f.check_box :skip_campaigns,
-                              class: "form-check-input",
-                              role: "switch",
-                              id: dom_id(item, :skip_campaigns),
-                              checked: false,
-                              aria: { label: t('roster.skip_campaigns') },
-                              data: { action: "change->auto-submit-form#submit" } %>
-                      </div>
-                    <% end %>
-                  <% end %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
+    <%= render "roster/components/groups_tab/group_table",
+               group: group,
+               component: component,
+               group_type: group_type %>
   <% end %>
 </div>

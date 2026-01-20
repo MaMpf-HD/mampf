@@ -27,6 +27,12 @@ module Rosters
       end
 
       validate :validate_skip_campaigns_switch
+      before_destroy :enforce_rosterable_destruction_constraints, prepend: true
+    end
+
+    # Checks if the item can be safely destroyed.
+    def destructible?
+      !in_campaign? && roster_empty?
     end
 
     # Checks if the roster is locked for manual modifications.
@@ -202,6 +208,18 @@ module Rosters
           # Only allowed if roster is empty (to avoid data inconsistency)
           errors.add(:base, I18n.t("roster.errors.roster_not_empty")) unless roster_empty?
         end
+      end
+
+      def enforce_rosterable_destruction_constraints
+        if in_campaign?
+          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
+          throw(:abort)
+        end
+
+        return if roster_empty?
+
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+        throw(:abort)
       end
   end
 end

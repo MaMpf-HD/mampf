@@ -18,10 +18,45 @@ en:
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
+    lifecycle_help:
+      title: "Roster Lifecycle"
+      toggle: "Lifecycle"
+      intro: "Follow these steps to set up and manage your course roster."
+      phase1:
+        title: "Group Creation"
+        description_html: "Create your %{link} using the dashboard below."
+        link_text: "groups"
+      phase2:
+        title: "Enrollment"
+        description_html: "Choose one of the %{link} to decide how students join your groups."
+        link_text: "Enrollment Strategies"
+      phase3:
+        title: "Management"
+        description_html: "Manage your rosters manually throughout the semester. See %{link} for details."
+        link_text: "Management"
+    management_help:
+      title: "Management"
+      toggle: "Management"
+      intro: "Information about lock periods and flexible group settings."
+      phase1:
+        title: "Lock Periods"
+        with_campaign: "With Registration Campaign"
+        without_campaign: "Without Registration Campaign"
+        campaigns_during: "Add/Remove Students: Locked during campaign"
+        campaigns_after: "Add/Remove Students: Unlocked after completion"
+        direct_always: "Add/Remove Students: Always possible"
+      phase2:
+        title: "Settings & Exceptions"
+        description: "After campaigns complete, both paths offer the same options:"
+        options:
+          - "Manual Adjustments: Add or remove individual students"
+          - "Self-Enrollment: Students choose their own group from available spots"
+          - "Fine-tune allocations as needed"
     roster_help:
-      title: "Roster Management Workflow"
-      toggle: "Workflow"
-      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      title: "Enrollment Strategies"
+      toggle: "Enrollment Strategies"
+      intro: "This guide compares the different ways to populate your groups."
+      mode_hint: "When using a registration campaign, simply add all relevant groups to it. It is possible to have multiple campaigns, but each group can only belong to one campaign. You can decide per group whether to use a campaign or manual/self-enrollment."
       group_types:
         toggle: "Group Types"
         title: "Available Group Types"
@@ -46,20 +81,20 @@ en:
         title: "1. Choose Your Setup Method"
         campaigns:
           title: "Registration Campaigns"
-          description: "Automated allocation with eligibility rules and preference support"
+          description: "Time-bounded process with rules"
           benefits:
-            - "Review registrations before finalization"
-            - "Eligibility rules (e.g., performance check, email verification)"
-            - "Students rank preferences for groups"
-            - "Time-bounded registration window"
+            - "Allocation via Preferences or FCFS"
+            - "Enforce eligibility rules (e.g. grades)"
+            - "Review registrations before allocation"
+            - "Roster entry after deadline"
         skip_campaigns:
           title: "Skip Campaigns"
-          description: "Manual control or self-enrollment from the start"
+          description: "Immediate, direct access"
           benefits:
-            - "Manual management: Add/remove students directly anytime"
-            - "Self-materialization: Students pick groups themselves"
-            - "No eligibility checks or preference ranking"
-            - "Good for small groups or simple enrollment"
+            - "Direct join only (FCFS)"
+            - "No eligibility checks"
+            - "Changes take effect immediately"
+            - "Immediate roster entry"
       phase2:
         title: "2. What Happens Next"
         campaigns_during: "Adding/removing members: Locked during campaign"
@@ -70,7 +105,7 @@ en:
         description: "Once campaigns complete, both paths have the same options:"
         options:
           - "Manual adjustments: Add or remove individual students"
-          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Control whether students can join or leave groups themselves"
           - "Fine-tune allocations as needed"
     actions:
       global_roster: 'Global Roster'
@@ -84,6 +119,14 @@ en:
       confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
+    cohorts:
+      attributes:
+        propagate_to_lecture: "Students are automatically enrolled in the course"
+      help:
+        enrollment: "If the course has no tutorials or talks, a registration cohort can be used. Students are automatically enrolled in the course."
+        planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
+        other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
+        propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'
@@ -102,7 +145,6 @@ en:
       title: 'Title'
       tutors: 'Tutors'
       speakers: 'Speakers'
-      capacity: 'Occupancy'
       occupancy: 'Occupancy'
       name: 'Name'
       email: 'Email'
@@ -116,8 +158,20 @@ en:
     view_campaign: 'View Campaign'
     create_campaign: 'Create Campaign'
     campaign_running: 'Campaign running'
+    campaign_draft: 'Campaign planned'
     overbooked: 'Overbooked'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
+    tooltips:
+      manage_participants: "Manage Participants"
+      edit_settings: "Edit Settings"
+      delete: "Delete"
+    hints:
+      talk_content_html: "Use the %{link} to manage content, tags, and media."
+      talk_content_new: "Content, tags, and media can be managed after creation."
+      cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
+      purpose_change_constrained_by_propagate: "The available types depend on whether students are added to the course roster. This setting cannot be changed."
+    buttons:
+      full_editor: "vollständigen Editor"
     errors:
       lecture_not_found: 'Lecture not found.'
       rosterable_not_found: 'Roster item not found.'
@@ -131,9 +185,13 @@ en:
       user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
       campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+      cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
+      cannot_delete_not_empty: "Cannot be deleted because there are participants."
     warnings:
-      capacity_exceeded: "Warning: Group capacity exceeded."
-      confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"
+      capacity_exceeded: 'The capacity of this group has been reached.'
+      confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
+      capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
     messages:
       updated: "Settings updated."
       user_moved: "Student moved to %{target}."

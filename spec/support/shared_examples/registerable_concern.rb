@@ -35,20 +35,6 @@ RSpec.shared_examples("a registerable model") do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
     end
 
-    context "when capacity is frozen" do
-      before do
-        campaign.update!(status: :completed)
-      end
-
-      it "adds error to capacity" do
-        registerable.capacity = 10
-        # Trigger update callbacks
-        registerable.save
-        expect(registerable.errors[:capacity])
-          .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.frozen"))
-      end
-    end
-
     context "when capacity reduction is invalid" do
       before do
         campaign.update!(status: :open)

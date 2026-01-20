@@ -28,14 +28,6 @@ module Registration
       "Other Group" => Cohort
     }.freeze
 
-    # Maps user-facing cohort type names to their corresponding purpose enum values.
-    # Only relevant for Cohort registerables, determines the semantic meaning of the group.
-    COHORT_TYPE_TO_PURPOSE = {
-      "Enrollment Group" => :enrollment,
-      "Planning Survey" => :planning,
-      "Other Group" => :general
-    }.freeze
-
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items
@@ -68,14 +60,6 @@ module Registration
       user_registrations.confirmed.pluck(:user_id)
     end
 
-    def capacity_editable?
-      return true if registration_campaign.draft?
-
-      return false if registration_campaign.completed?
-
-      true
-    end
-
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
     # in the tutorial GUI) is permissible under the current campaign rules.
     def validate_capacity_change_from_registerable!(new_capacity)
@@ -95,6 +79,8 @@ module Registration
 
       def valid_capacity_reduction?(new_capacity)
         return true if registration_campaign.draft?
+        # After completion, we trust the user (teacher) to manage capacity vs roster size.
+        return true if registration_campaign.completed?
         return true unless registration_campaign.first_come_first_served?
         return true if new_capacity.nil?
 

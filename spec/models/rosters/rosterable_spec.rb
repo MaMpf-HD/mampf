@@ -4,7 +4,7 @@ RSpec.describe(Rosters::Rosterable) do
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
-    context "when in manual mode" do
+    context "when skip_campaigns is enabled" do
       # skip_campaigns: true
       it "returns false" do
         expect(rosterable.locked?).to(be(false))
@@ -277,6 +277,77 @@ RSpec.describe(Rosters::Rosterable) do
       it "returns false when not empty" do
         rosterable.add_user_to_roster!(user)
         expect(rosterable.roster_empty?).to be(false)
+      end
+    end
+  end
+
+  describe "#destructible?" do
+    let(:rosterable) { create(:tutorial) }
+
+    context "when not in a campaign and roster is empty" do
+      it "returns true" do
+        expect(rosterable.destructible?).to(be(true))
+      end
+    end
+
+    context "when in a campaign" do
+      before do
+        campaign = create(:registration_campaign, status: :draft)
+        create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+        campaign.update(status: :open)
+      end
+
+      it "returns false" do
+        expect(rosterable.destructible?).to(be(false))
+      end
+    end
+
+    context "when roster is not empty" do
+      before do
+        rosterable.add_user_to_roster!(create(:user))
+      end
+
+      it "returns false" do
+        expect(rosterable.destructible?).to(be(false))
+      end
+    end
+  end
+
+  describe "#enforce_rosterable_destruction_constraints" do
+    let(:rosterable) { create(:tutorial) }
+
+    context "when in a campaign" do
+      before do
+        campaign = create(:registration_campaign, status: :draft)
+        create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+        campaign.update(status: :open)
+      end
+
+      it "adds an error and aborts destruction" do
+        rosterable.destroy
+        expect(rosterable.errors[:base])
+          .to(include(I18n.t("roster.errors.cannot_delete_in_campaign")))
+        expect(rosterable).not_to(be_destroyed)
+      end
+    end
+
+    context "when roster is not empty" do
+      before do
+        rosterable.add_user_to_roster!(create(:user))
+      end
+
+      it "adds an error and aborts destruction" do
+        rosterable.destroy
+        expect(rosterable.errors[:base])
+          .to(include(I18n.t("roster.errors.cannot_delete_not_empty")))
+        expect(rosterable).not_to(be_destroyed)
+      end
+    end
+
+    context "when safe to destroy" do
+      it "allows destruction" do
+        rosterable.destroy
+        expect(rosterable).to(be_destroyed)
       end
     end
   end

@@ -45,7 +45,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     context "sorting" do
       let!(:locked_tutorial) do
         t = create(:tutorial, lecture: lecture, title: "A Locked")
-        # Simulate being in a campaign so manual mode cannot be enabled
+        # Simulate being in a campaign so skip_campaigns cannot be enabled
         allow(t).to receive(:in_campaign?).and_return(true)
         allow(t).to receive(:skip_campaigns?).and_return(false)
         t
@@ -53,14 +53,14 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       let!(:manual_tutorial) do
         t = create(:tutorial, lecture: lecture, title: "B Manual", skip_campaigns: true)
-        # Simulate empty roster so manual mode can be disabled
+        # Simulate empty roster so skip_campaigns can be disabled
         allow(t).to receive(:roster_empty?).and_return(true)
         t
       end
 
       let!(:standard_tutorial) do
         t = create(:tutorial, lecture: lecture, title: "C Standard", skip_campaigns: false)
-        # Not in campaign, so manual mode can be enabled
+        # Not in campaign, so skip_campaigns can be enabled
         allow(t).to receive(:in_campaign?).and_return(false)
         t
       end
@@ -78,6 +78,20 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
           [manual_tutorial, standard_tutorial].include?(t)
         end
         expect(relevant_tutorials).to eq([manual_tutorial, standard_tutorial])
+      end
+
+      it "sorts talks by position" do
+        # Clear existing talks to avoid interference
+        lecture.talks.destroy_all
+
+        talk1 = create(:talk, lecture: lecture, position: 2)
+        talk2 = create(:talk, lecture: lecture, position: 1)
+
+        component = described_class.new(lecture: lecture, group_type: :talks)
+        groups = component.groups
+        talks = groups.find { |g| g[:type] == :talks }[:items]
+
+        expect(talks).to eq([talk2, talk1])
       end
     end
   end
@@ -161,6 +175,56 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     it "returns false if roster is not empty" do
       allow(tutorial).to receive(:roster_empty?).and_return(false)
       expect(component.show_campaign_running_badge?(tutorial, campaign)).to be(false)
+    end
+  end
+
+  describe "#campaign_badge_props" do
+    let(:draft_campaign) { build(:registration_campaign, status: :draft) }
+    let(:running_campaign) { build(:registration_campaign, status: :open) }
+
+    it "returns draft badge properties for draft campaign" do
+      props = component.campaign_badge_props(draft_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_draft"))
+      expect(props[:css_class]).to include("bg-secondary")
+    end
+
+    it "returns running badge properties for running campaign" do
+      props = component.campaign_badge_props(running_campaign)
+      expect(props[:text]).to eq(I18n.t("roster.campaign_running"))
+      expect(props[:css_class]).to include("bg-info")
+    end
+  end
+
+  describe "#show_skip_campaigns_switch?" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns true if skip_campaigns can be disabled" do
+      allow(item).to receive(:skip_campaigns?).and_return(true)
+      allow(item).to receive(:can_unskip_campaigns?).and_return(true)
+      expect(component.show_skip_campaigns_switch?(item)).to be(true)
+    end
+
+    it "returns true if skip_campaigns can be enabled" do
+      allow(item).to receive(:skip_campaigns?).and_return(false)
+      allow(item).to receive(:can_skip_campaigns?).and_return(true)
+      expect(component.show_skip_campaigns_switch?(item)).to be(true)
+    end
+
+    it "returns false otherwise" do
+      allow(item).to receive(:skip_campaigns?).and_return(true)
+      allow(item).to receive(:can_unskip_campaigns?).and_return(false)
+      expect(component.show_skip_campaigns_switch?(item)).to be(false)
+    end
+  end
+
+  describe "#toggle_skip_campaigns_path" do
+    let(:item) { create(:tutorial, lecture: lecture) }
+
+    it "returns the correct path" do
+      allow(Rails.application.routes.url_helpers).to receive(:tutorial_roster_path)
+        .with(item).and_return("/path/to/roster")
+
+      expect(component.toggle_skip_campaigns_path(item)).to eq("/path/to/roster")
     end
   end
 end

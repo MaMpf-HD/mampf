@@ -38,7 +38,7 @@ class RosterOverviewComponent < ViewComponent::Base
   # Helper to generate the correct polymorphic path
   def group_path(item)
     method_name = "#{item.model_name.singular_route_key}_roster_path"
-    helpers.public_send(method_name, item)
+    Rails.application.routes.url_helpers.public_send(method_name, item)
   end
 
   def active_campaign_for(item)
@@ -57,6 +57,14 @@ class RosterOverviewComponent < ViewComponent::Base
   def toggle_skip_campaigns_path(item)
     method_name = "#{item.class.name.underscore}_roster_path"
     Rails.application.routes.url_helpers.public_send(method_name, item)
+  end
+
+  def campaign_badge_props(campaign)
+    if campaign&.draft?
+      { text: I18n.t("roster.campaign_draft"), css_class: "badge bg-secondary" }
+    else
+      { text: I18n.t("roster.campaign_running"), css_class: "badge bg-info text-dark" }
+    end
   end
 
   private
@@ -80,9 +88,13 @@ class RosterOverviewComponent < ViewComponent::Base
 
       # Sort items: those with skip_campaigns switch at the bottom
       sorted_items = items.sort_by do |item|
-        has_switch = (item.skip_campaigns? && item.can_unskip_campaigns?) ||
-                     (!item.skip_campaigns? && item.can_skip_campaigns?)
-        [has_switch ? 1 : 0, item.title]
+        if type == :talks
+          item.position
+        else
+          has_switch = (item.skip_campaigns? && item.can_unskip_campaigns?) ||
+                       (!item.skip_campaigns? && item.can_skip_campaigns?)
+          [has_switch ? 1 : 0, item.title]
+        end
       end
 
       klass = config[:model].constantize

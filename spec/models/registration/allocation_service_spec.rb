@@ -124,7 +124,8 @@ RSpec.describe(Registration::AllocationService) do
           service.allocate!
         end.to change(Registration::UserRegistration, :count).by(1)
 
-        reg = user3.user_registrations.find_by(registration_campaign: campaign)
+        reg = Registration::UserRegistration.find_by(user: user3, registration_item: item2)
+        expect(reg).to be_present
         expect(reg.user).to eq(user3)
         expect(reg.registration_item).to eq(item2)
         expect(reg.preference_rank).to be_nil
