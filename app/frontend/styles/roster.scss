@@ -1,12 +1,12 @@
 // Roster Tile Styles
 .roster-tile {
   transition: all 0.2s ease-in-out;
-  border: 1px solid #dee2e6;
-  background: #fff;
+  border: 1px solid #d1d5db;
+  background: #fafbfc;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12) !important;
     border-color: var(--bs-primary);
     z-index: 10;
 
@@ -16,7 +16,8 @@
   }
 
   &.cohort {
-    background-color: #f1f3f5;
+    background: linear-gradient(135deg, #e7f0f7 0%, #dce6f0 100%);
+    border-color: #c5d5e4;
   }
 
   .tile-actions {
