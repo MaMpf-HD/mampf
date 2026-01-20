@@ -13,7 +13,7 @@
             <div class="small text-muted">
               <i class="bi bi-tag me-1"></i>
               <%= t("roster.group_category.flexible_group") %>
-              <% if item.purpose.present? && item.purpose != "general" %>
+              <% if should_display_cohort_purpose?(item) %>
                 (<%= t("roster.cohorts.purposes.#{item.purpose}") %>)
               <% end %>
             </div>
@@ -31,7 +31,7 @@
       <div class="small text-muted mb-3 flex-grow-1">
         <% if item.is_a?(Tutorial) %>
           <i class="bi bi-person me-1"></i>
-          <%= item.tutor_names.presence || "TBA" %>
+          <%= tutor_names_with_fallback(item) %>
         <% elsif item.is_a?(Cohort) %>
           <% if item.description.present? %>
             <div class="text-truncate-3" title="<%= item.description %>">
@@ -52,7 +52,7 @@
       <div class="mt-auto">
         <% if item.capacity %>
           <% current_count = item.roster_entries.count %>
-          <% overbooked = current_count > item.capacity %>
+          <% overbooked = item_overbooked?(item) %>
           <div class="d-flex justify-content-between font-monospace small mb-1">
             <span><%= t('roster.columns.occupancy') %></span>
             <span class="<%= 'text-danger fw-bold' if overbooked %>">

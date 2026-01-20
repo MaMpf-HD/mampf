@@ -213,4 +213,78 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(badge).to include('data-turbo-frame="roster_maintenance_tutorials"')
     end
   end
+
+  describe "#should_display_cohort_purpose?" do
+    it "returns true when purpose is present and not general" do
+      cohort = instance_double("Cohort", purpose: "enrollment")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(true)
+    end
+
+    it "returns false when purpose is general" do
+      cohort = instance_double("Cohort", purpose: "general")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+
+    it "returns false when purpose is nil" do
+      cohort = instance_double("Cohort", purpose: nil)
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+
+    it "returns false when purpose is blank" do
+      cohort = instance_double("Cohort", purpose: "")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+  end
+
+  describe "#item_overbooked?" do
+    it "returns true when roster entries exceed capacity" do
+      roster_entries = double("RosterEntries", count: 15)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(true)
+    end
+
+    it "returns false when roster entries equal capacity" do
+      roster_entries = double("RosterEntries", count: 10)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+
+    it "returns false when roster entries are below capacity" do
+      roster_entries = double("RosterEntries", count: 5)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+
+    it "returns false when capacity is nil" do
+      roster_entries = double("RosterEntries", count: 100)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: nil)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+  end
+
+  describe "#tutor_names_with_fallback" do
+    it "returns tutor names when present" do
+      tutorial = instance_double("Tutorial", tutor_names: "Alice, Bob")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("Alice, Bob")
+    end
+
+    it "returns TBA when tutor names are blank" do
+      tutorial = instance_double("Tutorial", tutor_names: "")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
+    end
+
+    it "returns TBA when tutor names are nil" do
+      tutorial = instance_double("Tutorial", tutor_names: nil)
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
+    end
+
+    it "returns TBA when tutor names are whitespace" do
+      tutorial = instance_double("Tutorial", tutor_names: "   ")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
+    end
+  end
 end

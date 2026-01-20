@@ -8,6 +8,20 @@ module RosterHelper
     "#{group.title} (#{count}/#{group.capacity || "∞"})"
   end
 
+  def should_display_cohort_purpose?(cohort)
+    cohort.purpose.present? && cohort.purpose != "general"
+  end
+
+  def item_overbooked?(item)
+    return false unless item.capacity
+
+    item.roster_entries.count > item.capacity
+  end
+
+  def tutor_names_with_fallback(tutorial)
+    tutorial.tutor_names.presence || "TBA"
+  end
+
   def roster_group_types(lecture)
     if lecture.seminar?
       [:talks, :cohorts]

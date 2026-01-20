@@ -11,15 +11,7 @@
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
   <div class="modal-body">
-    <% 
-      # Determine propagate value from context (dropdown) or existing cohort
-      if cohort.persisted?
-        propagates = cohort.propagate_to_lecture?
-      else
-        propagate_flag = params.dig(:cohort, :propagate_to_lecture)
-        propagates = propagate_flag.to_s == "true"
-      end
-    %>
+    <% propagates = cohort_propagates?(cohort, params) %>
     
     <%# Show context info header - always present since users come from dropdown or edit %>
     <div class="alert alert-info d-flex align-items-start mb-3">
@@ -40,13 +32,9 @@
     <%= hidden_field_tag :group_category, "Flexible Group" unless cohort.persisted? %>
 
     <% 
-      # Determine which semantic flag applies based on propagate context
-      special_purpose = propagates ? "enrollment" : "planning"
+      special_purpose = cohort_special_purpose_type(propagates)
       special_purpose_label = t("roster.cohorts.help.#{special_purpose}_checkbox_label")
-      
-      # Check if cohort has special purpose set
-      current_purpose = cohort.purpose.to_s.presence || "general"
-      has_special_purpose = current_purpose == special_purpose
+      has_special_purpose = cohort_has_special_purpose?(cohort, special_purpose)
     %>
 
     <div class="mb-3">
@@ -69,7 +57,7 @@
         <%= label_tag :has_special_purpose, special_purpose_label, class: "form-check-label" %>
       </div>
 
-      <% if propagates && (cohort.context.tutorials.any? || cohort.context.talks.any?) %>
+      <% if show_enrollment_warning?(cohort, propagates) %>
         <div class="alert alert-warning d-flex align-items-start mt-2 mb-0 py-2" 
              data-cohort-purpose-hierarchical-target="enrollmentWarning"
              style="display: <%= has_special_purpose ? 'flex' : 'none' %>;">
