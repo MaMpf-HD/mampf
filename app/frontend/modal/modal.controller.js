@@ -39,19 +39,19 @@ export default class extends Controller {
       // Dispose modal immediately to prevent Bootstrap trying to access
       // removed DOM elements during hide animation
       this.modal.dispose();
-      
+
       // Clear modal container
       const container = document.getElementById("modal-container");
       if (container) {
         container.innerHTML = "";
       }
-      
+
       // Remove backdrop manually if it exists
       const backdrop = document.querySelector(".modal-backdrop");
       if (backdrop) {
         backdrop.remove();
       }
-      
+
       // Restore body scroll
       document.body.classList.remove("modal-open");
       document.body.style.removeProperty("overflow");
