@@ -132,8 +132,8 @@ class TutorialsController < ApplicationController
         streams = []
 
         if @tutorial.errors.empty?
-          streams.concat(Rosters::StreamService.new(@lecture, view_context).item_updated(@tutorial,
-                                                                                         group_type: group_type, flash: flash))
+          streams.concat(Rosters::StreamService.new(@lecture, view_context)
+          .item_updated(@tutorial, group_type: group_type, flash: flash))
           streams << refresh_campaigns_index_stream(@tutorial.lecture)
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
@@ -321,6 +321,4 @@ class TutorialsController < ApplicationController
 
       streams
     end
-
-  private
 end
