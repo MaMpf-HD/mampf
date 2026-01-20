@@ -1,0 +1,142 @@
+en:
+  roster:
+    title: 'Roster'
+    tabs:
+      tutorial_maintenance: 'Coursework'
+      talk_maintenance: 'Coursework'
+      groups: 'Groups'
+      group_maintenance: 'Group Management'
+      candidates: 'Candidates'
+      enrollment: 'Enrollment'
+      performance: 'Performance'
+      overview: 'Overview'
+    stats:
+      total_participants: 'Total Participants'
+      capacity_usage: 'of %{count} spots filled'
+      unassigned: 'Unassigned'
+      action_required: 'Action required'
+    dashboard:
+      title: 'Dashboard'
+      description: 'Manage allocations and view global performance.'
+    roster_help:
+      title: "Roster Management Workflow"
+      toggle: "Workflow"
+      intro: "This guide shows you how to populate group rosters and which options are available at each stage."
+      group_types:
+        toggle: "Group Types"
+        title: "Available Group Types"
+        intro: "Different group types serve different purposes in your course structure."
+        tutorials:
+          title: "Tutorials"
+          description: "Weekly practice groups. Students are automatically added to the course roster."
+        talks:
+          title: "Talks"
+          description: "Seminar presentations. Speakers are automatically added to the course roster."
+        enrollment:
+          title: "Enrollment Group"
+          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
+        planning:
+          title: "Planning Group"
+          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
+        other:
+          title: "Flexible Groups"
+          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+      phase1:
+        title: "1. Choose Your Setup Method"
+        campaigns:
+          title: "Registration Campaigns"
+          description: "Automated allocation with eligibility rules and preference support"
+          benefits:
+            - "Review registrations before finalization"
+            - "Eligibility rules (e.g., performance check, email verification)"
+            - "Students rank preferences for groups"
+            - "Time-bounded registration window"
+        skip_campaigns:
+          title: "Skip Campaigns"
+          description: "Manual control or self-enrollment from the start"
+          benefits:
+            - "Manual management: Add/remove students directly anytime"
+            - "Self-materialization: Students pick groups themselves"
+            - "No eligibility checks or preference ranking"
+            - "Good for small groups or simple enrollment"
+      phase2:
+        title: "2. What Happens Next"
+        campaigns_during: "Adding/removing members: Locked during campaign"
+        campaigns_after: "Adding/removing members: Unlocked after completion"
+        direct_always: "Adding/removing members: Always editable"
+      phase3:
+        title: "3. Available Anytime (After Campaigns)"
+        description: "Once campaigns complete, both paths have the same options:"
+        options:
+          - "Manual adjustments: Add or remove individual students"
+          - "Self-materialization: Let students pick their own groups from available spots"
+          - "Fine-tune allocations as needed"
+    actions:
+      global_roster: 'Global Roster'
+      assign: 'Assign'
+      assign_to: 'Assign to...'
+      move: 'Move'
+      back: 'Back'
+      add: 'Add'
+      add_student_label: 'Student Email'
+      add_student_placeholder: 'student@example.com'
+      confirm_remove: 'Are you sure you want to remove this student?'
+      enable_manual_management: 'Direct Management'
+      enable_campaign_management: 'Campaign Management'
+    details:
+      participants: 'Participants'
+      empty: 'No participants in this group.'
+    candidates:
+      title: 'Unallocated Registrations'
+      help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
+      empty: 'No unallocated registrations found.'
+      no_prefs: 'No preferences'
+    manual_enrollment:
+      title: 'Manual Enrollment'
+      description: 'Manually add a student to a group. This is useful for late-comers.'
+      student: 'Student'
+      group: 'Group'
+      choose_group: 'Choose group...'
+    columns:
+      title: 'Title'
+      tutors: 'Tutors'
+      speakers: 'Speakers'
+      capacity: 'Occupancy'
+      occupancy: 'Occupancy'
+      name: 'Name'
+      email: 'Email'
+      preferences: 'Preferences'
+      actions: 'Actions'
+    manage: 'Manage'
+    skip_campaigns: 'Skip Campaigns'
+    enable_skip_campaigns_hint: 'Cannot skip campaigns because this group was part of a campaign.'
+    disable_skip_campaigns_hint: 'Cannot enable campaigns because the roster is not empty.'
+    enable_manual_management: 'Enable Direct Management'
+    view_campaign: 'View Campaign'
+    create_campaign: 'Create Campaign'
+    campaign_running: 'Campaign running'
+    overbooked: 'Overbooked'
+    empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
+    errors:
+      lecture_not_found: 'Lecture not found.'
+      rosterable_not_found: 'Roster item not found.'
+      invalid_type: 'Invalid group type.'
+      roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."
+      campaign_running: "cannot be disabled while a campaign is running."
+      capacity_exceeded: "Group capacity exceeded."
+      target_not_found: "Target group not found."
+      target_locked: "Target group is locked."
+      user_not_found: "Student not found."
+      user_already_in_bundle: "Student is already assigned to %{group}."
+      item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
+      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+    warnings:
+      capacity_exceeded: "Warning: Group capacity exceeded."
+      confirm_overbooking: "This group is already full. Do you want to proceed and overbook it?"
+    messages:
+      updated: "Settings updated."
+      user_moved: "Student moved to %{target}."
+      user_added: "Student added successfully."
+      user_added_to: "Student added to %{group}."
+      user_removed: "Student removed successfully."

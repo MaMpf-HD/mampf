@@ -5,6 +5,15 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
+    TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+
+    # Models including this concern must:
+    # - Implement #roster_entries (returns ActiveRecord::Relation)
+    #
+    # Models that are also Registerable should additionally:
+    # - Have a `skip_campaigns` boolean column (default: false)
+    #   (This allows switching between campaign-managed and manual roster management)
+
     included do
       # Abstract method to retrieve the roster entries (e.g., memberships or joins)
       # Should return an ActiveRecord::Relation
@@ -16,6 +25,63 @@ module Rosters
       def roster_user_id_column
         :user_id
       end
+
+      validate :validate_skip_campaigns_switch
+    end
+
+    # Checks if the roster is locked for manual modifications.
+    # Models without skip_campaigns (e.g., Lecture) are never locked.
+    # A roster is locked if campaigns are NOT skipped AND no campaign
+    # has been completed yet.
+    def locked?
+      return false unless respond_to?(:skip_campaigns)
+      return false if skip_campaigns?
+
+      !in_completed_campaign?
+    end
+
+    # Checks if skip_campaigns can be enabled (switched from false to true).
+    # This is only allowed if the item has never been part of any campaign.
+    # Models without skip_campaigns always return false.
+    def can_skip_campaigns?
+      return false unless respond_to?(:skip_campaigns)
+
+      !in_campaign?
+    end
+
+    # Checks if skip_campaigns can be disabled (switched from true to false).
+    # This is generally allowed as long as the roster is empty (to prevent data loss/inconsistency),
+    # but since we enforce "once in campaign, always in campaign" via can_skip_campaigns?,
+    # the reverse path is less critical but should still be safe.
+    # For now, we allow it if the roster is empty.
+    # Models without skip_campaigns always return false.
+    def can_unskip_campaigns?
+      return false unless respond_to?(:skip_campaigns)
+
+      roster_empty?
+    end
+
+    # Checks if the roster is currently empty.
+    def roster_empty?
+      !roster_entries.exists?
+    end
+
+    # Checks if the item is associated with any campaign.
+    def in_campaign?
+      return false unless respond_to?(:registration_items)
+
+      registration_items.exists?
+    end
+
+    # Checks if the item is associated with a completed campaign.
+    def in_completed_campaign?
+      return false unless respond_to?(:registration_items)
+
+      Registration::Campaign
+        .joins(:registration_items)
+        .where(registration_items: { registerable_id: id,
+                                     registerable_type: self.class.name })
+        .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.
@@ -53,52 +119,89 @@ module Rosters
       end
     end
 
+    def propagate_to_lecture!(user_ids)
+      return if user_ids.empty?
+
+      return if is_a?(Cohort) && !propagate_to_lecture
+
+      return unless respond_to?(:lecture)
+
+      parent = lecture
+      return unless parent.is_a?(Lecture)
+      return if parent == self
+
+      parent.ensure_roster_membership!(user_ids)
+    end
+
+    # Identifies users in the target list who are not yet in the roster and
+    # performs a bulk insert to add them efficiently, associating them with
+    # the given campaign.
+    def add_missing_users!(target_ids, current_ids, campaign)
+      users_to_add = target_ids - current_ids
+      return if users_to_add.empty?
+
+      # insert_all does not automatically apply the association scope (e.g. foreign keys).
+      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
+      scope_attrs = roster_entries.scope_attributes
+
+      attributes = users_to_add.map do |uid|
+        {
+          roster_user_id_column => uid,
+          :source_campaign_id => campaign.id,
+          :created_at => Time.current,
+          :updated_at => Time.current
+        }.merge(scope_attrs)
+      end
+      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    # Identifies users currently in the roster associated with this specific
+    # campaign but not in the target list, and removes them. This cleans up
+    # allocations from the same campaign that are no longer valid,
+    # without touching members added manually or by other campaigns.
+    def remove_excess_users!(target_ids, campaign)
+      roster_entries.where(source_campaign: campaign)
+                    .where.not(roster_user_id_column => target_ids)
+                    .delete_all
+    end
+
+    # Checks if the roster is over capacity.
+    def over_capacity?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count > capacity
+    end
+
+    # Checks if the roster is full (reached or exceeded capacity).
+    def full?
+      return false unless respond_to?(:capacity)
+      return false if capacity.nil?
+
+      roster_entries.count >= capacity
+    end
+
+    # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
+    def roster_group_type
+      self.class.name.tableize.to_sym
+    end
+
     private
 
-      def propagate_to_lecture!(user_ids)
-        return if user_ids.empty?
+      def validate_skip_campaigns_switch
+        return unless respond_to?(:skip_campaigns)
+        return if new_record?
+        return unless skip_campaigns_changed?
 
-        return if is_a?(Cohort) && !propagate_to_lecture
-
-        return unless respond_to?(:lecture)
-
-        parent = lecture
-        return unless parent.is_a?(Lecture)
-        return if parent == self
-
-        parent.ensure_roster_membership!(user_ids)
-      end
-
-      # Identifies users in the target list who are not yet in the roster and
-      # performs a bulk insert to add them efficiently, associating them with
-      # the given campaign.
-      def add_missing_users!(target_ids, current_ids, campaign)
-        users_to_add = target_ids - current_ids
-        return if users_to_add.empty?
-
-        # insert_all does not automatically apply the association scope (e.g. foreign keys).
-        # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
-        scope_attrs = roster_entries.scope_attributes
-
-        attributes = users_to_add.map do |uid|
-          {
-            roster_user_id_column => uid,
-            :source_campaign_id => campaign.id,
-            :created_at => Time.current,
-            :updated_at => Time.current
-          }.merge(scope_attrs)
+        if skip_campaigns?
+          # Switching from false (Campaign Mode) to true (Skip Campaigns)
+          # Only allowed if never in any campaign
+          errors.add(:base, I18n.t("roster.errors.campaign_associated")) if in_campaign?
+        else
+          # Switching from true (Skip Campaigns) to false (Campaign Mode)
+          # Only allowed if roster is empty (to avoid data inconsistency)
+          errors.add(:base, I18n.t("roster.errors.roster_not_empty")) unless roster_empty?
         end
-        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
-      end
-
-      # Identifies users currently in the roster associated with this specific
-      # campaign but not in the target list, and removes them. This cleans up
-      # allocations from the same campaign that are no longer valid,
-      # without touching members added manually or by other campaigns.
-      def remove_excess_users!(target_ids, campaign)
-        roster_entries.where(source_campaign: campaign)
-                      .where.not(roster_user_id_column => target_ids)
-                      .delete_all
       end
   end
 end

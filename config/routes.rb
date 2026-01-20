@@ -277,6 +277,11 @@ Rails.application.routes.draw do
        as: "import_lecture_toc"
 
   resources :lectures, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#index"
+      post "roster/add_to_group", to: "roster/maintenance#enroll", as: :roster_add_to_group
+    end
+
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
       resources :campaigns,
                 controller: "registration/campaigns",
@@ -797,7 +802,20 @@ Rails.application.routes.draw do
        to: "talks#modify",
        as: "modify_talk"
 
-  resources :talks, except: [:index]
+  resources :talks, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Talk" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+  end
 
   # tutorials routes
 
@@ -829,7 +847,37 @@ Rails.application.routes.draw do
       to: "tutorials#export_teams",
       as: "export_teams_to_csv"
 
-  resources :tutorials, only: [:new, :edit, :create, :update, :destroy]
+  resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Tutorial" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+  end
+
+  # cohorts routes
+
+  resources :cohorts, only: [:create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
+      patch "roster", to: "roster/maintenance#update", defaults: { type: "Cohort" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+  end
 
   # sections routes
 

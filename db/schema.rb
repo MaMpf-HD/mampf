@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_27_000002) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_29_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -162,6 +162,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000002) do
     t.boolean "propagate_to_lecture", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["context_type", "context_id", "purpose"], name: "index_cohorts_on_context_type_and_context_id_and_purpose"
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
     t.check_constraint "NOT (purpose = 1 AND propagate_to_lecture = false)", name: "enrollment_cohorts_must_propagate"
@@ -740,6 +741,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000002) do
     t.text "description"
     t.boolean "display_description", default: false
     t.integer "capacity"
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -1013,6 +1015,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_27_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "capacity"
+    t.boolean "skip_campaigns", default: false, null: false
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 

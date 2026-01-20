@@ -6,6 +6,7 @@ class Cohort < ApplicationRecord
 
   has_many :cohort_memberships, dependent: :destroy
   has_many :users, through: :cohort_memberships
+  has_many :members, through: :cohort_memberships, source: :user
 
   enum :purpose, {
     general: 0,

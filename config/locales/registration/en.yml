@@ -16,6 +16,9 @@ en:
       finalized: "Campaign finalized successfully."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       not_found: "Registration campaign not found."
+      completed_title: "Campaign Completed"
+      completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
+      go_to_roster: "Go to Roster"
       lecture_not_found: "Lecture not found."
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
@@ -114,25 +117,6 @@ en:
             - "Students should be able to join/leave anytime"
             - "You want minimal administrative overhead"
         note: "Self-enrollment can be enabled after a campaign completes to allow latecomers or group changes."
-      patterns:
-        title: "Which group types are available?"
-        intro: "Choose the group types that match your course structure. You can combine multiple types in one registration campaign."
-        tutorials:
-          title: "Tutorials"
-          description: "Weekly practice groups. Students are automatically added to the course roster."
-        talks:
-          title: "Talks"
-          description: "Seminar presentations. Speakers are automatically added to the course roster."
-        enrollment:
-          title: "Enrollment Group"
-          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
-        planning:
-          title: "Planning Group"
-          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
-        other:
-          title: "Flexible Groups"
-          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
-        note: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
@@ -275,7 +259,6 @@ en:
         utilization: "Utilization"
       errors:
         already_completed: "Campaign is already completed."
-        planning_only: "Planning only"
         wrong_status: "Campaign has wrong status for this action."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
@@ -313,6 +296,7 @@ en:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
               already_in_other_campaign: "This item is already part of another standard registration campaign."
+              registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
             registration_item:

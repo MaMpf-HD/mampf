@@ -1,0 +1,109 @@
+<div class="mb-3" id="<%= dom_id(@rosterable, :roster_detail) %>">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0"><%= helpers.group_title_with_capacity(@rosterable) %></h3>
+      <div class="text-muted small mt-1">
+        <%= @lecture.title %>
+      </div>
+    </div>
+    <div>
+      <%= link_to back_path, class: "btn btn-outline-secondary btn-sm", data: { turbo_frame: helpers.roster_maintenance_frame_id(group_type) } do %>
+        <i class="bi bi-arrow-left me-1"></i> <%= t('roster.actions.back') %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0"><%= t('roster.details.participants') %></h5>
+      <% unless locked? %>
+        <%= form_with url: add_member_path, method: :post,
+              class: "d-flex gap-2 align-items-center",
+              data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if overbooked?) } do |f| %>
+          <%= f.label :email, t('roster.actions.add_student_label'), class: "visually-hidden" %>
+          <%= f.email_field :email, class: "form-control form-control-sm", placeholder: t('roster.actions.add_student_placeholder'), required: true, style: "width: 250px;" %>
+          <%= f.button type: "submit", class: "btn btn-sm btn-primary text-nowrap" do %>
+            <i class="bi bi-plus-lg me-1"></i> <%= t('roster.actions.add') %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th><%= t('roster.columns.name') %></th>
+            <th><%= t('roster.columns.email') %></th>
+            <th><%= t('roster.columns.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.each do |student| %>
+            <tr>
+              <td><%= student.name %></td>
+              <td><%= student.email %></td>
+              <td>
+                <% unless locked? %>
+                  <div class="d-flex justify-content-end gap-2">
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}'>
+                        <%= t('roster.actions.move') %>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header"><%= t('roster.actions.assign_to') %></h6></li>
+                        <% if transfer_targets.any? %>
+                          <% transfer_targets.each do |target| %>
+                            <% if target[:type] %>
+                              <li><h6 class="dropdown-header"><%= target[:title] %></h6></li>
+                              <% target[:items].each do |item| %>
+                                <% group = item[:group] %>
+                                <li>
+                                  <%= button_to helpers.group_title_with_capacity(group),
+                                      move_member_path(student),
+                                      params: { target_id: group.id, target_type: group.class.name },
+                                      method: :patch,
+                                      data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if item[:overbooked]) },
+                                      class: "dropdown-item" %>
+                                </li>
+                              <% end %>
+                            <% else %>
+                              <% group = target[:group] %>
+                              <li>
+                                <%= button_to helpers.group_title_with_capacity(group),
+                                    move_member_path(student),
+                                    params: { target_id: group.id, target_type: group.class.name },
+                                    method: :patch,
+                                    data: { turbo_confirm: (t('roster.warnings.confirm_overbooking') if target[:overbooked]) },
+                                    class: "dropdown-item" %>
+                              </li>
+                            <% end %>
+                          <% end %>
+                        <% else %>
+                          <li><span class="dropdown-item disabled"><%= t('roster.details.empty') %></span></li>
+                        <% end %>
+                      </ul>
+                    </div>
+
+                    <%= button_to remove_member_path(student),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger",
+                                  data: { turbo_confirm: t('roster.actions.confirm_remove') } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          <% if students.empty? %>
+            <tr>
+              <td colspan="3" class="text-center text-muted py-3">
+                <%= t('roster.details.empty') %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

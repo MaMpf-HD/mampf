@@ -35,13 +35,13 @@ module Registration
 
       def add_tutorials(groups)
         used_ids = Registration::Item.where(registerable_type: "Tutorial").pluck(:registerable_id)
-        tutorials = @lecture.tutorials.where.not(id: used_ids)
+        tutorials = @lecture.tutorials.where(skip_campaigns: false).where.not(id: used_ids)
         groups[:tutorials] = tutorials if tutorials.any?
       end
 
       def add_talks(groups)
         used_ids = Registration::Item.where(registerable_type: "Talk").pluck(:registerable_id)
-        talks = @lecture.talks.where.not(id: used_ids)
+        talks = @lecture.talks.where(skip_campaigns: false).where.not(id: used_ids)
         groups[:talks] = talks if talks.any?
       end
 
