@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_18_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_18_191752) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -628,12 +628,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_18_000000) do
     t.bigint "user_id", null: false
     t.string "streakable_type", null: false
     t.bigint "streakable_id", null: false
-    t.integer "streak_counter", default: 0, null: false
-    t.datetime "last_activity", default: "2026-01-04 23:00:00", null: false
+    t.integer "value", default: 0, null: false
+    t.date "last_activity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["streakable_type", "streakable_id"], name: "index_streaks_on_streakable"
-    t.index ["user_id", "streakable_type", "streakable_id"], name: "index_streaks_on_user_id_and_streakable_type_and_streakable_id", unique: true
     t.index ["user_id"], name: "index_streaks_on_user_id"
   end
 

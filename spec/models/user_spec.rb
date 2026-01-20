@@ -189,4 +189,45 @@ RSpec.describe(User, type: :model) do
       expect(user.registration_campaigns).to include(campaign)
     end
   end
+
+  describe "#increment_streak_on" do
+    it "increments streak on a lecture, if none was existent" do
+      lecture = FactoryBot.create(:lecture)
+      user = FactoryBot.create(:confirmed_user)
+      user.increment_streak_on(lecture)
+
+      streak_value = user.streak_on(lecture)
+      expect(streak_value).to eq(1)
+    end
+
+    it "increments streak on a lecture, if there already was one" do
+      lecture = FactoryBot.create(:lecture)
+      user = FactoryBot.create(:confirmed_user)
+      streak = FactoryBot.create(
+        :streak,
+        user: user,
+        streakable: lecture,
+        value: 3,
+        last_activity: Time.current.prev_week
+      )
+      user.increment_streak_on(lecture)
+
+      expect(streak.reload.value).to eq(4)
+    end
+
+    it "does not increase streak, if last_activity was this week" do
+      lecture = FactoryBot.create(:lecture)
+      user = FactoryBot.create(:confirmed_user)
+      streak = FactoryBot.create(
+        :streak,
+        user: user,
+        streakable: lecture,
+        value: 3,
+        last_activity: Time.current
+      )
+      user.increment_streak_on(lecture)
+
+      expect(streak.reload.value).to eq(3)
+    end
+  end
 end

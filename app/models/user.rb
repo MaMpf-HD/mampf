@@ -800,6 +800,30 @@ class User < ApplicationRecord
                      visible_for_teacher: true)
   end
 
+  def increment_streak_on(streakable)
+    return if had_activity_this_week_on?(streakable)
+
+    if streaks.exists?(streakable: streakable)
+      streak = streaks.where(streakable: streakable).first
+      new_streak_value = streak.value + 1
+      streak.update(value: new_streak_value, last_activity: Time.current)
+    else
+      Streak.create(
+        user: self,
+        streakable: streakable,
+        value: 1,
+        last_activity: Time.current
+      )
+    end
+  end
+
+  def streak_on(streakable)
+    streak = streaks.where(streakable: streakable).first
+    return 0 if streak.nil?
+
+    streak.value
+  end
+
   private
 
     def set_defaults
@@ -862,5 +886,12 @@ class User < ApplicationRecord
     def medium_ids_of_lectures_or_edited_lectures
       lectures = given_lectures + edited_lectures
       lectures.flat_map(&:media_with_inheritance).pluck(:id)
+    end
+
+    def had_activity_this_week_on?(streakable)
+      streak = streaks.find_by(streakable_id: streakable.id)
+      return false if streak.nil?
+
+      streak.last_activity >= Time.current.beginning_of_week
     end
 end
