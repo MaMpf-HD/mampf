@@ -101,18 +101,12 @@ de:
         talks:
           title: "Vorträge"
           description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        enrollment:
-          title: "Anmeldungsgruppe"
-          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        planning:
-          title: "Planungsgruppe"
-          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Teilnehmerliste der Veranstaltung übernommen."
-        other:
+        flexible:
           title: "Flexible Gruppen"
-          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Sie können selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
         superset_principle:
           title: "Obermengenprinzip"
-          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Feste Einschreibung"
           description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwenden Sie die Entfernen-Aktion im Tab 'Eingeschriebene'."
@@ -172,7 +166,7 @@ de:
         planning: "Planung"
         general: "Allgemein"
       with_lecture_enrollment_title: "Mit Einschreibung"
-      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen oder als Sammelgruppen verwendet werden."
+      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
       without_lecture_enrollment_title: "Ohne Einschreibung"
       without_lecture_enrollment_help: "Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Wartelisten oder für Bedarfserfassung verwendet werden."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
@@ -192,8 +186,8 @@ de:
         propagate_readonly_warning: "⚠️ Diese Einstellung kann nach der Erstellung nicht mehr geändert werden."
         semantic_purpose_label: "Semantischer Zweck (optional)"
         semantic_purpose_explanation: "Dies dient nur zur besseren Organisation und Filterung. Die Funktionalität der Gruppe ändert sich nicht."
-        enrollment_checkbox_label: "Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
-        planning_checkbox_label: "Für Bedarfserfassung und Planung"
+        enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
+        planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
         general_with_enrollment: "Z.B. für Sonderprojekte oder Ergänzungsgruppen."
         general_without_enrollment: "Z.B. für Wartelisten oder Sonderprojekte."
         enrollment_short: "Für Veranstaltungen ohne Tutorien oder Vorträge."

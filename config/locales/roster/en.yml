@@ -101,18 +101,12 @@ en:
         talks:
           title: "Talks"
           description: "Seminar presentations. Speakers are automatically added to the course roster."
-        enrollment:
-          title: "Enrollment Group"
-          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
-        planning:
-          title: "Planning Group"
-          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
-        other:
+        flexible:
           title: "Flexible Groups"
-          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+          description: "For various purposes like enrollment groups (for courses without tutorials/talks), demand assessment, waitlists, supplementary groups (e.g., 'repeaters'), or special projects. You can specify whether members should be automatically added to the course roster."
         superset_principle:
           title: "Superset Principle"
-          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional group to enroll students from tutorials/talks into the lecture is not needed."
         sticky_enrollment:
           title: "Sticky Enrollment"
           description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
@@ -171,7 +165,7 @@ en:
         planning: "Planning"
         general: "General"
       with_lecture_enrollment_title: "With Enrollment"
-      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups or as collection groups."
+      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups ('repeaters'), or enrollment groups (for courses without tutorials/talks)."
       without_lecture_enrollment_title: "Without Enrollment"
       without_lecture_enrollment_help: "Members are not automatically enrolled in the course. Can be used e.g. for waitlists or for needs assessment."
       with_lecture_enrollment: "With Lecture Enrollment"
@@ -191,8 +185,8 @@ en:
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
         semantic_purpose_label: "Semantic Purpose (optional)"
         semantic_purpose_explanation: "This is only for better organization and filtering. The group's functionality does not change."
-        enrollment_checkbox_label: "For courses without tutorials/talks, to collect all students in a single group"
-        planning_checkbox_label: "For needs assessment and planning"
+        enrollment_checkbox_label: "Enrollment group: For courses without tutorials/talks, to collect all students in a single group"
+        planning_checkbox_label: "Planning group: For needs assessment and planning"
         general_with_enrollment: "E.g. for special projects or supplementary groups."
         general_without_enrollment: "E.g. for waitlists or special projects."
         enrollment_short: "For courses without tutorials or talks."
