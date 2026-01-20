@@ -6,7 +6,9 @@ module Roster
     class UserNotFoundError < StandardError; end
 
     before_action :set_lecture, only: [:index, :enroll]
-    before_action :set_rosterable, only: [:show, :update, :add_member, :remove_member, :move_member]
+    before_action :set_rosterable,
+                  only: [:show, :update, :add_member, :remove_member, :move_member,
+                         :update_self_materialization]
     before_action :authorize_lecture
     before_action :use_lecture_locale
 
@@ -121,6 +123,43 @@ module Roster
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
       render_roster_update(tab: params[:active_tab])
+    end
+
+    def update_self_materialization
+      mode = params[:self_materialization_mode]
+
+      component = RosterOverviewComponent.new(lecture: @lecture)
+      campaign = component.active_campaign_for(@rosterable)
+
+      group_type = if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type]&.to_sym || @rosterable.roster_group_type
+      end
+
+      ActiveRecord::Base.transaction do
+        if @rosterable.update(self_materialization_mode: mode)
+          flash.now[:notice] = t("roster.messages.updated")
+        else
+          flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
+          @rosterable.reload
+        end
+      end
+
+      render turbo_stream: [
+        turbo_stream.replace(
+          view_context.dom_id(@rosterable, :actions),
+          partial: "roster/components/groups_tab/item_actions",
+          locals: { item: @rosterable, component: component, campaign: campaign,
+                    group_type: group_type }
+        ),
+        turbo_stream.replace(
+          view_context.dom_id(@rosterable, :status),
+          partial: "roster/components/groups_tab/status_cell",
+          locals: { item: @rosterable, campaign: campaign, component: component }
+        ),
+        stream_flash
+      ]
     end
 
     private
@@ -353,11 +392,14 @@ module Roster
 
       def eager_load_lecture(id)
         Lecture.includes(
-          { registration_campaigns: [:user_registrations, :registration_items] },
+          { registration_campaigns: [:user_registrations, :registration_items,
+                                     :registration_policies] },
           tutorials: [:tutors, :tutorial_memberships,
-                      { registration_items: :registration_campaign }],
-          cohorts: [:cohort_memberships, { registration_items: :registration_campaign }],
-          talks: [:speakers, :speaker_talk_joins, { registration_items: :registration_campaign }]
+                      { registration_items: { registration_campaign: :registration_policies } }],
+          cohorts: [:cohort_memberships,
+                    { registration_items: { registration_campaign: :registration_policies } }],
+          talks: [:speakers, :speaker_talk_joins,
+                  { registration_items: { registration_campaign: :registration_policies } }]
         ).find_by(id: id)
       end
 

@@ -2,6 +2,26 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
+    status_texts:
+      awaiting_setup: "Awaiting setup"
+      awaiting_setup_short: "Setup"
+      direct_management: "Direct management"
+      direct_management_short: "Direct"
+      campaign_draft: "Campaign: Draft"
+      campaign_draft_short: "Draft"
+      campaign_open: "Campaign: Registration"
+      campaign_open_short: "Registration"
+      campaign_closed: "Campaign: Closed"
+      campaign_closed_short: "Closed"
+      campaign_processing: "Campaign: Processing"
+      campaign_processing_short: "Processing"
+      campaign_completed: "Campaign: Completed"
+      campaign_completed_short: "Completed"
+      post_campaign: "Post-campaign"
+      post_campaign_short: "Post-camp."
+      self_enrollment: "Self-enrollment"
+      no_policy_enforcement: "No policy enforcement"
+      gated_by_policies: "Gated by policies: %{policies}"
     participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
@@ -174,12 +194,27 @@ en:
       tutors: 'Tutors'
       speakers: 'Speakers'
       occupancy: 'Occupancy'
+      status: 'Status'
       name: 'Name'
       email: 'Email'
       groups: 'Groups'
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
+    self_materialization:
+      modes:
+        disabled: 'Self-Enrollment Disabled'
+        add_only: 'Join Only'
+        remove_only: 'Leave Only'
+        add_and_remove: 'Join & Leave'
+      label: 'Self-Enrollment'
+    policy_bypass_warning:
+      title: "Policy Bypass Warning"
+      message: "The last campaign '%{campaign_name}' had a registration policy '%{policy_name}'. Enabling self-enrollment will allow students to join without meeting those requirements."
+      confirm: "Enable anyway"
+      cancel: "Cancel"
+    unknown_policy: "Unknown policy"
+    completed_campaign: "Completed campaign"
     skip_campaigns: 'Skip Campaigns'
     enable_skip_campaigns_hint: 'Cannot skip campaigns because this group was part of a campaign.'
     disable_skip_campaigns_hint: 'Cannot enable campaigns because the roster is not empty.'
@@ -194,8 +229,17 @@ en:
       kick_from_lecture: "Removes lecture enrollment and all tutorial and (cohort with enrollment) memberships"
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
+      locked_manage: "Roster is locked during active campaign"
+      locked_manage_no_campaign: "Roster is locked (enable skip campaigns to manage directly)"
       edit_settings: "Edit Settings"
+      edit_disabled_campaign: "Cannot edit settings during active campaign"
       delete: "Delete"
+      delete_disabled: "Cannot delete group (has participants or in campaign)"
+      self_materialization_disabled_campaign: "Self-enrollment is disabled during active campaigns"
+      self_materialization_disabled_fresh: "Enable skip campaigns first to use self-enrollment"
+      create_campaign_disabled: "Cannot create campaign (skip campaigns is enabled)"
+      skip_campaigns_enabled: "Skipping campaigns (click to use campaigns)"
+      skip_campaigns_disabled: "Using campaigns (click to skip campaigns)"
     hints:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
@@ -212,15 +256,18 @@ en:
       invalid_type: 'Invalid group type.'
       roster_not_empty: "cannot be enabled because there are already students in the roster. Please empty the roster first."
       campaign_running: "cannot be disabled while a campaign is running."
+      active_campaign_exists: 'Self-Enrollment cannot be enabled because an active campaign already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
       user_already_in_bundle: "Student is already assigned to %{group}."
       item_locked: "This group is managed by an active registration campaign and cannot be modified manually."
-      campaign_associated: "This group is part of a registration campaign and cannot be managed manually."
+      campaign_associated: "Self-enrollment is not available because this group is part of a registration campaign."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration campaign."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
+      lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
+      cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to campaign mode. Please disable self-enrollment first or keep skip campaigns enabled."
     warnings:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'

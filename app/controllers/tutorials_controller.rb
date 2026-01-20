@@ -134,7 +134,6 @@ class TutorialsController < ApplicationController
         if @tutorial.errors.empty?
           streams << update_roster_groups_list_stream(group_type)
           streams << refresh_campaigns_index_stream(@tutorial.lecture)
-          streams << turbo_stream.update("modal-container", "")
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
                                           partial: "tutorials/modal_form",

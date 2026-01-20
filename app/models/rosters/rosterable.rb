@@ -32,7 +32,16 @@ module Rosters
         :"#{self.class.name.underscore}_memberships"
       end
 
+      enum :self_materialization_mode, {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, prefix: true
+
+      before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
+      validate :validate_self_materialization_switch
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
@@ -240,6 +249,23 @@ module Rosters
         end
       end
 
+      def validate_self_materialization_switch
+        return unless self_materialization_mode_changed?
+
+        if is_a?(Lecture) && !self_materialization_mode_disabled?
+          errors.add(:self_materialization_mode,
+                     I18n.t("roster.errors.lecture_cannot_self_materialize"))
+          return
+        end
+
+        return if self_materialization_mode_disabled?
+        return unless respond_to?(:skip_campaigns)
+
+        return unless locked?
+
+        errors.add(:base, I18n.t("roster.errors.campaign_associated"))
+      end
+
       def enforce_rosterable_destruction_constraints
         if in_campaign?
           errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
@@ -250,6 +276,32 @@ module Rosters
 
         errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
+      end
+
+      def enforce_consistency_between_modes
+        return unless respond_to?(:skip_campaigns)
+
+        # Detect conflicting user intent - both changed in same request
+        if skip_campaigns_changed? && self_materialization_mode_changed? &&
+           !skip_campaigns? && !self_materialization_mode_disabled?
+          errors.add(:base,
+                     I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization"))
+          return
+        end
+
+        # Auto-disable self-materialization when switching to campaign mode
+        # (only if user didn't explicitly change self_materialization_mode)
+        if skip_campaigns_changed? && !skip_campaigns? && !self_materialization_mode_changed?
+          self.self_materialization_mode = :disabled
+          return
+        end
+
+        # Auto-enable skip_campaigns when enabling self-materialization
+        # (only if user didn't explicitly change skip_campaigns)
+        if self_materialization_mode_changed? && !self_materialization_mode_disabled? &&
+           !skip_campaigns_changed? && !in_campaign?
+          self.skip_campaigns = true
+        end
       end
   end
 end

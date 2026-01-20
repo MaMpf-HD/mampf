@@ -280,6 +280,9 @@ Rails.application.routes.draw do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
       post "roster/add_to_group", to: "roster/maintenance#enroll", as: :roster_add_to_group
+      patch "roster/self_materialization",
+            to: "roster/maintenance#update_self_materialization",
+            as: :roster_update_self_materialization
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
@@ -814,6 +817,10 @@ Rails.application.routes.draw do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Talk" }
+      patch "roster/self_materialization",
+            to: "roster/maintenance#update_self_materialization",
+            defaults: { type: "Talk" },
+            as: :update_self_materialization
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
@@ -859,6 +866,10 @@ Rails.application.routes.draw do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Tutorial" }
+      patch "roster/self_materialization",
+            to: "roster/maintenance#update_self_materialization",
+            defaults: { type: "Tutorial" },
+            as: :update_self_materialization
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
@@ -876,6 +887,10 @@ Rails.application.routes.draw do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
       patch "roster", to: "roster/maintenance#update", defaults: { type: "Cohort" }
+      patch "roster/self_materialization",
+            to: "roster/maintenance#update_self_materialization",
+            defaults: { type: "Cohort" },
+            as: :update_self_materialization
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do

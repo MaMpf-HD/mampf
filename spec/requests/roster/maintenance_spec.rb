@@ -626,4 +626,39 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
     end
   end
+
+  describe "PATCH /tutorials/:id/roster/self_materialization" do
+    let(:tutorial) { create(:tutorial, lecture: lecture, self_materialization_mode: :disabled) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "updates the self_materialization_mode" do
+        patch tutorial_update_self_materialization_path(tutorial),
+              params: { self_materialization_mode: "add_only" }
+        expect(tutorial.reload.self_materialization_mode).to eq("add_only")
+      end
+
+      it "returns turbo stream response" do
+        patch tutorial_update_self_materialization_path(tutorial),
+              params: { self_materialization_mode: "add_only" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(response.content_type).to include("text/vnd.turbo-stream.html")
+        expect(response.body).to include('action="replace"')
+        expect(response.body).to include("actions_tutorial_#{tutorial.id}")
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch tutorial_update_self_materialization_path(tutorial),
+              params: { self_materialization_mode: "add_only" }
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
 end

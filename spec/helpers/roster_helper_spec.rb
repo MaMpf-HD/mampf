@@ -96,21 +96,53 @@ RSpec.describe(RosterHelper, type: :helper) do
       context "with campaign" do
         let(:campaign) { create(:registration_campaign) }
 
-        it "renders view campaign button" do
+        it "renders disabled manage button" do
           result = helper.roster_manage_button(item, component, campaign)
-          expect(result).to include("campaign_id=#{campaign.id}")
-          expect(result).to include("bi-calendar-check")
+          expect(result).to include("disabled")
+          expect(result).to include("bi-person-lines-fill")
         end
       end
 
       context "without campaign and not in campaign" do
         before { allow(item).to receive(:in_campaign?).and_return(false) }
 
-        it "renders create campaign button" do
+        it "renders disabled manage button" do
           result = helper.roster_manage_button(item, component, campaign)
-          expect(result).to include("new_campaign=true")
-          expect(result).to include("bi-calendar-plus")
+          expect(result).to include("disabled")
+          expect(result).to include("bi-person-lines-fill")
         end
+      end
+    end
+  end
+
+  describe "#roster_campaign_button" do
+    let(:item) { create(:tutorial) }
+    let(:component) do
+      double("component", lecture: create(:lecture), group_path: "/tutorials/#{item.id}/roster")
+    end
+
+    context "with active campaign" do
+      let(:campaign) { create(:registration_campaign) }
+
+      it "renders view campaign button" do
+        result = helper.roster_campaign_button(item, component, campaign)
+        expect(result).to include("campaign_id=#{campaign.id}")
+        expect(result).to include("bi-calendar-event")
+      end
+    end
+
+    context "without campaign and not in campaign" do
+      let(:campaign) { nil }
+
+      before do
+        allow(item).to receive(:in_campaign?).and_return(false)
+        allow(item).to receive(:skip_campaigns?).and_return(false)
+      end
+
+      it "renders create campaign button" do
+        result = helper.roster_campaign_button(item, component, campaign)
+        expect(result).to include("new_campaign=true")
+        expect(result).to include("bi-calendar-plus")
       end
     end
   end
@@ -142,8 +174,10 @@ RSpec.describe(RosterHelper, type: :helper) do
     context "when item is not destructible" do
       before { allow(item).to receive(:destructible?).and_return(false) }
 
-      it "returns nil" do
-        expect(helper.roster_destroy_button(item, :tutorials)).to be_nil
+      it "renders disabled destroy button" do
+        result = helper.roster_destroy_button(item, :tutorials)
+        expect(result).to include("disabled")
+        expect(result).to include("bi-trash")
       end
     end
   end

@@ -2,6 +2,26 @@ de:
   roster:
     title: 'Teilnehmende'
     status: 'Status'
+    status_texts:
+      awaiting_setup: "Wartet auf Einrichtung"
+      awaiting_setup_short: "Setup"
+      direct_management: "Direkte Verwaltung"
+      direct_management_short: "Direkt"
+      campaign_draft: "Anmeldeverfahren: Entwurf"
+      campaign_draft_short: "Entwurf"
+      campaign_open: "Anmeldeverfahren: Anmeldung"
+      campaign_open_short: "Anmeldung"
+      campaign_closed: "Anmeldeverfahren: Geschlossen"
+      campaign_closed_short: "Geschlossen"
+      campaign_processing: "Anmeldeverfahren: Verarbeitung"
+      campaign_processing_short: "Verarbeitung"
+      campaign_completed: "Anmeldeverfahren: Abgeschlossen"
+      campaign_completed_short: "Abgeschlossen"
+      post_campaign: "Nach Anmeldeverfahren"
+      post_campaign_short: "Nach Anmeld."
+      self_enrollment: "Selbsteinschreibung"
+      no_policy_enforcement: "Keine Richtliniendurchsetzung"
+      gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
     participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
@@ -176,12 +196,27 @@ de:
       speakers: 'Vortragende'
 
       occupancy: 'Belegung'
+      status: 'Status'
       name: 'Name'
       email: 'E-Mail'
       groups: 'Gruppen'
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
+    self_materialization:
+      modes:
+        disabled: 'Selbsteinschreibung deaktiviert'
+        add_only: 'Nur Eintragen'
+        remove_only: 'Nur Austragen'
+        add_and_remove: 'Ein- & Austragen'
+      label: 'Selbsteinschreibung'
+    policy_bypass_warning:
+      title: "Warnung zur Richtlinienumgehung"
+      message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
+      confirm: "Trotzdem aktivieren"
+      cancel: "Abbrechen"
+    unknown_policy: "Unbekannte Richtlinie"
+    completed_campaign: "Abgeschlossenes Anmeldeverfahren"
     skip_campaigns: 'Anmeldeverfahren überspringen'
     enable_skip_campaigns_hint: 'Anmeldeverfahren können nicht übersprungen werden, da diese Gruppe Teil einer Kampagne war.'
     disable_skip_campaigns_hint: 'Anmeldeverfahren können nicht aktiviert werden, da die Liste nicht leer ist.'
@@ -198,8 +233,17 @@ de:
       kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
       kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
+      locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
+      locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"
       edit_settings: "Einstellungen bearbeiten"
+      edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
       delete: "Löschen"
+      delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
+      self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"
+      self_materialization_disabled_fresh: "Aktiviere zuerst Anmeldeverfahren überspringen um Selbsteinschreibung zu nutzen"
+      create_campaign_disabled: "Kann kein Anmeldeverfahren erstellen (Anmeldeverfahren überspringen ist aktiviert)"
+      skip_campaigns_enabled: "Überspringt Anmeldeverfahren (klicken um Anmeldeverfahren zu nutzen)"
+      skip_campaigns_disabled: "Nutzt Anmeldeverfahren (klicken um Anmeldeverfahren zu überspringen)"
     hints:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
@@ -216,15 +260,18 @@ de:
       invalid_type: 'Ungültiger Gruppentyp.'
       roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
+      active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
-      campaign_associated: "Diese Gruppe ist Teil eines Anmeldeverfahrens und kann nicht manuell verwaltet werden."
+      campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
+      lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
+      cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktivieren Sie zuerst die Selbsteinschreibung oder behalten Sie 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
