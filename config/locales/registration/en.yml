@@ -169,6 +169,8 @@ en:
         existing: "Add Existing"
         new: "Create New"
         none_available: "No groups available to add."
+        create_in_roster_hint: "Need to create new groups?"
+        go_to_roster: "Go to Roster tab"
       columns:
         type: "Group Type"
         title: "Title"
