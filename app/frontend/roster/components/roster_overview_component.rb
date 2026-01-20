@@ -357,21 +357,9 @@ class RosterOverviewComponent < ViewComponent::Base
 
       # 2. Cohort (Enrolled) Actions
       if cohorts_enabled?
-        # Enrollment Group (With Enrollment)
-        actions << {
-          text: I18n.t("registration.item.types.enrollment_group"),
-          path: Rails.application.routes.url_helpers
-                     .new_cohort_path(lecture_id: @lecture.id,
-                                      group_type: @group_type,
-                                      format: :turbo_stream,
-                                      cohort: { purpose: "enrollment", propagate_to_lecture: true })
-        }
-
         # Flexible Group (With Enrollment)
-        label = "#{I18n.t("registration.item.types.other_group")} " \
-                "(#{I18n.t("roster.cohorts.with_lecture_enrollment_title")})"
         actions << {
-          text: label,
+          text: I18n.t("roster.group_category.flexible_group"),
           path: Rails.application.routes.url_helpers
                      .new_cohort_path(lecture_id: @lecture.id,
                                       group_type: @group_type,
@@ -388,16 +376,7 @@ class RosterOverviewComponent < ViewComponent::Base
 
       [
         {
-          text: I18n.t("registration.item.types.planning_survey"),
-          path: Rails.application.routes.url_helpers
-                     .new_cohort_path(lecture_id: @lecture.id,
-                                      group_type: @group_type,
-                                      format: :turbo_stream,
-                                      cohort: { purpose: "planning", propagate_to_lecture: false })
-        },
-        {
-          text: "#{I18n.t("registration.item.types.other_group")} " \
-                "(#{I18n.t("roster.cohorts.without_lecture_enrollment_title")})",
+          text: I18n.t("roster.group_category.flexible_group"),
           path: Rails.application.routes.url_helpers
                      .new_cohort_path(lecture_id: @lecture.id,
                                       group_type: @group_type,

@@ -5,9 +5,25 @@
 
       <%# HEADER: Title & Status %>
       <div class="d-flex justify-content-between align-items-start mb-2">
-        <h6 class="card-title fw-bold mb-0 text-truncate" title="<%= item.title %>">
-          <%= item.title %>
-        </h6>
+        <div class="flex-grow-1">
+          <h6 class="card-title fw-bold mb-1 text-truncate" title="<%= item.title %>">
+            <%= item.title %>
+          </h6>
+          <% if item.is_a?(Cohort) %>
+            <div class="small text-muted">
+              <i class="bi bi-tag me-1"></i>
+              <%= t("roster.group_category.flexible_group") %>
+              <% if item.purpose.present? && item.purpose != "general" %>
+                (<%= t("roster.cohorts.purposes.#{item.purpose}") %>)
+              <% end %>
+            </div>
+          <% elsif item.is_a?(Tutorial) %>
+            <div class="small text-muted">
+              <i class="bi bi-tag me-1"></i>
+              <%= t("roster.group_category.tutorial") %>
+            </div>
+          <% end %>
+        </div>
         <%= render "roster/components/groups_tab/status_cell", item: item, campaign: campaign, component: component %>
       </div>
 

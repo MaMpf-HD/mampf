@@ -2,70 +2,79 @@
               id: dom_id(cohort, "form"),
               data: {
                 turbo: true,
-                controller: "capacity-guard cohort-purpose registerable-type-help",
+                controller: "capacity-guard cohort-purpose-hierarchical",
                 action: "submit->capacity-guard#submit",
                 capacity_guard_current_count_value: cohort.members.count,
                 capacity_guard_original_capacity_value: cohort.capacity || 0,
-                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction"),
-                registerable_type_help_enrollment_help_value: t("roster.cohorts.help.enrollment"),
-                registerable_type_help_planning_help_value: t("roster.cohorts.help.planning"),
-                registerable_type_help_other_help_value: t("roster.cohorts.help.other")
+                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
               } do |f| %>
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
   <div class="modal-body">
-    <div class="mb-3">
-      <%= f.label :purpose, t("basics.type"), class: "form-label" %>
-      <%= f.select :cohort_type,
-                   cohort_type_options(cohort),
-                   { selected: cohort_type_from_purpose(cohort.purpose) },
-                   class: "form-select",
-                   disabled: params.dig(:cohort, :purpose).present?,
-                   data: {
-                     cohort_purpose_target: "typeSelect",
-                     registerable_type_help_target: "select",
-                     action: "change->cohort-purpose#togglePurpose change->registerable-type-help#updateHelp"
-                   } %>
-      <small class="form-text text-muted mt-2"
-             data-registerable-type-help-target="helpText"
-             style="display: none;"></small>
-
-      <% if cohort.purpose == "enrollment" && (cohort.context.tutorials.any? || cohort.context.talks.any?) %>
-        <div class="alert alert-secondary d-flex align-items-center mt-3 mb-0 py-2">
-          <i class="bi bi-info-circle-fill me-2"></i>
-          <span class="small"><%= t("roster.hints.superset_exists") %></span>
-        </div>
-      <% end %>
-    </div>
-
-    <%= f.hidden_field :purpose, data: { cohort_purpose_target: "purposeField" } %>
-
-    <div class="mb-3" data-cohort-purpose-target="propagateContainer" style="display: none;">
-      <div class="form-check">
-        <% is_locked = params.dig(:cohort, :propagate_to_lecture).present? %>
-        <%= f.check_box :propagate_to_lecture,
-                        class: "form-check-input",
-                        disabled: cohort.persisted? || is_locked,
-                        data: { cohort_purpose_target: "propagateCheckbox" } %>
-        <%= f.label :propagate_to_lecture,
-                    t("roster.cohorts.attributes.propagate_to_lecture"),
-                    class: "form-check-label" %>
-        <% if is_locked %>
-          <%= f.hidden_field :propagate_to_lecture %>
-        <% end %>
+    <% 
+      # Determine propagate value from context (dropdown) or existing cohort
+      if cohort.persisted?
+        propagates = cohort.propagate_to_lecture?
+      else
+        propagate_flag = params.dig(:cohort, :propagate_to_lecture)
+        propagates = propagate_flag.to_s == "true"
+      end
+    %>
+    
+    <%# Show context info header - always present since users come from dropdown or edit %>
+    <div class="alert alert-info d-flex align-items-start mb-3">
+      <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+      <div>
+        <strong>
+          <%= t("roster.group_category.flexible_group") %>
+          <%= propagates ? "(#{t("roster.cohorts.with_lecture_enrollment_title")})" : "(#{t("roster.cohorts.without_lecture_enrollment_title")})" %>
+        </strong>
+        <br>
+        <small class="text-muted">
+          <%= propagates ? t("roster.cohorts.with_lecture_enrollment_help") : t("roster.cohorts.without_lecture_enrollment_help") %>
+          <br><strong><%= t("roster.cohorts.help.propagate_readonly_warning") %></strong>
+        </small>
       </div>
-      <small class="form-text text-muted">
-        <%= t("roster.cohorts.help.propagate_to_lecture") %>
+    </div>
+    <%= f.hidden_field :propagate_to_lecture %>
+    <%= hidden_field_tag :group_category, "Flexible Group" unless cohort.persisted? %>
+
+    <% 
+      # Determine which semantic flag applies based on propagate context
+      special_purpose = propagates ? "enrollment" : "planning"
+      special_purpose_label = t("roster.cohorts.help.#{special_purpose}_checkbox_label")
+      
+      # Check if cohort has special purpose set
+      current_purpose = cohort.purpose.to_s.presence || "general"
+      has_special_purpose = current_purpose == special_purpose
+    %>
+
+    <div class="mb-3">
+      <label class="form-label">
+        <%= t("roster.cohorts.help.semantic_purpose_label") %>
+      </label>
+      <small class="form-text text-muted d-block mb-2">
+        <%= t("roster.cohorts.help.semantic_purpose_explanation") %>
       </small>
-      <% unless cohort.persisted? %>
-        <div class="alert alert-warning mt-2 mb-0 py-2">
-          <i class="bi bi-exclamation-triangle me-1"></i>
-          <%= t("roster.warnings.propagate_readonly_after_creation") %>
-        </div>
-      <% else %>
-        <div class="alert alert-info mt-2 mb-0 py-2">
-          <i class="bi bi-info-circle me-1"></i>
-          <%= t("roster.hints.purpose_change_constrained_by_propagate") %>
+      
+      <div class="form-check">
+        <%= check_box_tag :has_special_purpose,
+                          "1",
+                          has_special_purpose,
+                          class: "form-check-input",
+                          data: {
+                            cohort_purpose_hierarchical_target: "purposeCheckbox",
+                            action: "change->cohort-purpose-hierarchical#togglePurpose"
+                          } %>
+        <%= label_tag :has_special_purpose, special_purpose_label, class: "form-check-label" %>
+      </div>
+
+      <% if propagates && (cohort.context.tutorials.any? || cohort.context.talks.any?) %>
+        <div class="alert alert-warning d-flex align-items-start mt-2 mb-0 py-2" 
+             data-cohort-purpose-hierarchical-target="enrollmentWarning"
+             style="display: <%= has_special_purpose ? 'flex' : 'none' %>;">
+          <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+          <small><%= t("roster.cohorts.help.enrollment_warning") %></small>
         </div>
       <% end %>
     </div>

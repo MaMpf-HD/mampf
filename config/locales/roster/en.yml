@@ -2,6 +2,9 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
+    group_category:
+      tutorial: "Tutorial"
+      flexible_group: "Flexible Group"
     status_texts:
       awaiting_setup: "Awaiting setup"
       awaiting_setup_short: "Setup"
@@ -161,16 +164,22 @@ en:
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
+      purpose_label: "Purpose"
+      purposes:
+        enrollment: "Collection Group"
+        planning: "Planning"
+        general: "General"
       with_lecture_enrollment_title: "With Enrollment"
-      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
+      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups or as collection groups."
       without_lecture_enrollment_title: "Without Enrollment"
-      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      without_lecture_enrollment_help: "Members are not automatically enrolled in the course. Can be used e.g. for waitlists or for needs assessment."
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
       propagates_short: "Enrollment"
       propagates_hint: "Members of this cohort serve as lecture participants"
       lecture_enrollment: "Lecture Enrollment"
+      can_enable_propagate: "You can enable this to upgrade the group to automatically enroll students in the course."
       attributes:
         propagate_to_lecture: "Students are automatically enrolled in the course"
       help:
@@ -178,6 +187,16 @@ en:
         planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
         propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
+        propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
+        semantic_purpose_label: "Semantic Purpose (optional)"
+        semantic_purpose_explanation: "This is only for better organization and filtering. The group's functionality does not change."
+        enrollment_checkbox_label: "For courses without tutorials/talks, to collect all students in a single group"
+        planning_checkbox_label: "For needs assessment and planning"
+        general_with_enrollment: "E.g. for special projects or supplementary groups."
+        general_without_enrollment: "E.g. for waitlists or special projects."
+        enrollment_short: "For courses without tutorials or talks."
+        planning_short: "Needs assessment before semester begins."
+        enrollment_warning: "⚠️ This course already has tutorials/talks."
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'

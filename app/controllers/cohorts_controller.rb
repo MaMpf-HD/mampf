@@ -42,6 +42,7 @@ class CohortsController < ApplicationController
   def create
     cohort_attributes = cohort_params
     cohort_attributes = map_cohort_type_to_purpose(cohort_attributes)
+    cohort_attributes = parse_special_purpose_checkbox(cohort_attributes)
 
     @cohort = Cohort.new(cohort_attributes)
     @cohort.context = @lecture
@@ -65,7 +66,10 @@ class CohortsController < ApplicationController
 
   def update
     set_cohort_locale
-    if @cohort.update(cohort_params)
+    updated_attributes = cohort_params
+    updated_attributes = parse_special_purpose_checkbox(updated_attributes)
+
+    if @cohort.update(updated_attributes)
       flash.now[:notice] = t("controllers.cohorts.updated")
     else
       @errors = @cohort.errors
@@ -159,6 +163,19 @@ class CohortsController < ApplicationController
         attributes[:propagate_to_lecture] = true
       when :planning
         attributes[:propagate_to_lecture] = false
+      end
+
+      attributes
+    end
+
+    def parse_special_purpose_checkbox(attributes)
+      propagate_value = attributes[:propagate_to_lecture]
+      propagate_value = @cohort.propagate_to_lecture? if @cohort&.persisted?
+
+      attributes[:purpose] = if params[:has_special_purpose] == "1"
+        propagate_value ? :enrollment : :planning
+      else
+        :general
       end
 
       attributes
