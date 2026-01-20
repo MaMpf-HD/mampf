@@ -3641,6 +3641,7 @@ de:
     speaker: Vortragender
     speakers: Vortragende
     unlimited: unbegrenzt
+    personnel: Personal
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -4102,6 +4103,8 @@ de:
               invalid: 'Die Angaben sind ungültig.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
@@ -4113,6 +4116,8 @@ de:
               taken: 'Dieses Semester existiert bereits.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorien können nicht für Seminare erstellt werden."
             title:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits

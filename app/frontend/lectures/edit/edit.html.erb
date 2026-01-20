@@ -38,11 +38,15 @@
         </div>
       <% end %>
 
-      <% component.with_tab(name: "people",
-                            label: "#{t('basics.people')}/#{t('basics.tutorials')}") do %>
+      <% show_new_roster = Flipper.enabled?(:roster_maintenance) && !@lecture.legacy_seminar %>
+      <% people_label = show_new_roster ? t('basics.personnel') : "#{t('basics.people')}/#{t('basics.tutorials')}" %>
+
+      <% component.with_tab(name: "people", label: people_label) do %>
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %>
-          <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
+          <% unless show_new_roster %>
+            <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
+          <% end %>
           <%= render partial: 'lectures/edit/vouchers', locals: { lecture: @lecture } %>
         </div>
       <% end %>
