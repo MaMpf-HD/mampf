@@ -229,11 +229,12 @@ class RosterOverviewComponent < ViewComponent::Base
       end
 
       {
-        icon: "bi-check-circle-fill",
+        icon: "bi-calendar-check-fill",
         text: I18n.t("roster.status_texts.post_campaign_short") + (has_policies ? " 🛡️" : ""),
         css_class: "bg-light text-secondary border border-secondary",
         tooltip: tooltip_text,
-        self_enrollment: !item.self_materialization_mode_disabled?
+        self_enrollment: !item.self_materialization_mode_disabled?,
+        has_policies: has_policies
       }
     elsif item.skip_campaigns?
       {
@@ -241,7 +242,8 @@ class RosterOverviewComponent < ViewComponent::Base
         text: I18n.t("roster.status_texts.direct_management_short"),
         css_class: "bg-light text-primary border border-primary",
         tooltip: I18n.t("roster.status_texts.direct_management"),
-        self_enrollment: !item.self_materialization_mode_disabled?
+        self_enrollment: !item.self_materialization_mode_disabled?,
+        has_policies: false
       }
     else
       {
@@ -249,7 +251,8 @@ class RosterOverviewComponent < ViewComponent::Base
         text: I18n.t("roster.status_texts.awaiting_setup_short"),
         css_class: "bg-light text-muted border border-secondary",
         tooltip: I18n.t("roster.status_texts.awaiting_setup"),
-        self_enrollment: false
+        self_enrollment: false,
+        has_policies: false
       }
     end
   end
