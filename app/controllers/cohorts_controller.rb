@@ -11,6 +11,7 @@ class CohortsController < ApplicationController
 
   def new
     @cohort = Cohort.new(context: @lecture)
+    @cohort.assign_attributes(cohort_params) if params[:cohort].present?
     authorize! :new, @cohort
     set_cohort_locale
 
@@ -183,7 +184,6 @@ class CohortsController < ApplicationController
                           partial: "roster/components/groups_tab",
                           locals: {
                             groups: component.groups,
-                            total_participants: component.total_participants,
                             group_type: group_type,
                             component: component
                           })

@@ -1,10 +1,13 @@
 de:
   roster:
     title: 'Teilnehmende'
+    status: 'Status'
+    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
       talk_maintenance: 'Vortragsbetrieb'
       groups: 'Gruppen'
+      participants: 'Eingeschriebene'
       group_maintenance: 'Gruppenverwaltung'
       candidates: 'Kandidaten'
       enrollment: 'Einschreibung'
@@ -12,9 +15,16 @@ de:
       overview: 'Übersicht'
     stats:
       total_participants: 'Teilnehmende gesamt'
+      total_enrolled: 'Eingeschrieben'
       capacity_usage: 'von %{count} Plätzen belegt'
-      unassigned: 'Nicht zugewiesen'
+      unassigned: 'Ohne Gruppe'
+      status_assigned: 'Zugewiesen'
+      status_unassigned: 'Ohne Gruppe'
       action_required: 'Handlung erforderlich'
+      group_distribution: 'Gruppenverteilung'
+    filters:
+      all: 'Alle'
+      unassigned: 'Ohne Gruppe'
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
@@ -76,7 +86,12 @@ de:
         other:
           title: "Flexible Gruppen"
           description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
-        note: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+        superset_principle:
+          title: "Obermengenprinzip"
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+        sticky_enrollment:
+          title: "Feste Einschreibung"
+          description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwenden Sie die Entfernen-Aktion im Tab 'Eingeschriebene'."
       phase1:
         title: "1. Wählen Sie Ihre Einrichtungsmethode"
         campaigns:
@@ -112,15 +127,28 @@ de:
       global_roster: 'Gesamtliste'
       assign: 'Zuweisen'
       assign_to: 'Zuweisen zu...'
+      switch_to: 'Wechseln zu'
+      switch_from_to: 'Wechseln von %{from} → %{to}'
       move: 'Verschieben'
       back: 'Zurück'
       add: 'Hinzufügen'
+      add_to: 'Hinzufügen zu %{to}'
       add_student_label: 'E-Mail des Studierenden'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Sind Sie sicher, dass Sie diesen Studierenden entfernen möchten?'
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
     cohorts:
+      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
+      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
+      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
+      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
+      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
+      propagates_short: "Einschreibung"
+      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
+      lecture_enrollment: "Veranstaltungseinschreibung"
       attributes:
         propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
       help:
@@ -150,6 +178,7 @@ de:
       occupancy: 'Belegung'
       name: 'Name'
       email: 'E-Mail'
+      groups: 'Gruppen'
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
@@ -166,6 +195,8 @@ de:
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
     tooltips:
+      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
+      kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
       edit_settings: "Einstellungen bearbeiten"
       delete: "Löschen"
@@ -174,6 +205,9 @@ de:
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
       purpose_change_constrained_by_propagate: "Die verfügbaren Typen hängen davon ab, ob Studierende in die Teilnehmerliste übernommen werden. Diese Einstellung kann nicht geändert werden."
+      cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
+      cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+      cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
     buttons:
       full_editor: "vollständigen Editor"
     errors:
@@ -192,10 +226,13 @@ de:
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
     warnings:
+      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
+      confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
       propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'
+      setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "Studierende/r wurde nach %{target} verschoben."

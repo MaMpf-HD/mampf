@@ -1,6 +1,8 @@
 <% campaign = component.active_campaign_for(item) %>
 <tr>
-  <td class="fw-medium"><%= item.title %></td>
+  <td class="fw-medium">
+    <%= item.title %>
+  </td>
   <% if group[:type] == :tutorials %>
     <td><%= item.respond_to?(:tutors) ? item.tutors.map(&:name).join(", ") : "" %></td>
   <% elsif group[:type] == :cohorts %>

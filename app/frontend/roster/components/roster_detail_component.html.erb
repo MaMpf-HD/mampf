@@ -40,7 +40,7 @@
         <tbody>
           <% students.each do |student| %>
             <tr>
-              <td><%= student.name %></td>
+              <td><%= student.tutorial_name %></td>
               <td><%= student.email %></td>
               <td>
                 <% unless locked? %>
@@ -87,7 +87,9 @@
                     <%= button_to remove_member_path(student),
                                   method: :delete,
                                   class: "btn btn-sm btn-outline-danger",
-                                  data: { turbo_confirm: t('roster.actions.confirm_remove') } do %>
+                                  title: t('roster.tooltips.kick_from_group'),
+                                  data: { bs_toggle: "tooltip",
+                                          turbo_confirm: t('roster.warnings.confirm_kick_from_group') } do %>
                       <i class="bi bi-trash"></i>
                     <% end %>
                   </div>

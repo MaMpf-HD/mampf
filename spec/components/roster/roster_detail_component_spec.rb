@@ -42,14 +42,27 @@ RSpec.describe(RosterDetailComponent, type: :component) do
       it "generates correct paths without group_type" do
         render_inline(component)
         expect(component.add_member_path)
-          .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(tutorial))
+          .to eq(Rails.application.routes.url_helpers.add_member_tutorial_path(
+                   tutorial,
+                   group_type: :tutorials,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_tutorials"
+                 ))
         expect(component.remove_member_path(user))
           .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
-                   tutorial, user
+                   tutorial,
+                   user,
+                   group_type: :tutorials,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_tutorials"
                  ))
         expect(component.move_member_path(user))
           .to eq(Rails.application.routes.url_helpers.move_member_tutorial_path(
-                   tutorial, user
+                   tutorial,
+                   user,
+                   group_type: :tutorials,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_tutorials"
                  ))
       end
 
@@ -61,14 +74,22 @@ RSpec.describe(RosterDetailComponent, type: :component) do
           expect(component.add_member_path)
             .to eq(Rails.application.routes.url_helpers
             .add_member_tutorial_path(tutorial,
-                                      group_type: :tutorials))
+                                      group_type: :tutorials,
+                                      active_tab: "groups",
+                                      frame_id: "roster_maintenance_tutorials"))
           expect(component.remove_member_path(user))
             .to eq(Rails.application.routes.url_helpers.remove_member_tutorial_path(
-                     tutorial, user, group_type: :tutorials
+                     tutorial, user,
+                     group_type: :tutorials,
+                     active_tab: "groups",
+                     frame_id: "roster_maintenance_tutorials"
                    ))
           expect(component.move_member_path(user))
             .to eq(Rails.application.routes.url_helpers.move_member_tutorial_path(
-                     tutorial, user, group_type: :tutorials
+                     tutorial, user,
+                     group_type: :tutorials,
+                     active_tab: "groups",
+                     frame_id: "roster_maintenance_tutorials"
                    ))
         end
       end
@@ -153,14 +174,27 @@ RSpec.describe(RosterDetailComponent, type: :component) do
       it "generates correct paths without group_type" do
         render_inline(component)
         expect(component.add_member_path)
-          .to eq(Rails.application.routes.url_helpers.add_member_talk_path(talk))
+          .to eq(Rails.application.routes.url_helpers.add_member_talk_path(
+                   talk,
+                   group_type: :talks,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_talks"
+                 ))
         expect(component.remove_member_path(user))
           .to eq(Rails.application.routes.url_helpers.remove_member_talk_path(
-                   talk, user
+                   talk,
+                   user,
+                   group_type: :talks,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_talks"
                  ))
         expect(component.move_member_path(user))
           .to eq(Rails.application.routes.url_helpers.move_member_talk_path(
-                   talk, user
+                   talk,
+                   user,
+                   group_type: :talks,
+                   active_tab: "groups",
+                   frame_id: "roster_maintenance_talks"
                  ))
       end
 
@@ -170,15 +204,25 @@ RSpec.describe(RosterDetailComponent, type: :component) do
         it "includes group_type in paths" do
           render_inline(component)
           expect(component.add_member_path)
-            .to eq(Rails.application.routes.url_helpers.add_member_talk_path(talk,
-                                                                             group_type: :talks))
+            .to eq(Rails.application.routes.url_helpers.add_member_talk_path(
+                     talk,
+                     group_type: :talks,
+                     active_tab: "groups",
+                     frame_id: "roster_maintenance_talks"
+                   ))
           expect(component.remove_member_path(user))
             .to eq(Rails.application.routes.url_helpers.remove_member_talk_path(
-                     talk, user, group_type: :talks
+                     talk, user,
+                     group_type: :talks,
+                     active_tab: "groups",
+                     frame_id: "roster_maintenance_talks"
                    ))
           expect(component.move_member_path(user))
             .to eq(Rails.application.routes.url_helpers.move_member_talk_path(
-                     talk, user, group_type: :talks
+                     talk, user,
+                     group_type: :talks,
+                     active_tab: "groups",
+                     frame_id: "roster_maintenance_talks"
                    ))
         end
       end

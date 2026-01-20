@@ -4,25 +4,39 @@ class RosterOverviewComponent < ViewComponent::Base
   # Central configuration for supported types.
   # Maps the group_type symbol to the model class name string and roster association.
   SUPPORTED_TYPES = {
-    tutorials: { model: "Tutorial", association: :tutorial_memberships },
-    talks: { model: "Talk", association: :speaker_talk_joins },
-    cohorts: { model: "Cohort", association: :cohort_memberships }
+    tutorials: { model: "Tutorial", association: :tutorial_memberships, includes: :tutors },
+    talks: { model: "Talk", association: :speaker_talk_joins, includes: :speakers },
+    cohorts: { model: "Cohort", association: :cohort_memberships, includes: [] }
   }.freeze
 
-  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil)
+  # rubocop:disable Metrics/ParameterLists
+  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil,
+                 participants: nil, pagy: nil, filter_mode: "all", counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
     @active_tab = active_tab
     @rosterable = rosterable
+    @participants = participants
+    @pagy = pagy
+    @filter_mode = filter_mode
+    @counts = counts
   end
+  # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :active_tab, :rosterable
+  attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
+              :counts
 
   # Returns a list of groups to display based on the selected type.
   # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
   def groups
-    @groups ||= target_types.filter_map { |type| build_group_data(type) }
+    @groups ||= target_types.flat_map do |type|
+      if type == :cohorts
+        build_cohort_groups
+      else
+        [build_group_data(type)].compact
+      end
+    end
   end
 
   def group_type_title
@@ -42,7 +56,13 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def active_campaign_for(item)
-    item.registration_items.map(&:registration_campaign).find { |c| !c.completed? }
+    # Check loaded association first to avoid N+1 and direct DB hits
+    items = if item.association(:registration_items).loaded?
+      item.registration_items
+    else
+      item.registration_items.includes(:registration_campaign)
+    end
+    items.map(&:registration_campaign).find { |c| !c.completed? }
   end
 
   def show_campaign_running_badge?(item, campaign)
@@ -67,22 +87,66 @@ class RosterOverviewComponent < ViewComponent::Base
     end
   end
 
+  def subtables_for(group)
+    if group[:type] == :cohorts && group[:items].any?
+      with_enrollment = group[:items].select(&:propagate_to_lecture?)
+      without_enrollment = group[:items].reject(&:propagate_to_lecture?)
+
+      [
+        {
+          title: I18n.t("roster.cohorts.with_lecture_enrollment_title"),
+          help: I18n.t("roster.cohorts.with_lecture_enrollment_help"),
+          items: with_enrollment
+        },
+        {
+          title: I18n.t("roster.cohorts.without_lecture_enrollment_title"),
+          help: I18n.t("roster.cohorts.without_lecture_enrollment_help"),
+          items: without_enrollment
+        }
+      ].select { |p| p[:items].any? }
+        .presence || [{ title: nil, items: group[:items] }]
+    else
+      [{ title: nil, items: group[:items] }]
+    end
+  end
+
   private
 
     def target_types
       if @group_type == :all
         SUPPORTED_TYPES.keys
       elsif @group_type.is_a?(Array)
-        @group_type
+        @group_type.map(&:to_sym)
       else
-        [@group_type]
+        [@group_type.to_sym]
       end
+    end
+
+    def build_cohort_groups
+      # Filter for access groups or sidecars if needed,
+      # but returning all in one table per user request.
+
+      # Use eager loaded associations and sort in memory
+      items = @lecture.cohorts.sort_by(&:title)
+
+      # Removed early return to ensure "Add" button is always visible
+      # even if no cohorts exist yet.
+
+      [{
+        type: :cohorts,
+        title: Cohort.model_name.human(count: 2),
+        items: items,
+        link: Rails.application.routes.url_helpers.new_cohort_path(lecture_id: @lecture.id,
+                                                                   format: :turbo_stream,
+                                                                   group_type: @group_type)
+      }]
     end
 
     def build_group_data(type)
       config = SUPPORTED_TYPES[type]
+      # Using public_send returns the pre-loaded association target (Array) because
+      # we eager loaded it in controller
       items = @lecture.public_send(type)
-                      .includes(config[:association], registration_items: :registration_campaign)
 
       return nil if items.empty?
 
@@ -102,7 +166,13 @@ class RosterOverviewComponent < ViewComponent::Base
       {
         title: klass.model_name.human(count: 2),
         items: sorted_items,
-        type: type
+        type: type,
+        link: Rails.application.routes.url_helpers.public_send(
+          "new_#{config[:model].underscore}_path",
+          lecture_id: @lecture.id,
+          format: :turbo_stream,
+          group_type: @group_type
+        )
       }
     end
 end

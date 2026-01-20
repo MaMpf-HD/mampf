@@ -26,6 +26,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials"')
       end
 
+      it "assigns active_tab from params" do
+        get lecture_roster_path(lecture, tab: "enrollment")
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
+      end
+
       it "handles array group_type params" do
         get lecture_roster_path(lecture, group_type: ["tutorials", "cohorts"])
         expect(response.body).to include('turbo-frame id="roster_maintenance_tutorials_cohorts"')
@@ -43,6 +49,24 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           get lecture_roster_path(lecture)
           expect(response).to have_http_status(:success)
         end
+
+        context "when filtering unassigned participants" do
+          let(:assigned_user) { create(:user) }
+          let(:unassigned_user) { create(:user) }
+
+          before do
+            create(:lecture_membership, lecture: lecture, user: assigned_user)
+            create(:lecture_membership, lecture: lecture, user: unassigned_user)
+            create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
+          end
+
+          it "only returns unassigned participants" do
+            get lecture_roster_path(lecture, tab: "participants", filter: "unassigned")
+            expect(response).to have_http_status(:success)
+            expect(response.body).to include(unassigned_user.email)
+            expect(response.body).not_to include(assigned_user.email)
+          end
+        end
       end
     end
 
@@ -52,6 +76,26 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       it "redirects to root (unauthorized)" do
         get lecture_roster_path(lecture)
         expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /tutorials/:id/roster" do
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get tutorial_roster_path(tutorial)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "includes participants data for component" do
+        get tutorial_roster_path(tutorial)
+        expect(controller.instance_variable_get(:@participants)).not_to be_nil
+        expect(controller.instance_variable_get(:@pagy)).not_to be_nil
+        expect(response.body).to include('id="participants-tab"')
       end
     end
   end
@@ -112,6 +156,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(1)
       end
 
+      it "propagates tutorial roster additions to the lecture roster" do
+        expect do
+          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+        end.to change { lecture.members.count }.by(1)
+      end
+
       it "handles invalid email" do
         post add_member_tutorial_path(tutorial), params: { email: "invalid" }
         expect(flash[:alert]).to be_present
@@ -164,6 +214,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(-1)
       end
 
+      it "does not remove the user from the lecture roster" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        expect do
+          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+        end.not_to(change { lecture.members.count })
+      end
+
       context "when group is locked" do
         let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
@@ -212,6 +270,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.to change { source.members.count }.by(-1)
                                               .and(change { target.members.count }.by(1))
+      end
+
+      it "keeps lecture roster membership when moving within tutorials" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        expect do
+          patch(move_member_tutorial_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.not_to(change { lecture.members.count })
       end
 
       it "sets the correct flash message" do
@@ -290,6 +357,158 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     end
   end
 
+  describe "POST /lectures/:id/roster/members" do
+    let(:new_student) { create(:confirmed_user) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "adds the user to the lecture roster" do
+        expect do
+          post(add_member_lecture_path(lecture), params: { email: new_student.email })
+        end.to change { lecture.members.count }.by(1)
+      end
+
+      it "handles invalid email" do
+        post add_member_lecture_path(lecture), params: { email: "invalid@nonexistent.test" }
+        expect(flash[:alert]).to be_present
+      end
+
+      it "returns turbo stream response" do
+        post add_member_lecture_path(lecture),
+             params: { email: new_student.email },
+             as: :turbo_stream
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        post add_member_lecture_path(lecture), params: { email: new_student.email }
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not add the user" do
+        expect do
+          post(add_member_lecture_path(lecture), params: { email: new_student.email })
+        end.not_to(change { lecture.members.count })
+      end
+    end
+  end
+
+  describe "DELETE /lectures/:id/roster/members/:user_id" do
+    let(:member) { create(:confirmed_user) }
+
+    before { create(:lecture_membership, lecture: lecture, user: member) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "removes the user from the lecture roster" do
+        expect do
+          delete(remove_member_lecture_path(lecture, user_id: member.id))
+        end.to change { lecture.members.count }.by(-1)
+      end
+
+      it "returns turbo stream response" do
+        delete remove_member_lecture_path(lecture, user_id: member.id), as: :turbo_stream
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+
+      it "handles non-existent user" do
+        delete remove_member_lecture_path(lecture, user_id: 99_999), as: :turbo_stream
+        expect(flash[:alert]).to be_present
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        delete remove_member_lecture_path(lecture, user_id: member.id)
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not remove the user" do
+        expect do
+          delete(remove_member_lecture_path(lecture, user_id: member.id))
+        end.not_to(change { lecture.members.count })
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:id/roster/members/:user_id/move" do
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+    let(:target_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+    let(:member) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: member)
+      create(:tutorial_membership, tutorial: tutorial, user: member)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "moves the user to the target tutorial" do
+        expect do
+          patch(move_member_lecture_path(lecture, user_id: member.id),
+                params: { target_id: target_tutorial.id, target_type: "Tutorial" })
+        end.to change { tutorial.members.count }.by(-1)
+                                                .and(change { target_tutorial.members.count }.by(1))
+      end
+
+      it "keeps lecture membership when moving between tutorials" do
+        expect do
+          patch(move_member_lecture_path(lecture, user_id: member.id),
+                params: { target_id: target_tutorial.id, target_type: "Tutorial" })
+        end.not_to(change { lecture.members.count })
+      end
+
+      it "returns turbo stream response" do
+        patch move_member_lecture_path(lecture, user_id: member.id),
+              params: { target_id: target_tutorial.id, target_type: "Tutorial" },
+              as: :turbo_stream
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+
+      it "shows error when target is locked" do
+        allow_any_instance_of(Tutorial).to receive(:locked?).and_return(true)
+
+        patch move_member_lecture_path(lecture, user_id: member.id),
+              params: { target_id: target_tutorial.id, target_type: "Tutorial" },
+              as: :turbo_stream
+        expect(flash[:alert]).to be_present
+      end
+
+      it "shows error when target not found" do
+        patch move_member_lecture_path(lecture, user_id: member.id),
+              params: { target_id: 99_999, target_type: "Tutorial" },
+              as: :turbo_stream
+        expect(flash[:alert]).to be_present
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch move_member_lecture_path(lecture, user_id: member.id),
+              params: { target_id: target_tutorial.id, target_type: "Tutorial" }
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "does not move the user" do
+        expect do
+          patch(move_member_lecture_path(lecture, user_id: member.id),
+                params: { target_id: target_tutorial.id, target_type: "Tutorial" })
+        end.not_to(change { tutorial.members.count })
+      end
+    end
+  end
+
   describe "POST /cohorts/:id/roster/add_member" do
     let(:cohort) { create(:cohort, context: lecture, skip_campaigns: true) }
     let(:new_student) { create(:confirmed_user) }
@@ -301,6 +520,24 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           post(add_member_cohort_path(cohort), params: { email: new_student.email })
         end.to change { cohort.members.count }.by(1)
+      end
+
+      it "does not add the user to the lecture roster by default" do
+        expect do
+          post(add_member_cohort_path(cohort), params: { email: new_student.email })
+        end.not_to(change { lecture.members.count })
+      end
+
+      context "when cohort propagates to lecture" do
+        let(:cohort) do
+          create(:cohort, context: lecture, skip_campaigns: true, propagate_to_lecture: true)
+        end
+
+        it "adds the user to the lecture roster" do
+          expect do
+            post(add_member_cohort_path(cohort), params: { email: new_student.email })
+          end.to change { lecture.members.count }.by(1)
+        end
       end
     end
 

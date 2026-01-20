@@ -6,10 +6,12 @@ module RosterTransferable
   extend ActiveSupport::Concern
 
   def transfer_targets
-    @transfer_targets ||= available_groups.group_by(&:class).map do |klass, groups|
+    return @transfer_targets if @transfer_targets
+
+    targets = available_groups.group_by(&:class).map do |klass, groups|
       {
         type: klass.name.underscore.pluralize.to_sym,
-        title: klass.model_name.human(count: 2),
+        title: I18n.t("registration.item.groups.#{klass.name.underscore.pluralize}"),
         items: groups.map do |group|
           {
             group: group,
@@ -20,9 +22,21 @@ module RosterTransferable
         end
       }
     end
+
+    @transfer_targets = targets.sort_by { |target| group_order(target[:type]) }
   end
 
   def overbooked?(group)
     group.full?
   end
+
+  private
+
+    def group_order(type)
+      case type
+      when :tutorials, :talks then 1
+      when :cohorts then 2
+      else 3
+      end
+    end
 end

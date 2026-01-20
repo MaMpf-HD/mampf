@@ -10,7 +10,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns tutorials when group_type is :all" do
         groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials)
+        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :cohorts)
       end
 
       it "returns tutorials when group_type is :tutorials" do
@@ -26,7 +26,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "returns talks when group_type is :all" do
         groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:talks)
+        expect(groups.pluck(:type)).to contain_exactly(:talks, :cohorts)
       end
 
       it "returns talks when group_type is :talks" do
