@@ -248,7 +248,7 @@ Registration — Step 5: Roster Maintenance
 
 ```admonish example "PR-5.8 — Integrity job (lecture roster superset validation)"
 - Scope: Background job to verify lecture roster superset principle.
-- Job: `RosterSupersetCheckJob` validates that `Lecture#roster_user_ids` ⊇ (tutorials + talks + propagating cohorts).roster_user_ids.
+- Job: `RosterSupersetCheckerJob` validates that `Lecture#roster_user_ids` ⊇ (tutorials + talks + propagating cohorts).roster_user_ids.
 - Detection: Identifies users in sub-groups who are missing from lecture roster.
 - Monitoring: Logs violations for admin review; potential causes include callback failures, race conditions, or manual database edits.
 - Refs: [Superset Model](03-rosters.md#the-core-concept-lecture-roster-as-superset)
