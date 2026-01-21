@@ -185,7 +185,7 @@ en:
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
         semantic_purpose_label: "Semantic Purpose (optional)"
         semantic_purpose_explanation: "This is only for better organization and filtering. The group's functionality does not change."
-        enrollment_checkbox_label: "Enrollment group: For courses without tutorials/talks, to collect all students in a single group"
+        enrollment_checkbox_label: "Collection group: For courses without tutorials/talks, to collect all students in a single group"
         planning_checkbox_label: "Planning group: For needs assessment and planning"
         general_with_enrollment: "E.g. for special projects or supplementary groups."
         general_without_enrollment: "E.g. for waitlists or special projects."
