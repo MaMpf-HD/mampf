@@ -32,14 +32,6 @@ class RosterOverviewComponent < ViewComponent::Base
   attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
               :counts
 
-  # Returns a list of groups to display based on the selected type.
-  # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
-  def groups
-    # Deprecated for direct view use, but kept if needed for legacy.
-    # We will now use 'sections' for the main view.
-    sections
-  end
-
   def sections
     # Fetch all items across all requested types
     all_items = target_types.flat_map do |type|

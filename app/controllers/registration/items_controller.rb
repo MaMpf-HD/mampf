@@ -184,7 +184,6 @@ module Registration
         turbo_stream.update("roster_groups_list",
                             partial: "roster/components/groups_tab",
                             locals: {
-                              groups: component.groups,
                               group_type: group_type,
                               component: component
                             })

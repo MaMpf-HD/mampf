@@ -55,7 +55,7 @@
         <% if @rosterable %>
           <%= render RosterDetailComponent.new(rosterable: @rosterable, group_type: @group_type) %>
         <% else %>
-          <%= render "roster/components/groups_tab", groups: groups, group_type: @group_type, component: self %>
+          <%= render "roster/components/groups_tab", group_type: @group_type, component: self %>
         <% end %>
       <% end %>
     </div>
@@ -69,7 +69,7 @@
 
     <!-- Candidates Tab -->
     <div class="tab-pane fade <%= 'show active' if @active_tab == :enrollment %>" id="candidates-pane" role="tabpanel">
-      <%= render "roster/components/enrollment_tab", groups: groups, lecture: @lecture, group_type: @group_type %>
+      <%= render "roster/components/enrollment_tab", component: self, lecture: @lecture, group_type: @group_type %>
     </div>
 
     <!-- Overview Tab -->
