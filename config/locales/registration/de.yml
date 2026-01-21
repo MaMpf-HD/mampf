@@ -169,6 +169,8 @@ de:
         existing: "Vorhandene hinzufügen"
         new: "Neue erstellen"
         none_available: "Keine Gruppen verfügbar."
+        create_in_roster_hint: "Neue Gruppen erstellen?"
+        go_to_roster: "Zum Gruppen-Tab"
       columns:
         type: "Gruppenart"
         title: "Titel"

@@ -2,6 +2,9 @@ de:
   roster:
     title: 'Teilnehmende'
     status: 'Status'
+    group_category:
+      tutorial: "Tutorium"
+      flexible_group: "Flexible Gruppe"
     status_texts:
       awaiting_setup: "Wartet auf Einrichtung"
       awaiting_setup_short: "Setup"
@@ -22,6 +25,7 @@ de:
       self_enrollment: "Selbsteinschreibung"
       no_policy_enforcement: "Keine Richtliniendurchsetzung"
       gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
+      enforced_policies: "Richtlinien im Verfahren: %{policies}"
     participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
@@ -97,18 +101,12 @@ de:
         talks:
           title: "Vorträge"
           description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        enrollment:
-          title: "Anmeldungsgruppe"
-          description: "Anmeldung für Veranstaltungen ohne Tutorien oder Vorträge. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
-        planning:
-          title: "Planungsgruppe"
-          description: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Teilnehmerliste der Veranstaltung übernommen."
-        other:
+        flexible:
           title: "Flexible Gruppen"
-          description: "Für Wartelisten, Sonderprojekte oder sonstiges. Sie können festlegen, ob Studierende automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Sie können selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
         superset_principle:
           title: "Obermengenprinzip"
-          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Anmeldungsgruppe ist dann nicht nötig."
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Feste Einschreibung"
           description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwenden Sie die Entfernen-Aktion im Tab 'Eingeschriebene'."
@@ -159,16 +157,25 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
     cohorts:
-      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
-      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
-      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
-      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
+      kinds:
+        with_enrollment: "Gruppe mit Einschreibung"
+        without_enrollment: "Gruppe ohne Einschreibung"
+      purpose_label: "Zweck"
+      purposes:
+        enrollment: "Sammelgruppe"
+        planning: "Planung"
+        general: "Allgemein"
+      with_lecture_enrollment_title: "Mit Einschreibung"
+      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
+      without_lecture_enrollment_title: "Ohne Einschreibung"
+      without_lecture_enrollment_help: "Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Wartelisten oder für Bedarfserfassung verwendet werden."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
       with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
       without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
       propagates_short: "Einschreibung"
       propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
       lecture_enrollment: "Veranstaltungseinschreibung"
+      can_enable_propagate: "Sie können dies aktivieren, um die Gruppe zu upgraden und Studierende automatisch in die Veranstaltung einzuschreiben."
       attributes:
         propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
       help:
@@ -176,6 +183,16 @@ de:
         planning: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Veranstaltung eingeschrieben."
         other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Sie bestimmen, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktivieren Sie dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
+        propagate_readonly_warning: "⚠️ Diese Einstellung kann nach der Erstellung nicht mehr geändert werden."
+        semantic_purpose_label: "Semantischer Zweck (optional)"
+        semantic_purpose_explanation: "Dies dient nur zur besseren Organisation und Filterung. Die Funktionalität der Gruppe ändert sich nicht."
+        enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
+        planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
+        general_with_enrollment: "Z.B. für Sonderprojekte oder Ergänzungsgruppen."
+        general_without_enrollment: "Z.B. für Wartelisten oder Sonderprojekte."
+        enrollment_short: "Für Veranstaltungen ohne Tutorien oder Vorträge."
+        planning_short: "Bedarfserhebung vor Semesterbeginn."
+        enrollment_warning: "⚠️ Diese Veranstaltung hat bereits Tutorien/Vorträge."
     details:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
@@ -245,6 +262,7 @@ de:
       skip_campaigns_enabled: "Überspringt Anmeldeverfahren (klicken um Anmeldeverfahren zu nutzen)"
       skip_campaigns_disabled: "Nutzt Anmeldeverfahren (klicken um Anmeldeverfahren zu überspringen)"
     hints:
+      superset_exists: "Ihre Veranstaltung beinhaltet bereits Tutorien oder Vorträge, wodurch Studierende automatisch eingeschrieben werden. Eine separate Anmeldungsgruppe ist meist nicht nötig."
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
@@ -252,6 +270,8 @@ de:
       cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
       cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
       cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+    empty_state_help: "Noch keine Gruppen erstellt. Nutzen Sie den 'Hinzufügen'-Button für neue Gruppen."
+    empty_state_links_html: "Hilfe benötigt? Lesen Sie den %{workflow_link} oder informieren Sie sich über %{group_types_link}."
     buttons:
       full_editor: "vollständigen Editor"
     errors:

@@ -32,16 +32,44 @@ class RosterOverviewComponent < ViewComponent::Base
   attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
               :counts
 
-  # Returns a list of groups to display based on the selected type.
-  # Structure: { title: String, items: ActiveRecord::Relation, type: Symbol }
-  def groups
-    @groups ||= target_types.flat_map do |type|
-      if type == :cohorts
-        build_cohort_groups
-      else
-        [build_group_data(type)].compact
-      end
+  def sections
+    # Fetch all items across all requested types
+    all_items = target_types.flat_map do |type|
+      build_group_items(type)
+    end.compact
+
+    # Bucket 1: The official roster (propagate_to_lecture = true)
+    on_roster = all_items.select do |item|
+      !item.is_a?(Cohort) || item.propagate_to_lecture?
     end
+
+    # Bucket 2: Sidecars / Waitlists (propagate_to_lecture = false)
+    off_roster = all_items.select do |item|
+      item.is_a?(Cohort) && !item.propagate_to_lecture?
+    end
+
+    result = []
+
+    # 1. Main Roster Section
+    if on_roster.any? || primary_type_enabled?
+      result << {
+        title: primary_section_title,
+        items: sort_mixed_items(on_roster),
+        actions: build_roster_actions
+      }
+    end
+
+    # 2. Isolated Section
+    if off_roster.any? || cohorts_enabled?
+      result << {
+        title: I18n.t("roster.cohorts.without_lecture_enrollment_title"),
+        help: I18n.t("roster.cohorts.without_lecture_enrollment_help"),
+        items: off_roster,
+        actions: build_isolated_actions
+      }
+    end
+
+    result
   end
 
   def group_type_title
@@ -92,26 +120,7 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def subtables_for(group)
-    if group[:type] == :cohorts && group[:items].any?
-      with_enrollment = group[:items].select(&:propagate_to_lecture?)
-      without_enrollment = group[:items].reject(&:propagate_to_lecture?)
-
-      [
-        {
-          title: I18n.t("roster.cohorts.with_lecture_enrollment_title"),
-          help: I18n.t("roster.cohorts.with_lecture_enrollment_help"),
-          items: with_enrollment
-        },
-        {
-          title: I18n.t("roster.cohorts.without_lecture_enrollment_title"),
-          help: I18n.t("roster.cohorts.without_lecture_enrollment_help"),
-          items: without_enrollment
-        }
-      ].select { |p| p[:items].any? }
-        .presence || [{ title: nil, items: group[:items] }]
-    else
-      [{ title: nil, items: group[:items] }]
-    end
+    [{ title: nil, items: group[:items] }]
   end
 
   def primary_status(item, campaign)
@@ -196,7 +205,9 @@ class RosterOverviewComponent < ViewComponent::Base
     count = policies.loaded? ? policies.size : policies.count
     policy_kinds += "..." if count > MAX_DISPLAYED_POLICIES
 
-    I18n.t("roster.status_texts.gated_by_policies", policies: policy_kinds)
+    # Use past tense for completed campaigns, present tense for active ones
+    key = campaign.present? ? "gated_by_policies" : "enforced_policies"
+    I18n.t("roster.status_texts.#{key}", policies: policy_kinds)
   end
 
   def status_badge_data(item, campaign)
@@ -212,11 +223,12 @@ class RosterOverviewComponent < ViewComponent::Base
       end
 
       {
-        icon: "bi-check-circle-fill",
+        icon: "bi-calendar-check-fill",
         text: I18n.t("roster.status_texts.post_campaign_short") + (has_policies ? " 🛡️" : ""),
         css_class: "bg-light text-secondary border border-secondary",
         tooltip: tooltip_text,
-        self_enrollment: !item.self_materialization_mode_disabled?
+        self_enrollment: !item.self_materialization_mode_disabled?,
+        has_policies: has_policies
       }
     elsif item.skip_campaigns?
       {
@@ -224,7 +236,8 @@ class RosterOverviewComponent < ViewComponent::Base
         text: I18n.t("roster.status_texts.direct_management_short"),
         css_class: "bg-light text-primary border border-primary",
         tooltip: I18n.t("roster.status_texts.direct_management"),
-        self_enrollment: !item.self_materialization_mode_disabled?
+        self_enrollment: !item.self_materialization_mode_disabled?,
+        has_policies: false
       }
     else
       {
@@ -232,7 +245,8 @@ class RosterOverviewComponent < ViewComponent::Base
         text: I18n.t("roster.status_texts.awaiting_setup_short"),
         css_class: "bg-light text-muted border border-secondary",
         tooltip: I18n.t("roster.status_texts.awaiting_setup"),
-        self_enrollment: false
+        self_enrollment: false,
+        has_policies: false
       }
     end
   end
@@ -298,6 +312,10 @@ class RosterOverviewComponent < ViewComponent::Base
     campaign_has_policies?(last_campaign)
   end
 
+  def all_groups_empty?
+    @lecture.tutorials.empty? && @lecture.talks.empty? && @lecture.cohorts.empty?
+  end
+
   private
 
     # Cached lookup for the last completed campaign of an item
@@ -311,6 +329,91 @@ class RosterOverviewComponent < ViewComponent::Base
                                             .merge(::Registration::Campaign.completed)
                                             .order("registration_campaigns.updated_at DESC")
                                             .first&.registration_campaign
+    end
+
+    def build_roster_actions
+      actions = []
+
+      # 1. Tutorial / Talk Action
+      if primary_type_enabled?
+        label = @lecture.seminar? ? Talk.model_name.human : Tutorial.model_name.human
+        url = if @lecture.seminar?
+          Rails.application.routes.url_helpers.new_talk_path(lecture_id: @lecture.id,
+                                                             group_type: @group_type,
+                                                             format: :turbo_stream)
+        else
+          Rails.application.routes.url_helpers.new_tutorial_path(lecture_id: @lecture.id,
+                                                                 group_type: @group_type,
+                                                                 format: :turbo_stream)
+        end
+        actions << { text: label, path: url }
+      end
+
+      # 2. Cohort (Enrolled) Actions
+      if cohorts_enabled?
+        # Flexible Group (With Enrollment)
+        actions << {
+          text: I18n.t("roster.group_category.flexible_group"),
+          path: Rails.application.routes.url_helpers
+                     .new_cohort_path(lecture_id: @lecture.id,
+                                      group_type: @group_type,
+                                      format: :turbo_stream,
+                                      cohort: { purpose: "general", propagate_to_lecture: true })
+        }
+      end
+
+      actions
+    end
+
+    def build_isolated_actions
+      return [] unless cohorts_enabled?
+
+      [
+        {
+          text: I18n.t("roster.group_category.flexible_group"),
+          path: Rails.application.routes.url_helpers
+                     .new_cohort_path(lecture_id: @lecture.id,
+                                      group_type: @group_type,
+                                      format: :turbo_stream,
+                                      cohort: { purpose: "general", propagate_to_lecture: false })
+        }
+      ]
+    end
+
+    def build_group_items(type)
+      items = @lecture.public_send(type)
+      return [] if items.empty?
+
+      # Sorting: Completed campaigns at bottom, then by title
+      # Actually: Completed campaigns at TOP (0), others at bottom (1)
+      items.sort_by do |item|
+        if type == :talks
+          item.position
+        else
+          # Use campaign_completed? which is more direct
+          has_completed_campaign = item.in_completed_campaign?
+          [has_completed_campaign ? 0 : 1, item.title.to_s]
+        end
+      end
+    end
+
+    def sort_mixed_items(items)
+      items.sort_by do |item|
+        type_rank = item.is_a?(Cohort) ? 2 : 1
+        [type_rank, item.title.to_s]
+      end
+    end
+
+    def primary_type_enabled?
+      target_types.intersect?([:tutorials, :talks])
+    end
+
+    def cohorts_enabled?
+      target_types.include?(:cohorts)
+    end
+
+    def primary_section_title
+      I18n.t("roster.cohorts.with_lecture_enrollment_title")
     end
 
     def target_types

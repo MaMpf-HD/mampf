@@ -182,78 +182,6 @@ RSpec.describe(RosterHelper, type: :helper) do
     end
   end
 
-  describe "#cohort_type_options" do
-    it "returns array of translated type options" do
-      result = helper.cohort_type_options
-
-      expect(result).to be_an(Array)
-      expect(result.length).to eq(3)
-      expect(result).to all(be_an(Array).and(have_attributes(length: 2)))
-
-      types = result.map(&:last)
-      expect(types).to contain_exactly("Enrollment Group", "Planning Survey", "Other Group")
-    end
-
-    it "derives options from Cohort::TYPE_TO_PURPOSE" do
-      expected_types = Cohort::TYPE_TO_PURPOSE.keys
-      actual_types = helper.cohort_type_options.map(&:last)
-
-      expect(actual_types).to match_array(expected_types)
-    end
-
-    it "filters options for persisted cohorts with propagate=true" do
-      cohort = create(:cohort, propagate_to_lecture: true)
-      options = helper.cohort_type_options(cohort)
-      types = options.map(&:last)
-
-      expect(types).to include("Enrollment Group", "Other Group")
-      expect(types).not_to include("Planning Survey")
-    end
-
-    it "filters options for persisted cohorts with propagate=false" do
-      cohort = create(:cohort, propagate_to_lecture: false)
-      options = helper.cohort_type_options(cohort)
-      types = options.map(&:last)
-
-      expect(types).to include("Planning Survey", "Other Group")
-      expect(types).not_to include("Enrollment Group")
-    end
-
-    it "returns all options for new cohorts" do
-      cohort = build(:cohort)
-      options = helper.cohort_type_options(cohort)
-      types = options.map(&:last)
-
-      expect(types).to match_array(Cohort::TYPE_TO_PURPOSE.keys)
-    end
-  end
-
-  describe "#cohort_type_from_purpose" do
-    it "returns 'Enrollment Group' for :enrollment purpose" do
-      expect(helper.cohort_type_from_purpose(:enrollment)).to eq("Enrollment Group")
-    end
-
-    it "returns 'Planning Survey' for :planning purpose" do
-      expect(helper.cohort_type_from_purpose(:planning)).to eq("Planning Survey")
-    end
-
-    it "returns 'Other Group' for :general purpose" do
-      expect(helper.cohort_type_from_purpose(:general)).to eq("Other Group")
-    end
-
-    it "returns 'Other Group' for nil purpose" do
-      expect(helper.cohort_type_from_purpose(nil)).to eq("Other Group")
-    end
-
-    it "returns 'Other Group' for unknown purpose" do
-      expect(helper.cohort_type_from_purpose(:unknown)).to eq("Other Group")
-    end
-
-    it "handles string purpose values" do
-      expect(helper.cohort_type_from_purpose("enrollment")).to eq("Enrollment Group")
-    end
-  end
-
   describe "#roster_group_badge" do
     let(:group_type) { :tutorials }
     let(:tutorial) { create(:tutorial, title: "Tut 1") }
@@ -283,6 +211,80 @@ RSpec.describe(RosterHelper, type: :helper) do
       badge = helper.roster_group_badge(tutorial, group_type)
       # Check key parts of the turbo frame attribute
       expect(badge).to include('data-turbo-frame="roster_maintenance_tutorials"')
+    end
+  end
+
+  describe "#should_display_cohort_purpose?" do
+    it "returns true when purpose is present and not general" do
+      cohort = instance_double("Cohort", purpose: "enrollment")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(true)
+    end
+
+    it "returns false when purpose is general" do
+      cohort = instance_double("Cohort", purpose: "general")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+
+    it "returns false when purpose is nil" do
+      cohort = instance_double("Cohort", purpose: nil)
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+
+    it "returns false when purpose is blank" do
+      cohort = instance_double("Cohort", purpose: "")
+      expect(helper.should_display_cohort_purpose?(cohort)).to be(false)
+    end
+  end
+
+  describe "#item_overbooked?" do
+    it "returns true when roster entries exceed capacity" do
+      roster_entries = double("RosterEntries", count: 15)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(true)
+    end
+
+    it "returns false when roster entries equal capacity" do
+      roster_entries = double("RosterEntries", count: 10)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+
+    it "returns false when roster entries are below capacity" do
+      roster_entries = double("RosterEntries", count: 5)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: 10)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+
+    it "returns false when capacity is nil" do
+      roster_entries = double("RosterEntries", count: 100)
+      item = instance_double("Tutorial", roster_entries: roster_entries,
+                                         capacity: nil)
+      expect(helper.item_overbooked?(item)).to be(false)
+    end
+  end
+
+  describe "#tutor_names_with_fallback" do
+    it "returns tutor names when present" do
+      tutorial = instance_double("Tutorial", tutor_names: "Alice, Bob")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("Alice, Bob")
+    end
+
+    it "returns TBA when tutor names are blank" do
+      tutorial = instance_double("Tutorial", tutor_names: "")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
+    end
+
+    it "returns TBA when tutor names are nil" do
+      tutorial = instance_double("Tutorial", tutor_names: nil)
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
+    end
+
+    it "returns TBA when tutor names are whitespace" do
+      tutorial = instance_double("Tutorial", tutor_names: "   ")
+      expect(helper.tutor_names_with_fallback(tutorial)).to eq("TBA")
     end
   end
 end

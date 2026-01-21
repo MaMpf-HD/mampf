@@ -19,18 +19,6 @@ module Registration
       groups
     end
 
-    def creatable_types
-      return [] unless @lecture.is_a?(Lecture)
-
-      types = []
-      types << "Tutorial" unless @lecture.seminar?
-      types << "Talk" if @lecture.seminar?
-      types << "Enrollment Group"
-      types << "Planning Survey"
-      types << "Other Group"
-      types
-    end
-
     private
 
       def add_tutorials(groups)

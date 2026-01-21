@@ -18,16 +18,6 @@ module Registration
   # with different capacities or properties within the same campaign or
   # across different campaigns is possible, if needed, in the future
   class Item < ApplicationRecord
-    # Maps user-facing type names to their corresponding model classes.
-    # Used when creating new registerable entities through the item creation flow.
-    REGISTERABLE_CLASSES = {
-      "Tutorial" => Tutorial,
-      "Talk" => Talk,
-      "Enrollment Group" => Cohort,
-      "Planning Survey" => Cohort,
-      "Other Group" => Cohort
-    }.freeze
-
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items

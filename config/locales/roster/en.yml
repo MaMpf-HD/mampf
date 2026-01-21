@@ -2,6 +2,9 @@ en:
   roster:
     title: 'Participants'
     status: 'Status'
+    group_category:
+      tutorial: "Tutorial"
+      flexible_group: "Flexible Group"
     status_texts:
       awaiting_setup: "Awaiting setup"
       awaiting_setup_short: "Setup"
@@ -22,6 +25,7 @@ en:
       self_enrollment: "Self-enrollment"
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
+      enforced_policies: "Campaign enforced: %{policies}"
     participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
@@ -97,18 +101,12 @@ en:
         talks:
           title: "Talks"
           description: "Seminar presentations. Speakers are automatically added to the course roster."
-        enrollment:
-          title: "Enrollment Group"
-          description: "Registration for courses without tutorials or talks. Students are automatically added to the course roster."
-        planning:
-          title: "Planning Group"
-          description: "Demand assessment (often before semester begins). Students are not added to the course roster."
-        other:
+        flexible:
           title: "Flexible Groups"
-          description: "For waitlists, special projects, or other purposes. You can specify whether students should be automatically added to the course roster."
+          description: "For various purposes like enrollment groups (for courses without tutorials/talks), demand assessment, waitlists, supplementary groups (e.g., 'repeaters'), or special projects. You can specify whether members should be automatically added to the course roster."
         superset_principle:
           title: "Superset Principle"
-          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional enrollment group is not needed then."
+          description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional group to enroll students from tutorials/talks into the lecture is not needed."
         sticky_enrollment:
           title: "Sticky Enrollment"
           description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
@@ -158,16 +156,25 @@ en:
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
     cohorts:
-      with_lecture_enrollment_title: "With Lecture Enrollment"
-      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
-      without_lecture_enrollment_title: "Without Lecture Enrollment"
-      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      kinds:
+        with_enrollment: "Group with enrollment"
+        without_enrollment: "Group without enrollment"
+      purpose_label: "Purpose"
+      purposes:
+        enrollment: "Collection Group"
+        planning: "Planning"
+        general: "General"
+      with_lecture_enrollment_title: "With Enrollment"
+      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups ('repeaters'), or enrollment groups (for courses without tutorials/talks)."
+      without_lecture_enrollment_title: "Without Enrollment"
+      without_lecture_enrollment_help: "Members are not automatically enrolled in the course. Can be used e.g. for waitlists or for needs assessment."
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
       propagates_short: "Enrollment"
       propagates_hint: "Members of this cohort serve as lecture participants"
       lecture_enrollment: "Lecture Enrollment"
+      can_enable_propagate: "You can enable this to upgrade the group to automatically enroll students in the course."
       attributes:
         propagate_to_lecture: "Students are automatically enrolled in the course"
       help:
@@ -175,6 +182,16 @@ en:
         planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
         propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
+        propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
+        semantic_purpose_label: "Semantic Purpose (optional)"
+        semantic_purpose_explanation: "This is only for better organization and filtering. The group's functionality does not change."
+        enrollment_checkbox_label: "Collection group: For courses without tutorials/talks, to collect all students in a single group"
+        planning_checkbox_label: "Planning group: For needs assessment and planning"
+        general_with_enrollment: "E.g. for special projects or supplementary groups."
+        general_without_enrollment: "E.g. for waitlists or special projects."
+        enrollment_short: "For courses without tutorials or talks."
+        planning_short: "Needs assessment before semester begins."
+        enrollment_warning: "⚠️ This course already has tutorials/talks."
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'
@@ -241,6 +258,7 @@ en:
       skip_campaigns_enabled: "Skipping campaigns (click to use campaigns)"
       skip_campaigns_disabled: "Using campaigns (click to skip campaigns)"
     hints:
+      superset_exists: "Your course already involves tutorials or talks, so students are enrolled automatically. A separate enrollment group is usually not needed."
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
@@ -248,6 +266,8 @@ en:
       cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
+    empty_state_help: "No groups created yet. Use the 'Add' button to create one."
+    empty_state_links_html: "Need help? Read the %{workflow_link} or learn about %{group_types_link}."
     buttons:
       full_editor: "complete editor"
     errors:
@@ -282,4 +302,3 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
-

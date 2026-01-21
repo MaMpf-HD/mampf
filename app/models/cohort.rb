@@ -2,12 +2,6 @@ class Cohort < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
 
-  TYPE_TO_PURPOSE = {
-    "Enrollment Group" => :enrollment,
-    "Planning Survey" => :planning,
-    "Other Group" => :general
-  }.freeze
-
   belongs_to :context, polymorphic: true
 
   has_many :cohort_memberships, dependent: :destroy
