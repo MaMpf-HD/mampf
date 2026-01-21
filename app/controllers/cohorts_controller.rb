@@ -153,7 +153,7 @@ class CohortsController < ApplicationController
       propagate_value = if @cohort&.persisted?
         @cohort.propagate_to_lecture?
       else
-        attributes[:propagate_to_lecture].to_s == "true"
+        attributes[:propagate_to_lecture] == "true"
       end
 
       attributes[:purpose] = if params[:has_special_purpose] == "1"

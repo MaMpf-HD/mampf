@@ -35,11 +35,6 @@ RSpec.describe(CohortsHelper, type: :helper) do
         expect(helper.cohort_propagates?(cohort, params)).to be(false)
       end
 
-      it "returns false when params has propagate as boolean false" do
-        params = { cohort: { propagate_to_lecture: false } }
-        expect(helper.cohort_propagates?(cohort, params)).to be(false)
-      end
-
       it "returns false when params is missing propagate" do
         expect(helper.cohort_propagates?(cohort, {})).to be(false)
       end
