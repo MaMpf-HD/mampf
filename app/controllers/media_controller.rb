@@ -258,6 +258,8 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_video")
       return
     end
+
+    current_user.increment_streak_on(medium.lecture)
     I18n.locale = @medium.locale_with_inheritance
     @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
@@ -270,6 +272,9 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
+
+    current_user.increment_streak_on(medium.lecture)
+
     if params[:destination].present?
       redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
                   allow_other_host: true

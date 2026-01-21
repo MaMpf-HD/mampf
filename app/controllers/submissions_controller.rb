@@ -44,6 +44,7 @@ class SubmissionsController < ApplicationController
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
+    current_user.increment_streak_on(@lecture)
     return if @too_late
 
     if submission_manuscript_params[:manuscript].present?
@@ -404,6 +405,7 @@ class SubmissionsController < ApplicationController
       @join.save
       if @join.valid?
         @submission.update(last_modification_by_users_at: Time.zone.now)
+        current_user.increment_streak_on(@submission.assignment.lecture)
         send_join_email
         remove_invitee_status
       else
