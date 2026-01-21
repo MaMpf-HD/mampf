@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe(Rosters::RosterSupersetChecker) do
   subject { described_class.new }
 
-  let(:lecture) { create(:lecture) }
+  let(:active_term) { create(:term, :active) }
+  let(:lecture) { create(:lecture, term: active_term) }
 
   describe "#check_all_lectures!" do
     context "when superset invariant holds" do
@@ -43,7 +44,7 @@ RSpec.describe(Rosters::RosterSupersetChecker) do
 
         expect { subject.check_all_lectures! }
           .to raise_error(Rosters::RosterSupersetChecker::RosterSupersetViolationError,
-                          /Found 1 roster superset violations/)
+                          /Found 1 user\(s\) missing from lecture rosters/)
       end
 
       it "includes user details in violation log" do
@@ -88,7 +89,7 @@ RSpec.describe(Rosters::RosterSupersetChecker) do
 
         expect { subject.check_all_lectures! }
           .to raise_error(Rosters::RosterSupersetChecker::RosterSupersetViolationError,
-                          /Found 2 roster superset violations/)
+                          /Found 2 user\(s\) missing from lecture rosters/)
       end
     end
 
@@ -150,7 +151,7 @@ RSpec.describe(Rosters::RosterSupersetChecker) do
 
         create(:tutorial_membership, tutorial: tutorial, user: user)
 
-        allow(User).to receive(:find_by).with(id: user.id).and_return(nil)
+        allow(User).to receive(:where).with(id: [user.id]).and_return(User.none)
 
         logs = []
         original_error = Rails.logger.method(:error)
@@ -170,8 +171,8 @@ RSpec.describe(Rosters::RosterSupersetChecker) do
 
     context "with multiple lectures" do
       it "checks all lectures" do
-        create(:lecture)
-        create(:lecture)
+        create(:lecture, term: active_term)
+        create(:lecture, term: active_term)
 
         allow(Rails.logger).to receive(:info)
         expect(Rails.logger).to receive(:info)

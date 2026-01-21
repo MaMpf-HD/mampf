@@ -8,7 +8,9 @@ module Rosters
       total_lectures = 0
       total_violations = 0
 
-      Lecture.find_each do |lecture|
+      lectures_to_check = relevant_lectures
+
+      lectures_to_check.find_each do |lecture|
         total_lectures += 1
 
         lecture_ids = lecture_user_ids(lecture)
@@ -29,17 +31,33 @@ module Rosters
       return unless total_violations.positive?
 
       raise(RosterSupersetViolationError,
-            "Found #{total_violations} roster superset violations across " \
-            "#{total_lectures} lectures. Check logs for details.")
+            "Found #{total_violations} user(s) missing from lecture rosters " \
+            "(checked #{total_lectures} lectures). Check logs for details.")
     end
 
     private
+
+      # Returns lectures from the active term and the next term.
+      # This scopes validation to currently relevant lectures, avoiding
+      # unnecessary checks on historical/archived data.
+      def relevant_lectures
+        active_term = Term.active
+        return Lecture.none if active_term.blank?
+
+        term_ids = [active_term.id]
+        term_ids << active_term.next&.id if active_term.next.present?
+
+        Lecture.where(term_id: term_ids)
+      end
 
       def lecture_user_ids(lecture)
         lecture.lecture_memberships.pluck(:user_id).uniq
       end
 
       def propagating_group_user_ids(lecture)
+        # We intentionally skip SpeakerTalkJoins here. Historical seminars
+        # created before lecture-level rosters existed have speakers in talks
+        # but not in lecture rosters, which would cause false positives.
         tutorial_ids = TutorialMembership
                        .joins(:tutorial)
                        .where(tutorials: { lecture_id: lecture.id })
@@ -59,9 +77,34 @@ module Rosters
         missing_ids = group_ids - lecture_ids
         return [] if missing_ids.empty?
 
+        users_by_id = User.where(id: missing_ids)
+                          .index_by(&:id)
+
+        tutorial_groups =
+          lecture.tutorials
+                 .joins(:tutorial_memberships)
+                 .where(tutorial_memberships: { user_id: missing_ids })
+                 .select("tutorials.id, tutorials.title, tutorial_memberships.user_id")
+                 .group_by(&:user_id)
+
+        cohort_groups = lecture.cohorts
+                               .where(propagate_to_lecture: true)
+                               .joins(:cohort_memberships)
+                               .where(cohort_memberships: { user_id: missing_ids })
+                               .select("cohorts.id, cohorts.title, cohort_memberships.user_id")
+                               .group_by(&:user_id)
+
         missing_ids.map do |user_id|
-          user = User.find_by(id: user_id)
-          groups = find_user_groups(lecture, user_id)
+          user = users_by_id[user_id]
+          groups = []
+
+          tutorial_groups[user_id]&.each do |tutorial|
+            groups << "Tutorial: #{tutorial.title}"
+          end
+
+          cohort_groups[user_id]&.each do |cohort|
+            groups << "Cohort: #{cohort.title}"
+          end
 
           {
             user_id: user_id,
@@ -69,21 +112,6 @@ module Rosters
             found_in_groups: groups
           }
         end
-      end
-
-      def find_user_groups(lecture, user_id)
-        groups = lecture.tutorials.joins(:tutorial_memberships)
-                        .where(tutorial_memberships: { user_id: user_id }).map do |t|
-          "Tutorial: #{t.title}"
-        end
-
-        lecture.cohorts.where(propagate_to_lecture: true)
-               .joins(:cohort_memberships)
-               .where(cohort_memberships: { user_id: user_id }).find_each do |c|
-          groups << "Cohort: #{c.title}"
-        end
-
-        groups
       end
 
       def log_violation(lecture, violations)
