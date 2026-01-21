@@ -166,7 +166,7 @@ de:
         planning: "Planung"
         general: "Allgemein"
       with_lecture_enrollment_title: "Mit Einschreibung"
-      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
+      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
       without_lecture_enrollment_title: "Ohne Einschreibung"
       without_lecture_enrollment_help: "Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Wartelisten oder für Bedarfserfassung verwendet werden."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
