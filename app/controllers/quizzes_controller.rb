@@ -37,6 +37,7 @@ class QuizzesController < ApplicationController
 
   def take
     I18n.locale = @quiz.locale_with_inheritance
+    current_user.increment_streak_on(@quiz.lecture) unless @quiz.lecture.nil?
     render layout: "quiz"
   end
 
