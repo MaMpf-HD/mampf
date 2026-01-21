@@ -89,7 +89,6 @@ class CohortsController < ApplicationController
           streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                           partial: "cohorts/modal_form",
                                           locals: { cohort: @cohort })
-          streams << stream_flash if flash.present?
         end
 
         render turbo_stream: streams, status: @cohort.errors.empty? ? :ok : :unprocessable_content
@@ -176,7 +175,6 @@ class CohortsController < ApplicationController
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                         partial: "cohorts/modal_form",
                                         locals: { cohort: @cohort })
-        streams << stream_flash if flash.present?
       end
       streams
     end
