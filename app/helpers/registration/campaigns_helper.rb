@@ -70,16 +70,6 @@ module Registration
       t("registration.campaign.confirmations.#{key}")
     end
 
-    def campaign_open_confirmation(campaign)
-      msg = t("registration.campaign.confirmations.open")
-
-      if campaign.registration_items.any? { |i| i.capacity.nil? }
-        msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
-      end
-
-      msg
-    end
-
     def finalize_campaign_button(campaign)
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
@@ -122,7 +112,17 @@ module Registration
       button_to(t("registration.campaign.actions.open"),
                 open_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: campaign_open_confirmation(campaign) },
+                form: {
+                  data: {
+                    controller: "campaign-action",
+                    "campaign-action-campaign-id-value": campaign.id,
+                    "campaign-action-confirm-message-value":
+                      t("registration.campaign.confirmations.open"),
+                    "campaign-action-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    action: "submit->campaign-action#confirm"
+                  }
+                },
                 class: "btn btn-success")
     end
 
