@@ -13,7 +13,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         sections = component.sections
         main_section = sections.first
 
-        expect(main_section[:title]).to eq(I18n.t("roster.tabs.tutorial_maintenance"))
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
         expect(main_section[:items]).to include(tutorial)
       end
     end
@@ -26,7 +26,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         sections = component.sections
         main_section = sections.first
 
-        expect(main_section[:title]).to eq(I18n.t("roster.tabs.talk_maintenance"))
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
         expect(main_section[:items]).to include(talk)
       end
     end
@@ -37,8 +37,11 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       it "places enrolled cohorts in the main section" do
         sections = component.sections
-        main_section = sections.find { |s| s[:title] == I18n.t("roster.tabs.tutorial_maintenance") }
+        main_section = sections.find do |s|
+          s[:title] == I18n.t("roster.cohorts.with_lecture_enrollment_title")
+        end
 
+        expect(main_section).to be_present
         expect(main_section[:items]).to include(enrolled_cohort)
         expect(main_section[:items]).not_to include(isolated_cohort)
       end
@@ -76,14 +79,14 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       sections = component.sections
       actions = sections.first[:actions]
 
-      expect(actions).to include(include(label: Tutorial.model_name.human))
+      expect(actions).to include(include(text: Tutorial.model_name.human))
     end
 
     it "includes Create Enrolled Cohort action in main section" do
       sections = component.sections
       actions = sections.first[:actions]
 
-      expect(actions).to include(include(label: I18n.t("roster.cohorts.kinds.with_enrollment")))
+      expect(actions).to include(include(text: I18n.t("roster.group_category.flexible_group")))
     end
   end
 
