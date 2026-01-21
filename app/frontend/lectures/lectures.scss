@@ -130,3 +130,51 @@ h4.lecture-pane-subheader {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.streak-icon {
+    color: orangered;
+    position: relative;
+    display: inline-block;
+}
+
+.streak-icon .fa-fire {
+    font-size: 2rem;
+}
+
+.streak-count {
+    position: absolute;
+    bottom: -2px;
+    right: -4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: black;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 8px;
+    line-height: 1;
+    min-width: 1.4em;
+    text-align: center;
+}
+
+@media (min-width: 1200px) {
+  #lecture-details {
+    position: relative;
+  }
+
+  .streak {
+    position: absolute;
+    top: 50%;
+    left: 2em;
+    transform: translateY(-50%)
+  }
+}
+
+@media (max-width: 11999px) {
+  .streak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5em;
+  }
+}
+

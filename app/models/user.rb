@@ -803,6 +803,8 @@ class User < ApplicationRecord
   def increment_streak_on(streakable)
     return if had_activity_this_week_on?(streakable)
 
+    new_streak_value = 1
+
     if streaks.exists?(streakable: streakable)
       streak = streaks.where(streakable: streakable).first
       new_streak_value = streak.value + 1
@@ -811,10 +813,16 @@ class User < ApplicationRecord
       Streak.create(
         user: self,
         streakable: streakable,
-        value: 1,
+        value: new_streak_value,
         last_activity: Time.current
       )
     end
+
+    broadcast_update_to(
+      "user_#{id}_streak_on_#{streakable.id}",
+      target: "streak-count",
+      html: new_streak_value.to_s
+    )
   end
 
   def streak_on(streakable)

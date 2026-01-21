@@ -3,6 +3,17 @@
 <div class="row mt-2 mb-2">
   <div id="lecture-details" class="col-12 text-center">
     <h4>
+
+      <%= turbo_stream_from "user_#{current_user.id}_streak_on_#{@lecture.id}" %>
+      <span class="nav-item streak">
+        <span class="streak-icon">
+          <i class="fas fa-fire"></i>
+          <span id="streak-count" class="streak-count">
+            <%= current_user.streak_on(@lecture) %>
+          </span>
+        </span>
+      </span>
+
       <span class="badge bg-secondary">
         <%= @lecture.sort_localized %>
       </span>
