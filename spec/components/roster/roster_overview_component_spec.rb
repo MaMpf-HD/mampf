@@ -9,7 +9,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     context "with tutorials" do
       let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
-      it "places tutorials in the main section" do
+      it "places tutorials in the enrollment section" do
         sections = component.sections
         main_section = sections.first
 
@@ -22,7 +22,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let(:lecture) { create(:seminar) }
       let!(:talk) { create(:talk, lecture: lecture) }
 
-      it "places talks in the main section" do
+      it "places talks in the enrollment section" do
         sections = component.sections
         main_section = sections.first
 
@@ -35,7 +35,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let!(:enrolled_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
       let!(:isolated_cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
 
-      it "places enrolled cohorts in the main section" do
+      it "places enrolled cohorts in the enrollment section" do
         sections = component.sections
         main_section = sections.find do |s|
           s[:title] == I18n.t("roster.cohorts.with_lecture_enrollment_title")
@@ -46,7 +46,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         expect(main_section[:items]).not_to include(isolated_cohort)
       end
 
-      it "places isolated cohorts in the isolated section" do
+      it "places isolated cohorts in the without enrollment section" do
         sections = component.sections
         iso_section = sections.find do |s|
           s[:title] == I18n.t("roster.cohorts.without_lecture_enrollment_title")
@@ -75,14 +75,14 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
   end
 
   describe "#actions" do
-    it "includes Create Tutorial action in main section" do
+    it "includes Create Tutorial action in enrollment section" do
       sections = component.sections
       actions = sections.first[:actions]
 
       expect(actions).to include(include(text: Tutorial.model_name.human))
     end
 
-    it "includes Create Enrolled Cohort action in main section" do
+    it "includes Create Enrolled Cohort action in enrollment section" do
       sections = component.sections
       actions = sections.first[:actions]
 
