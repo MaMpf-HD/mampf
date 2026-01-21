@@ -1,9 +1,5 @@
-<p>
-  <strong>
-    <%= t('admin.talk.speakers') %>:
-  </strong>
-  <%= speaker_list(talk) %>
-</p>
+<%= render partial: "talks/talker",
+          locals: { talk: talk } %>
 <p>
   <strong>
     <%= t('basics.date') %>:

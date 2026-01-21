@@ -3760,6 +3760,8 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    self_register_talk: Für diesen Vortrag anmelden
+    self_remove_talk: Von diesem Vortrag abmelden
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

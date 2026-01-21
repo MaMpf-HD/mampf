@@ -61,6 +61,24 @@ module Rosters
       !in_completed_campaign?
     end
 
+    def config_allow_self_add?
+      ["add_only", "add_and_remove"].include?(self_materialization_mode)
+    end
+
+    # guard in FE for self-assignment possibility
+    def allow_self_add?(user)
+      config_allow_self_add? && !locked? && allocated_user_ids.exclude?(user.id) && !full?
+    end
+
+    def config_allow_self_remove?
+      ["remove_only", "add_and_remove"].include?(self_materialization_mode)
+    end
+
+    # guard in FE for self-removal possibility
+    def allow_self_remove?(user)
+      config_allow_self_remove? && !locked? && allocated_user_ids.include?(user.id)
+    end
+
     # Checks if skip_campaigns can be enabled (switched from false to true).
     # This is only allowed if the item has never been part of any campaign.
     # Models without skip_campaigns always return false.
