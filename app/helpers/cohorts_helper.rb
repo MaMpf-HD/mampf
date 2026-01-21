@@ -19,6 +19,6 @@ module CohortsHelper
   end
 
   def show_enrollment_warning?(cohort, propagates)
-    propagates && (cohort.context.tutorials.any? || cohort.context.talks.any?)
+    propagates && (cohort.context.tutorials.exists? || cohort.context.talks.exists?)
   end
 end
