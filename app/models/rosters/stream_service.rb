@@ -1,4 +1,9 @@
 module Rosters
+  # Generates Turbo Stream responses for roster updates.
+  #
+  # IMPORTANT: This service assumes the caller has already performed
+  # authorization checks. It should only be called from authorized controller
+  # actions. The service does not perform authorization itself.
   class StreamService
     def initialize(lecture, view_context)
       @lecture = lecture
