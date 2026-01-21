@@ -63,8 +63,36 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
+    def evaluate_full_trace_for(user, phase: :registration)
+      Registration::PolicyEngine.new(self).full_trace_for(user, phase: phase)
+    end
+
     def open_for_registrations?
       open? && registration_deadline > Time.current
+    end
+
+    def open_for_withdrawals?
+      open? && registration_deadline > Time.current
+    end
+
+    def lecture_based?
+      campaignable_type == "Lecture"
+    end
+
+    def exam_based?
+      campaignable_type == "Exam"
+    end
+
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_last_updated(user)
+      user_registrations.where(user_id: user.id).maximum(:updated_at)
+    end
+
+    def registerable_type
+      registration_items.first&.registerable_type
     end
 
     def user_registration_confirmed?(user)

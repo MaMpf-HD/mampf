@@ -1,0 +1,74 @@
+<div>
+  <% item_preferences.each do |pref| %>
+    <div class="row m-2">
+      <% item=pref.item %>
+        <div class="col-9">
+          <div class="fw-semibold text-primary mb-1" style="font-size: 1.05rem;">
+            <span class="fw-medium">
+              <%= item.registerable_type %>:
+            </span>
+            <span class="text-primary"><%= item.title %></span>
+          </div>
+
+          <div class="row mb-2">
+            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].drop(1).each do |col| %>
+              <div class="col-6 d-flex gap-1">
+                <span class="fw-medium small"><%= col[:header] %>:</span>
+                <span class="fw-normal"><%= col[:field].call(item) %></span>
+              </div>
+            <% end %>
+
+              <div class="col-6 d-flex gap-1">
+                <span class="fw-medium small"><%= t("basics.seats") %>:</span>
+                <span class="fw-normal"><%= nullable_capacity_display(item.capacity) %></span>
+              </div>
+          </div>
+
+        </div>
+
+        <div class="col-3 text-end">
+          <div class="d-flex flex-column gap-2">
+          <div class="mt-2">
+            <span class="badge rounded-pill bg-primary-soft text-primary border border-primary-subtle px-3">
+              Rank: <span class="fw-bold fs-6">
+                <%= pref.rank %>
+              </span>
+            </span>
+          </div>
+          <div class="text-end">
+          <button type="submit" 
+                  class="material-icons clickable arrow_upward w-auto
+                    border-0 bg-transparent p-0 m-0" 
+                  <%="disabled" if pref.rank==1 || !campaign.open_for_registrations?%>
+                  data-action="touched-check#mark"
+                  data-bs-toggle="tooltip"
+                  title="<%= t('buttons.move_up') %>"
+                  formaction="<%= preference_up_path(item.id) %>">
+                arrow_upward
+          </button>
+
+          <button type="submit" 
+                  class="material-icons clickable arrow_downward w-auto
+                    border-0 bg-transparent p-0 m-0" 
+                  <%="disabled" if pref.rank==item_preferences.size || !campaign.open_for_registrations?%>
+                  data-action="touched-check#mark"
+                  data-bs-toggle="tooltip"
+                  title="<%= t('buttons.move_down') %>"
+                  formaction="<%= preference_down_path(item.id) %>">
+                arrow_downward
+          </button>
+
+          <button type="submit" class="material-icons clickable playlist_remove w-auto
+                            border-0 bg-transparent p-0 m-0" data-action="touched-check#mark" data-bs-toggle="tooltip"
+            <%="disabled" if !campaign.open_for_registrations?%>
+            title="<%= t('buttons.remove_from_list') %>"
+              formaction="<%= remove_preference_path(item.id) %>">
+                playlist_remove
+          </button>
+        </div>
+        </div>
+        </div>
+    </div>
+    <hr class="ms-4 me-4">
+  <% end %>
+</div>
