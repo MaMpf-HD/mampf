@@ -49,7 +49,12 @@ class TermsController < ApplicationController
 
   def update
     if @term.update(term_params)
-      redirect_to terms_path
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(@term, @term)
+        end
+      end
     else
       render template: "terms/_form",
              locals: { term: @term },
