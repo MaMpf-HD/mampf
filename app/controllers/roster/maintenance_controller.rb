@@ -5,8 +5,6 @@ module Roster
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
-    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
-
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable,
                   only: [:show, :update, :add_member, :remove_member, :move_member,
@@ -139,11 +137,13 @@ module Roster
         params[:group_type]&.to_sym || @rosterable.roster_group_type
       end
 
-      if @rosterable.update(self_materialization_mode: mode)
-        flash.now[:notice] = t("roster.messages.updated")
-      else
-        flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
-        @rosterable.reload
+      ActiveRecord::Base.transaction do
+        if @rosterable.update(self_materialization_mode: mode)
+          flash.now[:notice] = t("roster.messages.updated")
+        else
+          flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
+          @rosterable.reload
+        end
       end
 
       render turbo_stream: [
@@ -179,34 +179,15 @@ module Roster
       end
 
       def render_roster_update(tab: nil, rosterable: @rosterable)
-        # Ensure lecture is eager loaded and fresh (to include new memberships)
         @lecture = eager_load_lecture(@lecture.id)
-
-        # Ensure participants are set up for the view
+        rosterable = reload_rosterable_from_lecture(rosterable)
         setup_participants
 
         active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
-
-        # Only set target_rosterable if we are in the groups tab, otherwise we risk
-        # changing the hidden groups tab to a detail view unexpectedly.
-        target_rosterable = active_tab == :groups ? rosterable : nil
-
-        # If the rosterable is the lecture itself, we want to show the overview/list
-        # in the groups tab, not a "detail view" of the lecture.
-        target_rosterable = nil if target_rosterable.is_a?(Lecture)
-
-        group_type = if params[:group_type].is_a?(Array)
-          params[:group_type].map(&:to_sym)
-        else
-          params[:group_type]&.to_sym || @rosterable&.roster_group_type || :all
-        end
-
-        # Ensure group_type is formatted correctly (strings/symbols/arrays) for the helper
-        group_type = group_type&.to_sym unless group_type.is_a?(Array)
-
-        # Ensure frame_id matches the group_type to prevent mismatch/targeting issues
-        expected_frame_id = view_context.roster_maintenance_frame_id(group_type)
-        frame_id = expected_frame_id if allowed_roster_frame_ids.include?(expected_frame_id)
+        target_rosterable = determine_target_rosterable(active_tab, rosterable)
+        group_type = normalize_group_type
+        frame_id = resolve_frame_id(group_type)
+        component_counts = build_component_counts
 
         respond_to do |format|
           format.turbo_stream do
@@ -220,8 +201,7 @@ module Roster
                                             participants: @participants,
                                             pagy: @pagy,
                                             filter_mode: @participants_filter,
-                                            counts: { total: @total_participants_count,
-                                                      unassigned: @unassigned_participants_count })
+                                            counts: component_counts)
               ),
               refresh_campaigns_index_stream(@lecture)
             ]
@@ -234,6 +214,54 @@ module Roster
         end
       end
 
+      def reload_rosterable_from_lecture(rosterable)
+        return rosterable if rosterable.nil? || rosterable.is_a?(Lecture)
+
+        collection = case rosterable
+                     when Tutorial then @lecture.tutorials
+                     when Talk then @lecture.talks
+                     when Cohort then @lecture.cohorts
+        end
+        collection&.find { |r| r.id == rosterable.id } || rosterable
+      end
+
+      def determine_target_rosterable(active_tab, rosterable)
+        return nil if active_tab == :enrollment
+        return nil if active_tab == :participants
+        return nil if rosterable.is_a?(Lecture)
+
+        rosterable
+      end
+
+      def normalize_group_type
+        group_type = if params[:group_type].is_a?(Array)
+          params[:group_type].map(&:to_sym)
+        else
+          fallback = if @rosterable.is_a?(Lecture)
+            :all
+          else
+            @rosterable&.roster_group_type || :all
+          end
+          params[:group_type]&.to_sym || fallback
+        end
+
+        group_type.is_a?(Array) ? group_type : group_type&.to_sym
+      end
+
+      def resolve_frame_id(group_type)
+        expected_frame_id = view_context.roster_maintenance_frame_id(group_type)
+        allowed_frame_ids = allowed_roster_frame_ids
+
+        allowed_frame_ids.include?(expected_frame_id) ? expected_frame_id : allowed_frame_ids.first
+      end
+
+      def build_component_counts
+        {
+          total: @total_participants_count,
+          unassigned: @unassigned_participants_count
+        }
+      end
+
       def allowed_roster_frame_ids
         group_types = [
           :all,
@@ -241,7 +269,10 @@ module Roster
           view_context.roster_group_types(@lecture)
         ].uniq
 
-        group_types.map { |t| view_context.roster_maintenance_frame_id(t) }
+        frame_ids = group_types.map { |t| view_context.roster_maintenance_frame_id(t) }
+        raise("No valid roster frame IDs generated") if frame_ids.empty?
+
+        frame_ids
       end
 
       def find_user
@@ -262,7 +293,7 @@ module Roster
       def set_rosterable_from_composite_id
         type, id = params[:rosterable_id].split("-")
 
-        unless ALLOWED_ROSTERABLE_TYPES.include?(type)
+        unless Rosters::Rosterable::TYPES.include?(type)
           respond_with_error(t("roster.errors.invalid_type"))
           return
         end
@@ -287,7 +318,7 @@ module Roster
       def find_target_rosterable(id)
         target_type = params[:target_type]
 
-        return nil if target_type.present? && ALLOWED_ROSTERABLE_TYPES.exclude?(target_type)
+        return nil if target_type.present? && Rosters::Rosterable::TYPES.exclude?(target_type)
 
         target_type ||= @rosterable.class.name
         klass = target_type.constantize
@@ -313,7 +344,7 @@ module Roster
       end
 
       def set_rosterable
-        unless ALLOWED_ROSTERABLE_TYPES.include?(params[:type])
+        unless Rosters::Rosterable::TYPES.include?(params[:type])
           redirect_to root_path, alert: t("roster.errors.invalid_type")
           return
         end
@@ -361,11 +392,14 @@ module Roster
 
       def eager_load_lecture(id)
         Lecture.includes(
-          { registration_campaigns: [:user_registrations, :registration_items] },
+          { registration_campaigns: [:user_registrations, :registration_items,
+                                     :registration_policies] },
           tutorials: [:tutors, :tutorial_memberships,
-                      { registration_items: :registration_campaign }],
-          cohorts: [:cohort_memberships, { registration_items: :registration_campaign }],
-          talks: [:speakers, :speaker_talk_joins, { registration_items: :registration_campaign }]
+                      { registration_items: { registration_campaign: :registration_policies } }],
+          cohorts: [:cohort_memberships,
+                    { registration_items: { registration_campaign: :registration_policies } }],
+          talks: [:speakers, :speaker_talk_joins,
+                  { registration_items: { registration_campaign: :registration_policies } }]
         ).find_by(id: id)
       end
 

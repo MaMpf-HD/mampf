@@ -65,9 +65,10 @@ RSpec.describe("Registration::Items", type: :request) do
           {
             registration_item: {
               new_registerable: "true",
-              registerable_type: "Cohort",
+              registerable_type: "Other Group",
               title: "New Cohort",
-              capacity: 15
+              capacity: 15,
+              propagate_to_lecture: "1"
             }
           }
         end

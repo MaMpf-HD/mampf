@@ -1,6 +1,9 @@
 # Renders a list of groups (tutorials, exams, etc.) for a lecture.
 # Can be filtered by group_type (:tutorials, :exams, :all).
 class RosterOverviewComponent < ViewComponent::Base
+  # Maximum number of policy names to display before truncating with "..."
+  MAX_DISPLAYED_POLICIES = 3
+
   # Central configuration for supported types.
   # Maps the group_type symbol to the model class name string and roster association.
   SUPPORTED_TYPES = {
@@ -21,6 +24,8 @@ class RosterOverviewComponent < ViewComponent::Base
     @pagy = pagy
     @filter_mode = filter_mode
     @counts = counts
+    @last_campaign_cache = {}
+    @campaign_policies_cache = {}
   end
   # rubocop:enable Metrics/ParameterLists
 
@@ -112,7 +117,7 @@ class RosterOverviewComponent < ViewComponent::Base
   def primary_status(item, campaign)
     if campaign
       I18n.t("roster.status_texts.campaign_#{campaign.status}")
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       status = I18n.t("roster.status_texts.post_campaign")
       unless item.self_materialization_mode_disabled?
         status += " (#{I18n.t("roster.status_texts.self_enrollment")})"
@@ -135,32 +140,22 @@ class RosterOverviewComponent < ViewComponent::Base
   def bypasses_campaign_policy?(item, target_mode)
     return false if target_mode.to_s == "disabled"
     return false if target_mode.to_s == "remove_only"
-    return false unless item.in_real_campaign?
+    return false unless item.in_campaign?
 
-    last_campaign = item.registration_items
-                        .joins(:registration_campaign)
-                        .merge(::Registration::Campaign.completed)
-                        .order("registration_campaigns.updated_at DESC")
-                        .first&.registration_campaign
-
+    last_campaign = last_completed_campaign_for(item)
     return false unless last_campaign
 
-    last_campaign.registration_policies.exists?
+    campaign_has_policies?(last_campaign)
   end
 
   def policy_bypass_warning_data(item, target_mode)
     return nil unless bypasses_campaign_policy?(item, target_mode)
 
-    last_campaign = item.registration_items
-                        .joins(:registration_campaign)
-                        .merge(::Registration::Campaign.completed)
-                        .order("registration_campaigns.updated_at DESC")
-                        .first&.registration_campaign
-
+    last_campaign = last_completed_campaign_for(item)
     policies = last_campaign.registration_policies.active
-    kinds = policies.limit(3).pluck(:kind)
+    kinds = policies.limit(MAX_DISPLAYED_POLICIES).pluck(:kind)
     policy_names = kinds.map { |k| I18n.t("registration.policy.kinds.#{k}") }.join(", ")
-    policy_names += "..." if policies.count > 3
+    policy_names += "..." if policies.count > MAX_DISPLAYED_POLICIES
 
     {
       policy_name: policy_names.presence || I18n.t("roster.unknown_policy"),
@@ -183,27 +178,23 @@ class RosterOverviewComponent < ViewComponent::Base
     target_campaign = campaign
 
     # If no active campaign, check for completed campaign with policies
-    if target_campaign.nil? && item.in_real_campaign?
-      target_campaign = item.registration_items
-                            .joins(:registration_campaign)
-                            .merge(::Registration::Campaign.completed)
-                            .order("registration_campaigns.updated_at DESC")
-                            .first&.registration_campaign
-    end
+    target_campaign = last_completed_campaign_for(item) if target_campaign.nil? && item.in_campaign?
 
     return nil unless campaign_has_policies?(target_campaign)
 
     policies = target_campaign.registration_policies.active
 
     policy_kinds = if policies.loaded?
-      policies.first(3).map { |p| I18n.t("registration.policy.kinds.#{p.kind}") }.join(", ")
+      policies.first(MAX_DISPLAYED_POLICIES).map do |p|
+        I18n.t("registration.policy.kinds.#{p.kind}")
+      end.join(", ")
     else
-      kinds = policies.limit(3).pluck(:kind)
+      kinds = policies.limit(MAX_DISPLAYED_POLICIES).pluck(:kind)
       kinds.map { |k| I18n.t("registration.policy.kinds.#{k}") }.join(", ")
     end
 
     count = policies.loaded? ? policies.size : policies.count
-    policy_kinds += "..." if count > 3
+    policy_kinds += "..." if count > MAX_DISPLAYED_POLICIES
 
     I18n.t("roster.status_texts.gated_by_policies", policies: policy_kinds)
   end
@@ -211,7 +202,7 @@ class RosterOverviewComponent < ViewComponent::Base
   def status_badge_data(item, campaign)
     if campaign
       campaign_badge_data(campaign)
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       tooltip_text = I18n.t("roster.status_texts.post_campaign")
       has_policies = campaign_has_policies_for_item?(item)
 
@@ -272,15 +263,16 @@ class RosterOverviewComponent < ViewComponent::Base
 
   def self_enrollment_badge_data(item)
     mode = item.self_materialization_mode
-    icon, text = case mode
-                 when "add_only"
-                   ["bi-person-plus-fill", "+"]
-                 when "remove_only"
-                   ["bi-person-dash-fill", "−"]
-                 when "add_and_remove"
-                   ["bi-person-fill-add", "±"]
-                 else
-                   ["bi-person", ""]
+    icon = "bi-person-fill"
+    text = case mode
+           when "add_only"
+             "+"
+           when "remove_only"
+             "−"
+           when "add_and_remove"
+             "±"
+           else
+             ""
     end
 
     has_warning = bypasses_campaign_policy?(item, mode)
@@ -298,20 +290,28 @@ class RosterOverviewComponent < ViewComponent::Base
   end
 
   def campaign_has_policies_for_item?(item)
-    return false unless item.in_real_campaign?
+    return false unless item.in_campaign?
 
-    last_campaign = item.registration_items
-                        .joins(:registration_campaign)
-                        .merge(::Registration::Campaign.completed)
-                        .order("registration_campaigns.updated_at DESC")
-                        .first&.registration_campaign
-
+    last_campaign = last_completed_campaign_for(item)
     return false unless last_campaign
 
     campaign_has_policies?(last_campaign)
   end
 
   private
+
+    # Cached lookup for the last completed campaign of an item
+    # Prevents N+1 queries by memoizing per item
+    def last_completed_campaign_for(item)
+      cache_key = "#{item.class.name}-#{item.id}"
+      return @last_campaign_cache[cache_key] if @last_campaign_cache.key?(cache_key)
+
+      @last_campaign_cache[cache_key] = item.registration_items
+                                            .joins(:registration_campaign)
+                                            .merge(::Registration::Campaign.completed)
+                                            .order("registration_campaigns.updated_at DESC")
+                                            .first&.registration_campaign
+    end
 
     def target_types
       if @group_type == :all
@@ -356,7 +356,7 @@ class RosterOverviewComponent < ViewComponent::Base
         if type == :talks
           item.position
         else
-          has_completed_campaign = item.in_real_campaign? && !item.campaign_active?
+          has_completed_campaign = item.in_completed_campaign?
           [has_completed_campaign ? 0 : 1, item.title.to_s]
         end
       end

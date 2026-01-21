@@ -66,11 +66,10 @@ module RosterHelper
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-event")
       end
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       # Has campaign history - show view campaign button for most recent
       recent_campaign = item.registration_items
                             .joins(:registration_campaign)
-                            .where(registration_campaigns: { planning_only: false })
                             .order("registration_campaigns.created_at DESC")
                             .first
                             &.registration_campaign
@@ -126,11 +125,10 @@ module RosterHelper
 
     if disabled
       tag.span(title: tooltip, data: { bs_toggle: "tooltip" }) do
-        link_to(polymorphic_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-danger disabled opacity-50",
-                style: "cursor: not-allowed;",
-                tabindex: -1,
-                aria: { disabled: true }) do
+        tag.button(class: "btn btn-sm btn-outline-danger opacity-50",
+                   style: "cursor: not-allowed;",
+                   disabled: true,
+                   type: "button") do
           tag.i(class: "bi bi-trash")
         end
       end
@@ -143,6 +141,67 @@ module RosterHelper
         tag.i(class: "bi bi-trash")
       end
     end
+  end
+
+  def self_materialization_state(item, campaign)
+    active_campaign = campaign && !campaign.completed?
+    disabled = active_campaign || (!item.skip_campaigns? && !item.in_campaign?)
+
+    tooltip = if active_campaign
+      t("roster.tooltips.self_materialization_disabled_campaign")
+    elsif !item.skip_campaigns? && !item.in_campaign?
+      t("roster.tooltips.self_materialization_disabled_fresh")
+    else
+      t("roster.self_materialization.label")
+    end
+
+    { disabled: disabled, tooltip: tooltip }
+  end
+
+  def skip_campaigns_state(item)
+    can_skip = item.can_skip_campaigns?
+    can_unskip = item.can_unskip_campaigns?
+    disabled = !(item.skip_campaigns? ? can_unskip : can_skip)
+    icon_class = item.skip_campaigns? ? "bi-calendar-x" : "bi-calendar-check"
+
+    tooltip = if disabled
+      if item.skip_campaigns?
+        t("roster.disable_skip_campaigns_hint")
+      else
+        t("roster.enable_skip_campaigns_hint")
+      end
+    elsif item.skip_campaigns?
+      t("roster.tooltips.skip_campaigns_enabled")
+    else
+      t("roster.tooltips.skip_campaigns_disabled")
+    end
+
+    { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
+  end
+
+  def cohort_type_options(cohort = nil)
+    available_types = if cohort&.persisted?
+      Cohort::TYPE_TO_PURPOSE.select do |_type, purpose|
+        case purpose
+        when :enrollment
+          cohort.propagate_to_lecture?
+        when :planning
+          !cohort.propagate_to_lecture?
+        when :general
+          true
+        end
+      end.keys
+    else
+      Cohort::TYPE_TO_PURPOSE.keys
+    end
+
+    available_types.map do |type|
+      [t("registration.item.types.#{type.parameterize(separator: "_")}"), type]
+    end
+  end
+
+  def cohort_type_from_purpose(purpose)
+    Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
   end
 
   def roster_group_badge(group, group_type)

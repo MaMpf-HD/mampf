@@ -3431,6 +3431,7 @@ en:
     speaker: Speaker
     speakers: Speakers
     unlimited: unlimited
+    personnel: Personnel
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3748,6 +3749,11 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
+              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
         course:
           attributes:
             title:

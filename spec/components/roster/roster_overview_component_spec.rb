@@ -51,12 +51,12 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         t
       end
 
-      let!(:skip_campaigns_tutorial) do
-        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
-      end
-
       let!(:fresh_tutorial) do
         create(:tutorial, lecture: lecture, title: "C Fresh", skip_campaigns: false)
+      end
+
+      let!(:skip_campaigns_tutorial) do
+        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
       end
 
       it "sorts completed campaigns first, then others, each subgroup sorted by title" do
@@ -320,6 +320,30 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       expect(component.bypasses_campaign_policy?(item, "add_only")).to be(true)
     end
+
+    it "caches campaign lookups to avoid N+1 queries" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      # First call should populate the cache
+      result1 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result1).to be(true)
+
+      # Verify the cache was populated
+      cache_key = "#{item.class.name}-#{item.id}"
+      expect(component.instance_variable_get(:@last_campaign_cache)).to have_key(cache_key)
+
+      # Second call should use the cached value and return same result
+      result2 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result2).to eq(result1)
+
+      # Cache should still contain the same campaign object
+      cached_campaign = component.instance_variable_get(:@last_campaign_cache)[cache_key]
+      expect(cached_campaign).to eq(campaign)
+    end
   end
 
   describe "#policy_bypass_warning_data" do
@@ -381,7 +405,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :disabled)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("")
       expect(data[:has_warning]).to be(false)
     end
@@ -390,7 +414,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-plus-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("+")
       expect(data[:css_class]).to eq("bg-light text-success border border-success")
       expect(data[:has_warning]).to be(false)
@@ -400,7 +424,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :remove_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-dash-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("−")
       expect(data[:has_warning]).to be(false)
     end
@@ -409,7 +433,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_and_remove)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-fill-add")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("±")
       expect(data[:has_warning]).to be(false)
     end
