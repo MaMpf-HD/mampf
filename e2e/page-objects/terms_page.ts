@@ -12,7 +12,7 @@ export class TermsPage {
     await this.page.goto(this.link);
   }
 
-  async createTerm(termYear: number, season: "SS" | "WS") {
+  async createTerm(termYear: number, season: "SS" | "WS", action = "save") {
     const newTermsPromises = this.page.waitForResponse(response =>
       response.url().includes("terms/new"),
     );
@@ -20,7 +20,7 @@ export class TermsPage {
     await newTermsPromises;
     await this.page.selectOption("#term_year", termYear.toString());
     await this.page.selectOption("#term_season", season);
-    await this.page.locator("#new_term").getByRole("button", { name: "Save" }).click();
+    await this.page.locator("#new_term").getByRole("button", { name: action === "save" ? "Save" : "Cancel" }).click();
   }
 
   async deleteTerm(termYear: number, season: "SS" | "WS") {
