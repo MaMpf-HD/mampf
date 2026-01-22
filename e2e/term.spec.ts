@@ -59,7 +59,6 @@ test("cancel creating Term", async ({ admin: { page } }) => {
 
   await termsPage.createTerm(currentYear + 2, "WS", "cancel");
 
-  await page.waitForTimeout(500);
   await expect(termsPage.getTermRow(currentYear + 2, "WS")).not.toBeVisible();
   await expect(page.getByText(`${currentYear + 2} WS`)).not.toBeVisible();
   await expect(termsPage.getTermRow(currentYear, "SS")).toBeVisible();
