@@ -178,7 +178,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 ```admonish info collapsible=true title="Grade Fields: Numeric vs Text"
 Two separate grade fields support different assessment types:
 
-**`grade_numeric` (Decimal):** For German exam grades (1.0, 1.3, 1.7, 2.0, 2.3, 3.0, 3.7, 4.0, 5.0)
+**`grade_numeric` (Decimal):** For German exam grades (1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0)
 - Type-safe: Database constraint prevents invalid values like "1,3" or "2.5"
 - Fast input: Tutors can type "1.3" directly in grading forms
 - Analyzable: Can compute averages, distributions (`participations.average(:grade_numeric)`)

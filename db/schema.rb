@@ -146,7 +146,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
     t.index ["status"], name: "index_assessment_participations_on_status"
     t.index ["tutorial_id"], name: "index_assessment_participations_on_tutorial_id"
     t.index ["user_id"], name: "index_assessment_participations_on_user_id"
-    t.check_constraint "grade_numeric IS NULL OR (grade_numeric = ANY (ARRAY[1.0, 1.3, 1.7, 2.0, 2.3, 3.0, 3.7, 4.0, 5.0]))", name: "valid_german_grades"
+    t.check_constraint "grade_numeric IS NULL OR (grade_numeric = ANY (ARRAY[1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]))", name: "valid_german_grades"
   end
 
   create_table "assessment_task_points", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
