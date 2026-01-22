@@ -49,7 +49,6 @@ import "~/js/remarks.coffee";
 import "~/js/sections.coffee";
 import "~/js/submissions.coffee";
 import "~/js/tags.coffee";
-import "~/js/terms.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
 import "~/js/upload.coffee";

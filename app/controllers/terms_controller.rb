@@ -1,7 +1,6 @@
 class TermsController < ApplicationController
-  before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
-  layout "administration"
-  authorize_resource except: [:index, :new, :create, :cancel, :set_active]
+  before_action :set_term, except: [:index, :new, :create, :set_active]
+  authorize_resource except: [:index, :new, :create, :set_active]
   layout "administration"
 
   def current_ability
@@ -16,38 +15,60 @@ class TermsController < ApplicationController
   def new
     @term = Term.new
     authorize! :new, @term
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def create
     @term = Term.new(term_params)
     authorize! :create, @term
-    @term.save
-    if @term.valid?
-      redirect_to terms_path
-      return
+    if @term.save
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend("terms", @term),
+            turbo_stream.update(Term.new, "")
+          ]
+        end
+      end
+    else
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
+             status: :unprocessable_content
     end
-    @errors = @term.errors[:season].join(", ")
-    render :update
   end
 
   def update
-    @term.update(term_params)
-    @errors = @term.errors[:season].join(", ") unless @term.valid?
+    if @term.update(term_params)
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(@term, @term)
+        end
+      end
+    else
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
+             status: :unprocessable_content
+    end
   end
 
   def destroy
     @term.destroy
-    redirect_to terms_path
-  end
-
-  def cancel
-    @id = params[:id]
-    @term = Term.find_by(id: @id)
-    authorize! :cancel, @term
-    @new_action = params[:new] == "true"
+    respond_to do |format|
+      format.html { redirect_to terms_path }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@term) }
+    end
   end
 
   def set_active
