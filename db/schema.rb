@@ -108,7 +108,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
   create_table "assessment_assessments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "assessable_type", null: false
     t.bigint "assessable_id", null: false
-    t.bigint "lecture_id"
+    t.bigint "lecture_id", null: false
     t.string "title", null: false
     t.boolean "requires_points", default: false, null: false
     t.boolean "requires_submission", default: false, null: false
@@ -1344,6 +1344,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
   add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
+  add_foreign_key "assessment_assessments", "lectures"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
