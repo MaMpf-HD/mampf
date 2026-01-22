@@ -16,7 +16,7 @@
       <%= f.select :active_term,
                    options_for_select(Term.select_terms, Term.active&.id),
                    {},
-                   { class: 'form-select form-select-sm', style: 'width: auto;' }  %>
+                   { class: 'form-select form-select-sm w-auto' }  %>
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary',
                    data: { confirm: t('confirmation.generic') } %>
