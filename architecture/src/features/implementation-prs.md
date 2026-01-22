@@ -268,7 +268,7 @@ Registration — Step 5: Roster Maintenance
 ```
 
 ```admonish abstract
-Grading — Step 6: Foundations (Schema)
+Grading — Step 6: Assessment Foundations (Schema)
 ```
 
 ```admonish example "PR-6.1 — Assessment schema (core tables)"
@@ -281,15 +281,6 @@ Grading — Step 6: Foundations (Schema)
   - `20251105000003_create_assessment_task_points.rb`
 - Refs: [Assessment models](04-assessments-and-grading.md#assessmentassessment-activerecord-model)
 - Acceptance: Migrations run; models have correct associations; no existing tables altered.
-```
-
-```admonish example "PR-6.2 — Grade scheme schema"
-- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
-- Migrations:
-  - `20251105000004_create_grade_schemes.rb`
-  - `20251105000005_create_grade_scheme_thresholds.rb`
-- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
-- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
 ```
 
 ```admonish abstract
@@ -343,17 +334,72 @@ Grading — Step 8: Assignment Grading
 ```
 
 ```admonish abstract
-Grading — Step 9: Participation Tracking
+Exams — Step 9: Registration & Grading
 ```
 
-```admonish example "PR-9.1 — Achievement model (new assessable type)"
+```admonish example "PR-9.1 — Exam schema and model"
+- Scope: Create `exams` table and `Exam` model with concerns.
+- Migrations:
+  - `20251110000000_create_exams.rb`
+- Concerns: `Registration::Registerable`, `Roster::Rosterable`,
+  `Assessment::Assessable`.
+- Implementation: `materialize_allocation!` delegates to `replace_roster!`;
+  `allocated_user_ids` returns roster user IDs.
+- Refs: [Exam model](05a-exam-model.md#exam-activerecord-model)
+- Acceptance: Exam model exists with all concerns; belongs_to lecture; methods implemented; no functional changes to existing data.
+```
+
+```admonish example "PR-9.2 — Grade scheme schema"
+- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
+- Migrations:
+  - `20251110000001_create_grade_schemes.rb`
+  - `20251110000002_create_grade_scheme_thresholds.rb`
+- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
+- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
+```
+
+```admonish example "PR-9.3 — Exam registration (campaign integration)"
+- Scope: Enable exam registration using existing campaign infrastructure.
+- Controllers: Extend `Registration::CampaignsController` to support
+  lecture-hosted exam campaigns; extend
+  `Registration::UserRegistrationsController` for exam context.
+- UI: Exam registration flows; reuses campaign show/index views with
+  exam-specific context.
+- Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
+- Acceptance: Teachers can create exam campaigns (lecture as campaignable, exam as registerable item); students can register for exams; FCFS and preference-based modes work; feature flag gates UI.
+```
+
+```admonish example "PR-9.4 — Grade scheme applier (service)"
+- Scope: `GradeScheme::Applier` for converting exam points to grades.
+- Implementation: Supports absolute points and percentage-based bands;
+  idempotent application via version_hash; respects manual overrides.
+- Refs: [GradeScheme applier](05b-grading-schemes.md#gradeschemesapplier-service-object)
+- Acceptance: Service computes grades from points; handles both absolute and percentage schemes; version_hash prevents duplicate applications.
+```
+
+```admonish example "PR-9.5 — Exam grading UI"
+- Scope: Complete exam grading workflow from point entry to grade publication.
+- Controllers: `ExamsController` (CRUD, scheduling),
+  `GradeScheme::SchemesController` (scheme configuration, preview, apply).
+- UI: Point entry grid; distribution analysis (histogram, statistics);
+  scheme configuration (two-point auto-generation + manual adjustment);
+  grade preview and application; results publication.
+- Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
+- Acceptance: Teachers can enter exam points; create and apply grade schemes; preview grade distribution; publish results to students; feature flag gates UI.
+```
+
+```admonish abstract
+Grading — Step 10: Participation Tracking
+```
+
+```admonish example "PR-10.1 — Achievement model (new assessable type)"
 - Scope: Create Achievement as assessable for non-graded participation.
 - Model: `Achievement` with `value_type` (boolean/numeric/percentage).
 - Refs: [Achievement model](04-assessments-and-grading.md#achievement-model)
 - Acceptance: Achievement model exists; can be linked to assessments; value_type validated.
 ```
 
-```admonish example "PR-9.2 — Achievement marking UI"
+```admonish example "PR-10.2 — Achievement marking UI"
 - Scope: UI for teachers to mark achievements.
 - Controllers: Extend `Assessment::ParticipationsController` with
   achievement marking actions.
@@ -363,30 +409,30 @@ Grading — Step 9: Participation Tracking
 ```
 
 ```admonish abstract
-Dashboards — Step 10: Partial Integration
+Dashboards — Step 11: Partial Integration
 ```
 
-```admonish example "PR-10.1 — Student dashboard (partial)"
-- Scope: Student dashboard with widgets for registrations, grades, deadlines.
+```admonish example "PR-11.1 — Student dashboard (partial)"
+- Scope: Student dashboard with widgets for registrations, grades, exams, deadlines.
 - Controllers: `Dashboards::StudentController` with widget partials.
-- Widgets: "My Registrations", "Recent Grades", "Upcoming Deadlines".
+- Widgets: "My Registrations", "Recent Grades", "Upcoming Exams", "Deadlines".
 - Refs: [Student dashboard mockup](12-views.md#student-dashboard)
-- Acceptance: Students see dashboard; widgets show data from new tables; exam eligibility widget hidden (added in Step 13).
+- Acceptance: Students see dashboard; widgets show data from new tables including exam registrations; exam eligibility widget hidden (added in Step 14).
 ```
 
-```admonish example "PR-10.2 — Teacher/editor dashboard (partial)"
-- Scope: Teacher dashboard with widgets for campaigns, rosters, grading.
+```admonish example "PR-11.2 — Teacher/editor dashboard (partial)"
+- Scope: Teacher dashboard with widgets for campaigns, rosters, grading, exams.
 - Controllers: `Dashboards::TeacherController` with widget partials.
-- Widgets: "Open Campaigns", "Roster Management", "Grading Queue".
+- Widgets: "Open Campaigns", "Roster Management", "Grading Queue", "Exam Management".
 - Refs: [Teacher dashboard mockup](12-views.md#teacher-dashboard)
-- Acceptance: Teachers see dashboard; widgets show actionable items; certification widget hidden (added in Step 13).
+- Acceptance: Teachers see dashboard; widgets show actionable items including exam grading; certification widget hidden (added in Step 14).
 ```
 
 ```admonish abstract
-Student Performance — Step 11: System Foundations
+Student Performance — Step 12: System Foundations
 ```
 
-```admonish example "PR-11.1 — Performance schema (Record, Rule, Achievement, Certification)"
+```admonish example "PR-12.1 — Performance schema (Record, Rule, Achievement, Certification)"
 - Scope: Create `student_performance_records`, `student_performance_rules`,
   `student_performance_achievements`, `student_performance_certifications`.
 - Migrations:
@@ -398,7 +444,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications.
 ```
 
-```admonish example "PR-11.2 — Computation service (materialize Records)"
+```admonish example "PR-12.2 — Computation service (materialize Records)"
 - Scope: `StudentPerformance::ComputationService` to aggregate performance data.
 - Implementation: Reads from `assessment_participations` and
   `assessment_task_points`; writes to `student_performance_records`.
@@ -406,7 +452,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Service computes points and achievements; upserts Records; handles missing data gracefully.
 ```
 
-```admonish example "PR-11.3 — Evaluator (proposal generator)"
+```admonish example "PR-12.3 — Evaluator (proposal generator)"
 - Scope: `StudentPerformance::Evaluator` to generate certification proposals.
 - Implementation: Reads Records and Rules; returns proposed status
   (passed/failed) per student.
@@ -414,7 +460,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Evaluator generates proposals; does NOT create Certifications; used for bulk UI only.
 ```
 
-```admonish example "PR-11.4 — Records controller (factual data display)"
+```admonish example "PR-12.4 — Records controller (factual data display)"
 - Scope: `StudentPerformance::RecordsController` for viewing performance data.
 - Controllers: Index/show actions for Records.
 - UI: Table view with points, achievements, computed_at timestamp.
@@ -422,7 +468,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Teachers can view Records; no decision-making UI; feature flag gates access.
 ```
 
-```admonish example "PR-11.5 — Certifications controller (teacher workflow)"
+```admonish example "PR-12.5 — Certifications controller (teacher workflow)"
 - Scope: `StudentPerformance::CertificationsController` for teacher certification.
 - Controllers: Index (dashboard), create (bulk), update (override),
   bulk_accept.
@@ -431,7 +477,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Teachers can review proposals; bulk accept; override with manual status; remediation workflow for stale certifications.
 ```
 
-```admonish example "PR-11.6 — Evaluator controller (proposal endpoints)"
+```admonish example "PR-12.6 — Evaluator controller (proposal endpoints)"
 - Scope: `StudentPerformance::EvaluatorController` for proposal generation.
 - Controllers: `bulk_proposals`, `preview_rule_change`, `single_proposal`.
 - UI: Modal for rule change preview showing diff of affected students.
@@ -440,20 +486,10 @@ Student Performance — Step 11: System Foundations
 ```
 
 ```admonish abstract
-Exam — Step 12: Registration & Certification Integration
+Exam Eligibility — Step 13: Student Performance Policy Integration
 ```
 
-```admonish example "PR-12.1 — Exam model (cross-cutting concerns)"
-- Scope: Create `Exam` model with concerns.
-- Concerns: `Registration::Campaignable`, `Registration::Registerable`,
-  `Roster::Rosterable`, `Assessment::Assessable`.
-- Implementation: `materialize_allocation!` delegates to `replace_roster!`;
-  `allocated_user_ids` returns roster user IDs.
-- Refs: [Exam model](05a-exam-model.md#exam-as-registerable)
-- Acceptance: Exam includes all concerns; methods implemented; no functional changes to existing exams.
-```
-
-```admonish example "PR-12.2 — Lecture performance policy (add to engine)"
+```admonish example "PR-13.1 — Student performance policy (add to engine)"
 - Scope: Add `student_performance` policy kind to `Registration::PolicyEngine`.
 - Implementation: `Registration::Policy#eval_student_performance` checks
   `StudentPerformance::Certification.find_by(...).status`.
@@ -463,7 +499,7 @@ Exam — Step 12: Registration & Certification Integration
 - Acceptance: Policy checks Certification table; phase-aware logic; tests use Certification doubles.
 ```
 
-```admonish example "PR-12.3 — Pre-flight checks (campaign open/finalize)"
+```admonish example "PR-13.2 — Pre-flight checks (campaign open/finalize)"
 - Scope: Add certification completeness checks to campaign lifecycle.
 - Controllers: Update `Registration::CampaignsController#open` to check
   for missing/pending certifications; block if incomplete.
@@ -473,35 +509,38 @@ Exam — Step 12: Registration & Certification Integration
 - Acceptance: Campaigns cannot open without complete certifications; finalization blocked if pending; failed certifications auto-rejected.
 ```
 
-```admonish example "PR-12.4 — Exam FCFS registration"
-- Scope: Exam registration with student_performance policy.
-- Controllers: Extend `Registration::UserRegistrationsController` for
-  exam context.
-- UI: Registration button with eligibility status display.
+```admonish example "PR-13.3 — Eligibility UI integration"
+- Scope: Wire eligibility checks into exam registration UI.
+- Controllers: Extend existing exam registration controllers to handle
+  student_performance policy errors.
+- UI: Eligibility status displays; blocked registration with clear
+  messaging; links to performance overview.
 - Refs: [Exam registration flow](05a-exam-model.md#student-experience)
-- Acceptance: Students can register for exams; policy blocks ineligible users; clear error messages; feature flag gates UI.
+- Acceptance: Students see eligibility status; policy blocks ineligible users; clear error messages; links to certification details; feature flag gates UI.
 ```
 
-```admonish example "PR-12.5 — Grade scheme application"
-- Scope: Apply grading schemes to exam results.
-- Service: `GradeScheme::Applier` to map points to grades.
-- Controllers: `GradeScheme::SchemesController` (preview/apply).
-- Refs: [GradeScheme applier](05b-grading-schemes.md#grading-scheme-applier)
-- Acceptance: Teachers can apply schemes; preview grade distribution; grades saved to participations.
+```admonish example "PR-13.4 — Certification remediation workflow"
+- Scope: UI for teachers to resolve pending certifications during finalization.
+- Controllers: Add remediation actions to
+  `StudentPerformance::CertificationsController`.
+- UI: Remediation modal during finalization showing pending students;
+  quick-resolve actions; bulk accept/reject.
+- Refs: [Remediation workflow](05-student-performance.md#policy-integration)
+- Acceptance: Teachers can resolve pending certifications inline during finalization; finalization retries after resolution; auto-rejection of failed students.
 ```
 
 ```admonish abstract
-Dashboards — Step 13: Complete Integration
+Dashboards — Step 14: Complete Integration
 ```
 
-```admonish example "PR-13.1 — Student dashboard extension"
+```admonish example "PR-14.1 — Student dashboard extension"
 - Scope: Add student performance and exam registration widgets.
 - Widgets: "Exam Eligibility Status", "Performance Overview".
 - Refs: [Student dashboard complete](12-views.md#student-dashboard)
 - Acceptance: Students see eligibility status; performance summary; links to certification details.
 ```
 
-```admonish example "PR-13.2 — Teacher dashboard extension"
+```admonish example "PR-14.2 — Teacher dashboard extension"
 - Scope: Add certification and exam management widgets.
 - Widgets: "Certification Pending List", "Eligibility Summary".
 - Refs: [Teacher dashboard complete](12-views.md#teacher-dashboard)
@@ -509,10 +548,10 @@ Dashboards — Step 13: Complete Integration
 ```
 
 ```admonish abstract
-Quality — Step 14: Hardening & Integrity
+Quality — Step 15: Hardening & Integrity
 ```
 
-```admonish example "PR-14.1 — Background jobs (performance/certification)"
+```admonish example "PR-15.1 — Background jobs (performance/certification)"
 - Scope: Create integrity jobs for student performance.
 - Jobs: `PerformanceRecordUpdateJob` (recompute Records after grading),
   `CertificationStaleCheckJob` (flag stale certifications),
@@ -521,7 +560,7 @@ Quality — Step 14: Hardening & Integrity
 - Acceptance: Jobs run on schedule; log issues; no auto-fix for critical data.
 ```
 
-```admonish example "PR-14.2 — Admin reporting (integrity dashboard)"
+```admonish example "PR-15.2 — Admin reporting (integrity dashboard)"
 - Scope: Admin UI for monitoring data integrity.
 - Controllers: `Admin::IntegrityController` with dashboard views.
 - Widgets: Pending certifications, stale certifications, roster mismatches.
