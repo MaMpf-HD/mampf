@@ -1,5 +1,0 @@
-searchResults = document.getElementById('lecture-search-results')
-searchResults.innerHTML = '<%= j render partial: "lectures/search/results",
-                                 locals: { lectures: @lectures,
-                                           pagy: @pagy } %>'
-initBootstrapPopovers()

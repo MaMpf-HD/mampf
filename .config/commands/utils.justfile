@@ -72,5 +72,12 @@ erd:
         exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
         only="Vignettes::Questionnaire, Vignettes::Slide, Vignettes::InfoSlide, Vignettes::Answer, Vignettes::UserAnswer, Vignettes::Question, Vignettes::SlideStatistic, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextQuestion, Vignettes::TextAnswer, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextAnswer, Vignettes::Option, Vignettes::Codename, Vignettes::CompletionMessage, Vignettes::NumberQuestion, Vignettes::NumberAnswer, Lecture, User"
 
+    # 🌟 Registration
+    bundle exec rake erd warn=false \
+        title="Registration" filename=/workspaces/mampf/tmp/erd/mampf-erd-registration \
+        inheritance=true polymorphism=true indirect=true attributes=content \
+        exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
+        only="Registration::Campaign,Registration::Item,Registration::UserRegistration,Registration::Policy,Lecture,Tutorial,Talk,User"
+
     echo "📂 Diagrams are ready for you in the folder {{justfile_directory()}}/tmp/erd/"
     echo "🔀 For the meanings of the arrows, refer to https://voormedia.github.io/rails-erd/gallery.html#notations"

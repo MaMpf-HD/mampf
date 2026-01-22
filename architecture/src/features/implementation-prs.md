@@ -86,7 +86,7 @@ Registration — Step 3: FCFS Mode
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
-- Scope: Manage registerable items within a campaign.
+- Scope: Manage registerable items within a campaign, including cohorts.
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
 - Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
 - UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.
@@ -112,6 +112,21 @@ Registration — Step 3: FCFS Mode
 - UI: Item selection dropdown; Turbo Stream for dynamic item list updates.
 - Refs: [Multi-item campaigns](02-registration.md#multi-item-campaigns)
 - Acceptance: Students can select from available items; capacity per item enforced; switching items updates previous registration.
+```
+
+```admonish example "PR-3.5 — Admin: Campaign Wizard (Pattern Selector)"
+- Scope: "New Campaign" wizard that forces an explicit choice of Registration Pattern.
+- Controllers: `Registration::CampaignsController#new` handles `?pattern=` param.
+- Logic:
+  - **Step 1 (Pattern Selection):** User chooses between:
+    - **Group Track (Pattern 1):** Creates "Group Registration" campaign (Tutorials/Talks) + optional "Special Groups" campaign (Cohorts).
+    - **Enrollment Track (Pattern 2):** Creates "Course Enrollment" campaign (Lecture).
+    - **Mixed Track (Pattern 3):** Creates both (gated by explicit acknowledgement).
+  - **Step 2 (Configuration):**
+    - For Group Track: Select group source (Tutorials vs Talks), optionally add Cohorts.
+    - For Enrollment Track: Confirm Lecture target.
+- UI: Modal with 3 distinct choices; "Mixed Track" is visually distinct/gated.
+- Acceptance: Wizard guides user through pattern selection; correctly creates 1 or 2 campaigns based on choice; enforces acknowledgement for Mixed Track.
 ```
 
 ```admonish abstract
@@ -157,14 +172,54 @@ Registration — Step 5: Roster Maintenance
 ```
 
 ```admonish example "PR-5.1 — Roster maintenance UI (admin)"
-- Scope: Post-allocation roster management.
+- Scope: Post-allocation roster management for Sub-Groups (Tutorial/Cohort).
 - Controllers: `Roster::MaintenanceController` (move/add/remove actions).
-- UI: Roster Overview with candidates panel (unassigned users from completed campaign); Detail view for individual roster with capacity checks.
+- Logic: Support `Tutorial`, `Talk` and `Cohort` as rosterable types.
+- UI: Roster Overview with detail views for individual groups; candidates panel (unassigned users from campaign); basic capacity enforcement.
 - Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
-- Acceptance: Teachers can move students between rosters; capacity enforced; candidates panel lists unassigned users; manual add/remove actions work.
+- Acceptance: Teachers can move students between tutorials/talks/cohorts; capacity enforced; candidates panel lists unassigned users; manual add/remove works for groups.
 ```
 
-```admonish example "PR-5.2 — Tutor abilities (read-only roster access)"
+```admonish example "PR-5.2 — Lecture Roster Superset (Enrollment Track)"
+- Scope: Implement Lecture Roster as the superset of all sub-groups.
+- Backend:
+  - Implement `Lecture#ensure_roster_membership!`.
+  - Update `Tutorial/Talk/Cohort#materialize_allocation!` to propagate users to Lecture.
+  - Update `Roster::MaintenanceService` to handle Enrollment/Drop logic (cascading delete).
+- UI: "Enrollment" tab in `RosterOverviewComponent` showing all lecture members; "Unassigned" status calculation.
+- Refs: [Superset Model](03-rosters.md#the-core-concept-lecture-roster-as-superset), [Enrollment Track](03-rosters.md#b-the-enrollment-track)
+- Acceptance: Adding user to tutorial adds them to lecture; Removing from lecture removes from tutorial; Enrollment tab lists all students.
+```
+
+```admonish example "PR-5.3 — Self-materialization (backend + admin config)"
+- Scope: Add `self_materialization_mode` enum to `Rosterable`; implement permission methods; admin UI for configuration.
+- Backend:
+  - Migration: Add `self_materialization_mode` enum column to tutorials, talks, cohorts, lectures.
+  - Update `Roster::Rosterable` concern with `can_self_add?`, `can_self_remove?`, `self_add!`, `self_remove!`.
+  - Validation: Block enabling mode during active campaigns (non-planning, non-completed).
+- Admin UI:
+  - Add mode selector dropdown to roster management UI (per-group basis).
+  - Four options: disabled/add_only/remove_only/add_and_remove.
+  - Turbo Frame update on change; validation errors shown inline.
+  - Feature flag: `self_materialization_enabled`.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access),
+  [Rosterable concern](03-rosters.md#rosterrosterable-concern)
+- Acceptance: Backend methods work; validation enforced; admin can configure mode per tutorial/cohort/talk; changes blocked with clear error if campaign active; feature flag gates both backend and UI.
+```
+
+```admonish example "PR-5.4 — Self-materialization UI (student)"
+- Scope: Student-facing join/leave buttons.
+- Controllers: `Roster::SelfMaterializationController` (join/leave actions).
+- UI:
+  - Join/Leave buttons on Tutorial/Cohort/Talk show pages.
+  - Turbo Stream updates for roster list.
+  - Buttons hidden when mode is `disabled`.
+  - Capacity/duplicate guards with error messages.
+- Refs: [Self-materialization](02-registration.md#self-materialization-direct-roster-access)
+- Acceptance: Students can join/leave when enabled; buttons respect mode settings; capacity enforced; clear error messages for violations; feature flag gates UI.
+```
+
+```admonish example "PR-5.5 — Tutor abilities (read-only roster access)"
 - Scope: Tutors can view rosters for their assigned groups.
 - Abilities: Update CanCanCan to allow read-only roster access for tutors.
 - UI: Tutors see Detail view without edit actions.
@@ -172,7 +227,7 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Tutors can view rosters for their tutorials; cannot edit; exams do not show candidates panel.
 ```
 
-```admonish example "PR-5.3 — Manual add student (from candidates or arbitrary)"
+```admonish example "PR-5.6 — Manual add student (from candidates or arbitrary)"
 - Scope: Add students to rosters manually.
 - Controllers: Extend `Roster::MaintenanceController` with `add_student` action.
 - UI: "Add student" button on Overview; search input for arbitrary student addition.
@@ -180,7 +235,18 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Teachers can add students from candidates or search; capacity enforced; duplicate prevention.
 ```
 
-```admonish example "PR-5.4 — Integrity job (assigned/allocated reconciliation)"
+```admonish example "PR-5.7 — Roster change notifications"
+- Scope: Email notifications for roster changes affecting students.
+- Mailer: `Roster::ChangeMailer` with methods: `added_to_group`, `removed_from_group`, `moved_between_groups`.
+- Triggers: Called from `Roster::MaintenanceService`, `Registration::Campaign#finalize!`, and `Roster::SelfMaterializationController`.
+- Content: Email includes group name, lecture context, action taken, timestamp; for moves, includes both source and target groups.
+- Configuration: Feature flag `roster_notifications_enabled`; teacher toggle per lecture for notification verbosity (all changes vs finalization-only).
+- Background: Deliver via `ActionMailer::DeliveryJob` (async).
+- Refs: [Roster maintenance](03-rosters.md#roster-maintenance)
+- Acceptance: Students receive emails on add/remove/move; emails queued asynchronously; feature flag gates delivery; teachers can configure notification timing per lecture.
+```
+
+```admonish example "PR-5.8 — Integrity job (assigned/allocated reconciliation)"
 - Scope: Background job to verify roster consistency.
 - Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
 - Monitoring: Logs mismatches for admin review.
@@ -188,8 +254,20 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
 ```
 
+```admonish example "PR-5.9 — Turbo Stream Orchestrator"
+- Scope: Extract stream logic from controllers into `Turbo::LectureStreamService`.
+- Pattern: Controllers declare "what happened" (e.g., `roster_changed`); service returns appropriate streams.
+- Refactor: `TutorialsController`, `CohortsController`, `Registration::CampaignsController`, `Roster::MaintenanceController`.
+- Implementation:
+  - `Turbo::LectureStreamService` with methods: `roster_changed`, `campaign_changed`, `enrollment_changed`.
+  - Each method returns array of turbo streams for all dependent UI components.
+  - Controllers call service instead of building streams inline.
+- Refs: [Turbo Streams](https://turbo.hotwired.dev/handbook/streams)
+- Acceptance: Controllers contain no DOM IDs or partial paths; all cross-tab updates centralized in service; adding new dependent views requires editing only the service.
+```
+
 ```admonish abstract
-Grading — Step 6: Foundations (Schema)
+Grading — Step 6: Assessment Foundations (Schema)
 ```
 
 ```admonish example "PR-6.1 — Assessment schema (core tables)"
@@ -202,15 +280,6 @@ Grading — Step 6: Foundations (Schema)
   - `20251105000003_create_assessment_task_points.rb`
 - Refs: [Assessment models](04-assessments-and-grading.md#assessmentassessment-activerecord-model)
 - Acceptance: Migrations run; models have correct associations; no existing tables altered.
-```
-
-```admonish example "PR-6.2 — Grade scheme schema"
-- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
-- Migrations:
-  - `20251105000004_create_grade_schemes.rb`
-  - `20251105000005_create_grade_scheme_thresholds.rb`
-- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
-- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
 ```
 
 ```admonish abstract
@@ -264,17 +333,72 @@ Grading — Step 8: Assignment Grading
 ```
 
 ```admonish abstract
-Grading — Step 9: Participation Tracking
+Exams — Step 9: Registration & Grading
 ```
 
-```admonish example "PR-9.1 — Achievement model (new assessable type)"
+```admonish example "PR-9.1 — Exam schema and model"
+- Scope: Create `exams` table and `Exam` model with concerns.
+- Migrations:
+  - `20251110000000_create_exams.rb`
+- Concerns: `Registration::Registerable`, `Roster::Rosterable`,
+  `Assessment::Assessable`.
+- Implementation: `materialize_allocation!` delegates to `replace_roster!`;
+  `allocated_user_ids` returns roster user IDs.
+- Refs: [Exam model](05a-exam-model.md#exam-activerecord-model)
+- Acceptance: Exam model exists with all concerns; belongs_to lecture; methods implemented; no functional changes to existing data.
+```
+
+```admonish example "PR-9.2 — Grade scheme schema"
+- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
+- Migrations:
+  - `20251110000001_create_grade_schemes.rb`
+  - `20251110000002_create_grade_scheme_thresholds.rb`
+- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
+- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
+```
+
+```admonish example "PR-9.3 — Exam registration (campaign integration)"
+- Scope: Enable exam registration using existing campaign infrastructure.
+- Controllers: Extend `Registration::CampaignsController` to support
+  lecture-hosted exam campaigns; extend
+  `Registration::UserRegistrationsController` for exam context.
+- UI: Exam registration flows; reuses campaign show/index views with
+  exam-specific context.
+- Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
+- Acceptance: Teachers can create exam campaigns (lecture as campaignable, exam as registerable item); students can register for exams; FCFS and preference-based modes work; feature flag gates UI.
+```
+
+```admonish example "PR-9.4 — Grade scheme applier (service)"
+- Scope: `GradeScheme::Applier` for converting exam points to grades.
+- Implementation: Supports absolute points and percentage-based bands;
+  idempotent application via version_hash; respects manual overrides.
+- Refs: [GradeScheme applier](05b-grading-schemes.md#gradeschemesapplier-service-object)
+- Acceptance: Service computes grades from points; handles both absolute and percentage schemes; version_hash prevents duplicate applications.
+```
+
+```admonish example "PR-9.5 — Exam grading UI"
+- Scope: Complete exam grading workflow from point entry to grade publication.
+- Controllers: `ExamsController` (CRUD, scheduling),
+  `GradeScheme::SchemesController` (scheme configuration, preview, apply).
+- UI: Point entry grid; distribution analysis (histogram, statistics);
+  scheme configuration (two-point auto-generation + manual adjustment);
+  grade preview and application; results publication.
+- Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
+- Acceptance: Teachers can enter exam points; create and apply grade schemes; preview grade distribution; publish results to students; feature flag gates UI.
+```
+
+```admonish abstract
+Grading — Step 10: Participation Tracking
+```
+
+```admonish example "PR-10.1 — Achievement model (new assessable type)"
 - Scope: Create Achievement as assessable for non-graded participation.
 - Model: `Achievement` with `value_type` (boolean/numeric/percentage).
 - Refs: [Achievement model](04-assessments-and-grading.md#achievement-model)
 - Acceptance: Achievement model exists; can be linked to assessments; value_type validated.
 ```
 
-```admonish example "PR-9.2 — Achievement marking UI"
+```admonish example "PR-10.2 — Achievement marking UI"
 - Scope: UI for teachers to mark achievements.
 - Controllers: Extend `Assessment::ParticipationsController` with
   achievement marking actions.
@@ -284,30 +408,30 @@ Grading — Step 9: Participation Tracking
 ```
 
 ```admonish abstract
-Dashboards — Step 10: Partial Integration
+Dashboards — Step 11: Partial Integration
 ```
 
-```admonish example "PR-10.1 — Student dashboard (partial)"
-- Scope: Student dashboard with widgets for registrations, grades, deadlines.
+```admonish example "PR-11.1 — Student dashboard (partial)"
+- Scope: Student dashboard with widgets for registrations, grades, exams, deadlines.
 - Controllers: `Dashboards::StudentController` with widget partials.
-- Widgets: "My Registrations", "Recent Grades", "Upcoming Deadlines".
+- Widgets: "My Registrations", "Recent Grades", "Upcoming Exams", "Deadlines".
 - Refs: [Student dashboard mockup](12-views.md#student-dashboard)
-- Acceptance: Students see dashboard; widgets show data from new tables; exam eligibility widget hidden (added in Step 13).
+- Acceptance: Students see dashboard; widgets show data from new tables including exam registrations; exam eligibility widget hidden (added in Step 14).
 ```
 
-```admonish example "PR-10.2 — Teacher/editor dashboard (partial)"
-- Scope: Teacher dashboard with widgets for campaigns, rosters, grading.
+```admonish example "PR-11.2 — Teacher/editor dashboard (partial)"
+- Scope: Teacher dashboard with widgets for campaigns, rosters, grading, exams.
 - Controllers: `Dashboards::TeacherController` with widget partials.
-- Widgets: "Open Campaigns", "Roster Management", "Grading Queue".
+- Widgets: "Open Campaigns", "Roster Management", "Grading Queue", "Exam Management".
 - Refs: [Teacher dashboard mockup](12-views.md#teacher-dashboard)
-- Acceptance: Teachers see dashboard; widgets show actionable items; certification widget hidden (added in Step 13).
+- Acceptance: Teachers see dashboard; widgets show actionable items including exam grading; certification widget hidden (added in Step 14).
 ```
 
 ```admonish abstract
-Student Performance — Step 11: System Foundations
+Student Performance — Step 12: System Foundations
 ```
 
-```admonish example "PR-11.1 — Performance schema (Record, Rule, Achievement, Certification)"
+```admonish example "PR-12.1 — Performance schema (Record, Rule, Achievement, Certification)"
 - Scope: Create `student_performance_records`, `student_performance_rules`,
   `student_performance_achievements`, `student_performance_certifications`.
 - Migrations:
@@ -319,7 +443,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications.
 ```
 
-```admonish example "PR-11.2 — Computation service (materialize Records)"
+```admonish example "PR-12.2 — Computation service (materialize Records)"
 - Scope: `StudentPerformance::ComputationService` to aggregate performance data.
 - Implementation: Reads from `assessment_participations` and
   `assessment_task_points`; writes to `student_performance_records`.
@@ -327,7 +451,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Service computes points and achievements; upserts Records; handles missing data gracefully.
 ```
 
-```admonish example "PR-11.3 — Evaluator (proposal generator)"
+```admonish example "PR-12.3 — Evaluator (proposal generator)"
 - Scope: `StudentPerformance::Evaluator` to generate certification proposals.
 - Implementation: Reads Records and Rules; returns proposed status
   (passed/failed) per student.
@@ -335,7 +459,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Evaluator generates proposals; does NOT create Certifications; used for bulk UI only.
 ```
 
-```admonish example "PR-11.4 — Records controller (factual data display)"
+```admonish example "PR-12.4 — Records controller (factual data display)"
 - Scope: `StudentPerformance::RecordsController` for viewing performance data.
 - Controllers: Index/show actions for Records.
 - UI: Table view with points, achievements, computed_at timestamp.
@@ -343,7 +467,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Teachers can view Records; no decision-making UI; feature flag gates access.
 ```
 
-```admonish example "PR-11.5 — Certifications controller (teacher workflow)"
+```admonish example "PR-12.5 — Certifications controller (teacher workflow)"
 - Scope: `StudentPerformance::CertificationsController` for teacher certification.
 - Controllers: Index (dashboard), create (bulk), update (override),
   bulk_accept.
@@ -352,7 +476,7 @@ Student Performance — Step 11: System Foundations
 - Acceptance: Teachers can review proposals; bulk accept; override with manual status; remediation workflow for stale certifications.
 ```
 
-```admonish example "PR-11.6 — Evaluator controller (proposal endpoints)"
+```admonish example "PR-12.6 — Evaluator controller (proposal endpoints)"
 - Scope: `StudentPerformance::EvaluatorController` for proposal generation.
 - Controllers: `bulk_proposals`, `preview_rule_change`, `single_proposal`.
 - UI: Modal for rule change preview showing diff of affected students.
@@ -361,20 +485,10 @@ Student Performance — Step 11: System Foundations
 ```
 
 ```admonish abstract
-Exam — Step 12: Registration & Certification Integration
+Exam Eligibility — Step 13: Student Performance Policy Integration
 ```
 
-```admonish example "PR-12.1 — Exam model (cross-cutting concerns)"
-- Scope: Create `Exam` model with concerns.
-- Concerns: `Registration::Campaignable`, `Registration::Registerable`,
-  `Roster::Rosterable`, `Assessment::Assessable`.
-- Implementation: `materialize_allocation!` delegates to `replace_roster!`;
-  `allocated_user_ids` returns roster user IDs.
-- Refs: [Exam model](05a-exam-model.md#exam-as-registerable)
-- Acceptance: Exam includes all concerns; methods implemented; no functional changes to existing exams.
-```
-
-```admonish example "PR-12.2 — Lecture performance policy (add to engine)"
+```admonish example "PR-13.1 — Student performance policy (add to engine)"
 - Scope: Add `student_performance` policy kind to `Registration::PolicyEngine`.
 - Implementation: `Registration::Policy#eval_student_performance` checks
   `StudentPerformance::Certification.find_by(...).status`.
@@ -384,7 +498,7 @@ Exam — Step 12: Registration & Certification Integration
 - Acceptance: Policy checks Certification table; phase-aware logic; tests use Certification doubles.
 ```
 
-```admonish example "PR-12.3 — Pre-flight checks (campaign open/finalize)"
+```admonish example "PR-13.2 — Pre-flight checks (campaign open/finalize)"
 - Scope: Add certification completeness checks to campaign lifecycle.
 - Controllers: Update `Registration::CampaignsController#open` to check
   for missing/pending certifications; block if incomplete.
@@ -394,35 +508,38 @@ Exam — Step 12: Registration & Certification Integration
 - Acceptance: Campaigns cannot open without complete certifications; finalization blocked if pending; failed certifications auto-rejected.
 ```
 
-```admonish example "PR-12.4 — Exam FCFS registration"
-- Scope: Exam registration with student_performance policy.
-- Controllers: Extend `Registration::UserRegistrationsController` for
-  exam context.
-- UI: Registration button with eligibility status display.
+```admonish example "PR-13.3 — Eligibility UI integration"
+- Scope: Wire eligibility checks into exam registration UI.
+- Controllers: Extend existing exam registration controllers to handle
+  student_performance policy errors.
+- UI: Eligibility status displays; blocked registration with clear
+  messaging; links to performance overview.
 - Refs: [Exam registration flow](05a-exam-model.md#student-experience)
-- Acceptance: Students can register for exams; policy blocks ineligible users; clear error messages; feature flag gates UI.
+- Acceptance: Students see eligibility status; policy blocks ineligible users; clear error messages; links to certification details; feature flag gates UI.
 ```
 
-```admonish example "PR-12.5 — Grade scheme application"
-- Scope: Apply grading schemes to exam results.
-- Service: `GradeScheme::Applier` to map points to grades.
-- Controllers: `GradeScheme::SchemesController` (preview/apply).
-- Refs: [GradeScheme applier](05b-grading-schemes.md#grading-scheme-applier)
-- Acceptance: Teachers can apply schemes; preview grade distribution; grades saved to participations.
+```admonish example "PR-13.4 — Certification remediation workflow"
+- Scope: UI for teachers to resolve pending certifications during finalization.
+- Controllers: Add remediation actions to
+  `StudentPerformance::CertificationsController`.
+- UI: Remediation modal during finalization showing pending students;
+  quick-resolve actions; bulk accept/reject.
+- Refs: [Remediation workflow](05-student-performance.md#policy-integration)
+- Acceptance: Teachers can resolve pending certifications inline during finalization; finalization retries after resolution; auto-rejection of failed students.
 ```
 
 ```admonish abstract
-Dashboards — Step 13: Complete Integration
+Dashboards — Step 14: Complete Integration
 ```
 
-```admonish example "PR-13.1 — Student dashboard extension"
+```admonish example "PR-14.1 — Student dashboard extension"
 - Scope: Add student performance and exam registration widgets.
 - Widgets: "Exam Eligibility Status", "Performance Overview".
 - Refs: [Student dashboard complete](12-views.md#student-dashboard)
 - Acceptance: Students see eligibility status; performance summary; links to certification details.
 ```
 
-```admonish example "PR-13.2 — Teacher dashboard extension"
+```admonish example "PR-14.2 — Teacher dashboard extension"
 - Scope: Add certification and exam management widgets.
 - Widgets: "Certification Pending List", "Eligibility Summary".
 - Refs: [Teacher dashboard complete](12-views.md#teacher-dashboard)
@@ -430,10 +547,10 @@ Dashboards — Step 13: Complete Integration
 ```
 
 ```admonish abstract
-Quality — Step 14: Hardening & Integrity
+Quality — Step 15: Hardening & Integrity
 ```
 
-```admonish example "PR-14.1 — Background jobs (performance/certification)"
+```admonish example "PR-15.1 — Background jobs (performance/certification)"
 - Scope: Create integrity jobs for student performance.
 - Jobs: `PerformanceRecordUpdateJob` (recompute Records after grading),
   `CertificationStaleCheckJob` (flag stale certifications),
@@ -442,7 +559,7 @@ Quality — Step 14: Hardening & Integrity
 - Acceptance: Jobs run on schedule; log issues; no auto-fix for critical data.
 ```
 
-```admonish example "PR-14.2 — Admin reporting (integrity dashboard)"
+```admonish example "PR-15.2 — Admin reporting (integrity dashboard)"
 - Scope: Admin UI for monitoring data integrity.
 - Controllers: `Admin::IntegrityController` with dashboard views.
 - Widgets: Pending certifications, stale certifications, roster mismatches.

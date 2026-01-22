@@ -29,7 +29,7 @@ class MediaController < ApplicationController
   def index
     authorize! :index, Medium.new
 
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @media = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::LectureMediaSearchConfigurator,
@@ -38,9 +38,6 @@ class MediaController < ApplicationController
         default_per_page: 8
       }
     )
-
-    @pagy = search_result.pagy
-    @media = search_result.results
 
     if @lecture.sort == "vignettes"
       render layout: "vignettes/layouts/vignettes_navbar"
@@ -236,15 +233,12 @@ class MediaController < ApplicationController
     @purpose = params.dig(:search, :purpose)
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 
-    search_result = Search::Searchers::ControllerSearcher.search(
+    @pagy, @media = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::MediaSearchConfigurator,
       options: { default_per_page: 10 }
     )
-
-    @pagy = search_result.pagy
-    @media = search_result.results
 
     respond_to do |format|
       format.js do
