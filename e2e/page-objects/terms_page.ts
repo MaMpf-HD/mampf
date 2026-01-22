@@ -13,11 +13,11 @@ export class TermsPage {
   }
 
   async createTerm(termYear: number, season: "SS" | "WS", action = "save") {
-    const newTermsPromises = this.page.waitForResponse(response =>
+    const newTermsPromise = this.page.waitForResponse(response =>
       response.url().includes("terms/new"),
     );
     await this.page.getByRole("link", { name: "Create Term" }).click();
-    await newTermsPromises;
+    await newTermsPromise;
     await this.page.selectOption("#term_year", termYear.toString());
     await this.page.selectOption("#term_season", season);
     await this.page.locator("#new_term").getByRole("button", { name: action === "save" ? "Save" : "Cancel" }).click();
