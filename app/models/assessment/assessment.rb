@@ -1,7 +1,7 @@
 module Assessment
   class Assessment < ApplicationRecord
     belongs_to :assessable, polymorphic: true
-    belongs_to :lecture, optional: true
+    belongs_to :lecture
 
     has_many :tasks, dependent: :destroy, class_name: "Assessment::Task",
                      inverse_of: :assessment

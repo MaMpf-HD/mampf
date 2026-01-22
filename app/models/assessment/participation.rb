@@ -1,7 +1,7 @@
 module Assessment
   class Participation < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
-                            inverse_of: :participations
+                            inverse_of: :assessment_participations
     belongs_to :user
     belongs_to :tutorial, optional: true
     belongs_to :grader, class_name: "User", optional: true
@@ -22,7 +22,7 @@ module Assessment
     validates :user_id, uniqueness: { scope: :assessment_id }
     validates :grade_numeric,
               inclusion: {
-                in: [1.0, 1.3, 1.7, 2.0, 2.3, 3.0, 3.7, 4.0, 5.0],
+                in: [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0],
                 allow_nil: true
               }
   end
