@@ -286,25 +286,71 @@ Grading — Step 6: Assessment Foundations (Schema)
 Grading — Step 7: Assessments (Formalize Assignments)
 ```
 
-```admonish example "PR-7.1 — Assessment migration (link Assignment to Assessment)"
-- Scope: Background migration to create Assessment for each Assignment.
-- Migration: Iterates existing Assignments; creates corresponding
-  `Assessment::Assessment` with `assessable_type: "Assignment"`.
-- Refs: [Assessment formalization](04-assessments-and-grading.md#usage-scenario-formalize-assignment)
-- Acceptance: All assignments have linked assessments; no data loss; migration idempotent.
+```admonish example "PR-7.1 — Assessment backend (Assignment integration)"
+- Scope: Integrate Assessment::Assessable into Assignment model with automatic participation seeding.
+- Backend:
+  - Add `Assessment::Assessable` concern
+  - Include concern in Assignment model (behind feature flag)
+  - Add `after_create :setup_assessment` hook
+  - Implement `seed_participations_from_roster!` for Assignment
+- Feature Flag: `assessment_grading_enabled` (per-lecture)
+- Behavior: When enabled, new assignments automatically create Assessment record + Participations for all lecture students
+- Refs: [Assessment::Assessable](04-assessments-and-grading.md#assessmentassessable-concern)
+- Acceptance: Feature flag works; new assignments get assessments; participations seeded from roster; old assignments unaffected.
 ```
 
-```admonish example "PR-7.2 — Assessment controllers (read-only exploration)"
-- Scope: CRUD for assessments and participations.
-- Controllers: `Assessment::AssessmentsController`,
-  `Assessment::ParticipationsController` (read-only for now).
-- UI: Index/show views for assessments; participation list per assessment.
-- Refs: [Assessment controllers](11-controllers.md#assessmentassessmentscontroller)
-- Acceptance: Teachers can view assessments and participations; no grading UI yet; feature flag gates access.
+```admonish example "PR-7.2 — Assessment UI (CRUD without grading)"
+- Scope: Complete assessment management UI (create, view, configure) without grading interface.
+- Controllers: `Assessment::AssessmentsController` (full CRUD), `Assessment::TasksController` (nested CRUD), `Assessment::ParticipationsController` (index only)
+- UI:
+  - "New Assessment" form (type/mode selection, schedule)
+  - Index page (list, filter, status badges)
+  - Show page with tabs (Overview, Settings, Tasks, Participants)
+  - Task management (add/edit/reorder problems)
+  - Participation list (auto-seeded from PR-7.1)
+- Limitations: No point entry, no grade calculation, no result publication (deferred to PR-8.x)
+- Feature Flag: Same `assessment_grading_enabled` flag gates entire UI
+- Refs: [Assessment controllers](11-controllers.md#assessmentassessmentscontroller), [Views](12-views.md#assessments)
+- Acceptance: Teachers can create assessments via UI; participations visible; tasks configurable; no grading actions available; feature flag gates access.
+```
+
+```admonish example "PR-7.3 — Submission assessment support (dual-column)"
+- Scope: Add `assessment_id` to submissions table; maintain backward compatibility with `assignment_id`.
+- Migration:
+  - Add `assessment_id` column (UUID, nullable) to `submissions` table
+  - Add foreign key constraint on `assessment_id`
+  - Keep existing `assignment_id` column and constraint (legacy support)
+- Model Changes:
+  - `belongs_to :assignment, optional: true` (legacy)
+  - `belongs_to :assessment, optional: true` (new)
+  - Validation: require one or the other (XOR pattern)
+  - Helper method: `grading_context` returns assessment or assignment
+- Controller Changes:
+  - For new submissions (when feature flag enabled): set `assessment_id`
+  - For old submissions: continue using `assignment_id`
+  - Views use `submission.grading_context` for navigation
+- Strategy: New submissions under feature flag use assessment_id; old submissions remain unchanged; both work simultaneously
+- Refs: [Submission dual-column pattern](04-assessments-and-grading.md#submission-extended-model)
+- Acceptance: Old submissions still work; new submissions link to assessments; no data loss; both columns coexist; feature flag determines which column is populated for new records.
 ```
 
 ```admonish abstract
 Grading — Step 8: Assignment Grading
+```
+
+```admonish example "PR-8.0 — Student submission integration with participations"
+- Scope: Update student submission workflow to interact with Assessment::Participation (when feature flag enabled).
+- Controllers: Update `SubmissionsController` to conditionally set participation status.
+- Logic (when `assessment_grading_enabled?`):
+  - On submission upload: Find or create `Assessment::Participation` for student(s)
+  - Set `participation.status = :submitted`, `submitted_at = Time.current`
+  - Set `submission.assessment_id` (new column from PR-7.3)
+  - For team submissions: Update all team members' participations
+- Logic (when flag disabled):
+  - Use existing submission flow with `assignment_id`
+  - No participation records created
+- Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios)
+- Acceptance: Feature flag controls behavior; new submissions link to assessments and update participations; old submissions continue working unchanged; no breaking changes to existing functionality.
 ```
 
 ```admonish example "PR-8.1 — Grading service (backend)"
@@ -328,6 +374,22 @@ Grading — Step 8: Assignment Grading
 - Controllers: Extend `Assessment::AssessmentsController` with
   `publish_results` and `unpublish_results` actions.
 - UI: Toggle button on assessment show page.
+- Refs: [Publication workflow](04-assessments-and-grading.md#publication-workflow)
+- Acceptance: Teachers can publish/unpublish results; students see results only when published; toggle works via Turbo Frame; feature flag gates UI.
+```
+
+```admonish example "PR-8.4 — Student results interface"
+- Scope: Student-facing views for published assessment results.
+- Controllers: `Assessment::ParticipationsController` (index, show for students)
+- UI:
+  - **Results Overview:** Progress dashboard (points earned, graded count, certification status), assignment list with filters (All/Graded/Pending), collapsible older assignments section
+  - **Results Detail:** Per-assignment view with task breakdown table, submitted files, tutor feedback, team info, overall progress sidebar
+  - Published results only (students cannot see unpublished grades)
+- Authorization: Students see only their own participations; results hidden when `assessment.results_published == false`
+- Navigation: Links from assignment pages to results; download feedback PDFs
+- Refs: [Student results views](12-views.md#assessments-lectures---student)
+- Acceptance: Students can view published results; task points visible; feedback displayed; unpublished assessments hidden; certification status shown; feature flag gates access.
+```
 - Refs: [Publication workflow](04-assessments-and-grading.md#publication-workflow)
 - Acceptance: Teachers can publish/unpublish results; students see results only when published.
 ```
