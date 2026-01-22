@@ -37,7 +37,7 @@ class CreateAssessmentParticipations < ActiveRecord::Migration[8.0]
     # execute "ALTER TABLE assessment_participations DROP CONSTRAINT valid_german_grades;"
     add_check_constraint :assessment_participations,
                          "grade_numeric IS NULL OR grade_numeric IN " \
-                         "(1.0, 1.3, 1.7, 2.0, 2.3, 3.0, 3.7, 4.0, 5.0)",
+                         "(1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0)",
                          name: "valid_german_grades"
   end
 end

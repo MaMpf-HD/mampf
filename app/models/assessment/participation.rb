@@ -4,7 +4,7 @@ module Assessment
                             inverse_of: :assessment_participations
     belongs_to :user
     belongs_to :tutorial, optional: true
-    belongs_to :grader, class_name: "User", optional: true
+    belongs_to :grader, class_name: "User", optional: true, inverse_of: false
 
     has_many :task_points, dependent: :destroy,
                            class_name: "Assessment::TaskPoint",

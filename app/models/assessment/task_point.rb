@@ -5,8 +5,8 @@ module Assessment
                inverse_of: :task_points
     belongs_to :task, class_name: "Assessment::Task",
                       inverse_of: :task_points
-    belongs_to :grader, class_name: "User", optional: true
-    belongs_to :submission, optional: true
+    belongs_to :grader, class_name: "User", optional: true, inverse_of: false
+    belongs_to :submission, optional: true, inverse_of: false
 
     validates :points, numericality: { greater_than_or_equal_to: 0 },
                        allow_nil: true

@@ -49,7 +49,8 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
                                       assessment_participation: participation)
         expect(task_point).not_to be_valid
         expect(task_point.errors[:base]).to include(
-          I18n.t("activerecord.errors.models.assessment/task_point.attributes.base.assessment_mismatch")
+          I18n.t("activerecord.errors.models.assessment/" \
+                 "task_point.attributes.base.assessment_mismatch")
         )
       end
     end
