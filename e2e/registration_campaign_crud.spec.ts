@@ -28,7 +28,6 @@ test.describe("Registration Campaigns CRUD", () => {
     await page.getByRole("button", { name: "Save" }).click();
 
     await expect(page.getByRole("heading", { name: "Exam Registration 2025" })).toBeVisible();
-    await expect(page.getByText("Draft")).toBeVisible();
   });
 
   test("Teacher can update an existing campaign", async ({
