@@ -34,7 +34,10 @@ module Assessment
       end
 
       # rubocop:disable Rails/SkipsModelValidations
-      Participation.insert_all(participations_data)
+      Participation.insert_all(
+        participations_data,
+        unique_by: [:assessment_id, :user_id]
+      )
       # rubocop:enable Rails/SkipsModelValidations
     end
   end
