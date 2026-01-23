@@ -46,12 +46,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.status).to eq("completed")
     end
 
-    it "creates a valid planning_only campaign" do
-      campaign = FactoryBot.create(:registration_campaign, :planning_only)
-      expect(campaign).to be_valid
-      expect(campaign.planning_only).to be(true)
-    end
-
     it "creates campaign with items for regular lecture" do
       campaign = FactoryBot.create(:registration_campaign, :with_items)
       expect(campaign).to be_valid
@@ -80,20 +74,74 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    it "creates campaign for lecture enrollment" do
-      campaign = FactoryBot.create(:registration_campaign, :for_lecture_enrollment)
-      expect(campaign).to be_valid
-      expect(campaign.registration_items.count).to eq(1)
-      item = campaign.registration_items.first
-      expect(item.registerable_type).to eq("Lecture")
-      expect(item.registerable).to eq(campaign.campaignable)
-    end
-
     it "creates campaign with policies" do
       campaign = FactoryBot.create(:registration_campaign, :with_policies)
       expect(campaign).to be_valid
       expect(campaign.registration_policies.count).to eq(1)
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
+    end
+  end
+
+  describe "validations" do
+    it "validates registration_deadline is in the future if open" do
+      campaign = build(:registration_campaign, :open, registration_deadline: 1.day.ago)
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "validates prerequisites are not draft if open" do
+      prereq = create(:registration_campaign, :draft)
+      campaign = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: campaign,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      campaign.status = :open
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:base, :prerequisite_is_draft,
+                                    description: prereq.description)).to be(true)
+    end
+  end
+
+  describe "deletion protection" do
+    it "prevents deletion if not draft" do
+      campaign = create(:registration_campaign, :open)
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion if referenced as prerequisite" do
+      prereq = create(:registration_campaign, :draft)
+      dependent = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect { prereq.destroy }.not_to change(Registration::Campaign, :count)
+      expect(prereq.errors.added?(:base, :referenced_as_prerequisite,
+                                  descriptions: dependent.description)).to be(true)
+    end
+  end
+
+  describe "freezing" do
+    let(:campaign) { create(:registration_campaign, :open) }
+
+    it "prevents changing allocation_mode if not draft" do
+      campaign.allocation_mode = :preference_based
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:allocation_mode, :frozen)).to be(true)
+    end
+
+    it "prevents reverting to draft from open" do
+      campaign.status = :draft
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
+    end
+
+    it "allows changing allocation_mode if draft" do
+      draft_campaign = create(:registration_campaign, :draft)
+      draft_campaign.allocation_mode = :preference_based
+      expect(draft_campaign).to be_valid
     end
   end
 
@@ -151,6 +199,22 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       expect(returned).to eq(result)
       expect(campaign.policies_satisfied?(user, phase: :registration)).to be(true)
+    end
+  end
+
+  describe "#locale_with_inheritance" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, campaignable: lecture) }
+
+    it "returns the locale of the campaignable" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return("de")
+      expect(campaign.locale_with_inheritance).to eq("de")
+    end
+
+    it "falls back to locale if locale_with_inheritance is missing" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return(nil)
+      allow(lecture).to receive(:locale).and_return("en")
+      expect(campaign.locale_with_inheritance).to eq("en")
     end
   end
 end

@@ -1,7 +1,141 @@
 en:
+  registration:
+    campaign:
+      created: "Campaign created successfully."
+      create_failed: "Campaign could not be created."
+      updated: "Campaign updated successfully."
+      update_failed: "Campaign could not be updated."
+      destroyed: "Campaign deleted successfully."
+      cannot_delete: "Campaign cannot be deleted."
+      confirm_delete: "Are you sure you want to delete this campaign?"
+      opened: "Campaign opened."
+      closed: "Campaign closed."
+      reopened: "Campaign reopened."
+      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      not_found: "Registration campaign not found."
+      lecture_not_found: "Lecture not found."
+      helpdesk:
+        campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
+        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
+        registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
+        allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
+      index:
+        title: "Registrations"
+        card_title: "Registration Campaigns"
+        new_campaign: "New Campaign"
+        none: "No campaigns found."
+        columns:
+          description: "Short description"
+          mode: "Allocation Mode"
+          opens_at: "Opens At"
+          deadline: "Deadline"
+          status: "Status"
+      new:
+        title: "New Campaign"
+      edit:
+        title: "Edit Campaign"
+      form:
+        new_title: "New Campaign"
+        edit_title: "Edit Campaign"
+        description: "Short description"
+        allocation_mode: "Allocation Mode"
+        registration_opens_at: "Registration Opens At"
+        registration_deadline: "Registration Deadline"
+        submit: "Save"
+      allocation_mode:
+        first_come_first_served: "First-Come-First-Served"
+        preference_based: "Preference-Based"
+      status:
+        draft: "Draft"
+        open: "Open"
+        processing: "Processing"
+        completed: "Completed"
+        closed: "Closed"
+        planning: "Planning"
+      actions:
+        open: "Start Registration"
+        close: "End Registration"
+        reopen: "Reopen Registration"
+      confirmations:
+        open: "Are you sure you want to open registration? Students will be able to register immediately."
+        close: "Are you sure you want to end registration? No new registrations will be accepted."
+        close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
+        reopen: "Are you sure you want to reopen registration?"
+      overview:
+        registrations: "Registrations"
+        total: "Total"
+        confirmed_count:
+          one: "Confirmed %{count}"
+          other: "Confirmed %{count}"
+        pending_count:
+          one: "Pending %{count}"
+          other: "Pending %{count}"
+        rejected_count:
+          one: "Rejected %{count}"
+          other: "Rejected %{count}"
+        items: "Items"
+    policy:
+      helpdesk:
+        policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
+        policies_frozen: "Policies cannot be modified once the campaign has been opened or is no longer a draft."
+        kind: "The type of rule to enforce. For example, 'Institutional Email' requires users to have an email address from a specific domain."
+        phase: "When the rule is checked. 'Registration': Checked when the student tries to register. 'Finalization': Checked when the final assignment is calculated (after the registration deadline has passed). 'Both': Checked at both times."
+        allowed_domains: "Enter the main domains (e.g. 'uni-heidelberg.de'). Subdomains (like 'stud.uni-heidelberg.de') are automatically included. Separate multiple domains with commas."
+      index:
+        title: "Policies"
+        add: "Add Policy"
+        none: "No policies configured."
+      new:
+        title: "New Policy"
+      edit:
+        title: "Edit Policy"
+      kind: "Type"
+      phase: "Phase"
+      config: "Configuration"
+      position: "Position"
+      created: "Policy created successfully."
+      updated: "Policy updated successfully."
+      destroyed: "Policy deleted successfully."
+      not_found: "Registration policy not found."
+      errors:
+        missing_domains: "At least one allowed domain must be specified."
+        missing_prerequisite_campaign: "A prerequisite campaign must be selected."
+        prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
+      configs:
+        allowed_domains: "Allowed Domains"
+        prerequisite_campaign_id: "Prerequisite Campaign"
+        lecture_id: "Lecture"
+      hints:
+        allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
+      kinds:
+        institutional_email: "Institutional Email"
+        prerequisite_campaign: "Prerequisite Campaign"
+        student_performance: "Student Performance"
+      phases:
+        registration: "Registration"
+        finalization: "Finalization"
+        both: "Both"
   activerecord:
     errors:
       models:
+        registration/campaign:
+          attributes:
+            base:
+              frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
+              cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
+              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
+            registration_deadline:
+              must_be_in_future: "must be in the future when campaign is open"
+            status:
+              cannot_revert_to_draft: "cannot be reverted to draft once opened"
+            allocation_mode:
+              frozen: "cannot be changed after campaign is opened"
+        registration/policy:
+          attributes:
+            base:
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
         registration/user_registration:
           attributes:
             registration_item:

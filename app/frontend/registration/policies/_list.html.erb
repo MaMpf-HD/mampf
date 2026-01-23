@@ -1,0 +1,62 @@
+<% campaign ||= @campaign %>
+<%= turbo_frame_tag "policies_list" do %>
+  <% if campaign.registration_policies.any? %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= t("registration.policy.kind") %></th>
+          <th><%= t("registration.policy.phase") %></th>
+          <th><%= t("registration.policy.config") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% campaign.registration_policies.order(:position).each do |policy| %>
+          <tr <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if campaign.draft? %>>
+            <td><%= t("registration.policy.kinds.#{policy.kind}") %></td>
+            <td><%= t("registration.policy.phases.#{policy.phase}") %></td>
+            <td>
+              <small class="text-muted">
+                <%= policy.config_summary %>
+              </small>
+            </td>
+            <td class="text-end">
+              <% if campaign.draft? %>
+                <%= link_to "", edit_registration_campaign_policy_path(campaign, policy),
+                            class: "d-none",
+                            data: { turbo_frame: "policy_form", row_link: true } %>
+                <div class="d-flex justify-content-end gap-1">
+                  <% unless policy.first? %>
+                    <%= button_to move_up_registration_campaign_policy_path(campaign, policy),
+                                  method: :patch,
+                                  class: "btn btn-sm btn-outline-secondary",
+                                  title: t("buttons.move_up") do %>
+                      <i class="bi bi-arrow-up"></i>
+                    <% end %>
+                  <% end %>
+                  <% unless policy.last? %>
+                    <%= button_to move_down_registration_campaign_policy_path(campaign, policy),
+                                  method: :patch,
+                                  class: "btn btn-sm btn-outline-secondary",
+                                  title: t("buttons.move_down") do %>
+                      <i class="bi bi-arrow-down"></i>
+                    <% end %>
+                  <% end %>
+                  <%= button_to registration_campaign_policy_path(campaign, policy),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                data: { confirm: t("confirmation.generic") },
+                                title: t("buttons.delete") do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted"><%= t("registration.policy.index.none") %></p>
+  <% end %>
+<% end %>

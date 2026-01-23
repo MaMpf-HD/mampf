@@ -1,7 +1,6 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-<% cache @lecture do %>
   <div id="lecture-area" data-cy="lecture-area">
     <!-- Header -->
     <div class="container small-width">
@@ -72,6 +71,14 @@
         </div>
       <% end %>
 
+      <% if Flipper.enabled?(:registration_campaigns) %>
+        <% component.with_tab(name: "campaigns", label: t("registration.campaign.index.title")) do %>
+          <div class="container small-width lecture-pane">
+            <%= render partial: "registration/campaigns/index", locals: { lecture: @lecture } %>
+          </div>
+        <% end %>
+      <% end %>
+
       <% if @lecture.sort == "vignettes" %>
         <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
           <div class="container small-width lecture-pane mb-3">
@@ -122,4 +129,3 @@
               locals: { lecture: @lecture } %>
   <% end %>
 
-<% end %>

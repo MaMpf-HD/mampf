@@ -36,8 +36,20 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    validates :title, :registration_deadline, :allocation_mode, :status, presence: true
-    validates :planning_only, inclusion: { in: [true, false] }
+    validates :registration_deadline, :allocation_mode, :status, presence: true
+    validates :description, length: { maximum: 100 }
+
+    validate :allocation_mode_frozen, on: :update
+    validate :cannot_revert_to_draft, on: :update
+    validate :registration_deadline_future_if_open
+    validate :prerequisites_not_draft, if: :open?
+
+    before_destroy :ensure_campaign_is_draft
+    before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
+
+    def locale_with_inheritance
+      campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
+    end
 
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
@@ -47,11 +59,73 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
+    def open_for_registrations?
+      open? && registration_deadline > Time.current
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
+    def can_be_deleted?
+      draft?
+    end
+
     private
+
+      def prerequisites_not_draft
+        prereq_ids = registration_policies.select { |p| p.kind == "prerequisite_campaign" }
+                                          .filter_map { |p| p.prerequisite_campaign_id.presence }
+
+        return if prereq_ids.empty?
+
+        Registration::Campaign.where(id: prereq_ids, status: :draft).find_each do |prereq|
+          errors.add(:base, :prerequisite_is_draft, description: prereq.description)
+        end
+      end
+
+      def ensure_not_referenced_as_prerequisite
+        referencing_policies = Registration::Policy
+                               .referencing_campaign(id)
+                               .where.not(registration_campaign_id: id)
+                               .includes(:registration_campaign)
+
+        return unless referencing_policies.any?
+
+        descriptions = referencing_policies.filter_map { |p| p.registration_campaign&.description }
+                                           .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, descriptions: descriptions)
+        throw(:abort)
+      end
+
+      def ensure_campaign_is_draft
+        return if draft?
+
+        errors.add(:base, :cannot_delete_active_campaign)
+        throw(:abort)
+      end
+
+      def allocation_mode_frozen
+        return unless allocation_mode_changed? && status_was != "draft"
+
+        errors.add(:allocation_mode, :frozen)
+      end
+
+      def cannot_revert_to_draft
+        return unless status_changed? && draft?
+
+        errors.add(:status, :cannot_revert_to_draft)
+      end
+
+      def registration_deadline_future_if_open
+        return unless open?
+        return unless registration_deadline_changed? || status_changed?
+        return if registration_deadline.blank?
+
+        return unless registration_deadline <= Time.current
+
+        errors.add(:registration_deadline, :must_be_in_future)
+      end
 
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)

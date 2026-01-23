@@ -3356,6 +3356,8 @@ en:
     solution: 'Solution'
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
+    details: 'Details'
+    settings: 'Settings'
     status: 'Status'
     sponsors: 'Funded by'
     since: 'since'
@@ -3443,6 +3445,8 @@ en:
     save_changes: "Save Changes"
     discard_changes: "Discard Changes"
     delete: 'Delete'
+    move_up: 'Move Up'
+    move_down: 'Move Down'
     publish: 'Publish'
     parent_course: 'Parent Course'
     parent_lecture: 'Parent Event Series'
