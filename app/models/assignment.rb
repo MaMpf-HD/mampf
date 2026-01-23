@@ -175,7 +175,7 @@ class Assignment < ApplicationRecord
     end
 
     assessment.seed_participations_from!(
-      user_ids: user_ids.uniq,
+      user_ids: user_ids,
       tutorial_mapping: tutorial_mapping
     )
   end
