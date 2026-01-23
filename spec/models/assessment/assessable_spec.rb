@@ -78,6 +78,25 @@ RSpec.describe(Assessment::Assessable) do
 
         expect(assessable.assessment.due_at).to be_within(1.second).of(original_due)
       end
+
+      it "can update optional fields when explicitly provided" do
+        original_due = 1.week.from_now
+        new_due = 2.weeks.from_now
+
+        assessable.ensure_assessment!(
+          title: "Test",
+          requires_points: true,
+          due_at: original_due
+        )
+
+        assessable.ensure_assessment!(
+          title: "Test",
+          requires_points: true,
+          due_at: new_due
+        )
+
+        expect(assessable.assessment.due_at).to be_within(1.second).of(new_due)
+      end
     end
   end
 
