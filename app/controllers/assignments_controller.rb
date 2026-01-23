@@ -17,7 +17,11 @@ class AssignmentsController < ApplicationController
 
     respond_to do |format|
       format.js
-      format.html { render :new, layout: false }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                 partial: "assessment/assignments/form",
+                                                 locals: { assignment: @assignment })
+      end
     end
   end
 
@@ -34,12 +38,24 @@ class AssignmentsController < ApplicationController
       @assignment.reload
       respond_to do |format|
         format.js
-        format.turbo_stream
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assignment_form_container", ""),
+            turbo_stream.prepend("assessment-assessments-list",
+                                 partial: "assessment/assessments/assessment_list_item",
+                                 locals: { assessable: @assignment, lecture: @lecture })
+          ]
+        end
       end
     else
       respond_to do |format|
         format.js
-        format.turbo_stream { render :new, status: :unprocessable_content }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                   partial: "assessment/assignments/form",
+                                                   locals: { assignment: @assignment }),
+                 status: :unprocessable_content
+        end
       end
     end
   end
@@ -59,7 +75,9 @@ class AssignmentsController < ApplicationController
   def cancel_edit
     respond_to do |format|
       format.js
-      format.html { render turbo_frame: "assignment_form" }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container", "")
+      end
     end
   end
 
@@ -72,7 +90,9 @@ class AssignmentsController < ApplicationController
 
     respond_to do |format|
       format.js
-      format.html { render turbo_frame: "assignment_form" }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container", "")
+      end
     end
   end
 

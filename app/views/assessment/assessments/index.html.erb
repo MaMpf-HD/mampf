@@ -16,11 +16,11 @@
                       new_assignment_path(params: { lecture_id: @lecture.id }),
                       class: 'btn btn-sm btn-primary',
                       id: 'newAssignmentButton',
-                      data: { turbo_frame: 'assignment_form' } %>
+                      data: { turbo_stream: true } %>
         </div>
       </div>
 
-      <%= turbo_frame_tag 'assignment_form' %>
+      <div id="assignment_form_container"></div>
     <% end %>
 
     <% if @assessables_with_assessment.any? %>

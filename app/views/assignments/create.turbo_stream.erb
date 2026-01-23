@@ -1,4 +1,0 @@
-<%= turbo_stream.replace 'assignment_form', '' %>
-<%= turbo_stream.prepend 'assessment-assessments-list' do %>
-  <%= render AssessmentListItemComponent.new(assessable: @assignment, lecture: @lecture) %>
-<% end %>

@@ -67,14 +67,14 @@
             <% if assignment.persisted? %>
               <%= link_to cancel_editing_assignment_path(assignment),
                   class: "btn btn-secondary",
-                  data: { turbo_method: :get } do %>
+                  data: { turbo_stream: true } do %>
                 <i class="bi bi-x-circle me-1"></i>
                 <%= t('buttons.cancel') %>
               <% end %>
             <% else %>
               <%= link_to cancel_new_assignment_path(lecture: assignment.lecture_id),
                   class: "btn btn-secondary",
-                  data: { turbo_method: :get } do %>
+                  data: { turbo_stream: true } do %>
                 <i class="bi bi-x-circle me-1"></i>
                 <%= t('buttons.cancel') %>
               <% end %>
