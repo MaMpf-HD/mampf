@@ -27,16 +27,20 @@ class AssignmentsController < ApplicationController
   def create
     @assignment = Assignment.new(assignment_params)
     authorize! :create, @assignment
-    @assignment.save
-    @errors = @assignment.errors
     @lecture = @assignment.lecture
     set_assignment_locale
 
-    @assignment.reload if @assignment.persisted?
-
-    respond_to do |format|
-      format.js
-      format.turbo_stream
+    if @assignment.save
+      @assignment.reload
+      respond_to do |format|
+        format.js
+        format.turbo_stream
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream { render :new, status: :unprocessable_content }
+      end
     end
   end
 

@@ -1,5 +1,3 @@
-<%= vite_javascript_tag 'js/datetimepicker' %>
-
 <div class="card mb-3">
   <div class="card-body">
     <%= form_with model: assignment, data: { turbo: true } do |f| %>
@@ -12,22 +10,25 @@
 
         <div class="col-md-6">
           <%= f.label :deadline, t('basics.deadline'), class: "form-label" %>
-          <div class="input-group log-event td-picker"
-               id="assignment-picker"
+          <div class="input-group td-picker"
+               id="assignment-deadline-picker"
+               data-controller="datetimepicker"
                data-td-target-input="nearest"
                data-td-target-toggle="nearest">
             <%= f.text_field :deadline,
                 class: 'form-control td-input',
-                autocomplete: 'off',
-                'data-td-target': '#assignment-picker' %>
+                data: { td_target: '#assignment-deadline-picker' },
+                value: assignment.deadline&.strftime("%Y-%m-%d %H:%M"),
+                autocomplete: 'off' %>
             <span class="input-group-text td-picker-button"
                   role="button"
-                  data-td-target="#assignment-picker"
+                  data-td-target="#assignment-deadline-picker"
                   data-td-toggle="datetimepicker">
               <i class="bi bi-calendar-fill"></i>
             </span>
           </div>
-          <div class="invalid-feedback td-error" id="assignment-deadline-error"></div>
+          <div class="invalid-feedback td-error" id="assignment-deadline-error"
+               data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>"></div>
         </div>
 
         <div class="col-md-4">
