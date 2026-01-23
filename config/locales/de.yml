@@ -412,6 +412,7 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
       lecture_content: 'Vorlesungsinhalt'
@@ -2292,6 +2293,7 @@ de:
   mampf_map: 'MaMpf-Map'
   external_render: 'in externem Tab rendern'
   medium:
+    singular: 'Medium'
     details: 'Details ansehen'
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'

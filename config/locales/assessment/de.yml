@@ -11,6 +11,7 @@ de:
     visible_from: 'Sichtbar ab'
     due_at: 'Fällig'
     legacy: 'Legacy'
+    draft: 'Entwurf'
     status:
       title: 'Status'
       draft: 'Entwurf'

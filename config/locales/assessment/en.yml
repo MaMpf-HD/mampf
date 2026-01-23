@@ -11,6 +11,7 @@ en:
     visible_from: 'Visible from'
     due_at: 'Due'
     legacy: 'Legacy'
+    draft: 'Draft'
     status:
       title: 'Status'
       draft: 'Draft'

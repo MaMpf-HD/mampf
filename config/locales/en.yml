@@ -388,6 +388,7 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
       lecture_content: 'Lecture Contents'
@@ -970,6 +971,7 @@ en:
           As it is not clear which tags associated to this section belong to
           which section, you can make assignments here.
     medium:
+      singular: 'Medium'
       course_medium_html: >
         There is one medium of this type that is associated to the
         course %{course}.

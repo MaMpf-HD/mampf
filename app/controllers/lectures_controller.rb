@@ -8,7 +8,7 @@ class LecturesController < ApplicationController
   authorize_resource except: [:new, :create, :search]
   before_action :check_for_consent
   before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
+  before_action :set_view_locale, only: [:edit, :update, :show, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout "administration"
@@ -140,10 +140,28 @@ class LecturesController < ApplicationController
     @errors = @lecture.errors
 
     if @lecture.valid?
-      if params[:subpage].present?
-        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
-      else
-        redirect_to edit_lecture_path(@lecture)
+      respond_to do |format|
+        format.html do
+          if params[:subpage].present?
+            redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
+          else
+            redirect_to edit_lecture_path(@lecture)
+          end
+        end
+        format.turbo_stream do
+          if params[:subpage] == "assessments"
+            flash.now[:notice] = t("admin.lecture.updated")
+            streams = [
+              turbo_stream.replace(
+                "lecture-submission-settings",
+                partial: "assessment/assessments/submission_settings",
+                locals: { lecture: @lecture }
+              )
+            ]
+            streams << stream_flash if flash.present?
+            render turbo_stream: streams
+          end
+        end
       end
       return
     end

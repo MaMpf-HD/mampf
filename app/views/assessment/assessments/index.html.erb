@@ -73,38 +73,8 @@
         <%= t('assessment.submission_settings') %>
       </h5>
 
-      <%= form_with model: @lecture,
-                    url: lecture_path(@lecture),
-                    html: { id: 'lecture-assignments-form', class: 'mt-3' },
-                    data: { turbo_frame: "_top" } do |f| %>
-        <div class="row">
-          <div class="col-md-6">
-            <%= f.label :submission_max_team_size,
-                        t('admin.lecture.submission_max_team_size'),
-                        class: "form-label" %>
-            <%= helpdesk t('admin.lecture.info.submission_max_team_size'), false %>
-            <%= f.number_field :submission_max_team_size,
-                                min: 1,
-                                max: 10000,
-                                class: 'form-control',
-                                value: @lecture.submission_max_team_size %>
-          </div>
-          <div class="col-md-6">
-            <%= f.label :submission_grace_period,
-                        t('admin.lecture.submission_grace_period'),
-                        class: "form-label" %>
-            <%= helpdesk t('admin.lecture.info.submission_grace_period'), false %>
-            <%= f.number_field :submission_grace_period,
-                                min: 0,
-                                max: 262800,
-                                class: 'form-control',
-                                value: @lecture.submission_grace_period %>
-          </div>
-        </div>
-        <div class="mt-3">
-          <%= hidden_field_tag :subpage, "assessments" %>
-          <%= f.submit t('buttons.save'), class: "btn btn-sm btn-primary" %>
-        </div>
+      <%= turbo_frame_tag "lecture-submission-settings" do %>
+        <%= render "assessment/assessments/submission_settings", lecture: @lecture %>
       <% end %>
     <% end %>
 
