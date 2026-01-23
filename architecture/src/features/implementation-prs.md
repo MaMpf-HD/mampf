@@ -287,17 +287,21 @@ Grading — Step 6: Assessment Foundations (Schema)
 Grading — Step 7: Assessments (Formalize Assignments)
 ```
 
-```admonish example "PR-7.1 — Assessment backend (Assignment integration)"
-- Scope: Integrate Assessment::Assessable into Assignment model with automatic participation seeding.
+```admonish example "PR-7.1 — Assessment backend (Assignment & Talk integration)"
+- Scope: Integrate Assessment::Assessable into Assignment and Talk models with automatic participation seeding.
 - Backend:
   - Add `Assessment::Assessable` concern
-  - Include concern in Assignment model (behind feature flag)
-  - Add `after_create :setup_assessment` hook
-  - Implement `seed_participations_from_roster!` for Assignment
-- Feature Flag: `assessment_grading_enabled` (per-lecture)
-- Behavior: When enabled, new assignments automatically create Assessment record + Participations for all lecture students
+  - Add `Assessment.seed_participations_from!(user_ids:, tutorial_mapping:)` bulk creation method
+  - Include concern in Assignment and Talk models (behind feature flag)
+  - Add `after_create :setup_assessment` hook to both models
+  - Implement `seed_participations_from_roster!` for Assignment (optimized single-query approach)
+  - Implement `seed_participations_from_roster!` for Talk (seeds from speakers)
+- Feature Flag: `assessment_grading` (global)
+- Performance: Optimized participation seeding reduces queries by 90% (23 → 3 queries for 20 tutorials)
+- Test Coverage: 104 specs (60%), covering both flag enabled/disabled states
+- Behavior: When enabled, new assignments/talks automatically create Assessment record + Participations; Assignment seeds from all lecture tutorials, Talk seeds from speakers only
 - Refs: [Assessment::Assessable](04-assessments-and-grading.md#assessmentassessable-concern)
-- Acceptance: Feature flag works; new assignments get assessments; participations seeded from roster; old assignments unaffected.
+- Acceptance: Feature flag works; new assignments/talks get assessments; participations seeded from roster; old records unaffected; performance scales to 600 students.
 ```
 
 ```admonish example "PR-7.2 — Assessment UI (CRUD without grading)"

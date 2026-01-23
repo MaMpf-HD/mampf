@@ -1,8 +1,11 @@
 class Assignment < ApplicationRecord
+  include Assessment::Assessable
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
@@ -153,4 +156,37 @@ class Assignment < ApplicationRecord
   def localized_deletion_date
     deletion_date.strftime(I18n.t("date.formats.concise"))
   end
+
+  def seed_participations_from_roster!
+    return unless assessment
+
+    memberships = TutorialMembership
+                  .where(tutorial_id: lecture.tutorial_ids)
+                  .pluck(:user_id, :tutorial_id)
+
+    user_ids = []
+    tutorial_mapping = {}
+
+    memberships.each do |user_id, tutorial_id|
+      user_ids << user_id
+      tutorial_mapping[user_id] = tutorial_id
+    end
+
+    assessment.seed_participations_from!(
+      user_ids: user_ids.uniq,
+      tutorial_mapping: tutorial_mapping
+    )
+  end
+
+  private
+
+    def setup_assessment
+      ensure_assessment!(
+        title: title,
+        requires_points: true,
+        requires_submission: true,
+        due_at: deadline
+      )
+      seed_participations_from_roster!
+    end
 end
