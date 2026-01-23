@@ -166,13 +166,8 @@ class Assignment < ApplicationRecord
                   .where(tutorial_id: lecture.tutorial_ids)
                   .pluck(:user_id, :tutorial_id)
 
-    user_ids = []
-    tutorial_mapping = {}
-
-    memberships.each do |user_id, tutorial_id|
-      user_ids << user_id
-      tutorial_mapping[user_id] = tutorial_id
-    end
+    tutorial_mapping = memberships.to_h
+    user_ids = memberships.map(&:first)
 
     assessment.seed_participations_from!(
       user_ids: user_ids,
