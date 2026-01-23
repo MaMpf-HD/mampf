@@ -13,8 +13,8 @@ module Assessment
       a.title = title
       a.requires_points = requires_points
       a.requires_submission = requires_submission
-      a.visible_from ||= visible_from if visible_from
-      a.due_at ||= due_at if due_at
+      a.visible_from = visible_from if visible_from
+      a.due_at = due_at if due_at
       a.lecture ||= try(:lecture)
       a.save! if a.changed?
       a
