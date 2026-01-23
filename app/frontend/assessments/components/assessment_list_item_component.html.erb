@@ -1,4 +1,4 @@
-<tr class="<%= 'table-secondary' if legacy %>">
+<tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
   <td>
     <% unless legacy %>
       <%= link_to title, show_path, class: "text-decoration-none" %>
@@ -25,6 +25,23 @@
     <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
     <td class="text-center"><%= tasks_count %></td>
     <td><%= deletion_date %></td>
+    <td>
+      <div class="d-flex gap-2 justify-content-end">
+        <%= link_to edit_assignment_path(assessable),
+            class: "btn btn-sm btn-outline-primary",
+            title: t('basics.edit'),
+            data: { turbo_stream: true } do %>
+          <i class="far fa-edit"></i>
+        <% end %>
+        <%= button_to assignment_path(assessable),
+            method: :delete,
+            class: "btn btn-sm btn-outline-danger",
+            title: t('basics.delete'),
+            data: { turbo_stream: true, turbo_confirm: t('basics.confirm_delete') } do %>
+          <i class="fas fa-trash-alt"></i>
+        <% end %>
+      </div>
+    </td>
   <% else %>
     <td colspan="6" class="text-muted">
       <%= I18n.t('assessment.legacy_description') %>

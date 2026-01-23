@@ -34,6 +34,7 @@
             <th><%= t('admin.assignment.filetype') %></th>
             <th class="text-center"><%= t('assessment.tasks') %></th>
             <th><%= t('admin.assignment.deletion') %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="assessment-assessments-list">
@@ -60,11 +61,56 @@
       </table>
     <% end %>
 
+    <% if @assessables_with_assessment.empty? && @legacy_assessables.empty? %>
+      <div class="text-center text-muted py-4">
+        <%= @lecture.seminar? ? t('assessment.no_talks_yet') : t('assessment.no_assignments_yet') %>
+      </div>
+    <% end %>
+
+    <% unless @lecture.seminar? %>
+      <div class="lecture-pane-separator"></div>
+      <h5 class="mb-3">
+        <%= t('assessment.submission_settings') %>
+      </h5>
+
+      <%= form_with model: @lecture,
+                    url: lecture_path(@lecture),
+                    html: { id: 'lecture-assignments-form', class: 'mt-3' } do |f| %>
+        <div class="row">
+          <div class="col-md-6">
+            <%= f.label :submission_max_team_size,
+                        t('admin.lecture.submission_max_team_size'),
+                        class: "form-label" %>
+            <%= helpdesk t('admin.lecture.info.submission_max_team_size'), false %>
+            <%= f.number_field :submission_max_team_size,
+                                min: 1,
+                                max: 10000,
+                                class: 'form-control',
+                                value: @lecture.submission_max_team_size %>
+          </div>
+          <div class="col-md-6">
+            <%= f.label :submission_grace_period,
+                        t('admin.lecture.submission_grace_period'),
+                        class: "form-label" %>
+            <%= helpdesk t('admin.lecture.info.submission_grace_period'), false %>
+            <%= f.number_field :submission_grace_period,
+                                min: 0,
+                                max: 262800,
+                                class: 'form-control',
+                                value: @lecture.submission_grace_period %>
+          </div>
+        </div>
+        <div class="mt-3">
+          <%= f.submit t('buttons.save'), class: "btn btn-sm btn-primary" %>
+        </div>
+      <% end %>
+    <% end %>
+
     <% if @legacy_assessables.any? %>
       <div class="lecture-pane-separator"></div>
-      <h4 class="mb-2">
+      <h5 class="mb-3">
         <%= t('assessment.legacy_items') %>
-      </h4>
+      </h5>
       <p class="text-muted small mb-3">
         <%= t('assessment.legacy_items_subtitle') %>
       </p>
@@ -78,12 +124,6 @@
             <% end %>
           <% end %>
         </div>
-      </div>
-    <% end %>
-
-    <% if @assessables_with_assessment.empty? && @legacy_assessables.empty? %>
-      <div class="text-center text-muted py-4">
-        <%= @lecture.seminar? ? t('assessment.no_talks_yet') : t('assessment.no_assignments_yet') %>
       </div>
     <% end %>
   <% end %>

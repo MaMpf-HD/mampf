@@ -23,6 +23,7 @@ en:
     legacy_description: 'Created before assessment system'
     no_assignments_yet: 'No assignments created yet.'
     no_talks_yet: 'No talks created yet.'
+    submission_settings: 'Submission Settings'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'

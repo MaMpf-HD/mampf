@@ -26,6 +26,16 @@ class AssignmentsController < ApplicationController
   end
 
   def edit
+    set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                 partial: "assessment/assignments/form",
+                                                 locals: { assignment: @assignment })
+      end
+    end
   end
 
   def create
@@ -61,15 +71,54 @@ class AssignmentsController < ApplicationController
   end
 
   def update
-    @assignment.update(assignment_params)
-    @errors = @assignment.errors
-    return if @errors.present?
+    set_assignment_locale
 
-    @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+    if @assignment.update(assignment_params)
+      @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+      @assignment.reload
+
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assignment_form_container", ""),
+            turbo_stream.replace(ActionView::RecordIdentifier.dom_id(@assignment),
+                                 partial: "assessment/assessments/assessment_list_item",
+                                 locals: { assessable: @assignment, lecture: @lecture })
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                   partial: "assessment/assignments/form",
+                                                   locals: { assignment: @assignment }),
+                 status: :unprocessable_content
+        end
+      end
+    end
   end
 
   def destroy
-    @assignment.destroy
+    set_assignment_locale
+
+    if @assignment.destroy
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          head :unprocessable_content
+        end
+      end
+    end
   end
 
   def cancel_edit
