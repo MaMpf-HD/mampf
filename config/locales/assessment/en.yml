@@ -12,6 +12,7 @@ en:
     due_at: 'Due'
     legacy: 'Legacy'
     status:
+      title: 'Status'
       draft: 'Draft'
       open: 'Open'
       closed: 'Closed'

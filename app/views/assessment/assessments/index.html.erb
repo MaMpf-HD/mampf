@@ -24,14 +24,40 @@
     <% end %>
 
     <% if @assessables_with_assessment.any? %>
-      <div class="list-group mb-4" id="assessment-assessments-list">
-        <% @assessables_with_assessment.each do |assessable| %>
-          <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: @lecture) %>
-        <% end %>
-      </div>
+      <table class="table table-hover mb-4">
+        <thead>
+          <tr>
+            <th><%= t('admin.assignment.title') %></th>
+            <th><%= t('assessment.status.title') %></th>
+            <th><%= t('assessment.due_at') %></th>
+            <th><%= t('medium.singular') %></th>
+            <th><%= t('admin.assignment.filetype') %></th>
+            <th class="text-center"><%= t('assessment.tasks') %></th>
+            <th><%= t('admin.assignment.deletion') %></th>
+          </tr>
+        </thead>
+        <tbody id="assessment-assessments-list">
+          <% @assessables_with_assessment.each do |assessable| %>
+            <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: @lecture) %>
+          <% end %>
+        </tbody>
+      </table>
     <% else %>
-      <div class="list-group mb-4" id="assessment-assessments-list">
-      </div>
+      <table class="table table-hover mb-4">
+        <thead>
+          <tr>
+            <th><%= t('admin.assignment.title') %></th>
+            <th><%= t('assessment.status.title') %></th>
+            <th><%= t('assessment.due_at') %></th>
+            <th><%= t('medium.singular') %></th>
+            <th><%= t('admin.assignment.filetype') %></th>
+            <th class="text-center"><%= t('assessment.tasks') %></th>
+            <th><%= t('admin.assignment.deletion') %></th>
+          </tr>
+        </thead>
+        <tbody id="assessment-assessments-list">
+        </tbody>
+      </table>
     <% end %>
 
     <% if @legacy_assessables.any? %>

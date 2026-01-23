@@ -1,63 +1,46 @@
-<div class="list-group-item <%= 'bg-light' if legacy %>">
-  <div class="row align-items-center">
-    <div class="col-md-5">
-      <div class="d-flex align-items-center">
-        <% unless legacy %>
-          <%= link_to title, show_path, class: "fw-bold text-decoration-none" %>
-        <% else %>
-          <span class="text-muted"><%= title %></span>
-        <% end %>
-        <span class="badge <%= badge_class %> ms-2"><%= badge_text %></span>
-      </div>
-      <div class="small text-muted">
-        <%= assessable_type %>
-        <% if assessable.is_a?(Talk) %>
-          · <%= I18n.t('assessment.position') %> <%= assessable.position %>
-        <% end %>
-      </div>
-    </div>
-
+<tr class="<%= 'table-secondary' if legacy %>">
+  <td>
     <% unless legacy %>
-      <div class="col-md-2 text-center">
-        <div class="small text-muted"><%= I18n.t('assessment.tasks') %></div>
-        <div class="fw-bold"><%= tasks_count %></div>
-      </div>
-
-      <div class="col-md-2 text-center">
-        <div class="small text-muted"><%= I18n.t('assessment.participants') %></div>
-        <div class="fw-bold"><%= participations_count %></div>
-      </div>
-
-      <div class="col-md-3">
-        <% if visible_from %>
-          <div class="small">
-            <i class="bi bi-eye me-1"></i>
-            <%= I18n.t('assessment.visible_from') %>: <%= visible_from %>
-          </div>
-        <% end %>
-        <% if due_at %>
-          <div class="small">
-            <i class="bi bi-calendar-event me-1"></i>
-            <%= I18n.t('assessment.due_at') %>: <%= due_at %>
-          </div>
-        <% end %>
-      </div>
+      <%= link_to title, show_path, class: "text-decoration-none" %>
     <% else %>
-      <div class="col-md-5 text-end">
-        <span class="small text-muted">
-          <%= I18n.t('assessment.legacy_description') %>
-        </span>
-      </div>
-      <div class="col-md-2 text-end d-flex gap-2 justify-content-end">
-        <% if edit_path.present? %>
-          <%= link_to t("basics.edit"), edit_path, class: "btn btn-sm btn-outline-primary" %>
-        <% end %>
-        <% if delete_path.present? %>
-          <%= button_to t("basics.delete"), delete_path, method: :delete,
-              data: { turbo_confirm: t("basics.confirm_delete") },
-              class: "btn btn-sm btn-outline-danger" %>
-        <% end %>
+      <span class="text-muted"><%= title %></span>
+    <% end %>
+    <% if assessable.is_a?(Talk) %>
+      <div class="small text-muted">
+        <%= I18n.t('assessment.position') %> <%= assessable.position %>
       </div>
     <% end %>
-  </div>
-</div>
+  </td>
+
+  <% unless legacy %>
+    <td><span class="badge <%= badge_class %>"><%= badge_text %></span></td>
+    <td><%= due_at %></td>
+    <td>
+      <% if medium_title %>
+        <span class="text-truncate d-inline-block" style="max-width: 200px;" title="<%= medium_title %>">
+          <%= medium_title %>
+        </span>
+      <% end %>
+    </td>
+    <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
+    <td class="text-center"><%= tasks_count %></td>
+    <td><%= deletion_date %></td>
+  <% else %>
+    <td colspan="6" class="text-muted">
+      <%= I18n.t('assessment.legacy_description') %>
+      <% if edit_path.present? || delete_path.present? %>
+        <div class="float-end d-flex gap-2">
+          <% if edit_path.present? %>
+            <%= link_to t("basics.edit"), edit_path, class: "btn btn-sm btn-outline-primary", remote: true %>
+          <% end %>
+          <% if delete_path.present? %>
+            <%= button_to t("basics.delete"), delete_path, method: :delete,
+                data: { confirm: t("basics.confirm_delete") },
+                class: "btn btn-sm btn-outline-danger",
+                remote: true %>
+          <% end %>
+        </div>
+      <% end %>
+    </td>
+  <% end %>
+</tr>

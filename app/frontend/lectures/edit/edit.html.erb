@@ -83,7 +83,7 @@
 
       <% if Flipper.enabled?(:assessment_grading) %>
         <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
-          <div class="container small-width lecture-pane">
+          <div class="container medium-width lecture-pane">
             <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id), loading: "lazy" do %>
               <div class="text-center my-4">
                 <div class="spinner-border" role="status">

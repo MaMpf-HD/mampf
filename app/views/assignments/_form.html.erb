@@ -2,7 +2,7 @@
 
 <div class="list-group-item assignmentRow"
        data-id="<%= assignment.id.to_i %>">
-  <%= form_with model: assignment do |f| %>
+  <%= form_with model: assignment, remote: true do |f| %>
     <div class="row">
       <div class="form-group col-2">
         <%= f.text_field :title,
@@ -75,10 +75,10 @@
         <% end %>
 
         <!-- Cancel button -->
-        <%= link_to cancel_editing_assignment_path(assignment),
+        <%= link_to assignment.persisted? ? cancel_edit_assignment_path(assignment) : cancel_new_assignment_path(lecture: assignment.lecture.id),
             role: "button", type: "button",
             class: "btn btn-secondary",
-            data: { turbo_method: :post } do %>
+            remote: true do %>
           <i class="fas fa-ban"></i>
         <% end %>
       </div>

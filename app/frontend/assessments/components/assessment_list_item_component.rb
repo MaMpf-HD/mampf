@@ -33,6 +33,24 @@ class AssessmentListItemComponent < ViewComponent::Base
     I18n.l(assessment.due_at, format: :short)
   end
 
+  def medium_title
+    return nil unless assessable.respond_to?(:medium) && assessable.medium
+
+    assessable.medium.local_title_for_viewers
+  end
+
+  def file_type
+    return nil unless assessable.respond_to?(:accepted_file_type)
+
+    assessable.accepted_file_type
+  end
+
+  def deletion_date
+    return nil unless assessable.respond_to?(:deletion_date) && assessable.deletion_date
+
+    I18n.l(assessable.deletion_date, format: :long)
+  end
+
   def tasks_count
     assessment&.tasks&.count || 0
   end

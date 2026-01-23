@@ -1,6 +1,6 @@
 de:
   assessment:
-    assessments: 'Bewertungen'
+    assessments: 'Leistungen'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'
     talk: 'Vortrag'
@@ -12,6 +12,7 @@ de:
     due_at: 'Fällig'
     legacy: 'Legacy'
     status:
+      title: 'Status'
       draft: 'Entwurf'
       open: 'Offen'
       closed: 'Geschlossen'

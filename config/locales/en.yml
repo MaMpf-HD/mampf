@@ -1839,7 +1839,10 @@ en:
       new: 'Add tutorial'
     assignment:
       new: 'Add assignment'
+      title: 'Title'
       title_placeholder: 'e.g. Exercise Sheet 1'
+      filetype: 'File Type'
+      deletion: 'Deletion Date'
     voucher:
       secure_hash: 'Secure Hash'
       expires_at: 'Expires at'
@@ -2135,6 +2138,7 @@ en:
   mampf_map: 'MaMpf Map'
   external_render: 'render in an external tab'
   medium:
+    singular: 'Medium'
     details: 'view details'
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
