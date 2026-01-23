@@ -75,7 +75,8 @@
 
       <%= form_with model: @lecture,
                     url: lecture_path(@lecture),
-                    html: { id: 'lecture-assignments-form', class: 'mt-3' } do |f| %>
+                    html: { id: 'lecture-assignments-form', class: 'mt-3' },
+                    data: { turbo_frame: "_top" } do |f| %>
         <div class="row">
           <div class="col-md-6">
             <%= f.label :submission_max_team_size,
@@ -101,6 +102,7 @@
           </div>
         </div>
         <div class="mt-3">
+          <%= hidden_field_tag :subpage, "assessments" %>
           <%= f.submit t('buttons.save'), class: "btn btn-sm btn-primary" %>
         </div>
       <% end %>
