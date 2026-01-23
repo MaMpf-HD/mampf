@@ -14,6 +14,11 @@ class AssignmentsController < ApplicationController
     @assignment.lecture = @lecture
     authorize! :new, @assignment
     set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.html { render :new, layout: false }
+    end
   end
 
   def edit
@@ -26,6 +31,13 @@ class AssignmentsController < ApplicationController
     @errors = @assignment.errors
     @lecture = @assignment.lecture
     set_assignment_locale
+
+    @assignment.reload if @assignment.persisted?
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream
+    end
   end
 
   def update
@@ -41,6 +53,10 @@ class AssignmentsController < ApplicationController
   end
 
   def cancel_edit
+    respond_to do |format|
+      format.js
+      format.html { render turbo_frame: "assignment_form" }
+    end
   end
 
   def cancel_new
@@ -49,6 +65,11 @@ class AssignmentsController < ApplicationController
     authorize! :cancel_new, assignment
     set_assignment_locale
     @none_left = @lecture&.assignments&.none?
+
+    respond_to do |format|
+      format.js
+      format.html { render turbo_frame: "assignment_form" }
+    end
   end
 
   private

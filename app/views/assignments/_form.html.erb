@@ -75,9 +75,10 @@
         <% end %>
 
         <!-- Cancel button -->
-        <%= link_to cancel_editing_assignment_path(assignment), remote: true,
+        <%= link_to cancel_editing_assignment_path(assignment),
             role: "button", type: "button",
-            class: "btn btn-secondary" do %>
+            class: "btn btn-secondary",
+            data: { turbo_method: :post } do %>
           <i class="fas fa-ban"></i>
         <% end %>
       </div>

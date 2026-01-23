@@ -1,4 +1,34 @@
 de:
+  assessment:
+    assessments: 'Bewertungen'
+    assignment: 'Hausaufgabe'
+    assignments: 'Hausaufgaben'
+    talk: 'Vortrag'
+    talks: 'Vorträge'
+    tasks: 'Aufgaben'
+    participants: 'Teilnehmer'
+    position: 'Position'
+    visible_from: 'Sichtbar ab'
+    due_at: 'Fällig'
+    legacy: 'Legacy'
+    status:
+      draft: 'Entwurf'
+      open: 'Offen'
+      closed: 'Geschlossen'
+      graded: 'Benotet'
+      archived: 'Archiviert'
+    legacy_items: 'Aufgaben ohne Bewertungssystem'
+    legacy_items_subtitle: 'Diese Aufgaben wurden vor dem Bewertungssystem erstellt. Sie können über die alte Oberfläche bearbeitet werden.'
+    legacy_description: 'Erstellt vor dem Bewertungssystem'
+    no_assignments_yet: 'Noch keine Hausaufgaben erstellt.'
+    no_talks_yet: 'Noch keine Vorträge erstellt.'
+    errors:
+      feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
+      no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
+      no_assessment: 'Bewertung für dieses Element nicht gefunden.'
+    info:
+      talks_created_in_roster: 'Vorträge werden im Roster-Tab für Seminare erstellt.'
+
   activerecord:
     errors:
       models:

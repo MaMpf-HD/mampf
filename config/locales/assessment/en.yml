@@ -1,4 +1,34 @@
 en:
+  assessment:
+    assessments: 'Assessments'
+    assignment: 'Assignment'
+    assignments: 'Assignments'
+    talk: 'Talk'
+    talks: 'Talks'
+    tasks: 'Tasks'
+    participants: 'Participants'
+    position: 'Position'
+    visible_from: 'Visible from'
+    due_at: 'Due'
+    legacy: 'Legacy'
+    status:
+      draft: 'Draft'
+      open: 'Open'
+      closed: 'Closed'
+      graded: 'Graded'
+      archived: 'Archived'
+    legacy_items: 'Assignments without Assessment System'
+    legacy_items_subtitle: 'These assignments were created before the assessment system. They can be edited using the legacy interface.'
+    legacy_description: 'Created before assessment system'
+    no_assignments_yet: 'No assignments created yet.'
+    no_talks_yet: 'No talks created yet.'
+    errors:
+      feature_not_available: 'Assessment feature is not available.'
+      no_assessable: 'Assignment or talk not found.'
+      no_assessment: 'Assessment not found for this item.'
+    info:
+      talks_created_in_roster: 'Talks are created in the Roster tab for seminars.'
+
   activerecord:
     errors:
       models:

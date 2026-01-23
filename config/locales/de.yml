@@ -1983,6 +1983,7 @@ de:
       new: 'Neues Tutorium anlegen'
     assignment:
       new: 'Neue Hausaufgabe anlegen'
+      title_placeholder: 'z.B. Übungsblatt 1'
     voucher:
       secure_hash: 'Sicherheits-Hash'
       expires_at: 'Läuft ab'
@@ -3485,6 +3486,10 @@ de:
     actions: 'Aktionen'
     search: 'Suche'
     post_processing: 'Stelle fertig...'
+    loading: 'Laden...'
+    edit: 'Bearbeiten'
+    delete: 'Löschen'
+    confirm_delete: 'Sind Sie sicher, dass Sie dies löschen möchten?'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
@@ -3548,6 +3553,7 @@ de:
     question: 'Frage'
     answer: 'Antwort'
     answers: 'Antworten'
+    loading: 'Laden...'
     none: 'keine'
     remark: 'Bemerkung'
     latex: 'LaTeX'
