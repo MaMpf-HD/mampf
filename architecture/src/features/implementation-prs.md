@@ -291,7 +291,7 @@ Grading — Step 7: Assessments (Formalize Assignments)
 - Scope: Integrate Assessment::Assessable into Assignment and Talk models with automatic participation seeding.
 - Backend:
   - Add `Assessment::Assessable` concern
-  - Add `Assessment.seed_participations_from!(user_ids:, tutorial_mapping:)` bulk creation method
+  - Add `Assessment::Assessment#seed_participations_from!(user_ids:, tutorial_mapping:)` instance method
   - Include concern in Assignment and Talk models (behind feature flag)
   - Add `after_create :setup_assessment` hook to both models
   - Implement `seed_participations_from_roster!` for Assignment (optimized single-query approach)
@@ -314,7 +314,7 @@ Grading — Step 7: Assessments (Formalize Assignments)
   - Task management (add/edit/reorder problems)
   - Participation list (auto-seeded from PR-7.1)
 - Limitations: No point entry, no grade calculation, no result publication (deferred to PR-8.x)
-- Feature Flag: Same `assessment_grading_enabled` flag gates entire UI
+- Feature Flag: Same `assessment_grading` flag gates entire UI
 - Refs: [Assessment controllers](11-controllers.md#assessmentassessmentscontroller), [Views](12-views.md#assessments)
 - Acceptance: Teachers can create assessments via UI; participations visible; tasks configurable; no grading actions available; feature flag gates access.
 ```

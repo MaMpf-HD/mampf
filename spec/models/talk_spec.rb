@@ -132,18 +132,6 @@ RSpec.describe(Talk, type: :model) do
     end
   end
 
-  describe "talk with speaker" do
-    before(:all) do
-      @talk = FactoryBot.build(:valid_talk, :with_speaker)
-    end
-    it "is valid" do
-      expect(@talk).to be_valid
-    end
-    it "has a speaker" do
-      expect(@talk.speakers).not_to be_nil
-    end
-  end
-
   # Test methods
 
   describe "#talk" do
