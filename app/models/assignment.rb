@@ -160,6 +160,8 @@ class Assignment < ApplicationRecord
   def seed_participations_from_roster!
     return unless assessment
 
+    # Users can only be in one tutorial per lecture (enforced by
+    # TutorialMembership validation), so each user_id appears at most once
     memberships = TutorialMembership
                   .where(tutorial_id: lecture.tutorial_ids)
                   .pluck(:user_id, :tutorial_id)
