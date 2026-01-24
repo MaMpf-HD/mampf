@@ -36,8 +36,6 @@ class Cohort < ApplicationRecord
   private
 
     def validate_purpose_propagate_compatibility
-      return unless purpose_changed?
-
       case purpose
       when "enrollment"
         errors.add(:purpose, :enrollment_must_propagate) unless propagate_to_lecture?
