@@ -267,7 +267,7 @@ namespace :solver do
                                    status: :draft,
                                    allocation_mode: :first_come_first_served,
                                    registration_deadline: 1.week.from_now,
-                                   description: "FCFS Campaign")
+                                   description: "Cohort FCFS Campaign")
       puts "Created campaign: #{campaign.id}"
     end
 
@@ -363,7 +363,7 @@ namespace :solver do
   task create_mixed_fcfs_registrations: :environment do
     campaign = Registration::Campaign.where(description: "FCFS Campaign").last
     unless campaign
-      puts "Campaign not found. Run solver:create_fcfs_campaign first."
+      puts "Campaign not found. Run solver:create_mixed_fcfs_campaign first."
       exit
     end
 
