@@ -79,7 +79,7 @@ Registration — Step 3: FCFS Mode
 - Controllers: `Registration::CampaignsController` (new/create/edit/update/show/destroy).
 - Actions: `open` (validates policies, updates status to :open), `close` (background job triggers status → :closed), `reopen` (reverts to :open if allocation not started).
 - Freezing: Campaign-level attributes freeze on lifecycle transitions (`allocation_mode`, `registration_opens_at` after draft; policies freeze on open).
-- UI: Turbo Frames for inline editing; flash messages for validation errors and freeze violations; feature flag `registration_campaigns_enabled`; disabled fields for frozen attributes.
+- UI: Turbo Frames for inline editing; flash messages for validation errors and freeze violations; feature flag `registration_campaigns`; disabled fields for frozen attributes.
 - Refs: [Campaign lifecycle & freezing](02-registration.md#campaign-lifecycle--freezing-rules),
   [State diagram](02-registration.md#campaign-state-diagram)
 - Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; freezing rules enforced with clear error messages; frozen fields disabled in UI; feature flag gates UI.
@@ -246,12 +246,13 @@ Registration — Step 5: Roster Maintenance
 - Acceptance: Students receive emails on add/remove/move; emails queued asynchronously; feature flag gates delivery; teachers can configure notification timing per lecture.
 ```
 
-```admonish example "PR-5.8 — Integrity job (assigned/allocated reconciliation)"
-- Scope: Background job to verify roster consistency.
-- Job: `AllocatedAssignedMatchJob` compares `Item#assigned_users` with `Registerable#allocated_user_ids`.
-- Monitoring: Logs mismatches for admin review.
-- Refs: [Integrity invariants](09-integrity-and-invariants.md#registration-allocation)
-- Acceptance: Job runs nightly; reports mismatches; no auto-fix (manual review required).
+```admonish example "PR-5.8 — Integrity job (lecture roster superset validation)"
+- Scope: Background job to verify lecture roster superset principle.
+- Job: `RosterSupersetCheckerJob` validates that `Lecture#roster_user_ids` ⊇ (tutorials + talks + propagating cohorts).roster_user_ids.
+- Detection: Identifies users in sub-groups who are missing from lecture roster.
+- Monitoring: Logs violations for admin review; potential causes include callback failures, race conditions, or manual database edits.
+- Refs: [Superset Model](03-rosters.md#the-core-concept-lecture-roster-as-superset)
+- Acceptance: Job runs nightly; reports missing users; no auto-fix (manual review required); clear log format with lecture ID, user IDs, and affected groups.
 ```
 
 ```admonish example "PR-5.9 — Turbo Stream Orchestrator"

@@ -1,0 +1,114 @@
+<% show = local_assigns[:show_initially] || false %>
+<div class="collapse mb-3 <%= 'show' if show %>" id="roster-workflow-collapse">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title mb-3"><%= t('roster.roster_help.title') %></h5>
+      <p class="text-muted mb-4"><%= t('roster.roster_help.intro') %></p>
+
+      <!-- Phase 1: Choose Setup Method -->
+      <div class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="border border-primary rounded p-3 h-100">
+              <h6 class="fw-bold mb-2">
+                <i class="bi bi-calendar-check me-2 text-primary"></i>
+                <%= t('roster.roster_help.phase1.campaigns.title') %>
+              </h6>
+              <p class="small text-muted mb-2"><%= t('roster.roster_help.phase1.campaigns.description') %></p>
+              <ul class="mb-0 small">
+                <% t('roster.roster_help.phase1.campaigns.benefits').each do |benefit| %>
+                  <li><%= benefit %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="border border-success rounded p-3 h-100">
+              <h6 class="fw-bold mb-2">
+                <i class="bi bi-calendar-x me-2 text-success"></i>
+                <%= t('roster.roster_help.phase1.skip_campaigns.title') %>
+              </h6>
+              <p class="small text-muted mb-2"><%= t('roster.roster_help.phase1.skip_campaigns.description') %></p>
+              <ul class="mb-0 small">
+                <% t('roster.roster_help.phase1.skip_campaigns.benefits').each do |benefit| %>
+                  <li><%= benefit %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connecting Lines -->
+      <div class="row g-3 mb-2">
+        <div class="col-md-6 text-center">
+          <div class="d-flex flex-column align-items-center h-100">
+            <i class="bi bi-arrow-down text-muted fs-4"></i>
+          </div>
+        </div>
+        <div class="col-md-6 text-center">
+          <div class="d-flex flex-column align-items-center h-100">
+            <i class="bi bi-arrow-down text-muted fs-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2: Lock Periods -->
+      <div class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="border border-primary rounded p-3">
+              <div class="mb-2">
+                <span class="badge bg-warning text-dark">
+                  <i class="bi bi-lock me-1"></i>
+                  <%= t('roster.roster_help.phase2.campaigns_during') %>
+                </span>
+              </div>
+              <div class="text-center fs-4 my-2 text-muted">↓</div>
+              <div>
+                <span class="badge bg-success">
+                  <i class="bi bi-unlock me-1"></i>
+                  <%= t('roster.roster_help.phase2.campaigns_after') %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="border border-success rounded p-3 h-100 d-flex align-items-center justify-content-center">
+              <span class="badge bg-success">
+                <i class="bi bi-check-circle me-1"></i>
+                <%= t('roster.roster_help.phase2.direct_always') %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Available Anytime -->
+      <div class="mb-3">
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div class="border-top flex-grow-1"></div>
+          <i class="bi bi-sliders mx-3 text-muted fs-4"></i>
+          <div class="border-top flex-grow-1"></div>
+        </div>
+        <div class="border border-secondary rounded p-3 bg-light">
+          <h6 class="fw-bold mb-2"><%= t('roster.roster_help.phase3.description') %></h6>
+          <ul class="mb-0 small">
+            <% t('roster.roster_help.phase3.options').each do |option| %>
+              <li><%= option %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+        <i class="bi bi-info-circle fs-4 me-3"></i>
+        <div>
+           <%= t('roster.roster_help.mode_hint') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

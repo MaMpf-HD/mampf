@@ -1,0 +1,81 @@
+<% I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do %>
+<div class="mb-3" data-controller="lecture-tabs">
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3" id="rosterTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if @active_tab == :groups %>" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups-pane" type="button" role="tab" data-tab-name="groups" data-lecture-tabs-target="tabButton">
+        <%= t('roster.tabs.groups') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if @active_tab == :participants %>" id="participants-tab" data-bs-toggle="tab" data-bs-target="#participants-pane" type="button" role="tab">
+        <%= t('roster.tabs.participants') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if @active_tab == :enrollment %>" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidates-pane" type="button" role="tab">
+        <%= t('roster.tabs.enrollment') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link disabled" id="performance-tab" type="button" role="tab" title="Coming soon">
+        <%= t('roster.tabs.performance') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if @active_tab == :overview %>" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab">
+        <%= t('roster.tabs.overview') %>
+      </button>
+    </li>
+    <li class="nav-item ms-auto d-flex gap-2 align-self-center" role="presentation">
+      <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#roster-lifecycle-collapse">
+        <i class="bi bi-recycle me-1"></i>
+        <%= t('roster.lifecycle_help.toggle') %>
+      </button>
+      <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#roster-group-types-collapse">
+        <i class="bi bi-grid-3x3 me-1"></i>
+        <%= t('roster.roster_help.group_types.toggle') %>
+      </button>
+      <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#roster-workflow-collapse">
+        <i class="bi bi-diagram-3 me-1"></i>
+        <%= t('roster.roster_help.toggle') %>
+      </button>
+      <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#roster-management-collapse">
+        <i class="bi bi-sliders me-1"></i>
+        <%= t('roster.management_help.toggle') %>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="rosterTabsContent">
+    <!-- Groups Tab -->
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :groups %>" id="groups-pane" role="tabpanel">
+      <%= helpers.turbo_frame_tag "roster_groups" do %>
+        <% if @rosterable %>
+          <%= render RosterDetailComponent.new(rosterable: @rosterable, group_type: @group_type) %>
+        <% else %>
+          <%= render "roster/components/groups_tab", group_type: @group_type, component: self %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Participants Tab -->
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :participants %>" id="participants-pane" role="tabpanel">
+      <%= render RosterParticipantsComponent.new(lecture: @lecture, group_type: @group_type,
+                                                 participants: @participants, pagy: @pagy,
+                                                 filter_mode: @filter_mode, counts: @counts) %>
+    </div>
+
+    <!-- Candidates Tab -->
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :enrollment %>" id="candidates-pane" role="tabpanel">
+      <%= render "roster/components/enrollment_tab", component: self, lecture: @lecture, group_type: @group_type %>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-pane fade <%= 'show active' if @active_tab == :overview %>" id="overview-pane" role="tabpanel">
+      <%= render "roster/components/overview_tab", component: self %>
+    </div>
+  </div>
+</div>
+<% end %>

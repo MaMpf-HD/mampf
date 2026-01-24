@@ -1,0 +1,81 @@
+<div id="<%= dom_id(item, :actions) %>" class="d-flex gap-2 justify-content-end align-items-center">
+  <%= roster_manage_button(item, component, campaign) %>
+  <%= roster_edit_button(item, group_type) %>
+  <%= roster_destroy_button(item, group_type) %>
+
+  <% # Self-materialization dropdown %>
+  <% self_mat_state = self_materialization_state(item, campaign) %>
+
+  <% if self_mat_state[:disabled] %>
+    <span title="<%= self_mat_state[:tooltip] %>" data-bs-toggle="tooltip">
+      <button class="btn btn-sm btn-outline-secondary opacity-50"
+              type="button"
+              style="cursor: not-allowed;"
+              disabled>
+        <i class="bi bi-person-check"></i>
+      </button>
+    </span>
+  <% else %>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-secondary"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="<%= self_mat_state[:tooltip] %>"
+              data-bs-boundary="viewport"
+              data-bs-popper-config='{"strategy":"fixed"}'>
+        <i class="bi bi-person-check"></i>
+      </button>
+      <ul class="dropdown-menu">
+        <% item.class.self_materialization_modes.keys.each do |mode| %>
+          <li>
+            <% policy_warning = component.policy_bypass_warning_data(item, mode) if mode != "disabled" %>
+            <%
+              link_data = { turbo_method: :patch }
+              if policy_warning
+                message = t("roster.policy_bypass_warning.message",
+                           campaign_name: policy_warning[:campaign_name],
+                           policy_name: policy_warning[:policy_name])
+                link_data[:turbo_confirm] = message
+              end
+            %>
+            <%= link_to t("roster.self_materialization.modes.#{mode}"),
+                  component.update_self_materialization_path(item, mode, group_type),
+                  class: "dropdown-item #{'active' if item.self_materialization_mode == mode}",
+                  data: link_data %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= roster_campaign_button(item, component, campaign) %>
+
+  <% # Skip campaigns toggle %>
+  <% skip_state = skip_campaigns_state(item) %>
+
+  <% if skip_state[:disabled] %>
+    <span title="<%= skip_state[:tooltip] %>" data-bs-toggle="tooltip">
+      <button class="btn btn-sm btn-outline-secondary opacity-50"
+              style="cursor: not-allowed;"
+              disabled>
+        <i class="<%= skip_state[:icon_class] %>"></i>
+      </button>
+    </span>
+  <% else %>
+    <%= form_with model: item, scope: :rosterable,
+          url: component.toggle_skip_campaigns_path(item),
+          method: :patch,
+          data: { turbo_stream: true } do |f| %>
+      <%= f.hidden_field :skip_campaigns, value: !item.skip_campaigns? %>
+      <%= hidden_group_type_field(group_type) %>
+      <%= f.button type: :submit,
+            class: "btn btn-sm btn-secondary",
+            title: skip_state[:tooltip],
+            data: { bs_toggle: "tooltip" } do %>
+        <i class="<%= skip_state[:icon_class] %>"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+

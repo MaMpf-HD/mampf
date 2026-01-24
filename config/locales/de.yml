@@ -7,13 +7,6 @@ de:
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
       truncate: "Abkürzen"
-  activerecord:
-    errors:
-      models:
-        lecture:
-          attributes:
-            teacher:
-              required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
     lesson_material:
       singular: 'Lektion'
@@ -3446,6 +3439,7 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    capacity: 'Kapazität'
     division: 'Teilbereich'
     error: Fehler
     course: 'Modul'
@@ -3467,6 +3461,9 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
+    seats: 'Plätze'
+    add: 'Hinzufügen'
+    name: 'Name'
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3482,6 +3479,7 @@ de:
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'
+    confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
     action: 'Aktion'
     actions: 'Aktionen'
@@ -3571,6 +3569,8 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    details: 'Details'
+    settings: 'Einstellungen'
     status: 'Status'
     sponsors: 'Gefördert durch'
     since: 'seit'
@@ -3640,6 +3640,8 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    unlimited: unbegrenzt
+    personnel: Personal
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3649,6 +3651,10 @@ de:
     referenced_from: 'referenziert in'
     irrelevant: 'egal'
   buttons:
+    create_tutorial: 'Tutorium erstellen'
+    edit_tutorial: 'Tutorium bearbeiten'
+    create_cohort: 'Gruppe erstellen'
+    edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
@@ -3656,6 +3662,8 @@ de:
     discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    move_up: 'Nach oben'
+    move_down: 'Nach unten'
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Veranstaltung'
@@ -3860,6 +3868,7 @@ de:
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
+    no_cohort: 'Eine Gruppe mit der angeforderten id existiert nicht.'
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
     no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
@@ -3881,11 +3890,26 @@ de:
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
+      created: 'Tutorium erfolgreich erstellt.'
+      updated: 'Tutorium erfolgreich aktualisiert.'
+      destroyed: 'Tutorium erfolgreich gelöscht.'
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
         dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
       bulk_download_failed: >
         Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Kann nicht gelöscht werden, da Abgaben existieren.'
+    cohorts:
+      created: 'Gruppe erfolgreich erstellt.'
+      updated: 'Gruppe erfolgreich aktualisiert.'
+      destroyed: 'Gruppe erfolgreich gelöscht.'
+      destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
+    talks:
+      created: 'Vortrag erfolgreich erstellt.'
+      updated: 'Vortrag erfolgreich aktualisiert.'
+      destroyed: 'Vortrag erfolgreich gelöscht.'
+      destruction_failed: 'Vortrag konnte nicht gelöscht werden.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
@@ -3941,6 +3965,11 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
+              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
         course:
           attributes:
             title:
@@ -4074,6 +4103,8 @@ de:
               invalid: 'Die Angaben sind ungültig.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
@@ -4085,12 +4116,20 @@ de:
               taken: 'Dieses Semester existiert bereits.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorien können nicht für Seminare erstellt werden."
             title:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
+                Veranstaltung.
         user:
           attributes:
             courses:

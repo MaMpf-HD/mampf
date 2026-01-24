@@ -3232,6 +3232,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    capacity: 'Capacity'
     division: 'Division'
     error: Error
     course: 'Course'
@@ -3253,10 +3254,13 @@ en:
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
     mail_noun: 'email'
+    name: 'Name'
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    seats: 'Seats'
+    add: 'Add'
     section: 'Section'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
@@ -3268,6 +3272,7 @@ en:
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'
+    confirm: 'Are you sure?'
     basics: 'Basics'
     action: 'Action'
     actions: 'Actions'
@@ -3356,6 +3361,8 @@ en:
     solution: 'Solution'
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
+    details: 'Details'
+    settings: 'Settings'
     status: 'Status'
     sponsors: 'Funded by'
     since: 'since'
@@ -3423,6 +3430,8 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    unlimited: unlimited
+    personnel: Personnel
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3436,6 +3445,10 @@ en:
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
+    create_tutorial: 'Create Tutorial'
+    edit_tutorial: 'Edit Tutorial'
+    create_cohort: 'Create Cohort'
+    edit_cohort: 'Edit Cohort'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3443,6 +3456,8 @@ en:
     save_changes: "Save Changes"
     discard_changes: "Discard Changes"
     delete: 'Delete'
+    move_up: 'Move Up'
+    move_down: 'Move Down'
     publish: 'Publish'
     parent_course: 'Parent Course'
     parent_lecture: 'Parent Event Series'
@@ -3639,6 +3654,7 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
+    no_cohort: 'There is no cohort with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
@@ -3663,11 +3679,26 @@ en:
     become_speaker_success: >
       Your speaker status has been updated.
     tutorials:
+      created: 'Tutorial successfully created.'
+      updated: 'Tutorial successfully updated.'
+      destroyed: 'Tutorial successfully deleted.'
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
         submissions for it that include uploaded files.
       bulk_download_failed: >
         An error happened in the creation of the zip archive: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Cannot be deleted because there are submissions.'
+    cohorts:
+      created: 'Cohort successfully created.'
+      updated: 'Cohort successfully updated.'
+      destroyed: 'Cohort successfully deleted.'
+      destruction_failed: 'Cohort could not be deleted.'
+    talks:
+      created: 'Talk successfully created.'
+      updated: 'Talk successfully updated.'
+      destroyed: 'Talk successfully deleted.'
+      destruction_failed: 'Talk could not be deleted.'
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
@@ -3716,6 +3747,11 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
+              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
         course:
           attributes:
             title:
@@ -3842,6 +3878,8 @@ en:
               invalid: 'The input is invalid.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Talks can only be created for seminars."
             title:
               blank: You need to give a title.
         term:
@@ -3853,10 +3891,18 @@ en:
               taken: 'This term already exists.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorials cannot be created for seminars."
             title:
               taken: >
                 This tutorium title is already taken for this event series.
               blank: You need to giv a title.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                There is already a tutorial membership for this user in this
+                lecture.
         user:
           attributes:
             courses:

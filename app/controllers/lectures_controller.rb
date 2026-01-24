@@ -73,12 +73,13 @@ class LecturesController < ApplicationController
   end
 
   def edit
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
-      eager_load_stuff
-      render template: "lectures/edit/edit"
+    eager_load_stuff
+    if params[:campaign_id]
+      @campaign = @lecture.registration_campaigns.find_by(id: params[:campaign_id])
+    elsif params[:new_campaign]
+      @new_campaign = @lecture.registration_campaigns.build
     end
+    render template: "lectures/edit/edit"
   end
 
   def create

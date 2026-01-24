@@ -1,0 +1,23 @@
+<div class="card mb-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">
+      <%= t("registration.policy.index.title") %>
+      <% if @campaign.draft? %>
+        <%= helpdesk(t("registration.policy.helpdesk.policies"), false) %>
+      <% else %>
+        <%= helpdesk(t("registration.policy.helpdesk.policies_frozen"), false) %>
+      <% end %>
+    </h5>
+    <% if @campaign.draft? %>
+      <%= link_to t("registration.policy.index.add"),
+                  new_registration_campaign_policy_path(@campaign),
+                  class: "btn btn-sm btn-primary",
+                  role: "button",
+                  data: { turbo_frame: "policy_form" } %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <%= turbo_frame_tag "policy_form" %>
+    <%= render "registration/policies/list" %>
+  </div>
+</div>
