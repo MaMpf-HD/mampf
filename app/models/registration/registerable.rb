@@ -37,6 +37,7 @@ module Registration
       def validate_capacity_change_via_items
         return unless will_save_change_to_capacity?
 
+        failed = false
         registration_items.each do |item|
           error = item.validate_capacity_change_from_registerable!(capacity)
 
@@ -51,8 +52,10 @@ module Registration
             "activerecord.errors.models.registration/item.attributes.base.#{msg}", **(options || {})
           )
           errors.add(:capacity, translated_msg)
-          throw(:abort)
+          failed = true
         end
+
+        throw(:abort) if failed
       end
   end
 end
