@@ -206,7 +206,7 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
-    describe "#validate_uniqueness_constraints" do
+    describe "validations" do
       let(:lecture) { create(:lecture) }
       let(:tutorial) { create(:tutorial, lecture: lecture) }
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
@@ -222,9 +222,9 @@ RSpec.describe(Registration::Item, type: :model) do
         it "is invalid if already in another campaign" do
           item = build(:registration_item, registration_campaign: campaign, registerable: tutorial)
           expect(item).not_to be_valid
-          expect(item.errors[:base])
-            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                               ".already_in_other_campaign"))
+          expect(item.errors[:registerable_id])
+            .to include(I18n.t("activerecord.errors.models.registration/" \
+                               "item.attributes.registerable_id.taken"))
         end
       end
     end

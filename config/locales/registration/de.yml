@@ -292,12 +292,10 @@ de:
         registration/item:
           attributes:
             registerable_id:
-              taken: "ist bereits Teil eines anderen Anmeldeverfahrens."
-              taken_by_real_campaign: "ist bereits Teil eines anderen aktiven Anmeldeverfahrens."
+              taken: "Dieses Element ist bereits Teil eines anderen Anmeldeverfahrens."
             base:
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
-              already_in_other_campaign: "Dieses Element ist bereits Teil eines anderen regulären Anmeldeverfahrens."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
         registration/user_registration:
           attributes:
