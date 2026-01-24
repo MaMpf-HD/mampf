@@ -1,8 +1,306 @@
 en:
+  registration:
+    campaign:
+      errors:
+        already_finalized: "Campaign is already finalized."
+      created: "Campaign created successfully."
+      create_failed: "Campaign could not be created."
+      updated: "Campaign updated successfully."
+      update_failed: "Campaign could not be updated."
+      destroyed: "Campaign deleted successfully."
+      cannot_delete: "Campaign cannot be deleted."
+      confirm_delete: "Are you sure you want to delete this campaign?"
+      opened: "Campaign opened."
+      closed: "Campaign closed."
+      reopened: "Campaign reopened."
+      finalized: "Campaign finalized successfully."
+      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      not_found: "Registration campaign not found."
+      completed_title: "Campaign Completed"
+      completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
+      go_to_roster: "Go to Roster"
+      lecture_not_found: "Lecture not found."
+      helpdesk:
+        campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
+        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
+        registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
+        allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
+        first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
+      index:
+        title: "Registrations"
+        card_title: "Registration Campaigns"
+        new_campaign: "New Campaign"
+        none: "No campaigns found."
+        columns:
+          description: "Short description"
+          type: "Type"
+          mode: "Allocation Mode"
+          opens_at: "Opens At"
+          deadline: "Deadline"
+          status: "Status"
+          registrations: "Registrations"
+      new:
+        title: "New Campaign"
+      edit:
+        title: "Edit Campaign"
+      form:
+        new_title: "New Campaign"
+        edit_title: "Edit Campaign"
+        description: "Short description"
+        allocation_mode: "Allocation Mode"
+        registration_opens_at: "Registration Opens At"
+        registration_deadline: "Registration Deadline"
+        submit: "Save"
+      allocation_mode:
+        first_come_first_served: "First-Come-First-Served"
+        preference_based: "Preference-Based"
+      status:
+        draft: "Draft"
+        open: "Open"
+        processing: "Processing"
+        completed: "Completed"
+        closed: "Closed"
+        planning: "Planning"
+      actions:
+        open: "Start Registration"
+        close: "End Registration"
+        reopen: "Reopen Registration"
+        finalize: "Finalize Allocation"
+        force_finalize: "Force Finalize (Ignore Errors)"
+        allocate: "Run Allocation"
+        reallocate: "Recalculate Allocation"
+        view_allocation: "View Allocation"
+        review_and_finalize: "Review & Finalize"
+        complete_planning: "Complete Planning"
+      confirmations:
+        open: "Are you sure you want to open registration? Students will be able to register immediately."
+        close: "Are you sure you want to end registration? No new registrations will be accepted."
+        close_early: "The registration deadline has not passed yet. Closing the campaign now will set the deadline to the current time. Are you sure?"
+        reopen: "Are you sure you want to reopen registration?"
+        finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
+        force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
+        reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
+        complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
+      overview:
+        registrations: "Registrations"
+        total: "Total"
+        confirmed_count:
+          one: "Confirmed %{count}"
+          other: "Confirmed %{count}"
+        pending_count:
+          one: "Pending %{count}"
+          other: "Pending %{count}"
+        rejected_count:
+          one: "Rejected %{count}"
+          other: "Rejected %{count}"
+        items: "Items"
+      warnings:
+        no_items: "This campaign has no items yet. Students won't be able to register for anything."
+        unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+      about:
+        toggle: "What are registration campaigns?"
+        title: "Registration Campaigns: When to Use?"
+        intro: "A registration campaign orchestrates enrollment into groups over a defined timeframe. For simple cases, you can skip campaigns and enable self-enrollment instead."
+        when_to_use_campaign:
+          title: "Use a registration campaign when..."
+          benefits:
+            - "You want to review registrations before finalization"
+            - "Eligibility rules are required (e.g., performance check, institutional email)"
+            - "Students should rank preferences (preferred tutorials/talks)"
+            - "You need a time-bounded registration window"
+        when_to_use_self:
+          title: "Use self-enrollment when..."
+          benefits:
+            - "No eligibility checks are needed"
+            - "First-come-first-served is sufficient (no preferences)"
+            - "Students should be able to join/leave anytime"
+            - "You want minimal administrative overhead"
+        note: "Self-enrollment can be enabled after a campaign completes to allow latecomers or group changes."
+    policy:
+      helpdesk:
+        policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
+        policies_frozen: "Policies cannot be modified once the campaign has been opened or is no longer a draft."
+        kind: "The type of rule to enforce. For example, 'Institutional Email' requires users to have an email address from a specific domain."
+        phase: "When the rule is checked. 'Registration': Checked when the student tries to register. 'Finalization': Checked when the final assignment is calculated (after the registration deadline has passed). 'Both': Checked at both times."
+        allowed_domains: "Enter the main domains (e.g. 'uni-heidelberg.de'). Subdomains (like 'stud.uni-heidelberg.de') are automatically included. Separate multiple domains with commas."
+      index:
+        title: "Policies"
+        add: "Add Policy"
+        none: "No policies configured."
+      new:
+        title: "New Policy"
+      edit:
+        title: "Edit Policy"
+      kind: "Type"
+      phase: "Phase"
+      config: "Configuration"
+      position: "Position"
+      created: "Policy created successfully."
+      updated: "Policy updated successfully."
+      destroyed: "Policy deleted successfully."
+      not_found: "Registration policy not found."
+      errors:
+        missing_domains: "At least one allowed domain must be specified."
+        missing_prerequisite_campaign: "A prerequisite campaign must be selected."
+        prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
+      configs:
+        allowed_domains: "Allowed Domains"
+        prerequisite_campaign_id: "Prerequisite Campaign"
+        lecture_id: "Lecture"
+      hints:
+        allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
+      kinds:
+        institutional_email: "Institutional Email"
+        prerequisite_campaign: "Prerequisite Campaign"
+        student_performance: "Student Performance"
+      phases:
+        registration: "Registration"
+        finalization: "Finalization"
+        both: "Both"
+    item:
+      not_found: "Group not found."
+      one: "Item"
+      index:
+        title: "Groups"
+        none: "No groups added yet."
+      add:
+        title: "Add Groups"
+        existing: "Add Existing"
+        new: "Create New"
+        none_available: "No groups available to add."
+        create_in_roster_hint: "Need to create new groups?"
+        go_to_roster: "Go to Roster tab"
+      columns:
+        type: "Group Type"
+        title: "Title"
+        capacity: "Capacity"
+        registrations: "Registrations"
+        first_choice: "1st Choice"
+      groups:
+        tutorials: "Tutorials"
+        talks: "Talks"
+        cohorts: "Other Groups"
+        general: "General"
+      types:
+        tutorial: "Tutorial"
+        talk: "Talk"
+        cohort: "Special Group"
+        enrollment_group: "Enrollment Group"
+        planning_survey: "Planning Group"
+        other_group: "Flexible Group"
+        lecture: "Lecture"
+        lecture_signup: "General Signup"
+      actions:
+        remove_from_campaign: "Remove from campaign"
+        delete_registerable: "Delete %{type}"
+      created: "Item added successfully."
+      destroyed: "Item removed successfully."
+      registerable_destroyed: "%{type} deleted successfully."
+      updated: "Item updated successfully."
+      invalid_type: "Invalid type."
+      cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
+      confirm_delete: "Are you sure you want to remove this item?"
+      confirm_remove: "Are you sure you want to remove this item from the campaign?"
+      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
+      select_type: "Select a group type..."
+      attributes:
+        capacity_optional: "Capacity (optional)"
+        propagate_to_lecture: "Students appear in the course roster"
+      hints:
+        no_propagation: "Students in this group do not appear in the course roster"
+      help:
+        tutorial: "Weekly practice sessions with fixed time slots. Students work on exercises, tutors grade them and can enter and manage points in MaMpf. Students who receive a tutorial spot after the registration process concludes are automatically added to the course roster."
+        talk: "Seminar presentations where students present topics. Grades for seminar talks can be managed in MaMpf. Students who receive a talk spot after the registration process concludes are automatically added to the course roster."
+        enrollment: "If the course has no tutorials or talks, an enrollment group can be used. Students who receive a spot after the registration process concludes are automatically added to the course roster."
+        planning: "Interest survey (typically before the semester begins) to gauge demand. No transfer to course rosters takes place."
+        other: "Flexible groups for waitlists, special projects, or audit listeners. You determine whether students appear in the course roster."
+        propagate_to_lecture: "If enabled, students in this group will automatically be added to the course roster. Disable this for pure waitlists that are not connected to course enrollment."
+    user_registration:
+      forced_assignment: "Forced Assignment"
+      index:
+        title: "Registrations"
+      status:
+        pending: "Pending"
+        confirmed: "Confirmed"
+        rejected: "Rejected"
+      rank: "Rank"
+      destroyed: "Registration removed successfully."
+      destroyed_all_for_user: "Removed %{count} registrations for user."
+      destroy_failed: "Failed to remove registrations."
+      none: "No registrations found."
+      preferences: "Preferences"
+      actions:
+        remove_user: "Remove user from campaign"
+    allocation:
+      started: "Allocation has been calculated."
+      conflicts:
+        title: "Conflicting Registrations"
+        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{tutorial}"
+      dashboard:
+        title: "Allocation Dashboard"
+        last_updated: "Last updated: %{time}"
+        unassigned_students: "Unassigned Students"
+        no_unassigned: "All students have been assigned!"
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
+        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
+        item_capacities: "Tutorial Capacities"
+      stats:
+        total_registrations: "Total Applicants"
+        assigned: "Assigned"
+        unassigned: "Unassigned"
+        happiness_distribution: "Preference Distribution"
+        rank: "Preference Rank"
+        count: "Count"
+        percentage: "Percentage"
+        rank_label: "Choice #%{rank}"
+        forced: "Forced Assignment"
+        capacity: "Capacity"
+        utilization: "Utilization"
+      errors:
+        already_completed: "Campaign is already completed."
+        wrong_status: "Campaign has wrong status for this action."
+        policy_violation: "Policy violations detected. Please review details below."
+        policy_violation_title: "Policy Violations Detected"
+        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        failed: "Allocation failed: %{error}"
   activerecord:
     errors:
       models:
+        registration/campaign:
+          attributes:
+            base:
+              frozen: "Campaign configuration cannot be changed once it is no longer in draft mode."
+              already_finalized: "Campaign is already finalized."
+              cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{descriptions}."
+              prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{description}' is still in draft mode."
+              no_items: "Cannot open campaign because no items have been added."
+              already_has_real_campaign: "A standard registration campaign already exists for this context. Only one standard campaign is allowed."
+            registration_deadline:
+              must_be_in_future: "must be in the future when campaign is open"
+            status:
+              cannot_revert_to_draft: "cannot be reverted to draft once opened"
+            allocation_mode:
+              frozen: "cannot be changed after campaign is opened"
+        registration/policy:
+          attributes:
+            base:
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+        registration/item:
+          attributes:
+            registerable_id:
+              taken: "is already part of another campaign."
+              taken_by_real_campaign: "is already part of another active campaign."
+            base:
+              capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+              already_in_other_campaign: "This item is already part of another standard registration campaign."
+              registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
             registration_item:
               must_belong_to_same_campaign: "must belong to the same campaign"
+

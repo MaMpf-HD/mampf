@@ -138,6 +138,7 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
 - Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
+- Previously Assigned: the student was once assigned (confirmed) but later removed (e.g. manually). This is tracked via the `materialized_at` timestamp on `Registration::UserRegistration`.
 - No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
 
 ```admonish note "Status semantics"
@@ -155,7 +156,9 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 - **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
   FCFS campaigns skip this step (results already determined).
 - **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`. All campaigns materialize—planning cohorts simply don't propagate to the lecture roster.
-- **Lecture performance completeness checks:**
+  - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
+- **Planning surveys:** Planning cohorts (with `propagate_to_lecture: false` and `purpose: :planning`) are used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
+- **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
   - **Campaign finalize:** Hard-fails if any confirmed registrants have missing/pending certifications (finalization or both phase); auto-rejects students with failed certifications
@@ -211,10 +214,18 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 ##### Capacity Constraints
 
-| Mode | Freeze Point | Modification Rules |
-|------|--------------|-------------------|
-| FCFS | Constrained | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. Cannot revoke confirmed spots. |
-| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `completed` (results published). |
+| Mode | Modification Rules |
+|------|-------------------|
+| FCFS | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+| Preference-based | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+
+During solver execution (~1 second), capacity modification is prevented via database row-level locks. See "Solver Execution Protection" above.
+
+```admonish info "Solver Execution Protection"
+During solver execution (~1 second), all registerables (tutorials/talks/cohorts) are locked via row-level database locks to prevent concurrent capacity modifications. This ensures the solver operates on consistent data. The `AllocationService` wraps the solver call in a transaction that acquires these locks before running the algorithm.
+
+**Philosophy**: "Hands off while the solver is running" - capacity edits are blocked for the brief window when allocation is being computed.
+```
 
 #### Implementation Notes
 
@@ -479,13 +490,13 @@ module Registration
 end
 ```
 
+### Uniqueness Constraints
+
+To ensure data integrity and prevent double-booking, the following constraint applies:
+
+- **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
+
 ### Usage Scenarios
-
-Each scenario below is the item-side view of the campaign types listed
-earlier. The `Registration::Item` belongs to the associated campaign and
-wraps the concrete `registerable` record that users ultimately get
-assigned to.
-
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For an "Enrollment Campaign" (simple courses):** A `RegistrationItem` is created for an enrollment cohort (`purpose: :enrollment`). The cohort propagates to the lecture roster automatically.
@@ -604,6 +615,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 | `registration_item_id`    | DB column         | Foreign key for the selected item.                               |
 | `status`                  | DB column (Enum)  | `pending`, `confirmed`, `rejected`.                              |
 | `preference_rank`         | DB column         | Nullable integer for preference-based mode.                      |
+| `materialized_at`         | DB column         | Timestamp set when the registration results in a domain assignment. |
 | `user`                    | Association       | The user who submitted.                                          |
 | `registration_campaign`   | Association       | The parent campaign.                                             |
 | `registration_item`       | Association       | The selected item.                                               |
@@ -611,6 +623,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 ### Behavior Highlights
 - The `status` tracks the lifecycle: `pending` (awaiting allocation), `confirmed` (successful), or `rejected` (unsuccessful).
 - The `preference_rank` is only used in `preference_based` campaigns and must be unique per user within a campaign.
+- The `materialized_at` timestamp indicates that this registration was successfully turned into a domain assignment (e.g. tutorial membership). It persists even if the user is later removed from the domain roster, allowing the system to identify "previously assigned" candidates.
 - In `first_come_first_served` mode, a registration is typically created directly with `confirmed` status if capacity allows.
 - Business logic should enforce that a user can only have one `confirmed` registration per campaign.
 
@@ -1080,49 +1093,73 @@ Ensures every confirmed user passes all finalization-phase policies before roste
 ```ruby
 module Registration
   class FinalizationGuard
+    Result = Struct.new(:success?, :error_code, :error_message, :data, keyword_init: true)
+
     def initialize(campaign)
       @campaign = campaign
     end
 
-    def check!
-      policies = @campaign.registration_policies.active.for_phase(:finalization).order(:position)
-      return true if policies.empty?
+    def check
+      if @campaign.completed?
+        return failure(:already_completed, "Campaign is already completed")
+      end
 
-      confirmed = @campaign.user_registrations.confirmed.includes(:user)
+      unless @campaign.processing?
+        return failure(:wrong_status, "Campaign must be in processing state")
+      end
 
-      confirmed.each do |ur|
-        user = ur.user
-        policies.each do |policy|
-          if policy.kind == "student_performance"
-            lecture = Lecture.find(policy.config["lecture_id"])
-            cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
+      validate_policies
+    end
 
-            if cert.nil? || cert.pending?
-              raise StandardError, "Finalization blocked: certification missing or pending for user #{user.id}"
-            elsif cert.failed?
-              ur.update!(status: :rejected)
-              next
-            end
-          else
-            outcome = policy.evaluate(user)
-            unless outcome[:pass]
-              raise StandardError, "Finalization blocked by policy #{policy.id} (#{policy.kind})"
+    private
+
+      def validate_policies
+        policies = @campaign.registration_policies.active.for_phase(:finalization)
+        return success if policies.empty?
+
+        invalid_users = []
+
+        # Eager load to avoid N+1
+        @campaign.registration_items.includes(user_registrations: :user).find_each do |item|
+          item.user_registrations.select(&:confirmed?).each do |registration|
+            user = registration.user
+            policies.each do |policy|
+              result = policy.evaluate(user)
+              unless result[:pass]
+                invalid_users << { user_id: user.id,
+                                   email: user.email,
+                                   policy: policy.kind }
+              end
             end
           end
         end
+
+        if invalid_users.any?
+          return failure(:policy_violation,
+                         "Some users no longer meet the requirements.",
+                         invalid_users)
+        end
+
+        success
       end
-      true
-    end
+
+      def success
+        Result.new(success?: true)
+      end
+
+      def failure(code, message, data = nil)
+        Result.new(success?: false, error_code: code, error_message: message, data: data)
+      end
   end
 end
 ```
 
 ### Behavior Highlights
 
-- **Auto-reject failed certifications:** Students with `StudentPerformance::Certification.status == :failed` are automatically moved to `rejected` status
-- **Hard-fail on missing/pending:** If any confirmed student has no certification or `status: :pending`, raise error and block finalization
-- **Remediation UI trigger:** The error message should trigger UI showing which students need certification resolution
-- **Other policies:** Evaluated normally; any failure blocks finalization
+- **Policy Validation:** Checks all policies configured for the `:finalization` phase (or `:both`).
+- **Safety Net:** Ensures that users who might have become ineligible after registration (e.g., changed email) are caught before being added to the roster.
+- **Manual Resolution:** If violations are found, the guard returns a failure result with the list of invalid users. The admin must then manually reject these users or fix the issue before retrying finalization.
+- **State Check:** Ensures the campaign is in the correct state (`processing`) and not already completed.
 
 See also: Student Performance → Certification and Pre-flight Validation (`05-student-performance.md`).
 

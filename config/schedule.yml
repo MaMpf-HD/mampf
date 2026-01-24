@@ -26,3 +26,14 @@ altcha_solutions_cleaner_job:
   cron: "0 0 */2 * *"
   class: "AltchaSolutionsCleaner"
   queue: critical
+
+roster_superset_checker:
+  # at 3:00 AM, every day
+  cron: "0 3 * * *"
+  class: "RosterSupersetCheckerJob"
+  queue: default
+  description: "Validates roster superset invariant nightly"
+
+campaign_status_worker:
+  cron: "*/1 * * * *"
+  class: "CampaignStatusWorker"

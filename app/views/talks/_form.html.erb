@@ -31,11 +31,13 @@
       <%= link_to t('buttons.parent_lecture'),
                   edit_lecture_path(talk.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
-      <%= link_to t('buttons.delete'),
-                  talk_path(talk),
-                  method: :delete,
-                  data: { confirm: t('confirmation.generic') },
-                  class: 'btn btn-sm btn-danger mb-2' %>
+      <% unless Flipper.enabled?(:roster_maintenance) %>
+        <%= link_to t('buttons.delete'),
+                    talk_path(talk),
+                    method: :delete,
+                    data: { confirm: t('confirmation.generic') },
+                    class: 'btn btn-sm btn-danger mb-2' %>
+      <% end %>
     </div>
   </div>
   <div class="row p-2">
