@@ -33,14 +33,25 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     let(:user) { FactoryBot.create(:user) }
     let(:item) { FactoryBot.create(:registration_item, registration_campaign: campaign) }
 
-    it "requires preference_rank" do
+    it "requires preference_rank for pending registrations" do
       registration = FactoryBot.build(:registration_user_registration,
                                       registration_campaign: campaign,
                                       user: user,
                                       registration_item: item,
-                                      preference_rank: nil)
+                                      preference_rank: nil,
+                                      status: :pending)
       expect(registration).not_to be_valid
       expect(registration.errors[:preference_rank]).to be_present
+    end
+
+    it "allows nil preference_rank for confirmed registrations (forced assignments)" do
+      registration = FactoryBot.build(:registration_user_registration,
+                                      registration_campaign: campaign,
+                                      user: user,
+                                      registration_item: item,
+                                      preference_rank: nil,
+                                      status: :confirmed)
+      expect(registration).to be_valid
     end
 
     it "ensures preference_rank is unique per user and campaign" do
@@ -145,6 +156,81 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
                                             registration_item: item,
                                             preference_rank: nil)
       expect(other_registration).to be_valid
+    end
+  end
+
+  describe "counter cache callbacks" do
+    let(:user) { FactoryBot.create(:user) }
+
+    context "with FCFS campaign (confirmed by default)" do
+      let(:campaign) { FactoryBot.create(:registration_campaign, :first_come_first_served) }
+      let(:item) { FactoryBot.create(:registration_item, registration_campaign: campaign) }
+
+      it "increments counter on creation" do
+        expect do
+          FactoryBot.create(:registration_user_registration, :fcfs,
+                            registration_campaign: campaign,
+                            registration_item: item,
+                            user: user)
+        end.to change { item.reload.confirmed_registrations_count }.by(1)
+      end
+
+      it "decrements counter on destruction" do
+        registration = FactoryBot.create(:registration_user_registration, :fcfs,
+                                         registration_campaign: campaign,
+                                         registration_item: item,
+                                         user: user)
+        expect do
+          registration.destroy
+        end.to change { item.reload.confirmed_registrations_count }.by(-1)
+      end
+
+      it "decrements counter when status changes to rejected" do
+        registration = FactoryBot.create(:registration_user_registration, :fcfs,
+                                         registration_campaign: campaign,
+                                         registration_item: item,
+                                         user: user)
+        expect do
+          registration.update(status: :rejected)
+        end.to change { item.reload.confirmed_registrations_count }.by(-1)
+      end
+    end
+
+    context "with preference-based campaign (pending by default)" do
+      let(:campaign) { FactoryBot.create(:registration_campaign, :preference_based) }
+      let(:item) { FactoryBot.create(:registration_item, registration_campaign: campaign) }
+
+      it "does not increment counter on creation" do
+        expect do
+          FactoryBot.create(:registration_user_registration, :preference_based,
+                            registration_campaign: campaign,
+                            registration_item: item,
+                            user: user,
+                            preference_rank: 1)
+        end.not_to(change { item.reload.confirmed_registrations_count })
+      end
+
+      it "increments counter when status changes to confirmed" do
+        registration = FactoryBot.create(:registration_user_registration, :preference_based,
+                                         registration_campaign: campaign,
+                                         registration_item: item,
+                                         user: user,
+                                         preference_rank: 1)
+        expect do
+          registration.update(status: :confirmed)
+        end.to change { item.reload.confirmed_registrations_count }.by(1)
+      end
+
+      it "does not decrement counter on destruction" do
+        registration = FactoryBot.create(:registration_user_registration, :preference_based,
+                                         registration_campaign: campaign,
+                                         registration_item: item,
+                                         user: user,
+                                         preference_rank: 1)
+        expect do
+          registration.destroy
+        end.not_to(change { item.reload.confirmed_registrations_count })
+      end
     end
   end
 

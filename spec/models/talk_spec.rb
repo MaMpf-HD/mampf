@@ -1,6 +1,14 @@
 require "rails_helper"
 
 RSpec.describe(Talk, type: :model) do
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_talk)).to be_valid
   end
@@ -15,6 +23,13 @@ RSpec.describe(Talk, type: :model) do
     talk = FactoryBot.build(:valid_talk)
     talk.title = nil
     expect(talk).to be_invalid
+  end
+  it "is invalid if lecture is not a seminar" do
+    lecture = FactoryBot.create(:lecture) # default sort is "lecture"
+    talk = FactoryBot.build(:talk, lecture: lecture)
+    expect(talk).to be_invalid
+    expect(talk.errors[:lecture])
+      .to include(I18n.t("activerecord.errors.models.talk.attributes.lecture.must_be_seminar"))
   end
 
   # Test traits
@@ -65,7 +80,7 @@ RSpec.describe(Talk, type: :model) do
         course = FactoryBot.build(:course, title: "Algebra 1",
                                            short_title: "Alg1")
         term = FactoryBot.build(:term, season: "SS", year: 2020)
-        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        lecture = FactoryBot.build(:seminar, course: course, term: term)
         FactoryBot.create(:talk, lecture: lecture, title: "total bs")
         @talk = FactoryBot.create(:talk, lecture: lecture,
                                          title: "even more bs")
@@ -83,14 +98,14 @@ RSpec.describe(Talk, type: :model) do
     describe "#title_for_viewers" do
       it "returns the correct title" do
         expect(@talk.title_for_viewers)
-          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#long_title" do
       it "returns the correct title" do
         expect(@talk.long_title)
-          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
@@ -104,20 +119,20 @@ RSpec.describe(Talk, type: :model) do
     describe "#short_title_with_lecture_date" do
       it "returns the correct title" do
         expect(@talk.short_title_with_lecture_date)
-          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#card_header" do
       it "returns the correct title" do
         expect(@talk.card_header)
-          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#compact_title" do
       it "returns the correct compact title" do
-        expect(@talk.compact_title).to eq("V.Alg1.SS20.V2")
+        expect(@talk.compact_title).to eq("S.Alg1.SS20.V2")
       end
     end
   end
@@ -137,7 +152,7 @@ RSpec.describe(Talk, type: :model) do
         course = FactoryBot.build(:course, title: "Algebra 1",
                                            short_title: "Alg1")
         term = FactoryBot.build(:term, season: "SS", year: 2020)
-        lecture = FactoryBot.build(:lecture, course: course, term: term,
+        lecture = FactoryBot.build(:seminar, course: course, term: term,
                                              locale: "br")
         @talk = FactoryBot.create(:talk, lecture: lecture)
       end
@@ -152,7 +167,7 @@ RSpec.describe(Talk, type: :model) do
 
   describe "#media_scope" do
     it "returns the lecture associated to the talk" do
-      lecture = FactoryBot.build(:lecture, released: "all")
+      lecture = FactoryBot.build(:seminar, released: "all")
       talk = FactoryBot.build(:talk, lecture: lecture)
       expect(talk.media_scope).to eq(lecture)
     end
@@ -160,7 +175,7 @@ RSpec.describe(Talk, type: :model) do
 
   context "position methods" do
     before :each do
-      lecture = FactoryBot.build(:lecture)
+      lecture = FactoryBot.build(:seminar)
       @talk1 = FactoryBot.create(:talk, lecture: lecture)
       @talk2 = FactoryBot.create(:talk, lecture: lecture)
       @talk3 = FactoryBot.create(:talk, lecture: lecture)
@@ -211,7 +226,7 @@ RSpec.describe(Talk, type: :model) do
     describe "#card_header_path" do
       it "returns the path for the talk if the user is subscribed to the " \
          "seminar" do
-        lecture = FactoryBot.build(:lecture)
+        lecture = FactoryBot.build(:seminar)
         user = FactoryBot.create(:confirmed_user)
         user.lectures << lecture
         talk = FactoryBot.create(:valid_talk, lecture: lecture)
@@ -219,7 +234,7 @@ RSpec.describe(Talk, type: :model) do
       end
 
       it "returns nil if user is not subscribed to the seminar" do
-        lecture = FactoryBot.build(:lecture)
+        lecture = FactoryBot.build(:seminar)
         user = FactoryBot.create(:confirmed_user)
         talk = FactoryBot.create(:valid_talk, lecture: lecture)
         expect(talk.card_header_path(user)).to be_nil
@@ -231,5 +246,20 @@ RSpec.describe(Talk, type: :model) do
     subject { FactoryBot.create(:valid_talk) }
 
     it_behaves_like "a registerable model"
+  end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:seminar) }
+    let(:talk) { create(:talk, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: user)).to be_empty
+
+      talk.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user)).to exist
+    end
   end
 end
