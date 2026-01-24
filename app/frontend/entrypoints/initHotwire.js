@@ -77,7 +77,7 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import SelectizeController from "~/controllers/selectize_controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
-import SubmissionSettingsController from "~/assessments/submission_settings.controller.js";
+import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
 window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);
 
 // Hotwire: Turbo
