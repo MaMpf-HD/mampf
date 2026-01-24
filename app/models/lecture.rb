@@ -795,21 +795,21 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    # Efficiently insert missing memberships using upsert (ignoring duplicates)
+    # Efficiently insert missing memberships (ignoring duplicates)
     # Note: Requires a unique index on [:user_id, :lecture_id]
     attributes = user_ids.map do |uid|
-      { user_id: uid, lecture_id: id, created_at: Time.current,
-        updated_at: Time.current }
+      { user_id: uid, lecture_id: id }
     end
 
     return if attributes.empty?
 
-    # Skipping validations for performance; ensure data integrity via unique index
+    # Rails handles timestamps automatically.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
+    # created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
-    LectureMembership.upsert_all(
+    LectureMembership.insert_all(
       attributes,
-      unique_by: [:user_id, :lecture_id],
-      record_timestamps: false # Timestamps handled manually above
+      unique_by: [:user_id, :lecture_id]
     )
     # rubocop:enable Rails/SkipsModelValidations
   end
