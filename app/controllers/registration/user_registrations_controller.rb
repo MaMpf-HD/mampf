@@ -1,0 +1,112 @@
+module Registration
+  class UserRegistrationsController < ApplicationController
+    before_action :set_campaign
+    before_action :set_locale
+
+    def current_ability
+      @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
+    end
+
+    def destroy_for_user
+      return if campaign_completed?
+
+      @user = User.find(params[:user_id])
+      registrations = @campaign.user_registrations.where(user: @user)
+
+      return if no_registrations_found?(registrations)
+
+      # Authorize based on the first registration (all belong to same campaign)
+      authorize! :destroy, registrations.first
+
+      destroy_registrations(registrations)
+    end
+
+    private
+
+      def render_turbo_stream_response
+        streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
+
+        streams << turbo_stream.update("registrations-tab-count",
+                                       @campaign.user_registrations.distinct.count(:user_id))
+
+        if params[:source] == "allocation"
+          load_allocation_data
+          streams << turbo_stream.replace("allocation-dashboard",
+                                          partial: "registration/allocations/dashboard")
+        elsif params[:source] == "registrations"
+          streams << turbo_stream.replace("user-registrations-list",
+                                          partial: "registration/user_registrations/index",
+                                          locals: { campaign: @campaign })
+        end
+
+        render turbo_stream: streams
+      end
+
+      def load_allocation_data
+        @dashboard = Registration::AllocationDashboard.new(@campaign)
+      end
+
+      def set_campaign
+        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        return if @campaign
+
+        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
+      end
+
+      def set_locale
+        I18n.locale = @campaign&.campaignable&.locale_with_inheritance || I18n.locale
+      end
+
+      def respond_with_error(message, redirect_path: nil)
+        respond_to do |format|
+          format.html do
+            path = redirect_path || registration_campaign_path(@campaign)
+            redirect_back_or_to(path, alert: message)
+          end
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
+          end
+        end
+      end
+
+      def campaign_completed?
+        return false unless @campaign.completed?
+
+        respond_with_error(t("registration.campaign.errors.already_finalized"))
+        true
+      end
+
+      def no_registrations_found?(registrations)
+        return false if registrations.any?
+
+        redirect_back_or_to(registration_campaign_path(@campaign),
+                            alert: t("registration.user_registration.none"))
+        true
+      end
+
+      def destroy_registrations(registrations)
+        count = registrations.count
+
+        if registrations.destroy_all
+          respond_with_destroy_success(count)
+        else
+          respond_with_error(t("registration.user_registration.destroy_failed"))
+        end
+      end
+
+      def respond_with_destroy_success(count)
+        message = t("registration.user_registration.destroyed_all_for_user", count: count)
+        respond_to do |format|
+          format.html do
+            redirect_back_or_to(registration_campaign_path(@campaign),
+                                notice: message)
+          end
+          format.turbo_stream do
+            flash.now[:notice] = message
+            render_turbo_stream_response
+          end
+        end
+      end
+  end
+end
