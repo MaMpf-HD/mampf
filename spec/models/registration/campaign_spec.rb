@@ -26,6 +26,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign = FactoryBot.create(:registration_campaign, :open)
       expect(campaign).to be_valid
       expect(campaign.status).to eq("open")
+      expect(campaign.registration_items).not_to be_empty
     end
 
     it "creates a valid closed campaign" do
@@ -44,12 +45,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign = FactoryBot.create(:registration_campaign, :completed)
       expect(campaign).to be_valid
       expect(campaign.status).to eq("completed")
-    end
-
-    it "creates a valid planning_only campaign" do
-      campaign = FactoryBot.create(:registration_campaign, :planning_only)
-      expect(campaign).to be_valid
-      expect(campaign.planning_only).to be(true)
     end
 
     it "creates campaign with items for regular lecture" do
@@ -80,20 +75,121 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    it "creates campaign for lecture enrollment" do
-      campaign = FactoryBot.create(:registration_campaign, :for_lecture_enrollment)
-      expect(campaign).to be_valid
-      expect(campaign.registration_items.count).to eq(1)
-      item = campaign.registration_items.first
-      expect(item.registerable_type).to eq("Lecture")
-      expect(item.registerable).to eq(campaign.campaignable)
-    end
-
     it "creates campaign with policies" do
       campaign = FactoryBot.create(:registration_campaign, :with_policies)
       expect(campaign).to be_valid
       expect(campaign.registration_policies.count).to eq(1)
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
+    end
+  end
+
+  describe "validations" do
+    it "validates registration_deadline is in the future if open" do
+      campaign = create(:registration_campaign, :open)
+      campaign.registration_deadline = 1.day.ago
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "validates prerequisites are not draft if open" do
+      prereq = create(:registration_campaign, :draft)
+      campaign = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: campaign,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      campaign.status = :open
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:base, :prerequisite_is_draft,
+                                    description: prereq.description)).to be(true)
+    end
+
+    describe "#description" do
+      it "validates maximum length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 101)
+        expect(campaign).not_to be_valid
+        expect(campaign.errors[:description]).to include(I18n.t("errors.messages.too_long",
+                                                                count: 100))
+      end
+
+      it "allows length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 100)
+        expect(campaign).to be_valid
+      end
+    end
+
+    describe "#ensure_editable" do
+      let(:campaign) { create(:registration_campaign, :completed) }
+
+      it "prevents updates if campaign is completed" do
+        campaign.description = "New description"
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
+      end
+
+      it "allows updates if status is changing (re-opening)" do
+        campaign.status = :open
+        campaign.registration_deadline = 1.day.from_now
+        expect(campaign).to be_valid
+      end
+
+      it "allows updates if status is changing (finalizing)" do
+        campaign = create(:registration_campaign, :processing)
+        campaign.status = :completed
+        expect(campaign).to be_valid
+      end
+    end
+
+    describe "#validate_real_campaign_uniqueness" do
+      let(:lecture) { create(:lecture) }
+
+      it "allows creating multiple campaigns for the same lecture" do
+        create(:registration_campaign, campaignable: lecture)
+        new_campaign = build(:registration_campaign, campaignable: lecture)
+        expect(new_campaign).to be_valid
+      end
+    end
+  end
+
+  describe "deletion protection" do
+    it "prevents deletion if not draft" do
+      campaign = create(:registration_campaign, :open)
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion if referenced as prerequisite" do
+      prereq = create(:registration_campaign, :draft)
+      dependent = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect { prereq.destroy }.not_to change(Registration::Campaign, :count)
+      expect(prereq.errors.added?(:base, :referenced_as_prerequisite,
+                                  descriptions: dependent.description)).to be(true)
+    end
+  end
+
+  describe "freezing" do
+    let(:campaign) { create(:registration_campaign, :open) }
+
+    it "prevents changing allocation_mode if not draft" do
+      campaign.allocation_mode = :preference_based
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:allocation_mode, :frozen)).to be(true)
+    end
+
+    it "prevents reverting to draft from open" do
+      campaign.status = :draft
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
+    end
+
+    it "allows changing allocation_mode if draft" do
+      draft_campaign = create(:registration_campaign, :draft)
+      draft_campaign.allocation_mode = :preference_based
+      expect(draft_campaign).to be_valid
     end
   end
 
@@ -151,6 +247,316 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       expect(returned).to eq(result)
       expect(campaign.policies_satisfied?(user, phase: :registration)).to be(true)
+    end
+  end
+
+  describe "#locale_with_inheritance" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, campaignable: lecture) }
+
+    it "returns the locale of the campaignable" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return("de")
+      expect(campaign.locale_with_inheritance).to eq("de")
+    end
+
+    it "falls back to locale if locale_with_inheritance is missing" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return(nil)
+      allow(lecture).to receive(:locale).and_return("en")
+      expect(campaign.locale_with_inheritance).to eq("en")
+    end
+  end
+
+  describe "registration counts" do
+    context "with preference based campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
+      let(:item1) { campaign.registration_items.first }
+      let(:item2) { campaign.registration_items.second }
+      let(:user) { create(:user) }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts pending users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts rejected users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :rejected,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes confirmed status over pending and rejected" do
+        # Confirmed on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+        # Pending on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes pending status over rejected" do
+        # Pending on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        # Rejected on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :rejected,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts distinct users only" do
+        # Two pending registrations for same user
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+    end
+
+    context "with FCFS campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
+      let(:item1) { campaign.registration_items.first }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1, status: :confirmed)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+    end
+  end
+
+  describe "#finalize!" do
+    let(:campaign) { create(:registration_campaign, :with_items, status: :processing) }
+
+    it "delegates to AllocationMaterializer and updates status" do
+      expect_any_instance_of(Registration::AllocationMaterializer).to receive(:materialize!)
+
+      expect do
+        campaign.finalize!
+      end.to change(campaign, :status).from("processing").to("completed")
+    end
+
+    it "updates pending registrations to rejected" do
+      create(:registration_user_registration, registration_campaign: campaign, status: :pending)
+      create(:registration_user_registration, registration_campaign: campaign, status: :confirmed)
+
+      campaign.finalize!
+
+      expect(campaign.user_registrations.pending).to be_empty
+      expect(campaign.user_registrations.rejected.count).to eq(1)
+      expect(campaign.user_registrations.confirmed.count).to eq(1)
+    end
+
+    context "concurrency protection" do
+      it "executes within a database lock" do
+        expect(campaign).to receive(:with_lock).and_yield
+        campaign.finalize!
+      end
+
+      it "aborts if campaign becomes completed while waiting for the lock" do
+        # 1. Simulate acquiring the lock
+        allow(campaign).to receive(:with_lock).and_yield
+
+        # 2. Simulate that another process finished the job while we were waiting
+        #    (The record is reloaded inside with_lock, so it sees the new status)
+        allow(campaign).to receive(:completed?).and_return(true)
+
+        # 3. Expect that we do NOT run the materialization logic again
+        expect_any_instance_of(Registration::AllocationMaterializer).not_to receive(:materialize!)
+
+        campaign.finalize!
+      end
+    end
+  end
+
+  describe "#user_registrations_grouped_by_user" do
+    let(:campaign) { create(:registration_campaign, :with_items) }
+    let(:user1) { create(:confirmed_user, name: "Alice") }
+    let(:user2) { create(:confirmed_user, name: "Bob") }
+    let(:user3) { create(:confirmed_user, name: "Charlie") }
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign, user: user2)
+      create(:registration_user_registration, registration_campaign: campaign, user: user3)
+      create(:registration_user_registration, registration_campaign: campaign, user: user1)
+    end
+
+    it "returns registrations grouped by user and ordered by user name" do
+      grouped = campaign.user_registrations_grouped_by_user
+      expect(grouped.keys.map(&:name)).to eq(["Alice", "Bob", "Charlie"])
+      expect(grouped[user1].count).to eq(1)
+      expect(grouped[user2].count).to eq(1)
+      expect(grouped[user3].count).to eq(1)
+    end
+  end
+
+  describe "#unassigned_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:assigned_user) { create(:user) }
+    let(:unassigned_user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    context "with tutorials" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      end
+
+      before do
+        # Register users
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: assigned_user)
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: unassigned_user)
+
+        # Assign one user to the tutorial
+        create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
+
+        # Open the campaign now that items are present
+        campaign.update(status: :open)
+      end
+
+      it "returns empty relation if campaign is draft" do
+        campaign.update(status: :draft)
+        expect(campaign.unassigned_users).to be_empty
+      end
+
+      it "returns users who are registered but not assigned to any item of the " \
+         "same type in the lecture" do
+        expect(campaign.unassigned_users).to include(unassigned_user)
+        expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+
+      it "does not include users who are not registered in the campaign" do
+        # other_user is not registered
+        expect(campaign.unassigned_users).not_to include(other_user)
+      end
+
+      context "with multiple tutorials in the lecture" do
+        let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+        let(:user_assigned_elsewhere) { create(:user) }
+
+        before do
+          # Register user
+          create(:registration_user_registration, registration_campaign: campaign,
+                                                  user: user_assigned_elsewhere)
+          # Assign to a tutorial that is NOT in the campaign items (but is in the lecture)
+          create(:tutorial_membership, tutorial: other_tutorial, user: user_assigned_elsewhere)
+        end
+
+        it "considers users assigned to other tutorials in the lecture as assigned" do
+          expect(campaign.unassigned_users).not_to include(user_assigned_elsewhere)
+        end
+      end
+    end
+
+    context "with cohorts" do
+      let(:cohort) { create(:cohort, context: lecture) }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign, registerable: cohort)
+      end
+
+      before do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: assigned_user, registration_item: item)
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: unassigned_user, registration_item: item)
+
+        # Assign one user to the cohort
+        create(:cohort_membership, cohort: cohort, user: assigned_user)
+
+        campaign.update(status: :open)
+      end
+
+      it "returns users who are registered but not assigned to any cohort in the lecture" do
+        expect(campaign.unassigned_users).to include(unassigned_user)
+        expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+    end
+  end
+
+  describe "#roster_group_type" do
+    let(:campaign) { build(:registration_campaign) }
+
+    it "returns 'tutorials' by default" do
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'tutorials' when items are tutorials" do
+      tutorial = create(:tutorial)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(campaign.roster_group_type).to eq("tutorials")
+    end
+
+    it "returns 'talks' when items are talks" do
+      talk = create(:talk)
+      create(:registration_item, registration_campaign: campaign, registerable: talk)
+      expect(campaign.roster_group_type).to eq("talks")
+    end
+
+    it "returns 'cohorts' when items are cohorts" do
+      cohort = create(:cohort)
+      create(:registration_item, registration_campaign: campaign, registerable: cohort)
+      expect(campaign.roster_group_type).to eq("cohorts")
     end
   end
 end
