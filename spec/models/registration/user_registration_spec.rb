@@ -250,4 +250,16 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       expect(registration.errors[:registration_item]).to include(error_msg)
     end
   end
+
+  describe "immutability" do
+    let(:registration) { FactoryBot.create(:registration_user_registration) }
+
+    it "prevents updating registration_item_id" do
+      new_item = FactoryBot.create(:registration_item)
+
+      expect do
+        registration.update(registration_item_id: new_item.id)
+      end.to raise_error(ActiveRecord::ReadonlyAttributeError)
+    end
+  end
 end
