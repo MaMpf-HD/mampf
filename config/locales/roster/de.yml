@@ -1,0 +1,308 @@
+de:
+  roster:
+    title: 'Teilnehmende'
+    status: 'Status'
+    group_category:
+      tutorial: "Tutorium"
+      flexible_group: "Flexible Gruppe"
+    status_texts:
+      awaiting_setup: "Wartet auf Einrichtung"
+      awaiting_setup_short: "Setup"
+      direct_management: "Direkte Verwaltung"
+      direct_management_short: "Direkt"
+      campaign_draft: "Anmeldeverfahren: Entwurf"
+      campaign_draft_short: "Entwurf"
+      campaign_open: "Anmeldeverfahren: Anmeldung"
+      campaign_open_short: "Anmeldung"
+      campaign_closed: "Anmeldeverfahren: Geschlossen"
+      campaign_closed_short: "Geschlossen"
+      campaign_processing: "Anmeldeverfahren: Verarbeitung"
+      campaign_processing_short: "Verarbeitung"
+      campaign_completed: "Anmeldeverfahren: Abgeschlossen"
+      campaign_completed_short: "Abgeschlossen"
+      post_campaign: "Nach Anmeldeverfahren"
+      post_campaign_short: "Nach Anmeld."
+      self_enrollment: "Selbsteinschreibung"
+      no_policy_enforcement: "Keine Richtliniendurchsetzung"
+      gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
+      enforced_policies: "Richtlinien im Verfahren: %{policies}"
+    participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutzen Sie die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner Gruppe mit automatischer Einschreibung angehören</li></ul>"
+    tabs:
+      tutorial_maintenance: 'Übungsbetrieb'
+      talk_maintenance: 'Vortragsbetrieb'
+      groups: 'Gruppen'
+      participants: 'Eingeschriebene'
+      group_maintenance: 'Gruppenverwaltung'
+      candidates: 'Kandidaten'
+      enrollment: 'Einschreibung'
+      performance: 'Leistungen'
+      overview: 'Übersicht'
+    stats:
+      total_participants: 'Teilnehmende gesamt'
+      total_enrolled: 'Eingeschrieben'
+      capacity_usage: 'von %{count} Plätzen belegt'
+      unassigned: 'Ohne Gruppe'
+      status_assigned: 'Zugewiesen'
+      status_unassigned: 'Ohne Gruppe'
+      action_required: 'Handlung erforderlich'
+      group_distribution: 'Gruppenverteilung'
+    filters:
+      all: 'Alle'
+      unassigned: 'Ohne Gruppe'
+    dashboard:
+      title: 'Dashboard'
+      description: 'Verwaltung der Zuteilungen und globale Übersicht.'
+    lifecycle_help:
+      title: "Lebenszyklus"
+      toggle: "Lebenszyklus"
+      intro: "Folgen Sie diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      phase1:
+        title: "Gruppenerstellung"
+        description_html: "Erstellen Sie Ihre %{link} über das Dashboard unten."
+        link_text: "Gruppen"
+      phase2:
+        title: "Einschreibung"
+        description_html: "Wählen Sie eine der %{link}, um zu entscheiden, wie Studierende beitreten."
+        link_text: "Einschreibemethoden"
+      phase3:
+        title: "Verwaltung"
+        description_html: "Verwalten Sie Ihre Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        link_text: "Verwaltung"
+    management_help:
+      title: "Verwaltung"
+      toggle: "Verwaltung"
+      intro: "Informationen zu Sperrzeiten und flexiblen Gruppeneinstellungen."
+      phase1:
+        title: "Sperrzeiten"
+        with_campaign: "Mit Anmeldeverfahren"
+        without_campaign: "Ohne Anmeldeverfahren"
+        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
+        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
+        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
+      phase2:
+        title: "Einstellungen & Ausnahmen"
+        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
+        options:
+          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
+          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
+          - "Zuteilungen nach Bedarf feinabstimmen"
+    roster_help:
+      title: "Einschreibemethoden"
+      toggle: "Einschreibemethoden"
+      intro: "Dieser Leitfaden vergleicht die verschiedenen Möglichkeiten, Ihre Gruppen zu füllen."
+      mode_hint: "Wenn Sie ein Anmeldeverfahren nutzen, fügen Sie diesem einfach alle benötigten Gruppen hinzu. Es können zwar mehrere Anmeldeverfahren parallel existieren, jede Gruppe kann jedoch nur Teil eines einzigen Verfahrens sein. Sie können für jede Gruppe individuell entscheiden, ob ein Anmeldeverfahren oder manuelle Einschreibung/Selbsteinschreibung genutzt wird."
+      group_types:
+        toggle: "Gruppentypen"
+        title: "Verfügbare Gruppentypen"
+        intro: "Verschiedene Gruppentypen dienen unterschiedlichen Zwecken in Ihrer Veranstaltungsstruktur."
+        tutorials:
+          title: "Tutorien"
+          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+        talks:
+          title: "Vorträge"
+          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+        flexible:
+          title: "Flexible Gruppen"
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Sie können selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+        superset_principle:
+          title: "Obermengenprinzip"
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
+        sticky_enrollment:
+          title: "Feste Einschreibung"
+          description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwenden Sie die Entfernen-Aktion im Tab 'Eingeschriebene'."
+      phase1:
+        title: "1. Wählen Sie Ihre Einrichtungsmethode"
+        campaigns:
+          title: "Anmeldeverfahren"
+          description: "Zeitlich begrenzter Prozess mit Regeln"
+          benefits:
+            - "Verteilung nach Präferenzen oder Eingang (FCFS)"
+            - "Einhaltung von Zulassungsregeln (z.B. Testat)"
+            - "Registrierungen vor Zuteilung prüfen"
+            - "Aufnahme in Liste erst nach Abschluss"
+        skip_campaigns:
+          title: "Anmeldeverfahren überspringen"
+          description: "Sofortiger, direkter Zugang"
+          benefits:
+            - "Nur direkter Beitritt (FCFS)"
+            - "Keine Prüfung von Zulassungsregeln"
+            - "Änderungen sind sofort wirksam"
+            - "Sofortige Aufnahme in die Liste"
+
+      phase2:
+        title: "2. Was passiert als Nächstes"
+        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
+        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
+        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
+      phase3:
+        title: "3. Jederzeit verfügbar (nach Verfahren)"
+        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
+        options:
+          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
+          - "Steuern Sie, ob Studierende Gruppen selbst beitreten oder verlassen können"
+          - "Zuteilungen nach Bedarf feinabstimmen"
+    actions:
+      global_roster: 'Gesamtliste'
+      assign: 'Zuweisen'
+      assign_to: 'Zuweisen zu...'
+      switch_to: 'Wechseln zu'
+      switch_from_to: 'Wechseln von %{from} → %{to}'
+      move: 'Verschieben'
+      back: 'Zurück'
+      add: 'Hinzufügen'
+      add_to: 'Hinzufügen zu %{to}'
+      add_student_label: 'E-Mail des Studierenden'
+      add_student_placeholder: 'student@example.com'
+      confirm_remove: 'Sind Sie sicher, dass Sie diesen Studierenden entfernen möchten?'
+      enable_manual_management: 'Direkte Verwaltung'
+      enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
+    cohorts:
+      kinds:
+        with_enrollment: "Gruppe mit Einschreibung"
+        without_enrollment: "Gruppe ohne Einschreibung"
+      purpose_label: "Zweck"
+      purposes:
+        enrollment: "Sammelgruppe"
+        planning: "Planung"
+        general: "Allgemein"
+      with_lecture_enrollment_title: "Mit Einschreibung"
+      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
+      without_lecture_enrollment_title: "Ohne Einschreibung"
+      without_lecture_enrollment_help: "Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Wartelisten oder für Bedarfserfassung verwendet werden."
+      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
+      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
+      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
+      propagates_short: "Einschreibung"
+      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
+      lecture_enrollment: "Veranstaltungseinschreibung"
+      can_enable_propagate: "Sie können dies aktivieren, um die Gruppe zu upgraden und Studierende automatisch in die Veranstaltung einzuschreiben."
+      attributes:
+        propagate_to_lecture: "Studierende werden automatisch in die Veranstaltung eingeschrieben"
+      help:
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende werden automatisch in die Veranstaltung eingeschrieben."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Veranstaltung eingeschrieben."
+        other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Sie bestimmen, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
+        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktivieren Sie dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
+        propagate_readonly_warning: "⚠️ Diese Einstellung kann nach der Erstellung nicht mehr geändert werden."
+        semantic_purpose_label: "Semantischer Zweck (optional)"
+        semantic_purpose_explanation: "Dies dient nur zur besseren Organisation und Filterung. Die Funktionalität der Gruppe ändert sich nicht."
+        enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
+        planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
+        general_with_enrollment: "Z.B. für Sonderprojekte oder Ergänzungsgruppen."
+        general_without_enrollment: "Z.B. für Wartelisten oder Sonderprojekte."
+        enrollment_short: "Für Veranstaltungen ohne Tutorien oder Vorträge."
+        planning_short: "Bedarfserhebung vor Semesterbeginn."
+        enrollment_warning: "⚠️ Diese Veranstaltung hat bereits Tutorien/Vorträge."
+    details:
+      participants: 'Teilnehmende'
+      empty: 'Keine Teilnehmenden in dieser Gruppe.'
+    candidates:
+      title: 'Unzugeteilte Anmeldungen'
+      help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
+      empty: 'Keine unzugeteilten Anmeldungen gefunden.'
+      no_prefs: 'Keine Präferenzen'
+    manual_enrollment:
+      title: 'Manuelle Einschreibung'
+      description: 'Fügen Sie einen Studierenden manuell zu einer Gruppe hinzu. Dies ist nützlich für Nachzügler.'
+      student: 'Studierende/r'
+      group: 'Gruppe'
+      choose_group: 'Gruppe wählen...'
+    columns:
+      title: 'Titel'
+      tutors: 'TutorInnen'
+      speakers: 'Vortragende'
+
+      occupancy: 'Belegung'
+      status: 'Status'
+      name: 'Name'
+      email: 'E-Mail'
+      groups: 'Gruppen'
+      preferences: 'Präferenzen'
+      actions: 'Aktionen'
+    manage: 'Verwalten'
+    self_materialization:
+      modes:
+        disabled: 'Selbsteinschreibung deaktiviert'
+        add_only: 'Nur Eintragen'
+        remove_only: 'Nur Austragen'
+        add_and_remove: 'Ein- & Austragen'
+      label: 'Selbsteinschreibung'
+    policy_bypass_warning:
+      title: "Warnung zur Richtlinienumgehung"
+      message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
+      confirm: "Trotzdem aktivieren"
+      cancel: "Abbrechen"
+    unknown_policy: "Unbekannte Richtlinie"
+    completed_campaign: "Abgeschlossenes Anmeldeverfahren"
+    skip_campaigns: 'Anmeldeverfahren überspringen'
+    enable_skip_campaigns_hint: 'Anmeldeverfahren können nicht übersprungen werden, da diese Gruppe Teil einer Kampagne war.'
+    disable_skip_campaigns_hint: 'Anmeldeverfahren können nicht aktiviert werden, da die Liste nicht leer ist.'
+    enable_manual_management: 'Direkte Verwaltung aktivieren'
+    view_campaign: 'Anmeldeverfahren ansehen'
+    create_campaign: 'Anmeldeverfahren erstellen'
+    campaign_running: 'Anmeldeverfahren läuft'
+    campaign_draft: 'Anmeldeverfahren geplant'
+    overbooked: 'Überbucht'
+    empty_hint: 'Nutzen Sie Anmeldeverfahren, damit sich Interessent:innen
+      einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
+      Abschluss der Verfahren möglich.'
+    tooltips:
+      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
+      kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
+      manage_participants: "Teilnehmende verwalten"
+      locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
+      locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"
+      edit_settings: "Einstellungen bearbeiten"
+      edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
+      delete: "Löschen"
+      delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
+      self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"
+      self_materialization_disabled_fresh: "Aktiviere zuerst Anmeldeverfahren überspringen um Selbsteinschreibung zu nutzen"
+      create_campaign_disabled: "Kann kein Anmeldeverfahren erstellen (Anmeldeverfahren überspringen ist aktiviert)"
+      skip_campaigns_enabled: "Überspringt Anmeldeverfahren (klicken um Anmeldeverfahren zu nutzen)"
+      skip_campaigns_disabled: "Nutzt Anmeldeverfahren (klicken um Anmeldeverfahren zu überspringen)"
+    hints:
+      superset_exists: "Ihre Veranstaltung beinhaltet bereits Tutorien oder Vorträge, wodurch Studierende automatisch eingeschrieben werden. Eine separate Anmeldungsgruppe ist meist nicht nötig."
+      talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
+      talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
+      cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
+      purpose_change_constrained_by_propagate: "Die verfügbaren Typen hängen davon ab, ob Studierende in die Teilnehmerliste übernommen werden. Diese Einstellung kann nicht geändert werden."
+      cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
+      cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+      cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
+    empty_state_help: "Noch keine Gruppen erstellt. Nutzen Sie den 'Hinzufügen'-Button für neue Gruppen."
+    empty_state_links_html: "Hilfe benötigt? Lesen Sie den %{workflow_link} oder informieren Sie sich über %{group_types_link}."
+    buttons:
+      full_editor: "vollständigen Editor"
+    errors:
+      lecture_not_found: 'Veranstaltung nicht gefunden.'
+      rosterable_not_found: 'Eintrag nicht gefunden.'
+      invalid_type: 'Ungültiger Gruppentyp.'
+      roster_not_empty: "kann nicht aktiviert werden, da bereits Studierende eingetragen sind. Bitte entfernen Sie diese zuerst."
+      campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
+      active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
+      capacity_exceeded: "Gruppenkapazität überschritten."
+      target_not_found: "Zielgruppe nicht gefunden."
+      target_locked: "Zielgruppe ist gesperrt."
+      user_not_found: "Studierende/r nicht gefunden."
+      user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
+      item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
+      cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
+      cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
+      lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
+      cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktivieren Sie zuerst die Selbsteinschreibung oder behalten Sie 'Anmeldeverfahren überspringen' aktiviert."
+    warnings:
+      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
+      confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
+      capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
+      confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
+      capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
+      propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'
+      setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
+    messages:
+      updated: "Einstellungen aktualisiert."
+      user_moved: "Studierende/r wurde nach %{target} verschoben."
+      user_added: "Studierende/r erfolgreich hinzugefügt."
+      user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
+      user_removed: "Studierende/r erfolgreich entfernt."

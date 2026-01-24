@@ -1,0 +1,23 @@
+<div id="<%= dom_id(item, :status) %>" class="d-flex gap-1 justify-content-end flex-shrink-0">
+  <% status_data = component.status_badge_data(item, campaign) %>
+  <span class="badge <%= status_data[:css_class] %>"
+        data-bs-toggle="tooltip"
+        title="<%= status_data[:tooltip] %>">
+    <i class="<%= status_data[:icon] %>"></i>
+    <%= "🛡️" if status_data[:has_policies] %>
+  </span>
+
+  <% if status_data[:self_enrollment] %>
+    <% self_enroll_data = component.self_enrollment_badge_data(item) %>
+    <span class="badge <%= self_enroll_data[:css_class] %>"
+          data-bs-toggle="tooltip"
+          title="<%= self_enroll_data[:tooltip] %>">
+      <i class="<%= self_enroll_data[:icon] %>"></i>
+      <%= self_enroll_data[:text] %>
+      <% if self_enroll_data[:has_warning] %>
+        <i class="bi bi-exclamation-triangle-fill ms-1 text-warning"></i>
+      <% end %>
+    </span>
+  <% end %>
+</div>
+
