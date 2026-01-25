@@ -15,7 +15,7 @@ with
 RUBY_DEBUG_ENABLE=$RUBY_DEBUG_ENABLE RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 ```
 ### /docker/development/compose.yml:
-Uncomment the following line to spwan 3 workers. Can be changed to a different number.
+Uncomment the following line to spawn 3 workers. Can be changed to a different number.
 
 ```yaml
 - WEB_CONCURRENCY=3
