@@ -4,7 +4,6 @@ FactoryBot.define do
     lecture { assessable.lecture }
     requires_points { false }
     requires_submission { false }
-    status { :draft }
 
     trait :with_points do
       requires_points { true }
@@ -14,18 +13,8 @@ FactoryBot.define do
       requires_submission { true }
     end
 
-    trait :open do
-      status { :open }
-      visible_from { 1.day.ago }
-    end
-
-    trait :closed do
-      status { :closed }
-      due_at { 1.day.ago }
-    end
-
-    trait :graded do
-      status { :graded }
+    trait :published do
+      results_published_at { 1.day.ago }
     end
 
     trait :with_tasks do

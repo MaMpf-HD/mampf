@@ -112,15 +112,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
     t.boolean "requires_points", default: false, null: false
     t.boolean "requires_submission", default: false, null: false
     t.decimal "total_points", precision: 10, scale: 2
-    t.integer "status", default: 0, null: false
-    t.datetime "visible_from"
-    t.datetime "due_at"
-    t.boolean "results_published", default: false, null: false
+    t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
-    t.index ["status"], name: "index_assessment_assessments_on_status"
   end
 
   create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
