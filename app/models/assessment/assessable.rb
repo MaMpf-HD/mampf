@@ -7,10 +7,9 @@ module Assessment
                            class_name: "Assessment::Assessment"
     end
 
-    def ensure_assessment!(title:, requires_points:, requires_submission: false,
+    def ensure_assessment!(requires_points:, requires_submission: false,
                            visible_from: nil, due_at: nil)
       a = assessment || build_assessment
-      a.title = title
       a.requires_points = requires_points
       a.requires_submission = requires_submission
       a.visible_from = visible_from if visible_from
