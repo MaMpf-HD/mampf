@@ -24,7 +24,7 @@ module Assessment
 
         return unless assessable.lecture_id != lecture_id
 
-        errors.add(:lecture_id, "must match assessable's lecture")
+        errors.add(:lecture_id, :must_match_assessable_lecture)
       end
   end
 end
