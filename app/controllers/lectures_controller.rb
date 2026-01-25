@@ -117,58 +117,9 @@ class LecturesController < ApplicationController
   def update
     return unless @lecture.valid_annotations_status?
 
-    editor_ids = lecture_params[:editor_ids]
-    unless editor_ids.nil?
-      # removes the empty String "" in the NEW array of editor ids
-      # and converts it into an array of integers
-      all_ids = editor_ids.map(&:to_i) - [0]
-      old_ids = @lecture.editor_ids
-      new_ids = all_ids - old_ids
-
-      # returns an array of Users that match the given ids
-      recipients = User.where(id: new_ids)
-
-      recipients.each do |r|
-        LectureNotifier.notify_new_editor_by_mail(r, @lecture)
-      end
-    end
-
-    @lecture.update(lecture_params)
-    @lecture.touch
-    @lecture.forum&.update(name: @lecture.forum_title)
-
-    @errors = @lecture.errors
-
-    if @lecture.valid?
-      respond_to do |format|
-        format.html do
-          if params[:subpage].present?
-            redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
-          else
-            redirect_to edit_lecture_path(@lecture)
-          end
-        end
-        format.turbo_stream do
-          if params[:subpage] == "assessments"
-            flash.now[:notice] = t("admin.lecture.updated")
-            streams = [
-              turbo_stream.replace(
-                "lecture-submission-settings",
-                partial: "assessment/assessments/submission_settings",
-                locals: { lecture: @lecture }
-              )
-            ]
-            streams << stream_flash if flash.present?
-            render turbo_stream: streams
-          end
-        end
-      end
-      return
-    end
-
-    respond_to do |format|
-      format.js { render template: "lectures/update/update" }
-    end
+    notify_new_editors
+    update_lecture_and_forum
+    handle_update_response
   end
 
   def publish
@@ -478,5 +429,66 @@ class LecturesController < ApplicationController
       return if @lecture.course.enough_questions?
 
       redirect_to :root, alert: I18n.t("controllers.no_test")
+    end
+
+    def notify_new_editors
+      editor_ids = lecture_params[:editor_ids]
+      return if editor_ids.nil?
+
+      all_ids = editor_ids.map(&:to_i) - [0]
+      new_ids = all_ids - @lecture.editor_ids
+      recipients = User.where(id: new_ids)
+      recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
+    end
+
+    def update_lecture_and_forum
+      @lecture.update(lecture_params)
+      @lecture.touch
+      @lecture.forum&.update(name: @lecture.forum_title)
+      @errors = @lecture.errors
+    end
+
+    def handle_update_response
+      if @lecture.valid?
+        handle_successful_update
+      else
+        handle_failed_update
+      end
+    end
+
+    def handle_successful_update
+      respond_to do |format|
+        format.html { redirect_to_edit_lecture }
+        format.turbo_stream { render_turbo_stream_update }
+      end
+    end
+
+    def redirect_to_edit_lecture
+      if params[:subpage].present?
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
+      else
+        redirect_to edit_lecture_path(@lecture)
+      end
+    end
+
+    def render_turbo_stream_update
+      return unless params[:subpage] == "assessments"
+
+      flash.now[:notice] = t("admin.lecture.updated")
+      streams = [
+        turbo_stream.replace(
+          "lecture-submission-settings",
+          partial: "assessment/assessments/submission_settings",
+          locals: { lecture: @lecture }
+        )
+      ]
+      streams << stream_flash if flash.present?
+      render turbo_stream: streams
+    end
+
+    def handle_failed_update
+      respond_to do |format|
+        format.js { render template: "lectures/update/update" }
+      end
     end
 end
