@@ -38,7 +38,7 @@ echo "----------------------------------------------------"
 echo "Running MaMpf (in RAILS_ENV: $RAILS_ENV)"
 echo "----------------------------------------------------"
 bundle exec sidekiq &
-bundle exec prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb &> /workspaces/mampf/log/prometheus_exporter.log & 
+bundle exec prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb &> /workspaces/mampf/log/prometheus_exporter.log &
 # bundle important to avoid conflicts with uri gem
 
 # https://shopify.github.io/ruby-lsp/vscode-extension.html#debugging-live-processes
