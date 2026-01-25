@@ -109,7 +109,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
     t.string "assessable_type", null: false
     t.bigint "assessable_id", null: false
     t.bigint "lecture_id", null: false
-    t.string "title", null: false
     t.boolean "requires_points", default: false, null: false
     t.boolean "requires_submission", default: false, null: false
     t.decimal "total_points", precision: 10, scale: 2
