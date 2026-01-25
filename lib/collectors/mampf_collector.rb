@@ -42,7 +42,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     # Consumptions count
     #
     # only counts when TRANSACTION BEGIN /*application='Mampf'*/ with INSERT INTO "consumptions"
-    # appears in th log, which is not always the case when you start a quiz,
+    # appears in the log, which is not always the case when you start a quiz,
     # e. g. if you have already a
     # quiz open.
     consumptions_count_gauge = PrometheusExporter::Metric::Gauge.new("consumption_count",
