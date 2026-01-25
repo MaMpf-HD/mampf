@@ -51,10 +51,7 @@ The main fields and methods of `Assessment` are:
 | `requires_points`         | DB column         | Boolean: whether this assessment tracks per-task points                  |
 | `requires_submission`     | DB column         | Boolean: whether students must upload files                              |
 | `total_points`            | DB column         | Optional maximum points (computed from tasks if blank)                   |
-| `status`                  | DB column (Enum)  | Workflow state: `draft` (0), `open` (1), `closed` (2), `graded` (3), `archived` (4) |
-| `visible_from`            | DB column         | Timestamp when assessment becomes visible to students                    |
-| `due_at`                  | DB column         | Deadline for submissions                                                 |
-| `results_published`       | DB column         | Boolean: whether students can see their points and grades                |
+| `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `participations`          | Association       | All student records for this assessment                                  |
 | `tasks`                   | Association       | Tasks (problems) for this assessment (only if `requires_points`)         |
 | `task_points`             | Association       | All task points through participations                                   |
@@ -87,13 +84,15 @@ module Assessment
     has_many :task_points, through: :participations,
       class_name: "Assessment::TaskPoint"
 
-  enum status: { draft: 0, open: 1, closed: 2, graded: 3, archived: 4 }
-
   validates :title, presence: true
   validate :tasks_only_when_requires_points
 
   def effective_total_points
     total_points.presence || tasks.sum(:max_points)
+  end
+
+  def results_published?
+    results_published_at.present?
   end
 
   def seed_participations_from!(user_ids:)
@@ -164,7 +163,8 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `user_id`        | DB column (FK)   | The student being graded                                       |
 | `tutorial_id`    | DB column (FK)   | Tutorial context at participation creation time (optional, null for exams/talks) |
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
-| `grade_value`    | DB column        | Final grade (e.g., "1.3", "Pass") - optional                   |
+| `grade_numeric`  | DB column (Decimal 2,1) | German grade (1.0-5.0) - for exam grades                    |
+| `grade_text`     | DB column (String) | Text-based grade ("pass", "fail", "exempt") - for achievements |
 | `status`         | DB column (Enum) | Workflow state: `not_started`, `in_progress`, `submitted`, `graded`, `exempt` |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
@@ -173,6 +173,23 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `published`      | DB column        | Boolean: whether results are visible to the student            |
 | `locked`         | DB column        | Boolean: prevents further edits after publication              |
 | `task_points`    | Association      | All task-level point records for this student in this assessment |
+
+```admonish info collapsible=true title="Grade Fields: Numeric vs Text"
+Two separate grade fields support different assessment types:
+
+**`grade_numeric` (Decimal):** For German exam grades (1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0)
+- Type-safe: Database constraint prevents invalid values like "1,3" or "2.5"
+- Fast input: Tutors can type "1.3" directly in grading forms
+- Analyzable: Can compute averages, distributions (`participations.average(:grade_numeric)`)
+- Display: Format as "1.3" (strip trailing zeros for integer grades: "4.0" → "4")
+
+**`grade_text` (String):** For pass/fail achievements and non-numeric assessments
+- Canonical values: "pass", "fail", "exempt" (lowercase, English)
+- I18n display: Translate on render (`t("assessment.grades.#{grade_text}")` → "Bestanden")
+- Flexible: Can store counts ("5"), percentages ("85"), or boolean results
+
+**Usage rule:** Exactly one of `grade_numeric` or `grade_text` should be present, never both.
+```
 
 ```admonish info collapsible=true title="Tutorial Context Details"
 The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when `seed_participations_from_roster!` runs during assessment setup). This field:
@@ -357,11 +374,28 @@ The points and feedback assigned to a specific student for a specific task withi
 | `grader_id`                   | DB column (FK)   | The tutor who assigned these points (optional)                 |
 | `submission_id`               | DB column (FK)   | Links to the graded submission for audit trail (optional)      |
 
+```admonish info collapsible=true title="Why submission_id? Team Grading and Audit Trail"
+The `submission_id` field enables critical workflows for team assignments:
+
+**Team Grading Fan-Out:**
+- One team submission → Tutor grades once → System creates TaskPoint records for **each team member**
+- All team members' TaskPoints link back to the **same submission_id**
+- Example: Alice, Bob, Carol submit together → 6 TaskPoint records (3 students × 2 tasks) all reference `submission_id: abc-123`
+
+**Audit Trail Benefits:**
+- **Grade complaints:** "Show me the submission that produced my grade" → `task_point.submission.manuscript_url`
+- **Re-grading:** "Re-grade this submission for all team members" → `submission.task_points.destroy_all`
+- **Team context:** "Did this student work alone or in a team?" → `task_point.submission.users.count`
+- **Turnaround time:** "How long did grading take?" → `task_point.created_at - task_point.submission.created_at`
+
+Without this field, linking grades back to the graded artifact requires complex joins through participation → user → user_submission_join → submission, which breaks if students switch teams.
+```
+
 ### Behavior Highlights
 
 - Enforces uniqueness per (participation, task) via database constraint
 - Triggers recomputation of `Assessment::Participation.points_total` on save
-- Visibility controlled by `assessment.results_published`, not per-task state
+- Visibility controlled by `assessment.results_published?` (checks results_published_at), not per-task state
 - Links back to the specific submission that was graded for audit trails
 - Validation ensures points do not exceed task maximum
 - Maintains update history via `updated_at` for complaint resolution tracking
@@ -402,7 +436,7 @@ Points are allowed to exceed task maximum to support extra credit and bonus poin
 
 - **Bonus points:** A tutor awards 12 points out of 10 for exceptional work on a problem. The system accepts this without validation errors, allowing the student's total to exceed the nominal maximum.
 
-- **Publishing results:** After completing all grading, the teacher sets `assessment.results_published = true`. Students can now see all their task points and comments at once.
+- **Publishing results:** After completing all grading, the teacher sets `assessment.results_published_at = Time.current`. Students can now see all their task points and comments at once by checking `assessment.results_published?`.
 
 - **Recomputation trigger:** After saving a TaskPoint with 8 points, the `after_commit` callback automatically calls `assessment_participation.recompute_points_total!`, updating the student's aggregate score across all tasks.
 
@@ -419,10 +453,10 @@ The grading interface remains available even after an assessment transitions to 
 
 When accessing grading for a `graded` or published assessment, the UI should display a warning:
 
-> **Results already published**  
+> **Results already published**
 > Changes will be visible to students immediately. Continue?
 
-This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
+This ensures teachers are aware that modifications affect published results. The `results_published_at` timestamp controls visibility (checked via `results_published?`), not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
 
 ````admonish info collapsible=true title="Per-Tutorial Result Publication (Implementation Details)"
 For assignments with multiple tutorials, results can be published independently per tutorial as grading completes. This eliminates coordination burden and provides faster feedback to students.

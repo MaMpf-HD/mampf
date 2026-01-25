@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -103,6 +103,73 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
     t.index ["explanation"], name: "index_answers_on_explanation_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["question_id"], name: "index_answers_on_question_id"
     t.index ["text"], name: "index_answers_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "assessment_assessments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "assessable_type", null: false
+    t.bigint "assessable_id", null: false
+    t.bigint "lecture_id", null: false
+    t.boolean "requires_points", default: false, null: false
+    t.boolean "requires_submission", default: false, null: false
+    t.decimal "total_points", precision: 10, scale: 2
+    t.datetime "results_published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
+    t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
+  end
+
+  create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "tutorial_id"
+    t.decimal "points_total", precision: 10, scale: 2
+    t.decimal "grade_numeric", precision: 2, scale: 1
+    t.string "grade_text"
+    t.integer "status", default: 0, null: false
+    t.datetime "submitted_at"
+    t.bigint "grader_id"
+    t.datetime "graded_at"
+    t.datetime "results_published_at"
+    t.boolean "published", default: false, null: false
+    t.boolean "locked", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
+    t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
+    t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
+    t.index ["status"], name: "index_assessment_participations_on_status"
+    t.index ["tutorial_id"], name: "index_assessment_participations_on_tutorial_id"
+    t.index ["user_id"], name: "index_assessment_participations_on_user_id"
+    t.check_constraint "grade_numeric IS NULL OR (grade_numeric = ANY (ARRAY[1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]))", name: "valid_german_grades"
+  end
+
+  create_table "assessment_task_points", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_participation_id", null: false
+    t.uuid "task_id", null: false
+    t.decimal "points", precision: 10, scale: 2
+    t.text "comment"
+    t.bigint "grader_id"
+    t.uuid "submission_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_participation_id", "task_id"], name: "index_task_points_on_participation_and_task", unique: true
+    t.index ["assessment_participation_id"], name: "index_task_points_on_participation"
+    t.index ["grader_id"], name: "index_assessment_task_points_on_grader_id"
+    t.index ["submission_id"], name: "index_assessment_task_points_on_submission_id"
+    t.index ["task_id"], name: "index_assessment_task_points_on_task_id"
+  end
+
+  create_table "assessment_tasks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.string "title", null: false
+    t.integer "position"
+    t.decimal "max_points", precision: 10, scale: 2, null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id", "position"], name: "index_assessment_tasks_on_assessment_id_and_position"
+    t.index ["assessment_id"], name: "index_assessment_tasks_on_assessment_id"
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -1272,6 +1339,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_10_000000) do
   add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
+  add_foreign_key "assessment_assessments", "lectures"
+  add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_participations", "tutorials"
+  add_foreign_key "assessment_participations", "users"
+  add_foreign_key "assessment_participations", "users", column: "grader_id"
+  add_foreign_key "assessment_task_points", "assessment_participations"
+  add_foreign_key "assessment_task_points", "assessment_tasks", column: "task_id"
+  add_foreign_key "assessment_task_points", "submissions"
+  add_foreign_key "assessment_task_points", "users", column: "grader_id"
+  add_foreign_key "assessment_tasks", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assignments", "lectures"
   add_foreign_key "claims", "redemptions"
   add_foreign_key "cohort_memberships", "cohorts"

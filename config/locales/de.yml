@@ -3945,6 +3945,10 @@ de:
           attributes:
             details:
               blank: 'Es muss ein Text angegeben werden.'
+        assessment/assessment:
+          attributes:
+            lecture_id:
+              must_match_assessable_lecture: "muss mit der Veranstaltung des Assessable übereinstimmen"
         assignment:
           attributes:
             title:

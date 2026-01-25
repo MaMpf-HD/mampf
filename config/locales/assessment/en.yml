@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    errors:
+      models:
+        assessment/task:
+          attributes:
+            base:
+              requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/task_point:
+          attributes:
+            base:
+              assessment_mismatch: "Task and participation must belong to the same assessment"
