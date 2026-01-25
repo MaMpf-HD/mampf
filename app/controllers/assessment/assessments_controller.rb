@@ -51,7 +51,7 @@ module Assessment
       authorize! :show, @assessment
 
       @tasks = @assessment.tasks.order(:position)
-      @participations_count = @assessment.participations.count
+      @participations_count = @assessment.assessment_participations.count
 
       respond_to do |format|
         format.html
