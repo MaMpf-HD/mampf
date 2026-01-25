@@ -179,7 +179,6 @@ class Assignment < ApplicationRecord
 
     def setup_assessment
       ensure_assessment!(
-        title: title,
         requires_points: true,
         requires_submission: true,
         due_at: deadline

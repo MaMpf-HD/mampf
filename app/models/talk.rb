@@ -174,7 +174,6 @@ class Talk < ApplicationRecord
 
     def setup_assessment
       ensure_assessment!(
-        title: title,
         requires_points: false,
         requires_submission: false
       )
