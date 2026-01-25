@@ -114,8 +114,9 @@ class AssignmentsController < ApplicationController
         format.js
         format.turbo_stream do
           if remaining_assignments.empty?
-            render turbo_stream: turbo_stream.update("assessment-assessments-wrapper",
-                                                     html: %(<div class="text-center text-muted py-4">#{I18n.t("assessment.no_assignments_yet")}</div>).html_safe)
+            render turbo_stream:
+            turbo_stream.update("assessment-assessments-wrapper",
+                                partial: "assessment/assessments/empty_assignments")
           else
             render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
           end
