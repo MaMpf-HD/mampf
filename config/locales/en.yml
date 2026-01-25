@@ -3743,6 +3743,10 @@ en:
           attributes:
             details:
               blank: 'You need to give a text.'
+        assessment/assessment:
+          attributes:
+            lecture_id:
+              must_match_assessable_lecture: "must match the assessable's lecture"
         assignment:
           attributes:
             title:

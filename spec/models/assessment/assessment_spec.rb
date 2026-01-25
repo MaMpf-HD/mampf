@@ -39,7 +39,9 @@ RSpec.describe(Assessment::Assessment, type: :model) do
                                     assessable: assignment,
                                     lecture: different_lecture)
       expect(assessment).not_to be_valid
-      expect(assessment.errors[:lecture_id]).to include("must match assessable's lecture")
+      expect(assessment.errors[:lecture_id]).to include(
+        I18n.t("activerecord.errors.models.assessment/assessment.attributes.lecture_id.must_match_assessable_lecture")
+      )
     end
 
     it "allows matching lecture" do
