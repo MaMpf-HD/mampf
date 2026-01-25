@@ -7,13 +7,10 @@ module Assessment
                            class_name: "Assessment::Assessment"
     end
 
-    def ensure_assessment!(requires_points:, requires_submission: false,
-                           visible_from: nil, due_at: nil)
+    def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment
       a.requires_points = requires_points
       a.requires_submission = requires_submission
-      a.visible_from = visible_from if visible_from
-      a.due_at = due_at if due_at
       a.lecture ||= try(:lecture)
       a.save! if a.changed?
       a

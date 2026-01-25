@@ -7,7 +7,7 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment).to be_valid
       expect(assessment.requires_points).to be(false)
       expect(assessment.requires_submission).to be(false)
-      expect(assessment.status).to eq("draft")
+      expect(assessment.results_published?).to be(false)
     end
 
     it "creates a valid assessment with points" do
@@ -16,11 +16,11 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment.requires_points).to be(true)
     end
 
-    it "creates a valid open assessment" do
-      assessment = FactoryBot.create(:assessment, :open)
+    it "creates a valid published assessment" do
+      assessment = FactoryBot.create(:assessment, :published)
       expect(assessment).to be_valid
-      expect(assessment.status).to eq("open")
-      expect(assessment.visible_from).to be_present
+      expect(assessment.results_published_at).to be_present
+      expect(assessment.results_published?).to be(true)
     end
 
     it "creates a valid assessment with tasks" do
@@ -39,9 +39,9 @@ RSpec.describe(Assessment::Assessment, type: :model) do
                                     assessable: assignment,
                                     lecture: different_lecture)
       expect(assessment).not_to be_valid
-      expect(assessment.errors[:lecture_id]).to include(
-        I18n.t("activerecord.errors.models.assessment/assessment.attributes.lecture_id.must_match_assessable_lecture")
-      )
+      error_key = "activerecord.errors.models.assessment/assessment" \
+                  ".attributes.lecture_id.must_match_assessable_lecture"
+      expect(assessment.errors[:lecture_id]).to include(I18n.t(error_key))
     end
 
     it "allows matching lecture" do
@@ -62,14 +62,17 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
-  describe "status enum" do
+  describe "publication" do
     let(:assessment) { FactoryBot.create(:assessment) }
 
-    it "supports all status values" do
-      [:draft, :open, :closed, :graded, :archived].each do |status|
-        assessment.status = status
-        expect(assessment).to be_valid
-      end
+    it "is not published by default" do
+      expect(assessment.results_published?).to be(false)
+      expect(assessment.results_published_at).to be_nil
+    end
+
+    it "is published when results_published_at is set" do
+      assessment.update(results_published_at: Time.current)
+      expect(assessment.results_published?).to be(true)
     end
   end
 end

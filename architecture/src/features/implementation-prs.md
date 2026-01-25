@@ -390,7 +390,7 @@ Grading — Step 8: Assignment Grading
   - **Results Overview:** Progress dashboard (points earned, graded count, certification status), assignment list with filters (All/Graded/Pending), collapsible older assignments section
   - **Results Detail:** Per-assignment view with task breakdown table, submitted files, tutor feedback, team info, overall progress sidebar
   - Published results only (students cannot see unpublished grades)
-- Authorization: Students see only their own participations; results hidden when `assessment.results_published == false`
+- Authorization: Students see only their own participations; results hidden when `assessment.results_published? == false`
 - Navigation: Links from assignment pages to results; download feedback PDFs
 - Refs: [Student results views](12-views.md#assessments-lectures---student)
 - Acceptance: Students can view published results; task points visible; feedback displayed; unpublished assessments hidden; certification status shown; feature flag gates access.
