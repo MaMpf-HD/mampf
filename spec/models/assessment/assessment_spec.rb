@@ -32,10 +32,31 @@ RSpec.describe(Assessment::Assessment, type: :model) do
   end
 
   describe "validations" do
-    it "requires a title" do
-      assessment = FactoryBot.build(:assessment, title: nil)
+    it "validates lecture matches assessable lecture" do
+      assignment = FactoryBot.create(:assignment, :with_lecture)
+      different_lecture = FactoryBot.create(:lecture)
+      assessment = FactoryBot.build(:assessment,
+                                    assessable: assignment,
+                                    lecture: different_lecture)
       expect(assessment).not_to be_valid
-      expect(assessment.errors[:title]).to be_present
+      expect(assessment.errors[:lecture_id]).to include("must match assessable's lecture")
+    end
+
+    it "allows matching lecture" do
+      assignment = FactoryBot.create(:assignment, :with_lecture)
+      assessment = FactoryBot.build(:assessment,
+                                    assessable: assignment,
+                                    lecture: assignment.lecture)
+      expect(assessment).to be_valid
+    end
+  end
+
+  describe "delegation" do
+    it "delegates title to assessable" do
+      assignment = FactoryBot.create(:assignment, :with_lecture, title: "Homework 5")
+      assessment = FactoryBot.create(:assessment, assessable: assignment,
+                                                  lecture: assignment.lecture)
+      expect(assessment.title).to eq("Homework 5")
     end
   end
 

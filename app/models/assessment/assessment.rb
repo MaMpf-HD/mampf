@@ -13,6 +13,18 @@ module Assessment
 
     enum :status, { draft: 0, open: 1, closed: 2, graded: 3, archived: 4 }
 
-    validates :title, presence: true
+    delegate :title, to: :assessable
+
+    validate :lecture_matches_assessable
+
+    private
+
+      def lecture_matches_assessable
+        return unless lecture_id.present? && assessable&.lecture_id.present?
+
+        return unless assessable.lecture_id != lecture_id
+
+        errors.add(:lecture_id, "must match assessable's lecture")
+      end
   end
 end

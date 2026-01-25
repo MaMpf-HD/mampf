@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :assessment, class: "Assessment::Assessment" do
     association :assessable, factory: [:assignment, :with_lecture]
     lecture { assessable.lecture }
-    title { "#{Faker::Educator.course_name} Assessment" }
     requires_points { false }
     requires_submission { false }
     status { :draft }
