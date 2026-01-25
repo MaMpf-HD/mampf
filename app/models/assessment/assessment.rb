@@ -11,9 +11,11 @@ module Assessment
     has_many :task_points, through: :assessment_participations,
                            class_name: "Assessment::TaskPoint"
 
-    enum :status, { draft: 0, open: 1, closed: 2, graded: 3, archived: 4 }
-
     delegate :title, to: :assessable
+
+    def results_published?
+      results_published_at.present?
+    end
 
     validate :lecture_matches_assessable
 
