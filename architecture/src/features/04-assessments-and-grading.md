@@ -29,6 +29,97 @@ We use a unified grading model with clear separation of concerns:
 
 ---
 
+## Tab Organization & Creation Contexts
+
+```admonish tip "Understanding the Separation"
+Assessable items (Assignments, Exams, Talks) are **created** in different tabs based on their primary purpose, but all are **graded** in a unified Assessments tab. This separates the creation context from the grading context.
+```
+
+### Where Things Are Created & Graded
+
+| Assessable Type | Created In        | Graded In         | Rationale                                                   |
+|-----------------|-------------------|-------------------|-------------------------------------------------------------|
+| **Assignment**  | Assessments Tab   | Assessments Tab   | Pure grading artifact; homework exists primarily to be graded |
+| **Exam**        | Assessments Tab   | Assessments Tab   | Pure grading artifact; exams exist primarily to assess knowledge |
+| **Talk**        | Roster/Groups Tab | Assessments Tab   | Seminar presentation created as part of roster setup; grading is secondary |
+| **Achievement** | TBD               | Assessments Tab   | Future: certificates/badges awarded based on performance |
+
+### Tab Purposes
+
+**Assessments Tab (Grading Hub):**
+- Primary interface for **all grading activities**
+- Lists assignments, exams, and talks together
+- Unified grading workflow for all types
+- Manage tasks/questions, enter grades, publish results
+- **Focus:** "What needs to be graded this week?"
+
+**Roster/Groups Tab (Seminar Organization):**
+- Create talks for seminars
+- Set up talk registration campaigns
+- Allocate students to presentation slots
+- Manage speaker rosters
+- **Focus:** "Who is presenting when?"
+
+**Registration Tab (Logistics Service):**
+- Configure registration campaigns **for existing exams**
+- Students register for exam slots
+- Allocate students to exam times/rooms
+- Finalize exam rosters
+- **Focus:** "Who is taking this exam and where?"
+
+### Workflow Examples
+
+**Creating an Assignment:**
+1. Teacher goes to **Assessments Tab**
+2. Clicks "New Assignment"
+3. System creates Assignment + Assessment (if flag enabled)
+4. Seeds participations from lecture tutorials
+5. Teacher adds tasks/problems
+6. Stays in Assessments Tab to grade
+
+**Creating an Exam:**
+1. Teacher goes to **Assessments Tab**
+2. Creates exam with date, duration, room capacity
+3. Adds exam questions as tasks
+4. (Later) Goes to **Registration Tab** to set up registration campaign
+5. Students register, allocations finalized, roster populated
+6. Returns to **Assessments Tab** to grade
+
+**Creating a Talk:**
+1. Teacher goes to **Roster/Groups Tab**
+2. Creates talk slot for seminar
+3. Sets up registration campaign for speakers
+4. Allocates students to presentation slots
+5. Talk appears automatically in **Assessments Tab** (if flag enabled)
+6. After presentation, goes to **Assessments Tab** to grade
+
+### Unified Assessments Index
+
+The Assessments Tab shows all gradeable items in one list, regardless of creation origin:
+
+```
+📊 Assessments for Linear Algebra WS2026
+
+┌─────────────────────────────────────────────────────┐
+│ Type       │ Title                │ Status          │
+├─────────────────────────────────────────────────────┤
+│ Assignment │ Homework 1           │ Graded ✓        │
+│ Assignment │ Homework 2           │ Grading... ⏳    │
+│ Exam       │ Midterm              │ Graded ✓        │
+│ Talk       │ Group Theory Talk    │ Pending grade   │
+│ Assignment │ Homework 3           │ Not started     │
+│ Exam       │ Final Exam           │ Registration ⏳  │
+└─────────────────────────────────────────────────────┘
+```
+
+```admonish success "Key Principle"
+**Creation context preserves domain meaning, grading context unifies workflow.**
+
+Teachers create items where they make semantic sense (homework vs presentations), but grade everything in one place for consistency and efficiency.
+```
+
+---
+
 ## Assessment::Assessment (ActiveRecord Model)
 **_The Gradebook Container_**
 
@@ -556,31 +647,142 @@ module Assessment
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
         class_name: "Assessment::Assessment"
-  end
+    end
 
-  def ensure_assessment!(title:, requires_points:, requires_submission: false,
-                        visible_from: nil, due_at: nil)
-    a = assessment || build_assessment
-    a.title = title
-    a.requires_points = requires_points
-    a.requires_submission = requires_submission
-    a.visible_from ||= visible_from if visible_from
-    a.due_at ||= due_at if due_at
-    a.lecture ||= try(:lecture)
-    a.save! if a.changed?
-    a
-  end
+    def ensure_assessment!(title:, requires_points:, requires_submission: false,
+                          visible_from: nil, due_at: nil)
+      a = assessment || build_assessment
+      a.title = title
+      a.requires_points = requires_points
+      a.requires_submission = requires_submission
+        a.visible_from = visible_from if visible_from
+        a.due_at = due_at if due_at
+      a.lecture ||= try(:lecture)
+      a.save! if a.changed?
+      a
+    end
 
-  # Override this method in including classes to define roster logic
-  # For Assignment: aggregate from lecture.tutorials
-  # For Exam: use exam registration roster
-  # For Talk: use speaker roster
+    # Override this method in including classes to define roster logic
+    # For Assignment: aggregate from lecture.tutorials
+    # For Exam: use exam registration roster
+    # For Talk: use speaker roster
+    def seed_participations_from_roster!
+      raise NotImplementedError,
+        "#{self.class.name} must implement seed_participations_from_roster!"
+    end
+  end
+end
+```
+
+### Concrete Implementations
+
+**Assignment (with optimized participation seeding):**
+
+```ruby
+# filepath: app/models/assignment.rb
+class Assignment < ApplicationRecord
+  include Assessment::Assessable
+
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+
   def seed_participations_from_roster!
-    raise NotImplementedError,
-      "#{self.class.name} must implement seed_participations_from_roster!"
+    return unless assessment
+
+    # Optimized: single query instead of N+1
+    memberships = TutorialMembership
+      .where(tutorial_id: lecture.tutorial_ids)
+      .pluck(:user_id, :tutorial_id)
+
+    tutorial_mapping = memberships.to_h
+    user_ids = memberships.map(&:first)
+
+    assessment.seed_participations_from!(user_ids: user_ids,
+                                         tutorial_mapping: tutorial_mapping)
+  end
+
+  private
+
+  def setup_assessment
+    ensure_assessment!(
+      title: title,
+      requires_points: true,
+      requires_submission: true,
+      visible_from: valid_from,
+      due_at: deadline
+    )
+    seed_participations_from_roster!
   end
 end
+```
+
+**Talk (speaker-only roster):**
+
+```ruby
+# filepath: app/models/talk.rb
+class Talk < ApplicationRecord
+  include Assessment::Assessable
+
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+
+  def seed_participations_from_roster!
+    return unless assessment
+
+    user_ids = speakers.pluck(:id)
+    assessment.seed_participations_from!(user_ids: user_ids,
+                                         tutorial_mapping: {})
+  end
+
+  private
+
+  def setup_assessment
+    ensure_assessment!(
+      title: title,
+      requires_points: false,
+      requires_submission: false,
+      visible_from: Time.current,
+      due_at: nil
+    )
+    seed_participations_from_roster!
+  end
 end
+```
+
+**Assessment bulk creation method:**
+
+```ruby
+# filepath: app/models/assessment/assessment.rb
+class Assessment::Assessment < ApplicationRecord
+  def seed_participations_from!(user_ids:, tutorial_mapping:)
+    existing = assessment_participations.pluck(:user_id).to_set
+    new_user_ids = user_ids.reject { |uid| existing.include?(uid) }
+
+    participations_data = new_user_ids.map do |user_id|
+      {
+        assessment_id: id,
+        user_id: user_id,
+        tutorial_id: tutorial_mapping[user_id],
+        status: 0,
+        points_total: 0.0,
+        created_at: Time.current,
+        updated_at: Time.current
+      }
+    end
+
+    Participation.insert_all(participations_data) if participations_data.any?
+  end
+end
+```
+
+### Performance Notes
+
+```admonish success "Optimized Participation Seeding"
+The Assignment implementation uses a single optimized query via `TutorialMembership.where().pluck()` instead of iterating tutorials. For a lecture with 20 tutorials and 600 students:
+
+- **Before:** 1 tutorial query + 20 roster queries + 2 assessment queries = 23 queries
+- **After:** 1 membership query + 1 check + 1 insert = 3 queries
+- **Improvement:** 90% query reduction
+
+This approach scales efficiently even for large lectures.
 ```
 
 ### Usage Scenarios
@@ -590,6 +792,112 @@ end
 - **Updating assessment metadata:** A teacher realizes the due date was wrong and calls `assignment.ensure_assessment!(title: "Homework 3", requires_points: true, due_at: 1.week.from_now)` again. The method is idempotent—it updates the existing Assessment::Assessment rather than creating a duplicate.
 
 - **For exams after registration:** An `Exam` becomes `Rosterable` after its registration campaign is completed and allocations are materialized. When calling `exam.seed_participations_from_roster!`, the concern reads from the exam's roster (the confirmed exam registrants) to seed participations. Only students who successfully registered for the exam will have participation records created.
+
+### Developer Guide: Adding New Assessable Types
+
+```admonish tip "Step-by-Step Integration"
+Follow this pattern when making a new model assessable (e.g., Achievement, Quiz):
+```
+
+**1. Include the Concern**
+
+```ruby
+class YourModel < ApplicationRecord
+  include Assessment::Assessable
+end
+```
+
+**2. Add Lifecycle Hook (Feature Flag Gated)**
+
+```ruby
+after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+```
+
+**3. Implement `seed_participations_from_roster!`**
+
+Define who should get participation records:
+
+```ruby
+def seed_participations_from_roster!
+  return unless assessment
+
+  # Define roster source (optimize for performance)
+  user_ids = # ... your roster logic ...
+  tutorial_mapping = # ... map user_id => tutorial_id (or {} if no tutorials) ...
+
+  assessment.seed_participations_from!(user_ids: user_ids,
+                                       tutorial_mapping: tutorial_mapping)
+end
+```
+
+**Performance Tips:**
+- Use `pluck` instead of loading full records
+- Avoid N+1 queries (use `where().pluck()` instead of iterating)
+- For large rosters (>100 users), prefer single queries with joins
+
+**4. Implement `setup_assessment` (Private)**
+
+```ruby
+private
+
+def setup_assessment
+  ensure_assessment!(
+    title: your_title,
+    requires_points: true_or_false,    # Does this need per-task grading?
+    requires_submission: true_or_false, # Do students upload files?
+    visible_from: your_start_date,
+    due_at: your_deadline              # nil if no deadline
+  )
+  seed_participations_from_roster!
+end
+```
+
+**5. Write Tests**
+
+Test both feature flag states:
+
+```ruby
+RSpec.describe YourModel, type: :model do
+  describe "assessment integration" do
+    context "when assessment_grading flag is enabled" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      it "creates assessment on model creation" do
+        model = FactoryBot.create(:your_model)
+        expect(model.assessment).to be_present
+      end
+
+      it "seeds participations from roster" do
+        model = FactoryBot.create(:your_model)
+        expect(model.assessment.assessment_participations.count).to eq(expected_count)
+      end
+    end
+
+    context "when assessment_grading flag is disabled" do
+      it "does not create assessment" do
+        model = FactoryBot.create(:your_model)
+        expect(model.assessment).to be_nil
+      end
+    end
+  end
+end
+```
+
+**6. Verify Idempotency**
+
+Ensure calling setup methods multiple times is safe:
+
+```ruby
+it "does not create duplicate participations on re-seed" do
+  model = FactoryBot.create(:your_model)
+  initial_count = model.assessment.assessment_participations.count
+
+  model.seed_participations_from_roster!
+
+  expect(model.assessment.assessment_participations.count).to eq(initial_count)
+end
+```
 
 ---
 

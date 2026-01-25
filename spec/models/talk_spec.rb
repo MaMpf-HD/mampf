@@ -54,7 +54,81 @@ RSpec.describe(Talk, type: :model) do
       expect(@talk).to be_valid
     end
     it "has a speaker" do
-      expect(@talk.speakers).not_to be_nil
+      expect(@talk.speakers.first).to be_kind_of(User)
+    end
+  end
+
+  describe "assessment integration" do
+    let(:seminar_lecture) { FactoryBot.create(:lecture, sort: "seminar") }
+    let(:talk) { FactoryBot.build(:talk, lecture: seminar_lecture, title: "Group Theory Talk") }
+    let(:speaker1) { FactoryBot.create(:confirmed_user) }
+    let(:speaker2) { FactoryBot.create(:confirmed_user) }
+
+    context "when assessment_grading flag is enabled" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      it "creates an assessment on talk creation" do
+        talk.save!
+
+        expect(talk.assessment).to be_present
+        expect(talk.assessment.title).to eq("Group Theory Talk")
+        expect(talk.assessment.requires_points).to be(false)
+        expect(talk.assessment.requires_submission).to be(false)
+        expect(talk.assessment.lecture).to eq(seminar_lecture)
+      end
+
+      it "seeds participations from talk roster (speakers)" do
+        talk.save!
+        FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker1)
+        FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker2)
+
+        talk.seed_participations_from_roster!
+
+        expect(talk.assessment.assessment_participations.count).to eq(2)
+
+        user_ids = talk.assessment.assessment_participations.pluck(:user_id)
+        expect(user_ids).to contain_exactly(speaker1.id, speaker2.id)
+      end
+
+      it "does not set tutorial_id on participations" do
+        talk.save!
+        FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker1)
+
+        talk.seed_participations_from_roster!
+
+        participation = talk.assessment.assessment_participations.find_by(user_id: speaker1.id)
+        expect(participation.tutorial_id).to be_nil
+      end
+
+      it "initializes participations with default values" do
+        talk.save!
+        FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker1)
+
+        talk.seed_participations_from_roster!
+
+        participation = talk.assessment.assessment_participations.first
+        expect(participation.status).to eq("not_started")
+        expect(participation.points_total).to eq(0.0)
+      end
+    end
+
+    context "when assessment_grading flag is disabled" do
+      before { Flipper.disable(:assessment_grading) }
+
+      it "does not create an assessment" do
+        talk.save!
+
+        expect(talk.assessment).to be_nil
+      end
+
+      it "works normally without assessment integration" do
+        talk.save!
+
+        expect(talk).to be_valid
+        expect(talk.title).to eq("Group Theory Talk")
+        expect(talk.lecture).to eq(seminar_lecture)
+      end
     end
   end
 
