@@ -46,14 +46,15 @@ class AssignmentsController < ApplicationController
 
     if @assignment.save
       @assignment.reload
+      all_assignments = @lecture.assignments.includes(:assessment).select(&:assessment)
       respond_to do |format|
         format.js
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update("assignment_form_container", ""),
-            turbo_stream.prepend("assessment-assessments-list",
-                                 partial: "assessment/assessments/assessment_list_item",
-                                 locals: { assessable: @assignment, lecture: @lecture })
+            turbo_stream.update("assessment-assessments-wrapper",
+                                partial: "assessment/assessments/assignments_table",
+                                locals: { assessables: all_assignments, lecture: @lecture })
           ]
         end
       end
@@ -103,12 +104,21 @@ class AssignmentsController < ApplicationController
 
   def destroy
     set_assignment_locale
+    @lecture = @assignment.lecture
+    remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
+                                    .includes(:assessment)
+                                    .select(&:assessment)
 
     if @assignment.destroy
       respond_to do |format|
         format.js
         format.turbo_stream do
-          render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
+          if remaining_assignments.empty?
+            render turbo_stream: turbo_stream.update("assessment-assessments-wrapper",
+                                                     html: %(<div class="text-center text-muted py-4">#{I18n.t("assessment.no_assignments_yet")}</div>).html_safe)
+          else
+            render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
+          end
         end
       end
     else

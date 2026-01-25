@@ -1,73 +1,91 @@
 <%= turbo_frame_tag "assessment-assessments-frame" do %>
   <% I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do %>
-    <h3 class="lecture-pane-header">
-      <%= @lecture.seminar? ? t('assessment.talks') : t('assessment.assignments') %>
-    </h3>
+    <% @assessables_by_type.each_with_index do |(type, assessables), index| %>
+      <% assessables_with_assessment = assessables.select(&:assessment) %>
 
-    <% if @lecture.seminar? %>
-      <div class="alert alert-info mb-3">
-        <i class="bi bi-info-circle me-2"></i>
-        <%= t('assessment.info.talks_created_in_roster') %>
-      </div>
-    <% else %>
-      <div class="row mb-3">
-        <div class="col-12 text-center">
-          <%= link_to t('admin.assignment.new'),
-                      new_assignment_path(params: { lecture_id: @lecture.id }),
-                      class: 'btn btn-sm btn-primary',
-                      id: 'newAssignmentButton',
-                      data: { turbo_stream: true } %>
+      <% if type == "Talk" %>
+        <h3 class="lecture-pane-header <%= 'mt-4' if index > 0 %>">
+          <%= t('assessment.talks') %>
+        </h3>
+
+        <div class="alert alert-info mb-3">
+          <i class="bi bi-info-circle me-2"></i>
+          <%= t('assessment.info.talks_created_in_roster') %>
         </div>
-      </div>
 
-      <div id="assignment_form_container"></div>
-    <% end %>
+        <table class="table table-hover mb-4">
+          <thead>
+            <tr>
+              <th><%= t('basics.title') %></th>
+              <th><%= t('assessment.speakers') %></th>
+              <th><%= t('assessment.date') %></th>
+            </tr>
+          </thead>
+          <tbody id="assessment-assessments-list">
+            <% if assessables_with_assessment.any? %>
+              <% assessables_with_assessment.each do |assessable| %>
+                <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: @lecture) %>
+              <% end %>
+            <% else %>
+              <%= render "assessment/assessments/empty_state",
+                         message: (@talks_without_speakers&.any? ? t('assessment.no_talks_with_speakers_yet') : t('assessment.no_talks_yet')),
+                         colspan: 3 %>
+            <% end %>
+          </tbody>
+        </table>
 
-    <% if @assessables_with_assessment.any? %>
-      <table class="table table-hover mb-4">
-        <thead>
-          <tr>
-            <th><%= t('admin.assignment.title') %></th>
-            <th><%= t('assessment.status.title') %></th>
-            <th><%= t('assessment.due_at') %></th>
-            <th><%= t('medium.singular') %></th>
-            <th><%= t('admin.assignment.filetype') %></th>
-            <th class="text-center"><%= t('assessment.tasks') %></th>
-            <th><%= t('admin.assignment.deletion') %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="assessment-assessments-list">
-          <% @assessables_with_assessment.each do |assessable| %>
-            <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: @lecture) %>
+      <% elsif type == "Assignment" %>
+        <h3 class="lecture-pane-header <%= 'mt-4' if index > 0 %>">
+          <%= t('assessment.assignments') %>
+        </h3>
+
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <%= link_to t('admin.assignment.new'),
+                        new_assignment_path(params: { lecture_id: @lecture.id }),
+                        class: 'btn btn-sm btn-primary',
+                        id: 'newAssignmentButton',
+                        data: { turbo_stream: true } %>
+          </div>
+        </div>
+
+        <div id="assignment_form_container"></div>
+
+        <div id="assessment-assessments-wrapper">
+          <% if assessables_with_assessment.any? %>
+            <table class="table table-hover mb-4">
+              <thead>
+                <tr>
+                  <th><%= t('admin.assignment.title') %></th>
+                  <th><%= t('medium.singular') %></th>
+                  <th><%= t('admin.assignment.filetype') %></th>
+                  <th class="text-center"><%= t('assessment.tasks') %></th>
+                  <th><%= t('admin.assignment.deletion') %></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="assessment-assessments-list">
+                <% assessables_with_assessment.each do |assessable| %>
+                  <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: @lecture) %>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div class="text-center text-muted py-4">
+              <%= t('assessment.no_assignments_yet') %>
+            </div>
           <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <table class="table table-hover mb-4">
-        <thead>
-          <tr>
-            <th><%= t('admin.assignment.title') %></th>
-            <th><%= t('assessment.status.title') %></th>
-            <th><%= t('assessment.due_at') %></th>
-            <th><%= t('medium.singular') %></th>
-            <th><%= t('admin.assignment.filetype') %></th>
-            <th class="text-center"><%= t('assessment.tasks') %></th>
-            <th><%= t('admin.assignment.deletion') %></th>
-          </tr>
-        </thead>
-        <tbody id="assessment-assessments-list">
-        </tbody>
-      </table>
+        </div>
+      <% end %>
     <% end %>
 
-    <% if @assessables_with_assessment.empty? && @legacy_assessables.empty? %>
+    <% if @assessables_by_type.empty? %>
       <div class="text-center text-muted py-4">
-        <%= @lecture.seminar? ? t('assessment.no_talks_yet') : t('assessment.no_assignments_yet') %>
+        <%= t('assessment.no_assessables_yet') %>
       </div>
     <% end %>
 
-    <% unless @lecture.seminar? %>
+    <% if @assessables_by_type["Assignment"]&.any? %>
       <div class="lecture-pane-separator"></div>
       <h5 class="mb-3">
         <%= t('assessment.submission_settings') %>

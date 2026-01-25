@@ -21,18 +21,6 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment_assessment_path(assessment.id)
   end
 
-  def visible_from
-    return nil unless assessment&.visible_from
-
-    I18n.l(assessment.visible_from, format: :short)
-  end
-
-  def due_at
-    return nil unless assessment&.due_at
-
-    I18n.l(assessment.due_at, format: :short)
-  end
-
   def medium_title
     return nil unless assessable.respond_to?(:medium) && assessable.medium
 
@@ -59,17 +47,28 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment&.assessment_participations&.count || 0
   end
 
+  def speaker_names
+    return nil unless assessable.is_a?(Talk) && assessable.speakers.any?
+
+    assessable.speakers.map(&:name).join(", ")
+  end
+
+  def talk_date
+    return nil unless assessable.is_a?(Talk) && assessable.dates.any?
+
+    I18n.l(assessable.dates.first, format: :long)
+  end
+
   def badge_class
     return "bg-secondary" if legacy
-    return "bg-success" if assessment&.open? || assessment&.closed?
+    return "bg-success" if assessment&.results_published?
 
     "bg-warning text-dark"
   end
 
   def badge_text
     return I18n.t("assessment.legacy") if legacy
-
-    return I18n.t("assessment.status.#{assessment.status}") if assessment
+    return I18n.t("assessment.results_published") if assessment&.results_published?
 
     I18n.t("assessment.draft")
   end

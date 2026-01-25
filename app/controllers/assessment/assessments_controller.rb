@@ -11,18 +11,27 @@ module Assessment
     def index
       authorize! :index, @lecture
 
-      @assessables = if @lecture.seminar?
-        @lecture.talks
-                .includes(:assessment, lecture: :term)
-                .order(:position)
-      else
-        @lecture.assignments
-                .includes(:assessment, lecture: :term)
-                .order(created_at: :desc)
-      end
+      all_talks = @lecture.talks
+                          .includes(:assessment, :speakers, lecture: :term)
+                          .order(:position)
+      talks_with_speakers = all_talks.select { |talk| talk.speakers.any? }
+      @talks_without_speakers = all_talks.reject { |talk| talk.speakers.any? }
 
-      @assessables_with_assessment = @assessables.select(&:assessment)
-      @legacy_assessables = @assessables.reject(&:assessment)
+      assignments = @lecture.assignments
+                            .includes(:assessment, medium: :tags, lecture: :term)
+                            .order(created_at: :desc)
+
+      @assessables_by_type = {}
+      @lecture.supported_assessable_types.each do |type|
+        @assessables_by_type[type] = []
+      end
+      @assessables_by_type["Talk"] = talks_with_speakers if @assessables_by_type.key?("Talk")
+      @assessables_by_type["Assignment"] = assignments if @assessables_by_type.key?("Assignment")
+
+      @assessables_with_assessment = @assessables_by_type.values.flatten
+                                                         .select(&:assessment)
+      @legacy_assessables = @assessables_by_type.values.flatten
+                                                .reject(&:assessment)
 
       respond_to do |format|
         format.html
@@ -31,8 +40,10 @@ module Assessment
             "assessment-assessments-card-body",
             partial: "assessment/assessments/card_body_index",
             locals: { lecture: @lecture,
+                      assessables_by_type: @assessables_by_type,
                       assessables_with_assessment: @assessables_with_assessment,
-                      legacy_assessables: @legacy_assessables }
+                      legacy_assessables: @legacy_assessables,
+                      talks_without_speakers: @talks_without_speakers }
           )
         end
       end

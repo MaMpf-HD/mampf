@@ -1,63 +1,69 @@
-<tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
-  <td>
-    <% unless legacy %>
-      <%= link_to title, show_path, class: "text-decoration-none" %>
-    <% else %>
-      <span class="text-muted"><%= title %></span>
-    <% end %>
-    <% if assessable.is_a?(Talk) %>
-      <div class="small text-muted">
-        <%= I18n.t('assessment.position') %> <%= assessable.position %>
-      </div>
-    <% end %>
-  </td>
-
-  <% unless legacy %>
-    <td><span class="badge <%= badge_class %>"><%= badge_text %></span></td>
-    <td><%= due_at %></td>
+<% if assessable.is_a?(Talk) %>
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
     <td>
-      <% if medium_title %>
-        <span class="text-truncate d-inline-block" style="max-width: 200px;" title="<%= medium_title %>">
-          <%= medium_title %>
-        </span>
+      <% unless legacy %>
+        <%= title %>
+      <% else %>
+        <span class="text-muted"><%= title %></span>
       <% end %>
     </td>
-    <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
-    <td class="text-center"><%= tasks_count %></td>
-    <td><%= deletion_date %></td>
+    <td><%= speaker_names %></td>
+    <td><%= talk_date %></td>
+  </tr>
+<% else %>
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
     <td>
-      <div class="d-flex gap-2 justify-content-end">
-        <%= link_to edit_assignment_path(assessable),
-            class: "btn btn-sm btn-outline-primary",
-            title: t('basics.edit'),
-            data: { turbo_stream: true } do %>
-          <i class="far fa-edit"></i>
-        <% end %>
-        <%= button_to assignment_path(assessable),
-            method: :delete,
-            class: "btn btn-sm btn-outline-danger",
-            title: t('basics.delete'),
-            data: { turbo_stream: true, turbo_confirm: t('basics.confirm_delete') } do %>
-          <i class="fas fa-trash-alt"></i>
-        <% end %>
-      </div>
+      <% unless legacy %>
+        <%= link_to title, show_path, class: "text-decoration-none" %>
+      <% else %>
+        <span class="text-muted"><%= title %></span>
+      <% end %>
     </td>
-  <% else %>
-    <td colspan="6" class="text-muted">
-      <%= I18n.t('assessment.legacy_description') %>
-      <% if edit_path.present? || delete_path.present? %>
-        <div class="float-end d-flex gap-2">
-          <% if edit_path.present? %>
-            <%= link_to t("basics.edit"), edit_path, class: "btn btn-sm btn-outline-primary", remote: true %>
+    <% unless legacy %>
+      <td>
+        <% if medium_title %>
+          <span class="text-truncate d-inline-block" style="max-width: 200px;" title="<%= medium_title %>">
+            <%= medium_title %>
+          </span>
+        <% end %>
+      </td>
+      <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
+      <td class="text-center"><%= tasks_count %></td>
+      <td><%= deletion_date %></td>
+      <td>
+        <div class="d-flex gap-2 justify-content-end">
+          <%= link_to edit_assignment_path(assessable),
+              class: "btn btn-sm btn-outline-primary",
+              title: t('basics.edit'),
+              data: { turbo_stream: true } do %>
+            <i class="far fa-edit"></i>
           <% end %>
-          <% if delete_path.present? %>
-            <%= button_to t("basics.delete"), delete_path, method: :delete,
-                data: { confirm: t("basics.confirm_delete") },
-                class: "btn btn-sm btn-outline-danger",
-                remote: true %>
+          <%= button_to assignment_path(assessable),
+              method: :delete,
+              class: "btn btn-sm btn-outline-danger",
+              title: t('basics.delete'),
+              data: { turbo_stream: true, turbo_confirm: t('basics.confirm_delete') } do %>
+            <i class="fas fa-trash-alt"></i>
           <% end %>
         </div>
-      <% end %>
-    </td>
-  <% end %>
-</tr>
+      </td>
+    <% else %>
+      <td colspan="5" class="text-muted">
+        <%= I18n.t('assessment.legacy_description') %>
+        <% if edit_path.present? || delete_path.present? %>
+          <div class="float-end d-flex gap-2">
+            <% if edit_path.present? %>
+              <%= link_to t("basics.edit"), edit_path, class: "btn btn-sm btn-outline-primary", remote: true %>
+            <% end %>
+            <% if delete_path.present? %>
+              <%= button_to t("basics.delete"), delete_path, method: :delete,
+                  data: { confirm: t("basics.confirm_delete") },
+                  class: "btn btn-sm btn-outline-danger",
+                  remote: true %>
+            <% end %>
+          </div>
+        <% end %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>

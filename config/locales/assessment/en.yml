@@ -8,10 +8,14 @@ en:
     tasks: 'Tasks'
     participants: 'Participants'
     position: 'Position'
+    speakers: 'Speakers'
+    date: 'Date'
+    edit_grades: 'Edit grades'
     visible_from: 'Visible from'
     due_at: 'Due'
     legacy: 'Legacy'
     draft: 'Draft'
+    results_published: 'Results published'
     status:
       title: 'Status'
       draft: 'Draft'
@@ -24,13 +28,15 @@ en:
     legacy_description: 'Created before assessment system'
     no_assignments_yet: 'No assignments created yet.'
     no_talks_yet: 'No talks created yet.'
+    no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
+    no_assessables_yet: 'No assessments created yet.'
     submission_settings: 'Submission Settings'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
       no_assessment: 'Assessment not found for this item.'
     info:
-      talks_created_in_roster: 'Talks are created in the Roster tab for seminars.'
+      talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
 
   activerecord:
     errors:

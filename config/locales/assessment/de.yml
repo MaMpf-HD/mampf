@@ -8,10 +8,14 @@ de:
     tasks: 'Aufgaben'
     participants: 'Teilnehmer'
     position: 'Position'
+    speakers: 'Sprecher'
+    date: 'Datum'
+    edit_grades: 'Noten bearbeiten'
     visible_from: 'Sichtbar ab'
     due_at: 'Fällig'
     legacy: 'Legacy'
     draft: 'Entwurf'
+    results_published: 'Ergebnisse veröffentlicht'
     status:
       title: 'Status'
       draft: 'Entwurf'
@@ -24,13 +28,15 @@ de:
     legacy_description: 'Erstellt vor dem Bewertungssystem'
     no_assignments_yet: 'Noch keine Hausaufgaben erstellt.'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
+    no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
+    no_assessables_yet: 'Noch keine Bewertungen erstellt.'
     submission_settings: 'Abgabe-Einstellungen'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
       no_assessment: 'Bewertung für dieses Element nicht gefunden.'
     info:
-      talks_created_in_roster: 'Vorträge werden im Roster-Tab für Seminare erstellt.'
+      talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
 
   activerecord:
     errors:

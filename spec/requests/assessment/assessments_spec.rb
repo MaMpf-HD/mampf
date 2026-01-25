@@ -44,7 +44,8 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           let(:seminar) { create(:seminar, teacher: teacher, editors: [editor]) }
 
           it "displays talks instead of assignments" do
-            create(:talk, lecture: seminar, title: "Test Talk")
+            talk = create(:talk, lecture: seminar, title: "Test Talk")
+            create(:speaker_talk_join, talk: talk)
             get assessment_assessments_path(lecture_id: seminar.id)
             expect(response.body).to include("Test Talk")
           end
