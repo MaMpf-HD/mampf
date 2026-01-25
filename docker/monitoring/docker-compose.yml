@@ -24,4 +24,3 @@ services:
     environment:
       - GF_SERVER_HTTP_PORT=2345
     restart: unless-stopped
-    
