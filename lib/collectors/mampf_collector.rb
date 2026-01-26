@@ -112,6 +112,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
             next unless parts.length >= 4
 
             current_pid = parts[0].to_i
+            # 'tee' processes are not connected to Puma workers and exclusively exist to pass on metrics
             next if parts[3] == "tee"
 
             cpu = parts[1].to_f
