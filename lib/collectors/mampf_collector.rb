@@ -91,39 +91,37 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
 
       return stats unless File.exist?(pid_file)
 
-      begin
-        pid_content = File.read(pid_file).strip
-        return stats if pid_content.empty?
+      pid_content = File.read(pid_file).strip
+      return stats if pid_content.empty?
 
-        master_pid = pid_content.to_i
+      master_pid = pid_content.to_i
 
-        # Find all CHILD processes (Worker) of the Master
-        worker_pids_str = `pgrep -P #{master_pid} -d,`.strip
+      # Find all CHILD processes (Worker) of the Master
+      worker_pids_str = `pgrep -P #{master_pid} -d,`.strip
 
-        # Build string of all PIDs (Master + Children) for the ps command
-        all_pids = worker_pids_str.empty? ? master_pid.to_s : "#{master_pid},#{worker_pids_str}"
+      # Build string of all PIDs (Master + Children) for the ps command
+      all_pids = worker_pids_str.empty? ? master_pid.to_s : "#{master_pid},#{worker_pids_str}"
 
-        # ps command: Returns PID, CPU, RAM (RSS) and COMMAND
-        output = `ps -p #{all_pids} -o pid=,%cpu=,rss=,comm=`.strip
+      # ps command: Returns PID, CPU, RAM (RSS) and COMMAND
+      output = `ps -p #{all_pids} -o pid=,%cpu=,rss=,comm=`.strip
 
-        unless output.empty?
-          output.each_line do |line|
-            parts = line.split
-            next unless parts.length >= 4
+      unless output.empty?
+        output.each_line do |line|
+          parts = line.split
+          next unless parts.length >= 4
 
-            current_pid = parts[0].to_i
-            # 'tee' processes are not connected to Puma workers
-            #  and exclusively exist to pass on metrics
-            next if parts[3] == "tee"
+          current_pid = parts[0].to_i
+          # 'tee' processes are not connected to Puma workers
+          #  and exclusively exist to pass on metrics
+          next if parts[3] == "tee"
 
-            cpu = parts[1].to_f
-            ram_mb = parts[2].to_f / 1024.0
+          cpu = parts[1].to_f
+          ram_mb = parts[2].to_f / 1024.0
 
-            # Distinction: Is it the Master or a Worker?
-            role = current_pid == master_pid ? "master" : "worker"
+          # Distinction: Is it the Master or a Worker?
+          role = current_pid == master_pid ? "master" : "worker"
 
-            stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb }
-          end
+          stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb }
         end
       end
 
