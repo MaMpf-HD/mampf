@@ -28,7 +28,7 @@ services:
       - NODE_ENV=development
       - MAMPF_PORT=3000
       # Uncomment to test clustered mode locally: Make matching changes in puma.rb and run.sh
-      # - WEB_CONCURRENCY=3   
+      # - WEB_CONCURRENCY=3
     ports:
       - 3036:3036 # Vite server
       - 9394:9394 # Prometheus server
