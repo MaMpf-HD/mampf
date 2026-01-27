@@ -42,7 +42,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
 
-      // Teachers cannot change the teacher (only admins can)
       const teacherSelect = page.getByTestId("teacher-select");
       await expect(teacherSelect.getByTestId("teacher-admin-select")).not.toBeVisible();
       await expect(teacherSelect.getByTestId("teacher-info")).toBeVisible();
@@ -54,7 +53,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 
         await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
 
-        // Search for users - should NOT find arbitrary users (non-admin restriction)
         await searchForUserInTomSelect(page, "editor-select", student.user, false);
         await expectUsersInDropdown(page, "editor-select", student.user, false);
       });
@@ -66,7 +64,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
         await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
         await page.getByTestId("new-tutorial-btn").click();
 
-        // Search for users - should NOT find arbitrary users (non-admin restriction)
         await searchForUserInTomSelect(page, "tutor-select-div", student.user, false);
         await expectUsersInDropdown(page, "tutor-select-div", student.user, false);
       });
@@ -79,7 +76,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 
         await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
 
-        // Admins can search and find any user
         await searchForUserInTomSelect(page, "teacher-select", teacher.user);
         await expectUsersInDropdown(page, "teacher-select", teacher.user, true);
       });
@@ -90,7 +86,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 
         await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
 
-        // Admins can search and find any user
         await searchForUserInTomSelect(page, "editor-select", student.user);
         await expectUsersInDropdown(page, "editor-select", student.user, true);
       });
@@ -102,7 +97,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
         await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
         await page.getByTestId("new-tutorial-btn").click();
 
-        // Admins can search and find any user
         await searchForUserInTomSelect(page, "tutor-select-div", student.user);
         await expectUsersInDropdown(page, "tutor-select-div", student.user, true);
       });
@@ -124,7 +118,6 @@ test.describe("Seminar speakers (new talk)", () => {
         await page.goto(`/lectures/${seminar.id}/edit`);
         await openTalkForm(page);
 
-        // Search for users - should NOT find arbitrary users (non-admin restriction)
         await searchForUserInTomSelect(page, "speaker-select-div", student.user, false);
         await expectUsersInDropdown(page, "speaker-select-div", student.user, false);
       });
@@ -138,7 +131,6 @@ test.describe("Seminar speakers (new talk)", () => {
         await page.goto(`/lectures/${seminar.id}/edit`);
         await openTalkForm(page);
 
-        // Admins can search and find any user
         await searchForUserInTomSelect(page, "speaker-select-div", student.user);
         await expectUsersInDropdown(page, "speaker-select-div", student.user, true);
       });
@@ -155,7 +147,6 @@ test.describe("Seminar speakers (existing talk)", () => {
 
         await page.goto(`/talks/${talk.id}/edit`);
 
-        // Search for users - should NOT find arbitrary users (non-admin restriction)
         await searchForUserInTomSelect(page, "speaker-select-div", student2.user, false);
         await expectUsersInDropdown(page, "speaker-select-div", student2.user, false);
       });
@@ -170,7 +161,6 @@ test.describe("Seminar speakers (existing talk)", () => {
 
         await page.goto(`/talks/${talk.id}/edit`);
 
-        // Admins can search and find any user
         await searchForUserInTomSelect(page, "speaker-select-div", student2.user);
         await expectUsersInDropdown(page, "speaker-select-div", student2.user, true);
       });
