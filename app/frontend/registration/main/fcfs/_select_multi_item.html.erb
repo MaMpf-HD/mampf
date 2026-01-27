@@ -1,7 +1,4 @@
 <div data-test="multi-item-fcfs">
-  <div class="h5 mb-3">
-    <%= t("basics.select_type", type: campaign.registerable_type) %>
-  </div>
 
   <div data-controller="registration-item-search">
     <div class="row m-2 align-items-center">
@@ -35,12 +32,9 @@
       <table class="table table-sm align-middle mb-2" id="itemsTable">
         <thead class="bg-grey-lighten-5 text-dark small">
           <tr>
-            <!-- attribute data columns -->
-            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-              <th class="fw-semibold <%= col[:cell_class] %>"><%= col[:header] %></th>
-            <% end %>
-
-            <!-- seats + status + action columns -->
+            <th class="fw-semibold"><%= t("registration.item.columns.type") %></th>
+            <th class="fw-semibold"><%= t("registration.item.columns.title") %></th>
+            <th class="fw-semibold">Attribute</th>
             <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
             <th class="fw-semibold text-center"><%= t("basics.status") %></th>
             <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
@@ -50,12 +44,23 @@
         <tbody>
           <% items.each do |item| %>
             <tr data-registration-item-search-target="row">
-              <!-- attribute data columns -->
-              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                <td class="<%= col[:cell_class] %>"><%= col[:field].call(item) %></td>
-              <% end %>
+              <td class="small fw-semibold text-dark">
+                <%= item_display_type(item) %>
+              </td>
+              <td class="small fw-semibold text-dark">
+                <%= item.registerable.title %>
+              </td>
 
-              <!-- seats column -->
+              <!-- attribute data column -->
+              <td class="small fw-semibold text-dark">
+                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].drop(1).each do |col| %> 
+                  <div class="d-flex justify-content-between">
+                    <span class="fw-semibold"><%= col[:header] %>:</span>
+                    <span><%= col[:field].call(item) %></span>
+                  </div>
+                <% end %>
+              </td>
+
               <td class="text-center small fw-semibold text-dark">
                 <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
               </td>

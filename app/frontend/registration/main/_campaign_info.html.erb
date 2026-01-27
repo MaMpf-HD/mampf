@@ -11,7 +11,7 @@
              <%= status_campaign_style(campaign.status) %>">
         <%= campaign.status&.humanize %>
       </span>
-      <% if campaign.planning_only %>
+      <% if campaign.only_planning_cohort? %>
         <span class="d-inline-flex align-items-center
              px-3 py-1 rounded-pill
              small fw-semibold

@@ -60,28 +60,15 @@ FactoryBot.define do
       end
     end
 
-    trait :planning_only do
-      planning_only { true }
-    end
-
     trait :with_items do
       transient do
-        self_registerable { false }
         capacity { nil }
         for_cohorts { false }
       end
       after(:create) do |campaign, evaluator|
         lecture = campaign.campaignable
 
-        self_registerable = evaluator.self_registerable
-
-        if self_registerable
-          create(:registration_item,
-                 registration_campaign: campaign,
-                 registerable_type: "Lecture",
-                 registerable: lecture)
-
-        elsif evaluator.for_cohorts
+        if evaluator.for_cohorts
           cohorts = create_list(:cohort, 3, context: lecture)
           cohorts.each do |cohort|
             create(:registration_item,
@@ -89,7 +76,6 @@ FactoryBot.define do
                    registerable_type: "Cohort",
                    registerable: cohort)
           end
-
         elsif lecture.seminar?
           talks = create_list(:talk, 3, lecture: lecture)
           talks.each do |talk|

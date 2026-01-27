@@ -1,5 +1,5 @@
 <div class="card-body border-top-0">
-  <% if single_mode?(campaign.registerable_type)%>
+  <% if campaign.registration_items.size == 1%>
   <%= render partial: 'registration/main/fcfs/select_single_item',
               locals: {campaign: campaign,
                       campaignable_host: campaignable_host,

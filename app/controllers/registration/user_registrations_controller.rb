@@ -2,7 +2,7 @@ module Registration
   class UserRegistrationsController < ApplicationController
     before_action :set_locale
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
-    helper UserRegistrationsHelper
+    helper UserRegistrationsHelper, ItemsHelper
     before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
                                         :update, :destroy_for_user]
     before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]

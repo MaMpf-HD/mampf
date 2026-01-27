@@ -25,7 +25,7 @@
     </div>
   <% end %>
 
-  <% is_single_mode = single_mode?(@campaign.registerable_type)%>
+  <% is_single_mode = @campaign.registration_items.size == 1 %>
 
   <% if is_single_mode %>
 

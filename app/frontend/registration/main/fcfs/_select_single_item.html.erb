@@ -1,5 +1,17 @@
 <div data-test="single-item-fcfs">
-  <div class="h5 mb-3"><%= t('registration.title') %></div>
+  <div class="h5 mb-3">
+    <span><%= item_display_type(item) %></span> : 
+    <span><%= item.registerable.title %></span>
+  </div>
+
+  <div>
+    <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].drop(1).each do |col| %> 
+      <div class="d-flex justify-content-between">
+        <span class="fw-semibold"><%= col[:header] %>:</span>
+        <span><%= col[:field].call(item) %></span>
+      </div>
+    <% end %>
+  </div>
 
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div class="small text-muted">

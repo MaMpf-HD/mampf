@@ -83,6 +83,13 @@ module Registration
       campaignable_type == "Exam"
     end
 
+    def only_planning_cohort?
+      registration_items.exists? &&
+        registration_items.size == 1 &&
+        registration_items.first.registerable_type == "Cohort" &&
+        registration_items.first.registerable.purpose == :planning
+    end
+
     def user_registrations_confirmed(user)
       user_registrations.where(user_id: user.id, status: :confirmed)
     end
@@ -91,9 +98,9 @@ module Registration
       user_registrations.where(user_id: user.id).maximum(:updated_at)
     end
 
-    def registerable_type
-      registration_items.first&.registerable_type
-    end
+    # def registerable_type
+    #   registration_items.first&.registerable_type
+    # end
 
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
