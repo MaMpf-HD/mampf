@@ -1,17 +1,17 @@
 <div>
+  <% if item_preferences.present? && item_preferences.any? %>
+  
   <% item_preferences.each do |pref| %>
     <div class="row m-2">
       <% item=pref.item %>
         <div class="col-9">
           <div class="fw-semibold text-primary mb-1" style="font-size: 1.05rem;">
-            <span class="fw-medium">
-              <%= item.registerable_type %>:
-            </span>
+            <span class="fw-medium"><%= item_display_type(item) %>:</span>
             <span class="text-primary"><%= item.title %></span>
           </div>
 
           <div class="row mb-2">
-            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].drop(1).each do |col| %>
+            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
               <div class="col-6 d-flex gap-1">
                 <span class="fw-medium small"><%= col[:header] %>:</span>
                 <span class="fw-normal"><%= col[:field].call(item) %></span>
@@ -70,5 +70,9 @@
         </div>
     </div>
     <hr class="ms-4 me-4">
+  <% end %>
+
+  <% else %>
+    <%= render partial: 'shared/no_selection' %>
   <% end %>
 </div>

@@ -44,19 +44,19 @@
         <tbody>
           <% items.each do |item| %>
             <tr data-registration-item-search-target="row">
-              <td class="small fw-semibold text-dark">
+              <td class="small text-dark">
                 <%= item_display_type(item) %>
               </td>
-              <td class="small fw-semibold text-dark">
+              <td class="small text-dark">
                 <%= item.registerable.title %>
               </td>
 
               <!-- attribute data column -->
-              <td class="small fw-semibold text-dark">
-                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].drop(1).each do |col| %> 
-                  <div class="d-flex justify-content-between">
-                    <span class="fw-semibold"><%= col[:header] %>:</span>
-                    <span><%= col[:field].call(item) %></span>
+              <td class="small text-dark">
+                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                  <div class="d-flex gap-1">
+                    <span class="fw-medium small"><%= col[:header] %>:</span>
+                    <span class="fw-normal small"><%= col[:field].call(item) %></span>
                   </div>
                 <% end %>
               </td>

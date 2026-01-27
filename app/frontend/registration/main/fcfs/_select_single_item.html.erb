@@ -4,19 +4,17 @@
     <span><%= item.registerable.title %></span>
   </div>
 
-  <div>
-    <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].drop(1).each do |col| %> 
-      <div class="d-flex justify-content-between">
-        <span class="fw-semibold"><%= col[:header] %>:</span>
-        <span><%= col[:field].call(item) %></span>
-      </div>
-    <% end %>
-  </div>
+  <div class="d-flex justify-content-between mb-2">
+    <div>
+      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %> 
+        <span class="fw-medium small"><%= col[:header] %>:</span>
+        <span class="fw-normal small"><%= col[:field].call(item) %></span>
+      <% end %>
 
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <div class="small text-muted">
-      <%= t('registration.seats_remaining') %>:
-      <span id="seatsRemaining"><%= nullable_capacity_display(item.capacity_remained) %></span>
+      <div class="small text-muted mb-1">
+        <%= t('registration.seats_remaining') %>:
+        <span><%= nullable_capacity_display(item.capacity_remained) %></span>
+      </div>
     </div>
 
     <% last_updated = campaign.user_registrations_last_updated(current_user) %>

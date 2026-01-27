@@ -3692,7 +3692,7 @@ de:
     closes: "Schließt"
     passed: "Bestanden"
     failed: "Nicht bestanden"
-    select_type: "Wählen Sie ein(e) %{type}"
+    select_type: "Wählen Sie Präferenzen"
     saved_at: "Gespeichert %{time}"
     available: "Verfügbar"
     full: "Ausgebucht"

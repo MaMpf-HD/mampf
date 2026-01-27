@@ -84,47 +84,35 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-
             <div class="h6"><%= t("registration.submitted_pref") %></div>
-
             <ol class="small mb-0">
               <% items_selected.each do |item| %>
                 <li class="mb-2">
-
                   <div class="row">
-
-                    <!-- Preference details -->
                     <div class="col-9 row">
-
-                      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].drop(1).each do |col| %>
-                        <div class="col-4 d-flex gap-1">
-                          <span class="fw-medium"><%= col[:header] %>:</span>
-                          <span class="fw-normal"><%= col[:field].call(item) %></span>
-                        </div>
-                      <% end %>
-
+                      <div class="col-4 d-flex gap-1">
+                        <span class="fw-medium"><%= t("registration.item.columns.type") %>:</span>
+                        <span class="fw-normal"><%= item_display_type(item) %></span>
+                      </div>
+                      <div class="col-4 d-flex gap-1">
+                        <span class="fw-medium"><%= t("registration.item.columns.title") %>:</span>
+                        <span class="fw-normal"><%= item.title %></span>
+                      </div>
                       <div class="col-4 d-flex gap-1">
                         <span class="fw-medium"><%= t("basics.seats") %>:</span>
                         <span class="fw-normal"><%= nullable_capacity_display(item.capacity) %></span>
                       </div>
-
                     </div>
-
-                    <!-- Status badge -->
                     <div class="col-3 d-flex justify-content-end align-items-center">
                       <%= confirm_status_badge(status_items_selected[item.id]) %>
                     </div>
-
                   </div>
-
                 </li>
               <% end %>
             </ol>
-
           </div>
         </div>
       </div>
-
     </div>
 
   <% else %>
@@ -133,29 +121,37 @@
     <div class="col-12 col-lg-8">
       <div class="card">
         <div class="card-body">
-
           <div class="alert alert-danger py-1 px-2">
             <%= t("registration.messages.cannot_secure_slot") %>
           </div>
-
           <div class="h6"><%= t("registration.status_for_registration") %></div>
-
+          
           <table class="table align-middle mb-2">
             <thead>
               <tr>
-                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                  <th class="fw-semibold <%= col[:cell_class] %>"><%= col[:header] %></th>
-                <% end %>
+                <th class="fw-semibold"><%= t("registration.item.columns.type") %></th>
+                <th class="fw-semibold"><%= t("registration.item.columns.title") %></th>
+                <th class="fw-semibold">Attribute</th>
                 <th class="fw-semibold text-end"><%= t("basics.status") %></th>
               </tr>
             </thead>
-
             <tbody>
               <% items_selected.each do |item| %>
                 <tr>
-                  <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-                    <td class="<%= col[:cell_class] %>"><%= col[:field].call(item) %></td>
-                  <% end %>
+                  <td class="small text-dark">
+                    <%= item_display_type(item) %>
+                  </td>
+                  <td class="small text-dark">
+                    <%= item.registerable.title %>
+                  </td>
+                  <td class="small text-dark">
+                    <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                      <div class="d-flex gap-1">
+                        <span class="fw-medium small"><%= col[:header] %>:</span>
+                        <span class="fw-normal small"><%= col[:field].call(item) %></span>
+                      </div>
+                    <% end %>
+                  </td>
                   <td class="text-end">
                     <%= confirm_status_badge(status_items_selected[item.id]) %>
                   </td>

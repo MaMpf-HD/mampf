@@ -60,23 +60,13 @@ module Registration
       ["lecture"].include?(regist_type)
     end
 
-    # TODO: in the future
-    # when tutorial field change (eg: tutorial.title), also adjust this
     TABLE_CONFIG = {
       "Tutorial" => [
-        { header: I18n.t("registration.item.types.tutorial"),
-          cell_class: "text-start fw-medium",
-          field: ->(item) { item.registerable.title } },
-        # { header: I18n.t("basics.time"),
-        #   field: lambda { item.time } },
         { header: I18n.t("basics.tutor"),
           cell_class: "text-start fw-semibold",
           field: ->(item) { item.registerable.tutor_names } }
       ],
       "Talk" => [
-        { header: I18n.t("registration.item.types.talk"),
-          cell_class: "text-start fw-medium",
-          field: ->(item) { item.registerable.title } },
         { header: I18n.t("basics.position"),
           cell_class: "text-end",
           field: ->(item) { item.registerable.position } },
@@ -88,9 +78,6 @@ module Registration
           } }
       ],
       "Cohort" => [
-        { header: I18n.t("registration.item.types.cohort"),
-          cell_class: "text-start fw-medium",
-          field: ->(item) { item.registerable.title } },
         { header: I18n.t("basics.description"),
           cell_class: "text-center",
           field: ->(item) { item.registerable.description } }

@@ -3475,7 +3475,7 @@ en:
     closes: "Closes"
     passed: "Passed"
     failed: "Failed"
-    select_type: "Select a %{type}"
+    select_type: "Select preferences"
     saved_at: "Saved %{time}"
     available: "Available"
     full: "Full"

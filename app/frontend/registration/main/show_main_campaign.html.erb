@@ -19,7 +19,7 @@
   </div>
 
   <!-- notification banner if campaign has been closed earlier than deadline -->
-  <% if !@campaign.open_for_registrations? && @campaign.registration_deadline < Time.current %>
+  <% if !@campaign.open_for_registrations? && @campaign.registration_deadline > Time.current %>
     <div class="alert alert-warning py-2 mt-2 mb-3">
       <span><%= t("registration.closed_before_deadline") %></span>
     </div>
