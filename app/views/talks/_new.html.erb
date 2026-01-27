@@ -35,7 +35,7 @@
       <div class="invalid-feedback" id="talk-date-error"></div>
     </div>
 
-    <div class="col-12 mb-3" data-cy="speaker-select-div">
+    <div class="col-12 mb-3" data-testid="speaker-select-div">
       <%= speaker_select(f, talk, with_preselection=false) %>
     </div>
     <% if lecture.talks.exists? %>

@@ -156,10 +156,11 @@ module LecturesHelper
                                                               placeholder: t("basics.enter_two_letters"), # rubocop:disable Layout/LineLength
                                                               no_results: t("basics.no_results"),
                                                               modal: true,
-                                                              cy: "teacher-admin-select"
+                                                              testid: "teacher-admin-select"
                                                             } })
 
-      error_div = content_tag(:div, "", class: "invalid-feedback", id: "lecture-teacher-error")
+      error_div = content_tag(:div, "", class: "invalid-feedback d-block",
+                                        id: "lecture-teacher-error")
 
       return label + help_desk + select + error_div
     end
@@ -177,7 +178,7 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher.info, "data-cy": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher.info, "data-testid": "teacher-info")
     end
 
     p1 + p2
@@ -204,6 +205,7 @@ module LecturesHelper
                   multiple: true,
                   data: {
                     cy: "lecture-editors-select",
+                    testid: "lecture-editors-select",
                     no_results: t("basics.no_results_editor")
                   })
     end

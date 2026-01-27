@@ -1,4 +1,8 @@
 <% unless from == 'course' %>
+  <div id="new-lecture-area"
+       class="bg-green-lighten-4 p-3 mb-3 rounded">
+<% end %>
+<% unless from == 'course' %>
   <div class="row">
     <div class="col-12">
       <h6>
@@ -29,15 +33,16 @@
                      { class: 'selectize',
                        disabled: from == 'course',
                        required: true,
-                       data: { terminfo: Course.pluck(:id, :term_independent) } } %>
+                       data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) } 
+                       }%>
         <% if from == 'course' %>
           <%= f.hidden_field :course_id, value: lecture.course.id %>
         <% end %>
-        <div class="invalid-feedback"
+        <div class="invalid-feedback d-block"
              id="new-lecture-course-error">
         </div>
       </div>
-      <div class="col-4" id="newLectureTerm"
+      <div class="col-4" id="newLectureTerm"  
            style="<%= term_independent ? 'display: none;' : '' %>">
         <%= f.label :term_id,
                     t('basics.term'),
@@ -48,7 +53,7 @@
                      {},
                      { class: 'form-select',
                        disabled: term_independent } %>
-        <div class="invalid-feedback"
+        <div class="invalid-feedback d-block"
              id="new-lecture-term-error">
         </div>
       </div>
@@ -71,15 +76,27 @@
       <div class="col-12 text-center">
         <%= f.submit t('buttons.save'),
               class: 'btn btn-primary',
-              "data-cy": 'new-lecture-submit' %>
-        <button type="button"
-                id="cancel-new-lecture"
-                class="btn btn-secondary">
-          <%= t('buttons.cancel') %>
-        </button>
+              "data-cy": 'new-lecture-submit', 
+              "data-testid": 'new-lecture-submit' %>
+        <% if from == 'course' %>
+          <button type="button"
+                  id="cancel-new-lecture"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+            <%= t('buttons.cancel') %>
+          </button>
+        <% else %>
+          <%= link_to t('buttons.cancel'),
+                      administration_path,
+                      class: 'btn btn-secondary',
+                      role: 'button' %>
+        <% end %>
       </div>
     </div>
     <%= f.hidden_field :from, value: from %>
     <%= f.hidden_field :content_mode, value: 'video' %>
   <% end %>
+<% end %>
+<% unless from == 'course' %>
+  </div>
 <% end %>
