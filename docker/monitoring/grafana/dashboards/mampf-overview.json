@@ -38,7 +38,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -119,12 +119,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "df7ajl0ayfe9sa"
+            "uid": "mimir"
           },
           "editorMode": "builder",
           "exemplar": false,
@@ -142,7 +142,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "description": "CPU Usage in % (of Puma Processes)",
       "fieldConfig": {
@@ -191,9 +191,13 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_puma_process_cpu_percent",
           "legendFormat": "PID: {{pid}}  - {{role}}",
@@ -208,7 +212,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "description": "RAM Usage in MB (of Puma Processes)",
       "fieldConfig": {
@@ -291,9 +295,13 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_puma_process_ram_mb",
           "legendFormat": "PID: {{pid}}  - {{role}}",
@@ -321,7 +329,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -366,9 +374,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_user_count",
           "legendFormat": "__auto",
@@ -382,7 +394,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -431,9 +443,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_lecture_count",
           "legendFormat": "__auto",
@@ -447,7 +463,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -496,9 +512,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_uploaded_medium_count",
           "legendFormat": "__auto",
@@ -512,7 +532,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -592,9 +612,13 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_http_requests_total",
           "format": "time_series",
@@ -609,7 +633,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -658,9 +682,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_tag_count",
           "legendFormat": "__auto",
@@ -674,7 +702,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -723,9 +751,13 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.1",
+      "pluginVersion": "12.3.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
           "editorMode": "builder",
           "expr": "ruby_consumption_count",
           "legendFormat": "__auto",
@@ -737,7 +769,7 @@
       "type": "stat"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -745,295 +777,294 @@
         "y": 19
       },
       "id": 10,
-      "panels": [
-        {
-          "datasource": {
-            "type": "datasource",
-            "uid": "-- Dashboard --"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "showValues": false,
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 20
-          },
-          "id": 8,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.2.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "datasource",
-                "uid": "-- Dashboard --"
-              },
-              "panelId": 4,
-              "refId": "A"
-            }
-          ],
-          "title": "Users over Time",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "datasource",
-            "uid": "-- Dashboard --"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "showValues": false,
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 20
-          },
-          "id": 11,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.2.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "datasource",
-                "uid": "-- Dashboard --"
-              },
-              "panelId": 2,
-              "refId": "A"
-            }
-          ],
-          "title": "Consumptions over Time",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "datasource",
-            "uid": "-- Dashboard --"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "showValues": false,
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 28
-          },
-          "id": 12,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.2.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "datasource",
-                "uid": "-- Dashboard --"
-              },
-              "panelId": 7,
-              "refId": "A"
-            }
-          ],
-          "title": "Medium Count over Time",
-          "type": "timeseries"
-        }
-      ],
+      "panels": [],
       "title": "Trends",
       "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 4,
+          "refId": "A"
+        }
+      ],
+      "title": "Users over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumptions over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 7,
+          "refId": "A"
+        }
+      ],
+      "title": "Medium Count over Time",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -1051,5 +1082,5 @@
   "timezone": "browser",
   "title": "MaMpf General Overview",
   "uid": "adzzdvc",
-  "version": 3
+  "version": 1
 }

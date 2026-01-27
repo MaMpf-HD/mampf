@@ -22,3 +22,6 @@ scrape_configs:
 
     static_configs:
       - targets: ['app:9394']
+      
+remote_write:
+  - url: http://mimir:9009/api/v1/push

@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   prometheus:
     image: prom/prometheus
@@ -14,6 +12,18 @@ services:
       app:
         condition: service_started
 
+  mimir:
+    image: grafana/mimir
+    volumes:
+      - ../monitoring/mimir.yml:/etc/mimir.yml
+      - mimir-data:/data
+    command: 
+      - "-config.file=/etc/mimir.yml"
+      - "-target=all"
+    ports:
+      - "9009:9009"
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana
     volumes:
@@ -24,3 +34,6 @@ services:
     environment:
       - GF_SERVER_HTTP_PORT=2345
     restart: unless-stopped
+
+volumes:
+  mimir-data:

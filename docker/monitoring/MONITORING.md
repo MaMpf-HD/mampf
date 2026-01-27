@@ -42,6 +42,7 @@ After `just up`:
 - tutorial dashboard creation
 - add online users
 - add other metrics:
+    - RAM % usage
     - http metrics
       - latency
       - bandwidth usage
