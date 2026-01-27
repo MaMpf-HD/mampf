@@ -1,8 +1,10 @@
 <% if assessable.is_a?(Talk) %>
-  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
+      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe unless legacy %>>
     <td>
       <% unless legacy %>
         <%= title %>
+        <%= link_to "", show_path, class: "d-none", data: { row_link: true, turbo_stream: true } %>
       <% else %>
         <span class="text-muted"><%= title %></span>
       <% end %>
@@ -11,10 +13,11 @@
     <td><%= talk_date %></td>
   </tr>
 <% else %>
-  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
+      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe unless legacy %>>
     <td>
       <% unless legacy %>
-        <%= link_to title, show_path, class: "text-decoration-none" %>
+        <%= link_to title, show_path, class: "text-decoration-none", data: { row_link: true, turbo_stream: true } %>
       <% else %>
         <span class="text-muted"><%= title %></span>
       <% end %>

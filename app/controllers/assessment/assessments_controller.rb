@@ -36,8 +36,8 @@ module Assessment
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "assessment-assessments-card-body",
+          render turbo_stream: turbo_stream.update(
+            "assessments_container",
             partial: "assessment/assessments/card_body_index",
             locals: { lecture: @lecture,
                       assessables_by_type: @assessables_by_type,
@@ -67,14 +67,15 @@ module Assessment
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "assessment-assessments-card-body",
+          render turbo_stream: turbo_stream.update(
+            "assessments_container",
             partial: "assessment/assessments/card_body_show",
             locals: { assessable: @assessable,
                       assessment: @assessment,
                       lecture: @lecture,
                       tasks: @tasks,
-                      participations_count: @participations_count }
+                      participations_count: @participations_count,
+                      tab: params[:tab] }
           )
         end
       end
