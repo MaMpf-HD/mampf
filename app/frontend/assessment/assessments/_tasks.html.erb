@@ -18,49 +18,50 @@
         <%= f.submit t('assessment.task.add'), class: "btn btn-primary w-100" %>
       </div>
     </div>
-    <small class="text-muted"><%= t('assessment.task.quick_add_info') %></small>
   <% end %>
 </div>
 
 <% if tasks.any? %>
-  <div id="tasks-list" data-controller="sortable" data-sortable-url-value="<%= reorder_assessment_assessment_tasks_path(assessment) %>">
-    <% tasks.each do |task| %>
-      <div id="<%= dom_id(task) %>" class="card mb-2" data-sortable-item data-id="<%= task.id %>">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start">
-            <div class="flex-grow-1" data-sortable-handle style="cursor: grab;">
-              <h6 class="mb-1">
+  <div class="d-flex gap-2">
+    <div class="d-flex flex-column gap-2" style="min-width: 50px;">
+      <% tasks.each_with_index do |_, index| %>
+        <div class="bg-light border rounded px-3 py-2 text-center">
+          <span class="fw-bold fs-5 text-muted"><%= index + 1 %>.</span>
+        </div>
+      <% end %>
+    </div>
+    <div id="tasks-list" class="flex-grow-1" data-controller="sortable" data-sortable-url-value="<%= reorder_assessment_assessment_tasks_path(assessment) %>">
+      <% tasks.each do |task| %>
+        <div id="<%= dom_id(task) %>" class="card mb-2" data-sortable-item data-id="<%= task.id %>">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="flex-grow-1 d-flex align-items-center" data-sortable-handle style="cursor: grab;">
                 <i class="bi bi-grip-vertical text-muted me-2"></i>
-                <%= task.title %>
-              </h6>
-              <small class="text-muted">
-                <%= t('assessment.task.max_points') %>: <strong><%= task.max_points %></strong>
-              </small>
-              <% if task.description.present? %>
-                <div class="mt-2">
-                  <small class="text-muted"><%= simple_format(task.description) %></small>
-                </div>
-              <% end %>
-            </div>
-            <div class="d-flex gap-2">
-              <%= link_to edit_assessment_assessment_task_path(assessment, task),
-                          class: "btn btn-sm btn-outline-primary",
-                          title: t('basics.edit'),
-                          data: { turbo_stream: true } do %>
-                <i class="far fa-edit"></i>
-              <% end %>
-              <%= button_to assessment_assessment_task_path(assessment, task),
-                            method: :delete,
-                            class: "btn btn-sm btn-outline-danger",
-                            title: t('basics.delete'),
-                            data: { turbo_confirm: t('basics.confirm_delete') } do %>
-                <i class="fas fa-trash-alt"></i>
-              <% end %>
+                <span class="fw-bold me-3"><%= number_with_precision(task.max_points, strip_insignificant_zeros: true) %> <%= t('assessment.task.points_abbrev') %></span>
+                <% if task.description.present? %>
+                  <span class="text-muted small"><%= task.description %></span>
+                <% end %>
+              </div>
+              <div class="d-flex gap-2">
+                <%= link_to edit_assessment_assessment_task_path(assessment, task),
+                            class: "btn btn-sm btn-outline-primary",
+                            title: t('basics.edit'),
+                            data: { turbo_stream: true } do %>
+                  <i class="far fa-edit"></i>
+                <% end %>
+                <%= button_to assessment_assessment_task_path(assessment, task),
+                              method: :delete,
+                              class: "btn btn-sm btn-outline-danger",
+                              title: t('basics.delete'),
+                              data: { turbo_confirm: t('basics.confirm_delete') } do %>
+                  <i class="fas fa-trash-alt"></i>
+                <% end %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 <% else %>
   <div class="alert alert-info">

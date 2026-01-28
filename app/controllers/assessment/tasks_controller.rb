@@ -29,11 +29,9 @@ module Assessment
     def create
       authorize! :update, @assessment
 
-      next_position = @assessment.tasks.maximum(:position).to_i + 1
       @task = @assessment.tasks.build(
-        title: I18n.t("assessment.task.default_title", number: next_position),
-        max_points: params[:max_points],
-        position: next_position
+        title: "",
+        max_points: params[:max_points]
       )
 
       if @task.save
@@ -96,7 +94,7 @@ module Assessment
       end
 
       def task_params
-        params.require(:assessment_task).permit(:title, :max_points, :description)
+        params.require(:assessment_task).permit(:max_points, :description)
       end
 
       def redirect_to_dashboard(tab:, notice: nil, alert: nil)
