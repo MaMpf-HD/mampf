@@ -1,5 +1,6 @@
 class RosterNotificationMailer < ApplicationMailer
-  # Triggered whenever a user is added to / removed from / moved between group(s) of a rosterable object
+  # Triggered whenever a user is added to / removed from / moved between group(s)
+  # of a rosterable object
 
   def added_to_group_email
     prepare_data(params)
