@@ -3004,6 +3004,43 @@ en:
         - shut down your device, restart it and try again.<br>
         - upload the files one by one.<br>
         In case of repeated occurrence please contact the MaMpf team.
+  registration:
+    registrations: "Registrations"
+    title: "Your Registration"
+    planning: "Planning"
+    course_code: "Course code"
+    campaign_main: "Campaign: Main registration"
+    eligibility_title: "Your Eligibility"
+    preferences_title: Your selected preferences
+    eligible: "Eligible"
+    not_eligible: "Not eligible"
+    prerequisite_campaign: "Prerequisite Campaign"
+    seats_remaining: "Seats remaining"
+    registered: "Registered"
+    not_registered: "Not registered"
+    register_now: "Register now"
+    need_save: You have unsaved changes. Click “Save” to update your preferences
+    currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."
+    withdraw: "Withdraw"
+    closed_before_deadline: The registration campaign has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+    withdraw_first: "Withdraw first"
+    filter_placeholder: "Filter by weekday, time, tutor"
+    status_for_registration: "Current statuses of your submitted options"
+    submitted_pref: "Your submitted choice(s)"
+    confirmed_assignment_pref: "Your confirmed %{type} assignment"
+    messages:
+      campaign_unavailable: "This campaign is not accessible right now."
+      campaign_not_opened: "Registration for this campaign is not opened."
+      registration_success: "Registration completed successfully."
+      registration_failed: "Registration could not be completed."
+      already_registered: "You are already registered for this campaign."
+      no_slots: "No seats available."
+      requirements_not_met: "You do not meet the requirements."
+      withdrawn: "You have withdrawn your registration."
+      preferences_saved: "Your preferences have been saved."
+      dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"
+      cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
+      course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
   package:
     no_zip: This file is not a .zip archive.
     too_big: This file is too big.
@@ -3355,6 +3392,7 @@ en:
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
     answer_count: 'Number of answers'
+    item_count: '%{count} items'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3429,6 +3467,25 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    mode: "Allocation Mode"
+    capacity: "Capacity"
+    seats: "Seats"
+    filled: "filled"
+    across_group: "across group"
+    closes: "Closes"
+    passed: "Passed"
+    failed: "Failed"
+    select_type: "Select preferences"
+    saved_at: "Saved %{time}"
+    available: "Available"
+    full: "Full"
+    position: "Position"
+    room: "Room"
+    confirmed: "Confirmed"
+    rejected: Rejected
+    pending: Pending
+    assigned: "Assigned"
+    dismissed: "Dismissed"
     unlimited: unlimited
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
@@ -3548,6 +3605,8 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    add_to_list: 'Add to List'
+    remove_from_list: 'Remove from List'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

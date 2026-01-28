@@ -1,0 +1,118 @@
+<div data-test="multi-item-fcfs">
+
+  <div data-controller="registration-item-search">
+    <div class="row m-2 align-items-center">
+      <!-- search form -->
+      <div class="col-8 mb-2 mt-2">
+        <%= render partial: "registration/item_search_form/search_form",
+                   locals: { controller: "registration-item-search",
+                             placeholder: t("registration.filter_placeholder") } %>
+      </div>
+
+      <!-- saved time -->
+      <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+      <% if last_updated %>
+        <div class="col-4 small text-success text-end fw-semibold">
+          <%= t("basics.saved_at", time: format_date(last_updated)) %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- notification banner if registered -->
+    <% if campaign.user_registration_confirmed?(current_user) %>
+      <div class="alert alert-info py-2 px-2 m-3">
+        <span>
+        <%= t("registration.currently_registered", 
+            name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
+        </span>
+      </div>
+    <% end %>
+
+    <div class="table-responsive m-3">
+      <table class="table table-sm align-middle mb-2" id="itemsTable">
+        <thead class="bg-grey-lighten-5 text-dark small">
+          <tr>
+            <th class="fw-semibold"><%= t("registration.item.columns.type") %></th>
+            <th class="fw-semibold"><%= t("registration.item.columns.title") %></th>
+            <th class="fw-semibold">Attribute</th>
+            <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
+            <th class="fw-semibold text-center"><%= t("basics.status") %></th>
+            <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% items.each do |item| %>
+            <tr data-registration-item-search-target="row">
+              <td class="small text-dark">
+                <%= item_display_type(item) %>
+              </td>
+              <td class="small text-dark">
+                <%= item.registerable.title %>
+              </td>
+
+              <!-- attribute data column -->
+              <td class="small text-dark">
+                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                  <div class="d-flex gap-1">
+                    <span class="fw-medium small"><%= col[:header] %>:</span>
+                    <span class="fw-normal small"><%= col[:field].call(item) %></span>
+                  </div>
+                <% end %>
+              </td>
+
+              <td class="text-center small fw-semibold text-dark">
+                <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+              </td>
+
+              <!-- status column -->
+              <td class="text-center">
+                <% if !item.user_registered?(current_user) %>
+                  <% if item.still_have_capacity? %>
+                    <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark"  style="min-width: 80px;">
+                                <%= t("basics.available") %></span>
+                  <% else %>
+                    <span class="badge rounded-pill fw-medium small text-dark bg-grey-lighten-4 text-dark"  style="min-width: 80px;">
+                                <%= t("basics.full") %></span>
+                  <% end %>
+                <% else %>
+                  <span class="badge rounded-pill fw-medium small text-bg-success"  style="min-width: 80px;">
+                                <%= t("registration.registered") %></span>
+                <% end %>
+              </td>
+
+              <!-- action column -->
+              <td class="d-flex justify-content-end py-2">
+                <% if !campaign.user_registration_confirmed?(current_user) %>
+                  <% if item.user_registered?(current_user) %>
+                    <%= button_to t("registration.withdraw"),
+                                  withdraw_item_path(campaign.id, item.id),
+                                  method: :delete,
+                                  disabled: !campaign.open_for_withdrawals?,
+                                  class: "btn btn-outline-danger btn-sm" %>
+                  <% else %>
+                    <%= button_to t("registration.register_now"),
+                                  register_item_path(campaign.id, item.id),
+                                  method: :post,
+                                  disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
+                                  class: "btn btn-sm btn-primary" %>
+                  <% end %>
+                <% else %>
+                  <% if item.user_registered?(current_user) %>
+                    <%= button_to t("registration.withdraw"),
+                                  withdraw_item_path(campaign.id, item.id),
+                                  method: :delete,
+                                  disabled: !campaign.open_for_withdrawals?,
+                                  class: "btn btn-outline-danger btn-sm" %>
+                  <% else %>
+                    <span class="text-muted small"><%= t("registration.withdraw_first") %></span>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

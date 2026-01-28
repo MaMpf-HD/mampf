@@ -1,0 +1,21 @@
+<%= form_with method: :post,
+              data: { turbo_frame: "preferences_workspace",
+                      controller: "touched-check" } do %>
+
+  <div class="card-body">
+    <div data-test="multi-item-preference">
+      <div class="h5 mb-3">
+        <%= t("basics.select_type") %>
+      </div>
+
+      <%= render partial: "registration/main/pb/preferences_workspace",
+                       locals: { campaign: campaign, item_preferences: item_preferences, items: items } %>
+      <div class="d-none m-2 text-danger" data-requires-touch-display>
+        <span>
+          <%= t("registration.need_save") %>
+        </span>
+      </div>
+      
+    </div>
+  </div>
+<% end %>

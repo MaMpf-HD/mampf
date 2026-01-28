@@ -968,6 +968,47 @@ Rails.application.routes.draw do
 
   resources :watchlist_entries
 
+  # registration routes
+  scope module: "registration", path: "" do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :user_registrations, only: [:index], path: "campaign_registrations"
+      get "campaign_registrations/:campaign_id",
+          to: "user_registrations#registrations_for_campaign",
+          as: :campaign_registrations_for_campaign
+
+      post "campaign_registrations/:campaign_id/items/:item_id/register",
+           to: "user_registrations#create",
+           as: :register_item
+      delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
+             to: "user_registrations#destroy",
+             as: :withdraw_item
+
+      post "user_registrations/:item_id/up",
+           to: "user_registrations#up",
+           as: :preference_up
+
+      post "user_registrations/:item_id/down",
+           to: "user_registrations#down",
+           as: :preference_down
+
+      post "user_registrations/:item_id/add",
+           to: "user_registrations#add",
+           as: :add_preference
+
+      post "user_registrations/:item_id/remove",
+           to: "user_registrations#remove",
+           as: :remove_preference
+
+      post "user_registrations/:campaign_id/reset",
+           to: "user_registrations#reset_preferences",
+           as: :reset_campaign_preferences
+
+      post "user_registrations/:campaign_id/save",
+           to: "user_registrations#update",
+           as: :save_campaign_preferences
+    end
+  end
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not

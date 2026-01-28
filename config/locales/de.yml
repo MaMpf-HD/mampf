@@ -3211,6 +3211,43 @@ de:
         - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
         - lade die Dateien einzeln hoch.<br>
         Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
+  registration:
+    registrations: "Anmeldungen"
+    title: "Ihre Anmeldung"
+    planning: "Planung"
+    course_code: "Kurscode"
+    campaign_main: "Kampagne: Hauptanmeldung"
+    eligibility_title: "Ihre Berechtigung"
+    preferences_title: Ihre ausgewählten Einstellungen
+    eligible: "Berechtigt"
+    not_eligible: "Nicht berechtigt"
+    prerequisite_campaign: "Voraussetzungskampagne"
+    seats_remaining: "Verbleibende Plätze"
+    registered: "Registriert"
+    not_registered: "Nicht registriert"
+    register_now: "Jetzt registrieren"
+    need_save: Sie haben ungespeicherte Änderungen. Klicken Sie auf "Speichern", um Ihre Einstellungen zu aktualisieren.
+    currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe zurückziehen."
+    withdraw: "Zurückziehen"
+    closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Sie Fragen zu dieser Änderung haben, wenden Sie sich bitte an die Kursverwaltung.
+    withdraw_first: "Zuerst zurückziehen"
+    filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
+    status_for_registration: "Aktueller Status Ihrer eingereichten Präferenzen"
+    submitted_pref: "Ihre eingereichte Auswahl"
+    confirmed_assignment_pref: "Ihre bestätigte %{type}-Zuweisung"
+    messages:
+      campaign_unavailable: "Diese Kampagne ist derzeit nicht verfügbar."
+      campaign_not_opened: "Die Registrierung für diese Kampagne ist geschlossen."
+      registration_success: "Registrierung erfolgreich abgeschlossen."
+      registration_failed: "Registrierung konnte nicht abgeschlossen werden."
+      already_registered: "Sie sind bereits für diese Kampagne registriert."
+      no_slots: "Keine Plätze verfügbar."
+      requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
+      preferences_saved: "Ihre Einstellungen wurden gespeichert."
+      withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
+      dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
+      cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden."
+      course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
     too_big: Die Datei ist zu groß.
@@ -3570,6 +3607,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3646,6 +3684,25 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
+    select_type: "Wählen Sie Präferenzen"
+    saved_at: "Gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
+    position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: Pending
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
     unlimited: unbegrenzt
   access:
     unpublished: 'unveröffentlicht'
@@ -3761,6 +3818,8 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

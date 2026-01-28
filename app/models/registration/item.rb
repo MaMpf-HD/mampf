@@ -60,12 +60,41 @@ module Registration
     validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
 
+    def item_capacity_used
+      confirmed_registrations_count
+    end
+
+    def capacity_remained
+      return nil if capacity.nil?
+
+      capacity - item_capacity_used
+    end
+
+    def still_have_capacity?
+      return true if capacity.nil?
+
+      capacity_remained.positive?
+    end
+
+    def user_registered?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
+
     def title
       registerable&.registration_title || registerable&.title
     end
 
     def confirmed_user_ids
       user_registrations.confirmed.pluck(:user_id)
+    end
+
+    def preference_rank(user)
+      registration = user_registrations.find_by(user_id: user.id)
+      registration&.preference_rank
     end
 
     def capacity_editable?
