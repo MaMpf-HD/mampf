@@ -7,6 +7,12 @@ de:
     talks: 'Vorträge'
     tasks: 'Aufgaben'
     participants: 'Teilnehmer'
+    grading: 'Bewertung'
+    statistics: 'Statistiken'
+    updated: 'Bewertung erfolgreich aktualisiert.'
+    form:
+      submit: 'Speichern'
+    no_tasks_yet: 'Noch keine Aufgaben erstellt.'
     position: 'Position'
     speakers: 'Sprecher'
     date: 'Datum'

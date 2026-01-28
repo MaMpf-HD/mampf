@@ -11,6 +11,8 @@ module Assessment
     has_many :task_points, through: :assessment_participations,
                            class_name: "Assessment::TaskPoint"
 
+    accepts_nested_attributes_for :assessable
+
     delegate :title, to: :assessable
 
     def results_published?

@@ -106,7 +106,7 @@ Rails.application.routes.draw do
   # assessment routes
   constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
     namespace :assessment do
-      resources :assessments, only: [:index, :show] do
+      resources :assessments, only: [:index, :show, :update] do
         resources :tasks, except: [:index] do
           collection do
             post :reorder

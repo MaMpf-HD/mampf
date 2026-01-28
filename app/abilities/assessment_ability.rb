@@ -12,5 +12,10 @@ class AssessmentAbility
       lecture = assessment.assessable&.lecture
       lecture.present? && user.can_edit?(lecture)
     end
+
+    can :update, Assessment::Assessment do |assessment|
+      lecture = assessment.assessable&.lecture
+      lecture.present? && user.can_edit?(lecture)
+    end
   end
 end

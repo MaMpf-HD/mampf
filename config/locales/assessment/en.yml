@@ -7,6 +7,12 @@ en:
     talks: 'Talks'
     tasks: 'Tasks'
     participants: 'Participants'
+    grading: 'Grading'
+    statistics: 'Statistics'
+    updated: 'Assessment updated successfully.'
+    form:
+      submit: 'Save'
+    no_tasks_yet: 'No tasks created yet.'
     position: 'Position'
     speakers: 'Speakers'
     date: 'Date'
