@@ -10,15 +10,6 @@ test.describe("draft campaign", () => {
   });
 });
 
-// test.describe("planning campaign", () => {
-//   test("given planning campaign, when user visits, then planning badge is shown", async ({ factory, student }) => {
-//     const campaign = await factory.create("registration_campaign", ["open", "planning_only"]);
-//     const page = new CampaignRegistrationPage(student.page, campaign.id);
-//     await page.goto();
-//     await expect(student.page.getByText("Planning")).toBeVisible();
-//   });
-// });
-
 test.describe("given completed campaign", () => {
   test("without roster result, when user visits, then dismissed status is shown", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["completed", "with_items"]);

@@ -7,6 +7,10 @@ module Registration
           errors = validate_register
           return Result.new(false, errors) unless errors.empty?
 
+          registrations = Registration::UserRegistration.where(registration_campaign: @campaign,
+                                                               user: @user)
+          registrations.destroy_all
+
           Registration::UserRegistration.create!(
             registration_campaign: @campaign,
             registration_item: @item,
