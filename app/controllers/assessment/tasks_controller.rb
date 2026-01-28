@@ -1,7 +1,7 @@
 module Assessment
   class TasksController < BaseController
     before_action :set_assessment
-    before_action :set_task, only: [:edit, :update, :destroy]
+    before_action :set_task, only: [:edit, :update, :destroy, :cancel]
     before_action :set_locale
 
     def current_ability
@@ -22,6 +22,20 @@ module Assessment
         format.html do
           render partial: "assessment/tasks/form",
                  locals: { task: @task, assessment: @assessment }
+        end
+      end
+    end
+
+    def cancel
+      authorize! :update, @assessment
+
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            ActionView::RecordIdentifier.dom_id(@task),
+            partial: "assessment/tasks/task_card",
+            locals: { task: @task, assessment: @assessment }
+          )
         end
       end
     end

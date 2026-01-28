@@ -108,6 +108,9 @@ Rails.application.routes.draw do
     namespace :assessment do
       resources :assessments, only: [:index, :show, :update] do
         resources :tasks, except: [:index] do
+          member do
+            get :cancel
+          end
           collection do
             post :reorder
           end

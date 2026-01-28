@@ -1,9 +1,9 @@
-<%= form_with model: task,
-              url: assessment_assessment_task_path(assessment, task),
-              method: :patch,
-              local: true,
-              html: { id: dom_id(task, :form) } do |f| %>
-  <div class="card mb-2">
+<div id="<%= dom_id(task) %>">
+  <%= form_with model: task,
+                url: assessment_assessment_task_path(assessment, task),
+                method: :patch,
+                local: true,
+                html: { class: "card mb-2" } do |f| %>
     <div class="card-body">
       <div class="row g-2">
         <div class="col-md-3">
@@ -20,14 +20,12 @@
           <div>
             <%= f.submit t('buttons.save'), class: "btn btn-primary me-2" %>
             <%= link_to t('buttons.cancel'),
-                       assessment_assessment_path(assessment,
-                                                 assessable_type: assessment.assessable.class.name,
-                                                 assessable_id: assessment.assessable.id,
-                                                 tab: 'tasks'),
-                       class: "btn btn-secondary" %>
+                       cancel_assessment_assessment_task_path(assessment, task),
+                       class: "btn btn-secondary",
+                       data: { turbo_stream: true } %>
           </div>
         </div>
       </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>
