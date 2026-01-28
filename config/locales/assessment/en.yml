@@ -12,6 +12,17 @@ en:
     updated: 'Assessment updated successfully.'
     form:
       submit: 'Save'
+    task:
+      max_points: 'Max Points'
+      max_points_placeholder: 'e.g., 10'
+      add: 'Add Task'
+      quick_add_info: 'A task will be auto-named (Task 1, Task 2, ...) based on current count.'
+      default_title: 'Task %{number}'
+      created: 'Task added successfully.'
+      updated: 'Task updated successfully.'
+      deleted: 'Task deleted successfully.'
+      delete_failed: 'Failed to delete task.'
+      description_placeholder: 'Optional: Add detailed instructions or rubric'
     no_tasks_yet: 'No tasks created yet.'
     position: 'Position'
     speakers: 'Speakers'
@@ -45,6 +56,7 @@ en:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
       no_assessment: 'Assessment not found for this item.'
+      no_task: 'Task not found.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
 

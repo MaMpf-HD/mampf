@@ -78,22 +78,10 @@
   </div>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'tasks' %>" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">
-    <div class="alert alert-secondary">
-      <i class="bi bi-list-check"></i>
-      <strong>Tasks Tab</strong> - Phase 4 will add quick-add interface for tasks
-    </div>
-    <% if tasks&.any? %>
-      <div class="list-group">
-        <% tasks.each do |task| %>
-          <div class="list-group-item d-flex justify-content-between align-items-center">
-            <span><%= task.title %></span>
-            <span class="badge bg-primary rounded-pill"><%= task.points %> pts</span>
-          </div>
-        <% end %>
-      </div>
-    <% else %>
-      <p class="text-muted text-center mt-3"><%= t("assessment.no_tasks_yet") %></p>
-    <% end %>
+    <%= render 'assessment/assessments/tasks',
+               assessment: assessment,
+               assessable: assessable,
+               tasks: tasks %>
   </div>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'grading' %>" id="grading" role="tabpanel" aria-labelledby="grading-tab">

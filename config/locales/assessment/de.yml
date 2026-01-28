@@ -12,6 +12,17 @@ de:
     updated: 'Bewertung erfolgreich aktualisiert.'
     form:
       submit: 'Speichern'
+    task:
+      max_points: 'Maximalpunkte'
+      max_points_placeholder: 'z.B. 10'
+      add: 'Aufgabe hinzufügen'
+      quick_add_info: 'Eine Aufgabe wird automatisch benannt (Aufgabe 1, Aufgabe 2, ...) basierend auf der aktuellen Anzahl.'
+      default_title: 'Aufgabe %{number}'
+      created: 'Aufgabe erfolgreich hinzugefügt.'
+      updated: 'Aufgabe erfolgreich aktualisiert.'
+      deleted: 'Aufgabe erfolgreich gelöscht.'
+      delete_failed: 'Löschen der Aufgabe fehlgeschlagen.'
+      description_placeholder: 'Optional: Detaillierte Anweisungen oder Bewertungsschema hinzufügen'
     no_tasks_yet: 'Noch keine Aufgaben erstellt.'
     position: 'Position'
     speakers: 'Sprecher'
@@ -44,7 +55,8 @@ de:
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
-      no_assessment: 'Bewertung für dieses Element nicht gefunden.'
+      no_assessment: 'Bewertung für dieses Element nicht gefunden.'      
+      no_task: 'Aufgabe nicht gefunden.'    
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
 
