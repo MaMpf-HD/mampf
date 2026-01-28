@@ -1,4 +1,8 @@
-<div class="card card-fixed-xxl">
+<div class="card card-fixed-xxl" 
+     <% if current_user.admin? %>
+       data-controller="administration--course-form"
+       data-administration--course-form-hidden-class="d-none"
+     <% end %>>
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
@@ -8,8 +12,9 @@
       </div>
       <div class="col-4 text-end">
         <% if current_user.admin? %>
-          <i class="fas fa-plus-circle text-light admin-index-button clickable",
-             id="new-course-button"
+          <i class="fas fa-plus-circle text-light admin-index-button clickable"
+             data-administration--course-form-target="button"
+             data-action="click->administration--course-form#show"
              data-bs-toggle="tooltip"
              title="<%= t('admin.main.create_course') %>">
           </i>
@@ -19,9 +24,8 @@
   </div>
   <div class="card-body scrollable">
     <% if current_user.admin? %>
-      <div id="new-course-area"
-           class="bg-green-lighten-4 p-3 mb-3 rounded"
-           style="display: none;">
+      <div data-administration--course-form-target="form"
+           class="bg-green-lighten-4 p-3 mb-3 rounded d-none">
         <%= render partial: 'courses/new',
                    locals: { course: Course.new } %>
       </div>
