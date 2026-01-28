@@ -80,6 +80,9 @@ window.Stimulus.register("selectize", SelectizeController);
 import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
 window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);
 
+import SettingsController from "~/assessment/settings.controller.js";
+window.Stimulus.register("assessments--settings", SettingsController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

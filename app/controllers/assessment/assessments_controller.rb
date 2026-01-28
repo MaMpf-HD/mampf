@@ -58,12 +58,12 @@ module Assessment
     def update
       authorize! :update, @assessment
 
-      if @assessment.update(assessment_params)
-        @assessable = @assessment.assessable
-        @lecture = @assessable.lecture
-        @tasks = @assessment.tasks.order(:position)
-        @participations_count = @assessment.assessment_participations.count
+      @assessable = @assessment.assessable
+      @lecture = @assessable.lecture
+      @tasks = @assessment.tasks.order(:position)
+      @participations_count = @assessment.assessment_participations.count
 
+      if @assessment.update(assessment_params)
         respond_to do |format|
           format.turbo_stream do
             flash.now[:success] = I18n.t("assessment.updated")
@@ -85,8 +85,16 @@ module Assessment
       else
         respond_to do |format|
           format.turbo_stream do
-            flash.now[:alert] = @assessment.errors.full_messages.join(", ")
-            render turbo_stream: stream_flash
+            render turbo_stream: turbo_stream.update(
+              "assessments_container",
+              partial: "assessment/assessments/card_body_show",
+              locals: { assessable: @assessable,
+                        assessment: @assessment,
+                        lecture: @lecture,
+                        tasks: @tasks,
+                        participations_count: @participations_count,
+                        tab: params[:tab] || "settings" }
+            ), status: :unprocessable_content
           end
         end
       end
