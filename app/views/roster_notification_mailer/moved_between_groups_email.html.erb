@@ -1,0 +1,8 @@
+<%= t('mailer.roster_moved_between_groups_email_body',
+      name: @username,
+      old_rosterable_type: @old_rosterable.class.name,
+      old_rosterable_title: @old_rosterable.title,
+      new_rosterable_type: @new_rosterable.class.name,
+      new_rosterable_title: @new_rosterable.title,
+      new_rosterable_link: link_to(t('basics.link'),
+                    @rosterable_link)) %>

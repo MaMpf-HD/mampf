@@ -3358,13 +3358,28 @@ de:
       Abgaben und Korrekturen der Veranstaltung %{lecture} mit dem
       Löschdatum %{deletion_date} automatisch gelöscht.
     roster_added_to_group_email_body: >
-      Hallo %{name},<br><br>
-      Sie wurden der Gruppe %{rosterable_type} %{rosterable_title} hinzugefügt.<br>
-      Sie können auf %{rosterable_type} hier zugreifen: %{rosterable_link}<br><br>
-      Mit freundlichen Grüßen,<br>
-      Ihr MaMpf‑Team
+      Hallo %{name},
+      Sie wurden der %{rosterable_type}-Gruppe %{rosterable_title} hinzugefügt.
+      Sie können die Gruppe hier aufrufen: %{rosterable_link}
+      Mit freundlichen Grüßen,
+      Ihr MaMpf-Team
     roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
-
+    removed_from_group_email: >
+      Hallo %{name},
+      Sie wurden aus der %{rosterable_type}-Gruppe %{rosterable_title} entfernt.
+      Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
+      wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
+      Mit freundlichen Grüßen,
+      Ihr MaMpf-Team
+    removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
+    moved_between_groups_email: >
+      Hallo %{name},
+      Sie wurden von der %{old_rosterable_type}-Gruppe %{old_rosterable_title}
+      in die %{new_rosterable_type}-Gruppe %{new_rosterable_title} verschoben.
+      Sie können Ihre neue Gruppe hier aufrufen: %{new_rosterable_link}
+      Mit freundlichen Grüßen,
+      Ihr MaMpf-Team
+    moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'
     hash_mail_subject: Überprüfung der Emailadresse
     hash_mail_body: >
       Hallo, %{name}!

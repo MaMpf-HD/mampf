@@ -31,6 +31,7 @@ module Rosters
 
     def remove_user!(user, rosterable)
       rosterable.remove_user_from_roster!(user)
+      send_removed_notification_email
       cascade_removal_from_subgroups!(user, rosterable)
     end
 
@@ -39,6 +40,7 @@ module Rosters
         remove_user!(user, from_rosterable)
         add_user!(user, to_rosterable, force: force)
       end
+      send_moved_between_groups_notification_email(user, from_rosterable, to_rosterable)
     end
 
     private
@@ -83,7 +85,6 @@ module Rosters
         return if lecture == rosterable
 
         lecture.ensure_roster_membership!([user.id])
-        # TODO: consider add mail noti here as well
       end
 
       def cascade_removal_from_subgroups!(user, rosterable)
@@ -104,12 +105,30 @@ module Rosters
         end
       end
 
+      # TODO: consider make this shorter
       def send_added_notification_email(user, rosterable)
         RosterNotificationMailer.with(
           rosterable: rosterable,
           recipient: user,
           sender: DefaultSetting::PROJECT_EMAIL
         ).added_to_group_email.deliver_now
+      end
+
+      def send_removed_notification_email(user, rosterable)
+        RosterNotificationMailer.with(
+          rosterable: rosterable,
+          recipient: user,
+          sender: DefaultSetting::PROJECT_EMAIL
+        ).removed_from_group_email.deliver_now
+      end
+
+      def send_moved_between_groups_notification_email(user, old_rosterable, new_rosterable)
+        RosterNotificationMailer.with(
+          old_rosterable: old_rosterable,
+          new_rosterable: new_rosterable,
+          recipient: user,
+          sender: DefaultSetting::PROJECT_EMAIL
+        ).moved_between_groups_email.deliver_now
       end
   end
 end
