@@ -1,0 +1,100 @@
+<div class="mb-3">
+  <%= link_to assessment_assessments_path(lecture_id: lecture.id),
+              class: "btn btn-sm btn-outline-secondary",
+              role: "button",
+              data: { turbo_stream: true } do %>
+    <i class="bi bi-arrow-left"></i> <%= t("back") %>
+  <% end %>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3><%= assessable.title %></h3>
+</div>
+
+<% tab ||= "settings" %>
+<ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link <%= 'active' if tab == 'settings' %>"
+            id="settings-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#settings"
+            type="button"
+            role="tab"
+            aria-controls="settings"
+            aria-selected="<%= tab == 'settings' %>">
+      <%= t("basics.settings") %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link <%= 'active' if tab == 'tasks' %>"
+            id="tasks-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#tasks"
+            type="button"
+            role="tab"
+            aria-controls="tasks"
+            aria-selected="<%= tab == 'tasks' %>">
+      <%= t("assessment.tasks") %>
+      <% if tasks&.any? %>
+        <span class="badge bg-secondary ms-1"><%= tasks.count %></span>
+      <% end %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link <%= 'active' if tab == 'grading' %>"
+            id="grading-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#grading"
+            type="button"
+            role="tab"
+            aria-controls="grading"
+            aria-selected="<%= tab == 'grading' %>">
+      <%= t("assessment.grading") %>
+      <% if participations_count&.positive? %>
+        <span class="badge bg-secondary ms-1"><%= participations_count %></span>
+      <% end %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link <%= 'active' if tab == 'statistics' %>"
+            id="statistics-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#statistics"
+            type="button"
+            role="tab"
+            aria-controls="statistics"
+            aria-selected="<%= tab == 'statistics' %>">
+      <%= t("assessment.statistics") %>
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="assessmentTabsContent">
+  <div class="tab-pane fade <%= 'show active' if tab == 'settings' %>" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <%= render 'assessment/assessments/settings',
+               assessment: assessment,
+               assessable: assessable,
+               lecture: lecture %>
+  </div>
+
+  <div class="tab-pane fade <%= 'show active' if tab == 'tasks' %>" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">
+    <%= render 'assessment/assessments/tasks',
+               assessment: assessment,
+               assessable: assessable,
+               tasks: tasks %>
+  </div>
+
+  <div class="tab-pane fade <%= 'show active' if tab == 'grading' %>" id="grading" role="tabpanel" aria-labelledby="grading-tab">
+    <div class="alert alert-secondary">
+      <i class="bi bi-table"></i>
+      <strong>Grading Tab</strong> - Phase 5 will add participant list with grades
+    </div>
+  </div>
+
+  <div class="tab-pane fade <%= 'show active' if tab == 'statistics' %>" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+    <div class="alert alert-secondary">
+      <i class="bi bi-graph-up"></i>
+      <strong>Statistics Tab</strong> - Phase 6 will add diagrams and analytics
+    </div>
+  </div>
+</div>

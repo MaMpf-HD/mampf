@@ -14,33 +14,131 @@ class AssignmentsController < ApplicationController
     @assignment.lecture = @lecture
     authorize! :new, @assignment
     set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                 partial: "assessment/assignments/form",
+                                                 locals: { assignment: @assignment })
+      end
+    end
   end
 
   def edit
+    set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                 partial: "assessment/assignments/form",
+                                                 locals: { assignment: @assignment })
+      end
+    end
   end
 
   def create
     @assignment = Assignment.new(assignment_params)
     authorize! :create, @assignment
-    @assignment.save
-    @errors = @assignment.errors
     @lecture = @assignment.lecture
     set_assignment_locale
+
+    if @assignment.save
+      @assignment.reload
+      all_assignments = @lecture.assignments.includes(:assessment).select(&:assessment)
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assignment_form_container", ""),
+            turbo_stream.update("assessment-assessments-wrapper",
+                                partial: "assessment/assessments/assignments_table",
+                                locals: { assessables: all_assignments, lecture: @lecture })
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                   partial: "assessment/assignments/form",
+                                                   locals: { assignment: @assignment }),
+                 status: :unprocessable_content
+        end
+      end
+    end
   end
 
   def update
-    @assignment.update(assignment_params)
-    @errors = @assignment.errors
-    return if @errors.present?
+    set_assignment_locale
 
-    @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+    if @assignment.update(assignment_params)
+      @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+      @assignment.reload
+
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assignment_form_container", ""),
+            turbo_stream.replace(ActionView::RecordIdentifier.dom_id(@assignment),
+                                 partial: "assessment/assessments/assessment_list_item",
+                                 locals: { assessable: @assignment, lecture: @lecture })
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assignment_form_container",
+                                                   partial: "assessment/assignments/form",
+                                                   locals: { assignment: @assignment }),
+                 status: :unprocessable_content
+        end
+      end
+    end
   end
 
   def destroy
-    @assignment.destroy
+    set_assignment_locale
+    @lecture = @assignment.lecture
+    remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
+                                    .includes(:assessment)
+                                    .select(&:assessment)
+
+    if @assignment.destroy
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          if remaining_assignments.empty?
+            render turbo_stream:
+            turbo_stream.update("assessment-assessments-wrapper",
+                                partial: "assessment/assessments/empty_assignments")
+          else
+            render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
+          end
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          head :unprocessable_content
+        end
+      end
+    end
   end
 
   def cancel_edit
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container", "")
+      end
+    end
   end
 
   def cancel_new
@@ -49,6 +147,13 @@ class AssignmentsController < ApplicationController
     authorize! :cancel_new, assignment
     set_assignment_locale
     @none_left = @lecture&.assignments&.none?
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assignment_form_container", "")
+      end
+    end
   end
 
   private

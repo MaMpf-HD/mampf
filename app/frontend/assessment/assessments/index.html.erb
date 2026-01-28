@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "assessment-assessments-frame" do %>
+  <div id="assessments_container">
+    <%= render AssessmentsIndexComponent.new(lecture: @lecture) %>
+  </div>
+<% end %>

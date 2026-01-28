@@ -412,6 +412,7 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
       lecture_content: 'Vorlesungsinhalt'
@@ -1051,6 +1052,7 @@ de:
           Da nicht klar ist, welche Tags zu  diesem Abschnitt gehören,
           kannst Du sie hier zu ordnen.
     medium:
+      singular: 'Medium'
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
         zugehörigen Moduls %{course} angesiedelt ist.
@@ -1983,6 +1985,10 @@ de:
       new: 'Neues Tutorium anlegen'
     assignment:
       new: 'Neue Hausaufgabe anlegen'
+      title: 'Titel'
+      title_placeholder: 'z.B. Übungsblatt 1'
+      filetype: 'Dateityp'
+      deletion: 'Löschdatum'
     voucher:
       secure_hash: 'Sicherheits-Hash'
       expires_at: 'Läuft ab'
@@ -2287,6 +2293,7 @@ de:
   mampf_map: 'MaMpf-Map'
   external_render: 'in externem Tab rendern'
   medium:
+    singular: 'Medium'
     details: 'Details ansehen'
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
@@ -3485,6 +3492,10 @@ de:
     actions: 'Aktionen'
     search: 'Suche'
     post_processing: 'Stelle fertig...'
+    loading: 'Laden...'
+    edit: 'Bearbeiten'
+    delete: 'Löschen'
+    confirm_delete: 'Sind Sie sicher, dass Sie dies löschen möchten?'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
@@ -3548,6 +3559,7 @@ de:
     question: 'Frage'
     answer: 'Antwort'
     answers: 'Antworten'
+    loading: 'Laden...'
     none: 'keine'
     remark: 'Bemerkung'
     latex: 'LaTeX'

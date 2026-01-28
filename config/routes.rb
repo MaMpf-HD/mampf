@@ -103,6 +103,23 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
+  # assessment routes
+  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
+    namespace :assessment do
+      resources :assessments, only: [:index, :show, :update] do
+        resources :tasks, except: [:index] do
+          member do
+            get :cancel
+          end
+          collection do
+            post :reorder
+          end
+        end
+        resources :participations, only: [:index]
+      end
+    end
+  end
+
   # chapters routes
 
   get "chapters/:id/list_sections",

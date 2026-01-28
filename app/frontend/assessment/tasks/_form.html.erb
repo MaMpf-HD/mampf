@@ -1,0 +1,31 @@
+<div id="<%= dom_id(task) %>">
+  <%= form_with model: task,
+                url: assessment_assessment_task_path(assessment, task),
+                method: :patch,
+                local: true,
+                html: { class: "card mb-2" } do |f| %>
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
+          <%= f.number_field :max_points, class: 'form-control', min: 0, step: 0.5, required: true %>
+        </div>
+        <div class="col-md-9">
+          <%= f.label :description, t('assessment.task.grading_notes'), class: "form-label" %>
+          <%= f.text_area :description, class: 'form-control', rows: 2, placeholder: t('assessment.task.grading_notes_placeholder') %>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-12 d-flex justify-content-between">
+          <div>
+            <%= f.submit t('buttons.save'), class: "btn btn-primary me-2" %>
+            <%= link_to t('buttons.cancel'),
+                       cancel_assessment_assessment_task_path(assessment, task),
+                       class: "btn btn-secondary",
+                       data: { turbo_stream: true } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

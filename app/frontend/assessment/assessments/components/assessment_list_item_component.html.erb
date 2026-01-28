@@ -1,0 +1,55 @@
+<% if assessable.is_a?(Talk) %>
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
+    <td>
+      <% if legacy %>
+        <span class="text-muted"><%= title %></span>
+      <% else %>
+        <%= title %>
+      <% end %>
+    </td>
+    <td><%= speaker_names %></td>
+    <td><%= talk_date %></td>
+  </tr>
+<% else %>
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
+      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if clickable? %>>
+    <td>
+      <% if legacy %>
+        <span class="text-muted"><%= title %></span>
+      <% elsif clickable? %>
+        <%= link_to title, show_path, class: "text-decoration-none", data: { row_link: true, turbo_stream: true } %>
+      <% else %>
+        <%= title %>
+      <% end %>
+    </td>
+    <% unless legacy %>
+      <td>
+        <% if medium_title %>
+          <span class="text-truncate d-inline-block" style="max-width: 200px;" title="<%= medium_title %>">
+            <%= medium_title %>
+          </span>
+        <% end %>
+      </td>
+      <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
+      <td class="text-center"><%= tasks_count %></td>
+      <td><%= deletion_date %></td>
+    <% else %>
+      <td colspan="4" class="text-muted">
+        <%= I18n.t('assessment.legacy_description') %>
+        <% if edit_path.present? || delete_path.present? %>
+          <div class="float-end d-flex gap-2">
+            <% if edit_path.present? %>
+              <%= link_to t("basics.edit"), edit_path, class: "btn btn-sm btn-outline-primary", remote: true %>
+            <% end %>
+            <% if delete_path.present? %>
+              <%= button_to t("basics.delete"), delete_path, method: :delete,
+                  data: { confirm: t("basics.confirm_delete") },
+                  class: "btn btn-sm btn-outline-danger",
+                  remote: true %>
+            <% end %>
+          </div>
+        <% end %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>

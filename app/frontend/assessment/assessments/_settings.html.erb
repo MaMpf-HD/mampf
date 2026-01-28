@@ -1,0 +1,120 @@
+<%= vite_javascript_tag 'js/datetimepicker' %>
+
+<%= form_with model: assessment,
+              url: assessment_assessment_path(assessment),
+              method: :patch,
+              local: true,
+              html: {
+                data: {
+                  controller: 'assessments--settings',
+                  action: 'turbo:submit-end->assessments--settings#resetAfterSave'
+                }
+              } do |f| %>
+  <input type="hidden" name="tab" value="settings">
+  
+  <%= f.fields_for :assessable do |af| %>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= af.label :title, t('basics.title'), class: "form-label" %>
+        <%= af.text_field :title,
+                          class: 'form-control',
+                          required: true,
+                          data: {
+                            assessments__settings_target: 'title',
+                            action: 'input->assessments--settings#checkForChanges'
+                          } %>
+      </div>
+
+      <div class="col-md-6">
+        <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
+        <div class="input-group td-picker"
+             id="assessment-deadline-picker"
+             data-controller="datetimepicker"
+             data-td-target-input="nearest"
+             data-td-target-toggle="nearest">
+          <%= af.text_field :deadline,
+              class: 'form-control td-input',
+              data: {
+                td_target: '#assessment-deadline-picker',
+                assessments__settings_target: 'deadline',
+                action: 'input->assessments--settings#checkForChanges change->assessments--settings#checkForChanges'
+              },
+              value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
+              autocomplete: 'off' %>
+          <span class="input-group-text td-picker-button"
+                role="button"
+                data-td-target="#assessment-deadline-picker"
+                data-td-toggle="datetimepicker">
+            <i class="bi bi-calendar-fill"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
+        <%= af.select :medium_id,
+                     options_for_select(Medium.where(teachable: lecture, sort: 'Exercise')
+                                              .map { |m| [m.local_title_for_viewers, m.id] },
+                                        assessable.medium_id),
+                     { include_blank: t('basics.select') },
+                     { class: 'form-select selectize',
+                       data: {
+                         assessments__settings_target: 'mediumId',
+                         action: 'change->assessments--settings#checkForChanges'
+                       } } %>
+      </div>
+
+      <div class="col-md-6">
+        <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
+        <%= af.select :accepted_file_type,
+                     options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
+                                        assessable.accepted_file_type),
+                     {},
+                     { class: 'form-select',
+                       data: {
+                         assessments__settings_target: 'acceptedFileType',
+                         action: 'change->assessments--settings#checkForChanges'
+                       } } %>
+      </div>
+
+      <div class="col-md-6">
+        <%= af.label :deletion_date, t('assignment.deletion_date'), class: "form-label" %>
+        <%= af.select :deletion_date,
+                     Term.possible_deletion_dates_localized,
+                     { selected: assessable.localized_deletion_date },
+                     class: 'form-select',
+                     data: {
+                       assessments__settings_target: 'deletionDate',
+                       action: 'change->assessments--settings#checkForChanges'
+                     } %>
+      </div>
+
+      <div class="col-12 mt-3 text-center d-none"
+           data-assessments--settings-target="warning">
+        <div class="alert alert-warning d-inline-block mb-2" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <%= t('warnings.unsaved_changes') %>
+        </div>
+      </div>
+
+      <div class="col-12 mt-4 d-flex justify-content-between d-none"
+           data-assessments--settings-target="submitButton">
+        <div>
+          <%= f.submit t('assessment.form.submit'), class: "btn btn-primary me-2" %>
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-action="click->assessments--settings#cancel">
+            <%= t('buttons.cancel') %>
+          </button>
+        </div>
+        <% if assessable.persisted? && assessable.destructible? %>
+          <%= button_to t('basics.delete'),
+                       assignment_path(assessable),
+                       method: :delete,
+                       class: "btn btn-outline-danger",
+                       data: { turbo_confirm: t('basics.confirm_delete') } %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

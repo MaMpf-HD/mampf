@@ -388,6 +388,7 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
       lecture_content: 'Lecture Contents'
@@ -970,6 +971,7 @@ en:
           As it is not clear which tags associated to this section belong to
           which section, you can make assignments here.
     medium:
+      singular: 'Medium'
       course_medium_html: >
         There is one medium of this type that is associated to the
         course %{course}.
@@ -1839,6 +1841,10 @@ en:
       new: 'Add tutorial'
     assignment:
       new: 'Add assignment'
+      title: 'Title'
+      title_placeholder: 'e.g. Exercise Sheet 1'
+      filetype: 'File Type'
+      deletion: 'Deletion Date'
     voucher:
       secure_hash: 'Secure Hash'
       expires_at: 'Expires at'
@@ -2134,6 +2140,7 @@ en:
   mampf_map: 'MaMpf Map'
   external_render: 'render in an external tab'
   medium:
+    singular: 'Medium'
     details: 'view details'
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
@@ -3278,6 +3285,10 @@ en:
     actions: 'Actions'
     post_processing: 'Post process...'
     search: 'Search'
+    loading: 'Loading...'
+    edit: 'Edit'
+    delete: 'Delete'
+    confirm_delete: 'Are you sure you want to delete this?'
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
     associated_to_short: 'Ass. to'
