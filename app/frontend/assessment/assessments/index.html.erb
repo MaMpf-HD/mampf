@@ -1,9 +1,5 @@
 <%= turbo_frame_tag "assessment-assessments-frame" do %>
   <div id="assessments_container">
-    <%= render "assessment/assessments/card_body_index",
-               lecture: @lecture,
-               assessables_by_type: @assessables_by_type,
-               talks_without_speakers: @talks_without_speakers,
-               legacy_assessables: @legacy_assessables %>
+    <%= render AssessmentsIndexComponent.new(lecture: @lecture) %>
   </div>
 <% end %>

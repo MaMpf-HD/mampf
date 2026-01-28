@@ -1,0 +1,139 @@
+<% I18n.with_locale(lecture.locale_with_inheritance || I18n.default_locale) do %>
+  <% assessables_by_type.each do |(type, assessables)| %>
+    <% assessables_with_assessment = assessables.select(&:assessment) %>
+
+    <% if type == "Talk" %>
+      <h3 class="lecture-pane-header">
+        <%= t('assessment.talks') %>
+      </h3>
+
+      <div class="alert alert-info mb-3">
+        <i class="bi bi-info-circle me-2"></i>
+        <%= t('assessment.info.talks_created_in_roster') %>
+      </div>
+
+      <% if assessables_with_assessment.any? %>
+        <table class="table table-hover mb-4">
+          <thead>
+            <tr>
+              <th><%= t('basics.title') %></th>
+              <th><%= t('assessment.speakers') %></th>
+              <th><%= t('assessment.date') %></th>
+            </tr>
+          </thead>
+          <tbody id="assessment-talks-list">
+            <% assessables_with_assessment.each do |assessable| %>
+              <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-center text-muted py-3">
+          <%= t('assessment.no_talks_yet') %>
+        </p>
+      <% end %>
+
+    <% elsif type == "Assignment" %>
+      <h3 class="lecture-pane-header">
+        <%= t('assessment.assignments') %>
+      </h3>
+
+      <div class="row mb-3">
+        <div class="col-12 text-center">
+          <%= link_to t('admin.assignment.new'),
+                      new_assignment_path(params: { lecture_id: lecture.id }),
+                      class: 'btn btn-sm btn-primary',
+                      id: 'newAssignmentButton',
+                      data: { turbo: false } %>
+        </div>
+      </div>
+
+      <div id="assignment_form_container"></div>
+
+      <div id="assessment-assignments-wrapper">
+        <% if assessables_with_assessment.any? %>
+          <table class="table table-hover mb-4">
+            <thead>
+              <tr>
+                <th><%= t('admin.assignment.title') %></th>
+                <th><%= t('medium.singular') %></th>
+                <th><%= t('admin.assignment.filetype') %></th>
+                <th class="text-center"><%= t('assessment.tasks') %></th>
+                <th><%= t('admin.assignment.deletion') %></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="assessment-assignments-list">
+              <% assessables_with_assessment.each do |assessable| %>
+                <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="text-center text-muted py-4">
+            <%= t('assessment.no_assignments_yet') %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if assessables_by_type.empty? %>
+    <div class="text-center text-muted py-4">
+      <%= t('assessment.no_assessables_yet') %>
+    </div>
+  <% end %>
+
+  <% if assessables_by_type["Assignment"]&.any? %>
+    <div class="lecture-pane-separator"></div>
+    <h5 class="mb-3">
+      <%= t('assessment.submission_settings') %>
+    </h5>
+
+    <%= helpers.turbo_frame_tag "lecture-submission-settings" do %>
+      <%= render "assessment/assessments/submission_settings", lecture: lecture %>
+    <% end %>
+  <% end %>
+
+  <% if legacy.any? %>
+    <div class="lecture-pane-separator"></div>
+    
+    <% if legacy_by_type["Assignment"]&.any? %>
+      <h5 class="mb-3">
+        <%= t('assessment.legacy_assignments') %>
+      </h5>
+      <p class="text-muted small">
+        <%= t('assessment.legacy_assignments_info') %>
+      </p>
+      
+      <div data-turbo="false">
+        <div class="list-group">
+          <% legacy_by_type["Assignment"].each do |assessable| %>
+            <%= render 'assignments/row', assignment: assessable %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+    <% if legacy_by_type["Talk"]&.any? %>
+      <h5 class="mb-3 <%= 'mt-4' if legacy_by_type['Assignment']&.any? %>">
+        <%= t('assessment.legacy_talks') %>
+      </h5>
+      <p class="text-muted small">
+        <%= t('assessment.legacy_talks_info') %>
+      </p>
+      
+      <table class="table">
+        <tbody>
+          <% legacy_by_type["Talk"].each do |assessable| %>
+            <%= render AssessmentListItemComponent.new(
+              assessable: assessable,
+              lecture: lecture,
+              legacy: true
+            ) %>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% end %>
+<% end %>
