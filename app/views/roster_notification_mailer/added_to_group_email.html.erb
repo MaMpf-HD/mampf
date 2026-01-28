@@ -1,0 +1,6 @@
+<%= t('mailer.roster_added_to_group_email_body',
+      name: @username,
+      rosterable_type: @rosterable.class.name,
+      rosterable_title: @rosterable.title,
+      rosterable_link: link_to(t('basics.link'),
+                    @rosterable_link)) %>
