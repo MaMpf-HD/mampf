@@ -3,14 +3,14 @@ import Sortable from "sortablejs";
 
 export default class extends Controller {
   static values = {
-    url: String
+    url: String,
   };
 
   connect() {
     this.sortable = Sortable.create(this.element, {
       handle: "[data-sortable-handle]",
       animation: 150,
-      onEnd: this.updateOrder.bind(this)
+      onEnd: this.updateOrder.bind(this),
     });
   }
 
@@ -22,7 +22,7 @@ export default class extends Controller {
 
   async updateOrder() {
     const items = this.element.querySelectorAll("[data-sortable-item]");
-    const order = Array.from(items).map((item) => item.dataset.id);
+    const order = Array.from(items).map(item => item.dataset.id);
 
     this.updateIndexes(items);
 
@@ -31,9 +31,9 @@ export default class extends Controller {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector("[name='csrf-token']").content
+          "X-CSRF-Token": document.querySelector("[name='csrf-token']").content,
         },
-        body: JSON.stringify({ order })
+        body: JSON.stringify({ order }),
       });
 
       if (!response.ok) {
