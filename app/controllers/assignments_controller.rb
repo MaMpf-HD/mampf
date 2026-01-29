@@ -18,9 +18,10 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.js
       format.turbo_stream do
-        render turbo_stream: turbo_stream.update("assignment_form_container",
-                                                 partial: "assessment/assignments/form",
-                                                 locals: { assignment: @assignment })
+        render turbo_stream: turbo_stream.update("assessments_container",
+                                                 partial: "assessment/assessments/card_body_form",
+                                                 locals: { assignment: @assignment,
+                                                           lecture: @lecture })
       end
     end
   end
@@ -53,7 +54,6 @@ class AssignmentsController < ApplicationController
         format.js
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.update("assignment_form_container", ""),
             turbo_stream.update("assessments_container",
                                 partial: "assessment/assessments/card_body_show",
                                 locals: { assessable: @assignment,
@@ -69,9 +69,10 @@ class AssignmentsController < ApplicationController
       respond_to do |format|
         format.js
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("assignment_form_container",
-                                                   partial: "assessment/assignments/form",
-                                                   locals: { assignment: @assignment }),
+          render turbo_stream: turbo_stream.update("assessments_container",
+                                                   partial: "assessment/assessments/card_body_form",
+                                                   locals: { assignment: @assignment,
+                                                             lecture: @lecture }),
                  status: :unprocessable_content
         end
       end
