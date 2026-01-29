@@ -302,7 +302,6 @@ One graded component (problem, question, or rubric item) within an assessment th
 | Name/Field       | Type/Kind        | Description                                                    |
 |------------------|------------------|----------------------------------------------------------------|
 | `assessment_id`  | DB column (FK)   | The assessment this task belongs to                            |
-| `title`          | DB column        | Human-readable task name (e.g., "Problem 1", "Question 3a")    |
 | `position`       | DB column        | Display order within the assessment                            |
 | `max_points`     | DB column        | Maximum achievable points for this task                        |
 | `description`    | DB column        | Optional detailed instructions or rubric text                  |
