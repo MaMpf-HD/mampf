@@ -11,17 +11,20 @@ module Assessment
     def edit
       authorize! :update, @assessment
 
+      index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
+      index = index ? index + 1 : @task.position
+
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             ActionView::RecordIdentifier.dom_id(@task),
             partial: "assessment/tasks/form",
-            locals: { task: @task, assessment: @assessment }
+            locals: { task: @task, assessment: @assessment, index: index }
           )
         end
         format.html do
           render partial: "assessment/tasks/form",
-                 locals: { task: @task, assessment: @assessment }
+                 locals: { task: @task, assessment: @assessment, index: index }
         end
       end
     end
@@ -93,6 +96,9 @@ module Assessment
       if @task.update(task_params)
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.updated"))
       else
+        index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
+        index = index ? index + 1 : @task.position
+
         respond_to do |format|
           format.html do
             redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
@@ -101,7 +107,7 @@ module Assessment
             render turbo_stream: turbo_stream.replace(
               ActionView::RecordIdentifier.dom_id(@task),
               partial: "assessment/tasks/form",
-              locals: { task: @task, assessment: @assessment }
+              locals: { task: @task, assessment: @assessment, index: index }
             ), status: :unprocessable_content
           end
         end

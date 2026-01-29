@@ -1,5 +1,7 @@
 <% index ||= task.position %>
 
+<% index ||= task.position %>
+
 <div id="<%= dom_id(task) %>" class="d-flex gap-2" data-sortable-item data-id="<%= task.id %>">
   <div class="bg-light border rounded px-3 py-2 text-center" style="min-width: 50px;">
     <span class="fw-bold fs-5 text-muted" data-sortable-index><%= index %>.</span>
