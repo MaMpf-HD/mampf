@@ -140,9 +140,9 @@ module Assessment
       end
 
       def assessment_params
-        params.require(:assessment_assessment).permit(
-          assessable_attributes: [:id, :title, :deadline, :medium_id,
-                                  :accepted_file_type, :deletion_date]
+        params.expect(
+          assessment_assessment: [assessable_attributes: [:id, :title, :deadline, :medium_id,
+                                                          :accepted_file_type, :deletion_date]]
         )
       end
   end

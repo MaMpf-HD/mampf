@@ -107,7 +107,7 @@ module Assessment
       end
 
       def task_params
-        params.require(:assessment_task).permit(:max_points, :description)
+        params.expect(assessment_task: [:max_points, :description])
       end
 
       def redirect_to_dashboard(tab:, notice: nil, alert: nil)
