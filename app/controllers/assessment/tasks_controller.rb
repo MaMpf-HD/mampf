@@ -29,12 +29,15 @@ module Assessment
     def cancel
       authorize! :update, @assessment
 
+      index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
+      index = index ? index + 1 : @task.position
+
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             ActionView::RecordIdentifier.dom_id(@task),
             partial: "assessment/tasks/task_card",
-            locals: { task: @task, assessment: @assessment }
+            locals: { task: @task, assessment: @assessment, index: index }
           )
         end
       end

@@ -24,6 +24,8 @@ export default class extends Controller {
     const items = this.element.querySelectorAll("[data-sortable-item]");
     const order = Array.from(items).map((item) => item.dataset.id);
 
+    this.updateIndexes(items);
+
     try {
       const response = await fetch(this.urlValue, {
         method: "POST",
@@ -41,5 +43,19 @@ export default class extends Controller {
     catch (error) {
       console.error("Error updating order:", error);
     }
+  }
+
+  updateIndexes(items) {
+    Array.from(items).forEach((item, index) => {
+      const indexEl = item.querySelector("[data-sortable-index]");
+      if (!indexEl) {
+        return;
+      }
+      indexEl.textContent = `${index + 1}.`;
+      indexEl.classList.add("task-index-highlight");
+      window.setTimeout(() => {
+        indexEl.classList.remove("task-index-highlight");
+      }, 600);
+    });
   }
 }
