@@ -1,4 +1,4 @@
-# AssignmentsController
+# Missing top-level docstring, please formulate one yourself 😁
 class AssignmentsController < ApplicationController
   before_action :set_assignment, except: [:new, :cancel_new, :create]
   before_action :set_lecture, only: :create
@@ -46,15 +46,22 @@ class AssignmentsController < ApplicationController
 
     if @assignment.save
       @assignment.reload
-      all_assignments = @lecture.assignments.includes(:assessment).select(&:assessment)
+      assessment = @assignment.assessment
+      tasks = assessment&.tasks&.order(:position) || []
+      participations_count = assessment&.assessment_participations&.count || 0
       respond_to do |format|
         format.js
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update("assignment_form_container", ""),
-            turbo_stream.update("assessment-assessments-wrapper",
-                                partial: "assessment/assessments/assignments_table",
-                                locals: { assessables: all_assignments, lecture: @lecture })
+            turbo_stream.update("assessments_container",
+                                partial: "assessment/assessments/card_body_show",
+                                locals: { assessable: @assignment,
+                                          assessment: assessment,
+                                          lecture: @lecture,
+                                          tasks: tasks,
+                                          participations_count: participations_count,
+                                          tab: "tasks" })
           ]
         end
       end
