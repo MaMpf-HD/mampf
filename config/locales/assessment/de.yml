@@ -26,6 +26,7 @@ de:
       description_hint: 'Eine Beschreibung kann später beim Bearbeiten ergänzt werden.'
       max_points_precision_hint: 'Es werden 2 Nachkommastellen gespeichert.'
       max_points_precision_warning: 'Es werden nur 2 Nachkommastellen gespeichert.'
+      missing_warning: 'Noch keine Aufgaben. Punkteingabe durch Tutor:innen nicht möglich.'
     no_tasks_yet: 'Noch keine Aufgaben erstellt.'
     position: 'Position'
     speakers: 'Sprecher'

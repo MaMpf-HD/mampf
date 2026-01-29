@@ -31,7 +31,14 @@
         <% end %>
       </td>
       <td><%= file_type ? content_tag(:code, file_type, class: 'small') : '' %></td>
-      <td class="text-center"><%= tasks_count %></td>
+      <td class="text-center">
+        <%= tasks_count %>
+        <% if tasks_count.zero? %>
+          <span class="ms-1 text-warning" title="<%= t('assessment.task.missing_warning') %>" data-bs-toggle="tooltip">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </span>
+        <% end %>
+      </td>
       <td><%= deletion_date %></td>
     <% else %>
       <td colspan="4" class="text-muted">

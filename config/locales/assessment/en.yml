@@ -26,6 +26,7 @@ en:
       description_hint: 'You can add a description later when editing the task.'
       max_points_precision_hint: 'Stored with 2 decimal places.'
       max_points_precision_warning: 'Only 2 decimal places are stored.'
+      missing_warning: 'No tasks yet. Points cannot be entered by tutors.'
     no_tasks_yet: 'No tasks created yet.'
     position: 'Position'
     speakers: 'Speakers'
