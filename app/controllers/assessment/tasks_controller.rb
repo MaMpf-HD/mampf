@@ -44,7 +44,6 @@ module Assessment
       authorize! :update, @assessment
 
       @task = @assessment.tasks.build(
-        title: "",
         max_points: params[:max_points]
       )
 
