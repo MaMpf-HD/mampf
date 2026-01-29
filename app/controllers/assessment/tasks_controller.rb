@@ -43,14 +43,34 @@ module Assessment
     def create
       authorize! :update, @assessment
 
-      @task = @assessment.tasks.build(
-        max_points: params[:max_points]
-      )
+      @task = @assessment.tasks.build(task_params)
 
       if @task.save
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.created"))
       else
-        redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
+        tasks = @assessment.tasks.order(:position)
+        participations_count = @assessment.assessment_participations.count
+        assessable = @assessment.assessable
+        lecture = assessable.lecture
+
+        respond_to do |format|
+          format.html do
+            redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
+          end
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              "assessments_container",
+              partial: "assessment/assessments/card_body_show",
+              locals: { assessable: assessable,
+                        assessment: @assessment,
+                        lecture: lecture,
+                        tasks: tasks,
+                        participations_count: participations_count,
+                        tab: "tasks",
+                        task: @task }
+            ), status: :unprocessable_content
+          end
+        end
       end
     end
 
@@ -70,7 +90,18 @@ module Assessment
       if @task.update(task_params)
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.updated"))
       else
-        redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
+        respond_to do |format|
+          format.html do
+            redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
+          end
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              ActionView::RecordIdentifier.dom_id(@task),
+              partial: "assessment/tasks/form",
+              locals: { task: @task, assessment: @assessment }
+            ), status: :unprocessable_content
+          end
+        end
       end
     end
 

@@ -81,7 +81,8 @@
     <%= render 'assessment/assessments/tasks',
                assessment: assessment,
                assessable: assessable,
-               tasks: tasks %>
+               tasks: tasks,
+               task: local_assigns[:task] %>
   </div>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'grading' %>" id="grading" role="tabpanel" aria-labelledby="grading-tab">
