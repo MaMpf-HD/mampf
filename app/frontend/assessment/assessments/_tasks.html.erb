@@ -3,19 +3,34 @@
                 method: :post,
                 local: true,
                 html: { class: "mb-3" } do |f| %>
-    <div class="row g-2 align-items-end">
-      <div class="col-md-6">
-        <%= label_tag :max_points, t('assessment.task.max_points'), class: "form-label" %>
-        <%= number_field_tag :max_points,
-                            nil,
-                            class: 'form-control',
-                            placeholder: t('assessment.task.max_points_placeholder'),
-                            min: 0,
-                            step: 0.5,
-                            required: true %>
+    <div data-controller="assessments--points-precision">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <%= label_tag :max_points, t('assessment.task.max_points'), class: "form-label" %>
+          <%= number_field_tag :max_points,
+                              nil,
+                              class: 'form-control',
+                              placeholder: t('assessment.task.max_points_placeholder'),
+                              min: 0,
+                              step: "any",
+                              required: true,
+                              data: {
+                                assessments__points_precision_target: "input",
+                                action: "input->assessments--points-precision#check change->assessments--points-precision#check"
+                              } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.submit t('assessment.task.add'), class: "btn btn-primary w-100" %>
+        </div>
       </div>
-      <div class="col-md-6">
-        <%= f.submit t('assessment.task.add'), class: "btn btn-primary w-100" %>
+      <div class="form-text">
+        <%= t("assessment.task.max_points_precision_hint") %>
+        <span class="ms-1"><%= t("assessment.task.description_hint") %></span>
+      </div>
+      <div class="form-text text-danger d-none"
+           data-assessments--points-precision-target="warning">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= t("assessment.task.max_points_precision_warning") %>
       </div>
     </div>
   <% end %>

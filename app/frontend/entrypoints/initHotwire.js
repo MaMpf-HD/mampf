@@ -83,6 +83,9 @@ window.Stimulus.register("assessments--submission-settings", SubmissionSettingsC
 import SettingsController from "~/assessment/settings.controller.js";
 window.Stimulus.register("assessments--settings", SettingsController);
 
+import PointsPrecisionController from "~/assessment/points_precision.controller.js";
+window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
+
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 
