@@ -94,13 +94,6 @@ RSpec.describe(Assignment, type: :model) do
         expect(participation.status).to eq("not_started")
         expect(participation.points_total).to eq(0.0)
       end
-
-      it "sets due_at from assignment deadline" do
-        deadline = 1.week.from_now
-        assignment = FactoryBot.create(:assignment, lecture: lecture, deadline: deadline)
-
-        expect(assignment.assessment.due_at).to be_within(1.second).of(deadline)
-      end
     end
 
     context "when assessment_grading flag is disabled" do

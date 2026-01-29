@@ -97,6 +97,19 @@ RSpec.describe("Assessment::Assessments", type: :request) do
     let!(:assignment) { create(:valid_assignment, lecture: lecture, title: "Test Assignment") }
     let!(:assessment) { assignment.assessment }
 
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "renders turbo_stream" do
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id },
+            as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include("assessments_container")
+      end
+    end
+
     context "as a student" do
       before { sign_in student }
 
@@ -129,6 +142,79 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         get assessment_assessment_path(999),
             params: { assessable_type: "Assignment", assessable_id: assignment_no_assessment.id }
         expect(response).to redirect_to(assessment_assessments_path(lecture_id: lecture.id))
+      end
+    end
+  end
+
+  describe "PATCH /assessment/assessments/:id" do
+    let!(:assignment) { create(:valid_assignment, lecture: lecture, title: "Old Title") }
+    let!(:assessment) { assignment.assessment }
+
+    before { sign_in teacher }
+
+    context "with valid parameters" do
+      it "updates the assessment" do
+        patch assessment_assessment_path(assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: {
+                    id: assignment.id,
+                    title: "New Title"
+                  }
+                }
+              },
+              as: :turbo_stream
+        assignment.reload
+        expect(assignment.title).to eq("New Title")
+      end
+
+      it "renders turbo_stream" do
+        patch assessment_assessment_path(assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: {
+                    id: assignment.id,
+                    title: "New Title"
+                  }
+                }
+              },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include("assessments_container")
+      end
+    end
+
+    context "with invalid parameters" do
+      it "does not update the assessment" do
+        patch assessment_assessment_path(assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: {
+                    id: assignment.id,
+                    title: ""
+                  }
+                }
+              },
+              as: :turbo_stream
+        assignment.reload
+        expect(assignment.title).to eq("Old Title")
+      end
+
+      it "renders unprocessable_content" do
+        patch assessment_assessment_path(assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: {
+                    id: assignment.id,
+                    title: ""
+                  }
+                }
+              },
+              as: :turbo_stream
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include("assessments_container")
       end
     end
   end

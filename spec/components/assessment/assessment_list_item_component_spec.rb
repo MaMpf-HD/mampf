@@ -29,7 +29,11 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
     it "returns the correct show path" do
       render_inline(component)
       expect(component.show_path).to eq(
-        Rails.application.routes.url_helpers.assessment_assessment_path(assessment.id)
+        Rails.application.routes.url_helpers.assessment_assessment_path(
+          assessment.id,
+          assessable_type: "Assignment",
+          assessable_id: assignment.id
+        )
       )
     end
 
@@ -50,8 +54,8 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
 
     it "returns tasks count" do
       assessment.update!(requires_points: true)
-      create(:assessment_task, assessment: assessment)
-      create(:assessment_task, assessment: assessment)
+      Assessment::Task.create!(assessment: assessment, max_points: 1)
+      Assessment::Task.create!(assessment: assessment, max_points: 1)
       expect(component.tasks_count).to eq(2)
     end
 

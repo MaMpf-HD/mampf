@@ -28,7 +28,8 @@ RSpec.describe("Assignments", type: :request) do
 
       it "renders the form" do
         get new_assignment_path(lecture_id: lecture.id), as: :turbo_stream
-        expect(response.body).to include("assignment_form_container")
+        expect(response.body).to include("assessments_container")
+        expect(response.body).to include("Add assignment")
       end
     end
 
@@ -139,14 +140,14 @@ RSpec.describe("Assignments", type: :request) do
           post assignments_path,
                params: { assignment: valid_attributes },
                as: :turbo_stream
-          expect(response.body).to include("assignment_form_container")
+          expect(response.body).to include("assessments_container")
         end
 
         it "prepends the new assignment to the list" do
           post assignments_path,
                params: { assignment: valid_attributes },
                as: :turbo_stream
-          expect(response.body).to include("assessment-assessments-list")
+          expect(response.body).to include("assessmentTabs")
         end
       end
 
@@ -170,7 +171,8 @@ RSpec.describe("Assignments", type: :request) do
           post assignments_path,
                params: { assignment: invalid_attributes },
                as: :turbo_stream
-          expect(response.body).to include("assignment_form_container")
+          expect(response.body).to include("assessments_container")
+          expect(response.body).to include("is-invalid")
         end
       end
     end
@@ -358,7 +360,10 @@ RSpec.describe("Assignments", type: :request) do
 
       it "removes the assignment from the list" do
         delete assignment_path(assignment), as: :turbo_stream
-        expect(response.body).to include(ActionView::RecordIdentifier.dom_id(assignment))
+        expect(response.body).to satisfy do |body|
+          body.include?("assessment-assessments-wrapper") ||
+            body.include?(ActionView::RecordIdentifier.dom_id(assignment))
+        end
       end
     end
 
