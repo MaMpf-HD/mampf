@@ -5,7 +5,6 @@ module Assessment
     has_many :task_points, dependent: :destroy,
                            class_name: "Assessment::TaskPoint", inverse_of: :task
 
-    validates :title, presence: true
     validates :max_points, numericality: { greater_than_or_equal_to: 0 }
     validate :assessment_requires_points
 

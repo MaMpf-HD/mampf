@@ -162,7 +162,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
 
   create_table "assessment_tasks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "assessment_id", null: false
-    t.string "title", null: false
     t.integer "position"
     t.decimal "max_points", precision: 10, scale: 2, null: false
     t.text "description"
@@ -170,6 +169,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_000003) do
     t.datetime "updated_at", null: false
     t.index ["assessment_id", "position"], name: "index_assessment_tasks_on_assessment_id_and_position"
     t.index ["assessment_id"], name: "index_assessment_tasks_on_assessment_id"
+    t.check_constraint "max_points >= 0::numeric", name: "max_points_non_negative"
   end
 
   create_table "assignments", force: :cascade do |t|
