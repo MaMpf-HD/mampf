@@ -1,4 +1,6 @@
 class GradingOverviewComponent < ViewComponent::Base
+  include ApplicationHelper
+
   def initialize(assessment:, lecture:)
     super()
     @assessment = assessment
@@ -9,6 +11,35 @@ class GradingOverviewComponent < ViewComponent::Base
 
   def requires_submission?
     assessment.requires_submission
+  end
+
+  def deadline
+    @deadline ||= assessment.assessable&.deadline
+  end
+
+  def deadline_status
+    return nil unless deadline
+
+    now = Time.current
+    if deadline > now
+      remaining = deadline - now
+      if remaining < 24.hours
+        { phase: :urgent, icon: "bi-exclamation-triangle", color: "text-warning" }
+      else
+        { phase: :open, icon: "bi-hourglass-split", color: "text-muted" }
+      end
+    else
+      elapsed = now - deadline
+      if elapsed < 24.hours
+        { phase: :just_closed, icon: "bi-inbox", color: "text-muted" }
+      else
+        { phase: :grading, icon: "bi-check-circle", color: "text-success" }
+      end
+    end
+  end
+
+  def progress_bar_color
+    progress_percentage == 100 ? :success : :info
   end
 
   def total_expected

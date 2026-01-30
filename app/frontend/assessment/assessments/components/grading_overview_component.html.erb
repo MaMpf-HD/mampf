@@ -11,6 +11,28 @@
     <h4><%= total_expected %> <%= t("assessment.participants") %></h4>
   </div>
 <% else %>
+  <% if deadline && deadline_status %>
+    <div class="mb-3 <%= deadline_status[:color] %>">
+      <i class="bi <%= deadline_status[:icon] %> me-1"></i>
+      <% case deadline_status[:phase] %>
+      <% when :open %>
+        <%= t("assessment.grading_overview.deadline.due_in",
+              time: time_ago_in_words(deadline),
+              date: l(deadline, format: :long)) %>
+      <% when :urgent %>
+        <%= t("assessment.grading_overview.deadline.due_soon",
+              time: time_ago_in_words(deadline),
+              date: l(deadline, format: :long)) %>
+      <% when :just_closed %>
+        <%= t("assessment.grading_overview.deadline.just_closed",
+              time: time_ago_in_words(deadline)) %>
+      <% when :grading %>
+        <%= t("assessment.grading_overview.deadline.grading_phase",
+              time: time_ago_in_words(deadline)) %>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <span class="fw-medium"><%= t("assessment.grading_overview.submission_progress") %></span>
@@ -19,15 +41,11 @@
         (<%= progress_percentage %>%)
       </span>
     </div>
-    <div class="progress" style="height: 24px;">
-      <div class="progress-bar <%= progress_percentage == 100 ? 'bg-success' : 'bg-primary' %>"
-           role="progressbar"
-           style="width: <%= progress_percentage %>%"
-           aria-valuenow="<%= progress_percentage %>"
-           aria-valuemin="0"
-           aria-valuemax="100">
-      </div>
-    </div>
+    <%= progress_bar(submitted_count, total_expected,
+                     classification: progress_bar_color,
+                     height: "24px",
+                     show_label: false,
+                     container_class: "progress") %>
   </div>
 
   <% if total_expected.zero? %>
@@ -52,16 +70,11 @@
             <td class="text-center"><%= stat.submitted %></td>
             <td class="text-center"><%= stat.missing %></td>
             <td>
-              <div class="progress" style="height: 16px;">
-                <div class="progress-bar <%= stat.progress_percentage == 100 ? 'bg-success' : 'bg-primary' %>"
-                     role="progressbar"
-                     style="width: <%= stat.progress_percentage %>%"
-                     aria-valuenow="<%= stat.progress_percentage %>"
-                     aria-valuemin="0"
-                     aria-valuemax="100">
-                  <small class="px-1"><%= stat.progress_percentage %>%</small>
-                </div>
-              </div>
+              <%= progress_bar(stat.submitted, stat.total,
+                               classification: stat.progress_percentage == 100 ? :success : :info,
+                               height: "16px",
+                               label: "#{stat.progress_percentage}%",
+                               container_class: "progress") %>
             </td>
           </tr>
         <% end %>

@@ -76,6 +76,11 @@ en:
       no_submission_required: 'No digital submission required for this assessment.'
       no_participants_yet: 'No participants have been added yet. Participants are seeded from lecture subscriptions.'
       no_tutorial_breakdown: 'No tutorial breakdown available.'
+      deadline:
+        due_in: 'Due in %{time} (%{date})'
+        due_soon: 'Due in %{time} (%{date})'
+        just_closed: 'Closed %{time} ago'
+        grading_phase: 'Closed %{time} ago — Grading phase'
 
   activerecord:
     errors:

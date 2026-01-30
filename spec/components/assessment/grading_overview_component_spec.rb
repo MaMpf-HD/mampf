@@ -207,4 +207,67 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       expect(nil_stat.name).to eq(I18n.t("assessment.grading_overview.unassigned"))
     end
   end
+
+  describe "#deadline" do
+    it "returns the assessable deadline" do
+      assignment.update!(deadline: 3.days.from_now)
+      expect(component.deadline).to eq(assignment.deadline)
+    end
+  end
+
+  describe "#deadline_status" do
+    context "when deadline is more than 24 hours away" do
+      before { assignment.update!(deadline: 3.days.from_now) }
+
+      it "returns open phase" do
+        expect(component.deadline_status[:phase]).to eq(:open)
+        expect(component.deadline_status[:color]).to eq("text-muted")
+      end
+    end
+
+    context "when deadline is less than 24 hours away" do
+      before { assignment.update!(deadline: 6.hours.from_now) }
+
+      it "returns urgent phase" do
+        expect(component.deadline_status[:phase]).to eq(:urgent)
+        expect(component.deadline_status[:color]).to eq("text-warning")
+      end
+    end
+
+    context "when deadline passed less than 24 hours ago" do
+      before { assignment.update!(deadline: 6.hours.ago) }
+
+      it "returns just_closed phase" do
+        expect(component.deadline_status[:phase]).to eq(:just_closed)
+        expect(component.deadline_status[:color]).to eq("text-muted")
+      end
+    end
+
+    context "when deadline passed more than 24 hours ago" do
+      before { assignment.update!(deadline: 3.days.ago) }
+
+      it "returns grading phase" do
+        expect(component.deadline_status[:phase]).to eq(:grading)
+        expect(component.deadline_status[:color]).to eq("text-success")
+      end
+    end
+  end
+
+  describe "#progress_bar_color" do
+    it "returns :success when 100% progress" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1, status: :submitted)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user3, tutorial: tutorial2, status: :submitted)
+      expect(component.progress_bar_color).to eq(:success)
+    end
+
+    it "returns :info when less than 100% progress" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+      expect(component.progress_bar_color).to eq(:info)
+    end
+  end
 end
