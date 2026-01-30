@@ -731,32 +731,34 @@ module Assessment
 
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
-        class_name: "Assessment::Assessment"
+                           class_name: "Assessment::Assessment"
     end
 
-    def ensure_assessment!(title:, requires_points:, requires_submission: false,
-                          visible_from: nil, due_at: nil)
+    def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment
-      a.title = title
       a.requires_points = requires_points
       a.requires_submission = requires_submission
-        a.visible_from = visible_from if visible_from
-        a.due_at = due_at if due_at
       a.lecture ||= try(:lecture)
       a.save! if a.changed?
       a
     end
 
-    # Override this method in including classes to define roster logic
-    # For Assignment: aggregate from lecture.tutorials
-    # For Exam: use exam registration roster
-    # For Talk: use speaker roster
     def seed_participations_from_roster!
-      raise NotImplementedError,
-        "#{self.class.name} must implement seed_participations_from_roster!"
+      raise(NotImplementedError,
+            "#{self.class.name} must implement seed_participations_from_roster!")
     end
   end
 end
+```
+
+```admonish info "Simplified Parameter Design"
+The `ensure_assessment!` method only takes `requires_points` and `requires_submission` parameters.
+Other attributes are accessed through delegation:
+- **Title:** `assessment.title` delegates to `assessable.title`
+- **Deadline:** Access via `assessment.assessable.deadline`
+- **Start date:** Access via `assessment.assessable.valid_from`
+
+This design avoids data duplication and ensures consistency with the source model.
 ```
 
 ### Concrete Implementations
@@ -773,7 +775,6 @@ class Assignment < ApplicationRecord
   def seed_participations_from_roster!
     return unless assessment
 
-    # Optimized: single query instead of N+1
     memberships = TutorialMembership
       .where(tutorial_id: lecture.tutorial_ids)
       .pluck(:user_id, :tutorial_id)
@@ -788,13 +789,7 @@ class Assignment < ApplicationRecord
   private
 
   def setup_assessment
-    ensure_assessment!(
-      title: title,
-      requires_points: true,
-      requires_submission: true,
-      visible_from: valid_from,
-      due_at: deadline
-    )
+    ensure_assessment!(requires_points: true, requires_submission: true)
     seed_participations_from_roster!
   end
 end
@@ -820,13 +815,7 @@ class Talk < ApplicationRecord
   private
 
   def setup_assessment
-    ensure_assessment!(
-      title: title,
-      requires_points: false,
-      requires_submission: false,
-      visible_from: Time.current,
-      due_at: nil
-    )
+    ensure_assessment!(requires_points: false, requires_submission: false)
     seed_participations_from_roster!
   end
 end
@@ -872,9 +861,9 @@ This approach scales efficiently even for large lectures.
 
 ### Usage Scenarios
 
-- **Initial setup for an assignment:** After creating an `Assignment` record, the teacher calls `assignment.ensure_assessment!(title: "Homework 3", requires_points: true, requires_submission: true)` to create the linked Assessment::Assessment. Then `assignment.seed_participations_from_roster!` aggregates students from all lecture tutorials and creates participation records for each.
+- **Initial setup for an assignment:** After creating an `Assignment` record, the `setup_assessment` callback calls `assignment.ensure_assessment!(requires_points: true, requires_submission: true)` to create the linked Assessment::Assessment. Then `assignment.seed_participations_from_roster!` aggregates students from all lecture tutorials and creates participation records for each.
 
-- **Updating assessment metadata:** A teacher realizes the due date was wrong and calls `assignment.ensure_assessment!(title: "Homework 3", requires_points: true, due_at: 1.week.from_now)` again. The method is idempotent—it updates the existing Assessment::Assessment rather than creating a duplicate.
+- **Idempotent configuration:** The `ensure_assessment!` method is idempotent—calling it again updates the existing Assessment::Assessment rather than creating a duplicate. Configuration changes (e.g., toggling `requires_submission`) can be done through the Assessment Settings UI.
 
 - **For exams after registration:** An `Exam` becomes `Rosterable` after its registration campaign is completed and allocations are materialized. When calling `exam.seed_participations_from_roster!`, the concern reads from the exam's roster (the confirmed exam registrants) to seed participations. Only students who successfully registered for the exam will have participation records created.
 
@@ -906,7 +895,6 @@ Define who should get participation records:
 def seed_participations_from_roster!
   return unless assessment
 
-  # Define roster source (optimize for performance)
   user_ids = # ... your roster logic ...
   tutorial_mapping = # ... map user_id => tutorial_id (or {} if no tutorials) ...
 
@@ -927,11 +915,8 @@ private
 
 def setup_assessment
   ensure_assessment!(
-    title: your_title,
-    requires_points: true_or_false,    # Does this need per-task grading?
-    requires_submission: true_or_false, # Do students upload files?
-    visible_from: your_start_date,
-    due_at: your_deadline              # nil if no deadline
+    requires_points: true_or_false,     # Does this need per-task grading?
+    requires_submission: true_or_false  # Do students upload files?
   )
   seed_participations_from_roster!
 end
@@ -1020,12 +1005,10 @@ module Assessment
     extend ActiveSupport::Concern
     include Assessment::Assessable
 
-  def ensure_pointbook!(title:, requires_submission: false, **opts)
+  def ensure_pointbook!(requires_submission: false)
     ensure_assessment!(
-      title: title,
       requires_points: true,
-      requires_submission: requires_submission,
-      **opts
+      requires_submission: requires_submission
     )
   end
 end
@@ -1033,11 +1016,11 @@ end
 
 ### Usage Scenarios
 
-- **For homework assignments:** After creating an assignment, call `assignment.ensure_pointbook!(title: "Homework 3", requires_submission: true, due_at: 1.week.from_now)`. The assessment is configured for task-level grading, and students must upload files. Tasks are then added for each problem.
+- **For homework assignments:** After creating an assignment, the `setup_assessment` callback calls `ensure_pointbook!(requires_submission: true)`. The assessment is configured for task-level grading, and students must upload files. Tasks are then added for each problem.
 
-- **For exams with per-question tracking:** An exam includes this concern to track points per question. Call `exam.ensure_pointbook!(title: "Final Exam", requires_submission: false)` since students don't upload files for in-person exams. Tasks represent individual exam questions.
+- **For exams with per-question tracking:** An exam includes this concern to track points per question. The callback calls `ensure_pointbook!(requires_submission: false)` since students don't upload files for in-person exams. Tasks represent individual exam questions.
 
-- **Idempotent reconfiguration:** A teacher realizes they set the wrong due date and calls `assignment.ensure_pointbook!(title: "Homework 3", requires_submission: true, due_at: 2.weeks.from_now)`. The method updates the existing assessment without creating a duplicate.
+- **Idempotent reconfiguration:** The method is idempotent—calling it again updates the existing assessment rather than creating a duplicate. Configuration changes can be done through the Assessment Settings UI.
 
 ---
 
@@ -1076,13 +1059,11 @@ module Assessment
     extend ActiveSupport::Concern
     include Assessment::Assessable
 
-  def ensure_gradebook!(title:, **opts)
+  def ensure_gradebook!
     requires_points = assessment&.requires_points
     ensure_assessment!(
-      title: title,
       requires_points: requires_points.nil? ? false : requires_points,
-      requires_submission: false,
-      **opts
+      requires_submission: false
     )
   end
 
@@ -1101,7 +1082,7 @@ end
 
 ### Usage Scenarios
 
-- **For seminar talks:** After creating a talk, call `talk.ensure_gradebook!(title: "Seminar Talk: Topology")` to create an assessment without tasks. After the presentation, call `talk.set_grade!(user: speaker, value: "1.0", grader: professor)` to record the final grade.
+- **For seminar talks:** After creating a talk, the `setup_assessment` callback calls `ensure_gradebook!` to create an assessment without tasks. After the presentation, call `talk.set_grade!(user: speaker, value: "1.0", grader: professor)` to record the final grade.
 
 - **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. After all tasks are graded and points computed, the teacher can call `exam.set_grade!(user: student, value: "1.3", grader: professor)` to store the official grade that appears on transcripts.
 
@@ -1142,26 +1123,22 @@ class Assignment < ApplicationRecord
   private
 
   def setup_grading
-    ensure_pointbook!(
-      title: title,
-      requires_submission: true,
-      due_at: deadline
-    )
+    ensure_pointbook!(requires_submission: true)
     seed_participations_from_roster!
   end
 
   def seed_participations_from_roster!
     return unless assessment
 
-    # Aggregate students from all tutorials in the lecture
-    lecture.tutorials.each do |tutorial|
-      user_ids = tutorial.roster_user_ids
-      user_ids.each do |user_id|
-        assessment.participations.find_or_create_by!(user_id: user_id) do |part|
-          part.tutorial_id = tutorial.id
-        end
-      end
-    end
+    memberships = TutorialMembership
+      .where(tutorial_id: lecture.tutorial_ids)
+      .pluck(:user_id, :tutorial_id)
+
+    tutorial_mapping = memberships.to_h
+    user_ids = memberships.map(&:first)
+
+    assessment.seed_participations_from!(user_ids: user_ids,
+                                         tutorial_mapping: tutorial_mapping)
   end
 end
 ```
