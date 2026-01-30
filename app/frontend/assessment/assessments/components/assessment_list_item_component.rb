@@ -60,7 +60,7 @@ class AssessmentListItemComponent < ViewComponent::Base
     return "—" unless assessment&.requires_points
     return "—" if tasks_count.zero?
 
-    formatted = total_points % 1 == 0 ? total_points.to_i : total_points
+    formatted = (total_points % 1).zero? ? total_points.to_i : total_points
     "#{formatted} #{I18n.t("assessment.task.points_abbrev")}"
   end
 
