@@ -58,8 +58,14 @@ The main fields and methods of `Assessment` are:
 | `effective_total_points`  | Method            | Returns `total_points` or sum of task max_points                         |
 | `seed_participations_from!(user_ids:)` | Method | Creates participation records for given users                    |
 
-```admonish warning "Submission Support - Current Scope"
-The `requires_submission` field is currently only used for **Assignment** types. Submission interfaces (upload, view, grade) are only implemented for assignments. For Exams and Talks, this field should remain `false` as no submission workflow exists for these types yet. See [Future Extensions](10-future-extensions.md) for planned support.
+```admonish warning "Submission Support - Configurable for Assignments"
+The `requires_submission` field controls whether students must upload files:
+
+- **Assignments:** Configurable. Defaults to `true` (digital submission), but can be set to `false` for paper-based homework collected during tutorials. Editable in the Assessment Settings tab.
+- **Exams:** Always `false`. Exams are graded in person or from scanned papers.
+- **Talks:** Always `false`. Presentations are graded live.
+
+When `requires_submission: false`, the participation workflow skips the `submitted` status, and the Grading Tab shows only grading progress (not submission progress).
 ```
 
 ### Behavior Highlights
@@ -134,7 +140,9 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 ### Usage Scenarios
 
-- **For a homework assignment:** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+
+- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
 
 - **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
 
@@ -165,7 +173,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_numeric`  | DB column (Decimal 2,1) | German grade (1.0-5.0) - for exam grades                    |
 | `grade_text`     | DB column (String) | Text-based grade ("pass", "fail", "exempt") - for achievements |
-| `status`         | DB column (Enum) | Workflow state: `not_started`, `in_progress`, `submitted`, `graded`, `exempt` |
+| `status`         | DB column (Enum) | Workflow state: `not_started`, `submitted`, `graded`, `exempt` (see Status Workflow below) |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
@@ -206,8 +214,56 @@ The `tutorial_id` field captures which tutorial the student was in **at the time
 - Maintains `points_total` as the sum of all associated `TaskPoint` records
 - Preserves submission history via `submitted_at` even after status transitions to `:graded`
 - Can carry both granular points (via tasks) and a final grade (for exams)
-- Supports workflow states from initial submission through final grading
+- Supports simple workflow states without intermediate "in progress" tracking
 - Provides locking mechanism to prevent post-publication tampering
+
+### Status Workflow
+
+The participation status depends on whether the assessment requires file submissions:
+
+**Digital submissions (`requires_submission: true`):**
+```
+not_started → submitted → graded
+                 ↓
+              exempt
+```
+
+**Paper/in-person (`requires_submission: false`):**
+```
+not_started → graded
+     ↓
+  exempt
+```
+
+| Status | Meaning | Trigger |
+|--------|---------|--------|
+| `not_started` | No action taken | Initial state when participation is seeded |
+| `submitted` | Student uploaded file | File upload (only applicable when `requires_submission: true`) |
+| `graded` | All grading complete | Tutor marks grading done (all task points entered) |
+| `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
+
+```admonish note "Why no 'in_progress' status?"
+We intentionally omit an `in_progress` status because:
+1. Tutors typically grade all tasks in one sitting (seconds to minutes)
+2. The partial grading window is too brief to be a meaningful dashboard metric
+3. Partial grading state can be **computed** from `task_points` when needed
+
+To determine grading progress, query the data directly:
+- Fully graded: `task_points.count == assessment.tasks.count`
+- Partially graded: `task_points.any? && task_points.count < assessment.tasks.count`
+- Not started: `task_points.none?`
+```
+
+```admonish tip "Grading Progress Display"
+For dashboard views showing grading progress per tutorial:
+
+| Tutorial | Graded | Progress |
+|----------|--------|----------|
+| Tutorial 1 | 16/20 | ████████░░ 80% |
+| Tutorial 2 | 12/20 | ██████░░░░ 60% |
+
+This is computed from participation status, not stored as a separate field.
+```
 
 ### Example Implementation
 
@@ -227,10 +283,9 @@ module Assessment
 
   enum status: {
     not_started: 0,
-    in_progress: 1,
-    submitted: 2,
-    graded: 3,
-    exempt: 4
+    submitted: 1,
+    graded: 2,
+    exempt: 3
   }
 
   validates :user_id, uniqueness: { scope: :assessment_id }
@@ -270,7 +325,9 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 - **After assessment setup:** When an assignment is created, `assignment.seed_participations_from_roster!` runs, creating one `Assessment::Participation` record for each student across all lecture tutorials. Each participation is initialized with `status: :not_started`, `points_total: 0`, `submitted_at: nil`, and `tutorial_id` set to the tutorial the student currently belongs to.
 
-- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
+- **Student submits work (digital assignment):** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
+
+- **Paper assignment grading:** For assignments with `requires_submission: false`, there is no `submitted` status. When the tutor enters points for all tasks, the participation transitions directly from `:not_started` to `:graded`. The `submitted_at` field remains `nil` since no file was uploaded.
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
