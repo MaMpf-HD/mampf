@@ -7,8 +7,8 @@ FactoryBot.define do
     points_total { nil }
     grade_numeric { nil }
     grade_text { nil }
-    status { :not_started }
-    submitted_at { nil }
+    status { :submitted }
+    submitted_at { Time.current }
     graded_at { nil }
     results_published_at { nil }
     published { false }
