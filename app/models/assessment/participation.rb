@@ -13,10 +13,9 @@ module Assessment
 
     enum :status, {
       not_started: 0,
-      in_progress: 1,
-      submitted: 2,
-      graded: 3,
-      exempt: 4
+      submitted: 1,
+      graded: 2,
+      exempt: 3
     }
 
     validates :user_id, uniqueness: { scope: :assessment_id }
