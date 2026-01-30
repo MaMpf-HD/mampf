@@ -86,10 +86,7 @@
   </div>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'grading' %>" id="grading" role="tabpanel" aria-labelledby="grading-tab">
-    <div class="alert alert-secondary">
-      <i class="bi bi-table"></i>
-      <strong>Grading Tab</strong> - Phase 5 will add participant list with grades
-    </div>
+    <%= render GradingOverviewComponent.new(assessment: assessment, lecture: lecture) %>
   </div>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'statistics' %>" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">

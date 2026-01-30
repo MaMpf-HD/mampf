@@ -67,6 +67,15 @@ de:
       no_task: 'Aufgabe nicht gefunden.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
+    grading_overview:
+      submission_progress: 'Abgabefortschritt'
+      submitted: 'Abgegeben'
+      missing: 'Ausstehend'
+      progress: 'Fortschritt'
+      unassigned: 'Nicht zugewiesen'
+      no_submission_required: 'Für diese Bewertung ist keine digitale Abgabe erforderlich.'
+      no_participants_yet: 'Es wurden noch keine Teilnehmenden hinzugefügt. Teilnehmende werden aus den Vorlesungsanmeldungen übernommen.'
+      no_tutorial_breakdown: 'Keine Aufschlüsselung nach Tutorien verfügbar.'
 
   activerecord:
     errors:

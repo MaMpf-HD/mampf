@@ -1,0 +1,210 @@
+require "rails_helper"
+
+RSpec.describe(GradingOverviewComponent, type: :component) do
+  let(:teacher) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+  let(:assignment) { create(:valid_assignment, lecture: lecture) }
+  let(:assessment) { assignment.reload.assessment }
+  let(:component) { described_class.new(assessment: assessment, lecture: lecture) }
+
+  let!(:tutorial1) { create(:tutorial, lecture: lecture, title: "Tutorial A") }
+  let!(:tutorial2) { create(:tutorial, lecture: lecture, title: "Tutorial B") }
+
+  let(:user1) { create(:confirmed_user) }
+  let(:user2) { create(:confirmed_user) }
+  let(:user3) { create(:confirmed_user) }
+
+  before do
+    Flipper.enable(:assessment_grading)
+    create(:tutorial_membership, tutorial: tutorial1, user: user1)
+    create(:tutorial_membership, tutorial: tutorial1, user: user2)
+    create(:tutorial_membership, tutorial: tutorial2, user: user3)
+  end
+
+  after do
+    Flipper.disable(:assessment_grading)
+  end
+
+  describe "#requires_submission?" do
+    it "returns true when assessment requires submission" do
+      assessment.update!(requires_submission: true)
+      expect(component.requires_submission?).to be(true)
+    end
+
+    it "returns false when assessment does not require submission" do
+      assessment.update!(requires_submission: false)
+      expect(component.requires_submission?).to be(false)
+    end
+  end
+
+  describe "rendering" do
+    context "when requires_submission is false" do
+      before { assessment.update!(requires_submission: false) }
+
+      it "shows no submission required message" do
+        render_inline(component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grading_overview.no_submission_required")
+        )
+      end
+
+      it "shows expected participant count from roster" do
+        render_inline(component)
+        expect(rendered_content).to include("3")
+        expect(rendered_content).to include(I18n.t("assessment.participants"))
+      end
+    end
+
+    context "when requires_submission is true" do
+      before { assessment.update!(requires_submission: true) }
+
+      it "shows submission progress" do
+        render_inline(component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grading_overview.submission_progress")
+        )
+      end
+
+      it "shows tutorial breakdown when roster has members" do
+        render_inline(component)
+        expect(rendered_content).to include("Tutorial A")
+        expect(rendered_content).to include("Tutorial B")
+      end
+    end
+  end
+
+  describe "#total_expected" do
+    it "returns count of all roster members" do
+      expect(component.total_expected).to eq(3)
+    end
+
+    it "returns 0 when roster is empty" do
+      TutorialMembership.delete_all
+      expect(component.total_expected).to eq(0)
+    end
+  end
+
+  describe "#submitted_count" do
+    it "counts participations with submitted or graded status" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1, status: :graded)
+
+      expect(component.submitted_count).to eq(2)
+    end
+
+    it "returns 0 when no participations exist (lazy creation)" do
+      expect(component.submitted_count).to eq(0)
+    end
+
+    it "excludes exempt status from submitted count" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1, status: :exempt)
+
+      expect(component.submitted_count).to eq(0)
+    end
+  end
+
+  describe "#missing_count" do
+    it "returns difference between expected roster count and submitted" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+
+      expect(component.missing_count).to eq(2)
+    end
+
+    it "equals total_expected when no submissions" do
+      expect(component.missing_count).to eq(3)
+    end
+  end
+
+  describe "#progress_percentage" do
+    it "returns 0 when no roster members" do
+      TutorialMembership.delete_all
+      expect(component.progress_percentage).to eq(0)
+    end
+
+    it "returns 0 when no submissions yet" do
+      expect(component.progress_percentage).to eq(0)
+    end
+
+    it "calculates percentage correctly" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+
+      expect(component.progress_percentage).to eq(33)
+    end
+
+    it "returns 100 when all submitted" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1, status: :graded)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user3, tutorial: tutorial2, status: :submitted)
+
+      expect(component.progress_percentage).to eq(100)
+    end
+  end
+
+  describe "#tutorial_stats" do
+    it "groups expected count by tutorial from roster" do
+      stats = component.tutorial_stats
+      expect(stats.size).to eq(2)
+
+      stat1 = stats.find { |s| s.name == "Tutorial A" }
+      expect(stat1.total).to eq(2)
+      expect(stat1.submitted).to eq(0)
+      expect(stat1.missing).to eq(2)
+
+      stat2 = stats.find { |s| s.name == "Tutorial B" }
+      expect(stat2.total).to eq(1)
+      expect(stat2.submitted).to eq(0)
+      expect(stat2.missing).to eq(1)
+    end
+
+    it "counts submissions per tutorial" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user1, tutorial: tutorial1, status: :submitted)
+
+      stats = component.tutorial_stats
+      stat1 = stats.find { |s| s.name == "Tutorial A" }
+
+      expect(stat1.total).to eq(2)
+      expect(stat1.submitted).to eq(1)
+      expect(stat1.missing).to eq(1)
+    end
+
+    it "excludes tutorials with no roster members" do
+      create(:tutorial, lecture: lecture, title: "Empty Tutorial")
+
+      stats = component.tutorial_stats
+      expect(stats.map(&:name)).not_to include("Empty Tutorial")
+    end
+  end
+
+  describe "TutorialStat" do
+    let(:tutorial) { tutorial1 }
+    let(:stat) do
+      described_class::TutorialStat.new(tutorial: tutorial, total: 10, submitted: 3)
+    end
+
+    it "calculates missing" do
+      expect(stat.missing).to eq(7)
+    end
+
+    it "calculates progress_percentage" do
+      expect(stat.progress_percentage).to eq(30)
+    end
+
+    it "returns tutorial title as name" do
+      expect(stat.name).to eq("Tutorial A")
+    end
+
+    it "returns unassigned label when tutorial is nil" do
+      nil_stat = described_class::TutorialStat.new(tutorial: nil, total: 5, submitted: 2)
+      expect(nil_stat.name).to eq(I18n.t("assessment.grading_overview.unassigned"))
+    end
+  end
+end

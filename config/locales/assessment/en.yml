@@ -67,6 +67,15 @@ en:
       no_task: 'Task not found.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
+    grading_overview:
+      submission_progress: 'Submission Progress'
+      submitted: 'Submitted'
+      missing: 'Missing'
+      progress: 'Progress'
+      unassigned: 'Unassigned'
+      no_submission_required: 'No digital submission required for this assessment.'
+      no_participants_yet: 'No participants have been added yet. Participants are seeded from lecture subscriptions.'
+      no_tutorial_breakdown: 'No tutorial breakdown available.'
 
   activerecord:
     errors:
