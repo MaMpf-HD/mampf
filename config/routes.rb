@@ -115,7 +115,6 @@ Rails.application.routes.draw do
             post :reorder
           end
         end
-        resources :participations, only: [:index]
       end
     end
   end

@@ -308,7 +308,7 @@ Grading — Step 7: Assessments (Formalize Assignments)
 
 ```admonish example "PR-7.2 — Assessment UI (CRUD without grading)"
 - Scope: Complete assessment management UI (create, view, configure) without grading interface.
-- Controllers: `Assessment::AssessmentsController` (full CRUD), `Assessment::TasksController` (nested CRUD), `Assessment::ParticipationsController` (index only)
+- Controllers: `Assessment::AssessmentsController` (full CRUD), `Assessment::TasksController` (nested CRUD)
 - UI:
   - "New Assessment" form (depending on assessable - only for assignments here)
   - Index page (list)
