@@ -180,8 +180,7 @@ class Assignment < ApplicationRecord
     def setup_assessment
       ensure_assessment!(
         requires_points: true,
-        requires_submission: true,
-        due_at: deadline
+        requires_submission: true
       )
       seed_participations_from_roster!
     end
