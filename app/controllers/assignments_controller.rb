@@ -28,15 +28,6 @@ class AssignmentsController < ApplicationController
 
   def edit
     set_assignment_locale
-
-    respond_to do |format|
-      format.js
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.update("assignment_form_container",
-                                                 partial: "assessment/assignments/form",
-                                                 locals: { assignment: @assignment })
-      end
-    end
   end
 
   def create
@@ -82,32 +73,10 @@ class AssignmentsController < ApplicationController
   def update
     set_assignment_locale
 
-    if @assignment.update(assignment_params)
-      @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
-      @assignment.reload
+    return unless @assignment.update(assignment_params)
 
-      respond_to do |format|
-        format.js
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update("assignment_form_container", ""),
-            turbo_stream.replace(ActionView::RecordIdentifier.dom_id(@assignment),
-                                 partial: "assessment/assessments/assessment_list_item",
-                                 locals: { assessable: @assignment, lecture: @lecture })
-          ]
-        end
-      end
-    else
-      respond_to do |format|
-        format.js
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.update("assignment_form_container",
-                                                   partial: "assessment/assignments/form",
-                                                   locals: { assignment: @assignment }),
-                 status: :unprocessable_content
-        end
-      end
-    end
+    @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+    @assignment.reload
   end
 
   def destroy
@@ -141,12 +110,6 @@ class AssignmentsController < ApplicationController
   end
 
   def cancel_edit
-    respond_to do |format|
-      format.js
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.update("assignment_form_container", "")
-      end
-    end
   end
 
   def cancel_new
@@ -155,13 +118,6 @@ class AssignmentsController < ApplicationController
     authorize! :cancel_new, assignment
     set_assignment_locale
     @none_left = @lecture&.assignments&.none?
-
-    respond_to do |format|
-      format.js
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.update("assignment_form_container", "")
-      end
-    end
   end
 
   private

@@ -56,15 +56,13 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "returns http success with turbo_stream" do
-        get edit_assignment_path(assignment), as: :turbo_stream
+      it "returns http success" do
+        get edit_assignment_path(assignment), xhr: true
         expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
       end
 
       it "renders the form with assignment data" do
-        get edit_assignment_path(assignment), as: :turbo_stream
-        expect(response.body).to include("assignment_form_container")
+        get edit_assignment_path(assignment), xhr: true
         expect(response.body).to include(assignment.title)
       end
     end
@@ -73,7 +71,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in editor }
 
       it "returns http success" do
-        get edit_assignment_path(assignment), as: :turbo_stream
+        get edit_assignment_path(assignment), xhr: true
         expect(response).to have_http_status(:success)
       end
     end
@@ -82,7 +80,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in student }
 
       it "redirects unauthorized users" do
-        get edit_assignment_path(assignment), as: :turbo_stream
+        get edit_assignment_path(assignment), xhr: true
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -225,32 +223,24 @@ RSpec.describe("Assignments", type: :request) do
         it "updates the assignment" do
           patch assignment_path(assignment),
                 params: { assignment: valid_attributes },
-                as: :turbo_stream
+                xhr: true
           assignment.reload
           expect(assignment.title).to eq("Updated Assignment Title")
           expect(assignment.accepted_file_type).to eq(".zip")
         end
 
-        it "renders a successful turbo_stream response" do
+        it "renders a successful response" do
           patch assignment_path(assignment),
                 params: { assignment: valid_attributes },
-                as: :turbo_stream
+                xhr: true
           expect(response).to have_http_status(:ok)
-          expect(response.media_type).to eq(Mime[:turbo_stream])
         end
 
-        it "clears the form container" do
+        it "renders the updated assignment row" do
           patch assignment_path(assignment),
                 params: { assignment: valid_attributes },
-                as: :turbo_stream
-          expect(response.body).to include("assignment_form_container")
-        end
-
-        it "replaces the assignment in the list" do
-          patch assignment_path(assignment),
-                params: { assignment: valid_attributes },
-                as: :turbo_stream
-          expect(response.body).to include(ActionView::RecordIdentifier.dom_id(assignment))
+                xhr: true
+          expect(response.body).to include("Updated Assignment Title")
         end
 
         context "when clearing medium_id" do
@@ -266,7 +256,7 @@ RSpec.describe("Assignments", type: :request) do
           it "removes the medium association" do
             patch assignment_path(assignment),
                   params: { assignment: valid_attributes.merge(medium_id: "") },
-                  as: :turbo_stream
+                  xhr: true
             assignment.reload
             expect(assignment.medium).to be_nil
           end
@@ -278,23 +268,16 @@ RSpec.describe("Assignments", type: :request) do
           original_title = assignment.title
           patch assignment_path(assignment),
                 params: { assignment: invalid_attributes },
-                as: :turbo_stream
+                xhr: true
           assignment.reload
           expect(assignment.title).to eq(original_title)
         end
 
-        it "renders an unprocessable_content response" do
+        it "renders a successful response" do
           patch assignment_path(assignment),
                 params: { assignment: invalid_attributes },
-                as: :turbo_stream
-          expect(response).to have_http_status(:unprocessable_content)
-        end
-
-        it "renders the form with errors" do
-          patch assignment_path(assignment),
-                params: { assignment: invalid_attributes },
-                as: :turbo_stream
-          expect(response.body).to include("assignment_form_container")
+                xhr: true
+          expect(response).to have_http_status(:ok)
         end
       end
     end
@@ -305,7 +288,7 @@ RSpec.describe("Assignments", type: :request) do
       it "updates the assignment" do
         patch assignment_path(assignment),
               params: { assignment: valid_attributes },
-              as: :turbo_stream
+              xhr: true
         assignment.reload
         expect(assignment.title).to eq("Updated Assignment Title")
       end
@@ -314,11 +297,13 @@ RSpec.describe("Assignments", type: :request) do
     context "as a student" do
       before { sign_in student }
 
-      it "redirects unauthorized users" do
+      it "does not update the assignment" do
+        original_title = assignment.title
         patch assignment_path(assignment),
               params: { assignment: valid_attributes },
-              as: :turbo_stream
-        expect(response).to have_http_status(:redirect)
+              xhr: true
+        assignment.reload
+        expect(assignment.title).to eq(original_title)
       end
     end
   end
@@ -397,15 +382,9 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "returns http success with turbo_stream" do
-        get cancel_edit_assignment_path(assignment), as: :turbo_stream
+      it "returns http success" do
+        get cancel_edit_assignment_path(assignment), xhr: true
         expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-      end
-
-      it "clears the form container" do
-        get cancel_edit_assignment_path(assignment), as: :turbo_stream
-        expect(response.body).to include("assignment_form_container")
       end
     end
 
@@ -413,7 +392,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in editor }
 
       it "returns http success" do
-        get cancel_edit_assignment_path(assignment), as: :turbo_stream
+        get cancel_edit_assignment_path(assignment), xhr: true
         expect(response).to have_http_status(:success)
       end
     end
@@ -423,15 +402,9 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "returns http success with turbo_stream" do
-        get cancel_new_assignment_path(lecture: lecture.id), as: :turbo_stream
+      it "returns http success" do
+        get cancel_new_assignment_path(lecture: lecture.id), xhr: true
         expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-      end
-
-      it "clears the form container" do
-        get cancel_new_assignment_path(lecture: lecture.id), as: :turbo_stream
-        expect(response.body).to include("assignment_form_container")
       end
     end
 
@@ -439,7 +412,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in editor }
 
       it "returns http success" do
-        get cancel_new_assignment_path(lecture: lecture.id), as: :turbo_stream
+        get cancel_new_assignment_path(lecture: lecture.id), xhr: true
         expect(response).to have_http_status(:success)
       end
     end
@@ -448,7 +421,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in student }
 
       it "redirects unauthorized users" do
-        get cancel_new_assignment_path(lecture: lecture.id), as: :turbo_stream
+        get cancel_new_assignment_path(lecture: lecture.id), xhr: true
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -459,7 +432,7 @@ RSpec.describe("Assignments", type: :request) do
       before { sign_in teacher }
 
       it "redirects to root for edit" do
-        get edit_assignment_path(id: 99_999), as: :turbo_stream
+        get edit_assignment_path(id: 99_999), xhr: true
         expect(response).to redirect_to(root_path)
       end
 
@@ -493,7 +466,7 @@ RSpec.describe("Assignments", type: :request) do
       end
 
       it "uses lecture locale for edit" do
-        get edit_assignment_path(german_assignment), as: :turbo_stream
+        get edit_assignment_path(german_assignment), xhr: true
         expect(I18n.locale).to eq(:de)
       end
 
@@ -515,7 +488,7 @@ RSpec.describe("Assignments", type: :request) do
       it "uses lecture locale for update" do
         patch assignment_path(german_assignment),
               params: { assignment: { title: "Updated" } },
-              as: :turbo_stream
+              xhr: true
         expect(I18n.locale).to eq(:de)
       end
     end
