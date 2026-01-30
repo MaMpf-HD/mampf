@@ -85,9 +85,10 @@ namespace :assessment do
         next
       end
 
+      point_options = [5, 10, 15, 20]
       task_count = rand(3..5)
       task_count.times do |i|
-        max_points = [5, 10, 15, 20].sample
+        max_points = point_options.sample
         assessment.tasks.create!(
           description: "Problem #{i + 1}",
           max_points: max_points,
