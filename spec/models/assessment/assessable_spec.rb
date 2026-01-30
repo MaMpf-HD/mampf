@@ -54,12 +54,6 @@ RSpec.describe(Assessment::Assessable) do
     let(:assessable) { FactoryBot.create(:assignment, lecture: lecture) }
 
     it_behaves_like "an assessable model"
-
-    describe "#seed_participations_from_roster!" do
-      it "implements the method (does not raise NotImplementedError)" do
-        expect { assessable.seed_participations_from_roster! }.not_to raise_error
-      end
-    end
   end
 
   describe "when included in Talk" do
@@ -67,11 +61,5 @@ RSpec.describe(Assessment::Assessable) do
     let(:assessable) { FactoryBot.create(:talk, lecture: seminar_lecture) }
 
     it_behaves_like "an assessable model"
-
-    describe "#seed_participations_from_roster!" do
-      it "implements the method (does not raise NotImplementedError)" do
-        expect { assessable.seed_participations_from_roster! }.not_to raise_error
-      end
-    end
   end
 end

@@ -288,20 +288,22 @@ Grading — Step 7: Assessments (Formalize Assignments)
 ```
 
 ```admonish example "PR-7.1 — Assessment backend (Assignment & Talk integration)"
-- Scope: Integrate Assessment::Assessable into Assignment and Talk models with automatic participation seeding.
+- Scope: Integrate Assessment::Assessable into Assignment and Talk models.
 - Backend:
-  - Add `Assessment::Assessable` concern
-  - Add `Assessment::Assessment#seed_participations_from!(user_ids:, tutorial_mapping:)` instance method
+  - Add `Assessment::Assessable` concern with `ensure_assessment!` method
+  - Add `Assessment::Assessment#seed_participations_from!(user_ids:, tutorial_mapping:)` instance method (for deadline backfill job)
   - Include concern in Assignment and Talk models (behind feature flag)
   - Add `after_create :setup_assessment` hook to both models
-  - Implement `seed_participations_from_roster!` for Assignment (optimized single-query approach)
-  - Implement `seed_participations_from_roster!` for Talk (seeds from speakers)
+- Participation Creation: **Lazy** — participations are NOT seeded on assignment creation. They are created on-demand when:
+  - A student submits work (status: :submitted)
+  - A tutor enters a grade (status: :graded)
+  - A teacher marks exemption (status: :exempt)
+  - A deadline backfill job runs (status: :not_started, for analytics)
 - Feature Flag: `assessment_grading` (global)
-- Performance: Optimized participation seeding reduces queries by 90% (23 → 3 queries for 20 tutorials)
-- Test Coverage: 104 specs (60%), covering both flag enabled/disabled states
-- Behavior: When enabled, new assignments/talks automatically create Assessment record + Participations; Assignment seeds from all lecture tutorials, Talk seeds from speakers only
+- Test Coverage: 90 specs (60%), covering both flag enabled/disabled states
+- Behavior: When enabled, new assignments/talks automatically create Assessment record; participations are created lazily
 - Refs: [Assessment::Assessable](04-assessments-and-grading.md#assessmentassessable-concern)
-- Acceptance: Feature flag works; new assignments/talks get assessments; participations seeded from roster; old records unaffected; performance scales to 600 students.
+- Acceptance: Feature flag works; new assignments/talks get assessments; old records unaffected.
 ```
 
 ```admonish example "PR-7.2 — Assessment UI (CRUD without grading)"
@@ -310,13 +312,13 @@ Grading — Step 7: Assessments (Formalize Assignments)
 - UI:
   - "New Assessment" form (depending on assessable - only for assignments here)
   - Index page (list)
-  - Show page with tabs (Overview, Settings, Tasks, Participants)
+  - Show page with tabs (Overview, Settings, Tasks, Grading)
   - Task management (add/edit/reorder problems)
-  - Participation list (auto-seeded from PR-7.1)
+  - Grading tab shows aggregated progress from roster (expected count from roster, submitted/graded count from participations)
 - Limitations: No point entry, no grade calculation, no result publication (deferred to PR-8.x)
 - Feature Flag: Same `assessment_grading` flag gates entire UI
 - Refs: [Assessment controllers](11-controllers.md#assessmentassessmentscontroller), [Views](12-views.md#assessments)
-- Acceptance: Teachers can create assessments via UI; participations visible; tasks configurable; no grading actions available; feature flag gates access.
+- Acceptance: Teachers can create assessments via UI; grading overview shows progress; tasks configurable; no grading actions available; feature flag gates access.
 ```
 
 ```admonish example "PR-7.3 — Submission assessment support (dual-column)"
