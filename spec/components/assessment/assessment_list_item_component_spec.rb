@@ -59,6 +59,32 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(component.tasks_count).to eq(2)
     end
 
+    describe "#total_points_display" do
+      it "returns dash when requires_points is false" do
+        assessment.update!(requires_points: false)
+        expect(component.total_points_display).to eq("—")
+      end
+
+      it "returns dash when no tasks exist" do
+        assessment.update!(requires_points: true)
+        expect(component.total_points_display).to eq("—")
+      end
+
+      it "returns integer format for whole number points" do
+        assessment.update!(requires_points: true)
+        Assessment::Task.create!(assessment: assessment, max_points: 10)
+        Assessment::Task.create!(assessment: assessment, max_points: 5)
+        expect(component.total_points_display).to eq("15 #{I18n.t("assessment.task.points_abbrev")}")
+      end
+
+      it "returns decimal format for fractional points" do
+        assessment.update!(requires_points: true)
+        Assessment::Task.create!(assessment: assessment, max_points: 10.5)
+        Assessment::Task.create!(assessment: assessment, max_points: 5)
+        expect(component.total_points_display).to eq("15.5 #{I18n.t("assessment.task.points_abbrev")}")
+      end
+    end
+
     it "returns participations count" do
       student = create(:confirmed_user)
       create(:assessment_participation, assessment: assessment, user: student)
