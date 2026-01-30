@@ -1,12 +1,20 @@
 class Assignment < ApplicationRecord
   include Assessment::Assessable
 
+  attr_writer :requires_submission
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   before_destroy :check_destructibility, prepend: true
+
+  def requires_submission
+    return assessment.requires_submission if assessment
+
+    @requires_submission.nil? || @requires_submission
+  end
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
@@ -180,7 +188,7 @@ class Assignment < ApplicationRecord
     def setup_assessment
       ensure_assessment!(
         requires_points: true,
-        requires_submission: true
+        requires_submission: requires_submission
       )
       seed_participations_from_roster!
     end

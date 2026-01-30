@@ -63,6 +63,19 @@
         </div>
 
         <div class="col-12">
+          <div class="form-check">
+            <%= f.check_box :requires_submission,
+                            class: 'form-check-input',
+                            checked: assignment.requires_submission.nil? ? true : assignment.requires_submission %>
+            <%= f.label :requires_submission, t('assessment.requires_submission'), class: 'form-check-label' %>
+            <div class="form-text text-muted">
+              <%= t('assessment.requires_submission_hint') %>
+             </div>
+          </div>
+        </div>
+
+
+        <div class="col-12">
           <div class="d-flex gap-2 justify-content-end">
             <% if assignment.persisted? %>
               <%= link_to cancel_editing_assignment_path(assignment),

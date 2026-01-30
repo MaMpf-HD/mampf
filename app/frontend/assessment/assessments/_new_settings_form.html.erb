@@ -62,6 +62,18 @@
                    class: "form-select" %>
     </div>
 
+    <div class="col-12">
+      <div class="form-check">
+        <%= f.check_box :requires_submission,
+                        class: "form-check-input",
+                        checked: assignment.requires_submission.nil? ? true : assignment.requires_submission %>
+        <%= f.label :requires_submission, t("assessment.requires_submission"), class: "form-check-label" %>
+        <div class="form-text text-muted">
+          <%= t("assessment.requires_submission_hint") %>
+        </div>
+      </div>
+    </div>
+
     <div class="col-12 mt-4 d-flex justify-content-between">
       <div>
         <%= f.submit t("assessment.form.submit"), class: "btn btn-primary me-2" %>

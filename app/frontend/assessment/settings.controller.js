@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["submitButton", "warning", "title", "deadline", "mediumId",
-    "acceptedFileType", "deletionDate"];
+    "acceptedFileType", "deletionDate", "requiresSubmission"];
 
   connect() {
     this.storeOriginalValues();
@@ -15,6 +15,9 @@ export default class extends Controller {
     this.originalMediumId = this.mediumIdTarget.value;
     this.originalAcceptedFileType = this.acceptedFileTypeTarget.value;
     this.originalDeletionDate = this.deletionDateTarget.value;
+    if (this.hasRequiresSubmissionTarget) {
+      this.originalRequiresSubmission = this.requiresSubmissionTarget.checked;
+    }
   }
 
   checkForChanges() {
@@ -23,9 +26,11 @@ export default class extends Controller {
     const mediumIdChanged = this.mediumIdTarget.value !== this.originalMediumId;
     const fileTypeChanged = this.acceptedFileTypeTarget.value !== this.originalAcceptedFileType;
     const deletionDateChanged = this.deletionDateTarget.value !== this.originalDeletionDate;
+    const requiresSubmissionChanged = this.hasRequiresSubmissionTarget
+      && this.requiresSubmissionTarget.checked !== this.originalRequiresSubmission;
 
     if (titleChanged || deadlineChanged || mediumIdChanged
-      || fileTypeChanged || deletionDateChanged) {
+      || fileTypeChanged || deletionDateChanged || requiresSubmissionChanged) {
       this.showSubmitElements();
     }
     else {
@@ -49,6 +54,9 @@ export default class extends Controller {
     this.mediumIdTarget.value = this.originalMediumId;
     this.acceptedFileTypeTarget.value = this.originalAcceptedFileType;
     this.deletionDateTarget.value = this.originalDeletionDate;
+    if (this.hasRequiresSubmissionTarget) {
+      this.requiresSubmissionTarget.checked = this.originalRequiresSubmission;
+    }
     this.hideSubmitElements();
   }
 

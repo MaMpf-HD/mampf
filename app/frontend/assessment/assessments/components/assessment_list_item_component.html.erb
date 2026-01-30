@@ -39,6 +39,13 @@
           </span>
         <% end %>
       </td>
+      <td class="text-center">
+        <% if requires_submission? %>
+          <i class="bi bi-check-lg text-success" title="<%= t('assessment.requires_submission') %>"></i>
+        <% else %>
+          <i class="bi bi-x-lg text-muted" title="<%= t('assessment.no_submission_required') %>"></i>
+        <% end %>
+      </td>
       <td><%= deletion_date %></td>
     <% else %>
       <td colspan="4" class="text-muted">

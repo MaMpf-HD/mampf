@@ -11,7 +11,7 @@
                 }
               } do |f| %>
   <input type="hidden" name="tab" value="settings">
-  
+
   <%= f.fields_for :assessable do |af| %>
     <div class="row g-3">
       <div class="col-md-6">
@@ -88,33 +88,51 @@
                        action: 'change->assessments--settings#checkForChanges'
                      } %>
       </div>
-
-      <div class="col-12 mt-3 text-center d-none"
-           data-assessments--settings-target="warning">
-        <div class="alert alert-warning d-inline-block mb-2" role="alert">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          <%= t('warnings.unsaved_changes') %>
-        </div>
-      </div>
-
-      <div class="col-12 mt-4 d-flex justify-content-between d-none"
-           data-assessments--settings-target="submitButton">
-        <div>
-          <%= f.submit t('assessment.form.submit'), class: "btn btn-primary me-2" %>
-          <button type="button"
-                  class="btn btn-secondary"
-                  data-action="click->assessments--settings#cancel">
-            <%= t('buttons.cancel') %>
-          </button>
-        </div>
-        <% if assessable.persisted? && assessable.destructible? %>
-          <%= button_to t('basics.delete'),
-                       assignment_path(assessable),
-                       method: :delete,
-                       class: "btn btn-outline-danger",
-                       data: { turbo_confirm: t('basics.confirm_delete') } %>
-        <% end %>
-      </div>
     </div>
   <% end %>
+
+  <div class="row g-3 mt-1">
+    <div class="col-12">
+      <div class="form-check">
+        <%= f.check_box :requires_submission,
+                        class: "form-check-input",
+                        checked: assessment.requires_submission,
+                        data: {
+                          assessments__settings_target: 'requiresSubmission',
+                          action: 'change->assessments--settings#checkForChanges'
+                        } %>
+        <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
+        <div class="form-text text-muted">
+          <%= t('assessment.requires_submission_hint') %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mt-3 text-center d-none"
+         data-assessments--settings-target="warning">
+      <div class="alert alert-warning d-inline-block mb-2" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <%= t('warnings.unsaved_changes') %>
+      </div>
+    </div>
+
+    <div class="col-12 mt-4 d-flex justify-content-between d-none"
+         data-assessments--settings-target="submitButton">
+      <div>
+        <%= f.submit t('assessment.form.submit'), class: "btn btn-primary me-2" %>
+        <button type="button"
+                class="btn btn-secondary"
+                data-action="click->assessments--settings#cancel">
+          <%= t('buttons.cancel') %>
+        </button>
+      </div>
+      <% if assessable.persisted? && assessable.destructible? %>
+        <%= button_to t('basics.delete'),
+                     assignment_path(assessable),
+                     method: :delete,
+                     class: "btn btn-outline-danger",
+                     data: { turbo_confirm: t('basics.confirm_delete') } %>
+      <% end %>
+    </div>
+  </div>
 <% end %>

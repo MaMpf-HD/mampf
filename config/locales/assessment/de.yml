@@ -10,6 +10,9 @@ de:
     grading: 'Bewertung'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
+    requires_submission: 'Digitale Abgabe erforderlich'
+    requires_submission_hint: 'Studierende müssen eine Datei hochladen'
+    no_submission_required: 'Keine digitale Abgabe'
     form:
       submit: 'Speichern'
     task:
@@ -59,8 +62,8 @@ de:
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
-      no_assessment: 'Bewertung für dieses Element nicht gefunden.'      
-      no_task: 'Aufgabe nicht gefunden.'    
+      no_assessment: 'Bewertung für dieses Element nicht gefunden.'
+      no_task: 'Aufgabe nicht gefunden.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
 

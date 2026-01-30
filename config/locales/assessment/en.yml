@@ -10,6 +10,9 @@ en:
     grading: 'Grading'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
+    requires_submission: 'Requires digital submission'
+    requires_submission_hint: 'Students must upload a file'
+    no_submission_required: 'No digital submission'
     form:
       submit: 'Save'
     task:

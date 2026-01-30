@@ -147,7 +147,36 @@ RSpec.describe(Assignment, type: :model) do
         expect(new_participation.tutorial_id).to eq(tutorial1.id)
       end
     end
-  end
 
-  # test method - NEEDS TO BE DONE
+    describe "#requires_submission" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      it "returns the assessment requires_submission value" do
+        assignment = FactoryBot.create(:assignment, lecture: lecture)
+
+        expect(assignment.requires_submission).to be(true)
+      end
+
+      it "returns default true when no assessment exists" do
+        Flipper.disable(:assessment_grading)
+        assignment = FactoryBot.create(:assignment, lecture: lecture)
+
+        expect(assignment.requires_submission).to be(true)
+      end
+
+      it "passes requires_submission to assessment on create" do
+        assignment = Assignment.new(
+          title: "Test Assignment",
+          deadline: 1.week.from_now,
+          deletion_date: 6.months.from_now,
+          lecture: lecture,
+          requires_submission: false
+        )
+        assignment.save!
+
+        expect(assignment.assessment.requires_submission).to be(false)
+      end
+    end
+  end
 end

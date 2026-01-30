@@ -52,6 +52,10 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment&.tasks&.count || 0
   end
 
+  def requires_submission?
+    assessment&.requires_submission
+  end
+
   def participations_count
     assessment&.assessment_participations&.count || 0
   end
