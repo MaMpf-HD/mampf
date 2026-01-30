@@ -264,7 +264,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_numeric`  | DB column (Decimal 2,1) | German grade (1.0-5.0) - for exam grades                    |
 | `grade_text`     | DB column (String) | Text-based grade ("pass", "fail", "exempt") - for achievements |
-| `status`         | DB column (Enum) | Workflow state: `not_started`, `submitted`, `graded`, `exempt` (see Status Workflow below) |
+| `status`         | DB column (Enum) | Workflow state: `submitted`, `graded`, `exempt` (see Status Workflow below) |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
@@ -291,9 +291,9 @@ Two separate grade fields support different assessment types:
 ```
 
 ```admonish info collapsible=true title="Tutorial Context Details"
-The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation**. This field:
-- Is **set once** when a participation is created (on submission, grading, or deadline backfill)
-- Is **never updated** if the student changes tutorials after the participation exists
+The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when they submit work or are graded). This field:
+- Is **set once** when the participation record is created
+- Is **never updated** if the student changes tutorials after submission
 - Is **nullable** for assessments without tutorial context (e.g., exams, talks)
 - Enables **per-tutorial publication** control for assignments
 - Provides **performance optimization** for tutor grading queries
@@ -310,25 +310,25 @@ The `tutorial_id` field captures which tutorial the student was in **at the time
 
 ### Status Workflow
 
-The participation status depends on whether the assessment requires file submissions:
+Participation records are created lazily when a student submits work, a tutor enters a grade, or a teacher marks an exemption. The absence of a participation record means the student has not interacted with the assessment.
 
 **Digital submissions (`requires_submission: true`):**
 ```
-not_started → submitted → graded
-                 ↓
-              exempt
+[no record] → submitted → graded
+                  ↓
+               exempt
 ```
 
 **Paper/in-person (`requires_submission: false`):**
 ```
-not_started → graded
-     ↓
-  exempt
+[no record] → graded
+      ↓
+   exempt
 ```
 
 | Status | Meaning | Trigger |
 |--------|---------|--------|
-| `not_started` | No action taken | Initial state when participation is seeded |
+| *(no record)* | No action taken | Student has not interacted with assessment |
 | `submitted` | Student uploaded file | File upload (only applicable when `requires_submission: true`) |
 | `graded` | All grading complete | Tutor marks grading done (all task points entered) |
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
@@ -373,10 +373,9 @@ module Assessment
       class_name: "Assessment::TaskPoint"
 
   enum status: {
-    not_started: 0,
-    submitted: 1,
-    graded: 2,
-    exempt: 3
+    submitted: 0,
+    graded: 1,
+    exempt: 2
   }
 
   validates :user_id, uniqueness: { scope: :assessment_id }
@@ -414,13 +413,11 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 ### Usage Scenarios
 
+- **After assessment setup:** When an assignment is created, an `Assessment::Assessment` record is automatically created via the `Assessable` concern. No participation records are created at this point—they are created lazily when students submit work or tutors enter grades.
 - **Lazy participation creation:** Participations are **not** created eagerly when an assignment is set up. Instead, they are created on-demand when a student submits work, when a tutor enters a grade, or via a scheduled job after the deadline passes. The "expected" count for progress tracking comes from querying the current roster, not pre-seeded participations.
 
 - **Student submits work (digital assignment):** A student uploads their homework file. The system creates a participation record (if none exists) with `status: :submitted`, sets `submitted_at: Time.current`, and captures the student's current `tutorial_id`. This is the first time a participation record may be created for this student/assessment pair.
 
-- **Paper assignment grading:** For assignments with `requires_submission: false`, participations are created when the tutor enters points. When the tutor enters points for a task, the system creates the participation (if needed) and transitions it to `:graded`. The `submitted_at` field remains `nil` since no file was uploaded.
-
-- **Deadline backfill job:** After an assignment's deadline passes, a scheduled job creates `:not_started` participations for all roster members who don't yet have a participation record. This provides a historical record of "who didn't submit" for analytics and grade calculation.
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
@@ -1428,53 +1425,34 @@ sequenceDiagram
     participant A as Assignment
     participant Assess as Assessment::Assessment
     participant L as Lecture
-    participant Tut as Tutorial
-    participant Part as Assessment::Participation
     actor Student
     participant Sub as Submission
+    participant Part as Assessment::Participation
 
     Teacher->>A: Create assignment
     A->>Assess: ensure_pointbook!(title, requires_submission: true)
     Assess->>Assess: Create/update assessment record
     Assess-->>A: Assessment created
 
-    Teacher->>A: seed_participations_from_roster!
-    A->>L: lecture.tutorials
-    L-->>A: [tutorial_1, tutorial_2, ...]
-
-    loop For each tutorial
-        A->>Tut: tutorial.roster_user_ids
-        Tut-->>A: [student_ids...]
-    end
-
-    A->>A: user_ids.uniq (deduplicate)
-
-    loop For each unique student
-        A->>Part: Create participation
-        Part->>Part: Set status: :not_started
-        Part->>Part: Set points_total: 0
-    end
-
-    A-->>Teacher: Participations seeded
-
     Teacher->>Assess: Add tasks (Problem 1, Problem 2, ...)
     Assess->>Assess: Create Assessment::Task records
 
-    Note over Teacher,Assess: Assessment is now ready for student work
+    Note over Teacher,Assess: Assessment is ready. No participations created yet.
 
     Student->>Sub: Upload homework file
     Sub->>Sub: Create submission record
     Sub->>Sub: Link to team members via user_submission_joins
 
     loop For each team member
-        Sub->>Part: Find participation by user_id
-        Part->>Part: Update status: :submitted
+        Sub->>Part: Find or create participation
+        Part->>Part: Set status: :submitted
         Part->>Part: Set submitted_at: Time.current
+        Part->>Part: Set tutorial_id from current membership
     end
 
     Sub-->>Student: Submission confirmed
 
-    Note over Student,Part: Participations track submission history<br/>even after grading
+    Note over Student,Part: Participations created lazily on submission
 ```
 
 ---

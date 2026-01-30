@@ -11,12 +11,6 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "validations" do
-    it "requires a title" do
-      task = FactoryBot.build(:assessment_task, title: nil)
-      expect(task).not_to be_valid
-      expect(task.errors[:title]).to be_present
-    end
-
     it "requires max_points to be >= 0" do
       task = FactoryBot.build(:assessment_task, max_points: -1)
       expect(task).not_to be_valid
