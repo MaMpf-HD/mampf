@@ -118,6 +118,35 @@ The Assessments Tab shows all gradeable items in one list, regardless of creatio
 Teachers create items where they make semantic sense (homework vs presentations), but grade everything in one place for consistency and efficiency.
 ```
 
+### Grading Tab vs. Performance Tab
+
+```admonish question "Why do we have both a Grading tab and a Performance tab?"
+The **Grading tab** (in the Assessment Dashboard) and the **Performance tab** (in the Roster Dashboard) serve different purposes despite some apparent overlap.
+```
+
+| Dimension | Grading Tab (Assessment) | Performance Tab (Roster) |
+|-----------|--------------------------|--------------------------|
+| **Location** | Assessment Dashboard (single assessment) | Roster Dashboard (lecture-wide) |
+| **Primary axis** | Tasks (columns) × Students (rows) | Assessments (columns) × Students (rows) |
+| **Editing** | Yes — enter points per task | No — read-only aggregate |
+| **Scope** | One assessment (e.g., "Homework 3") | All assessments in the lecture |
+| **Question answered** | "How did students do on Problem 2?" | "Is Alice eligible for the exam?" |
+| **User journey** | Grading workflow → enter data | Certification workflow → review eligibility |
+
+**The "filter to one assignment" overlap:** The Performance tab can filter to show a single assessment, which superficially resembles the Grading tab. However:
+1. Performance tab remains **read-only** — it consumes grading data, it doesn't produce it.
+2. Grading tab shows **task-level breakdown** — Performance shows only the total per assessment.
+3. Performance tab provides **cross-assessment context** — even when filtered, switching views is instant.
+
+```admonish tip "Design Pattern"
+This layered approach (detail view + aggregate view) is common in well-designed systems:
+- **Banking:** Transaction details vs. account statement
+- **LMS (Moodle/Canvas):** Assignment grading page vs. gradebook overview
+- **GitHub:** PR diff view vs. repository insights
+
+The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
+```
+
 ---
 
 ## Assessment::Assessment (ActiveRecord Model)

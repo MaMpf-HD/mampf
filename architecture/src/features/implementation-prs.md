@@ -308,8 +308,8 @@ Grading — Step 7: Assessments (Formalize Assignments)
 - Scope: Complete assessment management UI (create, view, configure) without grading interface.
 - Controllers: `Assessment::AssessmentsController` (full CRUD), `Assessment::TasksController` (nested CRUD), `Assessment::ParticipationsController` (index only)
 - UI:
-  - "New Assessment" form (type/mode selection, schedule)
-  - Index page (list, filter, status badges)
+  - "New Assessment" form (depending on assessable - only for assignments here)
+  - Index page (list)
   - Show page with tabs (Overview, Settings, Tasks, Participants)
   - Task management (add/edit/reorder problems)
   - Participation list (auto-seeded from PR-7.1)
