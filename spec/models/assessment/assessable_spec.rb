@@ -14,35 +14,38 @@ RSpec.describe(Assessment::Assessable) do
         )
 
         expect(result).to be_persisted
+        expect(result.title).to eq(assessable.title)
         expect(result.requires_points).to be(true)
         expect(result.requires_submission).to be(false)
       end
 
       it "is idempotent and updates existing assessment" do
         assessable.ensure_assessment!(
-          requires_points: true,
-          requires_submission: true
+          requires_points: true
         )
 
         original_id = assessable.assessment.id
 
         assessable.ensure_assessment!(
-          requires_points: false,
-          requires_submission: false
+          requires_points: false
         )
 
         expect(assessable.assessment.id).to eq(original_id)
         expect(assessable.assessment.requires_points).to be(false)
-        expect(assessable.assessment.requires_submission).to be(false)
       end
 
       it "sets lecture from assessable if available" do
         result = assessable.ensure_assessment!(
-          title: "Test",
           requires_points: false
         )
 
         expect(result.lecture).to eq(assessable.lecture)
+      end
+
+      it "delegates title to assessable" do
+        result = assessable.ensure_assessment!(requires_points: true)
+
+        expect(result.title).to eq(assessable.title)
       end
     end
   end
