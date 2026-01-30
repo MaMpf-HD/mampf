@@ -40,6 +40,9 @@
         <% end %>
       </td>
       <td class="text-center">
+        <%= total_points_display %>
+      </td>
+      <td class="text-center">
         <% if requires_submission? %>
           <i class="bi bi-check-lg text-success" title="<%= t('assessment.requires_submission') %>"></i>
         <% else %>
@@ -48,7 +51,7 @@
       </td>
       <td><%= deletion_date %></td>
     <% else %>
-      <td colspan="4" class="text-muted">
+      <td colspan="5" class="text-muted">
         <%= I18n.t('assessment.legacy_description') %>
         <% if edit_path.present? || delete_path.present? %>
           <div class="float-end d-flex gap-2">

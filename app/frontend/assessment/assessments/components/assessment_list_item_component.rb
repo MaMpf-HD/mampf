@@ -52,6 +52,18 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment&.tasks&.count || 0
   end
 
+  def total_points
+    assessment&.tasks&.sum(:max_points) || 0
+  end
+
+  def total_points_display
+    return "—" unless assessment&.requires_points
+    return "—" if tasks_count.zero?
+
+    formatted = total_points % 1 == 0 ? total_points.to_i : total_points
+    "#{formatted} #{I18n.t("assessment.task.points_abbrev")}"
+  end
+
   def requires_submission?
     assessment&.requires_submission
   end
