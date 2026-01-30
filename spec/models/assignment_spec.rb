@@ -66,33 +66,10 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.assessment.lecture).to eq(lecture)
       end
 
-      it "seeds participations from all lecture tutorials" do
+      it "does not eagerly seed participations (lazy creation)" do
         assignment = FactoryBot.create(:assignment, lecture: lecture)
 
-        expect(assignment.assessment.assessment_participations.count).to eq(3)
-
-        user_ids = assignment.assessment.assessment_participations.pluck(:user_id)
-        expect(user_ids).to contain_exactly(user1.id, user2.id, user3.id)
-      end
-
-      it "sets tutorial_id correctly on participations" do
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-
-        participation1 = assignment.assessment.assessment_participations.find_by(user_id: user1.id)
-        participation2 = assignment.assessment.assessment_participations.find_by(user_id: user2.id)
-        participation3 = assignment.assessment.assessment_participations.find_by(user_id: user3.id)
-
-        expect(participation1.tutorial_id).to eq(tutorial1.id)
-        expect(participation2.tutorial_id).to eq(tutorial1.id)
-        expect(participation3.tutorial_id).to eq(tutorial2.id)
-      end
-
-      it "initializes participations with default values" do
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-
-        participation = assignment.assessment.assessment_participations.first
-        expect(participation.status).to eq("not_started")
-        expect(participation.points_total).to eq(0.0)
+        expect(assignment.assessment.assessment_participations.count).to eq(0)
       end
     end
 
@@ -111,40 +88,6 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment).to be_valid
         expect(assignment.title).to eq("Homework 1")
         expect(assignment.lecture).to eq(lecture)
-      end
-    end
-
-    describe "#seed_participations_from_roster!" do
-      it "is idempotent" do
-        Flipper.enable(:assessment_grading)
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-        Flipper.disable(:assessment_grading)
-
-        initial_count = assignment.assessment.assessment_participations.count
-        expect(initial_count).to eq(3)
-
-        assignment.seed_participations_from_roster!
-
-        expect(assignment.assessment.assessment_participations.count).to eq(3)
-      end
-
-      it "adds new students if they join later" do
-        Flipper.enable(:assessment_grading)
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-        Flipper.disable(:assessment_grading)
-
-        expect(assignment.assessment.assessment_participations.count).to eq(3)
-
-        new_user = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:tutorial_membership, tutorial: tutorial1, user: new_user)
-
-        assignment.seed_participations_from_roster!
-
-        expect(assignment.assessment.assessment_participations.count).to eq(4)
-
-        new_participation = assignment.assessment.assessment_participations
-                                      .find_by(user_id: new_user.id)
-        expect(new_participation.tutorial_id).to eq(tutorial1.id)
       end
     end
   end

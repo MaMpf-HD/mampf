@@ -138,18 +138,6 @@ class Talk < ApplicationRecord
     :speaker_talk_joins
   end
 
-  def seed_participations_from_roster!
-    return unless assessment
-
-    # Talk roster = speakers
-    user_ids = speakers.pluck(:id)
-
-    assessment.seed_participations_from!(
-      user_ids: user_ids,
-      tutorial_mapping: {}
-    )
-  end
-
   private
 
     def touch_lecture
@@ -177,6 +165,5 @@ class Talk < ApplicationRecord
         requires_points: false,
         requires_submission: false
       )
-      seed_participations_from_roster!
     end
 end

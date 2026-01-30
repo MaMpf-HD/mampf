@@ -15,10 +15,5 @@ module Assessment
       a.save! if a.changed?
       a
     end
-
-    def seed_participations_from_roster!
-      raise(NotImplementedError,
-            "#{self.class.name} must implement seed_participations_from_roster!")
-    end
   end
 end

@@ -291,9 +291,9 @@ Two separate grade fields support different assessment types:
 ```
 
 ```admonish info collapsible=true title="Tutorial Context Details"
-The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when `seed_participations_from_roster!` runs during assessment setup). This field:
-- Is **set once** when participations are initialized from the roster
-- Is **never updated** if the student changes tutorials mid-semester
+The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation**. This field:
+- Is **set once** when a participation is created (on submission, grading, or deadline backfill)
+- Is **never updated** if the student changes tutorials after the participation exists
 - Is **nullable** for assessments without tutorial context (e.g., exams, talks)
 - Enables **per-tutorial publication** control for assignments
 - Provides **performance optimization** for tutor grading queries
@@ -392,10 +392,10 @@ end
 ```
 
 ```admonish warning collapsible=true title="Tutorial ID Behavior (Implementation Details)"
-The `tutorial_id` on participation is **never updated** after creation. It represents which tutorial the student was in when participations were initialized during assessment setup, not their current tutorial assignment.
+The `tutorial_id` on participation is **never updated** after creation. It represents which tutorial the student was in when the participation was created, not their current tutorial assignment.
 
 **When `tutorial_id` is set:**
-- **Assignments**: Set when `seed_participations_from_roster!` runs after assignment creation, capturing the tutorial each student belongs to at that moment
+- **Assignments**: Set when participation is created (on submission, grading, or deadline backfill), capturing the tutorial each student belongs to at that moment
 - **Exams**: Set to `nil` (exams don't have tutorial context)
 - **Talks**: Set to `nil` (talks have speakers, not tutorial participants)
 
@@ -414,11 +414,13 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 ### Usage Scenarios
 
-- **After assessment setup:** When an assignment is created, `assignment.seed_participations_from_roster!` runs, creating one `Assessment::Participation` record for each student across all lecture tutorials. Each participation is initialized with `status: :not_started`, `points_total: 0`, `submitted_at: nil`, and `tutorial_id` set to the tutorial the student currently belongs to.
+- **Lazy participation creation:** Participations are **not** created eagerly when an assignment is set up. Instead, they are created on-demand when a student submits work, when a tutor enters a grade, or via a scheduled job after the deadline passes. The "expected" count for progress tracking comes from querying the current roster, not pre-seeded participations.
 
-- **Student submits work (digital assignment):** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
+- **Student submits work (digital assignment):** A student uploads their homework file. The system creates a participation record (if none exists) with `status: :submitted`, sets `submitted_at: Time.current`, and captures the student's current `tutorial_id`. This is the first time a participation record may be created for this student/assessment pair.
 
-- **Paper assignment grading:** For assignments with `requires_submission: false`, there is no `submitted` status. When the tutor enters points for all tasks, the participation transitions directly from `:not_started` to `:graded`. The `submitted_at` field remains `nil` since no file was uploaded.
+- **Paper assignment grading:** For assignments with `requires_submission: false`, participations are created when the tutor enters points. When the tutor enters points for a task, the system creates the participation (if needed) and transitions it to `:graded`. The `submitted_at` field remains `nil` since no file was uploaded.
+
+- **Deadline backfill job:** After an assignment's deadline passes, a scheduled job creates `:not_started` participations for all roster members who don't yet have a participation record. This provides a historical record of "who didn't submit" for analytics and grade calculation.
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
@@ -426,11 +428,11 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 - **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
 
-- **Handling exemptions:** A student provides a medical certificate and is marked `status: :exempt`. Their participation record exists but no points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`. The `tutorial_id` is preserved for audit purposes.
+- **Handling exemptions:** A student provides a medical certificate. The teacher explicitly creates a participation with `status: :exempt`. No points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`. The `tutorial_id` is set to the student's current tutorial for audit purposes.
 
 - **Distinguishing submission vs non-submission:** After grading is complete, the teacher can query `submitted_at.present?` to distinguish students who submitted work (even if they received 0 points for quality) from those who never submitted at all.
 
-- **Student switches tutorials mid-semester:** Alice is in Tutorial A when participations are initialized for Homework 3. Her participation has `tutorial_id: 1` (Tutorial A). In week 6, she switches to Tutorial B. When Tutorial A publishes results, Alice's Homework 3 results become visible because her participation's `tutorial_id` still points to Tutorial A. Her future assignments will have new participations with `tutorial_id: 2` (Tutorial B).
+- **Student switches tutorials mid-semester:** Alice is in Tutorial A when she submits Homework 3. Her participation is created with `tutorial_id: 1` (Tutorial A). In week 6, she switches to Tutorial B. When Tutorial A publishes results, Alice's Homework 3 results become visible because her participation's `tutorial_id` still points to Tutorial A. Her future submissions will create participations with `tutorial_id: 2` (Tutorial B).
 
 ---
 
@@ -683,13 +685,12 @@ The minimal "make me gradeable" interface that all graded work must implement.
 |--------|-------------|
 | `assessment` | Returns the linked Assessment::Assessment record (polymorphic `has_one` association) |
 | `ensure_assessment!(...)` | Creates or updates the linked Assessment::Assessment with given configuration |
-| `seed_participations_from_roster!` | Creates Assessment::Participation records for all students in the roster |
 
 ### Behavior Highlights
 
 - Establishes the polymorphic link via `has_one :assessment, as: :assessable`
 - Provides a safe method to create/update the assessment without duplication
-- `seed_participations_from_roster!` should be overridden by including classes to define roster logic
+- Does not eagerly seed participations—participations are created lazily on submission/grading
 - Does not enforce whether points or grades are used—that's delegated to `Assessment::Pointable` and `Assessment::Gradable`
 
 ### Example Implementation
@@ -705,26 +706,13 @@ module Assessment
         class_name: "Assessment::Assessment"
     end
 
-    def ensure_assessment!(title:, requires_points:, requires_submission: false,
-                          visible_from: nil, due_at: nil)
+    def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment
-      a.title = title
       a.requires_points = requires_points
       a.requires_submission = requires_submission
-        a.visible_from = visible_from if visible_from
-        a.due_at = due_at if due_at
       a.lecture ||= try(:lecture)
       a.save! if a.changed?
       a
-    end
-
-    # Override this method in including classes to define roster logic
-    # For Assignment: aggregate from lecture.tutorials
-    # For Exam: use exam registration roster
-    # For Talk: use speaker roster
-    def seed_participations_from_roster!
-      raise NotImplementedError,
-        "#{self.class.name} must implement seed_participations_from_roster!"
     end
   end
 end
@@ -732,7 +720,7 @@ end
 
 ### Concrete Implementations
 
-**Assignment (with optimized participation seeding):**
+**Assignment:**
 
 ```ruby
 # filepath: app/models/assignment.rb
@@ -741,37 +729,18 @@ class Assignment < ApplicationRecord
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
 
-  def seed_participations_from_roster!
-    return unless assessment
-
-    # Optimized: single query instead of N+1
-    memberships = TutorialMembership
-      .where(tutorial_id: lecture.tutorial_ids)
-      .pluck(:user_id, :tutorial_id)
-
-    tutorial_mapping = memberships.to_h
-    user_ids = memberships.map(&:first)
-
-    assessment.seed_participations_from!(user_ids: user_ids,
-                                         tutorial_mapping: tutorial_mapping)
-  end
-
   private
 
   def setup_assessment
     ensure_assessment!(
-      title: title,
       requires_points: true,
-      requires_submission: true,
-      visible_from: valid_from,
-      due_at: deadline
+      requires_submission: requires_submission
     )
-    seed_participations_from_roster!
   end
 end
 ```
 
-**Talk (speaker-only roster):**
+**Talk:**
 
 ```ruby
 # filepath: app/models/talk.rb
@@ -780,30 +749,18 @@ class Talk < ApplicationRecord
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
 
-  def seed_participations_from_roster!
-    return unless assessment
-
-    user_ids = speakers.pluck(:id)
-    assessment.seed_participations_from!(user_ids: user_ids,
-                                         tutorial_mapping: {})
-  end
-
   private
 
   def setup_assessment
     ensure_assessment!(
-      title: title,
       requires_points: false,
-      requires_submission: false,
-      visible_from: Time.current,
-      due_at: nil
+      requires_submission: false
     )
-    seed_participations_from_roster!
   end
 end
 ```
 
-**Assessment bulk creation method:**
+**Assessment bulk creation method (for deadline backfill job or manual seeding):**
 
 ```ruby
 # filepath: app/models/assessment/assessment.rb
@@ -829,25 +786,26 @@ class Assessment::Assessment < ApplicationRecord
 end
 ```
 
-### Performance Notes
+### Lazy Participation Creation
 
-```admonish success "Optimized Participation Seeding"
-The Assignment implementation uses a single optimized query via `TutorialMembership.where().pluck()` instead of iterating tutorials. For a lecture with 20 tutorials and 600 students:
+```admonish success "Why No Eager Seeding"
+Participations are created **lazily** rather than on assignment creation for several reasons:
 
-- **Before:** 1 tutorial query + 20 roster queries + 2 assessment queries = 23 queries
-- **After:** 1 membership query + 1 check + 1 insert = 3 queries
-- **Improvement:** 90% query reduction
+1. **No timing assumptions:** Assignments can be created before, during, or after roster materialization
+2. **Always current:** The roster may change between assignment creation and deadline
+3. **Reduced complexity:** No callbacks, no bulk insert workarounds, no race conditions
+4. **Clear semantics:** A participation record means something happened (submission, grading, exemption)
 
-This approach scales efficiently even for large lectures.
+The "expected" count for progress tracking comes from querying the current roster at display time.
 ```
 
 ### Usage Scenarios
 
-- **Initial setup for an assignment:** After creating an `Assignment` record, the teacher calls `assignment.ensure_assessment!(title: "Homework 3", requires_points: true, requires_submission: true)` to create the linked Assessment::Assessment. Then `assignment.seed_participations_from_roster!` aggregates students from all lecture tutorials and creates participation records for each.
+- **Initial setup for an assignment:** After creating an `Assignment` record, the `setup_assessment` callback calls `ensure_assessment!(requires_points: true, requires_submission: ...)` to create the linked Assessment::Assessment. No participations are created at this point—they will be created lazily on submission or grading.
 
-- **Updating assessment metadata:** A teacher realizes the due date was wrong and calls `assignment.ensure_assessment!(title: "Homework 3", requires_points: true, due_at: 1.week.from_now)` again. The method is idempotent—it updates the existing Assessment::Assessment rather than creating a duplicate.
+- **Updating assessment metadata:** A teacher realizes a setting was wrong and calls `ensure_assessment!` again. The method is idempotent—it updates the existing Assessment::Assessment rather than creating a duplicate.
 
-- **For exams after registration:** An `Exam` becomes `Rosterable` after its registration campaign is completed and allocations are materialized. When calling `exam.seed_participations_from_roster!`, the concern reads from the exam's roster (the confirmed exam registrants) to seed participations. Only students who successfully registered for the exam will have participation records created.
+- **For exams after registration:** An `Exam` becomes `Rosterable` after its registration campaign is completed and allocations are materialized. Exam participations are created when grades are entered or results are finalized.
 
 ### Developer Guide: Adding New Assessable Types
 
@@ -869,46 +827,20 @@ end
 after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
 ```
 
-**3. Implement `seed_participations_from_roster!`**
-
-Define who should get participation records:
-
-```ruby
-def seed_participations_from_roster!
-  return unless assessment
-
-  # Define roster source (optimize for performance)
-  user_ids = # ... your roster logic ...
-  tutorial_mapping = # ... map user_id => tutorial_id (or {} if no tutorials) ...
-
-  assessment.seed_participations_from!(user_ids: user_ids,
-                                       tutorial_mapping: tutorial_mapping)
-end
-```
-
-**Performance Tips:**
-- Use `pluck` instead of loading full records
-- Avoid N+1 queries (use `where().pluck()` instead of iterating)
-- For large rosters (>100 users), prefer single queries with joins
-
-**4. Implement `setup_assessment` (Private)**
+**3. Implement `setup_assessment` (Private)**
 
 ```ruby
 private
 
 def setup_assessment
   ensure_assessment!(
-    title: your_title,
     requires_points: true_or_false,    # Does this need per-task grading?
-    requires_submission: true_or_false, # Do students upload files?
-    visible_from: your_start_date,
-    due_at: your_deadline              # nil if no deadline
+    requires_submission: true_or_false  # Do students upload files?
   )
-  seed_participations_from_roster!
 end
 ```
 
-**5. Write Tests**
+**4. Write Tests**
 
 Test both feature flag states:
 
