@@ -22,10 +22,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(rendered_content).to include(CGI.escapeHTML(assignment.title))
     end
 
-    it "returns assignment as assessable_type" do
-      expect(component.assessable_type).to eq(I18n.t("assessment.assignment"))
-    end
-
     it "returns the correct show path" do
       render_inline(component)
       expect(component.show_path).to eq(
@@ -85,26 +81,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       end
     end
 
-    it "returns participations count" do
-      student = create(:confirmed_user)
-      create(:assessment_participation, assessment: assessment, user: student)
-      expect(component.participations_count).to eq(1)
-    end
-
-    describe "badge_class and badge_text" do
-      it "returns draft badge when results not published" do
-        assessment.update!(results_published_at: nil)
-        expect(component.badge_class).to eq("bg-warning text-dark")
-        expect(component.badge_text).to eq(I18n.t("assessment.draft"))
-      end
-
-      it "returns success badge when results published" do
-        assessment.update!(results_published_at: Time.current)
-        expect(component.badge_class).to eq("bg-success")
-        expect(component.badge_text).to eq(I18n.t("assessment.results_published"))
-      end
-    end
-
     describe "edit and delete paths for non-legacy assignments" do
       it "returns nil for edit_path" do
         expect(component.edit_path).to be_nil
@@ -124,11 +100,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       a
     end
     let(:component) { described_class.new(assessable: assignment, lecture: lecture, legacy: true) }
-
-    it "renders legacy badge" do
-      expect(component.badge_class).to eq("bg-secondary")
-      expect(component.badge_text).to eq(I18n.t("assessment.legacy"))
-    end
 
     it "returns edit path for legacy assignment" do
       render_inline(component)
@@ -151,10 +122,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
     it "returns 0 for tasks_count when no assessment" do
       expect(component.tasks_count).to eq(0)
     end
-
-    it "returns 0 for participations_count when no assessment" do
-      expect(component.participations_count).to eq(0)
-    end
   end
 
   context "without assessment" do
@@ -165,11 +132,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       a
     end
     let(:component) { described_class.new(assessable: assignment, lecture: lecture) }
-
-    it "returns draft badge" do
-      expect(component.badge_class).to eq("bg-warning text-dark")
-      expect(component.badge_text).to eq(I18n.t("assessment.draft"))
-    end
 
     it "returns # as show_path" do
       expect(component.show_path).to eq("#")
@@ -190,10 +152,6 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
     it "renders the component" do
       render_inline(component)
       expect(rendered_content).to include(talk.title)
-    end
-
-    it "returns talk as assessable_type" do
-      expect(component.assessable_type).to eq(I18n.t("assessment.talk"))
     end
 
     it "returns speaker names" do

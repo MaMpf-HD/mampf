@@ -11,10 +11,6 @@ class AssessmentListItemComponent < ViewComponent::Base
 
   delegate :title, to: :assessable
 
-  def assessable_type
-    assessable.is_a?(Talk) ? I18n.t("assessment.talk") : I18n.t("assessment.assignment")
-  end
-
   def show_path
     return "#" unless assessment
     return "#" if assessable.is_a?(Talk)
@@ -68,10 +64,6 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment&.requires_submission
   end
 
-  def participations_count
-    assessment&.assessment_participations&.count || 0
-  end
-
   def speaker_names
     return nil unless assessable.is_a?(Talk) && assessable.speakers.any?
 
@@ -82,20 +74,6 @@ class AssessmentListItemComponent < ViewComponent::Base
     return nil unless assessable.is_a?(Talk) && assessable.dates.any?
 
     I18n.l(assessable.dates.first, format: :long)
-  end
-
-  def badge_class
-    return "bg-secondary" if legacy
-    return "bg-success" if assessment&.results_published?
-
-    "bg-warning text-dark"
-  end
-
-  def badge_text
-    return I18n.t("assessment.legacy") if legacy
-    return I18n.t("assessment.results_published") if assessment&.results_published?
-
-    I18n.t("assessment.draft")
   end
 
   def edit_path

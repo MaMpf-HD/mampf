@@ -50,10 +50,6 @@ class GradingOverviewComponent < ViewComponent::Base
     @submitted_count ||= participations.where(status: [:submitted, :graded]).count
   end
 
-  def graded_count
-    @graded_count ||= participations.where(status: :graded).count
-  end
-
   def missing_count
     total_expected - submitted_count
   end
