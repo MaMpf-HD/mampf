@@ -64,8 +64,24 @@ class GradingOverviewComponent < ViewComponent::Base
     @tutorial_stats ||= build_tutorial_stats
   end
 
-  def has_tutorials?
+  def tutorials?
     lecture.tutorials.any?
+  end
+
+  TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
+    def name
+      tutorial&.title || I18n.t("assessment.grading_overview.unassigned")
+    end
+
+    def missing
+      total - submitted
+    end
+
+    def progress_percentage
+      return 0 if total.zero?
+
+      (submitted.to_f / total * 100).round
+    end
   end
 
   private
@@ -108,22 +124,6 @@ class GradingOverviewComponent < ViewComponent::Base
     def count_statuses(grouped_data, tutorial_id, statuses)
       statuses.sum do |status|
         grouped_data[[tutorial_id, status.to_s]] || 0
-      end
-    end
-
-    TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
-      def name
-        tutorial&.title || I18n.t("assessment.grading_overview.unassigned")
-      end
-
-      def missing
-        total - submitted
-      end
-
-      def progress_percentage
-        return 0 if total.zero?
-
-        (submitted.to_f / total * 100).round
       end
     end
 end

@@ -70,14 +70,16 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
         assessment.update!(requires_points: true)
         Assessment::Task.create!(assessment: assessment, max_points: 10)
         Assessment::Task.create!(assessment: assessment, max_points: 5)
-        expect(component.total_points_display).to eq("15 #{I18n.t("assessment.task.points_abbrev")}")
+        expect(component.total_points_display)
+          .to eq("15 #{I18n.t("assessment.task.points_abbrev")}")
       end
 
       it "returns decimal format for fractional points" do
         assessment.update!(requires_points: true)
         Assessment::Task.create!(assessment: assessment, max_points: 10.5)
         Assessment::Task.create!(assessment: assessment, max_points: 5)
-        expect(component.total_points_display).to eq("15.5 #{I18n.t("assessment.task.points_abbrev")}")
+        expect(component.total_points_display)
+          .to eq("15.5 #{I18n.t("assessment.task.points_abbrev")}")
       end
     end
 
