@@ -83,11 +83,12 @@ module Assessment
     def reorder
       authorize! :update, @assessment
 
-      params[:order].each_with_index do |id, index|
-        @assessment.tasks.find(id).update(position: index + 1)
-      end
+      task = @assessment.tasks.find(params[:task_id])
+      task.insert_at(params[:position].to_i)
 
       head :ok
+    rescue ActiveRecord::RecordNotFound
+      head :bad_request
     end
 
     def update

@@ -10,7 +10,7 @@ export default class extends Controller {
     this.sortable = Sortable.create(this.element, {
       handle: "[data-sortable-handle]",
       animation: 150,
-      onEnd: this.updateOrder.bind(this),
+      onEnd: this.handleDragEnd.bind(this),
     });
   }
 
@@ -20,11 +20,12 @@ export default class extends Controller {
     }
   }
 
-  async updateOrder() {
+  async handleDragEnd(event) {
     const items = this.element.querySelectorAll("[data-sortable-item]");
-    const order = Array.from(items).map(item => item.dataset.id);
-
     this.updateIndexes(items);
+
+    const taskId = event.item.dataset.id;
+    const newPosition = event.newIndex + 1;
 
     try {
       const response = await fetch(this.urlValue, {
@@ -33,7 +34,7 @@ export default class extends Controller {
           "Content-Type": "application/json",
           "X-CSRF-Token": document.querySelector("[name='csrf-token']").content,
         },
-        body: JSON.stringify({ order }),
+        body: JSON.stringify({ task_id: taskId, position: newPosition }),
       });
 
       if (!response.ok) {
