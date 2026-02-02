@@ -1,4 +1,3 @@
-# Missing top-level docstring, please formulate one yourself 😁
 class AssignmentsController < ApplicationController
   before_action :set_assignment, except: [:new, :cancel_new, :create]
   before_action :set_lecture, only: :create

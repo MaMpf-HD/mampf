@@ -133,7 +133,7 @@ module Assessment
       end
 
       def set_assessment
-        @assessment = Assessment.find_by(id: params[:id])
+        @assessment = ::Assessment::Assessment.find_by(id: params[:id])
         return if @assessment
 
         redirect_to root_path, alert: I18n.t("assessment.errors.no_assessment")
