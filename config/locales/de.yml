@@ -3492,7 +3492,6 @@ de:
     actions: 'Aktionen'
     search: 'Suche'
     post_processing: 'Stelle fertig...'
-    loading: 'Laden...'
     edit: 'Bearbeiten'
     delete: 'Löschen'
     confirm_delete: 'Sind Sie sicher, dass Sie dies löschen möchten?'
