@@ -1,5 +1,5 @@
 module Assessment
-  class TasksController < BaseController
+  class TasksController < ApplicationController
     before_action :set_assessment
     before_action :set_task, only: [:edit, :update, :destroy, :cancel]
     before_action :set_locale

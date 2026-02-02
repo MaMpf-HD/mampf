@@ -1,5 +1,5 @@
 module Assessment
-  class AssessmentsController < BaseController
+  class AssessmentsController < ApplicationController
     before_action :set_lecture, only: [:index]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
