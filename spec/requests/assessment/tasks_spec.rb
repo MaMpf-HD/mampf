@@ -93,14 +93,23 @@ RSpec.describe("Assessment::Tasks", type: :request) do
   describe "POST /assessment/assessments/:assessment_id/tasks/reorder" do
     let!(:task1) { create(:assessment_task, assessment: assessment) }
     let!(:task2) { create(:assessment_task, assessment: assessment) }
+    let!(:task3) { create(:assessment_task, assessment: assessment) }
 
-    it "updates task positions" do
+    it "moves task to new position" do
       post reorder_assessment_assessment_tasks_path(assessment),
-           params: { order: [task2.id, task1.id] },
+           params: { task_id: task3.id, position: 1 },
            as: :json
       expect(response).to have_http_status(:ok)
       expect(task1.reload.position).to eq(2)
-      expect(task2.reload.position).to eq(1)
+      expect(task2.reload.position).to eq(3)
+      expect(task3.reload.position).to eq(1)
+    end
+
+    it "returns bad_request for non-existent task" do
+      post reorder_assessment_assessment_tasks_path(assessment),
+           params: { task_id: 99_999, position: 1 },
+           as: :json
+      expect(response).to have_http_status(:bad_request)
     end
   end
 end
