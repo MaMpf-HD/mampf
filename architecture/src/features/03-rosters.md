@@ -120,6 +120,17 @@ The “contract” required by the maintenance service, defining how to read and
 - **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
 - **Self-Materialization:** Enables student-initiated roster changes as an alternative to campaigns or post-campaign follow-up. Default is `disabled` (staff-only access).
 
+### Management Mode & Campaign Integration
+The `Rosterable` concern introduces a `skip_campaigns` boolean flag to explicitly control the lifecycle of the roster.
+
+- **Campaign Mode (`skip_campaigns: false`):** The roster is managed by registration campaigns. This is the default state. Even in campaign mode, manual adjustments (moves/adds) are allowed *after* the campaign is completed.
+- **Direct Management (`skip_campaigns: true`):** The roster is managed exclusively by staff. Users can be added or removed directly at any time. This is intended for groups that will *never* be part of a registration campaign (e.g., special "late-comers" groups or directly managed seminars).
+- **Transition Rules:**
+  - **Campaign → Skip:** Only allowed if the group has **never** been part of a real (non-planning) campaign. Once a group is used in a campaign, it is locked into campaign mode to ensure the integrity of the allocation process.
+  - **Skip → Campaign:** Only allowed if the roster is currently **empty**. This prevents data inconsistency where manually added students might be overwritten or ignored by the campaign allocation logic.
+
+This flag serves as a safety guardrail, ensuring that items with existing memberships aren't accidentally attached to a campaign which might overwrite them.
+
 ### Example Implementation
 ```ruby
 # filepath: app/models/concerns/roster/rosterable.rb

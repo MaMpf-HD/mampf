@@ -94,7 +94,7 @@ add_foreign_key :assessment_task_points, :assessment_participations, column: :pa
 | `Participation.total_points = sum(task_points.points)` | Automatic recomputation on `TaskPoint` save |
 | `TaskPoint.points ≤ Task.max_points` | Validation on save |
 | Task records exist only if `Assessment` has tasks | Validation |
-| Results visible only when `Assessment.results_published = true` | Controller authorization |
+| Results visible only when `Assessment.results_published?` returns true | Controller authorization |
 | `Participation.submitted_at` persists across status changes | Never overwritten after initial set |
 
 ```admonish note "Multiple Choice Extension"
