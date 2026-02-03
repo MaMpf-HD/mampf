@@ -311,12 +311,13 @@ Two separate grade fields support different assessment types:
 - Analyzable: Can compute averages, distributions (`participations.average(:grade_numeric)`)
 - Display: Format as "1.3" (strip trailing zeros for integer grades: "4.0" → "4")
 
-**`grade_text` (String):** For pass/fail achievements and non-numeric assessments
+**`grade_text` (String):** For pass/fail achievements, ECTS grades, and non-numeric assessments
 - Canonical values: "pass", "fail", "exempt" (lowercase, English)
+- ECTS grades: "A", "B", "C", "D", "E", "F" (for relative grading)
 - I18n display: Translate on render (`t("assessment.grades.#{grade_text}")` → "Bestanden")
 - Flexible: Can store counts ("5"), percentages ("85"), or boolean results
 
-**Usage rule:** Exactly one of `grade_numeric` or `grade_text` should be present, never both.
+**Usage rule:** At least one of `grade_numeric` or `grade_text` should be present. Both can coexist (e.g., German absolute grade 1.7 + ECTS relative grade "B").
 ```
 
 ```admonish info collapsible=true title="Tutorial Context Details"
