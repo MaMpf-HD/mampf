@@ -1,5 +1,5 @@
 class Assignment < ApplicationRecord
-  include Assessment::Assessable
+  include Assessment::Pointable
 
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
@@ -160,9 +160,6 @@ class Assignment < ApplicationRecord
   private
 
     def setup_assessment
-      ensure_assessment!(
-        requires_points: true,
-        requires_submission: true
-      )
+      ensure_pointbook!(requires_submission: true)
     end
 end

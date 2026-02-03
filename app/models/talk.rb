@@ -2,7 +2,7 @@
 class Talk < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
-  include Assessment::Assessable
+  include Assessment::Gradable
 
   belongs_to :lecture, touch: true
 
@@ -161,9 +161,6 @@ class Talk < ApplicationRecord
     end
 
     def setup_assessment
-      ensure_assessment!(
-        requires_points: false,
-        requires_submission: false
-      )
+      ensure_gradebook!
     end
 end
