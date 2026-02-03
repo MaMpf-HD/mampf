@@ -1,5 +1,5 @@
 class Assignment < ApplicationRecord
-  include Assessment::Assessable
+  include Assessment::Pointable
 
   attr_writer :requires_submission
 
@@ -168,9 +168,6 @@ class Assignment < ApplicationRecord
   private
 
     def setup_assessment
-      ensure_assessment!(
-        requires_points: true,
-        requires_submission: requires_submission
-      )
+      ensure_pointbook!(requires_submission: true)
     end
 end
