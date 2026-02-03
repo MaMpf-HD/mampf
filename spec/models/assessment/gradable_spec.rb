@@ -81,6 +81,14 @@ RSpec.describe(Assessment::Gradable) do
       expect(participation.grade_numeric).to be_nil
     end
 
+    it "allows both numeric and text grades (German + ECTS)" do
+      talk.set_grade!(user: user, grade_numeric: 1.7, grade_text: "B", grader: grader)
+
+      participation = talk.assessment.assessment_participations.find_by(user: user)
+      expect(participation.grade_numeric).to eq(1.7)
+      expect(participation.grade_text).to eq("B")
+    end
+
     it "raises error when assessment does not exist" do
       talk_without_assessment = FactoryBot.create(:talk, lecture: seminar_lecture)
 
