@@ -126,11 +126,11 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "ruby_puma_process_cpu_percent",
+          "expr": "sum by (job, role) (ruby_puma_process_cpu_percent)",
           "interval": "",
-          "legendFormat": "PID: {{pid}}  - {{role}}",
+          "legendFormat": "{{job}}  - {{role}}",
           "range": true,
           "refId": "A"
         }
@@ -198,9 +198,9 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "editorMode": "builder",
-          "expr": "ruby_puma_process_cpu_percent",
-          "legendFormat": "PID: {{pid}}  - {{role}}",
+          "editorMode": "code",
+          "expr": "sum by (job, role) (ruby_puma_process_cpu_percent)",
+          "legendFormat": "{{job}} - {{role}}",
           "range": true,
           "refId": "A"
         }
@@ -302,9 +302,9 @@
             "type": "prometheus",
             "uid": "mimir"
           },
-          "editorMode": "builder",
-          "expr": "ruby_puma_process_ram_mb",
-          "legendFormat": "PID: {{pid}}  - {{role}}",
+          "editorMode": "code",
+          "expr": "sum by (job, role) (ruby_puma_process_ram_mb)",
+          "legendFormat": "{{job}} - {{role}}",
           "range": true,
           "refId": "A"
         }
@@ -1082,5 +1082,5 @@
   "timezone": "browser",
   "title": "MaMpf General Overview",
   "uid": "adzzdvc",
-  "version": 1
+  "version": 4
 }
