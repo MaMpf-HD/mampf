@@ -1417,34 +1417,55 @@ Coordinates the grading workflow: takes one submission and distributes points to
 
 | Method | Description |
 |--------|-------------|
-| `grade_task!(submission:, task:, points:, grader:, comment: nil)` | Grades one task for all team members |
-| `grade_tasks!(submission:, grades_by_task_id:, grader:)` | Bulk grades multiple tasks at once |
+| `score_task!(submission:, task:, points:, scorer:, comment: nil)` | Enters points for one task for all team members |
+| `score_tasks!(submission:, points_by_task_id:, scorer:)` | Bulk enters points for multiple tasks at once |
 
 ### Behavior Highlights
 
-- Fan-out pattern: one submission graded → `Assessment::TaskPoint` created for each team member
+- Fan-out pattern: one submission scored → `Assessment::TaskPoint` created for each team member
 - Delegates to `PointEntryService` for actual point recording
-- Idempotent: re-grading the same submission/task overwrites points consistently
+- Idempotent: re-scoring the same submission/task overwrites points consistently
 - Links each `Assessment::TaskPoint` back to the `submission_id` for audit trail
-- Triggers `Assessment::Participation.recompute_points_total!` after grading
+- Triggers `Assessment::Participation.recompute_points_total!` after point entry
 - Validates that the task belongs to the submission's assessment
 - Wraps all operations in a database transaction for atomicity
 - Visibility controlled separately via `assessment.results_published`
 
-### Relationship Between Services
+### Service Interaction by Assessment Type
 
+**For Assignments (Pointable only):**
 ```
 Student uploads → Submission
                      ↓
-Tutor grades → SubmissionGrader (team fan-out)
-                     ↓
-               PointEntryService (create TaskPoints)
-                     ↓
-               Participation.total_points updated
-                     ↓
-       (Optional) Grade scheme calculation
-                     ↓
-               GradeEntryService (set final grade)
+Tutor enters points → SubmissionGrader (team fan-out)
+                        ↓
+                   PointEntryService (create TaskPoints)
+                        ↓
+                   Participation.total_points updated
+                   (END - no grades for assignments)
+```
+
+**For Exams with Grade Schemes (Pointable + Gradable):**
+```
+Student takes exam → Participation seeded from roster
+                      ↓
+Tutor enters points → PointEntryService (via grading UI)
+                      ↓
+                  TaskPoints created
+                      ↓
+                  Participation.total_points updated
+                      ↓
+Teacher applies scheme → Grade scheme calculation
+                          ↓
+                      GradeEntryService (set final grade)
+```
+
+**For Talks (Gradable only):**
+```
+Student presents → Participation seeded from roster
+                    ↓
+Teacher enters grade → GradeEntryService (set final grade)
+                    (END - no points for talks)
 ```
 
 ### Example Implementation
@@ -1465,7 +1486,7 @@ Tutor grades → SubmissionGrader (team fan-out)
 # filepath: app/services/assessment/submission_grader.rb
 module Assessment
   class SubmissionGrader
-    def grade_task!(submission:, task:, points:, grader:, comment: nil)
+    def score_task!(submission:, task:, points:, scorer:, comment: nil)
       assessment = submission.assessment
       raise ArgumentError, "Task not in assessment" unless
         task.assessment_id == assessment.id
@@ -1480,7 +1501,7 @@ module Assessment
           task_id: task.id
         )
         tp.points = points
-        tp.grader = grader
+        tp.grader = scorer
         tp.comment = comment if comment.present?
         tp.submission_id = submission.id
         tp.save!
@@ -1489,13 +1510,13 @@ module Assessment
     end
   end
 
-  def grade_tasks!(submission:, grades_by_task_id:, grader:)
-    Task.where(id: grades_by_task_id.keys).find_each do |t|
-      grade_task!(
+  def score_tasks!(submission:, points_by_task_id:, scorer:)
+    Task.where(id: points_by_task_id.keys).find_each do |t|
+      score_task!(
         submission: submission,
         task: t,
-        points: grades_by_task_id[t.id],
-        grader: grader
+        points: points_by_task_id[t.id],
+        scorer: scorer
       )
     end
   end
@@ -1504,13 +1525,13 @@ end
 
 ### Usage Scenarios
 
-- **Grading a team homework:** A tutor grades Problem 1 of a submission by Alice, Bob, and Carol. They call `Assessment::SubmissionGrader.new.grade_task!(submission: sub, task: problem1, points: 8, grader: tutor)`. The service creates three `Assessment::TaskPoint` records (one per team member), each with 8 points and linked to the same submission. Each team member's `Assessment::Participation.points_total` is updated.
+- **Scoring a team homework:** A tutor enters points for Problem 1 of a submission by Alice, Bob, and Carol. They call `Assessment::SubmissionGrader.new.score_task!(submission: sub, task: problem1, points: 8, scorer: tutor)`. The service creates three `Assessment::TaskPoint` records (one per team member), each with 8 points and linked to the same submission. Each team member's `Assessment::Participation.points_total` is updated.
 
-- **Bulk grading all tasks:** After reviewing the entire submission, the tutor calls `service.grade_tasks!(submission: sub, grades_by_task_id: { 1 => 8, 2 => 12, 3 => 5 }, grader: tutor)`. The service iterates through each task and fans out points, updating all participations in a single transaction.
+- **Bulk point entry for all tasks:** After reviewing the entire submission, the tutor calls `service.score_tasks!(submission: sub, points_by_task_id: { 1 => 8, 2 => 12, 3 => 5 }, scorer: tutor)`. The service iterates through each task and fans out points, updating all participations in a single transaction.
 
-- **Re-grading after complaint:** A student complains about Problem 2. The tutor reviews and agrees, calling `grade_task!` again with updated points. The existing `Assessment::TaskPoint` records are overwritten (upsert), and totals are recomputed. The audit trail via `submission_id` remains intact.
+- **Re-scoring after complaint:** A student complains about Problem 2. The tutor reviews and agrees, calling `score_task!` again with updated points. The existing `Assessment::TaskPoint` records are overwritten (upsert), and totals are recomputed. The audit trail via `submission_id` remains intact.
 
-- **Publishing results:** Tutors grade all submissions. Once grading is complete, the teacher calls `assessment.update!(results_published: true)`, making all points visible to students at once.
+- **Publishing results:** Tutors enter points for all submissions. Once point entry is complete, the teacher calls `assessment.update!(results_published: true)`, making all points visible to students at once.
 
 ---
 
