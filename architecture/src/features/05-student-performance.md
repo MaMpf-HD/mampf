@@ -114,7 +114,7 @@ its internal logic. For the canonical dispatcher, see Registration →
 **_Qualitative Student Accomplishments (Assessable Type)_**
 
 ```admonish info "What it represents"
-An assessable type that tracks qualitative student accomplishments during a lecture (e.g., blackboard presentations, discussion participation). Unlike assignments or exams, achievements can be boolean (pass/fail), numeric (count-based), or percentage-based. They integrate with the Assessment infrastructure for participation tracking and tutor grading workflows.
+An assessable type that tracks qualitative student accomplishments during a lecture (e.g., blackboard presentations, discussion attendance). Unlike assignments or exams, achievements can be boolean (pass/fail), numeric (count-based), or percentage-based. They integrate with the Assessment infrastructure for activity tracking and tutor workflows.
 ```
 
 ```admonish tip "Think of it as"

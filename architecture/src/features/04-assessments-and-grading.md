@@ -21,7 +21,7 @@ We use a unified grading model with clear separation of concerns:
 - **Dual Capability Model:** Two concerns provide orthogonal features:
   - `Assessment::Pointable`: Enables per-task point tracking ("pointbook" mode).
   - `Assessment::Gradable`: Enables final grade recording without tasks ("gradebook" mode).
-- **Participation Tracking:** `Assessment::Participation` records aggregate points, grade, and status per (user, assessment).
+- **Participation Records:** `Assessment::Participation` records aggregate points, grade, and status per (user, assessment).
 - **Granular Points:** `Assessment::Task` and `Assessment::TaskPoint` models support breakdown into graded components when `requires_points = true`.
 - **Team-Aware Grading:** `Assessment::SubmissionGrader` implements a fan-out pattern: grade one `Submission`, create `Assessment::TaskPoint` records for all team members.
 - **Roster Integration:** Participations are seeded from `Roster::Rosterable` models (tutorials, talks) or lecture rosters.
@@ -916,18 +916,25 @@ RSpec.describe YourModel, type: :model do
 end
 ```
 
-**6. Verify Idempotency**
+**6. Verify Lazy Creation**
 
-Ensure calling setup methods multiple times is safe:
+Ensure participations are created lazily, not eagerly:
 
 ```ruby
-it "does not create duplicate participations on re-seed" do
-  model = FactoryBot.create(:your_model)
-  initial_count = model.assessment.assessment_participations.count
+it "does not create participations on assignment creation" do
+  assignment = FactoryBot.create(:assignment)
 
-  model.seed_participations_from_roster!
+  expect(assignment.assessment.assessment_participations.count).to eq(0)
+end
 
-  expect(model.assessment.assessment_participations.count).to eq(initial_count)
+it "creates participation on first submission" do
+  assignment = FactoryBot.create(:assignment)
+  student = FactoryBot.create(:user)
+
+  submission = assignment.submissions.create!(user: student)
+
+  expect(assignment.assessment.assessment_participations.count).to eq(1)
+  expect(assignment.assessment.assessment_participations.first.status).to eq("submitted")
 end
 ```
 
@@ -1086,21 +1093,7 @@ class Assignment < ApplicationRecord
 
   def setup_grading
     ensure_pointbook!(requires_submission: true)
-    seed_participations_from_roster!
-  end
-
-  def seed_participations_from_roster!
-    return unless assessment
-
-    memberships = TutorialMembership
-      .where(tutorial_id: lecture.tutorial_ids)
-      .pluck(:user_id, :tutorial_id)
-
-    tutorial_mapping = memberships.to_h
-    user_ids = memberships.map(&:first)
-
-    assessment.seed_participations_from!(user_ids: user_ids,
-                                         tutorial_mapping: tutorial_mapping)
+    # Participations created lazily on first interaction (submission or grading)
   end
 end
 ```
@@ -1133,7 +1126,7 @@ class Talk < ApplicationRecord
 
   def setup_grading
     ensure_gradebook!(title: title)
-    seed_participations_from_roster!
+    # Participations created lazily when speaker is assigned and teacher grades
   end
 end
 ```
@@ -1150,7 +1143,7 @@ Talks in seminars follow a different workflow than assignments and exams. Talks 
    - Teacher creates talks in the Content tab of a seminar
    - Each talk is created for registration campaign purposes (students sign up for presentation slots)
    - Assessment record is automatically created via `after_create :setup_grading` hook
-   - Participations are seeded from speakers immediately
+   - Participations created lazily when speakers are assigned
 
 2. **Campaign & Registration:**
    - Students register for talk slots via registration campaign
@@ -1231,18 +1224,16 @@ The `Exam` model includes both `Assessment::Pointable` and `Assessment::Gradable
 1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
 3. After exam is administered, staff creates `Assessment::Assessment` with `requires_points: true`
-4. `seed_participations_from_roster!` creates participation records
-5. Tutors grade per-question points via tasks
-6. System computes `points_total` for each student
-7. Staff applies grade scheme to convert points to final grades
+4. Staff enters points → participations created lazily for each student on first point entry
+5. System computes `points_total` for each student
+6. Staff applies grade scheme to convert points to final grades
 
 **Without per-question points:**
 1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
 3. Staff creates `Assessment::Assessment` with `requires_points: false`
-4. `seed_participations_from_roster!` creates participation records
-5. Examiner records final grade directly after examination
-6. No point calculation needed
+4. Examiner records final grade directly → participations created lazily on grade entry
+5. No point calculation needed
 
 For multiple choice exam support and legal compliance, see [Exam Model - Multiple Choice Exams](05a-exam-model.md#multiple-choice-exams).
 
@@ -1337,11 +1328,79 @@ The model uses `assessment_id` instead of `assignment_id` to enable future exten
 
 ---
 
+## Service Layer Architecture
+
+```admonish tip "Layered Design"
+The grading system uses a layered approach: base grade entry service works for all Gradables, specialized services build on top for specific workflows.
+```
+
+### Layer 1: Grade Entry (Foundation)
+
+**`Assessment::GradeEntryService`** - Base service for setting final grades
+
+**Purpose:** Direct grade assignment for any Gradable (talks, oral exams, manual entry)
+
+**Interface:**
+```ruby
+Assessment::GradeEntryService.set_grade(
+  participation:,
+  grade:,
+  grader:,
+  comment: nil
+)
+```
+
+**Behavior:**
+- Sets `participation.grade` with validation
+- Validates grade format (letter grade, pass/fail, numeric, etc.)
+- Tracks audit information (`graded_by_id`, `graded_at`)
+- Works for ANY Gradable type
+- Used by: manual entry UI, grade schemes (as output), talk grading
+
+**Use Cases:**
+- **Talk grading:** Teacher enters "1.0" after seminar presentation
+- **Oral exam:** Teacher enters "2.3" directly (no written tasks)
+- **Small exam override:** 3 students, teacher skips points and enters final grades
+- **Grade scheme output:** Scheme calculates "2.7" from total points, calls this service
+
+---
+
+### Layer 2: Point Entry (Specialized for Pointables)
+
+**`Assessment::PointEntryService`** - Task-based point tracking
+
+**Purpose:** Enter points per task, calculate totals, optionally trigger grade calculation
+
+**Interface:**
+```ruby
+Assessment::PointEntryService.enter_points(
+  participation:,
+  task_points:,  # Hash of task_id => points
+  grader:
+)
+```
+
+**Behavior:**
+- Creates/updates `Assessment::TaskPoint` records
+- Calculates `participation.total_points` from task points
+- For Pointable+Gradable (exams): can trigger grade scheme
+- Validates point ranges per task
+- Works only for Pointable assessments
+
+**Use Cases:**
+- **Assignment grading:** Tutor enters points for Problems 1-3
+- **Exam grading:** Teacher enters points per question
+- **Partial grading:** Enter points for some tasks, leave others for later
+
+---
+
+### Layer 3: Team Submission Grading (Specialized for Submissions)
+
 ## Assessment::SubmissionGrader (Service)
 **_Team-Aware Grading Orchestrator_**
 
 ```admonish info "What it represents"
-Coordinates the grading workflow: takes one submission and distributes points to all team members automatically.
+Coordinates the grading workflow: takes one submission and distributes points to all team members automatically. Builds on PointEntryService for the actual point recording.
 ```
 
 ```admonish note "Think of it as"
@@ -1352,8 +1411,62 @@ Coordinates the grading workflow: takes one submission and distributes points to
 
 | Method | Description |
 |--------|-------------|
-| `grade_task!(submission:, task:, points:, grader:, comment: nil)` | Grades one task for all team members |
-| `grade_tasks!(submission:, grades_by_task_id:, grader:)` | Bulk grades multiple tasks at once |
+| `score_task!(submission:, task:, points:, scorer:, comment: nil)` | Enters points for one task for all team members |
+| `score_tasks!(submission:, points_by_task_id:, scorer:)` | Bulk enters points for multiple tasks at once |
+
+### Behavior Highlights
+
+- Fan-out pattern: one submission scored → `Assessment::TaskPoint` created for each team member
+- Delegates to `PointEntryService` for actual point recording
+- Idempotent: re-scoring the same submission/task overwrites points consistently
+- Links each `Assessment::TaskPoint` back to the `submission_id` for audit trail
+- Triggers `Assessment::Participation.recompute_points_total!` after point entry
+- Validates that the task belongs to the submission's assessment
+- Wraps all operations in a database transaction for atomicity
+- Visibility controlled separately via `assessment.results_published`
+
+### Service Interaction by Assessment Type
+
+**For Assignments (Pointable only):**
+```
+Student uploads → Submission
+                     ↓
+Tutor enters points → SubmissionGrader (team fan-out)
+                        ↓
+                   PointEntryService (create TaskPoints)
+                        ↓
+                   Participation.total_points updated
+                   (END - no grades for assignments)
+```
+
+**For Exams with Grade Schemes (Pointable + Gradable):**
+```
+Student takes exam → Participation seeded from roster
+                      ↓
+Staff enters points → PointEntryService (via grading UI)
+                      ↓
+                  TaskPoints created
+                      ↓
+                  Participation.total_points updated
+                      ↓
+Teacher applies scheme → Grade scheme calculation
+                          ↓
+                      GradeEntryService (set final grade)
+```
+
+```admonish note "Who enters exam points?"
+This varies by lecture. Some teachers allow tutors to enter points for exam questions; others restrict point entry to the teacher only. The system supports both workflows through permission configuration.
+```
+
+**For Talks (Gradable only):**
+```
+Student presents → Participation seeded from roster
+                    ↓
+Teacher enters grade → GradeEntryService (set final grade)
+                    (END - no points for talks)
+```
+
+### Example Implementation
 
 ### Behavior Highlights
 
@@ -1371,7 +1484,7 @@ Coordinates the grading workflow: takes one submission and distributes points to
 # filepath: app/services/assessment/submission_grader.rb
 module Assessment
   class SubmissionGrader
-    def grade_task!(submission:, task:, points:, grader:, comment: nil)
+    def score_task!(submission:, task:, points:, scorer:, comment: nil)
       assessment = submission.assessment
       raise ArgumentError, "Task not in assessment" unless
         task.assessment_id == assessment.id
@@ -1386,7 +1499,7 @@ module Assessment
           task_id: task.id
         )
         tp.points = points
-        tp.grader = grader
+        tp.grader = scorer
         tp.comment = comment if comment.present?
         tp.submission_id = submission.id
         tp.save!
@@ -1395,13 +1508,13 @@ module Assessment
     end
   end
 
-  def grade_tasks!(submission:, grades_by_task_id:, grader:)
-    Task.where(id: grades_by_task_id.keys).find_each do |t|
-      grade_task!(
+  def score_tasks!(submission:, points_by_task_id:, scorer:)
+    Task.where(id: points_by_task_id.keys).find_each do |t|
+      score_task!(
         submission: submission,
         task: t,
-        points: grades_by_task_id[t.id],
-        grader: grader
+        points: points_by_task_id[t.id],
+        scorer: scorer
       )
     end
   end
@@ -1410,13 +1523,13 @@ end
 
 ### Usage Scenarios
 
-- **Grading a team homework:** A tutor grades Problem 1 of a submission by Alice, Bob, and Carol. They call `Assessment::SubmissionGrader.new.grade_task!(submission: sub, task: problem1, points: 8, grader: tutor)`. The service creates three `Assessment::TaskPoint` records (one per team member), each with 8 points and linked to the same submission. Each team member's `Assessment::Participation.points_total` is updated.
+- **Scoring a team homework:** A tutor enters points for Problem 1 of a submission by Alice, Bob, and Carol. They call `Assessment::SubmissionGrader.new.score_task!(submission: sub, task: problem1, points: 8, scorer: tutor)`. The service creates three `Assessment::TaskPoint` records (one per team member), each with 8 points and linked to the same submission. Each team member's `Assessment::Participation.points_total` is updated.
 
-- **Bulk grading all tasks:** After reviewing the entire submission, the tutor calls `service.grade_tasks!(submission: sub, grades_by_task_id: { 1 => 8, 2 => 12, 3 => 5 }, grader: tutor)`. The service iterates through each task and fans out points, updating all participations in a single transaction.
+- **Bulk point entry for all tasks:** After reviewing the entire submission, the tutor calls `service.score_tasks!(submission: sub, points_by_task_id: { 1 => 8, 2 => 12, 3 => 5 }, scorer: tutor)`. The service iterates through each task and fans out points, updating all participations in a single transaction.
 
-- **Re-grading after complaint:** A student complains about Problem 2. The tutor reviews and agrees, calling `grade_task!` again with updated points. The existing `Assessment::TaskPoint` records are overwritten (upsert), and totals are recomputed. The audit trail via `submission_id` remains intact.
+- **Re-scoring after complaint:** A student complains about Problem 2. The tutor reviews and agrees, calling `score_task!` again with updated points. The existing `Assessment::TaskPoint` records are overwritten (upsert), and totals are recomputed. The audit trail via `submission_id` remains intact.
 
-- **Publishing results:** Tutors grade all submissions. Once grading is complete, the teacher calls `assessment.update!(results_published: true)`, making all points visible to students at once.
+- **Publishing results:** Tutors enter points for all submissions. Once point entry is complete, the teacher calls `assessment.update!(results_published: true)`, making all points visible to students at once.
 
 ---
 
