@@ -1,0 +1,82 @@
+<div id="exams_container">
+  <h3 class="lecture-pane-header">
+    <%= t('assessment.exams') %>
+  </h3>
+
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= link_to t('assessment.new_exam'),
+                  new_exam_path(params: { lecture_id: lecture.id }),
+                  class: 'btn btn-sm btn-primary',
+                  id: 'newExamButton',
+                  data: { turbo_stream: true } %>
+    </div>
+  </div>
+
+  <% if lecture.exams.empty? %>
+    <div class="text-center text-muted py-4">
+      <%= t('assessment.no_exams_yet') %>
+    </div>
+  <% else %>
+    <div class="list-group">
+      <div class="list-group-item bg-light">
+        <div class="row">
+          <div class="col-3">
+            <h6><%= t('basics.title') %></h6>
+          </div>
+          <div class="col-2">
+            <h6><%= t('assessment.date') %></h6>
+          </div>
+          <div class="col-2">
+            <h6><%= t('basics.location') %></h6>
+          </div>
+          <div class="col-2">
+            <h6><%= t('basics.capacity') %></h6>
+          </div>
+          <div class="col-2">
+            <h6><%= t('roster.participants') %></h6>
+          </div>
+          <div class="col-1">
+            <h6><%= t('basics.action') %></h6>
+          </div>
+        </div>
+      </div>
+      <% lecture.exams.order(date: :desc).each do |exam| %>
+        <div class="list-group-item" id="exam-row-<%= exam.id %>">
+          <div class="row align-items-center">
+            <div class="col-3">
+              <%= exam.title %>
+            </div>
+            <div class="col-2">
+              <%= exam.date ? l(exam.date, format: :short) : t('basics.not_specified') %>
+            </div>
+            <div class="col-2">
+              <%= exam.location.presence || t('basics.not_specified') %>
+            </div>
+            <div class="col-2">
+              <%= exam.capacity || t('basics.unlimited') %>
+            </div>
+            <div class="col-2">
+              <%= exam.roster_entries_count %>
+            </div>
+            <div class="col-1">
+              <%= link_to '',
+                          edit_exam_path(exam),
+                          class: 'far fa-edit text-dark me-2',
+                          title: t('buttons.edit'),
+                          data: { turbo_stream: true } %>
+              <%= link_to '',
+                          exam_path(exam),
+                          method: :delete,
+                          class: 'far fa-trash-alt text-danger',
+                          title: t('buttons.delete'),
+                          data: { turbo_method: :delete,
+                                  turbo_confirm: t('confirmation.generic'),
+                                  turbo_stream: true } %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

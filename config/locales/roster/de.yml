@@ -1,6 +1,7 @@
 de:
   roster:
     title: 'Teilnehmende'
+    participants: 'Teilnehmende'
     status: 'Status'
     group_category:
       tutorial: "Tutorium"
