@@ -227,10 +227,4 @@ class TalksController < ApplicationController
 
       streams
     end
-
-    def refresh_campaigns_index_stream(lecture)
-      turbo_stream.replace("campaigns_container",
-                           partial: "registration/campaigns/index",
-                           locals: { lecture: lecture })
-    end
 end

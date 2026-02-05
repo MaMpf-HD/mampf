@@ -147,6 +147,35 @@ This layered approach (detail view + aggregate view) is common in well-designed 
 The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
 ```
 
+### Grading Tab vs. Performance Tab
+
+```admonish question "Why do we have both a Grading tab and a Performance tab?"
+The **Grading tab** (in the Assessment Dashboard) and the **Performance tab** (in the Roster Dashboard) serve different purposes despite some apparent overlap.
+```
+
+| Dimension | Grading Tab (Assessment) | Performance Tab (Roster) |
+|-----------|--------------------------|--------------------------|
+| **Location** | Assessment Dashboard (single assessment) | Roster Dashboard (lecture-wide) |
+| **Primary axis** | Tasks (columns) × Students (rows) | Assessments (columns) × Students (rows) |
+| **Editing** | Yes — enter points per task | No — read-only aggregate |
+| **Scope** | One assessment (e.g., "Homework 3") | All assessments in the lecture |
+| **Question answered** | "How did students do on Problem 2?" | "Is Alice eligible for the exam?" |
+| **User journey** | Grading workflow → enter data | Certification workflow → review eligibility |
+
+**The "filter to one assignment" overlap:** The Performance tab can filter to show a single assessment, which superficially resembles the Grading tab. However:
+1. Performance tab remains **read-only** — it consumes grading data, it doesn't produce it.
+2. Grading tab shows **task-level breakdown** — Performance shows only the total per assessment.
+3. Performance tab provides **cross-assessment context** — even when filtered, switching views is instant.
+
+```admonish tip "Design Pattern"
+This layered approach (detail view + aggregate view) is common in well-designed systems:
+- **Banking:** Transaction details vs. account statement
+- **LMS (Moodle/Canvas):** Assignment grading page vs. gradebook overview
+- **GitHub:** PR diff view vs. repository insights
+
+The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
+```
+
 ---
 
 ## Assessment::Assessment (ActiveRecord Model)
@@ -171,6 +200,7 @@ The main fields and methods of `Assessment` are:
 | `requires_points`         | DB column         | Boolean: whether this assessment tracks per-task points                  |
 | `requires_submission`     | DB column         | Boolean: whether students must upload files                              |
 | `total_points`            | DB column         | Optional maximum points (computed from tasks if blank)                   |
+| `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `participations`          | Association       | All student records for this assessment                                  |
 | `tasks`                   | Association       | Tasks (problems) for this assessment (only if `requires_points`)         |
@@ -260,7 +290,9 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 ### Usage Scenarios
 
-- **For a homework assignment (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment (digital) (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+
+- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
 
 - **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
 
@@ -446,8 +478,7 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 - **After assessment setup:** When an assignment is created, an `Assessment::Assessment` record is automatically created via the `Assessable` concern. No participation records are created at this point—they are created lazily when students submit work or tutors enter grades.
 - **Lazy participation creation:** Participations are **not** created eagerly when an assignment is set up. Instead, they are created on-demand when a student submits work, when a tutor enters a grade, or via a scheduled job after the deadline passes. The "expected" count for progress tracking comes from querying the current roster, not pre-seeded participations.
 
-- **Student submits work (digital assignment):** A student uploads their homework file. The system creates a participation record (if none exists) with `status: :submitted`, sets `submitted_at: Time.current`, and captures the student's current `tutorial_id`. This is the first time a participation record may be created for this student/assessment pair.
-
+- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
@@ -731,7 +762,7 @@ module Assessment
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
                            class_name: "Assessment::Assessment"
-    end
+      end
 
     def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment

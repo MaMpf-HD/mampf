@@ -9,11 +9,12 @@ export default class extends Controller {
       tabButton.addEventListener("shown.bs.tab", this.onTabFocus);
     });
 
-    document.addEventListener("click", this.handleHelpButtonClick.bind(this));
+    this.boundHandleHelpButtonClick = this.handleHelpButtonClick.bind(this);
+    document.addEventListener("click", this.boundHandleHelpButtonClick);
   }
 
   disconnect() {
-    document.removeEventListener("click", this.handleHelpButtonClick.bind(this));
+    document.removeEventListener("click", this.boundHandleHelpButtonClick);
   }
 
   handleHelpButtonClick(event) {

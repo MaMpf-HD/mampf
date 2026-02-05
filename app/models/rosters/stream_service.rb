@@ -15,11 +15,10 @@ module Rosters
     def roster_changed(group_type: :all, flash: nil)
       streams = []
 
-      # 1. Refresh the Roster List (lazy load for performance)
+      # Refresh the Roster List (lazy load for performance)
       streams << refresh_roster_frame(group_type)
 
-      # 2. Flash
-      streams << render_flash(flash) if flash
+      streams << render_flash(flash)
 
       streams.compact
     end
@@ -43,7 +42,7 @@ module Rosters
           group_type: group_type
         }
       )
-      streams << render_flash(flash) if flash
+      streams << render_flash(flash)
       streams.compact
     end
 
@@ -64,7 +63,9 @@ module Rosters
 
       # Mimics the behavior of Flash#include logic in partials, but adapted for service use.
       # Generally we prepend to #flash-messages.
-      def render_flash(_flash)
+      def render_flash(flash)
+        return unless flash&.any?
+
         @view_context.turbo_stream.prepend("flash-messages", partial: "flash/message")
       end
 
