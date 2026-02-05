@@ -317,26 +317,6 @@ Grading — Step 7: Assessment Foundations (Backend & CRUD)
 - Acceptance: Teachers can create assessments via UI; participations visible; tasks configurable; no grading actions available; feature flag gates access.
 ```
 
-```admonish example "PR-7.3 — Submission assessment support (dual-column)"
-- Scope: Add `assessment_id` to submissions table; maintain backward compatibility with `assignment_id`.
-- Migration:
-  - Add `assessment_id` column (UUID, nullable) to `submissions` table
-  - Add foreign key constraint on `assessment_id`
-  - Keep existing `assignment_id` column and constraint (legacy support)
-- Model Changes:
-  - `belongs_to :assignment, optional: true` (legacy)
-  - `belongs_to :assessment, optional: true` (new)
-  - Validation: require one or the other (XOR pattern)
-  - Helper method: `grading_context` returns assessment or assignment
-- Controller Changes:
-  - For new submissions (when feature flag enabled): set `assessment_id`
-  - For old submissions: continue using `assignment_id`
-  - Views use `submission.grading_context` for navigation
-- Strategy: New submissions under feature flag use assessment_id; old submissions remain unchanged; both work simultaneously
-- Refs: [Submission dual-column pattern](04-assessments-and-grading.md#submission-extended-model)
-- Acceptance: Old submissions still work; new submissions link to assessments; no data loss; both columns coexist; feature flag determines which column is populated for new records.
-```
-
 ```admonish abstract
 Grading — Step 8: Unified Point Entry & Assignment Grading
 ```
@@ -395,7 +375,6 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 - Logic (when `assessment_grading_enabled?`):
   - On submission upload: Find or create `Assessment::Participation` for student(s)
   - Set `participation.status = :submitted`, `submitted_at = Time.current`
-  - Set `submission.assessment_id` (new column from PR-7.3)
   - For team submissions: Update all team members' participations
 - Logic (when flag disabled):
   - Use existing submission flow with `assignment_id`
