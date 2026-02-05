@@ -295,9 +295,8 @@ Grading — Step 7: Assessment Foundations (Backend & CRUD)
   - Include `Assessable + Pointable + Gradable` in Assignment model (behind feature flag)
   - Include `Assessable + Gradable` in Talk model (behind feature flag)
   - Add `after_create :setup_assessment` hooks
-  - Implement `seed_participations_from_roster!` for Assignment and Talk
 - Feature Flag: `assessment_grading_enabled` (per-lecture)
-- Behavior: When enabled, new assignments/talks automatically create Assessment record + Participations
+- Behavior: When enabled, new assignments/talks automatically create Assessment record (participations created lazily)
 - Refs: [Assessment::Assessable](04-assessments-and-grading.md#assessmentassessable-concern), [Pointable](04-assessments-and-grading.md#assessmentpointable-concern), [Gradable](04-assessments-and-grading.md#assessmentgradable-concern)
 - Acceptance: All three concerns exist; Assignment has all three; Talk has Assessable+Gradable; participations seeded on creation; feature flag gates behavior; old assignments unaffected.
 ```
@@ -329,7 +328,6 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Create `Exam` model with concerns: `Registration::Registerable`, `Roster::Rosterable`, `Assessment::Assessable`, `Assessment::Pointable`, `Assessment::Gradable`
   - Implement `materialize_allocation!` (delegates to `replace_roster!`)
   - Implement `allocated_user_ids` (returns roster user IDs)
-  - Implement `seed_participations_from_roster!`
 - Controllers: `ExamsController` (CRUD, scheduling) - teacher-facing only
 - UI: Basic exam creation/editing form for teachers
 - Limitations: No student registration flows, no grading UI, no grade schemes (deferred to PR-8.2 and later)
@@ -423,15 +421,15 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 ```
 
 ```admonish example "PR-8.8 — Student submission integration with participations"
-- Scope: Update student submission workflow to interact with Assessment::Participation (when feature flag enabled).
-- Controllers: Update `SubmissionsController` to conditionally set participation status
+- Scope: Update student submission workflow to create participations lazily on first interaction.
+- Controllers: Update `SubmissionsController` to conditionally create/update participation
 - Logic (when `assessment_grading_enabled?`):
-  - On submission upload: Find or create `Assessment::Participation` for student(s)
-  - Set `participation.status = :submitted`, `submitted_at = Time.current`
-  - For team submissions: Update all team members' participations
+  - On submission upload: Create `Assessment::Participation` if not exists (lazy creation)
+  - Set `participation.status = :submitted`, `submitted_at = Time.current`, `tutorial_id = student.tutorial`
+  - For team submissions: Create/update participations for all team members
+  - Note: First interaction creates the participation record
 - Logic (when flag disabled):
-  - Use existing submission flow with `assignment_id`
-  - No participation records created
+  - Use existing submission flow (no participation tracking)
 - Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios)
 - Acceptance: Feature flag controls behavior; new submissions link to assessments and update participations; old submissions continue working unchanged; no breaking changes to existing functionality.
 ```

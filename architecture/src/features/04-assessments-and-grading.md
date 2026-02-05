@@ -913,18 +913,25 @@ RSpec.describe YourModel, type: :model do
 end
 ```
 
-**6. Verify Idempotency**
+**6. Verify Lazy Creation**
 
-Ensure calling setup methods multiple times is safe:
+Ensure participations are created lazily, not eagerly:
 
 ```ruby
-it "does not create duplicate participations on re-seed" do
-  model = FactoryBot.create(:your_model)
-  initial_count = model.assessment.assessment_participations.count
+it "does not create participations on assignment creation" do
+  assignment = FactoryBot.create(:assignment)
 
-  model.seed_participations_from_roster!
+  expect(assignment.assessment.assessment_participations.count).to eq(0)
+end
 
-  expect(model.assessment.assessment_participations.count).to eq(initial_count)
+it "creates participation on first submission" do
+  assignment = FactoryBot.create(:assignment)
+  student = FactoryBot.create(:user)
+
+  submission = assignment.submissions.create!(user: student)
+
+  expect(assignment.assessment.assessment_participations.count).to eq(1)
+  expect(assignment.assessment.assessment_participations.first.status).to eq("submitted")
 end
 ```
 
@@ -1083,21 +1090,7 @@ class Assignment < ApplicationRecord
 
   def setup_grading
     ensure_pointbook!(requires_submission: true)
-    seed_participations_from_roster!
-  end
-
-  def seed_participations_from_roster!
-    return unless assessment
-
-    memberships = TutorialMembership
-      .where(tutorial_id: lecture.tutorial_ids)
-      .pluck(:user_id, :tutorial_id)
-
-    tutorial_mapping = memberships.to_h
-    user_ids = memberships.map(&:first)
-
-    assessment.seed_participations_from!(user_ids: user_ids,
-                                         tutorial_mapping: tutorial_mapping)
+    # Participations created lazily on first interaction (submission or grading)
   end
 end
 ```
@@ -1130,7 +1123,7 @@ class Talk < ApplicationRecord
 
   def setup_grading
     ensure_gradebook!(title: title)
-    seed_participations_from_roster!
+    # Participations created lazily when speaker is assigned and teacher grades
   end
 end
 ```
@@ -1147,7 +1140,7 @@ Talks in seminars follow a different workflow than assignments and exams. Talks 
    - Teacher creates talks in the Content tab of a seminar
    - Each talk is created for registration campaign purposes (students sign up for presentation slots)
    - Assessment record is automatically created via `after_create :setup_grading` hook
-   - Participations are seeded from speakers immediately
+   - Participations created lazily when speakers are assigned
 
 2. **Campaign & Registration:**
    - Students register for talk slots via registration campaign
@@ -1228,18 +1221,16 @@ The `Exam` model includes both `Assessment::Pointable` and `Assessment::Gradable
 1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
 3. After exam is administered, staff creates `Assessment::Assessment` with `requires_points: true`
-4. `seed_participations_from_roster!` creates participation records
-5. Tutors grade per-question points via tasks
-6. System computes `points_total` for each student
-7. Staff applies grade scheme to convert points to final grades
+4. Staff enters points → participations created lazily for each student on first point entry
+5. System computes `points_total` for each student
+6. Staff applies grade scheme to convert points to final grades
 
 **Without per-question points:**
 1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
 3. Staff creates `Assessment::Assessment` with `requires_points: false`
-4. `seed_participations_from_roster!` creates participation records
-5. Examiner records final grade directly after examination
-6. No point calculation needed
+4. Examiner records final grade directly → participations created lazily on grade entry
+5. No point calculation needed
 
 For multiple choice exam support and legal compliance, see [Exam Model - Multiple Choice Exams](05a-exam-model.md#multiple-choice-exams).
 
