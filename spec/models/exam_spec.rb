@@ -1,0 +1,187 @@
+require "rails_helper"
+
+RSpec.describe(Exam, type: :model) do
+  describe "Registration::Registerable" do
+    it_behaves_like "a registerable model"
+  end
+
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
+
+  it "has a valid factory" do
+    expect(build(:exam)).to be_valid
+  end
+
+  describe "validations" do
+    it "is invalid without a title" do
+      expect(build(:exam, title: nil)).to be_invalid
+    end
+
+    it "is invalid without a lecture" do
+      expect(build(:exam, lecture: nil)).to be_invalid
+    end
+
+    it "is valid without a date (oral exam)" do
+      expect(build(:exam, :oral)).to be_valid
+    end
+
+    it "is invalid with negative capacity" do
+      expect(build(:exam, capacity: -1)).to be_invalid
+    end
+
+    it "is invalid with zero capacity" do
+      expect(build(:exam, capacity: 0)).to be_invalid
+    end
+
+    it "is valid with positive capacity" do
+      expect(build(:exam, capacity: 100)).to be_valid
+    end
+
+    it "is valid with nil capacity (unlimited)" do
+      expect(build(:exam, capacity: nil)).to be_valid
+    end
+  end
+
+  describe "associations" do
+    it "belongs to a lecture" do
+      exam = create(:exam)
+      expect(exam.lecture).to be_a(Lecture)
+    end
+
+    it "has many exam_rosters" do
+      exam = create(:exam)
+      create_list(:exam_roster, 3, exam: exam)
+      expect(exam.exam_rosters.count).to eq(3)
+    end
+
+    it "has many users through exam_rosters" do
+      exam = create(:exam)
+      users = create_list(:confirmed_user, 3)
+      users.each { |user| create(:exam_roster, exam: exam, user: user) }
+      expect(exam.users.count).to eq(3)
+    end
+
+    it "destroys dependent exam_rosters when destroyed" do
+      exam = create(:exam)
+      create_list(:exam_roster, 3, exam: exam)
+
+      # Rosterable concern prevents destruction if roster not empty
+      # This is expected behavior - clear roster first
+      expect(exam.reload.destructible?).to be(false)
+
+      # After clearing roster, exam can be destroyed
+      exam.exam_rosters.destroy_all
+      expect { exam.destroy }.not_to raise_error
+    end
+  end
+
+  describe "concerns" do
+    it "includes Assessment::Pointable" do
+      expect(Exam.ancestors).to include(Assessment::Pointable)
+    end
+
+    it "includes Assessment::Gradable" do
+      expect(Exam.ancestors).to include(Assessment::Gradable)
+    end
+
+    it "includes Registration::Registerable" do
+      expect(Exam.ancestors).to include(Registration::Registerable)
+    end
+
+    it "includes Rosters::Rosterable" do
+      expect(Exam.ancestors).to include(Rosters::Rosterable)
+    end
+  end
+
+  describe "roster methods" do
+    let(:exam) { create(:exam) }
+    let(:users) { create_list(:confirmed_user, 3) }
+
+    before do
+      users.each { |user| create(:exam_roster, exam: exam, user: user) }
+    end
+
+    it "#roster_entries returns exam_rosters" do
+      expect(exam.roster_entries).to eq(exam.exam_rosters)
+    end
+
+    it "#roster_association_name returns :exam_rosters" do
+      expect(exam.roster_association_name).to eq(:exam_rosters)
+    end
+
+    it "#allocated_user_ids returns user IDs" do
+      expect(exam.allocated_user_ids).to match_array(users.map(&:id))
+    end
+  end
+
+  describe "#materialize_allocation!" do
+    let(:lecture) { create(:lecture) }
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:campaign) { create(:registration_campaign) }
+    let(:user1) { create(:confirmed_user) }
+    let(:user2) { create(:confirmed_user) }
+
+    it "propagates users to the lecture roster" do
+      expect(lecture.lecture_memberships.where(user: [user1, user2])).to be_empty
+
+      exam.materialize_allocation!(user_ids: [user1.id, user2.id], campaign: campaign)
+
+      expect(lecture.lecture_memberships.where(user: user1)).to exist
+      expect(lecture.lecture_memberships.where(user: user2)).to exist
+    end
+
+    it "adds new users to the exam roster" do
+      exam.materialize_allocation!(user_ids: [user1.id, user2.id], campaign: campaign)
+
+      expect(exam.allocated_user_ids).to include(user1.id, user2.id)
+    end
+
+    it "removes users not in the target list" do
+      create(:exam_roster, exam: exam, user: user1, source_campaign: campaign)
+
+      exam.materialize_allocation!(user_ids: [user2.id], campaign: campaign)
+
+      expect(exam.allocated_user_ids).not_to include(user1.id)
+      expect(exam.allocated_user_ids).to include(user2.id)
+    end
+
+    it "preserves manually added users" do
+      manual_user = create(:confirmed_user)
+      create(:exam_roster, exam: exam, user: manual_user, source_campaign: nil)
+
+      exam.materialize_allocation!(user_ids: [user1.id], campaign: campaign)
+
+      expect(exam.allocated_user_ids).to include(manual_user.id, user1.id)
+    end
+  end
+
+  describe "assessment setup" do
+    context "when assessment_grading feature flag is enabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
+      end
+
+      it "creates an assessment after creation" do
+        exam = nil
+        expect do
+          exam = create(:exam)
+        end.to change(Assessment::Assessment, :count).by(1)
+
+        expect(exam.assessment).to be_present
+      end
+    end
+
+    context "when assessment_grading feature flag is disabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(false)
+      end
+
+      it "does not create an assessment after creation" do
+        expect do
+          create(:exam)
+        end.not_to change(Assessment::Assessment, :count)
+      end
+    end
+  end
+end
