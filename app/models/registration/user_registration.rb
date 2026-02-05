@@ -13,6 +13,11 @@ module Registration
                class_name: "Registration::Item",
                inverse_of: :user_registrations
 
+    # A user registration represents an application for a specific item.
+    # Changing the target item is semantically a different application.
+    # Therefore, the registration_item_id is immutable.
+    attr_readonly :registration_item_id
+
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
 
     validates :status, presence: true

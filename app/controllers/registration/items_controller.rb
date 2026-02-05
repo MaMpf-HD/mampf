@@ -45,8 +45,8 @@ module Registration
           end
         end
       else
-        messages = @item.errors.full_messages
-        messages += @item.registerable.errors.full_messages if @item.registerable&.errors&.any?
+        messages = @item.errors.map(&:message)
+        messages += @item.registerable.errors.map(&:message) if @item.registerable&.errors&.any?
         respond_with_error(messages.uniq.to_sentence)
       end
     end
@@ -102,7 +102,7 @@ module Registration
         if @item.save
           respond_with_success(t("registration.item.created"))
         else
-          respond_with_error(@item.errors.full_messages.to_sentence)
+          respond_with_error(@item.errors.map(&:message).uniq.to_sentence)
         end
       end
 
