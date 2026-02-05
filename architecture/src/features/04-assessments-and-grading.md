@@ -1449,7 +1449,7 @@ Tutor enters points → SubmissionGrader (team fan-out)
 ```
 Student takes exam → Participation seeded from roster
                       ↓
-Tutor enters points → PointEntryService (via grading UI)
+Staff enters points → PointEntryService (via grading UI)
                       ↓
                   TaskPoints created
                       ↓
@@ -1458,6 +1458,10 @@ Tutor enters points → PointEntryService (via grading UI)
 Teacher applies scheme → Grade scheme calculation
                           ↓
                       GradeEntryService (set final grade)
+```
+
+```admonish note "Who enters exam points?"
+This varies by lecture. Some teachers allow tutors to enter points for exam questions; others restrict point entry to the teacher only. The system supports both workflows through permission configuration.
 ```
 
 **For Talks (Gradable only):**
