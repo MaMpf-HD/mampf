@@ -320,37 +320,43 @@ Grading — Step 7: Assessment Foundations (Backend & CRUD)
 Grading — Step 8: Unified Point Entry & Assignment Grading
 ```
 
-```admonish example "PR-8.1 — Exam foundations (backend)"
-- Scope: Exam model, backend implementation, teacher CRUD (no student registration yet).
+```admonish example "PR-8.1 — Exam foundations (backend & teacher UI)"
+- Scope: Exam model, backend implementation, teacher CRUD, campaign creation for exams.
 - Migrations:
   - `20251110000000_create_exams.rb`
+  - `20251110000001_create_exam_rosters.rb`
 - Backend:
   - Create `Exam` model with concerns: `Registration::Registerable`, `Roster::Rosterable`, `Assessment::Assessable`, `Assessment::Pointable`, `Assessment::Gradable`
   - Implement `materialize_allocation!` (delegates to `replace_roster!`)
   - Implement `allocated_user_ids` (returns roster user IDs)
+  - Extend `Registration::CampaignsController` to support exam campaigns (campaignable_type: "Exam")
 - Controllers: `ExamsController` (CRUD, scheduling) - teacher-facing only
-- UI: Basic exam creation/editing form for teachers
+- UI:
+  - Basic exam creation/editing form for teachers
+  - Extend campaign creation UI to support exams (reuses existing campaign views)
+  - Teachers can create campaigns with exams as registerable items
 - Limitations: No student registration flows, no grading UI, no grade schemes (deferred to PR-8.2 and later)
-- Rationale: Backend foundation enables parallel work on registration (PR-8.2) and grading (PR-8.3+)
-- Feature Flag: Same `assessment_grading_enabled` flag gates exam creation
+- Rationale: Complete teacher/admin workflow for exam setup; enables parallel work on student registration (PR-8.2) and grading (PR-8.3+)
+- Feature Flag: Same `assessment_grading_enabled` flag gates exam creation and campaign setup
 - Refs: [Exam model](05a-exam-model.md#exam-activerecord-model)
-- Acceptance: Exam model exists with all concerns; teachers can create/edit exams; backend methods implemented; no student-facing features yet; feature flag gates UI.
+- Acceptance: Exam model exists with all concerns; teachers can create/edit exams; teachers can create exam campaigns; backend methods implemented; no student-facing features yet; feature flag gates UI.
 ```
 
 ```admonish example "PR-8.2 — Exam registration (student-facing)"
-- Scope: Enable students to register for exams via campaigns.
-- Dependencies: Requires PR-8.1 (Exam model)
+- Scope: Enable students to view and register for exams via campaigns.
+- Dependencies: Requires PR-8.1 (Exam model + campaign support)
 - Backend:
-  - Extend `Registration::CampaignsController` to support exam campaigns (campaignable_type: "Exam")
   - Extend `Registration::UserRegistrationsController` to handle exam registrations
+  - Policy evaluation for exam eligibility (uses existing PolicyEngine)
 - UI:
-  - Exam registration flows (reuses existing campaign views)
-  - FCFS and preference-based modes
-  - Student can view available exams and register
-- Rationale: Separate from backend foundation so different developer can work on student-facing features
-- Feature Flag: Same `assessment_grading_enabled` flag gates exam registration
+  - Student-facing exam registration flows (reuses existing registration views)
+  - Display available exam campaigns
+  - Registration button/form for eligible students
+  - Confirmation and status display
+- Rationale: Pure student-facing work; can be developed in parallel with grading features
+- Feature Flag: Same `assessment_grading_enabled` flag gates student exam registration
 - Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
-- Acceptance: Students can register for exam campaigns; allocation works for exams; roster materialization works; both FCFS and preference modes supported.
+- Acceptance: Students can view available exam campaigns; eligible students can register; allocation works for exams; roster materialization works; both FCFS and preference modes supported; ineligible students see appropriate error messages.
 ```
 
 ```admonish example "PR-8.3 — Grade Entry Service (base layer)"
