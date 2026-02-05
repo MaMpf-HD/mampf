@@ -29,7 +29,7 @@ graph TD
         S6 --> S7["7. Assessments (Formalize)"];
         S7 --> S8["8. Assignment Grading"];
         S8 --> S9["9. Exams (Registration + Grading)"];
-        S9 --> S10["10. Participation Tracking"];
+        S9 --> S10["10. Activity Tracking"];
     end
 
     subgraph "Phase 3: Dashboard Integration (Partial)"
@@ -255,8 +255,8 @@ graph TD
     multiple steps.
     ```
 
-10. **[Grading] Participation Tracking**
-   Action: Implement Achievement model as a new assessable type for tracking non-graded participation (presentations, attendance). Build UI for teachers to mark achievements and for students to view their progress.
+10. **[Grading] Activity Tracking**
+   Action: Implement Achievement model as a new assessable type for tracking attendance and involvement (presentations, attendance). Build UI for teachers to mark achievements and for students to view their progress.
 
     Controllers: Add `Assessment::AchievementsController` for CRUD and
     `Assessment::ParticipationsController` extensions for achievement
