@@ -321,8 +321,8 @@ Grading — Step 7: Assessment Foundations (Backend & CRUD)
 Grading — Step 8: Unified Point Entry & Assignment Grading
 ```
 
-```admonish example "PR-8.1 — Exam foundations (model + registration + CRUD)"
-- Scope: Introduce Exam model with basic functionality (no grade schemes yet).
+```admonish example "PR-8.1 — Exam foundations (backend)"
+- Scope: Exam model, backend implementation, teacher CRUD (no student registration yet).
 - Migrations:
   - `20251110000000_create_exams.rb`
 - Backend:
@@ -330,25 +330,41 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Implement `materialize_allocation!` (delegates to `replace_roster!`)
   - Implement `allocated_user_ids` (returns roster user IDs)
   - Implement `seed_participations_from_roster!`
-- Controllers: `ExamsController` (CRUD, scheduling)
-- Registration: Extend `Registration::CampaignsController` and `Registration::UserRegistrationsController` to support lecture-hosted exam campaigns
-- UI: Basic exam creation/editing form; exam registration flows (reuses campaign views); FCFS and preference-based modes
-- Limitations: No grading UI, no grade schemes, no point entry (deferred to PR-8.3 and Step 9)
-- Rationale: Having exams around enables unified point entry UI design in PR-8.3
+- Controllers: `ExamsController` (CRUD, scheduling) - teacher-facing only
+- UI: Basic exam creation/editing form for teachers
+- Limitations: No student registration flows, no grading UI, no grade schemes (deferred to PR-8.2 and later)
+- Rationale: Backend foundation enables parallel work on registration (PR-8.2) and grading (PR-8.3+)
 - Feature Flag: Same `assessment_grading_enabled` flag gates exam creation
-- Refs: [Exam model](05a-exam-model.md#exam-activerecord-model), [Exam registration flow](05a-exam-model.md#exam-registration-flow)
-- Acceptance: Exam model exists with all concerns; teachers can create exams and exam campaigns; students can register for exams; no grading functionality yet; feature flag gates UI.
+- Refs: [Exam model](05a-exam-model.md#exam-activerecord-model)
+- Acceptance: Exam model exists with all concerns; teachers can create/edit exams; backend methods implemented; no student-facing features yet; feature flag gates UI.
 ```
 
-```admonish example "PR-8.2 — Grading service (backend for point entry)"
+```admonish example "PR-8.2 — Exam registration (student-facing)"
+- Scope: Enable students to register for exams via campaigns.
+- Dependencies: Requires PR-8.1 (Exam model)
+- Backend:
+  - Extend `Registration::CampaignsController` to support exam campaigns (campaignable_type: "Exam")
+  - Extend `Registration::UserRegistrationsController` to handle exam registrations
+- UI:
+  - Exam registration flows (reuses existing campaign views)
+  - FCFS and preference-based modes
+  - Student can view available exams and register
+- Rationale: Separate from backend foundation so different developer can work on student-facing features
+- Feature Flag: Same `assessment_grading_enabled` flag gates exam registration
+- Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
+- Acceptance: Students can register for exam campaigns; allocation works for exams; roster materialization works; both FCFS and preference modes supported.
+```
+
+```admonish example "PR-8.3 — Grading service (backend for point entry)"
 - Scope: `Assessment::GradingService` for saving points.
 - Implementation: Fanout pattern creates Participation and TaskPoints per student (or team); supports ANY Pointable (assignments and exams)
 - Refs: [GradingService](04-assessments-and-grading.md#assessmentgradingservice-service)
 - Acceptance: Service creates participations and task points; handles team grading; validates point ranges; works for Assignment and Exam assessables.
 ```
 
-```admonish example "PR-8.3 — Unified point entry UI (for ANY Pointable)"
+```admonish example "PR-8.4 — Unified point entry UI (for ANY Pointable)"
 - Scope: Point entry interface that works for both assignments and exams.
+- Dependencies: Requires PR-8.1 (Exam model) and PR-8.3 (GradingService)
 - Controllers: `Assessment::GradingController` (new/create/update)
 - UI:
   - Grid view with students × tasks
@@ -361,7 +377,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 - Acceptance: Teachers can enter points for assignments AND exams; service called on save; results preview shown; UI agnostic to assessable type; feature flag gates UI.
 ```
 
-```admonish example "PR-8.4 — Publish/unpublish results"
+```admonish example "PR-8.5 — Publish/unpublish results"
 - Scope: Toggle result visibility for students.
 - Controllers: Extend `Assessment::AssessmentsController` with `publish_results` and `unpublish_results` actions
 - UI: Toggle button on assessment show page; works for both assignments and exams
@@ -369,7 +385,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 - Acceptance: Teachers can publish/unpublish results; students see results only when published; toggle works via Turbo Frame; works for any assessable type; feature flag gates UI.
 ```
 
-```admonish example "PR-8.5 — Student submission integration with participations"
+```admonish example "PR-8.6 — Student submission integration with participations"
 - Scope: Update student submission workflow to interact with Assessment::Participation (when feature flag enabled).
 - Controllers: Update `SubmissionsController` to conditionally set participation status
 - Logic (when `assessment_grading_enabled?`):
@@ -383,7 +399,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 - Acceptance: Feature flag controls behavior; new submissions link to assessments and update participations; old submissions continue working unchanged; no breaking changes to existing functionality.
 ```
 
-```admonish example "PR-8.6 — Student results interface"
+```admonish example "PR-8.7 — Student results interface"
 - Scope: Student-facing views for published assessment results.
 - Controllers: `Assessment::ParticipationsController` (index, show for students)
 - UI:
