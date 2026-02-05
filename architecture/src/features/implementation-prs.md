@@ -429,7 +429,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - For team submissions: Create/update participations for all team members
   - Note: First interaction creates the participation record
 - Logic (when flag disabled):
-  - Use existing submission flow (no participation tracking)
+  - Use existing submission flow (no Assessment::Participation records created)
 - Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios)
 - Acceptance: Feature flag controls behavior; new submissions link to assessments and update participations; old submissions continue working unchanged; no breaking changes to existing functionality.
 ```
@@ -482,17 +482,17 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish abstract
-Grading — Step 10: Participation Tracking (Achievements)
+Grading — Step 10: Activity Tracking (Achievements)
 ```
 
-```admonish example "PR-10.1 — Achievement model (participation tracking)"
+```admonish example "PR-10.1 — Achievement model (activity tracking)"
 - Scope: Create Achievement as assessable for non-graded participation.
 - Model: `Achievement` with `value_type` (boolean/numeric/percentage)
 - Concerns: `Assessment::Assessable` (but NOT Pointable or Gradable)
 - Controllers: `AchievementsController` (CRUD), extend `Assessment::ParticipationsController` with achievement marking actions
 - UI: Checkbox/numeric input for marking; student list view
-- Rationale: Achievements track participation but don't contribute to grades
-- Refs: [Achievement model](04-assessments-and-grading.md#achievement-model), [Participation tracking](04-assessments-and-grading.md#participation-tracking)
+- Rationale: Achievements track attendance/involvement but don't contribute to grades
+- Refs: [Achievement model](04-assessments-and-grading.md#achievement-model), [Activity tracking](04-assessments-and-grading.md#activity-tracking)
 - Acceptance: Achievement model exists; can be linked to assessments; teachers can mark achievements; students see progress; value_type validated; feature flag gates UI.
 ```
 

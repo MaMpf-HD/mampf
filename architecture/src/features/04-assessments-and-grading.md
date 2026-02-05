@@ -21,7 +21,7 @@ We use a unified grading model with clear separation of concerns:
 - **Dual Capability Model:** Two concerns provide orthogonal features:
   - `Assessment::Pointable`: Enables per-task point tracking ("pointbook" mode).
   - `Assessment::Gradable`: Enables final grade recording without tasks ("gradebook" mode).
-- **Participation Tracking:** `Assessment::Participation` records aggregate points, grade, and status per (user, assessment).
+- **Participation Records:** `Assessment::Participation` records aggregate points, grade, and status per (user, assessment).
 - **Granular Points:** `Assessment::Task` and `Assessment::TaskPoint` models support breakdown into graded components when `requires_points = true`.
 - **Team-Aware Grading:** `Assessment::SubmissionGrader` implements a fan-out pattern: grade one `Submission`, create `Assessment::TaskPoint` records for all team members.
 - **Roster Integration:** Participations are seeded from `Roster::Rosterable` models (tutorials, talks) or lecture rosters.
