@@ -1,5 +1,4 @@
 require "rails_helper"
-require_relative "../../../app/models/rosters/stream_service"
 
 RSpec.describe(Rosters::StreamService) do
   let(:lecture) { create(:lecture) }

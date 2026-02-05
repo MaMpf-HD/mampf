@@ -118,6 +118,35 @@ The Assessments Tab shows all gradeable items in one list, regardless of creatio
 Teachers create items where they make semantic sense (homework vs presentations), but grade everything in one place for consistency and efficiency.
 ```
 
+### Grading Tab vs. Performance Tab
+
+```admonish question "Why do we have both a Grading tab and a Performance tab?"
+The **Grading tab** (in the Assessment Dashboard) and the **Performance tab** (in the Roster Dashboard) serve different purposes despite some apparent overlap.
+```
+
+| Dimension | Grading Tab (Assessment) | Performance Tab (Roster) |
+|-----------|--------------------------|--------------------------|
+| **Location** | Assessment Dashboard (single assessment) | Roster Dashboard (lecture-wide) |
+| **Primary axis** | Tasks (columns) × Students (rows) | Assessments (columns) × Students (rows) |
+| **Editing** | Yes — enter points per task | No — read-only aggregate |
+| **Scope** | One assessment (e.g., "Homework 3") | All assessments in the lecture |
+| **Question answered** | "How did students do on Problem 2?" | "Is Alice eligible for the exam?" |
+| **User journey** | Grading workflow → enter data | Certification workflow → review eligibility |
+
+**The "filter to one assignment" overlap:** The Performance tab can filter to show a single assessment, which superficially resembles the Grading tab. However:
+1. Performance tab remains **read-only** — it consumes grading data, it doesn't produce it.
+2. Grading tab shows **task-level breakdown** — Performance shows only the total per assessment.
+3. Performance tab provides **cross-assessment context** — even when filtered, switching views is instant.
+
+```admonish tip "Design Pattern"
+This layered approach (detail view + aggregate view) is common in well-designed systems:
+- **Banking:** Transaction details vs. account statement
+- **LMS (Moodle/Canvas):** Assignment grading page vs. gradebook overview
+- **GitHub:** PR diff view vs. repository insights
+
+The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
+```
+
 ---
 
 ## Assessment::Assessment (ActiveRecord Model)
@@ -142,6 +171,7 @@ The main fields and methods of `Assessment` are:
 | `requires_points`         | DB column         | Boolean: whether this assessment tracks per-task points                  |
 | `requires_submission`     | DB column         | Boolean: whether students must upload files                              |
 | `total_points`            | DB column         | Optional maximum points (computed from tasks if blank)                   |
+| `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `participations`          | Association       | All student records for this assessment                                  |
 | `tasks`                   | Association       | Tasks (problems) for this assessment (only if `requires_points`)         |
@@ -231,7 +261,9 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 ### Usage Scenarios
 
-- **For a homework assignment (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment (digital) (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+
+- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
 
 - **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
 
@@ -417,8 +449,7 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 - **After assessment setup:** When an assignment is created, an `Assessment::Assessment` record is automatically created via the `Assessable` concern. No participation records are created at this point—they are created lazily when students submit work or tutors enter grades.
 - **Lazy participation creation:** Participations are **not** created eagerly when an assignment is set up. Instead, they are created on-demand when a student submits work, when a tutor enters a grade, or via a scheduled job after the deadline passes. The "expected" count for progress tracking comes from querying the current roster, not pre-seeded participations.
 
-- **Student submits work (digital assignment):** A student uploads their homework file. The system creates a participation record (if none exists) with `status: :submitted`, sets `submitted_at: Time.current`, and captures the student's current `tutorial_id`. This is the first time a participation record may be created for this student/assessment pair.
-
+- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
@@ -701,8 +732,8 @@ module Assessment
 
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
-        class_name: "Assessment::Assessment"
-    end
+                           class_name: "Assessment::Assessment"
+      end
 
     def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment
@@ -712,8 +743,19 @@ module Assessment
       a.save! if a.changed?
       a
     end
+
   end
 end
+```
+
+```admonish info "Simplified Parameter Design"
+The `ensure_assessment!` method only takes `requires_points` and `requires_submission` parameters.
+Other attributes are accessed through delegation:
+- **Title:** `assessment.title` delegates to `assessable.title`
+- **Deadline:** Access via `assessment.assessable.deadline`
+- **Start date:** Access via `assessment.assessable.valid_from`
+
+This design avoids data duplication and ensures consistency with the source model.
 ```
 
 ### Concrete Implementations
@@ -731,8 +773,10 @@ class Assignment < ApplicationRecord
 
   def setup_assessment
     ensure_assessment!(
+      title: title,
       requires_points: true,
-      requires_submission: requires_submission
+      requires_submission: true,
+
     )
   end
 end
@@ -751,8 +795,9 @@ class Talk < ApplicationRecord
 
   def setup_assessment
     ensure_assessment!(
+      title: title,
       requires_points: false,
-      requires_submission: false
+      requires_submission: false,
     )
   end
 end
@@ -832,8 +877,9 @@ private
 
 def setup_assessment
   ensure_assessment!(
+    title: your_title,
     requires_points: true_or_false,    # Does this need per-task grading?
-    requires_submission: true_or_false  # Do students upload files?
+    requires_submission: true_or_false, # Do students upload files?
   )
 end
 ```
@@ -921,12 +967,10 @@ module Assessment
     extend ActiveSupport::Concern
     include Assessment::Assessable
 
-  def ensure_pointbook!(title:, requires_submission: false, **opts)
+  def ensure_pointbook!(requires_submission: false)
     ensure_assessment!(
-      title: title,
       requires_points: true,
-      requires_submission: requires_submission,
-      **opts
+      requires_submission: requires_submission
     )
   end
 end
@@ -934,11 +978,11 @@ end
 
 ### Usage Scenarios
 
-- **For homework assignments:** After creating an assignment, call `assignment.ensure_pointbook!(title: "Homework 3", requires_submission: true, due_at: 1.week.from_now)`. The assessment is configured for task-level grading, and students must upload files. Tasks are then added for each problem.
+- **For homework assignments:** After creating an assignment, the `setup_assessment` callback calls `ensure_pointbook!(requires_submission: true)`. The assessment is configured for task-level grading, and students must upload files. Tasks are then added for each problem.
 
-- **For exams with per-question tracking:** An exam includes this concern to track points per question. Call `exam.ensure_pointbook!(title: "Final Exam", requires_submission: false)` since students don't upload files for in-person exams. Tasks represent individual exam questions.
+- **For exams with per-question tracking:** An exam includes this concern to track points per question. The callback calls `ensure_pointbook!(requires_submission: false)` since students don't upload files for in-person exams. Tasks represent individual exam questions.
 
-- **Idempotent reconfiguration:** A teacher realizes they set the wrong due date and calls `assignment.ensure_pointbook!(title: "Homework 3", requires_submission: true, due_at: 2.weeks.from_now)`. The method updates the existing assessment without creating a duplicate.
+- **Idempotent reconfiguration:** The method is idempotent—calling it again updates the existing assessment rather than creating a duplicate. Configuration changes can be done through the Assessment Settings UI.
 
 ---
 
@@ -977,13 +1021,11 @@ module Assessment
     extend ActiveSupport::Concern
     include Assessment::Assessable
 
-  def ensure_gradebook!(title:, **opts)
+  def ensure_gradebook!
     requires_points = assessment&.requires_points
     ensure_assessment!(
-      title: title,
       requires_points: requires_points.nil? ? false : requires_points,
-      requires_submission: false,
-      **opts
+      requires_submission: false
     )
   end
 
@@ -1002,7 +1044,7 @@ end
 
 ### Usage Scenarios
 
-- **For seminar talks:** After creating a talk, call `talk.ensure_gradebook!(title: "Seminar Talk: Topology")` to create an assessment without tasks. After the presentation, call `talk.set_grade!(user: speaker, value: "1.0", grader: professor)` to record the final grade.
+- **For seminar talks:** After creating a talk, the `setup_assessment` callback calls `ensure_gradebook!` to create an assessment without tasks. After the presentation, call `talk.set_grade!(user: speaker, value: "1.0", grader: professor)` to record the final grade.
 
 - **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. After all tasks are graded and points computed, the teacher can call `exam.set_grade!(user: student, value: "1.3", grader: professor)` to store the official grade that appears on transcripts.
 
@@ -1043,26 +1085,22 @@ class Assignment < ApplicationRecord
   private
 
   def setup_grading
-    ensure_pointbook!(
-      title: title,
-      requires_submission: true,
-      due_at: deadline
-    )
+    ensure_pointbook!(requires_submission: true)
     seed_participations_from_roster!
   end
 
   def seed_participations_from_roster!
     return unless assessment
 
-    # Aggregate students from all tutorials in the lecture
-    lecture.tutorials.each do |tutorial|
-      user_ids = tutorial.roster_user_ids
-      user_ids.each do |user_id|
-        assessment.participations.find_or_create_by!(user_id: user_id) do |part|
-          part.tutorial_id = tutorial.id
-        end
-      end
-    end
+    memberships = TutorialMembership
+      .where(tutorial_id: lecture.tutorial_ids)
+      .pluck(:user_id, :tutorial_id)
+
+    tutorial_mapping = memberships.to_h
+    user_ids = memberships.map(&:first)
+
+    assessment.seed_participations_from!(user_ids: user_ids,
+                                         tutorial_mapping: tutorial_mapping)
   end
 end
 ```

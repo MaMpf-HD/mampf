@@ -292,12 +292,10 @@ en:
         registration/item:
           attributes:
             registerable_id:
-              taken: "is already part of another campaign."
-              taken_by_real_campaign: "is already part of another active campaign."
+              taken: "This item is already part of a campaign."
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
-              already_in_other_campaign: "This item is already part of another standard registration campaign."
               registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
