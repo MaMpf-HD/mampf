@@ -378,8 +378,9 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Works for: Talks, oral exams, small exams (manual entry)
   - Also: manual override interface (even when grade scheme exists)
 - Rationale: Foundation UI that works for all Gradables; reusable base before specialized tools
-- Refs: [Grade Entry UI](12-views.md#grade-entry-interface)
-- Acceptance: Teachers can enter grades directly for any Gradable; validation works; audit tracking visible; feature flag gates UI.
+- Note: This PR covers talk grading (no separate talk grading UI needed)
+- Refs: [Grade Entry UI](12-views.md#grade-entry-interface), [Talk grading](04-assessments-and-grading.md#talk-grading)
+- Acceptance: Teachers can enter grades directly for any Gradable including talks; validation works; audit tracking visible; feature flag gates UI.
 ```
 
 ```admonish example "PR-8.5 — Point Entry Service (specialized for Pointables)"
@@ -453,15 +454,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
-```admonish example "PR-9.1 — Exam registration consolidation"
-- Scope: Finalize exam registration workflows (no functional changes, just documentation).
-- Note: Exam registration was introduced in PR-8.1; this PR serves as checkpoint to verify all flows work correctly before adding grade schemes
-- Testing: Comprehensive end-to-end tests for exam registration and allocation
-- Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
-- Acceptance: All exam registration flows tested; campaign creation, student registration, allocation, and finalization work correctly.
-```
-
-```admonish example "PR-9.2 — Grade scheme schema"
+```admonish example "PR-9.1 — Grade scheme schema"
 - Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
 - Migrations:
   - `20251110000001_create_grade_schemes.rb`
@@ -470,43 +463,31 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 - Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
 ```
 
-```admonish example "PR-9.3 — Grade scheme applier (service)"
+```admonish example "PR-9.2 — Grade scheme applier (service)"
 - Scope: `GradeScheme::Applier` for converting exam points to grades.
 - Implementation: Supports absolute points and percentage-based bands; idempotent application via version_hash; respects manual overrides
 - Refs: [GradeScheme applier](05b-grading-schemes.md#gradeschemesapplier-service-object)
 - Acceptance: Service computes grades from points; handles both absolute and percentage schemes; version_hash prevents duplicate applications.
 ```
 
-```admonish example "PR-9.4 — Grade scheme UI + distribution analysis"
-- Scope: UI for grade scheme configuration and application (layers on top of PR-8.3 point entry).
+```admonish example "PR-9.3 — Grade scheme UI + distribution analysis"
+- Scope: UI for grade scheme configuration and application (layers on top of PR-8.5/8.6 point entry).
 - Controllers: `GradeScheme::SchemesController` (configuration, preview, apply)
 - UI:
   - Distribution analysis (histogram, statistics) based on entered points
   - Scheme configuration (two-point auto-generation + manual adjustment)
   - Grade preview showing how scheme maps to students
   - Apply action (runs GradeScheme::Applier)
-- Integration: Uses existing point entry UI from PR-8.3; adds grade scheme layer
+- Integration: Uses existing point entry UI from PR-8.5/8.6; adds grade scheme layer
 - Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
-- Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.4 toggle; feature flag gates UI.
+- Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.7 toggle; feature flag gates UI.
 ```
 
 ```admonish abstract
-Grading — Step 10: Participation Tracking (Talk Grading)
+Grading — Step 10: Participation Tracking (Achievements)
 ```
 
-```admonish example "PR-10.1 — Talk grading UI (Gradable without Pointable)"
-- Scope: Direct grade entry for talks (no task points, just final grade).
-- Controllers: `Assessment::TalkGradingController` (new controller for Gradable-only workflow)
-- UI:
-  - Student list with grade dropdown (direct grade entry, no tasks)
-  - Reuses publication toggle from PR-8.4
-  - Demonstrates Gradable concern without Pointable (talks don't have task breakdowns)
-- Rationale: Talks have Assessable+Gradable but NOT Pointable (no task decomposition)
-- Refs: [Talk grading workflow](04-assessments-and-grading.md#talk-grading)
-- Acceptance: Teachers can assign final grades to talks; no task points involved; publication works; feature flag gates UI.
-```
-
-```admonish example "PR-10.2 — Achievement model (participation tracking)"
+```admonish example "PR-10.1 — Achievement model (participation tracking)"
 - Scope: Create Achievement as assessable for non-graded participation.
 - Model: `Achievement` with `value_type` (boolean/numeric/percentage)
 - Concerns: `Assessment::Assessable` (but NOT Pointable or Gradable)
