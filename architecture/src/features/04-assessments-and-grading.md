@@ -1334,11 +1334,79 @@ The model uses `assessment_id` instead of `assignment_id` to enable future exten
 
 ---
 
+## Service Layer Architecture
+
+```admonish tip "Layered Design"
+The grading system uses a layered approach: base grade entry service works for all Gradables, specialized services build on top for specific workflows.
+```
+
+### Layer 1: Grade Entry (Foundation)
+
+**`Assessment::GradeEntryService`** - Base service for setting final grades
+
+**Purpose:** Direct grade assignment for any Gradable (talks, oral exams, manual entry)
+
+**Interface:**
+```ruby
+Assessment::GradeEntryService.set_grade(
+  participation:,
+  grade:,
+  grader:,
+  comment: nil
+)
+```
+
+**Behavior:**
+- Sets `participation.grade` with validation
+- Validates grade format (letter grade, pass/fail, numeric, etc.)
+- Tracks audit information (`graded_by_id`, `graded_at`)
+- Works for ANY Gradable type
+- Used by: manual entry UI, grade schemes (as output), talk grading
+
+**Use Cases:**
+- **Talk grading:** Teacher enters "1.0" after seminar presentation
+- **Oral exam:** Teacher enters "2.3" directly (no written tasks)
+- **Small exam override:** 3 students, teacher skips points and enters final grades
+- **Grade scheme output:** Scheme calculates "2.7" from total points, calls this service
+
+---
+
+### Layer 2: Point Entry (Specialized for Pointables)
+
+**`Assessment::PointEntryService`** - Task-based point tracking
+
+**Purpose:** Enter points per task, calculate totals, optionally trigger grade calculation
+
+**Interface:**
+```ruby
+Assessment::PointEntryService.enter_points(
+  participation:,
+  task_points:,  # Hash of task_id => points
+  grader:
+)
+```
+
+**Behavior:**
+- Creates/updates `Assessment::TaskPoint` records
+- Calculates `participation.total_points` from task points
+- For Pointable+Gradable (exams): can trigger grade scheme
+- Validates point ranges per task
+- Works only for Pointable assessments
+
+**Use Cases:**
+- **Assignment grading:** Tutor enters points for Problems 1-3
+- **Exam grading:** Teacher enters points per question
+- **Partial grading:** Enter points for some tasks, leave others for later
+
+---
+
+### Layer 3: Team Submission Grading (Specialized for Submissions)
+
 ## Assessment::SubmissionGrader (Service)
 **_Team-Aware Grading Orchestrator_**
 
 ```admonish info "What it represents"
-Coordinates the grading workflow: takes one submission and distributes points to all team members automatically.
+Coordinates the grading workflow: takes one submission and distributes points to all team members automatically. Builds on PointEntryService for the actual point recording.
 ```
 
 ```admonish note "Think of it as"
@@ -1351,6 +1419,35 @@ Coordinates the grading workflow: takes one submission and distributes points to
 |--------|-------------|
 | `grade_task!(submission:, task:, points:, grader:, comment: nil)` | Grades one task for all team members |
 | `grade_tasks!(submission:, grades_by_task_id:, grader:)` | Bulk grades multiple tasks at once |
+
+### Behavior Highlights
+
+- Fan-out pattern: one submission graded → `Assessment::TaskPoint` created for each team member
+- Delegates to `PointEntryService` for actual point recording
+- Idempotent: re-grading the same submission/task overwrites points consistently
+- Links each `Assessment::TaskPoint` back to the `submission_id` for audit trail
+- Triggers `Assessment::Participation.recompute_points_total!` after grading
+- Validates that the task belongs to the submission's assessment
+- Wraps all operations in a database transaction for atomicity
+- Visibility controlled separately via `assessment.results_published`
+
+### Relationship Between Services
+
+```
+Student uploads → Submission
+                     ↓
+Tutor grades → SubmissionGrader (team fan-out)
+                     ↓
+               PointEntryService (create TaskPoints)
+                     ↓
+               Participation.total_points updated
+                     ↓
+       (Optional) Grade scheme calculation
+                     ↓
+               GradeEntryService (set final grade)
+```
+
+### Example Implementation
 
 ### Behavior Highlights
 
