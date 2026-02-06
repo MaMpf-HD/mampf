@@ -108,7 +108,15 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    submissions.proper.none?
+    non_destructible_reason.nil?
+  end
+
+  def non_destructible_reason
+    return :has_submissions if submissions.proper.any?
+
+    return :has_grading_data if grading_data?
+
+    nil
   end
 
   def check_destructibility
@@ -166,6 +174,14 @@ class Assignment < ApplicationRecord
   end
 
   private
+
+    def grading_data?
+      return false unless assessment&.assessment_participations
+
+      assessment.assessment_participations.any? do |p|
+        p.graded? || p.exempt? || p.task_points.any? || p.points_total.present?
+      end
+    end
 
     def setup_assessment
       ensure_pointbook!(requires_submission: true)

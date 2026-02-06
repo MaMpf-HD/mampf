@@ -91,4 +91,116 @@ RSpec.describe(Assignment, type: :model) do
       end
     end
   end
+
+  describe "destructibility" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:assignment) { FactoryBot.create(:assignment, lecture: lecture) }
+
+    context "when assignment has no submissions or grading data" do
+      it "is destructible" do
+        expect(assignment.destructible?).to be(true)
+      end
+
+      it "returns nil for non_destructible_reason" do
+        expect(assignment.non_destructible_reason).to be_nil
+      end
+    end
+
+    context "when assignment has proper submissions" do
+      before do
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+        submission = FactoryBot.create(:submission, :with_manuscript,
+                                       assignment: assignment,
+                                       tutorial: tutorial)
+        FactoryBot.create(:user_submission_join,
+                          submission: submission,
+                          user: FactoryBot.create(:confirmed_user))
+      end
+
+      it "is not destructible" do
+        expect(assignment.destructible?).to be(false)
+      end
+
+      it "returns :has_submissions as non_destructible_reason" do
+        expect(assignment.non_destructible_reason).to eq(:has_submissions)
+      end
+    end
+
+    context "when assignment has grading data but no submissions" do
+      before do
+        Flipper.enable(:assessment_grading)
+        assignment.reload
+      end
+
+      after { Flipper.disable(:assessment_grading) }
+
+      context "with graded participation" do
+        before do
+          participation = FactoryBot.create(:assessment_participation,
+                                            assessment: assignment.assessment,
+                                            status: :graded)
+        end
+
+        it "is not destructible" do
+          expect(assignment.destructible?).to be(false)
+        end
+
+        it "returns :has_grading_data as non_destructible_reason" do
+          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        end
+      end
+
+      context "with exempt participation" do
+        before do
+          participation = FactoryBot.create(:assessment_participation,
+                                            assessment: assignment.assessment,
+                                            status: :exempt)
+        end
+
+        it "is not destructible" do
+          expect(assignment.destructible?).to be(false)
+        end
+
+        it "returns :has_grading_data as non_destructible_reason" do
+          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        end
+      end
+
+      context "with task points entered" do
+        before do
+          participation = FactoryBot.create(:assessment_participation,
+                                            assessment: assignment.assessment)
+          task = FactoryBot.create(:assessment_task, assessment: assignment.assessment)
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation,
+                            task: task,
+                            points: 5.0)
+        end
+
+        it "is not destructible" do
+          expect(assignment.destructible?).to be(false)
+        end
+
+        it "returns :has_grading_data as non_destructible_reason" do
+          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        end
+      end
+
+      context "with points_total set" do
+        before do
+          participation = FactoryBot.create(:assessment_participation,
+                                            assessment: assignment.assessment,
+                                            points_total: 10.0)
+        end
+
+        it "is not destructible" do
+          expect(assignment.destructible?).to be(false)
+        end
+
+        it "returns :has_grading_data as non_destructible_reason" do
+          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        end
+      end
+    end
+  end
 end
