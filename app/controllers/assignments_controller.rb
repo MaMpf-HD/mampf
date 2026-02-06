@@ -91,10 +91,14 @@ class AssignmentsController < ApplicationController
         format.turbo_stream do
           if remaining_assignments.empty?
             render turbo_stream:
-            turbo_stream.update("assessment-assessments-wrapper",
+            turbo_stream.update("assessments_container",
                                 partial: "assessment/assessments/empty_assignments")
           else
-            render turbo_stream: turbo_stream.remove(ActionView::RecordIdentifier.dom_id(@assignment))
+            render turbo_stream:
+            turbo_stream.update("assessments_container",
+                                partial: "assessment/assessments/index",
+                                locals: { lecture: @lecture,
+                                          assignments_with_assessments: remaining_assignments })
           end
         end
       end

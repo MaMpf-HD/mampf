@@ -17,6 +17,9 @@ de:
     requires_submission: 'Digitale Abgabe erforderlich'
     requires_submission_hint: 'Studierende müssen eine Datei hochladen'
     no_submission_required: 'Keine digitale Abgabe'
+    not_destructible:
+      has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
+      has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
     form:
       submit: 'Speichern'
     task:
