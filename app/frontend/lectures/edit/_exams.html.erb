@@ -18,65 +18,61 @@
       <%= t('assessment.no_exams_yet') %>
     </div>
   <% else %>
-    <div class="list-group">
-      <div class="list-group-item bg-light">
-        <div class="row">
-          <div class="col-3">
-            <h6><%= t('basics.title') %></h6>
-          </div>
-          <div class="col-2">
-            <h6><%= t('assessment.date') %></h6>
-          </div>
-          <div class="col-2">
-            <h6><%= t('basics.location') %></h6>
-          </div>
-          <div class="col-2">
-            <h6><%= t('basics.capacity') %></h6>
-          </div>
-          <div class="col-2">
-            <h6><%= t('roster.participants') %></h6>
-          </div>
-          <div class="col-1">
-            <h6><%= t('basics.action') %></h6>
-          </div>
-        </div>
-      </div>
-      <% lecture.exams.order(date: :desc).each do |exam| %>
-        <div class="list-group-item" id="exam-row-<%= exam.id %>">
-          <div class="row align-items-center">
-            <div class="col-3">
-              <%= exam.title %>
-            </div>
-            <div class="col-2">
-              <%= exam.date ? l(exam.date, format: :short) : t('basics.not_specified') %>
-            </div>
-            <div class="col-2">
-              <%= exam.location.presence || t('basics.not_specified') %>
-            </div>
-            <div class="col-2">
-              <%= exam.capacity || t('basics.unlimited') %>
-            </div>
-            <div class="col-2">
-              <%= exam.roster_entries_count %>
-            </div>
-            <div class="col-1">
-              <%= link_to '',
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= t('basics.title') %></th>
+          <th><%= t('assessment.date') %></th>
+          <th><%= t('basics.location') %></th>
+          <th><%= t('basics.capacity') %></th>
+          <th><%= t('roster.participants') %></th>
+          <th class="text-end"><%= t('basics.action') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% lecture.exams.order(date: :desc).each do |exam| %>
+          <tr id="exam-row-<%= exam.id %>"
+              data-controller="row-click"
+              data-action="click->row-click#visit"
+              style="cursor: pointer;">
+            <td>
+              <%= link_to exam.title,
                           edit_exam_path(exam),
-                          class: 'far fa-edit text-dark me-2',
-                          title: t('buttons.edit'),
-                          data: { turbo_stream: true } %>
-              <%= link_to '',
-                          exam_path(exam),
+                          class: "text-decoration-none",
+                          data: { turbo_stream: true, row_link: true } %>
+            </td>
+            <td>
+              <%= exam.date ? l(exam.date, format: :short) : t('basics.not_specified') %>
+            </td>
+            <td>
+              <%= exam.location.presence || t('basics.not_specified') %>
+            </td>
+            <td>
+              <%= exam.capacity || t('basics.unlimited') %>
+            </td>
+            <td>
+              <%= exam.roster_entries_count %>
+            </td>
+            <td class="text-end">
+              <%= link_to edit_exam_path(exam),
+                          class: "text-dark me-2",
+                          data: { turbo_stream: true },
+                          title: t('buttons.edit') do %>
+                <i class="far fa-edit"></i>
+              <% end %>
+              <%= link_to exam_path(exam),
                           method: :delete,
-                          class: 'far fa-trash-alt text-danger',
+                          class: "text-danger",
                           title: t('buttons.delete'),
                           data: { turbo_method: :delete,
                                   turbo_confirm: t('confirmation.generic'),
-                                  turbo_stream: true } %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
+                                  turbo_stream: true } do %>
+                <i class="far fa-trash-alt"></i>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   <% end %>
 </div>

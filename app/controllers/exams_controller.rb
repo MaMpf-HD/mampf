@@ -1,5 +1,8 @@
 class ExamsController < ApplicationController
+  include Flash
+
   before_action :set_lecture, only: [:index, :new]
+  before_action :set_exam, only: [:edit, :update, :destroy]
   authorize_resource
 
   def current_ability
@@ -8,6 +11,15 @@ class ExamsController < ApplicationController
 
   def index
     @exams = @lecture.exams.order(date: :desc)
+    set_exam_locale
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "lectures/edit/exams",
+                                                 locals: { lecture: @lecture })
+      end
+    end
   end
 
   def new
@@ -23,6 +35,99 @@ class ExamsController < ApplicationController
                                                  partial: "exams/form",
                                                  locals: { exam: @exam,
                                                            lecture: @lecture })
+      end
+    end
+  end
+
+  def edit
+    authorize! :edit, @exam
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "exams/form",
+                                                 locals: { exam: @exam,
+                                                           lecture: @lecture })
+      end
+    end
+  end
+
+  def create
+    @exam = Exam.new(exam_params)
+    @lecture = @exam.lecture
+    authorize! :create, @exam
+    set_exam_locale
+
+    respond_to do |format|
+      if @exam.save
+        format.turbo_stream do
+          flash[:success] = t("assessment.exam_created")
+          render turbo_stream: [
+            turbo_stream.update("exams_container",
+                                partial: "lectures/edit/exams",
+                                locals: { lecture: @lecture }),
+            stream_flash
+          ]
+        end
+      else
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("exams_container",
+                                                   partial: "exams/form",
+                                                   locals: { exam: @exam,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
+    end
+  end
+
+  def update
+    authorize! :update, @exam
+
+    respond_to do |format|
+      if @exam.update(exam_params)
+        format.turbo_stream do
+          flash[:success] = t("assessment.exam_updated")
+          render turbo_stream: [
+            turbo_stream.update("exams_container",
+                                partial: "lectures/edit/exams",
+                                locals: { lecture: @lecture }),
+            stream_flash
+          ]
+        end
+      else
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("exams_container",
+                                                   partial: "exams/form",
+                                                   locals: { exam: @exam,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
+    end
+  end
+
+  def destroy
+    authorize! :destroy, @exam
+
+    if @exam.destructible?
+      @exam.destroy
+      respond_to do |format|
+        format.turbo_stream do
+          flash[:success] = t("assessment.exam_destroyed")
+          render turbo_stream: [
+            turbo_stream.remove("exam-row-#{@exam.id}"),
+            stream_flash
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          flash[:error] = t("assessment.exam_not_destructible")
+          render turbo_stream: stream_flash,
+                 status: :unprocessable_content
+        end
       end
     end
   end

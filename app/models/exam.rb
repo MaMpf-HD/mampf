@@ -21,6 +21,14 @@ class Exam < ApplicationRecord
     :exam_rosters
   end
 
+  def destructible?
+    roster_entries.empty? && !in_campaign?
+  end
+
+  def in_campaign?
+    Registration::Item.exists?(registerable: self)
+  end
+
   private
 
     def setup_assessment

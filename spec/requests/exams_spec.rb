@@ -16,7 +16,7 @@ RSpec.describe("Exams", type: :request) do
     Flipper.disable(:assessment_grading)
   end
 
-  xdescribe "GET /exams" do
+  describe "POST /exams" do
     context "as a teacher" do
       before { sign_in teacher }
 
@@ -86,7 +86,7 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
-  xdescribe "POST /exams" do
+  describe "POST /exams" do
     let(:valid_attributes) do
       {
         title: "New Exam",
@@ -183,7 +183,7 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
-  xdescribe "GET /exams/:id/edit" do
+  describe "GET /exams/:id/edit" do
     context "as a teacher" do
       before { sign_in teacher }
 
@@ -219,7 +219,7 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
-  xdescribe "PATCH /exams/:id" do
+  describe "PATCH /exams/:id" do
     let(:valid_attributes) do
       {
         title: "Updated Exam Title",
@@ -315,7 +315,7 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
-  xdescribe "DELETE /exams/:id" do
+  describe "DELETE /exams/:id" do
     context "as a teacher" do
       before { sign_in teacher }
 
