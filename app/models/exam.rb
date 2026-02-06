@@ -36,6 +36,12 @@ class Exam < ApplicationRecord
     Registration::Item.exists?(registerable: self)
   end
 
+  def registration_title
+    return title unless date
+
+    "#{title} (#{I18n.l(date, format: :short)})"
+  end
+
   private
 
     def setup_assessment

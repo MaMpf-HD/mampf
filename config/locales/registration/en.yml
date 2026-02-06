@@ -55,6 +55,8 @@ en:
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
         preference_based: "Preference-Based"
+      type:
+        exam: "Exam"
       status:
         draft: "Draft"
         open: "Open"
@@ -98,6 +100,7 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
+        preference_mode_for_exam: "Preference mode is uncommon for exam campaigns. Consider using First-Come-First-Served unless you have multiple exam sessions or retakes."
       about:
         toggle: "What are registration campaigns?"
         title: "Registration Campaigns: When to Use?"
@@ -181,10 +184,12 @@ en:
         tutorials: "Tutorials"
         talks: "Talks"
         cohorts: "Other Groups"
+        exams: "Exams"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        exam: "Exam"
         cohort: "Special Group"
         enrollment_group: "Enrollment Group"
         planning_survey: "Planning Group"
@@ -297,6 +302,8 @@ en:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
               registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
+              cannot_add_exam_to_non_exam_campaign: "Exams cannot be added to campaigns that already contain tutorials, talks, or other groups."
+              cannot_add_non_exam_to_exam_campaign: "Tutorials, talks, and other groups cannot be added to exam campaigns."
         registration/user_registration:
           attributes:
             registration_item:

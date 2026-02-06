@@ -20,6 +20,32 @@
       </div>
     <% else %>
       <div class="row g-4">
+            <% if available_items[:exams].present? %>
+              <div class="col-12">
+                <h6><%= t("registration.item.groups.exams") %></h6>
+                <div class="list-group">
+                  <% available_items[:exams].each do |exam| %>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <%= exam.title %>
+                        <% if exam.date %>
+                          <span class="text-muted ms-2">(<%= l(exam.date, format: :short) %>)</span>
+                        <% end %>
+                        <span class="badge bg-secondary ms-2">
+                          <%= format_capacity(exam.capacity) %>
+                        </span>
+                      </div>
+                      <%= button_to t("basics.add"),
+                                    registration_campaign_items_path(campaign),
+                                    params: { registration_item: { registerable_id: exam.id, registerable_type: "Exam" } },
+                                    class: "btn btn-sm btn-primary",
+                                    data: { turbo: true } %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
             <% if available_items[:tutorials].present? %>
               <div class="col-12">
                 <h6><%= t("registration.item.groups.tutorials") %></h6>

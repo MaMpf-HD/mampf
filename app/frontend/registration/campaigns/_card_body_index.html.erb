@@ -21,6 +21,7 @@
                 <% else %>
                   <span class="text-muted">&mdash;</span>
                 <% end %>
+                <%= campaign_type_badge(campaign) %>
               <% end %>
             </td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>

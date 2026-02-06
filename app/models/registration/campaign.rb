@@ -75,6 +75,11 @@ module Registration
       draft?
     end
 
+    def exam_campaign?
+      registration_items.where.not(registerable_type: "Exam").none? &&
+        registration_items.where(registerable_type: "Exam").any?
+    end
+
     def total_registrations_count
       return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
 
