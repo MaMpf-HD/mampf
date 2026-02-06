@@ -22,7 +22,14 @@ class Exam < ApplicationRecord
   end
 
   def destructible?
-    roster_entries.empty? && !in_campaign?
+    non_destructible_reason.nil?
+  end
+
+  def non_destructible_reason
+    return :has_roster_entries if roster_entries.any?
+    return :in_campaign if in_campaign?
+
+    nil
   end
 
   def in_campaign?

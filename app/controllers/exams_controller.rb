@@ -3,13 +3,14 @@ class ExamsController < ApplicationController
 
   before_action :set_lecture, only: [:index, :new]
   before_action :set_exam, only: [:edit, :update, :destroy]
-  authorize_resource
+  authorize_resource except: :index
 
   def current_ability
     @current_ability ||= ExamAbility.new(current_user)
   end
 
   def index
+    authorize! :index, Exam.new(lecture: @lecture)
     @exams = @lecture.exams.order(date: :desc)
     set_exam_locale
 

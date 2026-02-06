@@ -21,12 +21,12 @@ RSpec.describe("Exams", type: :request) do
       before { sign_in teacher }
 
       it "returns http success" do
-        get exams_path(lecture_id: lecture.id)
+        get exams_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:success)
       end
 
       it "renders the exams list" do
-        get exams_path(lecture_id: lecture.id)
+        get exams_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response.body).to include(exam.title)
       end
     end
@@ -35,7 +35,7 @@ RSpec.describe("Exams", type: :request) do
       before { sign_in editor }
 
       it "returns http success" do
-        get exams_path(lecture_id: lecture.id)
+        get exams_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:success)
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe("Exams", type: :request) do
       before { sign_in student }
 
       it "redirects unauthorized users" do
-        get exams_path(lecture_id: lecture.id)
+        get exams_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:redirect)
       end
     end

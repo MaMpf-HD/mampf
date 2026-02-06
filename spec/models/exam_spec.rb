@@ -184,4 +184,70 @@ RSpec.describe(Exam, type: :model) do
       end
     end
   end
+
+  describe "destructibility" do
+    let(:lecture) { create(:lecture) }
+    let(:exam) { create(:exam, lecture: lecture) }
+
+    context "when exam has no roster entries and is not in a campaign" do
+      it "is destructible" do
+        expect(exam.destructible?).to be(true)
+      end
+
+      it "returns nil for non_destructible_reason" do
+        expect(exam.non_destructible_reason).to be_nil
+      end
+    end
+
+    context "when exam has roster entries" do
+      before do
+        user = create(:confirmed_user)
+        create(:exam_roster, exam: exam, user: user)
+      end
+
+      it "is not destructible" do
+        expect(exam.destructible?).to be(false)
+      end
+
+      it "returns :has_roster_entries as non_destructible_reason" do
+        expect(exam.non_destructible_reason).to eq(:has_roster_entries)
+      end
+    end
+
+    context "when exam is part of a registration campaign" do
+      before do
+        campaign = create(:registration_campaign)
+        create(:registration_item, registerable: exam, registration_campaign: campaign)
+      end
+
+      it "is not destructible" do
+        expect(exam.destructible?).to be(false)
+      end
+
+      it "returns :in_campaign as non_destructible_reason" do
+        expect(exam.non_destructible_reason).to eq(:in_campaign)
+      end
+
+      it "#in_campaign? returns true" do
+        expect(exam.in_campaign?).to be(true)
+      end
+    end
+
+    context "when exam has both roster entries and is in a campaign" do
+      before do
+        user = create(:confirmed_user)
+        create(:exam_roster, exam: exam, user: user)
+        campaign = create(:registration_campaign)
+        create(:registration_item, registerable: exam, registration_campaign: campaign)
+      end
+
+      it "is not destructible" do
+        expect(exam.destructible?).to be(false)
+      end
+
+      it "returns :has_roster_entries as first non_destructible_reason (checked first)" do
+        expect(exam.non_destructible_reason).to eq(:has_roster_entries)
+      end
+    end
+  end
 end

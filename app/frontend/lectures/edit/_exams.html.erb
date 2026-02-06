@@ -26,7 +26,6 @@
           <th><%= t('basics.location') %></th>
           <th><%= t('basics.capacity') %></th>
           <th><%= t('roster.participants') %></th>
-          <th class="text-end"><%= t('basics.action') %></th>
         </tr>
       </thead>
       <tbody>
@@ -52,23 +51,6 @@
             </td>
             <td>
               <%= exam.roster_entries_count %>
-            </td>
-            <td class="text-end">
-              <%= link_to edit_exam_path(exam),
-                          class: "text-dark me-2",
-                          data: { turbo_stream: true },
-                          title: t('buttons.edit') do %>
-                <i class="far fa-edit"></i>
-              <% end %>
-              <%= link_to exam_path(exam),
-                          method: :delete,
-                          class: "text-danger",
-                          title: t('buttons.delete'),
-                          data: { turbo_method: :delete,
-                                  turbo_confirm: t('confirmation.generic'),
-                                  turbo_stream: true } do %>
-                <i class="far fa-trash-alt"></i>
-              <% end %>
             </td>
           </tr>
         <% end %>
