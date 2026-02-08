@@ -29,7 +29,7 @@
         </tr>
       </thead>
       <tbody>
-        <% lecture.exams.order(date: :desc).each do |exam| %>
+        <% lecture.exams.order(date: :asc).each do |exam| %>
           <tr id="exam-row-<%= exam.id %>"
               data-controller="row-click"
               data-action="click->row-click#visit"

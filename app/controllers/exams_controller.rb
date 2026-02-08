@@ -17,7 +17,7 @@ class ExamsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
-                                                 partial: "lectures/edit/exams",
+                                                 partial: "exams/list",
                                                  locals: { lecture: @lecture })
       end
     end
@@ -65,7 +65,7 @@ class ExamsController < ApplicationController
           flash[:success] = t("assessment.exam_created")
           render turbo_stream: [
             turbo_stream.update("exams_container",
-                                partial: "lectures/edit/exams",
+                                partial: "exams/list",
                                 locals: { lecture: @lecture }),
             stream_flash
           ]
@@ -91,7 +91,7 @@ class ExamsController < ApplicationController
           flash[:success] = t("assessment.exam_updated")
           render turbo_stream: [
             turbo_stream.update("exams_container",
-                                partial: "lectures/edit/exams",
+                                partial: "exams/list",
                                 locals: { lecture: @lecture }),
             stream_flash
           ]
