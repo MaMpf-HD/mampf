@@ -80,6 +80,91 @@ tutorials.each do |tut|
   puts "  #{tut.title}: #{tut.roster_user_ids.size} students"
 end
 
+# Verify upstream propagation to lecture roster
+# Tutorials automatically propagate their rosters to the lecture
+puts "\nLecture Roster After Tutorial Materialization:"
+puts "  Total students with lecture access: #{lecture.roster_user_ids.size}"
+puts "  (All tutorial members automatically added to lecture roster via upstream propagation)"
+
+# --- Phase 3b: Simple Course Example (Enrollment Cohort Pattern) ---
+# For demonstration: create a second lecture without tutorials
+simple_lecture = FactoryBot.create(:lecture_with_sparse_toc, "with_title",
+                                   title: "Advanced Topics Seminar")
+
+# Create an enrollment cohort for simple course pattern
+enrollment_cohort = FactoryBot.create(:cohort,
+  context: simple_lecture,
+  title: "Course Enrollment",
+  purpose: :enrollment,
+  propagate_to_lecture: true,
+  capacity: 20
+)
+
+# Create campaign for the enrollment cohort
+simple_campaign = Registration::Campaign.create!(
+  campaignable: simple_lecture,
+  title: "Seminar Enrollment",
+  allocation_mode: :first_come_first_served,
+  registration_deadline: 10.days.from_now,
+  status: :open
+)
+
+simple_campaign.registration_items.create!(registerable: enrollment_cohort)
+
+# Students register directly for the cohort
+users.first(5).each do |user|
+  Registration::UserRegistration.create!(
+    user: user,
+    registration_campaign: simple_campaign,
+    registration_item: simple_campaign.registration_items.first,
+    status: :confirmed
+  )
+end
+
+simple_campaign.finalize!
+
+puts "\nEnrollment Cohort Pattern (Simple Course):"
+puts "  Cohort roster: #{enrollment_cohort.roster_user_ids.size} students"
+puts "  Lecture roster: #{simple_lecture.roster_user_ids.size} students"
+puts "  (Cohort members automatically propagated to lecture roster)"
+
+# --- Phase 3c: Planning Cohort Example (Pattern 3) ---
+# Create a planning cohort for demand forecasting
+planning_cohort = FactoryBot.create(:cohort,
+  context: lecture,
+  title: "Winter 2025 Interest Survey",
+  purpose: :planning,
+  propagate_to_lecture: false,
+  capacity: nil # No capacity limit for surveys
+)
+
+planning_campaign = Registration::Campaign.create!(
+  campaignable: lecture,
+  title: "Demand Survey",
+  allocation_mode: :first_come_first_served,
+  registration_deadline: 30.days.from_now,
+  status: :open
+)
+
+planning_campaign.registration_items.create!(registerable: planning_cohort)
+
+# Students register to signal interest
+users.sample(8).each do |user|
+  Registration::UserRegistration.create!(
+    user: user,
+    registration_campaign: planning_campaign,
+    registration_item: planning_campaign.registration_items.first,
+    status: :confirmed
+  )
+end
+
+planning_campaign.finalize!
+
+puts "\nPlanning Cohort Pattern (Demand Forecasting):"
+puts "  Planning cohort roster: #{planning_cohort.roster_user_ids.size} students"
+puts "  Lecture roster unchanged: #{lecture.roster_user_ids.size} students"
+puts "  (Planning cohort does NOT propagate - used for staffing decisions only)"
+
 # --- Phase 4: Roster Maintenance ---
 # Move one student from Tutorial 1 to Tutorial 2
 from_tut = tutorials.first
@@ -88,7 +173,9 @@ student_to_move_id = from_tut.roster_user_ids.first
 
 if student_to_move_id
   # Assuming a Roster Maintenance service exists
-  puts "Moved student #{student_to_move_id} from #{from_tut.title} to #{to_tut.title}"
+  puts "\nRoster Maintenance:"
+  puts "  Moved student #{student_to_move_id} from #{from_tut.title} to #{to_tut.title}"
+  puts "  (Student remains in lecture roster - sticky membership)"
 end
 
 # --- Phase 5: Coursework Assessments ---
@@ -240,19 +327,8 @@ exam_campaign.registration_policies.create!(
   active: true,
   config: { "allowed_domains" => ["uni.edu", "student.uni.edu"] }
 )
-# --- Phase 9: Exam Registration Campaign ---
-# Create exam first
-exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 
-# Create registration campaign
-exam_campaign = Registration::Campaign.create!(
-  campaignable: exam,
-  title: "Final Exam Registration",
-  allocation_mode: :first_come_first_served,
-  registration_deadline: 2.weeks.from_now,
-  status: :draft
-)
-exam_item = exam_campaign.registration_items.create!(registerable: exam)
+exam_campaign.update!(status: :draft)
 
 # Add policies: student performance + institutional email
 exam_campaign.registration_policies.create!(
