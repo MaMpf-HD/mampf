@@ -1,55 +1,132 @@
 <div id="exam-settings">
   <div class="row">
-    <div class="col-md-8">
-      <%= form_with model: exam, url: exam_path(exam), method: :patch, local: true do |f| %>
-        <div class="mb-3">
-          <%= f.label :title, t('basics.title'), class: 'form-label' %>
-          <%= f.text_field :title, class: 'form-control', required: true %>
+    <div class="col-12">
+      <% if exam.persisted? %>
+        <div class="text-end mb-3">
+          <% if exam.destructible? %>
+            <%= button_to t('basics.delete'),
+                        exam_path(exam),
+                        method: :delete,
+                        class: "btn btn-outline-danger btn-sm",
+                        data: { turbo_confirm: t('basics.confirm_delete') } %>
+          <% else %>
+            <span class="d-inline-block"
+                  tabindex="0"
+                  title="<%= t("assessment.exam_not_destructible.#{exam.non_destructible_reason}") %>"
+                  data-bs-toggle="tooltip">
+              <button class="btn btn-outline-secondary btn-sm" disabled>
+                <i class="bi bi-lock-fill me-1"></i>
+                <%= t('basics.delete') %>
+              </button>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%= form_with model: exam,
+                    url: exam_path(exam, tab: 'settings'),
+                    html: { id: 'exam-form' },
+                    data: { turbo: true, controller: "exams--form" } do |f| %>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :title, t('basics.title'), class: "form-label" %>
+            <%= f.text_field :title,
+                             class: 'form-control',
+                             placeholder: t('assessment.exam_title_placeholder'),
+                             data: { exams__form_target: "title",
+                                     action: "input->exams--form#checkForChanges" } %>
+            <div class="invalid-feedback" id="exam-title-error"></div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :date, t('basics.date'), class: "form-label" %>
+            <div class="input-group td-picker"
+                 id="exam-date-picker"
+                 data-controller="datetimepicker"
+                 data-td-target-input="nearest"
+                 data-td-target-toggle="nearest">
+              <%= f.text_field :date,
+                               class: "form-control td-input",
+                               data: { td_target: "#exam-date-picker",
+                                       exams__form_target: "date",
+                                       action: "change->exams--form#checkForChanges" },
+                               value: exam.date&.strftime("%Y-%m-%d %H:%M"),
+                               autocomplete: "off" %>
+              <span class="input-group-text td-picker-button"
+                    role="button"
+                    data-td-target="#exam-date-picker"
+                    data-td-toggle="datetimepicker">
+                <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
+              </span>
+            </div>
+            <small class="text-muted d-block"><%= t('assessment.exam_date_hint') %></small>
+          </div>
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <%= f.label :date, t('assessment.date'), class: 'form-label' %>
-            <%= f.datetime_local_field :date, class: 'form-control' %>
-            <div class="form-text"><%= t('assessment.date_hint') %></div>
+            <%= f.label :location, t('basics.location'), class: "form-label" %>
+            <%= f.text_field :location,
+                             class: 'form-control',
+                             placeholder: t('assessment.exam_location_placeholder'),
+                             data: { exams__form_target: "location",
+                                     action: "input->exams--form#checkForChanges" } %>
           </div>
 
           <div class="col-md-6 mb-3">
-            <%= f.label :location, t('basics.location'), class: 'form-label' %>
-            <%= f.text_field :location, class: 'form-control' %>
-            <div class="form-text"><%= t('assessment.location_hint') %></div>
+            <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
+            <%= f.number_field :capacity,
+                               class: 'form-control',
+                               min: 1,
+                               placeholder: t('assessment.exam_capacity_placeholder'),
+                               data: { exams__form_target: "capacity",
+                                       action: "input->exams--form#checkForChanges" } %>
+            <small class="text-muted d-block"><%= t('assessment.exam_capacity_hint') %></small>
           </div>
         </div>
 
         <div class="mb-3">
-          <%= f.label :capacity, t('basics.capacity'), class: 'form-label' %>
-          <%= f.number_field :capacity, class: 'form-control', min: 0, step: 1 %>
-          <div class="form-text"><%= t('assessment.capacity_hint') %></div>
-        </div>
-
-        <div class="mb-3">
-          <%= f.label :description, t('basics.description'), class: 'form-label' %>
-          <%= f.text_area :description, class: 'form-control', rows: 4 %>
-          <div class="form-text"><%= t('assessment.description_hint') %></div>
+          <%= f.label :description, t('basics.description'), class: "form-label" %>
+          <%= f.text_area :description,
+                          class: 'form-control',
+                          rows: 3,
+                          placeholder: t('assessment.exam_description_placeholder'),
+                          data: { exams__form_target: "description",
+                                  action: "input->exams--form#checkForChanges" } %>
         </div>
 
         <% if Flipper.enabled?(:registration_campaigns) %>
-          <div class="mb-3">
-            <div class="form-check form-switch">
-              <%= f.check_box :skip_campaigns, class: 'form-check-input' %>
-              <%= f.label :skip_campaigns, t('assessment.skip_campaigns'), class: 'form-check-label' %>
-            </div>
-            <div class="form-text"><%= t('assessment.skip_campaigns_hint') %></div>
+          <div class="mb-3 form-check">
+            <%= f.check_box :skip_campaigns,
+                            class: 'form-check-input',
+                            data: { exams__form_target: "skipCampaigns",
+                                    action: "change->exams--form#checkForChanges" } %>
+            <%= f.label :skip_campaigns, t('assessment.skip_campaigns_label'), class: 'form-check-label' %>
+            <small class="text-muted d-block"><%= t('assessment.skip_campaigns_hint') %></small>
           </div>
         <% end %>
 
-        <div class="d-flex gap-2">
-          <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
-          <%= link_to t('buttons.cancel'),
-                      exam_path(exam, tab: 'overview'),
-                      class: 'btn btn-outline-secondary' %>
+        <%= f.hidden_field :lecture_id, value: exam.lecture_id %>
+
+        <div class="mt-4 text-center d-none" data-exams--form-target="warning">
+          <div class="d-inline-block">
+            <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <%= t('warnings.unsaved_changes') %>
+            </div>
+            <%= f.submit t('buttons.save'),
+                         class: 'btn btn-primary me-2',
+                         data: { exams__form_target: "submitButton" } %>
+            <%= button_tag t('buttons.cancel'),
+                           type: "button",
+                           class: 'btn btn-secondary',
+                           data: { exams__form_target: "cancelButton",
+                                   action: "click->exams--form#cancel" } %>
+          </div>
         </div>
       <% end %>
+
     </div>
   </div>
 </div>

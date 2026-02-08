@@ -110,26 +110,43 @@ class ExamsController < ApplicationController
       if @exam.update(exam_params)
         format.turbo_stream do
           flash[:success] = t("assessment.exam_updated")
-          streams = [
-            turbo_stream.update("exams_container",
-                                partial: "exams/list",
-                                locals: { lecture: @lecture }),
-            stream_flash
-          ]
-          if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
-            streams << turbo_stream.append("exams_container",
-                                           partial: "exams/campaign_cta",
-                                           locals: { exam: @exam })
+          if params[:tab] == "settings"
+            render turbo_stream: [
+              turbo_stream.update("exams_container",
+                                  partial: "exams/card_body_show",
+                                  locals: { exam: @exam, active_tab: "settings" }),
+              stream_flash
+            ]
+          else
+            streams = [
+              turbo_stream.update("exams_container",
+                                  partial: "exams/list",
+                                  locals: { lecture: @lecture }),
+              stream_flash
+            ]
+            if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
+              streams << turbo_stream.append("exams_container",
+                                             partial: "exams/campaign_cta",
+                                             locals: { exam: @exam })
+            end
+            render turbo_stream: streams
           end
-          render turbo_stream: streams
         end
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("exams_container",
-                                                   partial: "exams/form",
-                                                   locals: { exam: @exam,
-                                                             lecture: @lecture }),
-                 status: :unprocessable_content
+          if params[:tab] == "settings"
+            render turbo_stream: turbo_stream.update("exams_container",
+                                                     partial: "exams/card_body_show",
+                                                     locals: { exam: @exam,
+                                                               active_tab: "settings" }),
+                   status: :unprocessable_content
+          else
+            render turbo_stream: turbo_stream.update("exams_container",
+                                                     partial: "exams/form",
+                                                     locals: { exam: @exam,
+                                                               lecture: @lecture }),
+                   status: :unprocessable_content
+          end
         end
       end
     end
