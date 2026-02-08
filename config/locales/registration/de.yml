@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      title: 'Anmeldeverfahren'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
@@ -183,13 +185,13 @@ de:
       groups:
         tutorials: "Tutorien"
         talks: "Vorträge"
-        cohorts: "Weitere Gruppen"        
-        exams: "Klausuren"        
+        cohorts: "Weitere Gruppen"
+        exams: "Klausuren"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
-        talk: "Vortrag"        
-        exam: "Klausur"        
+        talk: "Vortrag"
+        exam: "Klausur"
         cohort: "Sondergruppe"
         enrollment_group: "Anmeldungsgruppe"
         planning_survey: "Planungsgruppe"

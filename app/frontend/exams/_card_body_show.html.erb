@@ -109,7 +109,7 @@
   </ul>
 
   <!-- Tab Content -->
-  <div class="tab-content lecture-pane" id="examTabContent">
+  <div class="tab-content" id="examTabContent">
     <div class="tab-pane fade <%= 'show active' if active_tab == 'overview' %>"
          id="exam-overview-pane" role="tabpanel" aria-labelledby="exam-overview-tab">
       <%= render partial: "exams/overview", locals: { exam: exam, lecture: exam.lecture } %>

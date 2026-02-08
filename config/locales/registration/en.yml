@@ -1,6 +1,8 @@
 en:
   registration:
     campaign:
+      title: 'Registration Campaign'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Campaign is already finalized."
       created: "Campaign created successfully."

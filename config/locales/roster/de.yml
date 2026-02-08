@@ -307,3 +307,27 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
+    exam_participants: 'Prüfungsteilnehmer'
+    participants_count: 'Teilnehmer'
+    participants_via_campaign: 'Über Kampagne'
+    registered_at: 'Registriert am'
+    export_roster: 'Teilnehmerliste exportieren'
+    exam_roster_hint: 'Studierende, die sich über das Kampagnensystem registriert haben, werden hier aufgelistet.'
+    no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
+    admin: 'Administration'
+    manual_adjustments: 'Manuelle Anpassungen'
+    admin_placeholder: 'Teilnehmerverwaltung ist noch nicht verfügbar'
+    admin_description: 'Hier können Sie manuell Teilnehmer hinzufügen oder entfernen, den Registrierungsstatus anpassen und Ausnahmen verwalten.'
+    manage_roster: 'Teilnehmerliste verwalten'
+    manage_in_roster: 'In Teilnehmerliste verwalten'
+    registered: 'Registriert'
+    participants_manual: 'Manuell'
+    roster_data_loading: 'Lade Teilnehmerdaten...'
+    no_participants_to_verify: 'Es gibt noch keine Teilnehmer zu überprüfen.'
+  student_performance:
+    verification_data_loading: 'Lade Überprüfungsdaten...'
+    points: 'Punkte'
+    achievements: 'Leistungen'
+    status: 'Status'
+    view_details: 'Details anzeigen'
+    manage_performance: 'In Teilnehmerliste → Leistungen verwalten'

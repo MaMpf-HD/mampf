@@ -1,10 +1,10 @@
 <div id="exam-overview">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-12">
       <table class="table table-sm">
         <tbody>
           <tr>
-            <th style="width: 30%"><%= t('basics.title') %>:</th>
+            <th class="w-25"><%= t('basics.title') %>:</th>
             <td><%= exam.title %></td>
           </tr>
           <tr>
@@ -49,30 +49,32 @@
                 <% elsif exam.in_campaign? %>
                   <% campaign = exam.registration_campaign %>
                   <% if campaign %>
-                    <div>
+                    <div class="d-flex align-items-center flex-wrap gap-2">
                       <span class="badge bg-<%= campaign_badge_color(campaign) %>">
                         <%= t("registration.campaign.status.#{campaign.status}") %>
                       </span>
                       <%= link_to edit_lecture_path(exam.lecture,
                                 tab: "campaigns",
                                 campaign_id: campaign.id),
-                              class: "btn btn-sm btn-outline-secondary ms-1",
+                              class: "btn btn-sm btn-outline-secondary",
                               title: t("assessment.campaign_status.go_to_campaign"),
                               data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
                         <i class="bi bi-calendar-event"></i>
                       <% end %>
-                    </div>
-                    <div class="mt-2 small text-muted">
-                      <div>
+                      <div class="vr mx-1 text-body-tertiary"></div>
+                      <div class="small text-muted text-nowrap">
                         <i class="bi bi-calendar-range me-1"></i>
                         <%= t('registration.campaign.deadline_label') %>:
                         <%= l(campaign.registration_deadline, format: :long) %>
                       </div>
-                      <div class="mt-1">
+                      <div class="vr mx-1 text-body-tertiary"></div>
+                      <div class="small text-muted text-nowrap">
                         <i class="bi bi-people me-1"></i>
-                        <%= campaign.total_registrations_count %> <%= t('registration.campaign.registrations') %>
-                        (<%= campaign.confirmed_count %> <%= t('registration.campaign.confirmed') %><% if campaign.pending_count > 0 %>,
-                        <%= campaign.pending_count %> <%= t('registration.campaign.pending') %><% end %>)
+                        <%= campaign.total_registrations_count %> <%= t('registration.campaign.overview.registrations') %>
+                        <span class="text-body-secondary">
+                          (<%= campaign.confirmed_count %> <%= t('registration.user_registration.status.confirmed') %><% if campaign.pending_count > 0 %>,
+                          <%= campaign.pending_count %> <%= t('registration.user_registration.status.pending') %><% end %>)
+                        </span>
                       </div>
                     </div>
                   <% end %>
@@ -92,26 +94,12 @@
               </td>
             </tr>
           <% end %>
-          <% if exam.description.present? %>
-            <tr>
-              <th><%= t('basics.description') %>:</th>
-              <td><%= simple_format(exam.description) %></td>
-            </tr>
-          <% end %>
+          <tr>
+            <th><%= t('basics.description') %>:</th>
+            <td><%= exam.description.present? ? simple_format(exam.description) : "-" %></td>
+          </tr>
         </tbody>
       </table>
-
-      <% if exam.description.blank? %>
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-          <i class="bi bi-info-circle me-2"></i>
-          <div class="flex-grow-1">
-            <%= t('assessment.no_description') %>
-          </div>
-          <%= link_to t('basics.add'),
-                      exam_path(exam, tab: 'settings'),
-                      class: 'btn btn-sm btn-outline-primary ms-2' %>
-        </div>
-      <% end %>
     </div>
   </div>
 </div>

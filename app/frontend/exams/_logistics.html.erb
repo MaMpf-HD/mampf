@@ -28,92 +28,77 @@
   <div class="tab-content">
     <!-- Eligibility Tab -->
     <div class="tab-pane fade show active" id="eligibility-content" role="tabpanel">
-      <div class="card">
-        <div class="card-header bg-light">
-          <h6 class="mb-0"><%= t('assessment.student_performance_verification') %></h6>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-info" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            <%= t('assessment.eligibility_view_hint') %>
-            <%= link_to t('roster.manage_in_roster'),
-                        edit_lecture_path(lecture, tab: 'roster'),
-                        class: 'alert-link' %>
-          </div>
+      <h6 class="mb-3 border-bottom pb-2"><%= t('assessment.student_performance_verification') %></h6>
 
-          <% if exam.roster_entries_count && exam.roster_entries_count > 0 %>
-            <p class="text-muted small mb-3">
-              <%= t('assessment.eligibility_description') %>
-            </p>
-
-            <div class="table-responsive">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th><%= t('basics.name') %></th>
-                    <th><%= t('student_performance.points') %></th>
-                    <th><%= t('student_performance.achievements') %></th>
-                    <th><%= t('student_performance.status') %></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="4" class="text-center py-4 text-muted">
-                      <%= t('student_performance.verification_data_loading') %>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          <% else %>
-            <div class="text-center py-4">
-              <p class="text-muted"><%= t('roster.no_participants_to_verify') %></p>
-            </div>
-          <% end %>
-        </div>
+      <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <%= t('assessment.eligibility_view_hint') %>
+        <%= link_to t('roster.manage_in_roster'),
+                    edit_lecture_path(lecture, tab: 'roster'),
+                    class: 'alert-link' %>
       </div>
+
+      <% if exam.roster_entries_count && exam.roster_entries_count > 0 %>
+        <p class="text-muted small mb-3">
+          <%= t('assessment.eligibility_description') %>
+        </p>
+
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th><%= t('basics.name') %></th>
+                <th><%= t('student_performance.points') %></th>
+                <th><%= t('student_performance.achievements') %></th>
+                <th><%= t('student_performance.status') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="4" class="text-center py-4 text-muted">
+                  <%= t('student_performance.verification_data_loading') %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-4 bg-light rounded">
+          <p class="text-muted mb-0"><%= t('roster.no_participants_to_verify') %></p>
+        </div>
+      <% end %>
     </div>
 
     <!-- Roster Admin Tab -->
     <div class="tab-pane fade" id="roster-admin-content" role="tabpanel">
-      <div class="card">
-        <div class="card-header bg-light">
-          <h6 class="mb-0"><%= t('roster.manual_adjustments') %></h6>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-info" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            <strong><%= t('basics.coming_soon') %>:</strong>
-            <%= t('roster.admin_placeholder') %>
-          </div>
+      <h6 class="mb-3 border-bottom pb-2"><%= t('roster.manual_adjustments') %></h6>
 
-          <p class="text-muted small">
-            <%= t('roster.admin_description') %>
-          </p>
-        </div>
+      <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong><%= t('basics.coming_soon') %>:</strong>
+        <%= t('roster.admin_placeholder') %>
       </div>
+
+      <p class="text-muted small">
+        <%= t('roster.admin_description') %>
+      </p>
     </div>
 
     <!-- Room Assignments Tab -->
     <div class="tab-pane fade" id="rooms-content" role="tabpanel">
-      <div class="card">
-        <div class="card-header bg-light">
-          <h6 class="mb-0"><%= t('assessment.room_seat_assignments') %></h6>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-info" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            <strong><%= t('basics.coming_soon') %>:</strong>
-            <%= t('assessment.rooms_placeholder') %>
-          </div>
+      <h6 class="mb-3 border-bottom pb-2"><%= t('assessment.room_seat_assignments') %></h6>
 
-          <div class="text-center py-4">
-            <i class="bi bi-door-open display-3 text-muted mb-3 d-block"></i>
-            <p class="text-muted">
-              <%= t('assessment.rooms_description') %>
-            </p>
-          </div>
-        </div>
+      <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong><%= t('basics.coming_soon') %>:</strong>
+        <%= t('assessment.rooms_placeholder') %>
+      </div>
+
+      <div class="text-center py-4 bg-light rounded">
+        <i class="bi bi-door-open display-3 text-muted mb-3 d-block"></i>
+        <p class="text-muted mb-0">
+          <%= t('assessment.rooms_description') %>
+        </p>
       </div>
     </div>
   </div>
