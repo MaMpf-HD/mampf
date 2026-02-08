@@ -26,6 +26,7 @@
           <th><%= t('basics.location') %></th>
           <th><%= t('basics.capacity') %></th>
           <th><%= t('roster.participants') %></th>
+          <th><%= t('assessment.campaign_status.title') %></th>
         </tr>
       </thead>
       <tbody>
@@ -51,6 +52,9 @@
             </td>
             <td>
               <%= exam.roster_entries_count %>
+            </td>
+            <td>
+              <%= render "exams/campaign_status", exam: exam %>
             </td>
           </tr>
         <% end %>

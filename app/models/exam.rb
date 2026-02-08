@@ -36,6 +36,14 @@ class Exam < ApplicationRecord
     Registration::Item.exists?(registerable: self)
   end
 
+  def registration_campaign
+    Registration::Item.find_by(registerable: self)&.registration_campaign
+  end
+
+  def needs_campaign?
+    !skip_campaigns && !in_campaign?
+  end
+
   def registration_title
     return title unless date
 

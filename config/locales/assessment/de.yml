@@ -77,6 +77,15 @@ de:
     exam_description_placeholder: 'Optionale Hinweise zur Prüfung'
     skip_campaigns_label: 'Anmeldesystem überspringen (manuelle Verwaltung)'
     skip_campaigns_hint: 'Nur aktivieren, wenn diese Prüfung noch nie Teil eines Anmeldeverfahrens war'
+    campaign_status:
+      title: 'Anmeldung'
+      none: 'Kein Verfahren'
+      direct: 'Manuelle Verwaltung'
+      create: 'Verfahren erstellen'
+      go_to_campaign: 'Zum Anmeldeverfahren'
+    campaign_cta:
+      message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
+      create: 'Jetzt Verfahren erstellen'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
     no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'

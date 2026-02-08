@@ -63,12 +63,18 @@ class ExamsController < ApplicationController
       if @exam.save
         format.turbo_stream do
           flash[:success] = t("assessment.exam_created")
-          render turbo_stream: [
+          streams = [
             turbo_stream.update("exams_container",
                                 partial: "exams/list",
                                 locals: { lecture: @lecture }),
             stream_flash
           ]
+          if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
+            streams << turbo_stream.append("exams_container",
+                                           partial: "exams/campaign_cta",
+                                           locals: { exam: @exam })
+          end
+          render turbo_stream: streams
         end
       else
         format.turbo_stream do
@@ -89,12 +95,18 @@ class ExamsController < ApplicationController
       if @exam.update(exam_params)
         format.turbo_stream do
           flash[:success] = t("assessment.exam_updated")
-          render turbo_stream: [
+          streams = [
             turbo_stream.update("exams_container",
                                 partial: "exams/list",
                                 locals: { lecture: @lecture }),
             stream_flash
           ]
+          if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
+            streams << turbo_stream.append("exams_container",
+                                           partial: "exams/campaign_cta",
+                                           locals: { exam: @exam })
+          end
+          render turbo_stream: streams
         end
       else
         format.turbo_stream do
