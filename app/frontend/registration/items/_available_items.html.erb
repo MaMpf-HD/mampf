@@ -1,5 +1,6 @@
 <% service = registration_items_service(campaign) %>
 <% available_items = service.items %>
+<% show_roster_link = service.suggest_roster_creation? %>
 
 <div class="card mb-4">
   <div class="card-body">
@@ -9,12 +10,14 @@
           <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
           <div>
             <p class="mb-1"><%= t("registration.item.add.none_available") %></p>
-            <p class="mb-0 text-muted small">
-              <%= t("registration.item.add.create_in_roster_hint") %>
-              <%= link_to t("registration.item.add.go_to_roster"),
-                          edit_lecture_path(campaign.campaignable, tab: "roster"),
-                          class: "fw-semibold" %>
-            </p>
+            <% if show_roster_link %>
+              <p class="mb-0 text-muted small">
+                <%= t("registration.item.add.create_in_roster_hint") %>
+                <%= link_to t("registration.item.add.go_to_roster"),
+                            edit_lecture_path(campaign.campaignable, tab: "roster"),
+                            class: "fw-semibold" %>
+              </p>
+            <% end %>
           </div>
         </div>
       </div>
@@ -115,23 +118,25 @@
               </div>
             <% end %>
       </div>
-      <div class="card border-primary mt-4 mb-0">
-        <div class="card-body py-3">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-plus-circle text-primary fs-4 me-3"></i>
-              <span class="text-muted">
-                <%= t("registration.item.add.create_in_roster_hint") %>
-              </span>
+      <% if show_roster_link %>
+        <div class="card border-primary mt-4 mb-0">
+          <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-plus-circle text-primary fs-4 me-3"></i>
+                <span class="text-muted">
+                  <%= t("registration.item.add.create_in_roster_hint") %>
+                </span>
+              </div>
+              <%= link_to edit_lecture_path(campaign.campaignable, tab: "roster"),
+                          class: "btn btn-sm btn-primary" do %>
+                <i class="bi bi-arrow-right me-1"></i>
+                <%= t("registration.item.add.go_to_roster") %>
+              <% end %>
             </div>
-            <%= link_to edit_lecture_path(campaign.campaignable, tab: "roster"),
-                        class: "btn btn-sm btn-primary" do %>
-              <i class="bi bi-arrow-right me-1"></i>
-              <%= t("registration.item.add.go_to_roster") %>
-            <% end %>
           </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
   </div>
 </div>

@@ -25,6 +25,10 @@ module Registration
       groups
     end
 
+    def suggest_roster_creation?
+      campaign_accepts_non_exams?
+    end
+
     private
 
       def campaign_accepts_exams?
