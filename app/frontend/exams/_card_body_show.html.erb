@@ -1,0 +1,143 @@
+<% active_tab ||= "overview" %>
+
+<div id="exam-dashboard" data-cy="exam-dashboard">
+  <!-- Header -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <h1 class="h3 mb-1"><%= exam.title %></h1>
+        <p class="text-muted mb-0"><%= exam.lecture.title %> · <%= exam.lecture.term_teacher_info %></p>
+      </div>
+      <div>
+        <%= link_to t('buttons.back'),
+                    exams_path(lecture_id: exam.lecture_id),
+                    class: 'btn btn-sm btn-outline-secondary',
+                    data: { turbo_stream: true } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs mb-3" id="examTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'overview' %>"
+              id="exam-overview-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-overview-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-overview-pane"
+              aria-selected="<%= active_tab == 'overview' %>">
+        <%= t('assessment.overview') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'settings' %>"
+              id="exam-settings-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-settings-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-settings-pane"
+              aria-selected="<%= active_tab == 'settings' %>">
+        <%= t('assessment.settings') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'tasks' %>"
+              id="exam-tasks-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-tasks-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-tasks-pane"
+              aria-selected="<%= active_tab == 'tasks' %>">
+        <%= t('assessment.tasks') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'grading' %>"
+              id="exam-grading-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-grading-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-grading-pane"
+              aria-selected="<%= active_tab == 'grading' %>">
+        <%= t('assessment.grading') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'roster' %>"
+              id="exam-roster-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-roster-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-roster-pane"
+              aria-selected="<%= active_tab == 'roster' %>">
+        <%= t('assessment.roster') %>
+        <% if exam.roster_entries_count && exam.roster_entries_count > 0 %>
+          <span class="badge bg-secondary ms-1"><%= exam.roster_entries_count %></span>
+        <% end %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'logistics' %>"
+              id="exam-logistics-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-logistics-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-logistics-pane"
+              aria-selected="<%= active_tab == 'logistics' %>">
+        <%= t('assessment.logistics') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'statistics' %>"
+              id="exam-statistics-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-statistics-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-statistics-pane"
+              aria-selected="<%= active_tab == 'statistics' %>">
+        <%= t('assessment.statistics') %>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content lecture-pane" id="examTabContent">
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'overview' %>"
+         id="exam-overview-pane" role="tabpanel" aria-labelledby="exam-overview-tab">
+      <%= render partial: "exams/overview", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'settings' %>"
+         id="exam-settings-pane" role="tabpanel" aria-labelledby="exam-settings-tab">
+      <%= render partial: "exams/settings", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'tasks' %>"
+         id="exam-tasks-pane" role="tabpanel" aria-labelledby="exam-tasks-tab">
+      <%= render partial: "exams/tasks", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'grading' %>"
+         id="exam-grading-pane" role="tabpanel" aria-labelledby="exam-grading-tab">
+      <%= render partial: "exams/grading", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'roster' %>"
+         id="exam-roster-pane" role="tabpanel" aria-labelledby="exam-roster-tab">
+      <%= render partial: "exams/roster", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'logistics' %>"
+         id="exam-logistics-pane" role="tabpanel" aria-labelledby="exam-logistics-tab">
+      <%= render partial: "exams/logistics", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'statistics' %>"
+         id="exam-statistics-pane" role="tabpanel" aria-labelledby="exam-statistics-tab">
+      <%= render partial: "exams/statistics", locals: { exam: exam, lecture: exam.lecture } %>
+    </div>
+  </div>
+  </div>
+</div>

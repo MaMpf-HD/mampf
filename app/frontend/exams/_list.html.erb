@@ -37,7 +37,7 @@
               style="cursor: pointer;">
             <td>
               <%= link_to exam.title,
-                          edit_exam_path(exam),
+                          exam_path(exam),
                           class: "text-decoration-none",
                           data: { turbo_stream: true, row_link: true } %>
             </td>

@@ -1,0 +1,55 @@
+<div id="exam-settings">
+  <div class="row">
+    <div class="col-md-8">
+      <%= form_with model: exam, url: exam_path(exam), method: :patch, local: true do |f| %>
+        <div class="mb-3">
+          <%= f.label :title, t('basics.title'), class: 'form-label' %>
+          <%= f.text_field :title, class: 'form-control', required: true %>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :date, t('assessment.date'), class: 'form-label' %>
+            <%= f.datetime_local_field :date, class: 'form-control' %>
+            <div class="form-text"><%= t('assessment.date_hint') %></div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :location, t('basics.location'), class: 'form-label' %>
+            <%= f.text_field :location, class: 'form-control' %>
+            <div class="form-text"><%= t('assessment.location_hint') %></div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :capacity, t('basics.capacity'), class: 'form-label' %>
+          <%= f.number_field :capacity, class: 'form-control', min: 0, step: 1 %>
+          <div class="form-text"><%= t('assessment.capacity_hint') %></div>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :description, t('basics.description'), class: 'form-label' %>
+          <%= f.text_area :description, class: 'form-control', rows: 4 %>
+          <div class="form-text"><%= t('assessment.description_hint') %></div>
+        </div>
+
+        <% if Flipper.enabled?(:registration_campaigns) %>
+          <div class="mb-3">
+            <div class="form-check form-switch">
+              <%= f.check_box :skip_campaigns, class: 'form-check-input' %>
+              <%= f.label :skip_campaigns, t('assessment.skip_campaigns'), class: 'form-check-label' %>
+            </div>
+            <div class="form-text"><%= t('assessment.skip_campaigns_hint') %></div>
+          </div>
+        <% end %>
+
+        <div class="d-flex gap-2">
+          <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
+          <%= link_to t('buttons.cancel'),
+                      exam_path(exam, tab: 'overview'),
+                      class: 'btn btn-outline-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

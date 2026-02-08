@@ -123,7 +123,9 @@
                   <% end %>
                 </div>
                 <div class="tab-pane fade" id="exams-pane" role="tabpanel" aria-labelledby="exams-tab">
-                  <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
+                  <div id="exams_container">
+                    <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
+                  </div>
                 </div>
               </div>
             <% end %>

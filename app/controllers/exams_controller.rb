@@ -2,7 +2,7 @@ class ExamsController < ApplicationController
   include Flash
 
   before_action :set_lecture, only: [:index, :new]
-  before_action :set_exam, only: [:edit, :update, :destroy]
+  before_action :set_exam, only: [:show, :edit, :update, :destroy]
   authorize_resource except: :index
 
   def current_ability
@@ -19,6 +19,21 @@ class ExamsController < ApplicationController
         render turbo_stream: turbo_stream.update("exams_container",
                                                  partial: "exams/list",
                                                  locals: { lecture: @lecture })
+      end
+    end
+  end
+
+  def show
+    authorize! :show, @exam
+    @active_tab = params[:tab] || "overview"
+    set_exam_locale
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "exams/card_body_show",
+                                                 locals: { exam: @exam, tab: @active_tab })
       end
     end
   end
