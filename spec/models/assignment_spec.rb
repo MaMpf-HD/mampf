@@ -136,9 +136,9 @@ RSpec.describe(Assignment, type: :model) do
 
       context "with graded participation" do
         before do
-          participation = FactoryBot.create(:assessment_participation,
-                                            assessment: assignment.assessment,
-                                            status: :graded)
+          FactoryBot.create(:assessment_participation,
+                            assessment: assignment.assessment,
+                            status: :graded)
         end
 
         it "is not destructible" do
@@ -152,9 +152,9 @@ RSpec.describe(Assignment, type: :model) do
 
       context "with exempt participation" do
         before do
-          participation = FactoryBot.create(:assessment_participation,
-                                            assessment: assignment.assessment,
-                                            status: :exempt)
+          FactoryBot.create(:assessment_participation,
+                            assessment: assignment.assessment,
+                            status: :exempt)
         end
 
         it "is not destructible" do
@@ -188,9 +188,9 @@ RSpec.describe(Assignment, type: :model) do
 
       context "with points_total set" do
         before do
-          participation = FactoryBot.create(:assessment_participation,
-                                            assessment: assignment.assessment,
-                                            points_total: 10.0)
+          FactoryBot.create(:assessment_participation,
+                            assessment: assignment.assessment,
+                            points_total: 10.0)
         end
 
         it "is not destructible" do
