@@ -100,7 +100,7 @@ module Registration
                 registration_campaign_allocation_path(campaign),
                 method: :post,
                 class: "btn btn-primary",
-                data: { confirm: confirm, turbo: true })
+                data: { confirm: confirm, turbo_stream: true })
     end
 
     def view_allocation_button(campaign)
@@ -129,7 +129,8 @@ module Registration
                       t("registration.campaign.confirmations.open"),
                     "campaign-action-warning-message-value":
                       t("registration.campaign.warnings.unlimited_items"),
-                    action: "submit->campaign-action#confirm"
+                    action: "submit->campaign-action#confirm",
+                    turbo_stream: true
                   }
                 },
                 class: "btn btn-success")
@@ -139,7 +140,8 @@ module Registration
       button_to(t("registration.campaign.actions.close"),
                 close_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: campaign_close_confirmation(campaign) },
+                data: { confirm: campaign_close_confirmation(campaign),
+                        turbo_stream: true },
                 class: "btn btn-warning")
     end
 
@@ -147,7 +149,8 @@ module Registration
       button_to(t("registration.campaign.actions.reopen"),
                 reopen_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: t("registration.campaign.confirmations.reopen") },
+                data: { confirm: t("registration.campaign.confirmations.reopen"),
+                        turbo_stream: true },
                 class: "btn btn-success")
     end
 

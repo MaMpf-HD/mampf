@@ -7,7 +7,14 @@ export default class extends Controller {
     campaignId: String,
   };
 
+  confirmed = false;
+
   async confirm(event) {
+    // If already confirmed, allow the form to submit
+    if (this.confirmed) {
+      return;
+    }
+
     event.preventDefault();
 
     let message = this.confirmMessageValue;
@@ -35,9 +42,9 @@ export default class extends Controller {
     }
 
     if (confirm(message)) {
-      // Remove the data-action to prevent infinite loop, then click the button
-      this.element.removeAttribute("data-action");
-      this.element.click();
+      // Set flag and submit the form
+      this.confirmed = true;
+      this.element.requestSubmit();
     }
   }
 }
