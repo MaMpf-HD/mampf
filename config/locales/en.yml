@@ -3736,6 +3736,16 @@ en:
       The MaMpf Team has been notified about this bug, we will try to fix it as
       soon as possible.
   activerecord:
+    models:
+      tutorial:
+        one: Tutorial
+        other: Tutorials
+      talk:
+        one: Talk
+        other: Talks
+      cohort:
+        one: Group
+        other: Groups
     errors:
       no_valid_url: 'This is not a valid URL.'
       models:
