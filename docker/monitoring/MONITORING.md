@@ -45,36 +45,25 @@ After `just up`:
 ### TODO
 
 - Mimir Database
-- rename users to registered users
-- node exporter instead of ps command?
-- aggregate different pids in dashboard
-    - filter tags
 - add online users
 - add other metrics:
-    - active sessions
     - Mimir storage usage?
     - alerts
-    - RAM % usage
-      - systemwide
-      - MaMpf
-    - http metrics
-      - latency? from log? per controller, mediacontroller show
-        through Controller action (in application_controller.rb?)
-      - bandwidth usage
-    - error rate
+    - bandwidth usage
     - signups...
     - sidekiq
     - puma metrics in grafana 
     - quiz participation/completion
     - ...
-- Node exporter?
-- Index Worker role in mampf_collector.rb 
+-
 
 Priority:
 
 ~~1. Aggregate PIDs~~
 ~~2. RAM %~~
-3. Compactor configuren
+3. Roleup
 4. Alerts
-5. Latency
+5. bandwidth
 6. Puma Metrics in Grafana
+7. active sessions = online users
+8. singups, Änderungsrate registerd users, deleted users
