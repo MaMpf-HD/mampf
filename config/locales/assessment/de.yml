@@ -69,7 +69,6 @@ de:
     exam_created: 'Prüfung erfolgreich erstellt'
     exam_updated: 'Prüfung erfolgreich aktualisiert'
     exam_destroyed: 'Prüfung erfolgreich gelöscht'
-    exam_not_destructible: 'Prüfung kann nicht gelöscht werden (noch Teilnehmer oder in Kampagne)'
     exam_title_placeholder: 'z.B. Hauptklausur, Nachklausur, Mündliche Prüfung'
     exam_date_hint: 'Optional für mündliche Prüfungen mit individuellen Terminen'
     exam_location_placeholder: 'z.B. Hörsaal, Raum, oder Online'

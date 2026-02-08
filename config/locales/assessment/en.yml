@@ -69,7 +69,6 @@ en:
     exam_created: 'Exam created successfully'
     exam_updated: 'Exam updated successfully'
     exam_destroyed: 'Exam deleted successfully'
-    exam_not_destructible: 'Exam cannot be deleted (has participants or in campaign)'
     exam_title_placeholder: 'e.g., Main Exam, Retake Exam, Oral Examination'
     exam_date_hint: 'Optional for oral exams with individual appointments'
     exam_location_placeholder: 'e.g., Lecture Hall, Room, or Online'
