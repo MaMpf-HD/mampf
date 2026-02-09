@@ -1,4 +1,6 @@
 <% active_tab ||= "overview" %>
+<% assessment ||= exam.assessment %>
+<% tasks ||= assessment&.tasks&.order(:position) || [] %>
 
 <div id="exam-dashboard" data-cy="exam-dashboard">
   <!-- Header -->
@@ -53,6 +55,9 @@
               aria-controls="exam-tasks-pane"
               aria-selected="<%= active_tab == 'tasks' %>">
         <%= t('assessment.tasks') %>
+        <% if tasks.any? %>
+          <span class="badge bg-secondary ms-1"><%= tasks.count %></span>
+        <% end %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -108,7 +113,8 @@
     </div>
     <div class="tab-pane fade <%= 'show active' if active_tab == 'tasks' %>"
          id="exam-tasks-pane" role="tabpanel" aria-labelledby="exam-tasks-tab">
-      <%= render partial: "exams/tasks", locals: { exam: exam, lecture: exam.lecture } %>
+      <%= render partial: "exams/tasks",
+               locals: { exam: exam, assessment: assessment, tasks: tasks } %>
     </div>
     <div class="tab-pane fade <%= 'show active' if active_tab == 'grading' %>"
          id="exam-grading-pane" role="tabpanel" aria-labelledby="exam-grading-tab">

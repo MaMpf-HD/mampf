@@ -33,7 +33,7 @@ class ExamsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
                                                  partial: "exams/card_body_show",
-                                                 locals: { exam: @exam, tab: @active_tab })
+                                                 locals: exam_dashboard_locals)
       end
     end
   end
@@ -114,7 +114,7 @@ class ExamsController < ApplicationController
             render turbo_stream: [
               turbo_stream.update("exams_container",
                                   partial: "exams/card_body_show",
-                                  locals: { exam: @exam, active_tab: "settings" }),
+                                  locals: exam_dashboard_locals(active_tab: "settings")),
               stream_flash
             ]
           else
@@ -135,11 +135,12 @@ class ExamsController < ApplicationController
       else
         format.turbo_stream do
           if params[:tab] == "settings"
-            render turbo_stream: turbo_stream.update("exams_container",
-                                                     partial: "exams/card_body_show",
-                                                     locals: { exam: @exam,
-                                                               active_tab: "settings" }),
-                   status: :unprocessable_content
+            locals = exam_dashboard_locals(active_tab: "settings")
+            render turbo_stream: turbo_stream.update(
+              "exams_container",
+              partial: "exams/card_body_show",
+              locals: locals
+            ), status: :unprocessable_content
           else
             render turbo_stream: turbo_stream.update("exams_container",
                                                      partial: "exams/form",
@@ -198,5 +199,16 @@ class ExamsController < ApplicationController
       params.expect(exam: [:title, :date, :location, :capacity,
                            :description, :skip_campaigns,
                            :lecture_id])
+    end
+
+    def exam_dashboard_locals(active_tab: @active_tab)
+      assessment = @exam.assessment
+      tasks = assessment&.tasks&.order(:position) || []
+      {
+        exam: @exam,
+        active_tab: active_tab,
+        assessment: assessment,
+        tasks: tasks
+      }
     end
 end

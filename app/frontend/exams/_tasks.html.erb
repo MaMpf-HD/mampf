@@ -1,15 +1,14 @@
 <div id="exam-tasks">
-  <div class="alert alert-info" role="alert">
-    <i class="bi bi-info-circle me-2"></i>
-    <strong><%= t('basics.coming_soon') %>:</strong>
-    <%= t('assessment.tasks_placeholder') %>
-  </div>
-
-  <div class="text-center py-5 bg-light rounded">
-    <i class="bi bi-clipboard-check display-1 text-muted mb-3"></i>
-    <h5 class="text-muted"><%= t('assessment.tasks_management') %></h5>
-    <p class="text-muted small">
-      <%= t('assessment.tasks_description') %>
-    </p>
-  </div>
+  <% if assessment %>
+    <%= render "assessment/assessments/tasks",
+               assessment: assessment,
+               assessable: exam,
+               tasks: tasks,
+               task: local_assigns[:task] %>
+  <% else %>
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t('assessment.errors.no_assessment') %>
+    </div>
+  <% end %>
 </div>
