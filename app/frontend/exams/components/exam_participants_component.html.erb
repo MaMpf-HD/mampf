@@ -1,0 +1,59 @@
+<%= render MemberListComponent.new(
+      title: t("roster.tabs.participants"),
+      count: entries.size,
+      empty_message: t("roster.no_participants_yet")
+    ) do |list| %>
+
+  <% list.with_columns do %>
+    <th><%= t("basics.name") %></th>
+    <th><%= t("basics.email") %></th>
+    <% if performance_available? %>
+      <th><%= t("student_performance.points") %></th>
+    <% end %>
+    <% if certification_available? %>
+      <th><%= t("student_performance.status") %></th>
+    <% end %>
+    <th><%= t("roster.registered_at") %></th>
+  <% end %>
+
+  <% entries.each do |entry| %>
+    <% user = entry.user %>
+    <% list.with_row do %>
+      <tr>
+        <td><%= user.tutorial_name %></td>
+        <td><%= user.email %></td>
+        <% if performance_available? %>
+          <td>
+            <% perf = performance_for(user) %>
+            <% if perf %>
+              <span class="fw-medium">
+                <%= number_to_percentage(perf.percentage_materialized,
+                                         precision: 0) %>
+              </span>
+            <% else %>
+              <span class="text-muted">&ndash;</span>
+            <% end %>
+          </td>
+        <% end %>
+        <% if certification_available? %>
+          <td>
+            <% badge = certification_badge(user) %>
+            <% if badge %>
+              <span class="badge bg-<%= badge[:color] %>">
+                <i class="bi <%= badge[:icon] %> me-1"></i>
+                <%= badge[:label] %>
+              </span>
+            <% else %>
+              <span class="text-muted">&ndash;</span>
+            <% end %>
+          </td>
+        <% end %>
+        <td>
+          <span class="text-muted small">
+            <%= l(entry.created_at, format: :short) %>
+          </span>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>
