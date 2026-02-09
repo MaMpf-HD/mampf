@@ -6,7 +6,10 @@
   </div>
 </div>
 <%= form_with model: course,
-              html: { id: 'new-course-form' } do |f| %>
+              html: { id: 'new-course-form' },
+        data: { turbo: true,
+          action: 'turbo:submit-end->administration--course-form#closeBySuccess' },
+              local: true do |f| %>
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),

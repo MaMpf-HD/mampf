@@ -30,13 +30,15 @@
                    locals: { course: Course.new } %>
       </div>
     <% end %>
-    <% if current_user.edited_courses.any? %>
-      <%= render partial: 'administration/index/courses_card',
-                 locals: { courses:
-                             current_user.edited_courses
-                                         .natural_sort_by(&:title) } %>
-    <% else %>
-      <%= t('admin.main.no_edited_courses') %>
-    <% end %>
+    <div id="courses">
+      <% if current_user.edited_courses.any? %>
+        <%= render partial: 'administration/index/courses_card',
+                  locals: { courses:
+                              current_user.edited_courses
+                                          .natural_sort_by(&:title) } %>
+      <% else %>
+        <%= t('admin.main.no_edited_courses') %>
+      <% end %>
+    </div>
   </div>
 </div>
