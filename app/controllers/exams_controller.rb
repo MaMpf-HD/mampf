@@ -187,6 +187,9 @@ class ExamsController < ApplicationController
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:lecture_id])
+      return if @lecture
+
+      redirect_to root_path, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_exam_locale
