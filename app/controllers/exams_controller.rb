@@ -45,7 +45,6 @@ class ExamsController < ApplicationController
     set_exam_locale
 
     respond_to do |format|
-      format.js
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
                                                  partial: "exams/form",

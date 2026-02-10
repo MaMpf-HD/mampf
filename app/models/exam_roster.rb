@@ -1,3 +1,4 @@
+# Provides the association between Exams and Users for exam participation.
 class ExamRoster < ApplicationRecord
   belongs_to :exam
   belongs_to :user

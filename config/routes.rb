@@ -103,11 +103,6 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
-  # exam routes
-  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
-    resources :exams, only: [:index, :new, :show, :edit, :create, :update, :destroy]
-  end
-
   # assessment routes
   constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
     namespace :assessment do
@@ -151,6 +146,11 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # exam routes
+  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
+    resources :exams, only: [:index, :new, :show, :edit, :create, :update, :destroy]
+  end
 
   # feedback routes
   resources :feedbacks, only: [:new, :create]
