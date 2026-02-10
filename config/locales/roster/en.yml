@@ -304,20 +304,6 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
-    exam_participants: 'Exam Participants'
-    participants_count: 'Participants'
-    participants_via_campaign: 'Via Campaign'
     registered_at: 'Registered At'
-    export_roster: 'Export Roster'
-    exam_roster_hint: 'Students who registered through the campaign system are listed here.'
     no_participants_yet: 'No participants have registered yet.'
-    admin: 'Admin'
-    manual_adjustments: 'Manual Adjustments'
-    admin_placeholder: 'Roster administration is not yet available'
-    admin_description: 'Here you can manually add or remove participants, adjust registration status, and manage exceptions.'
-    manage_roster: 'Manage Roster'
-    manage_in_roster: 'Manage in Roster'
     registered: 'Registered'
-    participants_manual: 'Manual'
-    roster_data_loading: 'Loading roster data...'
-    no_participants_to_verify: 'There are no participants to verify yet.'
