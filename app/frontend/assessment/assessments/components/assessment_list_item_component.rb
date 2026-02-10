@@ -38,10 +38,10 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessable.accepted_file_type
   end
 
-  def deletion_date
-    return nil unless assessable.respond_to?(:deletion_date) && assessable.deletion_date
+  def deadline_display
+    return nil unless assessable.respond_to?(:deadline) && assessable.deadline
 
-    I18n.l(assessable.deletion_date, format: :long)
+    I18n.l(assessable.deadline, format: :short)
   end
 
   def tasks_count
