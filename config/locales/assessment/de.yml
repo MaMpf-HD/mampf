@@ -46,7 +46,7 @@ de:
     date: 'Datum'
     edit_grades: 'Noten bearbeiten'
     visible_from: 'Sichtbar ab'
-    due_at: 'Fällig'
+    due_at: 'Abgabedatum'
     legacy: 'Legacy'
     draft: 'Entwurf'
     results_published: 'Ergebnisse veröffentlicht'

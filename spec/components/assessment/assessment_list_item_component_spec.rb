@@ -44,8 +44,8 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(component.file_type).to eq(assignment.accepted_file_type)
     end
 
-    it "returns deletion date formatted" do
-      expect(component.deletion_date).to eq(I18n.l(assignment.deletion_date, format: :long))
+    it "returns deadline formatted" do
+      expect(component.deadline_display).to eq(I18n.l(assignment.deadline, format: :short))
     end
 
     it "returns tasks count" do
@@ -185,8 +185,8 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(component.file_type).to be_nil
     end
 
-    it "returns nil for deletion_date" do
-      expect(component.deletion_date).to be_nil
+    it "returns nil for deadline_display" do
+      expect(component.deadline_display).to be_nil
     end
 
     it "returns 0 tasks_count for talk without tasks" do

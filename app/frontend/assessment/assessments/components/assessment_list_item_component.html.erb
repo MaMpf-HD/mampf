@@ -49,7 +49,7 @@
           <i class="bi bi-x-lg text-muted" title="<%= t('assessment.no_submission_required') %>"></i>
         <% end %>
       </td>
-      <td><%= deletion_date %></td>
+      <td><%= deadline_display %></td>
     <% else %>
       <td colspan="5" class="text-muted">
         <%= I18n.t('assessment.legacy_description') %>
