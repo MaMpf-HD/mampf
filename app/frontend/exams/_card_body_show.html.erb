@@ -122,7 +122,7 @@
     </div>
     <div class="tab-pane fade <%= 'show active' if active_tab == 'roster' %>"
          id="exam-roster-pane" role="tabpanel" aria-labelledby="exam-roster-tab">
-      <%= render ExamParticipantsComponent.new(exam: exam) %>
+      <%= render partial: "exams/roster", locals: { exam: exam } %>
     </div>
     <div class="tab-pane fade <%= 'show active' if active_tab == 'statistics' %>"
          id="exam-statistics-pane" role="tabpanel" aria-labelledby="exam-statistics-tab">
