@@ -88,7 +88,17 @@ class CoursesController < ApplicationController
 
   def render_question_counter
     tags = Tag.where(id: tag_params[:tag_ids])
-    @count = @course.question_count(tags)
+    count = @course.question_count(tags)
+
+    text = if count > 1
+      t("quiz.questions_for_tags", count: count)
+    elsif count == 1
+      t("quiz.question_for_tags")
+    else
+      t("quiz.no_question_for_tags")
+    end
+
+    render turbo_stream: turbo_stream.update("question_counter", text)
   end
 
   def search

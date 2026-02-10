@@ -35,6 +35,9 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
+import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
+window.Stimulus.register("question-counter", QuestionCounterController);
+
 import AdministrationCourseFormController from "~/administration/course_form.controller.js";
 window.Stimulus.register("administration--course-form", AdministrationCourseFormController);
 

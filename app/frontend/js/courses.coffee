@@ -47,21 +47,6 @@ $(document).on 'turbo:load', ->
       $('.admin-index-button').show()
     return
 
-  $(document).on 'change', '#search_course_tag_ids', ->
-    courseId = $(this).data('course')
-    tagIds = $('#search_course_tag_ids').val()
-    $('#questionCounter').empty()
-    return if tagIds.length == 0
-    $.ajax Routes.render_question_counter_path(courseId),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        tag_ids: tagIds
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
-    return
-
   # if user detaches image, adjust hidden values
   # (relevant on media edit page)
   $('#detach-image').on 'click', ->
@@ -75,5 +60,4 @@ $(document).on 'turbo:load', ->
 
 $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
-  $(document).off 'change', '#search_course_tag_ids'
   return
