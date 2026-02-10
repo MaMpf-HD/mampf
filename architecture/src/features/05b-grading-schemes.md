@@ -596,7 +596,7 @@ module GradeScheme
     end
 
   def analyze_distribution
-    participations = @assessment.participations.where(status: :graded)
+    participations = @assessment.participations.where(status: :reviewed)
     points = participations.pluck(:points_total)
     max_points = @assessment.effective_total_points
 
@@ -615,7 +615,7 @@ module GradeScheme
     return if already_applied?
 
     Assessment::Participation.transaction do
-      participations = @assessment.participations.where(status: :graded)
+      participations = @assessment.participations.where(status: :reviewed)
       
       participations.each do |participation|
         next if participation.manual_grade_override?
@@ -629,7 +629,7 @@ module GradeScheme
   end
 
   def preview
-    participations = @assessment.participations.where(status: :graded)
+    participations = @assessment.participations.where(status: :reviewed)
     
     participations.map do |p|
       {

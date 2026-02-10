@@ -29,5 +29,10 @@ FactoryBot.define do
         create_list(:assessment_participation, 3, assessment: assessment)
       end
     end
+
+    trait :gradable do
+      association :assessable, factory: :talk
+      lecture { assessable.lecture }
+    end
   end
 end

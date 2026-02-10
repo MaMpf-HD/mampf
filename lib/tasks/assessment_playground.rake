@@ -7,7 +7,7 @@
 #
 # In production, Assessment::Participation records are created lazily:
 # - When a student submits work → status: :submitted
-# - When a tutor grades → status: :graded
+# - When a tutor reviews → status: :reviewed
 # - When marked exempt → status: :exempt
 #
 # The absence of a participation record means "not started".
@@ -19,8 +19,8 @@
 # assessment:create_assignments  - Creates 3 test assignments
 # assessment:create_tasks        - Creates 3-5 random tasks per assignment
 # assessment:seed_participations - Seeds participations (simulates submissions)
-# assessment:randomize_statuses  - Randomizes: some graded, some exempt, some deleted
-# assessment:seed_grades         - Assigns random German grades to graded participations
+# assessment:randomize_statuses  - Randomizes: some reviewed, some exempt, some deleted
+# assessment:seed_grades         - Assigns random German grades to reviewed participations
 # assessment:setup               - Runs all of the above
 # assessment:reset               - Destroys test assignments
 #
@@ -200,7 +200,7 @@ namespace :assessment do
         elsif rand < grading_rate
           base_time = p.submitted_at || Time.current
           p.update!(
-            status: :graded,
+            status: :reviewed,
             graded_at: base_time + rand(1..48).hours,
             grader_id: tutorial.tutors.first&.id
           )
@@ -209,15 +209,15 @@ namespace :assessment do
 
       remaining = Assessment::Participation.where(tutorial_id: tutorial.id)
       submitted = remaining.where(status: :submitted).count
-      graded = remaining.where(status: :graded).count
+      reviewed = remaining.where(status: :reviewed).count
       exempt = remaining.where(status: :exempt).count
 
       puts "✓ Tutorial '#{tutorial.title}': #{remaining.count} total " \
-           "(#{submitted} submitted, #{graded} graded, #{exempt} exempt)"
+           "(#{submitted} submitted, #{reviewed} reviewed, #{exempt} exempt)"
     end
   end
 
-  desc "Assign random German grades to graded participations"
+  desc "Assign random German grades to reviewed participations"
   task seed_grades: :environment do
     Flipper.enable(:assessment_grading)
 
@@ -309,7 +309,7 @@ namespace :assessment do
       next unless assessment
 
       parts = assessment.assessment_participations
-      reviewed = parts.where(status: :graded).count
+      reviewed = parts.where(status: :reviewed).count
       submitted = parts.where(status: :submitted).count
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
@@ -325,9 +325,9 @@ namespace :assessment do
   def seed_grades_for(assessment, german_grades, label)
     return unless assessment
 
-    graded = assessment.assessment_participations.where(status: :graded)
+    graded = assessment.assessment_participations.where(status: :reviewed)
     if graded.empty?
-      puts "  ⏭ No graded participations for: #{label}"
+      puts "  ⏭ No reviewed participations for: #{label}"
       return
     end
 

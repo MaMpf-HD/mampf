@@ -13,7 +13,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
     let(:assessment) { assignment.reload.assessment }
     let(:component) { described_class.new(assessment: assessment) }
 
-    context "when no participations are graded" do
+    context "when no participations are reviewed" do
       before do
         create(:assessment_participation, :submitted,
                assessment: assessment, tutorial: tutorial)
@@ -24,40 +24,49 @@ RSpec.describe(GradeTableComponent, type: :component) do
         expect(rendered_content).to include(I18n.t("assessment.no_grades_yet"))
       end
 
-      it "reports any_graded? as false" do
-        expect(component.any_graded?).to be(false)
+      it "reports any_reviewed? as false" do
+        expect(component.any_reviewed?).to be(false)
       end
     end
+  end
+
+  context "with an exam (gradable)" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:assessment) do
+      exam.ensure_gradebook!
+      exam.assessment
+    end
+    let(:component) { described_class.new(assessment: assessment) }
 
     context "when participations have grades" do
       let(:grader) { create(:confirmed_user) }
-      let!(:graded_participation) do
-        create(:assessment_participation, :with_numeric_grade,
+      let!(:reviewed_participation) do
+        create(:assessment_participation, :reviewed,
                assessment: assessment, tutorial: tutorial,
-               grader: grader, grade_numeric: 2.3)
+               grader: grader, grade_numeric: 2.3, grade_text: "2.3")
       end
 
-      it "renders a table with the graded participation" do
+      it "renders a table with the reviewed participation" do
         render_inline(component)
         expect(rendered_content).to include("2.3")
-        expect(rendered_content).to include(graded_participation.user.tutorial_name)
+        expect(rendered_content).to include(reviewed_participation.user.tutorial_name)
       end
 
-      it "reports any_graded? as true" do
-        expect(component.any_graded?).to be(true)
+      it "reports any_reviewed? as true" do
+        expect(component.any_reviewed?).to be(true)
       end
 
       it "returns the grade display" do
-        expect(component.grade_display(graded_participation)).to eq("2.3")
+        expect(component.grade_display(reviewed_participation)).to eq("2.3")
       end
 
       it "returns the grader display" do
-        expect(component.grader_display(graded_participation)).to eq(grader.tutorial_name)
+        expect(component.grader_display(reviewed_participation)).to eq(grader.tutorial_name)
       end
 
       it "returns the graded_at display" do
-        expect(component.graded_at_display(graded_participation)).to eq(
-          I18n.l(graded_participation.graded_at, format: :short)
+        expect(component.graded_at_display(reviewed_participation)).to eq(
+          I18n.l(reviewed_participation.graded_at, format: :short)
         )
       end
     end
@@ -66,14 +75,14 @@ RSpec.describe(GradeTableComponent, type: :component) do
       before do
         create(:assessment_participation, :submitted,
                assessment: assessment, tutorial: tutorial)
-        create(:assessment_participation, :with_numeric_grade,
+        create(:assessment_participation, :reviewed,
                assessment: assessment, tutorial: tutorial,
-               grade_numeric: 1.7)
+               grade_numeric: 1.7, grade_text: "1.7")
       end
 
-      it "only shows graded participations in the table" do
+      it "only shows reviewed participations in the table" do
         render_inline(component)
-        expect(component.graded_participations.count).to eq(1)
+        expect(component.reviewed_participations.count).to eq(1)
       end
     end
   end

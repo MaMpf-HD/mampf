@@ -13,7 +13,7 @@ module Assessment
 
     enum :status, {
       submitted: 0,
-      graded: 1,
+      reviewed: 1,
       exempt: 2
     }
 
@@ -29,7 +29,7 @@ module Assessment
 
       def assessment_must_be_gradable
         return unless assessment&.assessable
-        return if assessment.assessable.is_a?(Assessment::Gradable)
+        return if assessment.assessable.is_a?(::Assessment::Gradable)
 
         errors.add(:grade_numeric, :not_gradable)
       end

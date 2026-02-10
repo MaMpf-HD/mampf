@@ -47,7 +47,7 @@ class GradingOverviewComponent < ViewComponent::Base
   end
 
   def submitted_count
-    @submitted_count ||= participations.where(status: [:submitted, :graded]).count
+    @submitted_count ||= participations.where(status: [:submitted, :reviewed]).count
   end
 
   def missing_count
@@ -109,7 +109,7 @@ class GradingOverviewComponent < ViewComponent::Base
         total = membership_counts[tutorial.id] || 0
         next if total.zero?
 
-        submitted = count_statuses(participation_data, tutorial.id, [:submitted, :graded])
+        submitted = count_statuses(participation_data, tutorial.id, [:submitted, :reviewed])
 
         stats << TutorialStat.new(
           tutorial: tutorial,

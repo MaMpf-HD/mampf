@@ -16,12 +16,12 @@ class GradeTableComponent < ViewComponent::Base
                         .order(:tutorial_id, "users.name")
   end
 
-  def graded_participations
-    @graded_participations ||= participations.where(status: :graded)
+  def reviewed_participations
+    @reviewed_participations ||= participations.where(status: :reviewed)
   end
 
-  def any_graded?
-    graded_participations.any?
+  def any_reviewed?
+    reviewed_participations.any?
   end
 
   def grade_display(participation)

@@ -85,11 +85,11 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   end
 
   describe "#submitted_count" do
-    it "counts participations with submitted or graded status" do
+    it "counts participations with submitted or reviewed status" do
       create(:assessment_participation, assessment: assessment,
                                         user: user1, tutorial: tutorial1, status: :submitted)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :graded)
+                                        user: user2, tutorial: tutorial1, status: :reviewed)
 
       expect(component.submitted_count).to eq(2)
     end
@@ -140,7 +140,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       create(:assessment_participation, assessment: assessment,
                                         user: user1, tutorial: tutorial1, status: :submitted)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :graded)
+                                        user: user2, tutorial: tutorial1, status: :reviewed)
       create(:assessment_participation, assessment: assessment,
                                         user: user3, tutorial: tutorial2, status: :submitted)
 

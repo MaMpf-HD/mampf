@@ -325,7 +325,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_numeric`  | DB column (Decimal 2,1) | German grade (1.0-5.0) - for exam grades                    |
 | `grade_text`     | DB column (String) | Text-based grade ("pass", "fail", "exempt") - for achievements |
-| `status`         | DB column (Enum) | Workflow state: `submitted`, `graded`, `exempt` (see Status Workflow below) |
+| `status`         | DB column (Enum) | Workflow state: `submitted`, `reviewed`, `exempt` (see Status Workflow below) |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
@@ -365,7 +365,7 @@ The `tutorial_id` field captures which tutorial the student was in **at the time
 
 - Enforces uniqueness per (assessment, user) via database constraint
 - Maintains `points_total` as the sum of all associated `TaskPoint` records
-- Preserves submission history via `submitted_at` even after status transitions to `:graded`
+- Preserves submission history via `submitted_at` even after status transitions to `:reviewed`
 - Can carry both granular points (via tasks) and a final grade (for exams)
 - Supports simple workflow states without intermediate "in progress" tracking
 - Provides locking mechanism to prevent post-publication tampering
@@ -376,14 +376,14 @@ Participation records are created lazily when a student submits work, a tutor en
 
 **Digital submissions (`requires_submission: true`):**
 ```
-[no record] → submitted → graded
+[no record] → submitted → reviewed
                   ↓
                exempt
 ```
 
 **Paper/in-person (`requires_submission: false`):**
 ```
-[no record] → graded
+[no record] → reviewed
       ↓
    exempt
 ```
@@ -392,7 +392,7 @@ Participation records are created lazily when a student submits work, a tutor en
 |--------|---------|--------|
 | *(no record)* | No action taken | Student has not interacted with assessment |
 | `submitted` | Student uploaded file | File upload (only applicable when `requires_submission: true`) |
-| `graded` | All grading complete | Tutor marks grading done (all task points entered) |
+| `reviewed` | All grading complete | Tutor marks grading done (all task points entered) |
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
 
 ```admonish note "Why no 'in_progress' status?"
@@ -436,7 +436,7 @@ module Assessment
 
   enum status: {
     submitted: 0,
-    graded: 1,
+    reviewed: 1,
     exempt: 2
   }
 
@@ -480,9 +480,9 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 - **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
-- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
+- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:reviewed` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
 - **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
 
@@ -1072,7 +1072,7 @@ module Assessment
       grade_value: value,
       grader_id: grader&.id,
       graded_at: Time.current,
-      status: :graded
+      status: :reviewed
     )
   end
 end
