@@ -16,7 +16,7 @@ RSpec.describe("Exams", type: :request) do
     Flipper.disable(:assessment_grading)
   end
 
-  describe "POST /exams" do
+  describe "GET /exams" do
     context "as a teacher" do
       before { sign_in teacher }
 

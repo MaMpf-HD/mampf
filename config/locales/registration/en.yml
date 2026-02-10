@@ -102,7 +102,6 @@ en:
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
-        preference_mode_for_exam: "Preference mode is uncommon for exam campaigns. Consider using First-Come-First-Served unless you have multiple exam sessions or retakes."
       about:
         toggle: "What are registration campaigns?"
         title: "Registration Campaigns: When to Use?"

@@ -102,7 +102,6 @@ de:
       warnings:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
-        preference_mode_for_exam: "Präferenzbasierte Zuteilung ist unüblich für Klausuranmeldungen. Erwägen Sie Direktanmeldung, es sei denn, Sie haben mehrere Klausurtermine oder Wiederholungstermine."
       about:
         toggle: "Was sind Anmeldeverfahren?"
         title: "Anmeldeverfahren: Wann verwenden?"

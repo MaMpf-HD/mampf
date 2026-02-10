@@ -23,14 +23,7 @@
     <% end %>
     <%= f.select :allocation_mode,
                  Registration::Campaign.allocation_modes.keys.map { |k| [t("registration.campaign.allocation_mode.#{k}"), k] },
-                 {}, class: "form-select", disabled: !campaign.draft?,
-                 data: { controller: "exam-campaign-warning", 
-                         exam_campaign_warning_is_exam_value: campaign.exam_campaign? } %>
-    <div class="alert alert-warning mt-2 d-none" 
-         data-exam-campaign-warning-target="alert">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      <%= t("registration.campaign.warnings.preference_mode_for_exam") %>
-    </div>
+                 {}, class: "form-select", disabled: !campaign.draft? %>
   </div>
 
   <div class="mb-3">
