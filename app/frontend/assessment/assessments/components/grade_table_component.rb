@@ -27,10 +27,12 @@ class GradeTableComponent < ViewComponent::Base
   def grade_display(participation)
     return nil unless participation.grade_numeric
 
-    if participation.grade_text.present? && participation.grade_text != participation.grade_numeric.to_s
-      "#{participation.grade_numeric} (#{participation.grade_text})"
+    text = participation.grade_text
+    numeric = participation.grade_numeric
+    if text.present? && text != numeric.to_s
+      "#{numeric} (#{text})"
     else
-      participation.grade_numeric.to_s
+      numeric.to_s
     end
   end
 

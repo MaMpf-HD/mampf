@@ -292,9 +292,8 @@ namespace :assessment do
 
     puts "\n#{"=" * 68}"
     puts "Assessment Playground Summary"
-    puts "#{"=" * 68}"
-    puts format("%-35s %8s %8s %8s %8s",
-                "Assessment", "Revwd", "Submtd", "Exempt", "Grades")
+    puts "=" * 68
+    puts "Assessment                           Revwd   Submtd   Exempt   Grades"
     puts "-" * 68
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
@@ -314,11 +313,12 @@ namespace :assessment do
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
       grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
-      puts format("%-35s %8s %8s %8s %8s",
-                  label.truncate(35), reviewed, submitted, exempt, grades)
+      puts format("%-35<name>s %8<r>s %8<s>s %8<e>s %8<g>s",
+                  name: label.truncate(35), r: reviewed,
+                  s: submitted, e: exempt, g: grades)
     end
 
-    puts "#{"=" * 68}"
+    puts "=" * 68
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 

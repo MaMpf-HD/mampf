@@ -235,26 +235,31 @@ namespace :exam do
 
     puts "\n#{"=" * 60}"
     puts "Exam Playground Summary"
-    puts "#{"=" * 60}"
+    puts "=" * 60
 
     if exam
       assessment = exam.assessment
       tasks_count = assessment&.tasks&.count || 0
       total_pts = assessment&.tasks&.sum(:max_points) || 0
       roster_count = exam.exam_rosters.count
-      puts format("%-25s %s", "Exam:", exam.title)
-      puts format("%-25s %s", "Date:", exam.date&.strftime("%Y-%m-%d") || "n/a")
-      puts format("%-25s %d (%s pts)", "Tasks:", tasks_count, total_pts)
-      puts format("%-25s %d", "Roster entries:", roster_count)
+      puts format("%-25<k>s %<v>s", k: "Exam:", v: exam.title)
+      date_str = exam.date&.strftime("%Y-%m-%d") || "n/a"
+      puts format("%-25<k>s %<v>s", k: "Date:", v: date_str)
+      puts format("%-25<k>s %<n>d (%<p>s pts)",
+                  k: "Tasks:", n: tasks_count, p: total_pts)
+      puts format("%-25<k>s %<v>d",
+                  k: "Roster entries:", v: roster_count)
     end
 
     if campaign
       regs = campaign.user_registrations.count
-      puts format("%-25s %s", "Campaign status:", campaign.status)
-      puts format("%-25s %d", "Registrations:", regs)
+      puts format("%-25<k>s %<v>s",
+                  k: "Campaign status:", v: campaign.status)
+      puts format("%-25<k>s %<v>d",
+                  k: "Registrations:", v: regs)
     end
 
-    puts "#{"=" * 60}"
+    puts "=" * 60
     puts "✅ Exam setup complete!"
     puts "Next: run assessment:setup to seed participations + grades."
   end
@@ -269,7 +274,7 @@ namespace :exam do
                                               description: "Exam Registration Campaign")
 
     if campaign
-      campaign.update_column(:status, 0)
+      campaign.update_column(:status, 0) # rubocop:disable Rails/SkipsModelValidations
       campaign.reload
       campaign.user_registrations.delete_all
       campaign.registration_items.delete_all
