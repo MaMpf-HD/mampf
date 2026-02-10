@@ -21,21 +21,6 @@ class Exam < ApplicationRecord
     :exam_rosters
   end
 
-  def destructible?
-    non_destructible_reason.nil?
-  end
-
-  def non_destructible_reason
-    return :has_roster_entries if roster_entries.any?
-    return :in_campaign if in_campaign?
-
-    nil
-  end
-
-  def in_campaign?
-    Registration::Item.exists?(registerable: self)
-  end
-
   def registration_campaign
     Registration::Item.find_by(registerable: self)&.registration_campaign
   end

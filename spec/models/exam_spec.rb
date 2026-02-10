@@ -209,8 +209,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(false)
       end
 
-      it "returns :has_roster_entries as non_destructible_reason" do
-        expect(exam.non_destructible_reason).to eq(:has_roster_entries)
+      it "returns :roster_not_empty as non_destructible_reason" do
+        expect(exam.non_destructible_reason).to eq(:roster_not_empty)
       end
     end
 
@@ -245,8 +245,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(false)
       end
 
-      it "returns :has_roster_entries as first non_destructible_reason (checked first)" do
-        expect(exam.non_destructible_reason).to eq(:has_roster_entries)
+      it "returns :roster_not_empty as first non_destructible_reason (checked first)" do
+        expect(exam.non_destructible_reason).to eq(:roster_not_empty)
       end
     end
   end

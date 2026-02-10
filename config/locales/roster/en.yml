@@ -320,10 +320,3 @@ en:
     participants_manual: 'Manual'
     roster_data_loading: 'Loading roster data...'
     no_participants_to_verify: 'There are no participants to verify yet.'
-  student_performance:
-    verification_data_loading: 'Loading verification data...'
-    points: 'Points'
-    achievements: 'Achievements'
-    status: 'Status'
-    view_details: 'View Details'
-    manage_performance: 'Manage in Roster → Performance'

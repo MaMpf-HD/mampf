@@ -21,7 +21,7 @@ de:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
     exam_not_destructible:
-      has_roster_entries: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
+      roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
       in_campaign: 'Löschen nicht möglich: Prüfung ist Teil eines Anmeldeverfahrens'
     form:
       submit: 'Speichern'

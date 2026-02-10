@@ -324,10 +324,3 @@ de:
     participants_manual: 'Manuell'
     roster_data_loading: 'Lade Teilnehmerdaten...'
     no_participants_to_verify: 'Es gibt noch keine Teilnehmer zu überprüfen.'
-  student_performance:
-    verification_data_loading: 'Lade Überprüfungsdaten...'
-    points: 'Punkte'
-    achievements: 'Leistungen'
-    status: 'Status'
-    view_details: 'Details anzeigen'
-    manage_performance: 'In Teilnehmerliste → Leistungen verwalten'

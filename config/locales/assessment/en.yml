@@ -21,7 +21,7 @@ en:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
     exam_not_destructible:
-      has_roster_entries: 'Cannot delete: Registered participants exist'
+      roster_not_empty: 'Cannot delete: Registered participants exist'
       in_campaign: 'Cannot delete: Exam is part of a registration campaign'
     form:
       submit: 'Save'
