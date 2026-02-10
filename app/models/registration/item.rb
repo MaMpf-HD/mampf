@@ -112,7 +112,7 @@ module Registration
 
         return if existing_types.empty?
 
-        if registerable_type == "Exam" && existing_types.any?
+        if registerable_type == "Exam" && existing_types.any? { |t| t != "Exam" }
           errors.add(:base, :cannot_add_exam_to_non_exam_campaign)
         elsif registerable_type != "Exam" && existing_types.include?("Exam")
           errors.add(:base, :cannot_add_non_exam_to_exam_campaign)
