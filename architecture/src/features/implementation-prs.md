@@ -318,7 +318,19 @@ Grading — Step 7: Assessment Foundations (Backend & CRUD)
 ```
 
 ```admonish abstract
-Grading — Step 8: Unified Point Entry & Assignment Grading
+Grading — Step 8: Exams, Point/Grade Views & Publication
+```
+
+```admonish info
+Step 8 is split into a **read-only path** (PRs 8.1, 8.3–8.5) and an
+**interactive write path** (PRs 8.2, 8.6–8.9) that can be developed in
+parallel by different team members.
+
+The read-only PRs deliver views that display grade and point data
+seeded via rake playground tasks. The interactive PRs later add
+services and inline editing on top of the same components. This
+separation allows the analysis pipeline (Steps 9–12) to proceed
+without waiting for the interactive entry UI.
 ```
 
 ```admonish example "PR-8.1 — Exam foundations (backend & teacher UI)"
@@ -336,8 +348,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Basic exam creation/editing form for teachers
   - Extend campaign creation UI to support exams (reuses existing campaign views)
   - Teachers can create campaigns with exams as registerable items
-- Limitations: No student registration flows, no grading UI, no grade schemes (deferred to PR-8.2 and later)
-- Rationale: Complete teacher/admin workflow for exam setup; enables parallel work on student registration (PR-8.2) and grading (PR-8.3+)
+- Limitations: No student registration flows, no grading UI, no grade schemes (deferred to later PRs)
 - Feature Flag: Same `assessment_grading_enabled` flag gates exam creation and campaign setup
 - Refs: [Exam model](05a-exam-model.md#exam-activerecord-model)
 - Acceptance: Exam model exists with all concerns; teachers can create/edit exams; teachers can create exam campaigns; backend methods implemented; no student-facing features yet; feature flag gates UI.
@@ -354,87 +365,78 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Display available exam campaigns
   - Registration button/form for eligible students
   - Confirmation and status display
-- Rationale: Pure student-facing work; can be developed in parallel with grading features
 - Feature Flag: Same `assessment_grading_enabled` flag gates student exam registration
 - Refs: [Exam registration flow](05a-exam-model.md#exam-registration-flow)
 - Acceptance: Students can view available exam campaigns; eligible students can register; allocation works for exams; roster materialization works; both FCFS and preference modes supported; ineligible students see appropriate error messages.
 ```
 
-```admonish example "PR-8.3 — Grade Entry Service (base layer)"
-- Scope: Foundation service for setting final grades on participations (works for ALL Gradables).
-- Service: `Assessment::GradeEntryService`
-- Implementation:
-  - `GradeEntryService.set_grade(participation, grade, grader)` sets `participation.grade`
-  - Validation: grade format/range checks
-  - Audit: tracks `graded_by_id`, `graded_at`
-  - Works for: Talks, oral exams, manual grade entry, output target for grade schemes
-- Rationale: Base layer that all grade-setting flows use (manual or automatic)
-- Refs: [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service)
-- Acceptance: Service sets grades with validation; works for any Gradable; audit tracking included; no UI yet.
+```admonish example "PR-8.3 — Read-only grade view"
+- Scope: Read-only table displaying students and their final grades.
+- Dependencies: Requires PR-7.2 (assessment show page with tabs)
+- ViewComponent: `GradeTableComponent` — table with name, tutorial, grade, `graded_at`
+- Controller: `Assessment::ParticipationsController#index` (read-only)
+- Rake: Extend `assessment_playground.rake` with `seed_grades` task that writes `grade`, `graded_at`, `grader_id` directly on participations
+- Rationale: Provides the visual foundation for grade display; the same component is reused when interactive editing is added later (PR-8.6). Seeded data via rake tasks is sufficient for testing the read path and unblocking Steps 9–12.
+- Refs: [Grade Entry UI](12-views.md#grade-entry-interface)
+- Acceptance: Grade table renders on assessment show page; displays seeded grades correctly; works for any Gradable (assignments, exams, talks); feature flag gates UI.
 ```
 
-```admonish example "PR-8.4 — Simple Grade Entry UI (base UI)"
-- Scope: Basic grade entry interface for direct grade input (no tasks/points).
-- Dependencies: Requires PR-8.3 (GradeEntryService)
-- Controllers: `Assessment::GradesController` (index, update)
-- UI:
-  - Grid view: students × single grade column
-  - Inline editing with Turbo Frames
-  - Works for: Talks, oral exams, small exams (manual entry)
-  - Also: manual override interface (even when grade scheme exists)
-- Rationale: Foundation UI that works for all Gradables; reusable base before specialized tools
-- Note: This PR covers talk grading (no separate talk grading UI needed)
-- Refs: [Grade Entry UI](12-views.md#grade-entry-interface), [Talk grading](04-assessments-and-grading.md#talk-grading)
-- Acceptance: Teachers can enter grades directly for any Gradable including talks; validation works; audit tracking visible; feature flag gates UI.
-```
-
-```admonish example "PR-8.5 — Point Entry Service (specialized for Pointables)"
-- Scope: Service for entering points per task (creates TaskPoint records).
-- Dependencies: Requires PR-8.3 (GradeEntryService as foundation)
-- Service: `Assessment::PointEntryService`
-- Implementation:
-  - Fanout pattern creates Participation and TaskPoints per student (or team)
-  - Supports ANY Pointable (assignments, task-based exams)
-  - Calculates `participation.total_points` from task points
-  - For Pointable+Gradable (exams): can optionally trigger grade scheme calculation
-- Rationale: Specialized layer on top of base grade entry; handles task-based assessments
-- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service)
-- Acceptance: Service creates participations and task points; handles team grading; validates point ranges; works for Assignment and Exam assessables.
-```
-
-```admonish example "PR-8.6 — Point Entry UI (specialized for Pointables)"
-- Scope: Task-based point entry interface for assignments and exams.
-- Dependencies: Requires PR-8.1 (Exam model), PR-8.4 (base grade UI patterns), PR-8.5 (PointEntryService)
-- Controllers: `Assessment::TaskPointsController` (index, update)
-- UI:
-  - Grid view: students × tasks (multi-column)
-  - Inline editing with Turbo Frames
-  - Total points calculation
-  - Design works for Assignment (homework) AND Exam (written test)
-  - No assignment-specific assumptions (reusable for exams)
-- Rationale: Specialized UI for task-based assessments; builds on base grade entry patterns from PR-8.4
-- Testing: Verify UI works for both assessable types
+```admonish example "PR-8.4 — Read-only point grid"
+- Scope: Read-only students × tasks matrix with per-task scores and row totals.
+- Dependencies: Requires PR-7.2 (tasks exist on assessments)
+- ViewComponent: `PointGridComponent` — table with dynamic task columns and total column
+- Controller: `Assessment::TaskPointsController#index` (read-only)
+- Rake: Extend `assessment_playground.rake` with `seed_task_points` task that creates `Assessment::TaskPoint` records with random scores and updates `participation.points_total`
+- Rationale: Same as PR-8.3 — provides the visual foundation; the same component is reused when interactive editing is added later (PR-8.7). Seeded data unblocks the grade scheme pipeline (Step 9).
 - Refs: [Point Entry UI](12-views.md#point-entry-interface)
-- Acceptance: Teachers can enter points for tasks; service called on save; totals calculated; results preview shown; UI agnostic to assessable type; feature flag gates UI.
+- Acceptance: Point grid renders with dynamic task columns; totals calculated correctly; works for any Pointable (assignments, exams); feature flag gates UI.
 ```
 
-```admonish example "PR-8.7 — Publish/unpublish results"
+```admonish example "PR-8.5 — Publish/unpublish results"
 - Scope: Toggle result visibility for students.
-- Dependencies: Works with both grade entry (PR-8.4) and point entry (PR-8.6) results
+- Dependencies: Requires PR-8.3 or PR-8.4 (data to show when published)
 - Controllers: Extend `Assessment::AssessmentsController` with `publish_results` and `unpublish_results` actions
 - UI: Toggle button on assessment show page; works for grades, points, or both
 - Refs: [Publication workflow](04-assessments-and-grading.md#publication-workflow)
 - Acceptance: Teachers can publish/unpublish results; students see results only when published; toggle works via Turbo Frame; works for any assessable type; feature flag gates UI.
 ```
 
+```admonish example "PR-8.6 — Interactive grade entry (service + write UI)"
+- Scope: Add write capability to the read-only grade table from PR-8.3.
+- Dependencies: Requires PR-8.3 (read-only grade view)
+- Service: `Assessment::GradeEntryService`
+  - `set_grade(participation, grade, grader)` sets `participation.grade`
+  - Validation: grade format/range checks
+  - Audit: tracks `graded_by_id`, `graded_at`
+  - Works for: Talks, oral exams, manual grade entry, output target for grade schemes
+- Controller: Extend `Assessment::GradesController` with `update` action
+- UI: Turbo Frame inline editing on the existing `GradeTableComponent` — click a grade cell, input field, save
+- Refs: [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service), [Grade Entry UI](12-views.md#grade-entry-interface)
+- Acceptance: Teachers can enter grades directly for any Gradable including talks; validation works; audit tracking visible; feature flag gates UI.
+```
+
+```admonish example "PR-8.7 — Interactive point entry (service + write UI)"
+- Scope: Add write capability to the read-only point grid from PR-8.4.
+- Dependencies: Requires PR-8.4 (read-only point grid)
+- Service: `Assessment::PointEntryService`
+  - Fanout pattern creates Participation and TaskPoints per student (or team)
+  - Supports any Pointable (assignments, task-based exams)
+  - Calculates `participation.points_total` from task points
+  - For Pointable+Gradable (exams): can optionally trigger grade scheme calculation
+- Controller: Extend `Assessment::TaskPointsController` with `update` action
+- UI: Turbo Frame inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates
+- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Point Entry UI](12-views.md#point-entry-interface)
+- Acceptance: Teachers can enter points for tasks; service called on save; totals calculated; UI agnostic to assessable type; feature flag gates UI.
+```
+
 ```admonish example "PR-8.8 — Student submission integration with participations"
 - Scope: Update student submission workflow to create participations lazily on first interaction.
+- Dependencies: Requires PR-8.6 or PR-8.7 (services for writing participations)
 - Controllers: Update `SubmissionsController` to conditionally create/update participation
 - Logic (when `assessment_grading_enabled?`):
   - On submission upload: Create `Assessment::Participation` if not exists (lazy creation)
   - Set `participation.status = :submitted`, `submitted_at = Time.current`, `tutorial_id = student.tutorial`
   - For team submissions: Create/update participations for all team members
-  - Note: First interaction creates the participation record
 - Logic (when flag disabled):
   - Use existing submission flow (no Assessment::Participation records created)
 - Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios)
@@ -443,6 +445,7 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
 
 ```admonish example "PR-8.9 — Student results interface"
 - Scope: Student-facing views for published assessment results.
+- Dependencies: Requires PR-8.5 (publish/unpublish)
 - Controllers: `Assessment::ParticipationsController` (index, show for students)
 - UI:
   - **Results Overview:** Progress dashboard (points earned, graded count, certification status), assignment list with filters (All/Graded/Pending), collapsible older assignments section
@@ -450,9 +453,8 @@ Grading — Step 8: Unified Point Entry & Assignment Grading
   - Published results only (students cannot see unpublished grades)
   - Works for assignments, exams, and talks (unified interface)
 - Authorization: Students see only their own participations; results hidden when `assessment.results_published == false`
-- Navigation: Links from assessment pages to results; download feedback PDFs
 - Refs: [Student results views](12-views.md#assessments-lectures---student)
-- Acceptance: Students can view published results; task points visible (if Pointable); final grade visible (if Gradable); feedback displayed; unpublished assessments hidden; certification status shown; works for any assessable type; feature flag gates access.
+- Acceptance: Students can view published results; task points visible (if Pointable); final grade visible (if Gradable); feedback displayed; unpublished assessments hidden; works for any assessable type; feature flag gates access.
 ```
 
 ```admonish abstract
@@ -476,16 +478,16 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish example "PR-9.3 — Grade scheme UI + distribution analysis"
-- Scope: UI for grade scheme configuration and application (layers on top of PR-8.5/8.6 point entry).
+- Scope: UI for grade scheme configuration and application (layers on top of PR-8.4 point grid).
 - Controllers: `GradeScheme::SchemesController` (configuration, preview, apply)
 - UI:
   - Distribution analysis (histogram, statistics) based on entered points
   - Scheme configuration (two-point auto-generation + manual adjustment)
   - Grade preview showing how scheme maps to students
   - Apply action (runs GradeScheme::Applier)
-- Integration: Uses existing point entry UI from PR-8.5/8.6; adds grade scheme layer
+- Integration: Uses existing read-only point grid from PR-8.4; adds grade scheme layer
 - Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
-- Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.7 toggle; feature flag gates UI.
+- Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.5 toggle; feature flag gates UI.
 ```
 
 ```admonish abstract
