@@ -59,9 +59,9 @@ module Assessment
             redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
           end
           format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              *dashboard_turbo_args(tab: "tasks", task: @task)
-            ), status: :unprocessable_content
+            target, options = dashboard_turbo_args(tab: "tasks", task: @task)
+            render turbo_stream: turbo_stream.update(target, **options),
+                   status: :unprocessable_content
           end
         end
       end
