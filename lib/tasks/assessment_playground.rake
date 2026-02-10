@@ -20,6 +20,7 @@
 # assessment:create_tasks        - Creates 3-5 random tasks per assignment
 # assessment:seed_participations - Seeds participations (simulates submissions)
 # assessment:randomize_statuses  - Randomizes: some graded, some exempt, some deleted
+# assessment:seed_grades         - Assigns random German grades to graded participations
 # assessment:setup               - Runs all of the above
 # assessment:reset               - Destroys test assignments
 #
@@ -133,6 +134,46 @@ namespace :assessment do
 
       puts "✓ Created #{created} participations for: #{assignment.title}"
     end
+
+    if lecture.respond_to?(:exams)
+      membership_lookup = TutorialMembership
+                          .where(tutorial_id: lecture.tutorial_ids)
+                          .pluck(:user_id, :tutorial_id)
+                          .to_h
+
+      lecture.exams.each do |exam|
+        assessment = exam.assessment
+        next unless assessment
+
+        existing_count = assessment.assessment_participations.count
+        if existing_count.positive?
+          puts "✓ Participations already exist for: #{exam.title} (#{existing_count})"
+          next
+        end
+
+        roster_user_ids = exam.exam_rosters.pluck(:user_id)
+        if roster_user_ids.empty?
+          puts "  ⏭ No roster entries for: #{exam.title} (run exam:setup first)"
+          next
+        end
+
+        created = 0
+        roster_user_ids.each do |uid|
+          tutorial_id = membership_lookup[uid]
+          next unless tutorial_id
+
+          assessment.assessment_participations.create!(
+            user_id: uid,
+            tutorial_id: tutorial_id,
+            status: :submitted,
+            submitted_at: (exam.date || Time.current) - rand(1..4).hours
+          )
+          created += 1
+        end
+
+        puts "✓ Created #{created} participations for: #{exam.title}"
+      end
+    end
   end
 
   desc "Randomize participation statuses with per-tutorial variance"
@@ -157,9 +198,10 @@ namespace :assessment do
         elsif roll < (1 - submission_rate)
           p.destroy!
         elsif rand < grading_rate
+          base_time = p.submitted_at || Time.current
           p.update!(
             status: :graded,
-            graded_at: p.submitted_at + rand(1..48).hours,
+            graded_at: base_time + rand(1..48).hours,
             grader_id: tutorial.tutors.first&.id
           )
         end
@@ -175,15 +217,42 @@ namespace :assessment do
     end
   end
 
+  desc "Assign random German grades to graded participations"
+  task seed_grades: :environment do
+    Flipper.enable(:assessment_grading)
+
+    lecture = Lecture.joins(:tutorials).distinct.first
+    abort "No lecture with tutorials found." unless lecture
+
+    german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+
+    if lecture.respond_to?(:talks)
+      lecture.talks.each do |talk|
+        seed_grades_for(talk.assessment, german_grades, talk.title)
+      end
+    end
+
+    if lecture.respond_to?(:exams)
+      lecture.exams.each do |exam|
+        seed_grades_for(exam.assessment, german_grades, exam.title)
+      end
+    end
+  end
+
   desc "Run full assessment playground setup"
   task setup: :environment do
+    old_level = ActiveRecord::Base.logger&.level
+    ActiveRecord::Base.logger&.level = :warn
+
     Rake::Task["assessment:create_assignments"].invoke
     Rake::Task["assessment:create_tasks"].invoke
     Rake::Task["assessment:seed_participations"].invoke
     Rake::Task["assessment:randomize_statuses"].invoke
+    Rake::Task["assessment:seed_grades"].invoke
 
-    puts "\n✅ Assessment playground setup complete!"
-    puts "Visit the lecture's Grading tab to see the results."
+    print_summary
+
+    ActiveRecord::Base.logger&.level = old_level
   end
 
   desc "Reset assessment playground (destroy test assignments)"
@@ -202,11 +271,69 @@ namespace :assessment do
       assignment = lecture.assignments.find_by(title: title)
       next unless assignment
 
+      if assignment.assessment
+        pid = assignment.assessment.assessment_participations.select(:id)
+        Assessment::TaskPoint.where(assessment_participation_id: pid).delete_all
+        assignment.assessment.assessment_participations.delete_all
+        assignment.assessment.tasks.delete_all
+      end
+
       assignment.destroy!
       destroyed += 1
       puts "✓ Destroyed: #{title}"
     end
 
     puts "Done. Destroyed #{destroyed} test assignments."
+  end
+
+  def print_summary
+    lecture = Lecture.joins(:tutorials).distinct.first
+    return unless lecture
+
+    puts "\n#{"=" * 60}"
+    puts "Assessment Playground Summary"
+    puts "#{"=" * 60}"
+    puts format("%-35s %8s %8s %8s", "Assessment", "Graded", "Submtd", "Exempt")
+    puts "-" * 60
+
+    assessables = lecture.assignments.map { |a| [a.title, a.assessment] }
+    assessables += lecture.talks.map { |t| [t.title, t.assessment] } if lecture.respond_to?(:talks)
+    assessables += lecture.exams.map { |e| [e.title, e.assessment] } if lecture.respond_to?(:exams)
+
+    assessables.each do |label, assessment|
+      next unless assessment
+
+      parts = assessment.assessment_participations
+      graded = parts.where(status: :graded).count
+      submitted = parts.where(status: :submitted).count
+      exempt = parts.where(status: :exempt).count
+      puts format("%-35s %8d %8d %8d", label.truncate(35), graded, submitted, exempt)
+    end
+
+    puts "#{"=" * 60}"
+    puts "✅ Setup complete! Visit the lecture's Grading tab."
+  end
+
+  def seed_grades_for(assessment, german_grades, label)
+    return unless assessment
+
+    graded = assessment.assessment_participations.where(status: :graded)
+    if graded.empty?
+      puts "  ⏭ No graded participations for: #{label}"
+      return
+    end
+
+    already_graded = graded.where.not(grade_numeric: nil).count
+    if already_graded == graded.count
+      puts "  ✓ Grades already set for: #{label} (#{already_graded})"
+      return
+    end
+
+    graded.where(grade_numeric: nil).find_each do |p|
+      grade = german_grades.sample
+      p.update!(grade_numeric: grade, grade_text: grade.to_s)
+    end
+
+    puts "  ✓ Assigned grades to #{graded.count} participations for: #{label}"
   end
 end

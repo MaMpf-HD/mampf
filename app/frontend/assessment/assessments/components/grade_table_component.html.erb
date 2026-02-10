@@ -1,0 +1,31 @@
+<% if any_graded? %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th><%= t("basics.name") %></th>
+        <th><%= t("basics.tutorial") %></th>
+        <th class="text-center"><%= t("assessment.grading") %></th>
+        <th><%= t("assessment.graded_by") %></th>
+        <th><%= t("assessment.graded_at") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% graded_participations.each do |participation| %>
+        <tr>
+          <td><%= participation.user.tutorial_name %></td>
+          <td><%= participation.tutorial&.title %></td>
+          <td class="text-center">
+            <span class="badge bg-secondary"><%= grade_display(participation) %></span>
+          </td>
+          <td class="text-muted small"><%= grader_display(participation) %></td>
+          <td class="text-muted small"><%= graded_at_display(participation) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-mortarboard me-1"></i>
+    <%= t("assessment.no_grades_yet") %>
+  </div>
+<% end %>
