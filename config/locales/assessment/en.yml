@@ -131,6 +131,10 @@ en:
           attributes:
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            grade_numeric:
+              not_gradable: "cannot be set on a non-gradable assessment"
         assessment/task_point:
           attributes:
             base:

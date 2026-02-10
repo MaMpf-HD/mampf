@@ -290,27 +290,35 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
-    puts "\n#{"=" * 60}"
+    puts "\n#{"=" * 68}"
     puts "Assessment Playground Summary"
-    puts "#{"=" * 60}"
-    puts format("%-35s %8s %8s %8s", "Assessment", "Graded", "Submtd", "Exempt")
-    puts "-" * 60
+    puts "#{"=" * 68}"
+    puts format("%-35s %8s %8s %8s %8s",
+                "Assessment", "Revwd", "Submtd", "Exempt", "Grades")
+    puts "-" * 68
 
-    assessables = lecture.assignments.map { |a| [a.title, a.assessment] }
-    assessables += lecture.talks.map { |t| [t.title, t.assessment] } if lecture.respond_to?(:talks)
-    assessables += lecture.exams.map { |e| [e.title, e.assessment] } if lecture.respond_to?(:exams)
+    assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
+    if lecture.respond_to?(:talks)
+      assessables += lecture.talks.map { |t| [t.title, t.assessment, t] }
+    end
+    if lecture.respond_to?(:exams)
+      assessables += lecture.exams.map { |e| [e.title, e.assessment, e] }
+    end
 
-    assessables.each do |label, assessment|
+    assessables.each do |label, assessment, assessable|
       next unless assessment
 
       parts = assessment.assessment_participations
-      graded = parts.where(status: :graded).count
+      reviewed = parts.where(status: :graded).count
       submitted = parts.where(status: :submitted).count
       exempt = parts.where(status: :exempt).count
-      puts format("%-35s %8d %8d %8d", label.truncate(35), graded, submitted, exempt)
+      gradable = assessable.is_a?(Assessment::Gradable)
+      grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
+      puts format("%-35s %8s %8s %8s %8s",
+                  label.truncate(35), reviewed, submitted, exempt, grades)
     end
 
-    puts "#{"=" * 60}"
+    puts "#{"=" * 68}"
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 
