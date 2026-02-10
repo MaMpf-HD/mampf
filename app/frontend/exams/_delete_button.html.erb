@@ -1,0 +1,21 @@
+<% if exam.persisted? %>
+  <div class="text-end mb-3">
+    <% if exam.destructible? %>
+      <%= button_to t('basics.delete'),
+                    exam_path(exam),
+                    method: :delete,
+                    class: "btn btn-outline-danger btn-sm",
+                    data: { turbo_confirm: t('basics.confirm_delete') } %>
+    <% else %>
+      <span class="d-inline-block"
+            tabindex="0"
+            title="<%= t("assessment.exam_not_destructible.#{exam.non_destructible_reason}") %>"
+            data-bs-toggle="tooltip">
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+          <i class="bi bi-lock-fill me-1"></i>
+          <%= t('basics.delete') %>
+        </button>
+      </span>
+    <% end %>
+  </div>
+<% end %>
