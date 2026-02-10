@@ -7,7 +7,6 @@
   <% list.with_columns do %>
     <th><%= t("basics.name") %></th>
     <th><%= t("basics.email") %></th>
-    <th><%= t("roster.registered_at") %></th>
   <% end %>
 
   <% entries.each do |entry| %>
@@ -16,11 +15,6 @@
       <tr>
         <td><%= user.tutorial_name %></td>
         <td><%= user.email %></td>
-        <td>
-          <span class="text-muted small">
-            <%= l(entry.created_at, format: :short) %>
-          </span>
-        </td>
       </tr>
     <% end %>
   <% end %>

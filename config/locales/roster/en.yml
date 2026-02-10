@@ -304,6 +304,5 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
-    registered_at: 'Registered At'
     no_participants_yet: 'No participants have registered yet.'
     registered: 'Registered'

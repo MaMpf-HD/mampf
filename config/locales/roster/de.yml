@@ -308,6 +308,5 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
-    registered_at: 'Registriert am'
     no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
     registered: 'Registriert'
