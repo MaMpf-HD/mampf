@@ -1,8 +1,12 @@
 <% if assessable.is_a?(Talk) %>
-  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>">
+  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
+      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if clickable? %>>
     <td>
       <% if legacy %>
         <span class="text-muted"><%= title %></span>
+      <% elsif clickable? %>
+        <%= link_to title, show_path, class: "text-decoration-none",
+            data: { row_link: true, turbo_stream: true } %>
       <% else %>
         <%= title %>
       <% end %>

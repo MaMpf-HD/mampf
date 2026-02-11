@@ -44,12 +44,13 @@ class AssignmentsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/card_body_show",
-                                locals: { assessable: @assignment,
-                                          assessment: assessment,
-                                          lecture: @lecture,
-                                          tasks: tasks,
-                                          tab: "tasks" })
+                                AssessmentDashboardComponent.new(
+                                  assessable: @assignment,
+                                  assessment: assessment,
+                                  lecture: @lecture,
+                                  active_tab: "tasks",
+                                  tasks: tasks
+                                ))
           ]
         end
       end
