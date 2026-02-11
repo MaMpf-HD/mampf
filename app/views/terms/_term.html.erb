@@ -21,7 +21,7 @@
       <%= link_to t('buttons.edit'),
                   edit_term_path(term),
                   class: 'btn btn-sm btn-outline-primary my-1',
-                  data: { turbo_frame: dom_id(term) } %>
+                  data: { turbo_frame: dom_id(term), turbo_prefetch: false } %>
       <% if term.lectures.empty? %>
         <%= button_to t('buttons.delete'),
                       term_path(term),
