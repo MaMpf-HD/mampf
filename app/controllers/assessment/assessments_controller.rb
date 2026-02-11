@@ -36,7 +36,6 @@ module Assessment
       authorize! :show, @assessment
 
       @tasks = @assessment.tasks.order(:position)
-      @participations_count = @assessment.assessment_participations.count
 
       respond_to do |format|
         format.html
@@ -48,7 +47,6 @@ module Assessment
                       assessment: @assessment,
                       lecture: @lecture,
                       tasks: @tasks,
-                      participations_count: @participations_count,
                       tab: params[:tab] }
           )
         end
@@ -61,7 +59,6 @@ module Assessment
       @assessable = @assessment.assessable
       @lecture = @assessable.lecture
       @tasks = @assessment.tasks.order(:position)
-      @participations_count = @assessment.assessment_participations.count
 
       if @assessment.update(assessment_params)
         respond_to do |format|
@@ -75,7 +72,6 @@ module Assessment
                           assessment: @assessment,
                           lecture: @lecture,
                           tasks: @tasks,
-                          participations_count: @participations_count,
                           tab: params[:tab] || "settings" }
               ),
               stream_flash
@@ -92,7 +88,6 @@ module Assessment
                         assessment: @assessment,
                         lecture: @lecture,
                         tasks: @tasks,
-                        participations_count: @participations_count,
                         tab: params[:tab] || "settings" }
             ), status: :unprocessable_content
           end

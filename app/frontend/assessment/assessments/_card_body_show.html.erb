@@ -12,6 +12,9 @@
 </div>
 
 <% tab ||= "settings" %>
+<% pointable = assessable.is_a?(Assessment::Pointable) %>
+<% gradable = assessable.is_a?(Assessment::Gradable) %>
+<% has_submissions = pointable && assessment.requires_submission %>
 <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
   <li class="nav-item" role="presentation">
     <button class="nav-link <%= 'active' if tab == 'settings' %>"
@@ -35,26 +38,50 @@
             aria-controls="tasks"
             aria-selected="<%= tab == 'tasks' %>">
       <%= t("assessment.tasks") %>
-      <% if tasks&.any? %>
-        <span class="badge bg-secondary ms-1"><%= tasks.count %></span>
-      <% end %>
     </button>
   </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link <%= 'active' if tab == 'grading' %>"
-            id="grading-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#grading"
-            type="button"
-            role="tab"
-            aria-controls="grading"
-            aria-selected="<%= tab == 'grading' %>">
-      <%= t("assessment.grading") %>
-      <% if participations_count&.positive? %>
-        <span class="badge bg-secondary ms-1"><%= participations_count %></span>
-      <% end %>
-    </button>
-  </li>
+  <% if has_submissions %>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'submissions' %>"
+              id="submissions-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#submissions"
+              type="button"
+              role="tab"
+              aria-controls="submissions"
+              aria-selected="<%= tab == 'submissions' %>">
+        <%= t("assessment.submissions") %>
+      </button>
+    </li>
+  <% end %>
+  <% if pointable %>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'points' %>"
+              id="points-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#points"
+              type="button"
+              role="tab"
+              aria-controls="points"
+              aria-selected="<%= tab == 'points' %>">
+        <%= t("assessment.points") %>
+      </button>
+    </li>
+  <% end %>
+  <% if gradable %>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if tab == 'grades' %>"
+              id="grades-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#grades"
+              type="button"
+              role="tab"
+              aria-controls="grades"
+              aria-selected="<%= tab == 'grades' %>">
+        <%= t("assessment.grades") %>
+      </button>
+    </li>
+  <% end %>
   <li class="nav-item" role="presentation">
     <button class="nav-link <%= 'active' if tab == 'statistics' %>"
             id="statistics-tab"
@@ -85,12 +112,26 @@
                task: local_assigns[:task] %>
   </div>
 
-  <div class="tab-pane fade <%= 'show active' if tab == 'grading' %>" id="grading" role="tabpanel" aria-labelledby="grading-tab">
-    <%= render GradingOverviewComponent.new(assessment: assessment, lecture: lecture) %>
-    <div class="mt-4">
+  <% if has_submissions %>
+    <div class="tab-pane fade <%= 'show active' if tab == 'submissions' %>" id="submissions" role="tabpanel" aria-labelledby="submissions-tab">
+      <%= render GradingOverviewComponent.new(assessment: assessment, lecture: lecture) %>
+    </div>
+  <% end %>
+
+  <% if pointable %>
+    <div class="tab-pane fade <%= 'show active' if tab == 'points' %>" id="points" role="tabpanel" aria-labelledby="points-tab">
+      <div class="alert alert-secondary">
+        <i class="bi bi-grid-3x3"></i>
+        <%= t("assessment.points_grid_placeholder") %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if gradable %>
+    <div class="tab-pane fade <%= 'show active' if tab == 'grades' %>" id="grades" role="tabpanel" aria-labelledby="grades-tab">
       <%= render GradeTableComponent.new(assessment: assessment) %>
     </div>
-  </div>
+  <% end %>
 
   <div class="tab-pane fade <%= 'show active' if tab == 'statistics' %>" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
     <div class="alert alert-secondary">

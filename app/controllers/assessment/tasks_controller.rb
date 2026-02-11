@@ -170,7 +170,6 @@ module Assessment
                         task: task } }
           ]
         else
-          participations_count = @assessment.assessment_participations.count
           [
             "assessments_container",
             { partial: "assessment/assessments/card_body_show",
@@ -178,7 +177,6 @@ module Assessment
                         assessment: @assessment,
                         lecture: assessable.lecture,
                         tasks: tasks,
-                        participations_count: participations_count,
                         tab: tab,
                         task: task } }
           ]

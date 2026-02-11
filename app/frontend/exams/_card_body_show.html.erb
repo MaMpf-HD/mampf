@@ -55,21 +55,30 @@
               aria-controls="exam-tasks-pane"
               aria-selected="<%= active_tab == 'tasks' %>">
         <%= t('assessment.tasks') %>
-        <% if tasks.any? %>
-          <span class="badge bg-secondary ms-1"><%= tasks.count %></span>
-        <% end %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if active_tab == 'grading' %>"
-              id="exam-grading-tab"
+      <button class="nav-link <%= 'active' if active_tab == 'points' %>"
+              id="exam-points-tab"
               data-bs-toggle="tab"
-              data-bs-target="#exam-grading-pane"
+              data-bs-target="#exam-points-pane"
               type="button"
               role="tab"
-              aria-controls="exam-grading-pane"
-              aria-selected="<%= active_tab == 'grading' %>">
-        <%= t('assessment.grading') %>
+              aria-controls="exam-points-pane"
+              aria-selected="<%= active_tab == 'points' %>">
+        <%= t('assessment.points') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link <%= 'active' if active_tab == 'grades' %>"
+              id="exam-grades-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#exam-grades-pane"
+              type="button"
+              role="tab"
+              aria-controls="exam-grades-pane"
+              aria-selected="<%= active_tab == 'grades' %>">
+        <%= t('assessment.grades') %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -82,9 +91,6 @@
               aria-controls="exam-roster-pane"
               aria-selected="<%= active_tab == 'roster' %>">
         <%= t('assessment.roster') %>
-        <% if exam.roster_entries_count && exam.roster_entries_count > 0 %>
-          <span class="badge bg-secondary ms-1"><%= exam.roster_entries_count %></span>
-        <% end %>
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -116,9 +122,18 @@
       <%= render partial: "exams/tasks",
                locals: { exam: exam, assessment: assessment, tasks: tasks } %>
     </div>
-    <div class="tab-pane fade <%= 'show active' if active_tab == 'grading' %>"
-         id="exam-grading-pane" role="tabpanel" aria-labelledby="exam-grading-tab">
-      <%= render partial: "exams/grading", locals: { exam: exam, lecture: exam.lecture } %>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'points' %>"
+         id="exam-points-pane" role="tabpanel" aria-labelledby="exam-points-tab">
+      <div class="alert alert-secondary">
+        <i class="bi bi-grid-3x3"></i>
+        <%= t('assessment.points_grid_placeholder') %>
+      </div>
+    </div>
+    <div class="tab-pane fade <%= 'show active' if active_tab == 'grades' %>"
+         id="exam-grades-pane" role="tabpanel" aria-labelledby="exam-grades-tab">
+      <% if assessment %>
+        <%= render GradeTableComponent.new(assessment: assessment) %>
+      <% end %>
     </div>
     <div class="tab-pane fade <%= 'show active' if active_tab == 'roster' %>"
          id="exam-roster-pane" role="tabpanel" aria-labelledby="exam-roster-tab">

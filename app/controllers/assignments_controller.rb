@@ -39,7 +39,6 @@ class AssignmentsController < ApplicationController
       @assignment.reload
       assessment = @assignment.assessment
       tasks = assessment&.tasks&.order(:position) || []
-      participations_count = assessment&.assessment_participations&.count || 0
       respond_to do |format|
         format.js
         format.turbo_stream do
@@ -50,7 +49,6 @@ class AssignmentsController < ApplicationController
                                           assessment: assessment,
                                           lecture: @lecture,
                                           tasks: tasks,
-                                          participations_count: participations_count,
                                           tab: "tasks" })
           ]
         end

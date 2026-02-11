@@ -4,7 +4,7 @@
       <tr>
         <th><%= t("basics.name") %></th>
         <th><%= t("basics.tutorial") %></th>
-        <th class="text-center"><%= t("assessment.grading") %></th>
+        <th class="text-center"><%= t("assessment.grade") %></th>
         <th><%= t("assessment.graded_by") %></th>
         <th><%= t("assessment.graded_at") %></th>
       </tr>
@@ -15,7 +15,7 @@
           <td><%= participation.user.tutorial_name %></td>
           <td><%= participation.tutorial&.title %></td>
           <td class="text-center">
-            <span class="badge bg-secondary"><%= grade_display(participation) %></span>
+            <%= grade_display(participation) %>
           </td>
           <td class="text-muted small"><%= grader_display(participation) %></td>
           <td class="text-muted small"><%= graded_at_display(participation) %></td>
