@@ -166,3 +166,24 @@ test.describe("Seminar speakers (existing talk)", () => {
       });
   });
 });
+
+test("Import Lesson", async ({ factory, admin: { page } }) => {
+  const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
+  const sourceLesson = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
+  const sourceMedium = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
+    { lesson_id: sourceLesson.id });
+
+  const targetLecture = await factory.create("lecture");
+
+  await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
+  await page.getByRole("button", { name: "Import Media" }).click();
+  await page.getByRole("combobox", { name: "Types" }).fill("Les");
+  await page.locator("#search_media_types-opt-1").click();
+  await page.getByRole("button", { name: "Search" }).click();
+  await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
+  await page.locator("#mediaTable").locator(".col-3.mediumTags").click();
+  await page.getByRole("button", { name: "Import", exact: true }).click();
+
+  await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
+  await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium.description);
+});
