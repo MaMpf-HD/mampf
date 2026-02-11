@@ -41,6 +41,8 @@ window.Stimulus.register("question-counter", QuestionCounterController);
 import AdministrationCourseFormController from "~/administration/course_form.controller.js";
 window.Stimulus.register("administration--course-form", AdministrationCourseFormController);
 
+import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
+window.Stimulus.register("courses-edit", CoursesEditController);
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
