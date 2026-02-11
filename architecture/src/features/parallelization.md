@@ -473,7 +473,7 @@ graph TD
 
 ---
 
-#### Step 9: Participation Tracking (Moderate Parallelization)
+#### Step 9: Activity Tracking (Moderate Parallelization)
 
 **Parallelization level:** 2 developers
 
