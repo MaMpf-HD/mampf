@@ -111,12 +111,11 @@ class CoursesController < ApplicationController
       options: { default_per_page: 20 }
     )
 
-    respond_to do |format|
-      format.js
-      format.html do
-        redirect_to :root, alert: I18n.t("controllers.search_only_js")
-      end
-    end
+    render turbo_stream: turbo_stream.update(
+      "courses-search-results",
+      partial: "courses/search/results",
+      locals: { courses: @courses, pagy: @pagy }
+    )
   end
 
   private
