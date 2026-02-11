@@ -167,52 +167,74 @@ test.describe("Seminar speakers (existing talk)", () => {
   });
 });
 
-test("Import Lesson", async ({ factory, admin: { page } }) => {
-  const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
-  const sourceLesson = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
-  const sourceMedium = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
-    { lesson_id: sourceLesson.id });
+test.describe("Import Media", () => {
+  test("import lesson", async ({ factory, admin: { page } }) => {
+    const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
+    const sourceLesson = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
+    const sourceMedium = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
+      { lesson_id: sourceLesson.id });
 
-  const targetLecture = await factory.create("lecture");
+    const targetLecture = await factory.create("lecture");
 
-  await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
-  await page.getByRole("button", { name: "Import Media" }).click();
-  await page.getByRole("combobox", { name: "Types" }).fill("Les");
-  await page.locator("#search_media_types-opt-1").click();
-  await page.getByRole("button", { name: "Search" }).click();
-  await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
-  await page.locator("#mediaTable").getByText(sourceMedium.description).click();
-  await page.getByRole("button", { name: "Import", exact: true }).click();
+    await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
+    await page.getByRole("button", { name: "Import Media" }).click();
+    await page.getByRole("combobox", { name: "Types" }).fill("Les");
+    await page.locator("#search_media_types-opt-1").click();
+    await page.getByRole("button", { name: "Search" }).click();
+    await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
+    await page.locator("#mediaTable").getByText(sourceMedium.description).click();
+    await page.getByRole("button", { name: "Import", exact: true }).click();
 
-  await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
-  await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium.description);
-});
+    await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
+    await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium.description);
+  });
 
-test("Reset Import Lesson", async ({ factory, admin: { page } }) => {
-  const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
-  const sourceLesson1 = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
-  const sourceMedium1 = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
-    { lesson_id: sourceLesson1.id });
+  test("reset import lesson", async ({ factory, admin: { page } }) => {
+    const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
+    const sourceLesson1 = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
+    const sourceMedium1 = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
+      { lesson_id: sourceLesson1.id });
 
-  const sourceLesson2 = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
-  const sourceMedium2 = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
-    { lesson_id: sourceLesson2.id });
+    const sourceLesson2 = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
+    const sourceMedium2 = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
+      { lesson_id: sourceLesson2.id });
 
-  const targetLecture = await factory.create("lecture");
+    const targetLecture = await factory.create("lecture");
 
-  await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
-  await page.getByRole("button", { name: "Import Media" }).click();
-  await page.getByRole("combobox", { name: "Types" }).fill("Les");
-  await page.locator("#search_media_types-opt-1").click();
-  await page.getByRole("button", { name: "Search" }).click();
-  await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
+    await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
+    await page.getByRole("button", { name: "Import Media" }).click();
+    await page.getByRole("combobox", { name: "Types" }).fill("Les");
+    await page.locator("#search_media_types-opt-1").click();
+    await page.getByRole("button", { name: "Search" }).click();
+    await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
 
-  await page.locator("#mediaTable").getByText(sourceMedium1.description).click();
-  await page.getByRole("button", { name: "Reset" }).click();
+    await page.locator("#mediaTable").getByText(sourceMedium1.description).click();
+    await page.getByRole("button", { name: "Reset" }).click();
 
-  await page.locator("#mediaTable").getByText(sourceMedium2.description).click();
-  await page.getByRole("button", { name: "Import", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
-  await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium2.description);
-  await expect(page.locator("#importedMediaTable")).not.toContainText(sourceMedium1.description);
+    await page.locator("#mediaTable").getByText(sourceMedium2.description).click();
+    await page.getByRole("button", { name: "Import", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
+    await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium2.description);
+    await expect(page.locator("#importedMediaTable")).not.toContainText(sourceMedium1.description);
+  });
+
+  test("remove imported lesson", async ({ factory, admin: { page } }) => {
+    const sourceLecture = await factory.create("lecture", ["with_sparse_toc"]);
+    const sourceLesson = await factory.create("valid_lesson", [], { lecture_id: sourceLecture.id });
+    const sourceMedium = await factory.create("lesson_medium", ["with_lesson_by_id", "released"],
+      { lesson_id: sourceLesson.id });
+
+    const targetLecture = await factory.create("lecture");
+    await factory.create("import", [],
+      { medium_id: sourceMedium.id, teachable_id: targetLecture.id, teachable_type: "Lecture" });
+
+    await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
+    await page.getByRole("button", { name: "Import Media" }).click();
+    await expect(page.getByRole("heading", { name: "Imported Media ( 1)" })).toBeVisible();
+    await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium.description);
+
+    await page.getByTitle("Delete").click();
+    await expect(page.getByRole("heading", { name: "Imported Media (0)" })).toBeVisible();
+    await expect(page.getByText("There are no imported media.")).toBeVisible();
+  });
 });
