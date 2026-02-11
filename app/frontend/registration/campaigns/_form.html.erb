@@ -1,0 +1,62 @@
+<%= form_with(model: [lecture, campaign].compact,
+              url: campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
+              local: true) do |f| %>
+
+  <% if campaign.errors[:base].present? %>
+    <div class="alert alert-danger">
+      <%= campaign.errors[:base].join(", ") %>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :description, t("registration.campaign.form.description"), class: "form-label" %>
+    <%= helpdesk(t("registration.campaign.helpdesk.description"), false) %>
+    <%= f.text_field :description, class: "form-control", disabled: campaign.completed? %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :allocation_mode, t("registration.campaign.form.allocation_mode"), class: "form-label" %>
+    <% if campaign.draft? %>
+      <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode"), false) %>
+    <% else %>
+      <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode_frozen"), false) %>
+    <% end %>
+    <%= f.select :allocation_mode,
+                 Registration::Campaign.allocation_modes.keys.map { |k| [t("registration.campaign.allocation_mode.#{k}"), k] },
+                 {}, class: "form-select", disabled: !campaign.draft? %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :registration_deadline, t("registration.campaign.form.registration_deadline"), class: "form-label" %>
+    <%= helpdesk(t("registration.campaign.helpdesk.registration_deadline"), false) %>
+    <div class="input-group td-picker"
+         id="registration-deadline-picker"
+         data-controller="datetimepicker"
+         data-td-target-input="nearest"
+         data-td-target-toggle="nearest">
+      <%= f.text_field :registration_deadline,
+                       class: "form-control td-input",
+                       data: { td_target: "#registration-deadline-picker" },
+                       value: campaign.registration_deadline&.strftime("%Y-%m-%d %H:%M"),
+                       autocomplete: "off",
+                       disabled: campaign.completed? %>
+      <span class="input-group-text td-picker-button"
+            role="button"
+            data-td-target="#registration-deadline-picker"
+            data-td-toggle="datetimepicker"
+            <%= "disabled" if campaign.completed? %>>
+        <i class="bi bi-calendar-fill"></i>
+      </span>
+      <div class="invalid-feedback td-error"
+           data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
+      </div>
+    </div>
+  </div>
+
+  <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary" %>
+  <%= link_to t("buttons.cancel"),
+              campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
+              class: "btn btn-secondary",
+              role: "button",
+              data: { turbo_stream: true } %>
+<% end %>

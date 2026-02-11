@@ -8,6 +8,7 @@ echo "🚀 Install Just"
 
 echo "🚀 Install zsh"
 ./.devcontainer/zsh/install-zsh.sh
+git config --global alias.last 'log -n1 --format="%h"'
 
 echo "🚀 Install MdBook"
 ./.devcontainer/install-mdbook.sh
