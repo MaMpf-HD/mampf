@@ -21,7 +21,8 @@
 # assessment:seed_participations - Seeds participations (simulates submissions)
 # assessment:randomize_statuses  - Randomizes: some reviewed, some exempt, some deleted
 # assessment:seed_grades         - Assigns random German grades to reviewed participations
-# assessment:setup               - Runs all of the above
+# assessment:seed_seminar_grades - Grades speakers in the two-stage seminar campaign
+# assessment:setup               - Runs all of the above (except seed_seminar_grades)
 # assessment:reset               - Destroys test assignments
 #
 # ## Usage
@@ -320,6 +321,60 @@ namespace :assessment do
 
     puts "=" * 68
     puts "✅ Setup complete! Visit the lecture's Grading tab."
+  end
+
+  desc "Seed grades for talks in the two-stage seminar campaign"
+  task seed_seminar_grades: :environment do
+    Flipper.enable(:assessment_grading)
+
+    course = Course.find_by(title: "Campaign Test Seminar")
+    abort "Seminar course not found. Run solver:create_two_stage_campaign first." unless course
+
+    seminar = Lecture.find_by(course: course)
+    abort "Seminar lecture not found." unless seminar
+
+    german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+    graded_count = 0
+    skipped_count = 0
+
+    seminar.talks.includes(:speakers).find_each do |talk|
+      assessment = talk.assessment
+      unless assessment
+        puts "  ⏭ No assessment for talk: #{talk.title}"
+        skipped_count += 1
+        next
+      end
+
+      if talk.speakers.empty?
+        puts "  ⏭ No speakers for talk: #{talk.title}"
+        skipped_count += 1
+        next
+      end
+
+      talk.speakers.each do |speaker|
+        participation = assessment.assessment_participations
+                                  .find_or_initialize_by(user: speaker)
+
+        if participation.grade_numeric.present?
+          puts "  ✓ Already graded: #{speaker.tutorial_name} → #{talk.title}"
+          next
+        end
+
+        grade = german_grades.sample
+        participation.assign_attributes(
+          status: :reviewed,
+          grade_numeric: grade,
+          grade_text: grade.to_s,
+          graded_at: Time.current - rand(1..72).hours,
+          grader: seminar.teacher
+        )
+        participation.save!
+        graded_count += 1
+      end
+    end
+
+    puts "\nDone. Graded #{graded_count} talk participations, " \
+         "skipped #{skipped_count} talks."
   end
 
   def seed_grades_for(assessment, german_grades, label)

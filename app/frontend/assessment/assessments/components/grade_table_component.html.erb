@@ -3,7 +3,9 @@
     <thead>
       <tr>
         <th><%= t("basics.name") %></th>
-        <th><%= t("basics.tutorial") %></th>
+        <% if show_tutorial_column? %>
+          <th><%= t("basics.tutorial") %></th>
+        <% end %>
         <th class="text-center"><%= t("assessment.grade") %></th>
         <th><%= t("assessment.graded_by") %></th>
         <th><%= t("assessment.graded_at") %></th>
@@ -13,7 +15,9 @@
       <% reviewed_participations.each do |participation| %>
         <tr>
           <td><%= participation.user.tutorial_name %></td>
-          <td><%= participation.tutorial&.title %></td>
+          <% if show_tutorial_column? %>
+            <td><%= participation.tutorial&.title %></td>
+          <% end %>
           <td class="text-center">
             <%= grade_display(participation) %>
           </td>

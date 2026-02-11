@@ -52,16 +52,42 @@
         </button>
       </li>
     <% end %>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if tab_active?('grading') %>"
-              data-bs-toggle="tab"
-              data-bs-target="#<%= dom_prefix %>-grading"
-              type="button"
-              role="tab"
-              aria-selected="<%= tab_active?('grading') %>">
-        <%= t("assessment.grading") %>
-      </button>
-    </li>
+    <% if show_submissions? %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link <%= 'active' if tab_active?('submissions') %>"
+                data-bs-toggle="tab"
+                data-bs-target="#<%= dom_prefix %>-submissions"
+                type="button"
+                role="tab"
+                aria-selected="<%= tab_active?('submissions') %>">
+          <%= t("assessment.submissions") %>
+        </button>
+      </li>
+    <% end %>
+    <% if show_points? %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link <%= 'active' if tab_active?('points') %>"
+                data-bs-toggle="tab"
+                data-bs-target="#<%= dom_prefix %>-points"
+                type="button"
+                role="tab"
+                aria-selected="<%= tab_active?('points') %>">
+          <%= t("assessment.points") %>
+        </button>
+      </li>
+    <% end %>
+    <% if show_grades? %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link <%= 'active' if tab_active?('grades') %>"
+                data-bs-toggle="tab"
+                data-bs-target="#<%= dom_prefix %>-grades"
+                type="button"
+                role="tab"
+                aria-selected="<%= tab_active?('grades') %>">
+          <%= t("assessment.grades") %>
+        </button>
+      </li>
+    <% end %>
     <% if show_roster? %>
       <li class="nav-item" role="presentation">
         <button class="nav-link <%= 'active' if tab_active?('roster') %>"
@@ -74,16 +100,18 @@
         </button>
       </li>
     <% end %>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if tab_active?('statistics') %>"
-              data-bs-toggle="tab"
-              data-bs-target="#<%= dom_prefix %>-statistics"
-              type="button"
-              role="tab"
-              aria-selected="<%= tab_active?('statistics') %>">
-        <%= t("assessment.statistics") %>
-      </button>
-    </li>
+    <% if show_statistics? %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link <%= 'active' if tab_active?('statistics') %>"
+                data-bs-toggle="tab"
+                data-bs-target="#<%= dom_prefix %>-statistics"
+                type="button"
+                role="tab"
+                aria-selected="<%= tab_active?('statistics') %>">
+          <%= t("assessment.statistics") %>
+        </button>
+      </li>
+    <% end %>
   </ul>
 
   <div class="tab-content">
@@ -128,19 +156,32 @@
       </div>
     <% end %>
 
-    <div class="tab-pane fade <%= 'show active' if tab_active?('grading') %>"
-         id="<%= dom_prefix %>-grading" role="tabpanel">
-      <% if assignment? %>
+    <% if show_submissions? %>
+      <div class="tab-pane fade <%= 'show active' if tab_active?('submissions') %>"
+           id="<%= dom_prefix %>-submissions" role="tabpanel">
         <%= render GradingOverviewComponent.new(
               assessment: assessment, lecture: lecture) %>
-      <% else %>
-        <div class="alert alert-info" role="alert">
-          <i class="bi bi-info-circle me-2"></i>
-          <strong><%= t("basics.coming_soon") %>:</strong>
-          <%= t("assessment.grading_placeholder") %>
+      </div>
+    <% end %>
+
+    <% if show_points? %>
+      <div class="tab-pane fade <%= 'show active' if tab_active?('points') %>"
+           id="<%= dom_prefix %>-points" role="tabpanel">
+        <div class="alert alert-secondary">
+          <i class="bi bi-grid-3x3"></i>
+          <%= t("assessment.points_grid_placeholder") %>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
+
+    <% if show_grades? %>
+      <div class="tab-pane fade <%= 'show active' if tab_active?('grades') %>"
+           id="<%= dom_prefix %>-grades" role="tabpanel">
+        <% if assessment %>
+          <%= render GradeTableComponent.new(assessment: assessment) %>
+        <% end %>
+      </div>
+    <% end %>
 
     <% if show_roster? %>
       <div class="tab-pane fade <%= 'show active' if tab_active?('roster') %>"
@@ -150,13 +191,15 @@
       </div>
     <% end %>
 
-    <div class="tab-pane fade <%= 'show active' if tab_active?('statistics') %>"
-         id="<%= dom_prefix %>-statistics" role="tabpanel">
-      <div class="alert alert-info" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        <strong><%= t("basics.coming_soon") %>:</strong>
-        <%= t("assessment.statistics_placeholder") %>
+    <% if show_statistics? %>
+      <div class="tab-pane fade <%= 'show active' if tab_active?('statistics') %>"
+           id="<%= dom_prefix %>-statistics" role="tabpanel">
+        <div class="alert alert-info" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          <strong><%= t("basics.coming_soon") %>:</strong>
+          <%= t("assessment.statistics_placeholder") %>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </div>

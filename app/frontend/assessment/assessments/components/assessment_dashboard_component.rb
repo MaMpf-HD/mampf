@@ -1,4 +1,6 @@
 class AssessmentDashboardComponent < ViewComponent::Base
+  # Missing top-level docstring, please formulate one yourself 😁
+
   # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
                  active_tab: nil, tasks: nil, task: nil)
@@ -26,6 +28,10 @@ class AssessmentDashboardComponent < ViewComponent::Base
     assessable.is_a?(Assessment::Pointable)
   end
 
+  def gradable?
+    assessable.is_a?(Assessment::Gradable)
+  end
+
   def show_overview?
     exam?
   end
@@ -38,8 +44,24 @@ class AssessmentDashboardComponent < ViewComponent::Base
     pointable?
   end
 
+  def show_submissions?
+    pointable? && assessment&.requires_submission
+  end
+
+  def show_points?
+    pointable?
+  end
+
+  def show_grades?
+    gradable?
+  end
+
   def show_roster?
     exam?
+  end
+
+  def show_statistics?
+    !assessable.is_a?(Talk)
   end
 
   def default_tab
@@ -48,7 +70,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     elsif assignment?
       "settings"
     else
-      "grading"
+      "grades"
     end
   end
 

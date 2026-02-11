@@ -8,6 +8,10 @@ class GradeTableComponent < ViewComponent::Base
 
   attr_reader :assessment
 
+  def show_tutorial_column?
+    !assessment.assessable.is_a?(Talk)
+  end
+
   def participations
     @participations ||= assessment
                         .assessment_participations
