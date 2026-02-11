@@ -31,9 +31,10 @@ class ExamsController < ApplicationController
     respond_to do |format|
       format.html
       format.turbo_stream do
-        render turbo_stream: turbo_stream.update("exams_container",
-                                                 partial: "exams/card_body_show",
-                                                 locals: exam_dashboard_locals)
+        render turbo_stream: turbo_stream.update(
+          "exams_container",
+          build_dashboard_component
+        )
       end
     end
   end
@@ -111,9 +112,10 @@ class ExamsController < ApplicationController
           flash[:success] = t("assessment.exam_updated")
           if params[:tab] == "settings"
             render turbo_stream: [
-              turbo_stream.update("exams_container",
-                                  partial: "exams/card_body_show",
-                                  locals: exam_dashboard_locals(active_tab: "settings")),
+              turbo_stream.update(
+                "exams_container",
+                build_dashboard_component(active_tab: "settings")
+              ),
               stream_flash
             ]
           else
@@ -134,11 +136,9 @@ class ExamsController < ApplicationController
       else
         format.turbo_stream do
           if params[:tab] == "settings"
-            locals = exam_dashboard_locals(active_tab: "settings")
             render turbo_stream: turbo_stream.update(
               "exams_container",
-              partial: "exams/card_body_show",
-              locals: locals
+              build_dashboard_component(active_tab: "settings")
             ), status: :unprocessable_content
           else
             render turbo_stream: turbo_stream.update("exams_container",
@@ -204,14 +204,16 @@ class ExamsController < ApplicationController
                            :lecture_id])
     end
 
-    def exam_dashboard_locals(active_tab: @active_tab)
+    def build_dashboard_component(active_tab: @active_tab, task: nil)
       assessment = @exam.assessment
       tasks = assessment&.tasks&.order(:position) || []
-      {
-        exam: @exam,
-        active_tab: active_tab,
+      AssessmentDashboardComponent.new(
+        assessable: @exam,
         assessment: assessment,
-        tasks: tasks
-      }
+        lecture: @lecture,
+        active_tab: active_tab,
+        tasks: tasks,
+        task: task
+      )
     end
 end

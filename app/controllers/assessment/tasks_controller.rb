@@ -59,8 +59,8 @@ module Assessment
             redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
           end
           format.turbo_stream do
-            target, options = dashboard_turbo_args(tab: "tasks", task: @task)
-            render turbo_stream: turbo_stream.update(target, **options),
+            target, component = dashboard_turbo_args(tab: "tasks", task: @task)
+            render turbo_stream: turbo_stream.update(target, component),
                    status: :unprocessable_content
           end
         end
@@ -158,31 +158,16 @@ module Assessment
       def dashboard_turbo_args(tab:, task: nil)
         assessable = @assessment.assessable
         tasks = @assessment.tasks.order(:position)
-
-        if assessable.is_a?(Exam)
-          [
-            "exams_container",
-            { partial: "exams/card_body_show",
-              locals: { exam: assessable,
-                        active_tab: tab,
-                        assessment: @assessment,
-                        tasks: tasks,
-                        task: task } }
-          ]
-        else
-          participations_count = @assessment.assessment_participations.count
-          [
-            "assessments_container",
-            { partial: "assessment/assessments/card_body_show",
-              locals: { assessable: assessable,
-                        assessment: @assessment,
-                        lecture: assessable.lecture,
-                        tasks: tasks,
-                        participations_count: participations_count,
-                        tab: tab,
-                        task: task } }
-          ]
-        end
+        container = assessable.is_a?(Exam) ? "exams_container" : "assessments_container"
+        component = AssessmentDashboardComponent.new(
+          assessable: assessable,
+          assessment: @assessment,
+          lecture: assessable.lecture,
+          active_tab: tab,
+          tasks: tasks,
+          task: task
+        )
+        [container, component]
       end
   end
 end

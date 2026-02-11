@@ -13,7 +13,6 @@ class AssessmentListItemComponent < ViewComponent::Base
 
   def show_path
     return "#" unless assessment
-    return "#" if assessable.is_a?(Talk)
 
     assessment_assessment_path(
       assessment.id,
@@ -23,7 +22,7 @@ class AssessmentListItemComponent < ViewComponent::Base
   end
 
   def clickable?
-    !legacy && assessable.is_a?(Assignment) && assessment.present?
+    !legacy && assessment.present?
   end
 
   def medium_title

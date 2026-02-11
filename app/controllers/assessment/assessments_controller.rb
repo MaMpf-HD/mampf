@@ -36,20 +36,13 @@ module Assessment
       authorize! :show, @assessment
 
       @tasks = @assessment.tasks.order(:position)
-      @participations_count = @assessment.assessment_participations.count
 
       respond_to do |format|
         format.html
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
             "assessments_container",
-            partial: "assessment/assessments/card_body_show",
-            locals: { assessable: @assessable,
-                      assessment: @assessment,
-                      lecture: @lecture,
-                      tasks: @tasks,
-                      participations_count: @participations_count,
-                      tab: params[:tab] }
+            build_dashboard_component(active_tab: params[:tab])
           )
         end
       end
@@ -61,7 +54,6 @@ module Assessment
       @assessable = @assessment.assessable
       @lecture = @assessable.lecture
       @tasks = @assessment.tasks.order(:position)
-      @participations_count = @assessment.assessment_participations.count
 
       if @assessment.update(assessment_params)
         respond_to do |format|
@@ -70,13 +62,9 @@ module Assessment
             render turbo_stream: [
               turbo_stream.update(
                 "assessments_container",
-                partial: "assessment/assessments/card_body_show",
-                locals: { assessable: @assessable,
-                          assessment: @assessment,
-                          lecture: @lecture,
-                          tasks: @tasks,
-                          participations_count: @participations_count,
-                          tab: params[:tab] || "settings" }
+                build_dashboard_component(
+                  active_tab: params[:tab] || "settings"
+                )
               ),
               stream_flash
             ]
@@ -87,13 +75,9 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.update(
               "assessments_container",
-              partial: "assessment/assessments/card_body_show",
-              locals: { assessable: @assessable,
-                        assessment: @assessment,
-                        lecture: @lecture,
-                        tasks: @tasks,
-                        participations_count: @participations_count,
-                        tab: params[:tab] || "settings" }
+              build_dashboard_component(
+                active_tab: params[:tab] || "settings"
+              )
             ), status: :unprocessable_content
           end
         end
@@ -137,6 +121,16 @@ module Assessment
         return if @assessment
 
         redirect_to root_path, alert: I18n.t("assessment.errors.no_assessment")
+      end
+
+      def build_dashboard_component(active_tab: nil)
+        AssessmentDashboardComponent.new(
+          assessable: @assessable,
+          assessment: @assessment,
+          lecture: @lecture,
+          active_tab: active_tab,
+          tasks: @tasks
+        )
       end
 
       def assessment_params
