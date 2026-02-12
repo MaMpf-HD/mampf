@@ -28,7 +28,7 @@
             <td>
               <% if exam.capacity %>
                 <%= exam.capacity %>
-                <% if exam.roster_entries_count %>
+                <% if exam.roster_entries_count.positive? %>
                   <span class="text-muted small">
                     (<%= exam.roster_entries_count %> <%= t('roster.registered') %>)
                   </span>
