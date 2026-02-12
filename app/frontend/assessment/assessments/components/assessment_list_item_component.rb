@@ -26,7 +26,7 @@ class AssessmentListItemComponent < ViewComponent::Base
   end
 
   def row_tag_attrs
-    attrs = { id: dom_id(assessable), class: ('table-secondary' if legacy) }
+    attrs = { id: dom_id(assessable), class: ("table-secondary" if legacy) }
     if clickable?
       attrs[:data] = { controller: "row-click",
                        action: "click->row-click#visit" }
