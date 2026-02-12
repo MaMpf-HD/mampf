@@ -6,17 +6,23 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
   before { Flipper.enable(:assessment_grading) }
   after { Flipper.disable(:assessment_grading) }
 
-  shared_examples "always visible tabs" do
-    it "renders the grading tab" do
+  shared_examples "visible tab" do |tab_key|
+    it "renders the #{tab_key} tab" do
       render_inline(component)
-      expect(rendered_content).to include("data-bs-target=\"##{component.dom_prefix}-grading\"")
+      expect(rendered_content).to include(
+        "data-bs-target=\"##{component.dom_prefix}-#{tab_key}\""
+      )
     end
+  end
 
-    it "renders the statistics tab" do
+  shared_examples "hidden tab" do |tab_name|
+    it "does not render the #{tab_name} tab" do
       render_inline(component)
-      expect(rendered_content).to include("data-bs-target=\"##{component.dom_prefix}-statistics\"")
+      expect(rendered_content).not_to include("-#{tab_name}\"")
     end
+  end
 
+  shared_examples "common header" do
     it "renders the assessable title" do
       render_inline(component)
       expect(rendered_content).to include(CGI.escapeHTML(assessable.title))
@@ -26,13 +32,6 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       render_inline(component)
       expect(rendered_content).to include(I18n.t("back"))
       expect(rendered_content).to include(component.back_path)
-    end
-  end
-
-  shared_examples "hidden tab" do |tab_name|
-    it "does not render the #{tab_name} tab" do
-      render_inline(component)
-      expect(rendered_content).not_to include("-#{tab_name}\"")
     end
   end
 
@@ -46,20 +45,25 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: lecture)
     end
 
-    include_examples "always visible tabs"
-
-    it "renders the settings tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-settings\"")
-    end
-
-    it "renders the tasks tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-tasks\"")
-    end
-
+    include_examples "common header"
+    include_examples "visible tab", "settings"
+    include_examples "visible tab", "tasks"
+    include_examples "visible tab", "grading"
+    include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "roster"
+
+    describe "#tabs" do
+      it "returns four TabConfig entries" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(["settings", "tasks", "grading", "statistics"])
+      end
+
+      it "uses GradingOverviewComponent for the grading tab" do
+        grading = component.tabs.find { |t| t.key == "grading" }
+        expect(grading.component).to be_a(GradingOverviewComponent)
+      end
+    end
 
     describe "#default_tab" do
       it 'returns "settings"' do
@@ -117,26 +121,26 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: lecture)
     end
 
-    include_examples "always visible tabs"
+    include_examples "common header"
+    include_examples "visible tab", "overview"
+    include_examples "visible tab", "settings"
+    include_examples "visible tab", "tasks"
+    include_examples "visible tab", "grading"
+    include_examples "visible tab", "roster"
+    include_examples "visible tab", "statistics"
 
-    it "renders the overview tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-overview\"")
-    end
+    describe "#tabs" do
+      it "returns six TabConfig entries" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(
+          ["overview", "settings", "tasks", "grading", "roster", "statistics"]
+        )
+      end
 
-    it "renders the settings tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-settings\"")
-    end
-
-    it "renders the tasks tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-tasks\"")
-    end
-
-    it "renders the roster tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-roster\"")
+      it "uses PlaceholderTabComponent for the grading tab" do
+        grading = component.tabs.find { |t| t.key == "grading" }
+        expect(grading.component).to be_a(PlaceholderTabComponent)
+      end
     end
 
     it "renders all six tabs" do
@@ -186,11 +190,25 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: seminar)
     end
 
-    include_examples "always visible tabs"
+    include_examples "common header"
+    include_examples "visible tab", "grading"
+    include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "settings"
     include_examples "hidden tab", "tasks"
     include_examples "hidden tab", "roster"
+
+    describe "#tabs" do
+      it "returns two TabConfig entries" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(["grading", "statistics"])
+      end
+
+      it "uses PlaceholderTabComponent for the grading tab" do
+        grading = component.tabs.find { |t| t.key == "grading" }
+        expect(grading.component).to be_a(PlaceholderTabComponent)
+      end
+    end
 
     it "renders exactly two tabs" do
       render_inline(component)

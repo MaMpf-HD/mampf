@@ -16,147 +16,26 @@
   </div>
 
   <ul class="nav nav-tabs mb-3" role="tablist">
-    <% if show_overview? %>
+    <% tabs.each do |tab| %>
       <li class="nav-item" role="presentation">
-        <button class="nav-link <%= 'active' if tab_active?('overview') %>"
+        <button class="nav-link <%= 'active' if tab_active?(tab.key) %>"
                 data-bs-toggle="tab"
-                data-bs-target="#<%= dom_prefix %>-overview"
+                data-bs-target="#<%= dom_prefix %>-<%= tab.key %>"
                 type="button"
                 role="tab"
-                aria-selected="<%= tab_active?('overview') %>">
-          <%= t("assessment.overview") %>
+                aria-selected="<%= tab_active?(tab.key) %>">
+          <%= tab.label %>
         </button>
       </li>
     <% end %>
-    <% if show_settings? %>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link <%= 'active' if tab_active?('settings') %>"
-                data-bs-toggle="tab"
-                data-bs-target="#<%= dom_prefix %>-settings"
-                type="button"
-                role="tab"
-                aria-selected="<%= tab_active?('settings') %>">
-          <%= t("basics.settings") %>
-        </button>
-      </li>
-    <% end %>
-    <% if show_tasks? %>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link <%= 'active' if tab_active?('tasks') %>"
-                data-bs-toggle="tab"
-                data-bs-target="#<%= dom_prefix %>-tasks"
-                type="button"
-                role="tab"
-                aria-selected="<%= tab_active?('tasks') %>">
-          <%= t("assessment.tasks") %>
-        </button>
-      </li>
-    <% end %>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if tab_active?('grading') %>"
-              data-bs-toggle="tab"
-              data-bs-target="#<%= dom_prefix %>-grading"
-              type="button"
-              role="tab"
-              aria-selected="<%= tab_active?('grading') %>">
-        <%= t("assessment.grading") %>
-      </button>
-    </li>
-    <% if show_roster? %>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link <%= 'active' if tab_active?('roster') %>"
-                data-bs-toggle="tab"
-                data-bs-target="#<%= dom_prefix %>-roster"
-                type="button"
-                role="tab"
-                aria-selected="<%= tab_active?('roster') %>">
-          <%= t("assessment.roster") %>
-        </button>
-      </li>
-    <% end %>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if tab_active?('statistics') %>"
-              data-bs-toggle="tab"
-              data-bs-target="#<%= dom_prefix %>-statistics"
-              type="button"
-              role="tab"
-              aria-selected="<%= tab_active?('statistics') %>">
-        <%= t("assessment.statistics") %>
-      </button>
-    </li>
   </ul>
 
   <div class="tab-content">
-    <% if show_overview? %>
-      <div class="tab-pane fade <%= 'show active' if tab_active?('overview') %>"
-           id="<%= dom_prefix %>-overview" role="tabpanel">
-        <%= render partial: "exams/overview",
-                   locals: { exam: assessable, lecture: lecture } %>
+    <% tabs.each do |tab| %>
+      <div class="tab-pane fade <%= 'show active' if tab_active?(tab.key) %>"
+           id="<%= dom_prefix %>-<%= tab.key %>" role="tabpanel">
+        <%= render tab.component %>
       </div>
     <% end %>
-
-    <% if show_settings? %>
-      <div class="tab-pane fade <%= 'show active' if tab_active?('settings') %>"
-           id="<%= dom_prefix %>-settings" role="tabpanel">
-        <% if exam? %>
-          <%= render partial: "exams/settings",
-                     locals: { exam: assessable, lecture: lecture } %>
-        <% else %>
-          <%= render "assessment/assessments/settings",
-                     assessment: assessment,
-                     assessable: assessable,
-                     lecture: lecture %>
-        <% end %>
-      </div>
-    <% end %>
-
-    <% if show_tasks? %>
-      <div class="tab-pane fade <%= 'show active' if tab_active?('tasks') %>"
-           id="<%= dom_prefix %>-tasks" role="tabpanel">
-        <% if assessment %>
-          <%= render "assessment/assessments/tasks",
-                     assessment: assessment,
-                     assessable: assessable,
-                     tasks: tasks,
-                     task: task %>
-        <% else %>
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            <%= t("assessment.errors.no_assessment") %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-
-    <div class="tab-pane fade <%= 'show active' if tab_active?('grading') %>"
-         id="<%= dom_prefix %>-grading" role="tabpanel">
-      <% if assignment? %>
-        <%= render GradingOverviewComponent.new(
-              assessment: assessment, lecture: lecture) %>
-      <% else %>
-        <div class="alert alert-info" role="alert">
-          <i class="bi bi-info-circle me-2"></i>
-          <strong><%= t("basics.coming_soon") %>:</strong>
-          <%= t("assessment.grading_placeholder") %>
-        </div>
-      <% end %>
-    </div>
-
-    <% if show_roster? %>
-      <div class="tab-pane fade <%= 'show active' if tab_active?('roster') %>"
-           id="<%= dom_prefix %>-roster" role="tabpanel">
-        <%= render partial: "exams/roster",
-                   locals: { exam: assessable } %>
-      </div>
-    <% end %>
-
-    <div class="tab-pane fade <%= 'show active' if tab_active?('statistics') %>"
-         id="<%= dom_prefix %>-statistics" role="tabpanel">
-      <div class="alert alert-info" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        <strong><%= t("basics.coming_soon") %>:</strong>
-        <%= t("assessment.statistics_placeholder") %>
-      </div>
-    </div>
   </div>
 </div>
