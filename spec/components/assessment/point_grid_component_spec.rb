@@ -17,8 +17,8 @@ RSpec.describe(PointGridComponent, type: :component) do
       expect(rendered_content).to include(I18n.t("assessment.no_tasks_yet"))
     end
 
-    it "reports any_graded? as false" do
-      expect(component.any_graded?).to be(false)
+    it "reports any_participations? as false" do
+      expect(component.any_participations?).to be(false)
     end
   end
 
@@ -31,13 +31,13 @@ RSpec.describe(PointGridComponent, type: :component) do
              assessment: assessment, tutorial: tutorial)
     end
 
-    it "renders the no-points empty state" do
+    it "renders the table with dashes for ungraded participations" do
       render_inline(component)
-      expect(rendered_content).to include(I18n.t("assessment.no_points_yet"))
+      expect(rendered_content).to include("\u2014")
     end
 
-    it "reports any_graded? as false" do
-      expect(component.any_graded?).to be(false)
+    it "reports any_participations? as true" do
+      expect(component.any_participations?).to be(true)
     end
   end
 
@@ -70,8 +70,8 @@ RSpec.describe(PointGridComponent, type: :component) do
              points: 14.5)
     end
 
-    it "reports any_graded? as true" do
-      expect(component.any_graded?).to be(true)
+    it "reports any_participations? as true" do
+      expect(component.any_participations?).to be(true)
     end
 
     it "renders the student name" do
@@ -131,9 +131,10 @@ RSpec.describe(PointGridComponent, type: :component) do
              points: 7)
     end
 
-    it "only shows participations with points_total" do
+    it "shows all participations including ungraded" do
       render_inline(component)
-      expect(component.graded_participations.count).to eq(1)
+      rows = Nokogiri::HTML(rendered_content).css("tbody tr")
+      expect(rows.count).to eq(2)
     end
   end
 

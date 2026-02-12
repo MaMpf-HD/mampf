@@ -1,4 +1,4 @@
-<% if any_reviewed? %>
+<% if any_participations? %>
   <table class="table table-hover">
     <thead>
       <tr>
@@ -12,14 +12,14 @@
       </tr>
     </thead>
     <tbody>
-      <% reviewed_participations.each do |participation| %>
+      <% participations.each do |participation| %>
         <tr>
           <td><%= participation.user.tutorial_name %></td>
           <% if show_tutorial_column? %>
             <td><%= participation.tutorial&.title %></td>
           <% end %>
           <td class="text-center">
-            <%= grade_display(participation) %>
+            <%= grade_display(participation) || "—" %>
           </td>
           <td class="text-muted small"><%= grader_display(participation) %></td>
           <td class="text-muted small"><%= graded_at_display(participation) %></td>

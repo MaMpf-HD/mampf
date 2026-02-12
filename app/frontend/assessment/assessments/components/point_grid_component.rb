@@ -24,12 +24,8 @@ class PointGridComponent < ViewComponent::Base
                         .order(:tutorial_id, "users.name")
   end
 
-  def graded_participations
-    @graded_participations ||= participations.where.not(points_total: nil)
-  end
-
-  def any_graded?
-    graded_participations.any?
+  def any_participations?
+    participations.any?
   end
 
   def task_points_map(participation)

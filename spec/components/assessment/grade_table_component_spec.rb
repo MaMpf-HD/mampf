@@ -19,13 +19,13 @@ RSpec.describe(GradeTableComponent, type: :component) do
                assessment: assessment, tutorial: tutorial)
       end
 
-      it "renders the empty state" do
+      it "renders the table with dashes for ungraded participations" do
         render_inline(component)
-        expect(rendered_content).to include(I18n.t("assessment.no_grades_yet"))
+        expect(rendered_content).to include("\u2014")
       end
 
-      it "reports any_reviewed? as false" do
-        expect(component.any_reviewed?).to be(false)
+      it "reports any_participations? as true" do
+        expect(component.any_participations?).to be(true)
       end
     end
   end
@@ -52,8 +52,8 @@ RSpec.describe(GradeTableComponent, type: :component) do
         expect(rendered_content).to include(reviewed_participation.user.tutorial_name)
       end
 
-      it "reports any_reviewed? as true" do
-        expect(component.any_reviewed?).to be(true)
+      it "reports any_participations? as true" do
+        expect(component.any_participations?).to be(true)
       end
 
       it "returns the grade display" do
@@ -80,9 +80,10 @@ RSpec.describe(GradeTableComponent, type: :component) do
                grade_numeric: 1.7, grade_text: "1.7")
       end
 
-      it "only shows reviewed participations in the table" do
+      it "shows all participations including ungraded" do
         render_inline(component)
-        expect(component.reviewed_participations.count).to eq(1)
+        rows = Nokogiri::HTML(rendered_content).css("tbody tr")
+        expect(rows.count).to eq(2)
       end
     end
   end
