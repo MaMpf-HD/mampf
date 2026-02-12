@@ -261,7 +261,6 @@ namespace :exam do
 
     puts "=" * 60
     puts "✅ Exam setup complete!"
-    puts "Next: run assessment:setup to seed participations + grades."
   end
 
   desc "Reset exam playground (destroy exam + campaign)"

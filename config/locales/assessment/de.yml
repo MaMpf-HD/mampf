@@ -122,6 +122,9 @@ de:
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     statistics_analysis: 'Statistiken & Analyse'
+    no_points_yet: 'Noch keine Punkte eingetragen.'
+    point_grid:
+      total: 'Gesamt'
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
 
