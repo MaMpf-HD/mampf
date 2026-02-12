@@ -15,7 +15,9 @@ export default class extends Controller {
     this.originalLocation = this.locationTarget.value;
     this.originalCapacity = this.capacityTarget.value;
     this.originalDescription = this.descriptionTarget.value;
-    this.originalSkipCampaigns = this.skipCampaignsTarget.checked;
+    this.originalSkipCampaigns = this.hasSkipCampaignsTarget
+      ? this.skipCampaignsTarget.checked
+      : false;
   }
 
   checkForChanges() {
@@ -24,7 +26,8 @@ export default class extends Controller {
     const locationChanged = this.locationTarget.value !== this.originalLocation;
     const capacityChanged = this.capacityTarget.value !== this.originalCapacity;
     const descriptionChanged = this.descriptionTarget.value !== this.originalDescription;
-    const skipCampaignsChanged = this.skipCampaignsTarget.checked !== this.originalSkipCampaigns;
+    const skipCampaignsChanged = this.hasSkipCampaignsTarget
+      && this.skipCampaignsTarget.checked !== this.originalSkipCampaigns;
 
     if (titleChanged || dateChanged || locationChanged || capacityChanged
       || descriptionChanged || skipCampaignsChanged) {
@@ -53,7 +56,9 @@ export default class extends Controller {
     this.locationTarget.value = this.originalLocation;
     this.capacityTarget.value = this.originalCapacity;
     this.descriptionTarget.value = this.originalDescription;
-    this.skipCampaignsTarget.checked = this.originalSkipCampaigns;
+    if (this.hasSkipCampaignsTarget) {
+      this.skipCampaignsTarget.checked = this.originalSkipCampaigns;
+    }
     this.hideSubmitElements();
   }
 
