@@ -11,14 +11,15 @@ class ExamsController < ApplicationController
 
   def index
     authorize! :index, Exam.new(lecture: @lecture)
-    @exams = @lecture.exams.order(date: :desc)
     set_exam_locale
+    @exams = @lecture.exams.order(date: :asc)
 
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
                                                  partial: "exams/list",
-                                                 locals: { lecture: @lecture })
+                                                 locals: { lecture: @lecture,
+                                                           exams: @exams })
       end
     end
   end
@@ -81,7 +82,8 @@ class ExamsController < ApplicationController
           streams = [
             turbo_stream.update("exams_container",
                                 partial: "exams/list",
-                                locals: { lecture: @lecture }),
+                                locals: { lecture: @lecture,
+                                          exams: @lecture.exams.order(date: :asc) }),
             stream_flash
           ]
           if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
@@ -122,7 +124,8 @@ class ExamsController < ApplicationController
             streams = [
               turbo_stream.update("exams_container",
                                   partial: "exams/list",
-                                  locals: { lecture: @lecture }),
+                                  locals: { lecture: @lecture,
+                                            exams: @lecture.exams.order(date: :asc) }),
               stream_flash
             ]
             if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
@@ -161,7 +164,10 @@ class ExamsController < ApplicationController
         format.turbo_stream do
           flash[:success] = t("assessment.exam_destroyed")
           render turbo_stream: [
-            turbo_stream.remove("exam-row-#{@exam.id}"),
+            turbo_stream.update("exams_container",
+                                partial: "exams/list",
+                                locals: { lecture: @lecture,
+                                          exams: @lecture.exams.order(date: :asc) }),
             stream_flash
           ]
         end

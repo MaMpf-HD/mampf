@@ -332,9 +332,9 @@ RSpec.describe("Exams", type: :request) do
           expect(response.media_type).to eq(Mime[:turbo_stream])
         end
 
-        it "removes the exam from the list" do
+        it "renders the updated exams list" do
           delete exam_path(exam), as: :turbo_stream
-          expect(response.body).to include("remove")
+          expect(response.body).to include("exams_container")
         end
       end
     end

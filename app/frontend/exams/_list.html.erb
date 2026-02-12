@@ -13,7 +13,9 @@
     </div>
   </div>
 
-  <% if lecture.exams.empty? %>
+  <% exams ||= lecture.exams.order(date: :asc) %>
+
+  <% if exams.empty? %>
     <div class="text-center text-muted py-4">
       <%= t('assessment.no_exams_yet') %>
     </div>
@@ -30,7 +32,7 @@
         </tr>
       </thead>
       <tbody>
-        <% lecture.exams.order(date: :asc).each do |exam| %>
+        <% exams.each do |exam| %>
           <tr id="exam-row-<%= exam.id %>"
               data-controller="row-click"
               data-action="click->row-click#visit"
