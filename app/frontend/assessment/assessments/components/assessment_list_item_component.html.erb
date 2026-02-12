@@ -1,6 +1,5 @@
 <% if assessable.is_a?(Talk) %>
-  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
-      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if clickable? %>>
+  <%= tag.tr(**row_tag_attrs) do %>
     <td>
       <% if legacy %>
         <span class="text-muted"><%= title %></span>
@@ -13,10 +12,9 @@
     </td>
     <td><%= speaker_names %></td>
     <td><%= talk_date %></td>
-  </tr>
+  <% end %>
 <% else %>
-  <tr id="<%= dom_id(assessable) %>" class="<%= 'table-secondary' if legacy %>"
-      <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if clickable? %>>
+  <%= tag.tr(**row_tag_attrs) do %>
     <td>
       <% if legacy %>
         <span class="text-muted"><%= title %></span>
@@ -72,5 +70,5 @@
         <% end %>
       </td>
     <% end %>
-  </tr>
+  <% end %>
 <% end %>
