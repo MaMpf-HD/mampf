@@ -164,7 +164,10 @@ class ExamsController < ApplicationController
         format.turbo_stream do
           flash[:success] = t("assessment.exam_destroyed")
           render turbo_stream: [
-            turbo_stream.remove("exam-row-#{@exam.id}"),
+            turbo_stream.update("exams_container",
+                                partial: "exams/list",
+                                locals: { lecture: @lecture,
+                                          exams: @lecture.exams.order(date: :asc) }),
             stream_flash
           ]
         end
