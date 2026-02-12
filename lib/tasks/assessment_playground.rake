@@ -448,7 +448,9 @@ namespace :assessment do
                .where(assessment_participation_id: reviewed.select(:id))
     if existing.any?
       existing.delete_all
+      # rubocop:disable Rails/SkipsModelValidations
       reviewed.update_all(points_total: nil)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     reviewed.find_each do |participation|
@@ -473,7 +475,7 @@ namespace :assessment do
   def clean_invalid_grades!
     non_gradable_ids = Assessment::Assessment
                        .includes(:assessable)
-                       .select { |a| !a.assessable.is_a?(Assessment::Gradable) }
+                       .reject { |a| a.assessable.is_a?(Assessment::Gradable) }
                        .map(&:id)
     return if non_gradable_ids.empty?
 
@@ -482,7 +484,9 @@ namespace :assessment do
             .where.not(grade_numeric: nil)
     return if dirty.empty?
 
+    # rubocop:disable Rails/SkipsModelValidations
     dirty.update_all(grade_numeric: nil, grade_text: nil)
+    # rubocop:enable Rails/SkipsModelValidations
     puts "⚠ Cleaned #{dirty.count} invalid grade_numeric values " \
          "on non-gradable assessments"
   end
