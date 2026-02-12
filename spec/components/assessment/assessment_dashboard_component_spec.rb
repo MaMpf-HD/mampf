@@ -6,7 +6,23 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
   before { Flipper.enable(:assessment_grading) }
   after { Flipper.disable(:assessment_grading) }
 
-  shared_examples "always visible tabs" do
+  shared_examples "visible tab" do |tab_key|
+    it "renders the #{tab_key} tab" do
+      render_inline(component)
+      expect(rendered_content).to include(
+        "data-bs-target=\"##{component.dom_prefix}-#{tab_key}\""
+      )
+    end
+  end
+
+  shared_examples "hidden tab" do |tab_name|
+    it "does not render the #{tab_name} tab" do
+      render_inline(component)
+      expect(rendered_content).not_to include("-#{tab_name}\"")
+    end
+  end
+
+  shared_examples "common header" do
     it "renders the assessable title" do
       render_inline(component)
       expect(rendered_content).to include(CGI.escapeHTML(assessable.title))
@@ -16,15 +32,6 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       render_inline(component)
       expect(rendered_content).to include(I18n.t("back"))
       expect(rendered_content).to include(component.back_path)
-    end
-  end
-
-  shared_examples "hidden tab" do |tab_name|
-    it "does not render the #{tab_name} tab" do
-      render_inline(component)
-      expect(rendered_content).not_to include(
-        "#{component.dom_prefix}-#{tab_name}\""
-      )
     end
   end
 
@@ -38,66 +45,63 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: lecture)
     end
 
-    include_examples "always visible tabs"
-
-    it "renders the settings tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-settings\"")
-    end
-
-    it "renders the tasks tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-tasks\"")
-    end
-
-    it "renders the points tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-points\"")
-    end
-
-    it "renders the statistics tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-statistics\"")
-    end
-
+    include_examples "common header"
+    include_examples "visible tab", "settings"
+    include_examples "visible tab", "tasks"
+    include_examples "visible tab", "submissions"
+    include_examples "visible tab", "points"
+    include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "roster"
     include_examples "hidden tab", "grades"
 
-    describe "#show_submissions?" do
-      it "returns true when requires_submission is true" do
-        assessment.update!(requires_submission: true)
-        expect(component.show_submissions?).to be(true)
-      end
-
-      it "returns false when requires_submission is false" do
-        assessment.update!(requires_submission: false)
-        expect(component.show_submissions?).to be(false)
-      end
-    end
-
-    context "when requires_submission is true" do
-      before { assessment.update!(requires_submission: true) }
-
-      it "renders the submissions tab" do
-        render_inline(component)
-        expect(rendered_content).to include("-submissions\"")
-      end
-
-      it "renders GradingOverviewComponent in the submissions pane" do
-        render_inline(component)
-        expect(rendered_content).to include("grading_overview_component")
-      end
-    end
-
-    context "when requires_submission is false" do
-      before { assessment.update!(requires_submission: false) }
-
-      it "does not render the submissions tab" do
-        render_inline(component)
-        expect(rendered_content).not_to include(
-          "#{component.dom_prefix}-submissions\""
+    describe "#tabs" do
+      it "returns the correct tab keys" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(
+          %w[settings tasks submissions points statistics]
         )
+      end
+    end
+
+    describe "submissions tab (conditional)" do
+      it "is included when requires_submission is true" do
+        assessment.update!(requires_submission: true)
+        keys = described_class.new(
+          assessable: assignment, assessment: assessment, lecture: lecture
+        ).tabs.map(&:key)
+        expect(keys).to include("submissions")
+      end
+
+      it "is excluded when requires_submission is false" do
+        assessment.update!(requires_submission: false)
+        keys = component.tabs.map(&:key)
+        expect(keys).not_to include("submissions")
+      end
+
+      context "when requires_submission is true" do
+        before { assessment.update!(requires_submission: true) }
+
+        it "renders the submissions tab" do
+          render_inline(component)
+          expect(rendered_content).to include("-submissions\"")
+        end
+
+        it "renders GradingOverviewComponent in the submissions pane" do
+          render_inline(component)
+          expect(rendered_content).to include("grading_overview_component")
+        end
+      end
+
+      context "when requires_submission is false" do
+        before { assessment.update!(requires_submission: false) }
+
+        it "does not render the submissions tab" do
+          render_inline(component)
+          expect(rendered_content).not_to include(
+            "#{component.dom_prefix}-submissions\""
+          )
+        end
       end
     end
 
@@ -152,41 +156,22 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: lecture)
     end
 
-    include_examples "always visible tabs"
+    include_examples "common header"
+    include_examples "visible tab", "overview"
+    include_examples "visible tab", "settings"
+    include_examples "visible tab", "tasks"
+    include_examples "visible tab", "points"
+    include_examples "visible tab", "grades"
+    include_examples "visible tab", "roster"
+    include_examples "visible tab", "statistics"
 
-    it "renders the overview tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-overview\"")
-    end
-
-    it "renders the settings tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-settings\"")
-    end
-
-    it "renders the tasks tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-tasks\"")
-    end
-
-    it "renders the points tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-points\"")
-    end
-
-    it "renders the grades tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-grades\"")
-    end
-
-    it "renders the roster tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-roster\"")
-    end
-
-    it "renders the statistics tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-statistics\"")
+    describe "#tabs" do
+      it "returns the correct tab keys" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(
+          %w[overview settings tasks points grades roster statistics]
+        )
+      end
     end
 
     it "renders GradeTableComponent in the grades pane" do
@@ -236,7 +221,8 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
                           lecture: seminar)
     end
 
-    include_examples "always visible tabs"
+    include_examples "common header"
+    include_examples "visible tab", "grades"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "settings"
     include_examples "hidden tab", "tasks"
@@ -245,9 +231,11 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "hidden tab", "points"
     include_examples "hidden tab", "statistics"
 
-    it "renders the grades tab" do
-      render_inline(component)
-      expect(rendered_content).to include("-grades\"")
+    describe "#tabs" do
+      it "returns the correct tab keys" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(%w[grades])
+      end
     end
 
     it "renders exactly one tab" do
