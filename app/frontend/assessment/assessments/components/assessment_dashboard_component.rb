@@ -1,6 +1,6 @@
+# Renders the dashboard for an assessment, which includes multiple tabs for
+# different aspects of the assessment management.
 class AssessmentDashboardComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
-
   TabConfig = Data.define(:key, :label, :component)
 
   # rubocop: disable Metrics/ParameterLists
