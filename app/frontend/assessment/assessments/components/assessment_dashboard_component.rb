@@ -57,124 +57,124 @@ class AssessmentDashboardComponent < ViewComponent::Base
 
   private
 
-  def exam?
-    assessable.is_a?(Exam)
-  end
-
-  def assignment?
-    assessable.is_a?(Assignment)
-  end
-
-  def pointable?
-    assessable.is_a?(Assessment::Pointable)
-  end
-
-  def gradable?
-    assessable.is_a?(Assessment::Gradable)
-  end
-
-  def build_tabs
-    [].tap do |t|
-      t << overview_tab if exam?
-      t << settings_tab if exam? || assignment?
-      t << tasks_tab if pointable?
-      t << submissions_tab if pointable? && assessment&.requires_submission
-      t << points_tab if pointable?
-      t << grades_tab if gradable?
-      t << roster_tab if exam?
-      t << statistics_tab unless assessable.is_a?(Talk)
+    def exam?
+      assessable.is_a?(Exam)
     end
-  end
 
-  def overview_tab
-    TabConfig.new(
-      "overview",
-      I18n.t("assessment.overview"),
-      PartialTabComponent.new(
-        partial: "exams/overview",
-        locals: { exam: assessable, lecture: lecture }
-      )
-    )
-  end
+    def assignment?
+      assessable.is_a?(Assignment)
+    end
 
-  def settings_tab
-    TabConfig.new(
-      "settings",
-      I18n.t("basics.settings"),
-      settings_component
-    )
-  end
+    def pointable?
+      assessable.is_a?(Assessment::Pointable)
+    end
 
-  def settings_component
-    if exam?
-      PartialTabComponent.new(
-        partial: "exams/settings",
-        locals: { exam: assessable, lecture: lecture }
-      )
-    else
-      PartialTabComponent.new(
-        partial: "assessment/assessments/settings",
-        locals: { assessment: assessment, assessable: assessable,
-                  lecture: lecture }
+    def gradable?
+      assessable.is_a?(Assessment::Gradable)
+    end
+
+    def build_tabs
+      [].tap do |t|
+        t << overview_tab if exam?
+        t << settings_tab if exam? || assignment?
+        t << tasks_tab if pointable?
+        t << submissions_tab if pointable? && assessment&.requires_submission
+        t << points_tab if pointable?
+        t << grades_tab if gradable?
+        t << roster_tab if exam?
+        t << statistics_tab unless assessable.is_a?(Talk)
+      end
+    end
+
+    def overview_tab
+      TabConfig.new(
+        "overview",
+        I18n.t("assessment.overview"),
+        PartialTabComponent.new(
+          partial: "exams/overview",
+          locals: { exam: assessable, lecture: lecture }
+        )
       )
     end
-  end
 
-  def tasks_tab
-    TabConfig.new(
-      "tasks",
-      I18n.t("assessment.tasks"),
-      TasksTabComponent.new(
-        assessment: assessment, assessable: assessable,
-        tasks: tasks, task: task
+    def settings_tab
+      TabConfig.new(
+        "settings",
+        I18n.t("basics.settings"),
+        settings_component
       )
-    )
-  end
+    end
 
-  def submissions_tab
-    TabConfig.new(
-      "submissions",
-      I18n.t("assessment.submissions"),
-      GradingOverviewComponent.new(assessment: assessment, lecture: lecture)
-    )
-  end
+    def settings_component
+      if exam?
+        PartialTabComponent.new(
+          partial: "exams/settings",
+          locals: { exam: assessable, lecture: lecture }
+        )
+      else
+        PartialTabComponent.new(
+          partial: "assessment/assessments/settings",
+          locals: { assessment: assessment, assessable: assessable,
+                    lecture: lecture }
+        )
+      end
+    end
 
-  def points_tab
-    TabConfig.new(
-      "points",
-      I18n.t("assessment.points"),
-      PlaceholderTabComponent.new(
-        message: I18n.t("assessment.points_grid_placeholder")
+    def tasks_tab
+      TabConfig.new(
+        "tasks",
+        I18n.t("assessment.tasks"),
+        TasksTabComponent.new(
+          assessment: assessment, assessable: assessable,
+          tasks: tasks, task: task
+        )
       )
-    )
-  end
+    end
 
-  def grades_tab
-    TabConfig.new(
-      "grades",
-      I18n.t("assessment.grades"),
-      GradeTableComponent.new(assessment: assessment)
-    )
-  end
-
-  def roster_tab
-    TabConfig.new(
-      "roster",
-      I18n.t("assessment.roster"),
-      PartialTabComponent.new(
-        partial: "exams/roster",
-        locals: { exam: assessable }
+    def submissions_tab
+      TabConfig.new(
+        "submissions",
+        I18n.t("assessment.submissions"),
+        GradingOverviewComponent.new(assessment: assessment, lecture: lecture)
       )
-    )
-  end
+    end
 
-  def statistics_tab
-    TabConfig.new(
-      "statistics",
-      I18n.t("assessment.statistics"),
-      PlaceholderTabComponent.new(
-        message: I18n.t("assessment.statistics_placeholder")
+    def points_tab
+      TabConfig.new(
+        "points",
+        I18n.t("assessment.points"),
+        PlaceholderTabComponent.new(
+          message: I18n.t("assessment.points_grid_placeholder")
+        )
       )
-    )
-  end
+    end
+
+    def grades_tab
+      TabConfig.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradeTableComponent.new(assessment: assessment)
+      )
+    end
+
+    def roster_tab
+      TabConfig.new(
+        "roster",
+        I18n.t("assessment.roster"),
+        PartialTabComponent.new(
+          partial: "exams/roster",
+          locals: { exam: assessable }
+        )
+      )
+    end
+
+    def statistics_tab
+      TabConfig.new(
+        "statistics",
+        I18n.t("assessment.statistics"),
+        PlaceholderTabComponent.new(
+          message: I18n.t("assessment.statistics_placeholder")
+        )
+      )
+    end
 end

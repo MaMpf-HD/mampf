@@ -59,7 +59,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          %w[settings tasks submissions points statistics]
+          ["settings", "tasks", "submissions", "points", "statistics"]
         )
       end
     end
@@ -169,7 +169,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          %w[overview settings tasks points grades roster statistics]
+          ["overview", "settings", "tasks", "points", "grades", "roster", "statistics"]
         )
       end
     end
@@ -234,7 +234,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     describe "#tabs" do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
-        expect(keys).to eq(%w[grades])
+        expect(keys).to eq(["grades"])
       end
     end
 
