@@ -179,7 +179,7 @@ class Assignment < ApplicationRecord
       return false unless assessment&.assessment_participations
 
       assessment.assessment_participations.any? do |p|
-        p.graded? || p.exempt? || p.task_points.any? || p.points_total.present?
+        p.reviewed? || p.exempt? || p.task_points.any? || p.points_total.present?
       end
     end
 
