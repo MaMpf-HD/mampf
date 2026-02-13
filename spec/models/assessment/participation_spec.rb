@@ -73,7 +73,7 @@ RSpec.describe(Assessment::Participation, type: :model) do
 
   describe "enums" do
     it "supports all status values" do
-      statuses = ["pending", "reviewed", "exempt"]
+      statuses = ["pending", "reviewed", "absent", "exempt"]
       statuses.each do |status|
         participation = FactoryBot.build(:assessment_participation, status: status)
         expect(participation.status).to eq(status)

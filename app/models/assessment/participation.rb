@@ -14,7 +14,8 @@ module Assessment
     enum :status, {
       pending: 0,
       reviewed: 1,
-      exempt: 2
+      absent: 2,
+      exempt: 3
     }
 
     validates :user_id, uniqueness: { scope: :assessment_id }

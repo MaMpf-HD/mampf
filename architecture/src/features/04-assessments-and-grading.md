@@ -614,8 +614,8 @@ module Assessment
   enum status: {
     pending: 0,
     reviewed: 1,
-    exempt: 2,
-    absent: 3
+    absent: 2,
+    exempt: 3
   }
 
   validates :user_id, uniqueness: { scope: :assessment_id }
@@ -2011,6 +2011,6 @@ end
 
 **Migration rationale:**
 - `note`: Nullable free-text column for teacher/tutor annotations on any participation status (exempt reasons, absent context, grading remarks). Internal only — not exposed to students.
-- No new `absent` migration needed: the `absent: 3` enum value is added in the model code; the existing integer `status` column already supports it.
+- No new `absent` migration needed: the `absent: 2` enum value is added in the model code (PR-6.1); the existing integer `status` column already supports it.
 
 
