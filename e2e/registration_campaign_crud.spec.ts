@@ -46,15 +46,9 @@ test.describe("Registration Campaigns CRUD", () => {
     await expect(lectureEditPage.campaignsTab).toBeVisible();
     await lectureEditPage.campaignsTab.click();
 
-    await expect(page.getByText("Old Description")).toBeVisible();
     await page.getByText("Old Description").click();
-
-    await expect(page.getByRole("tab", { name: "Settings" })).toBeVisible();
     await page.getByRole("tab", { name: "Settings" }).click();
-
-    await expect(page.getByLabel("Description")).toBeVisible();
     await page.getByLabel("Description").fill("Updated Description");
-    await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
     await page.getByRole("button", { name: "Save" }).click();
 
     await expect(page.getByRole("heading", { name: "Updated Description" })).toBeVisible();
