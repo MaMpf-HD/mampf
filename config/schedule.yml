@@ -37,3 +37,5 @@ roster_superset_checker:
 campaign_status_worker:
   cron: "*/1 * * * *"
   class: "CampaignStatusWorker"
+  queue: critical
+  description: "Auto-closes campaigns based on their scheduled dates"

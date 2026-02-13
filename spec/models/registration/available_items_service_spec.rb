@@ -87,6 +87,29 @@ RSpec.describe(Registration::AvailableItemsService) do
       end
     end
 
+    context "when items are used in another campaign of the same lecture" do
+      let(:lecture) { create(:lecture, sort: "lecture") }
+      let(:other_campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:service) { described_class.new(campaign) }
+      let!(:tutorial_in_other) { create(:tutorial, lecture: lecture) }
+      let!(:tutorial_free) { create(:tutorial, lecture: lecture) }
+
+      before do
+        create(:registration_item,
+               registration_campaign: other_campaign,
+               registerable: tutorial_in_other)
+      end
+
+      it "excludes items from other campaigns of the same lecture" do
+        expect(service.items[:tutorials]).not_to include(tutorial_in_other)
+      end
+
+      it "still includes unused items" do
+        expect(service.items[:tutorials]).to include(tutorial_free)
+      end
+    end
+
     context "when campaigns can mix item types" do
       let(:lecture) { create(:lecture, sort: "lecture") }
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
