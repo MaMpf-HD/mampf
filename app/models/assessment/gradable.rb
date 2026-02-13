@@ -32,7 +32,7 @@ module Assessment
         **grade_attrs,
         grader_id: grader&.id,
         graded_at: Time.current,
-        status: :graded
+        status: :reviewed
       )
     end
   end
