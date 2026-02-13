@@ -47,7 +47,7 @@ class GradingOverviewComponent < ViewComponent::Base
   end
 
   def submitted_count
-    @submitted_count ||= participations.where(status: [:pending, :reviewed]).count
+    @submitted_count ||= participations.submitted.count
   end
 
   def missing_count
@@ -100,16 +100,17 @@ class GradingOverviewComponent < ViewComponent::Base
       stats = []
 
       membership_counts = roster_memberships.group(:tutorial_id).count
-      participation_data = participations
-                           .where.not(tutorial_id: nil)
-                           .group(:tutorial_id, :status)
-                           .count
+      submission_counts = participations
+                          .where.not(tutorial_id: nil)
+                          .where.not(submitted_at: nil)
+                          .group(:tutorial_id)
+                          .count
 
       lecture.tutorials.includes(:tutors).order(:title).each do |tutorial|
         total = membership_counts[tutorial.id] || 0
         next if total.zero?
 
-        submitted = count_statuses(participation_data, tutorial.id, [:pending, :reviewed])
+        submitted = submission_counts[tutorial.id] || 0
 
         stats << TutorialStat.new(
           tutorial: tutorial,
@@ -119,11 +120,5 @@ class GradingOverviewComponent < ViewComponent::Base
       end
 
       stats
-    end
-
-    def count_statuses(grouped_data, tutorial_id, statuses)
-      statuses.sum do |status|
-        grouped_data[[tutorial_id, status.to_s]] || 0
-      end
     end
 end
