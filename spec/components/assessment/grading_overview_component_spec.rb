@@ -85,9 +85,9 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   end
 
   describe "#submitted_count" do
-    it "counts participations with submitted or reviewed status" do
+    it "counts participations with pending or reviewed status" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
       create(:assessment_participation, assessment: assessment,
                                         user: user2, tutorial: tutorial1, status: :reviewed)
 
@@ -109,7 +109,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   describe "#missing_count" do
     it "returns difference between expected roster count and submitted" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
 
       expect(component.missing_count).to eq(2)
     end
@@ -131,18 +131,18 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
 
     it "calculates percentage correctly" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
 
       expect(component.progress_percentage).to eq(33)
     end
 
     it "returns 100 when all submitted" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
       create(:assessment_participation, assessment: assessment,
                                         user: user2, tutorial: tutorial1, status: :reviewed)
       create(:assessment_participation, assessment: assessment,
-                                        user: user3, tutorial: tutorial2, status: :submitted)
+                                        user: user3, tutorial: tutorial2, status: :pending)
 
       expect(component.progress_percentage).to eq(100)
     end
@@ -166,7 +166,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
 
     it "counts submissions per tutorial" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
 
       stats = component.tutorial_stats
       stat1 = stats.find { |s| s.name == "Tutorial A" }
@@ -256,17 +256,17 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   describe "#progress_bar_color" do
     it "returns :success when 100% progress" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :submitted)
+                                        user: user2, tutorial: tutorial1, status: :pending)
       create(:assessment_participation, assessment: assessment,
-                                        user: user3, tutorial: tutorial2, status: :submitted)
+                                        user: user3, tutorial: tutorial2, status: :pending)
       expect(component.progress_bar_color).to eq(:success)
     end
 
     it "returns :info when less than 100% progress" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1, status: :pending)
       expect(component.progress_bar_color).to eq(:info)
     end
   end
