@@ -57,43 +57,11 @@ module Registration
         return
       end
 
-      if params[:cascade] == "true"
-        destroy_cascading
-      else
-        destroy_item_only
-      end
+      @item.destroy
+      respond_with_success(t("registration.item.destroyed"))
     end
 
     private
-
-      def destroy_item_only
-        @item.destroy
-        respond_with_success(t("registration.item.destroyed"))
-      end
-
-      def destroy_cascading
-        registerable = @item.registerable
-        authorize! :destroy, registerable
-
-        if perform_cascading_destroy(registerable)
-          message = t("registration.item.registerable_destroyed",
-                      type: t("registration.item.types.#{registerable.class.name.underscore}"))
-          respond_with_success(message)
-        else
-          respond_with_error(registerable.errors.full_messages.to_sentence)
-        end
-      end
-
-      def perform_cascading_destroy(registerable)
-        success = false
-        ActiveRecord::Base.transaction do
-          @item.destroy
-          raise(ActiveRecord::Rollback) unless registerable.destroy
-
-          success = true
-        end
-        success
-      end
 
       def create_existing_item
         @item = @campaign.registration_items.build(item_params)

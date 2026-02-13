@@ -147,8 +147,6 @@ This layered approach (detail view + aggregate view) is common in well-designed 
 The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
 ```
 
----
-
 ## Assessment::Assessment (ActiveRecord Model)
 **_The Gradebook Container_**
 
@@ -186,7 +184,7 @@ The `requires_submission` field controls whether students must upload files:
 - **Exams:** Always `false`. Exams are graded in person or from scanned papers.
 - **Talks:** Always `false`. Presentations are graded live.
 
-When `requires_submission: false`, the participation workflow skips the `submitted` status, and the Grading Tab shows only grading progress (not submission progress).
+When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
 ```
 
 ### Behavior Highlights
@@ -261,11 +259,9 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 ### Usage Scenarios
 
-- **For a homework assignment (digital) (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
 
-- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
-
-- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. The participation workflow skips the `submitted` status entirely.
+- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. No file uploads occur and `submitted_at` remains `nil` for all participations.
 
 - **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
 
@@ -296,7 +292,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_numeric`  | DB column (Decimal 2,1) | German grade (1.0-5.0) - for exam grades                    |
 | `grade_text`     | DB column (String) | Text-based grade ("pass", "fail", "exempt") - for achievements |
-| `status`         | DB column (Enum) | Workflow state: `submitted`, `graded`, `exempt` (see Status Workflow below) |
+| `status`         | DB column (Enum) | Grading workflow state: `pending`, `reviewed`, `exempt`, `absent` (see Status Workflow below) |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
@@ -314,12 +310,13 @@ Two separate grade fields support different assessment types:
 - Analyzable: Can compute averages, distributions (`participations.average(:grade_numeric)`)
 - Display: Format as "1.3" (strip trailing zeros for integer grades: "4.0" → "4")
 
-**`grade_text` (String):** For pass/fail achievements and non-numeric assessments
+**`grade_text` (String):** For pass/fail achievements, ECTS grades, and non-numeric assessments
 - Canonical values: "pass", "fail", "exempt" (lowercase, English)
+- ECTS grades: "A", "B", "C", "D", "E", "F" (for relative grading)
 - I18n display: Translate on render (`t("assessment.grades.#{grade_text}")` → "Bestanden")
 - Flexible: Can store counts ("5"), percentages ("85"), or boolean results
 
-**Usage rule:** Exactly one of `grade_numeric` or `grade_text` should be present, never both.
+**Usage rule:** At least one of `grade_numeric` or `grade_text` should be present. Both can coexist (e.g., German absolute grade 1.7 + ECTS relative grade "B").
 ```
 
 ```admonish info collapsible=true title="Tutorial Context Details"
@@ -335,35 +332,194 @@ The `tutorial_id` field captures which tutorial the student was in **at the time
 
 - Enforces uniqueness per (assessment, user) via database constraint
 - Maintains `points_total` as the sum of all associated `TaskPoint` records
-- Preserves submission history via `submitted_at` even after status transitions to `:graded`
+- Preserves submission history via `submitted_at` even after status transitions to `:reviewed`
+- Separates concerns: `status` tracks grading workflow position; `submitted_at` tracks student submission (orthogonal axes)
 - Can carry both granular points (via tasks) and a final grade (for exams)
 - Supports simple workflow states without intermediate "in progress" tracking
 - Provides locking mechanism to prevent post-publication tampering
 
 ### Status Workflow
 
-Participation records are created lazily when a student submits work, a tutor enters a grade, or a teacher marks an exemption. The absence of a participation record means the student has not interacted with the assessment.
-
-**Digital submissions (`requires_submission: true`):**
-```
-[no record] → submitted → graded
-                  ↓
-               exempt
-```
-
-**Paper/in-person (`requires_submission: false`):**
-```
-[no record] → graded
-      ↓
-   exempt
-```
+The `status` enum tracks a participation's position in the **grading workflow**. It does *not* track whether the student submitted work — that is captured orthogonally by `submitted_at`.
 
 | Status | Meaning | Trigger |
 |--------|---------|--------|
-| *(no record)* | No action taken | Student has not interacted with assessment |
-| `submitted` | Student uploaded file | File upload (only applicable when `requires_submission: true`) |
-| `graded` | All grading complete | Tutor marks grading done (all task points entered) |
+| *(no record)* | No participation exists | Student has not interacted with assessment |
+| `pending` | In grading pipeline, awaiting review | Roster seed (exams/talks), submission upload (assignments), deadline backfill job |
+| `reviewed` | All grading complete | Tutor/teacher marks grading done (all task points entered) |
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
+| `absent` | Did not attend (in-person) | Teacher marks student as no-show (explicit action) |
+
+```admonish tip "Submission is orthogonal to status"
+`submitted_at` records whether and when the student delivered work. It is independent of `status`:
+- `pending` + `submitted_at` present → student submitted, not yet graded
+- `pending` + `submitted_at` nil → roster-seeded or backfilled, no submission
+- `reviewed` + `submitted_at` present → graded, had submitted work
+- `reviewed` + `submitted_at` nil → graded without file submission (paper, exam)
+
+This separation keeps the enum clean and future-proof (e.g. digital exam submissions would set `submitted_at` without needing a new status value).
+```
+
+```admonish warning "Where absent applies"
+The `absent` status is an **attendance** concept. It only applies to assessments with a specific time and place where students are expected to show up physically:
+- **Exams:** Student was on the roster but did not attend on exam day.
+- **Talks:** Speaker was assigned a presentation slot but did not show up.
+
+For **assignments**, `absent` does not apply. Non-submission is captured differently (see lifecycle diagrams below).
+```
+
+### Participation Lifecycle per Assessable Type
+
+The participation lifecycle differs significantly by assessable type. These diagrams document the full flow for implementers of PR-8.5 (participation creation), PR-8.6/8.7 (interactive grading), and beyond.
+
+#### Exam Participation Lifecycle
+
+Exam participations are **pre-seeded** from the exam roster after the registration campaign is finalized. All students start with a participation record before the exam takes place.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "Roster seeded" as seeded
+    state "pending<br/>(default, points nil)" as pending
+    state "reviewed<br/>(points + grade set)" as reviewed
+    state "absent<br/>(did not attend)" as absent
+    state "exempt<br/>(excused)" as exempt
+
+    [*] --> seeded : Campaign finalized,<br/>roster materialized
+    seeded --> pending : Participation created<br/>(bulk seed)
+    pending --> reviewed : Teacher enters points/grade
+    pending --> absent : Teacher marks no-show<br/>(bulk action)
+    pending --> exempt : Teacher marks excused<br/>(medical cert etc.)
+    absent --> exempt : Late excuse arrives
+
+    note right of pending
+        All students start here.
+        points_total = nil,
+        grade = nil
+    end note
+
+    note right of absent
+        Points remain nil.
+        Excluded from grade scheme stats.
+    end note
+```
+
+**Key points for implementers:**
+- All exam participations exist *before* grading begins (via `seed_participations_from!`)
+- After the exam, teacher first marks no-shows (bulk "Mark as absent"), then grades the rest
+- `absent` → `exempt` is the only allowed status "upgrade" (late excuse)
+- Grade scheme `Applier` must filter out `absent` and `exempt` when computing distribution stats
+
+#### Assignment Participation Lifecycle (Digital Submission)
+
+Assignment participations are **lazy** — created on first interaction (submission or grading). After the deadline, a backfill job seeds remaining roster students.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "No record" as none
+    state "pending<br/>(submitted_at set)" as pending_sub
+    state "pending<br/>(backfilled, no file)" as pending_bf
+    state "reviewed<br/>(points entered)" as reviewed
+    state "exempt<br/>(excused)" as exempt
+
+    [*] --> none : Assignment created
+    none --> pending_sub : Student uploads file<br/>(submitted_at set)
+    none --> exempt : Tutor marks excused
+    pending_sub --> reviewed : Tutor enters points
+    none --> pending_bf : Deadline backfill job<br/>(submitted_at = nil)
+    pending_bf --> reviewed : Tutor enters points<br/>(e.g. paper handed in)
+    pending_bf --> exempt : Tutor marks excused
+
+    note right of none
+        No participation record.
+        Student hasn't interacted.
+    end note
+
+    note right of pending_bf
+        Same status as submitters
+        but submitted_at is nil →
+        distinguishes from actual
+        submitters.
+    end note
+```
+
+**Key points for implementers:**
+- `absent` is **not used** for assignments — non-submission is captured by `submitted_at.nil?`
+- Both submission and backfill create participations with `status: :pending`; `submitted_at` distinguishes them
+- After deadline backfill, **all** roster students have participations
+- The grading grid should show all roster students; those without participations appear as `"—"`
+- Tutors can still mark students as `exempt` (sick, personal reasons)
+
+#### Assignment Participation Lifecycle (Paper / No Digital Submission)
+
+When `requires_submission: false`, the submission step is skipped entirely. The backfill job seeds everyone; tutors enter points directly.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "No record" as none
+    state "pending<br/>(backfilled)" as pending
+    state "reviewed<br/>(points entered)" as reviewed
+    state "exempt<br/>(excused)" as exempt
+
+    [*] --> none : Assignment created
+    none --> pending : Deadline backfill job
+    none --> exempt : Tutor marks excused
+    pending --> reviewed : Tutor enters points
+    pending --> exempt : Tutor marks excused
+
+    note right of pending
+        No submitted_at.
+        Tutor enters points for
+        students who handed in paper.
+        Students with nil points
+        after grading = didn't submit.
+    end note
+```
+
+**Key points for implementers:**
+- Same as digital, but no `submitted_at` distinction (nobody uploads files)
+- "Didn't hand in paper" = participation with `status: :pending`, `points_total: nil` after grading is complete
+- `absent` is **not used** — there's no physical event to attend
+
+#### Talk Participation Lifecycle
+
+Talk participations are **pre-seeded** from the speaker roster when the talk is created. Each talk typically has one speaker.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "pending<br/>(speaker assigned)" as pending
+    state "reviewed<br/>(grade entered)" as reviewed
+    state "absent<br/>(no-show)" as absent
+    state "exempt<br/>(excused)" as exempt
+
+    [*] --> pending : Talk created,<br/>speaker seeded
+    pending --> reviewed : Teacher enters grade
+    pending --> absent : Speaker didn't show up
+    pending --> exempt : Speaker excused<br/>(rescheduled)
+    absent --> exempt : Late excuse arrives
+
+    note right of pending
+        Speaker assigned.
+        grade = nil
+    end note
+
+    note right of absent
+        Presentation did not happen.
+        No grade assigned.
+    end note
+```
+
+**Key points for implementers:**
+- Talks are Gradable only (no points/tasks) — teacher enters a final grade directly
+- `absent` applies because the talk is a physical event (presentation slot)
+- A no-show talk may be rescheduled (`absent` → `exempt` → new talk created) or recorded as failed
 
 ```admonish note "Why no 'in_progress' status?"
 We intentionally omit an `in_progress` status because:
@@ -388,6 +544,57 @@ For dashboard views showing grading progress per tutorial:
 This is computed from participation status, not stored as a separate field.
 ```
 
+### Absence Tracking & No-Shows
+
+```admonish info "The Problem"
+For in-person assessments (exams, talks), participations are seeded from the roster before the event. After the event, all ungraded students look identical: no points, no grade. The teacher needs to distinguish "not yet graded" from "did not attend".
+
+For assignments, this problem does not arise: non-submission is captured by the absence of `submitted_at` (see lifecycle diagrams above).
+```
+
+The `absent` status solves this by recording an attendance fact separately from grading data:
+
+| Scenario | Status | Points | Grade | Display |
+|----------|--------|--------|-------|---------|
+| Not yet graded | `pending` | `nil` | `nil` | — |
+| Graded | `reviewed` | 42.0 | 2.3 | 42 |
+| Excused (medical cert) | `exempt` | `nil` | `nil` | exempt |
+| Did not attend | `absent` | `nil` | `nil` | n/a |
+
+**Design decisions:**
+
+- **`absent` does not imply 0 points.** Points remain `nil`; the status alone carries the attendance fact. The teacher or a grade scheme can later decide whether absent = 0 or absent = excluded from averages.
+- **`absent` → `exempt` transition is allowed.** If a late excuse arrives (e.g. medical certificate submitted days after), the teacher can upgrade `absent` to `exempt`.
+- **Marking no-shows is an explicit teacher action.** After an exam, the teacher uses a bulk action ("Mark as absent") on unchecked students. The system never auto-marks students as absent.
+- **`absent` is only for in-person assessments.** See the applicability table below.
+
+| Assessable | `absent` applicable? | Non-participation signal |
+|---|---|---|
+| **Exam** | Yes | Physical event; roster pre-seeded |
+| **Talk** | Yes | Physical event; speaker pre-seeded |
+| **Assignment (digital)** | No | `submitted_at.nil?` on pending participation |
+| **Assignment (paper)** | No | `points_total.nil?` after grading complete |
+
+**The `note` column:**
+
+A nullable `note` text column on `assessment_participations` provides free-text annotation for any status. It is status-agnostic and internal (teacher/tutor-facing, not shown to students).
+
+| Status | Example `note` |
+|--------|---------------|
+| `exempt` | "Medical cert ref #1234, received 2026-02-15" |
+| `absent` | "Contacted student, no response" |
+| `reviewed` | "Re-graded after appeal, +2 pts on P3" |
+
+This keeps the schema simple while covering immediate needs. If structured querying becomes necessary (e.g. "show all medical exemptions this semester"), a dedicated `reason` enum column can be added later without breaking the `note` field.
+
+```admonish warning "Future Extension Point"
+The `note` column is deliberately minimal. If structured reasons or audit trails are needed later, implementers can add:
+- A `reason` enum column (e.g. `medical`, `personal`, `unexcused`, `other`) alongside `note`
+- A separate `participation_events` log table for full status change history
+
+The `note` column remains useful in both cases and requires no migration.
+```
+
 ### Example Implementation
 
 ```ruby
@@ -405,9 +612,10 @@ module Assessment
       class_name: "Assessment::TaskPoint"
 
   enum status: {
-    submitted: 0,
-    graded: 1,
-    exempt: 2
+    pending: 0,
+    reviewed: 1,
+    exempt: 2,
+    absent: 3
   }
 
   validates :user_id, uniqueness: { scope: :assessment_id }
@@ -445,16 +653,20 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 ### Usage Scenarios
 
+- **After assessment setup:** When an assignment is created, an `Assessment::Assessment` record is automatically created via the `Assessable` concern. No participation records are created at this point—they are created lazily when students submit work or tutors enter grades.
+- **Lazy participation creation:** Participations are **not** created eagerly when an assignment is set up. Instead, they are created on-demand when a student submits work, when a tutor enters a grade, or via a scheduled job after the deadline passes. The "expected" count for progress tracking comes from querying the current roster, not pre-seeded participations.
 
-- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
+- **Student submits work:** A student uploads their homework file. The system creates a participation with `status: :pending` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
-- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
+- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:reviewed` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
 - **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
 
 - **Handling exemptions:** A student provides a medical certificate. The teacher explicitly creates a participation with `status: :exempt`. No points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`. The `tutorial_id` is set to the student's current tutorial for audit purposes.
+
+- **Handling no-shows (exams):** After an exam, the teacher opens the grading view. Students who did not attend are marked `status: :absent` via a bulk action ("Mark as absent"). Points remain `nil` — the status alone carries the attendance fact. If a late excuse arrives, the teacher can change `absent` → `exempt`. The `note` field can capture the reason (e.g. "medical cert received 2026-02-20").
 
 - **Distinguishing submission vs non-submission:** After grading is complete, the teacher can query `submitted_at.present?` to distinguish students who submitted work (even if they received 0 points for quality) from those who never submitted at all.
 
@@ -730,7 +942,7 @@ module Assessment
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
                            class_name: "Assessment::Assessment"
-    end
+      end
 
     def ensure_assessment!(requires_points:, requires_submission: false)
       a = assessment || build_assessment
@@ -931,7 +1143,7 @@ it "creates participation on first submission" do
   submission = assignment.submissions.create!(user: student)
 
   expect(assignment.assessment.assessment_participations.count).to eq(1)
-  expect(assignment.assessment.assessment_participations.first.status).to eq("submitted")
+  expect(assignment.assessment.assessment_participations.first.status).to eq("pending")
 end
 ```
 
@@ -1040,7 +1252,7 @@ module Assessment
       grade_value: value,
       grader_id: grader&.id,
       graded_at: Time.current,
-      status: :graded
+      status: :reviewed
     )
   end
 end
@@ -1315,7 +1527,7 @@ The model uses `assessment_id` instead of `assignment_id` to enable future exten
 
 ### Usage Scenarios
 
-- **Team homework submission:** Alice, Bob, and Carol form a team for Homework 3. Alice uploads `HW3.pdf` via the submission interface. The system creates one `Submission` record linked to all three students via `user_submission_joins`, then updates each team member's `Assessment::Participation` record: `status: :submitted` and `submitted_at: Time.current`. When a tutor grades this submission, `TaskPoint` records are created for all three team members with identical points.
+- **Team homework submission:** Alice, Bob, and Carol form a team for Homework 3. Alice uploads `HW3.pdf` via the submission interface. The system creates one `Submission` record linked to all three students via `user_submission_joins`, then updates each team member's `Assessment::Participation` record: `status: :pending` and `submitted_at: Time.current`. When a tutor grades this submission, `TaskPoint` records are created for all three team members with identical points.
 
 - **Per-task uploads (new feature):** An assignment allows students to upload separate files for each problem. The team uploads `Problem1.pdf` with `task_id: 1`, `Problem2.pdf` with `task_id: 2`. Each upload updates the team members' `Assessment::Participation.submitted_at` timestamp (idempotent if already set). Tutors can grade each problem independently, and the grading service still fans out points to all team members for each task.
 
@@ -1594,7 +1806,7 @@ sequenceDiagram
 
     loop For each team member
         Sub->>Part: Find or create participation
-        Part->>Part: Set status: :submitted
+        Part->>Part: Set status: :pending
         Part->>Part: Set submitted_at: Time.current
         Part->>Part: Set tutorial_id from current membership
     end
@@ -1783,5 +1995,22 @@ Submission.includes(:users, :tutorial).find_each do |sub|
   end
 end
 ```
+
+### Schema Update for Absence Tracking
+
+**New column for `assessment_participations`:**
+
+```ruby
+# filepath: db/migrate/20260213000000_add_note_to_assessment_participations.rb
+class AddNoteToAssessmentParticipations < ActiveRecord::Migration[7.0]
+  def change
+    add_column :assessment_participations, :note, :text, null: true
+  end
+end
+```
+
+**Migration rationale:**
+- `note`: Nullable free-text column for teacher/tutor annotations on any participation status (exempt reasons, absent context, grading remarks). Internal only — not exposed to students.
+- No new `absent` migration needed: the `absent: 3` enum value is added in the model code; the existing integer `status` column already supports it.
 
 
