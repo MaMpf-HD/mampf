@@ -1,4 +1,4 @@
-<% if any_participations? %>
+<% if any_gradeable? %>
   <table class="table table-hover">
     <thead>
       <tr>
@@ -12,7 +12,7 @@
       </tr>
     </thead>
     <tbody>
-      <% participations.each do |participation| %>
+      <% gradeable_participations.each do |participation| %>
         <tr>
           <td><%= participation.user.tutorial_name %></td>
           <% if show_tutorial_column? %>
@@ -31,5 +31,43 @@
   <div class="text-center text-muted py-3">
     <i class="bi bi-mortarboard me-1"></i>
     <%= t("assessment.no_grades_yet") %>
+  </div>
+<% end %>
+
+<% if any_excluded? %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-person-dash me-1"></i>
+        <%= t("assessment.grade_table.excluded_heading") %>
+        <span class="badge bg-secondary ms-1">
+          <%= excluded_participations.size %>
+        </span>
+      </h6>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th><%= t("basics.name") %></th>
+            <% if show_tutorial_column? %>
+              <th><%= t("basics.tutorial") %></th>
+            <% end %>
+            <th><%= t("assessment.grade_table.reason") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% excluded_participations.each do |participation| %>
+            <tr>
+              <td><%= participation.user.tutorial_name %></td>
+              <% if show_tutorial_column? %>
+                <td><%= participation.tutorial&.title %></td>
+              <% end %>
+              <td><%= status_label(participation) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 <% end %>

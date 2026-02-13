@@ -85,11 +85,13 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   end
 
   describe "#submitted_count" do
-    it "counts participations with submitted or reviewed status" do
+    it "counts participations with submitted_at present" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :reviewed)
+                                        user: user2, tutorial: tutorial1,
+                                        submitted_at: 2.days.ago)
 
       expect(component.submitted_count).to eq(2)
     end
@@ -98,9 +100,21 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       expect(component.submitted_count).to eq(0)
     end
 
-    it "excludes exempt status from submitted count" do
+    it "excludes participations without submitted_at" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :exempt)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1,
+                                        submitted_at: nil)
+
+      expect(component.submitted_count).to eq(1)
+    end
+
+    it "excludes exempt participations (submitted_at is nil)" do
+      create(:assessment_participation, assessment: assessment,
+                                        user: user2, tutorial: tutorial1,
+                                        status: :exempt, submitted_at: nil)
 
       expect(component.submitted_count).to eq(0)
     end
@@ -109,7 +123,8 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   describe "#missing_count" do
     it "returns difference between expected roster count and submitted" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
 
       expect(component.missing_count).to eq(2)
     end
@@ -131,18 +146,22 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
 
     it "calculates percentage correctly" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
 
       expect(component.progress_percentage).to eq(33)
     end
 
     it "returns 100 when all submitted" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :reviewed)
+                                        user: user2, tutorial: tutorial1,
+                                        submitted_at: 2.days.ago)
       create(:assessment_participation, assessment: assessment,
-                                        user: user3, tutorial: tutorial2, status: :submitted)
+                                        user: user3, tutorial: tutorial2,
+                                        submitted_at: 1.day.ago)
 
       expect(component.progress_percentage).to eq(100)
     end
@@ -166,7 +185,8 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
 
     it "counts submissions per tutorial" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
 
       stats = component.tutorial_stats
       stat1 = stats.find { |s| s.name == "Tutorial A" }
@@ -256,17 +276,21 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   describe "#progress_bar_color" do
     it "returns :success when 100% progress" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
       create(:assessment_participation, assessment: assessment,
-                                        user: user2, tutorial: tutorial1, status: :submitted)
+                                        user: user2, tutorial: tutorial1,
+                                        submitted_at: 2.days.ago)
       create(:assessment_participation, assessment: assessment,
-                                        user: user3, tutorial: tutorial2, status: :submitted)
+                                        user: user3, tutorial: tutorial2,
+                                        submitted_at: 1.day.ago)
       expect(component.progress_bar_color).to eq(:success)
     end
 
     it "returns :info when less than 100% progress" do
       create(:assessment_participation, assessment: assessment,
-                                        user: user1, tutorial: tutorial1, status: :submitted)
+                                        user: user1, tutorial: tutorial1,
+                                        submitted_at: 1.day.ago)
       expect(component.progress_bar_color).to eq(:info)
     end
   end

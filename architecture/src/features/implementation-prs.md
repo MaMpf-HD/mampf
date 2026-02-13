@@ -373,7 +373,7 @@ without waiting for the interactive entry UI.
 ```admonish example "PR-8.3 — Read-only grade view"
 - Scope: Read-only table displaying students and their final grades, with distinct indicators for absent/exempt statuses.
 - Dependencies: Requires PR-7.2 (assessment show page with tabs)
-- Model: Add `absent: 3` to `Participation.status` enum (no migration needed — existing integer column supports it).
+- Model: `absent` enum value already exists from PR-6.1 (no action needed).
 - ViewComponent: `GradeTableComponent` — table with name, tutorial, grade, `graded_at`. Displays `"exempt"` for exempt participations and `"n/a"` for absent participations instead of `"—"`. The `"—"` indicator is reserved for "not yet graded" (status `pending`, grade nil).
 - Controller: `Assessment::ParticipationsController#index` (read-only)
 - Rake: Extend `assessment_playground.rake` with `seed_grades` task that writes `grade`, `graded_at`, `grader_id` directly on participations. Seed ~5% of exam participations as `absent` and ~2% as `exempt` for realistic test data.
@@ -384,7 +384,7 @@ without waiting for the interactive entry UI.
 
 ```admonish example "PR-8.4 — Read-only point grid"
 - Scope: Read-only students × tasks matrix with per-task scores and row totals, with distinct indicators for absent/exempt statuses.
-- Dependencies: Requires PR-7.2 (tasks exist on assessments), PR-8.3 (`absent` enum value)
+- Dependencies: Requires PR-7.2 (tasks exist on assessments)
 - ViewComponent: `PointGridComponent` — table with dynamic task columns and total column. Displays `"n/a"` across all cells for absent participations and `"exempt"` for exempt participations instead of `"—"`. The `"—"` indicator is reserved for "not yet graded" (points nil, status `pending`).
 - Controller: `Assessment::TaskPointsController#index` (read-only)
 - Rake: Extend `assessment_playground.rake` with `seed_task_points` task that creates `Assessment::TaskPoint` records with random scores and updates `participation.points_total`. Absent/exempt participations (seeded in PR-8.3) get no task points.

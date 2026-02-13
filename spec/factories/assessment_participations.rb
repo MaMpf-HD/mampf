@@ -7,7 +7,7 @@ FactoryBot.define do
     points_total { nil }
     grade_numeric { nil }
     grade_text { nil }
-    status { :submitted }
+    status { :pending }
     submitted_at { Time.current }
     graded_at { nil }
     results_published_at { nil }
@@ -18,8 +18,13 @@ FactoryBot.define do
       association :tutorial
     end
 
+    trait :pending do
+      status { :pending }
+      submitted_at { 1.day.ago }
+    end
+
     trait :submitted do
-      status { :submitted }
+      status { :pending }
       submitted_at { 1.day.ago }
     end
 
@@ -28,6 +33,16 @@ FactoryBot.define do
       submitted_at { 2.days.ago }
       graded_at { 1.day.ago }
       points_total { Faker::Number.decimal(l_digits: 2, r_digits: 2) }
+    end
+
+    trait :absent do
+      status { :absent }
+      submitted_at { nil }
+    end
+
+    trait :exempt do
+      status { :exempt }
+      submitted_at { nil }
     end
 
     trait :with_numeric_grade do

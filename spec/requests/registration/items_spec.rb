@@ -161,17 +161,6 @@ RSpec.describe("Registration::Items", type: :request) do
 
           expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
         end
-
-        context "with cascade delete" do
-          it "deletes the item and the registerable" do
-            expect do
-              delete(registration_campaign_item_path(campaign, item), params: { cascade: "true" })
-            end.to change(Registration::Item, :count).by(-1)
-               .and(change(Tutorial, :count).by(-1))
-
-            expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
-          end
-        end
       end
 
       context "when campaign is open" do

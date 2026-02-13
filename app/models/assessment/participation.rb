@@ -12,10 +12,13 @@ module Assessment
                            inverse_of: :assessment_participation
 
     enum :status, {
-      submitted: 0,
+      pending: 0,
       reviewed: 1,
-      exempt: 2
+      absent: 2,
+      exempt: 3
     }
+
+    scope :submitted, -> { where.not(submitted_at: nil) }
 
     validates :user_id, uniqueness: { scope: :assessment_id }
     validates :grade_numeric,
