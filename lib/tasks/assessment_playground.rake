@@ -186,23 +186,29 @@ namespace :assessment do
     abort "No lecture with tutorials found." unless lecture
 
     lecture.tutorials.each do |tutorial|
-      submission_rate = rand(40..95) / 100.0
-      grading_rate = rand(20..60) / 100.0
+      submission_rate = rand(70..90) / 100.0
+      grading_rate = rand(50..85) / 100.0
 
       participations = Assessment::Participation.where(tutorial_id: tutorial.id)
       next if participations.empty?
 
       participations.each do |p|
-        roll = rand
         is_physical = p.assessment.assessable_type.in?(["Exam", "Talk"])
+        assessable = p.assessment.assessable
+        future_deadline = assessable.respond_to?(:deadline) &&
+                          assessable.deadline&.future?
 
-        if roll < 0.05
+        if rand < 0.05
           p.update!(status: :exempt, submitted_at: nil)
-        elsif is_physical && roll < 0.13
+        elsif is_physical && rand < 0.10
           p.update!(status: :absent, submitted_at: nil)
-        elsif roll < (1 - submission_rate)
-          p.destroy!
-        elsif rand < grading_rate
+        elsif rand > submission_rate
+          if future_deadline
+            p.destroy!
+          else
+            p.update!(submitted_at: nil)
+          end
+        elsif !future_deadline && rand < grading_rate
           base_time = p.submitted_at || Time.current
           p.update!(
             status: :reviewed,
@@ -297,11 +303,11 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
-    puts "\n#{"=" * 76}"
+    puts "\n#{"=" * 85}"
     puts "Assessment Playground Summary"
-    puts "=" * 76
-    puts "Assessment                           Revwd   Pendng   Absent   Exempt   Grades"
-    puts "-" * 76
+    puts "=" * 85
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades"
+    puts "-" * 85
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
     if lecture.respond_to?(:talks)
@@ -316,17 +322,21 @@ namespace :assessment do
 
       parts = assessment.assessment_participations
       reviewed = parts.where(status: :reviewed).count
-      pending = parts.where(status: :pending).count
+      pending_sub = parts.where(status: :pending)
+                         .where.not(submitted_at: nil).count
+      pending_nosub = parts.where(status: :pending, submitted_at: nil).count
       absent = parts.where(status: :absent).count
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
       grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
-      puts format("%-35<name>s %8<r>s %8<p>s %8<a>s %8<e>s %8<g>s",
-                  name: label.truncate(35), r: reviewed,
-                  p: pending, a: absent, e: exempt, g: grades)
+      puts format(
+        "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<g>s",
+        name: label.truncate(35), r: reviewed, p: pending_sub,
+        ns: pending_nosub, a: absent, e: exempt, g: grades
+      )
     end
 
-    puts "=" * 76
+    puts "=" * 85
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 
