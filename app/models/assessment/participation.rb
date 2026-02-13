@@ -18,6 +18,8 @@ module Assessment
       exempt: 3
     }
 
+    scope :submitted, -> { where.not(submitted_at: nil) }
+
     validates :user_id, uniqueness: { scope: :assessment_id }
     validates :grade_numeric,
               inclusion: {
