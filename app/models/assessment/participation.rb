@@ -12,8 +12,8 @@ module Assessment
                            inverse_of: :assessment_participation
 
     enum :status, {
-      submitted: 0,
-      graded: 1,
+      pending: 0,
+      reviewed: 1,
       exempt: 2
     }
 
