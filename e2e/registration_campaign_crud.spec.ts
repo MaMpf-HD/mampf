@@ -34,7 +34,6 @@ test.describe("Registration Campaigns CRUD", () => {
     factory,
     teacher: { page, user },
   }) => {
-    // Setup: Create campaign via factory directly
     const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     await factory.create("registration_campaign", [], {
       campaignable_id: lecture.id,
