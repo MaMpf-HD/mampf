@@ -21,6 +21,7 @@ de:
     grade_table:
       absent: 'nicht angetreten'
       exempt: 'entschuldigt'
+      not_submitted: 'nicht abgegeben'
       excluded_heading: 'Sonderfälle'
       reason: 'Grund'
     statistics: 'Statistiken'

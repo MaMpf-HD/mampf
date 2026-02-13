@@ -21,6 +21,7 @@ en:
     grade_table:
       absent: 'absent'
       exempt: 'exempt'
+      not_submitted: 'not submitted'
       excluded_heading: 'Special Cases'
       reason: 'Reason'
     statistics: 'Statistics'

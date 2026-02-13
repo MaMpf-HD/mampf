@@ -17,8 +17,8 @@ RSpec.describe(PointGridComponent, type: :component) do
       expect(rendered_content).to include(I18n.t("assessment.no_tasks_yet"))
     end
 
-    it "reports any_participations? as false" do
-      expect(component.any_participations?).to be(false)
+    it "reports any_scoring? as false" do
+      expect(component.any_scoring?).to be(false)
     end
   end
 
@@ -36,8 +36,8 @@ RSpec.describe(PointGridComponent, type: :component) do
       expect(rendered_content).to include("\u2014")
     end
 
-    it "reports any_participations? as true" do
-      expect(component.any_participations?).to be(true)
+    it "reports any_scoring? as true" do
+      expect(component.any_scoring?).to be(true)
     end
   end
 
@@ -70,8 +70,8 @@ RSpec.describe(PointGridComponent, type: :component) do
              points: 14.5)
     end
 
-    it "reports any_participations? as true" do
-      expect(component.any_participations?).to be(true)
+    it "reports any_scoring? as true" do
+      expect(component.any_scoring?).to be(true)
     end
 
     it "renders the student name" do
@@ -129,12 +129,154 @@ RSpec.describe(PointGridComponent, type: :component) do
              task: task,
              assessment_participation: reviewed,
              points: 7)
+      create(:assessment_participation, :absent,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation,
+             assessment: assessment, tutorial: tutorial,
+             status: :pending, submitted_at: nil)
     end
 
-    it "shows all participations including ungraded" do
+    it "includes only submitted pending and reviewed in scoring" do
+      expect(component.scoring_participations.count).to eq(2)
+    end
+
+    it "separates absent into excluded list" do
+      expect(component.absent_participations.count).to eq(1)
+    end
+
+    it "separates non-submitters into excluded list" do
+      expect(component.not_submitted_participations.count).to eq(1)
+    end
+
+    it "renders both grid and summary card" do
       render_inline(component)
-      rows = Nokogiri::HTML(rendered_content).css("tbody tr")
-      expect(rows.count).to eq(2)
+      expect(rendered_content).to include("7")
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.absent")
+      )
+    end
+  end
+
+  context "with an absent participation" do
+    let!(:task) do
+      create(:assessment_task, assessment: assessment,
+                               max_points: 10, position: 1,
+                               description: "Problem 1")
+    end
+
+    let!(:absent_participation) do
+      create(:assessment_participation, :absent,
+             assessment: assessment, tutorial: tutorial)
+    end
+
+    it "does not include absent in the main grid" do
+      expect(component.scoring_participations).to be_empty
+    end
+
+    it "lists absent in the summary card" do
+      render_inline(component)
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.excluded_heading")
+      )
+      expect(rendered_content).to include(
+        absent_participation.user.tutorial_name
+      )
+    end
+  end
+
+  context "with an exempt participation" do
+    let!(:task) do
+      create(:assessment_task, assessment: assessment,
+                               max_points: 10, position: 1,
+                               description: "Problem 1")
+    end
+
+    let!(:exempt_participation) do
+      create(:assessment_participation, :exempt,
+             assessment: assessment, tutorial: tutorial)
+    end
+
+    it "does not include exempt in the main grid" do
+      expect(component.scoring_participations).to be_empty
+    end
+
+    it "shows exempt in the summary card" do
+      render_inline(component)
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.exempt")
+      )
+    end
+  end
+
+  describe "#excluded_participations" do
+    let!(:task) do
+      create(:assessment_task, assessment: assessment,
+                               max_points: 10, position: 1,
+                               description: "Problem 1")
+    end
+
+    before do
+      create(:assessment_participation, :absent,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation, :exempt,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation,
+             assessment: assessment, tutorial: tutorial,
+             status: :pending, submitted_at: nil)
+    end
+
+    it "combines absent, exempt, and non-submitters" do
+      expect(component.excluded_participations.count).to eq(3)
+    end
+  end
+
+  describe "#status_label" do
+    it "returns the i18n label for absent" do
+      p = build(:assessment_participation, :absent, assessment: assessment)
+      expect(component.status_label(p)).to eq(
+        I18n.t("assessment.grade_table.absent")
+      )
+    end
+
+    it "returns the i18n label for exempt" do
+      p = build(:assessment_participation, :exempt, assessment: assessment)
+      expect(component.status_label(p)).to eq(
+        I18n.t("assessment.grade_table.exempt")
+      )
+    end
+
+    it "returns the i18n label for not submitted" do
+      p = build(:assessment_participation, assessment: assessment,
+                                           status: :pending,
+                                           submitted_at: nil)
+      expect(component.status_label(p)).to eq(
+        I18n.t("assessment.grade_table.not_submitted")
+      )
+    end
+  end
+
+  context "with a non-submitted participation" do
+    let!(:task) do
+      create(:assessment_task, assessment: assessment,
+                               max_points: 10, position: 1,
+                               description: "Problem 1")
+    end
+
+    before do
+      create(:assessment_participation,
+             assessment: assessment, tutorial: tutorial,
+             status: :pending, submitted_at: nil)
+    end
+
+    it "does not include non-submitters in the main grid" do
+      expect(component.scoring_participations).to be_empty
+    end
+
+    it "lists non-submitters in the summary card" do
+      render_inline(component)
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.not_submitted")
+      )
     end
   end
 

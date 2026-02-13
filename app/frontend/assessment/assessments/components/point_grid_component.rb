@@ -16,16 +16,46 @@ class PointGridComponent < ViewComponent::Base
     @tasks ||= assessment.tasks.order(:position)
   end
 
-  def participations
-    @participations ||= assessment
-                        .assessment_participations
-                        .joins(:user)
-                        .includes(:user, :tutorial, task_points: :task)
-                        .order(:tutorial_id, "users.name")
+  def scoring_participations
+    @scoring_participations ||=
+      participations.where(status: [:pending, :reviewed])
+                    .where.not(submitted_at: nil)
   end
 
-  def any_participations?
-    participations.any?
+  def not_submitted_participations
+    @not_submitted_participations ||=
+      participations.where(status: :pending, submitted_at: nil)
+  end
+
+  def absent_participations
+    @absent_participations ||= participations.where(status: :absent)
+  end
+
+  def exempt_participations
+    @exempt_participations ||= participations.where(status: :exempt)
+  end
+
+  def excluded_participations
+    @excluded_participations ||=
+      not_submitted_participations +
+      participations.where(status: [:absent, :exempt]).to_a
+  end
+
+  def any_scoring?
+    scoring_participations.any?
+  end
+
+  def any_excluded?
+    not_submitted_participations.any? ||
+      absent_participations.any? || exempt_participations.any?
+  end
+
+  def status_label(participation)
+    if participation.pending? && participation.submitted_at.nil?
+      I18n.t("assessment.grade_table.not_submitted")
+    else
+      I18n.t("assessment.grade_table.#{participation.status}")
+    end
   end
 
   def task_points_map(participation)
@@ -68,5 +98,13 @@ class PointGridComponent < ViewComponent::Base
 
     def format_points(value)
       (value % 1).zero? ? value.to_i.to_s : value.to_s
+    end
+
+    def participations
+      @participations ||= assessment
+                          .assessment_participations
+                          .joins(:user)
+                          .includes(:user, :tutorial, task_points: :task)
+                          .order(:tutorial_id, "users.name")
     end
 end

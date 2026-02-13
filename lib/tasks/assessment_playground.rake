@@ -186,23 +186,29 @@ namespace :assessment do
     abort "No lecture with tutorials found." unless lecture
 
     lecture.tutorials.each do |tutorial|
-      submission_rate = rand(40..95) / 100.0
-      grading_rate = rand(20..60) / 100.0
+      submission_rate = rand(70..90) / 100.0
+      grading_rate = rand(50..85) / 100.0
 
       participations = Assessment::Participation.where(tutorial_id: tutorial.id)
       next if participations.empty?
 
       participations.each do |p|
-        roll = rand
         is_physical = p.assessment.assessable_type.in?(["Exam", "Talk"])
+        assessable = p.assessment.assessable
+        future_deadline = assessable.respond_to?(:deadline) &&
+                          assessable.deadline&.future?
 
-        if roll < 0.05
+        if rand < 0.05
           p.update!(status: :exempt, submitted_at: nil)
-        elsif is_physical && roll < 0.13
+        elsif is_physical && rand < 0.10
           p.update!(status: :absent, submitted_at: nil)
-        elsif roll < (1 - submission_rate)
-          p.destroy!
-        elsif rand < grading_rate
+        elsif rand > submission_rate
+          if future_deadline
+            p.destroy!
+          else
+            p.update!(submitted_at: nil)
+          end
+        elsif !future_deadline && rand < grading_rate
           base_time = p.submitted_at || Time.current
           p.update!(
             status: :reviewed,
@@ -318,11 +324,11 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
-    puts "\n#{"=" * 85}"
+    puts "\n#{"=" * 93}"
     puts "Assessment Playground Summary"
-    puts "=" * 85
-    puts "Assessment                           Revwd   Pendng   Absent   Exempt   Grades   Points"
-    puts "-" * 85
+    puts "=" * 93
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades   Points"
+    puts "-" * 93
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
     if lecture.respond_to?(:talks)
@@ -337,7 +343,9 @@ namespace :assessment do
 
       parts = assessment.assessment_participations
       reviewed = parts.where(status: :reviewed).count
-      pending = parts.where(status: :pending).count
+      pending_sub = parts.where(status: :pending)
+                         .where.not(submitted_at: nil).count
+      pending_nosub = parts.where(status: :pending, submitted_at: nil).count
       absent = parts.where(status: :absent).count
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
@@ -350,12 +358,14 @@ namespace :assessment do
       else
         "-"
       end
-      puts format("%-35<name>s %8<r>s %8<p>s %8<a>s %8<e>s %8<g>s %8<pt>s",
-                  name: label.truncate(35), r: reviewed,
-                  p: pending, a: absent, e: exempt, g: grades, pt: points)
+      puts format(
+        "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<g>s %8<pt>s",
+        name: label.truncate(35), r: reviewed, p: pending_sub,
+        ns: pending_nosub, a: absent, e: exempt, g: grades, pt: points
+      )
     end
 
-    puts "=" * 85
+    puts "=" * 93
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 
@@ -439,28 +449,35 @@ namespace :assessment do
   def seed_task_points_for(assessment, label)
     return unless assessment&.requires_points?
 
+    assessable = assessment.assessable
+    if assessable.respond_to?(:deadline) && assessable.deadline&.future?
+      puts "  ⏭ Deadline not yet passed for: #{label}"
+      return
+    end
+
     tasks = assessment.tasks.order(:position)
     if tasks.empty?
       puts "  ⏭ No tasks for: #{label}"
       return
     end
 
-    reviewed = assessment.assessment_participations.where(status: :reviewed)
-    if reviewed.empty?
-      puts "  ⏭ No reviewed participations for: #{label}"
+    gradeable = assessment.assessment_participations
+                          .where(status: [:pending, :reviewed])
+    if gradeable.empty?
+      puts "  ⏭ No gradeable participations for: #{label}"
       return
     end
 
     existing = Assessment::TaskPoint
-               .where(assessment_participation_id: reviewed.select(:id))
+               .where(assessment_participation_id: gradeable.select(:id))
     if existing.any?
       existing.delete_all
       # rubocop:disable Rails/SkipsModelValidations
-      reviewed.update_all(points_total: nil)
+      gradeable.update_all(points_total: nil)
       # rubocop:enable Rails/SkipsModelValidations
     end
 
-    reviewed.find_each do |participation|
+    gradeable.find_each do |participation|
       total = 0.0
       tasks.each do |task|
         half_steps = (task.max_points * 2).to_i
@@ -476,7 +493,7 @@ namespace :assessment do
       participation.update!(points_total: total)
     end
 
-    puts "  ✓ Seeded task points for #{reviewed.count} participations: #{label}"
+    puts "  ✓ Seeded task points for #{gradeable.count} participations: #{label}"
   end
 
   def clean_invalid_grades!
