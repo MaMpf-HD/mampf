@@ -462,9 +462,10 @@ namespace :assessment do
     end
 
     gradeable = assessment.assessment_participations
-                          .where(status: [:pending, :reviewed])
+                          .where(status: :reviewed)
+                          .where.not(submitted_at: nil)
     if gradeable.empty?
-      puts "  ⏭ No gradeable participations for: #{label}"
+      puts "  ⏭ No reviewed participations for: #{label}"
       return
     end
 
