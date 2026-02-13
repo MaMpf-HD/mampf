@@ -12,9 +12,9 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(participation.tutorial).to be_present
     end
 
-    it "creates a submitted participation" do
-      participation = FactoryBot.create(:assessment_participation, :submitted)
-      expect(participation.status).to eq("submitted")
+    it "creates a pending participation" do
+      participation = FactoryBot.create(:assessment_participation, :pending)
+      expect(participation.status).to eq("pending")
       expect(participation.submitted_at).to be_present
     end
 
@@ -85,7 +85,7 @@ RSpec.describe(Assessment::Participation, type: :model) do
 
   describe "enums" do
     it "supports all status values" do
-      statuses = ["submitted", "reviewed", "exempt"]
+      statuses = ["pending", "reviewed", "absent", "exempt"]
       statuses.each do |status|
         participation = FactoryBot.build(:assessment_participation, status: status)
         expect(participation.status).to eq(status)

@@ -7,7 +7,7 @@ FactoryBot.define do
     points_total { nil }
     grade_numeric { nil }
     grade_text { nil }
-    status { :submitted }
+    status { :pending }
     submitted_at { Time.current }
     graded_at { nil }
     results_published_at { nil }
@@ -18,8 +18,8 @@ FactoryBot.define do
       association :tutorial
     end
 
-    trait :submitted do
-      status { :submitted }
+    trait :pending do
+      status { :pending }
       submitted_at { 1.day.ago }
     end
 
