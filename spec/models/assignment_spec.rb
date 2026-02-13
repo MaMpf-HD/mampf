@@ -138,7 +138,7 @@ RSpec.describe(Assignment, type: :model) do
         before do
           FactoryBot.create(:assessment_participation,
                             assessment: assignment.assessment,
-                            status: :graded)
+                            status: :reviewed)
         end
 
         it "is not destructible" do
