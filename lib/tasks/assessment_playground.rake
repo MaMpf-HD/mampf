@@ -6,8 +6,9 @@
 # ## Lazy Participation Creation Model
 #
 # In production, Assessment::Participation records are created lazily:
-# - When a student submits work → status: :submitted
+# - When a student submits work → status: :pending
 # - When a tutor reviews → status: :reviewed
+# - When marked absent → status: :absent
 # - When marked exempt → status: :exempt
 #
 # The absence of a participation record means "not started".
@@ -127,7 +128,7 @@ namespace :assessment do
         assessment.assessment_participations.create!(
           user_id: membership.user_id,
           tutorial_id: membership.tutorial_id,
-          status: :submitted,
+          status: :pending,
           submitted_at: assignment.deadline - rand(1..72).hours
         )
         created += 1
@@ -166,7 +167,7 @@ namespace :assessment do
           assessment.assessment_participations.create!(
             user_id: uid,
             tutorial_id: tutorial_id,
-            status: :submitted,
+            status: :pending,
             submitted_at: (exam.date || Time.current) - rand(1..4).hours
           )
           created += 1
@@ -193,9 +194,12 @@ namespace :assessment do
 
       participations.each do |p|
         roll = rand
+        is_physical = p.assessment.assessable_type.in?(["Exam", "Talk"])
 
-        if roll < 0.02
+        if roll < 0.05
           p.update!(status: :exempt, submitted_at: nil)
+        elsif is_physical && roll < 0.13
+          p.update!(status: :absent, submitted_at: nil)
         elsif roll < (1 - submission_rate)
           p.destroy!
         elsif rand < grading_rate
@@ -209,12 +213,14 @@ namespace :assessment do
       end
 
       remaining = Assessment::Participation.where(tutorial_id: tutorial.id)
-      submitted = remaining.where(status: :submitted).count
+      pending = remaining.where(status: :pending).count
       reviewed = remaining.where(status: :reviewed).count
+      absent = remaining.where(status: :absent).count
       exempt = remaining.where(status: :exempt).count
 
       puts "✓ Tutorial '#{tutorial.title}': #{remaining.count} total " \
-           "(#{submitted} submitted, #{reviewed} reviewed, #{exempt} exempt)"
+           "(#{pending} pending, #{reviewed} reviewed, " \
+           "#{absent} absent, #{exempt} exempt)"
     end
   end
 
@@ -291,11 +297,11 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
-    puts "\n#{"=" * 68}"
+    puts "\n#{"=" * 76}"
     puts "Assessment Playground Summary"
-    puts "=" * 68
-    puts "Assessment                           Revwd   Submtd   Exempt   Grades"
-    puts "-" * 68
+    puts "=" * 76
+    puts "Assessment                           Revwd   Pendng   Absent   Exempt   Grades"
+    puts "-" * 76
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
     if lecture.respond_to?(:talks)
@@ -310,16 +316,17 @@ namespace :assessment do
 
       parts = assessment.assessment_participations
       reviewed = parts.where(status: :reviewed).count
-      submitted = parts.where(status: :submitted).count
+      pending = parts.where(status: :pending).count
+      absent = parts.where(status: :absent).count
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
       grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
-      puts format("%-35<name>s %8<r>s %8<s>s %8<e>s %8<g>s",
+      puts format("%-35<name>s %8<r>s %8<p>s %8<a>s %8<e>s %8<g>s",
                   name: label.truncate(35), r: reviewed,
-                  s: submitted, e: exempt, g: grades)
+                  p: pending, a: absent, e: exempt, g: grades)
     end
 
-    puts "=" * 68
+    puts "=" * 76
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 

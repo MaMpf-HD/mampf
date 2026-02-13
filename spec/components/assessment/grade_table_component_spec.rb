@@ -13,19 +13,33 @@ RSpec.describe(GradeTableComponent, type: :component) do
     let(:assessment) { assignment.reload.assessment }
     let(:component) { described_class.new(assessment: assessment) }
 
-    context "when no participations are reviewed" do
-      before do
-        create(:assessment_participation, :submitted,
-               assessment: assessment, tutorial: tutorial)
-      end
-
+    context "when no participations exist" do
       it "renders the empty state" do
         render_inline(component)
         expect(rendered_content).to include(I18n.t("assessment.no_grades_yet"))
       end
 
-      it "reports any_reviewed? as false" do
-        expect(component.any_reviewed?).to be(false)
+      it "reports any_gradeable? as false" do
+        expect(component.any_gradeable?).to be(false)
+      end
+    end
+
+    context "when a pending participation exists" do
+      before do
+        create(:assessment_participation, :submitted,
+               assessment: assessment, tutorial: tutorial)
+      end
+
+      it "renders the table (not the empty state)" do
+        render_inline(component)
+        expect(rendered_content).not_to include(
+          I18n.t("assessment.no_grades_yet")
+        )
+      end
+
+      it "shows em-dash for the grade" do
+        render_inline(component)
+        expect(rendered_content).to include("\u2014")
       end
     end
   end
@@ -52,8 +66,8 @@ RSpec.describe(GradeTableComponent, type: :component) do
         expect(rendered_content).to include(reviewed_participation.user.tutorial_name)
       end
 
-      it "reports any_reviewed? as true" do
-        expect(component.any_reviewed?).to be(true)
+      it "reports any_gradeable? as true" do
+        expect(component.any_gradeable?).to be(true)
       end
 
       it "returns the grade display" do
@@ -71,18 +85,93 @@ RSpec.describe(GradeTableComponent, type: :component) do
       end
     end
 
+    context "with an absent participation" do
+      let!(:absent_participation) do
+        create(:assessment_participation, :absent,
+               assessment: assessment, tutorial: tutorial)
+      end
+
+      it "does not include absent in the main table" do
+        expect(component.gradeable_participations).to be_empty
+      end
+
+      it "lists absent in the summary section" do
+        render_inline(component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_table.absent")
+        )
+        expect(rendered_content).to include(
+          absent_participation.user.tutorial_name
+        )
+      end
+
+      it "reports any_excluded? as true" do
+        expect(component.any_excluded?).to be(true)
+      end
+
+      it "counts absent participations" do
+        expect(component.absent_participations.count).to eq(1)
+      end
+    end
+
+    context "with an exempt participation" do
+      let!(:exempt_participation) do
+        create(:assessment_participation, :exempt,
+               assessment: assessment, tutorial: tutorial)
+      end
+
+      it "does not include exempt in the main table" do
+        expect(component.gradeable_participations).to be_empty
+      end
+
+      it "lists exempt in the summary section" do
+        render_inline(component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_table.exempt")
+        )
+        expect(rendered_content).to include(
+          exempt_participation.user.tutorial_name
+        )
+      end
+
+      it "reports any_excluded? as true" do
+        expect(component.any_excluded?).to be(true)
+      end
+
+      it "counts exempt participations" do
+        expect(component.exempt_participations.count).to eq(1)
+      end
+    end
+
     context "with mixed participation statuses" do
-      before do
+      let!(:pending) do
         create(:assessment_participation, :submitted,
                assessment: assessment, tutorial: tutorial)
+      end
+      let!(:reviewed) do
         create(:assessment_participation, :reviewed,
                assessment: assessment, tutorial: tutorial,
                grade_numeric: 1.7, grade_text: "1.7")
       end
+      let!(:absent) do
+        create(:assessment_participation, :absent,
+               assessment: assessment, tutorial: tutorial)
+      end
 
-      it "only shows reviewed participations in the table" do
+      it "includes only pending and reviewed in gradeable" do
+        expect(component.gradeable_participations.count).to eq(2)
+      end
+
+      it "separates absent into excluded list" do
+        expect(component.absent_participations.count).to eq(1)
+      end
+
+      it "renders both table and summary" do
         render_inline(component)
-        expect(component.reviewed_participations.count).to eq(1)
+        expect(rendered_content).to include("1.7")
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_table.absent")
+        )
       end
     end
   end
@@ -92,10 +181,10 @@ RSpec.describe(GradeTableComponent, type: :component) do
     let(:assessment) { assignment.reload.assessment }
     let(:component) { described_class.new(assessment: assessment) }
 
-    it "returns nil when grade_numeric is nil" do
+    it "returns em-dash when grade_numeric is nil (pending)" do
       participation = build(:assessment_participation, assessment: assessment,
                                                        grade_numeric: nil)
-      expect(component.grade_display(participation)).to be_nil
+      expect(component.grade_display(participation)).to eq("\u2014")
     end
 
     it "shows combined display when grade_text differs from numeric" do
@@ -103,6 +192,89 @@ RSpec.describe(GradeTableComponent, type: :component) do
                                                        grade_numeric: 4.0,
                                                        grade_text: "ausreichend")
       expect(component.grade_display(participation)).to eq("4.0 (ausreichend)")
+    end
+  end
+
+  describe "#excluded_participations" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:assessment) do
+      exam.ensure_gradebook!
+      exam.assessment
+    end
+    let(:component) { described_class.new(assessment: assessment) }
+
+    it "combines absent and exempt into one collection" do
+      create(:assessment_participation, :absent,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation, :exempt,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation, :submitted,
+             assessment: assessment, tutorial: tutorial)
+
+      expect(component.excluded_participations.count).to eq(2)
+    end
+  end
+
+  describe "#status_label" do
+    let(:assignment) { create(:valid_assignment, lecture: lecture) }
+    let(:assessment) { assignment.reload.assessment }
+    let(:component) { described_class.new(assessment: assessment) }
+
+    it "returns the absent label" do
+      p = build(:assessment_participation, :absent, assessment: assessment)
+      expect(component.status_label(p)).to eq(
+        I18n.t("assessment.grade_table.absent")
+      )
+    end
+
+    it "returns the exempt label" do
+      p = build(:assessment_participation, :exempt, assessment: assessment)
+      expect(component.status_label(p)).to eq(
+        I18n.t("assessment.grade_table.exempt")
+      )
+    end
+  end
+
+  describe "excluded students card rendering" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:assessment) do
+      exam.ensure_gradebook!
+      exam.assessment
+    end
+    let(:component) { described_class.new(assessment: assessment) }
+
+    it "renders excluded card with heading and badge count" do
+      create(:assessment_participation, :absent,
+             assessment: assessment, tutorial: tutorial)
+      create(:assessment_participation, :exempt,
+             assessment: assessment, tutorial: tutorial)
+
+      render_inline(component)
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.excluded_heading")
+      )
+      expect(rendered_content).to include("2")
+    end
+
+    it "shows each excluded student with their status" do
+      absent = create(:assessment_participation, :absent,
+                      assessment: assessment, tutorial: tutorial)
+
+      render_inline(component)
+      expect(rendered_content).to include(absent.user.tutorial_name)
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.absent")
+      )
+    end
+
+    it "does not render the card when no excluded students" do
+      create(:assessment_participation, :submitted,
+             assessment: assessment, tutorial: tutorial)
+
+      render_inline(component)
+      expect(rendered_content).not_to include(
+        I18n.t("assessment.grade_table.excluded_heading")
+      )
     end
   end
 end

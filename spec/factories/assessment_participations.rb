@@ -23,11 +23,26 @@ FactoryBot.define do
       submitted_at { 1.day.ago }
     end
 
+    trait :submitted do
+      status { :pending }
+      submitted_at { 1.day.ago }
+    end
+
     trait :reviewed do
       status { :reviewed }
       submitted_at { 2.days.ago }
       graded_at { 1.day.ago }
       points_total { Faker::Number.decimal(l_digits: 2, r_digits: 2) }
+    end
+
+    trait :absent do
+      status { :absent }
+      submitted_at { nil }
+    end
+
+    trait :exempt do
+      status { :exempt }
+      submitted_at { nil }
     end
 
     trait :with_numeric_grade do

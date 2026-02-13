@@ -18,6 +18,11 @@ de:
     graded_by: 'Bewertet von'
     graded_at: 'Bewertet am'
     no_grades_yet: 'Es wurden noch keine Noten eingetragen.'
+    grade_table:
+      absent: 'nicht angetreten'
+      exempt: 'entschuldigt'
+      excluded_heading: 'Sonderfälle'
+      reason: 'Grund'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe erforderlich'

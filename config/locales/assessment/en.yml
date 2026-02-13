@@ -18,6 +18,11 @@ en:
     graded_by: 'Graded by'
     graded_at: 'Graded at'
     no_grades_yet: 'No grades have been entered yet.'
+    grade_table:
+      absent: 'absent'
+      exempt: 'exempt'
+      excluded_heading: 'Special Cases'
+      reason: 'Reason'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
     requires_submission: 'Requires digital submission'
