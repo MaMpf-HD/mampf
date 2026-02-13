@@ -3442,6 +3442,7 @@ de:
     capacity: 'Kapazität'
     division: 'Teilbereich'
     error: Fehler
+    edit: "Bearbeiten"
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'

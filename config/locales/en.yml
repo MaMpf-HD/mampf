@@ -3235,6 +3235,7 @@ en:
     capacity: 'Capacity'
     division: 'Division'
     error: Error
+    edit: "Edit"
     course: 'Course'
     courses: 'Courses'
     term: 'Term'

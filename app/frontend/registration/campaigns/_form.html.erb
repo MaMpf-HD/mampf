@@ -1,6 +1,14 @@
-<%= form_with(model: [lecture, campaign].compact,
-              url: campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
-              local: true) do |f| %>
+<% cancel_path = campaign.persisted? ?
+  registration_campaign_path(campaign) :
+  lecture_registration_campaigns_path(lecture) %>
+<% cancel_data = campaign.persisted? ?
+  { turbo_frame: "campaign_overview_frame" } :
+  { turbo_stream: true } %>
+
+<%= turbo_frame_tag "campaign_overview_frame" do %>
+  <%= form_with(model: [lecture, campaign].compact,
+                url: campaign.persisted? ? registration_campaign_path(campaign) :
+                  lecture_registration_campaigns_path(lecture)) do |f| %>
 
   <% if campaign.errors[:base].present? %>
     <div class="alert alert-danger">
@@ -55,8 +63,9 @@
 
   <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary" %>
   <%= link_to t("buttons.cancel"),
-              campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
+              cancel_path,
               class: "btn btn-secondary",
               role: "button",
-              data: { turbo_stream: true } %>
+              data: cancel_data %>
+  <% end %>
 <% end %>

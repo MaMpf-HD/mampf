@@ -5,8 +5,6 @@ de:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
-      updated: "Anmeldeverfahren erfolgreich aktualisiert."
-      update_failed: "Anmeldeverfahren konnte nicht aktualisiert werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
       confirm_delete: "Sind Sie sicher, dass Sie dieses Anmeldeverfahren löschen wollen?"

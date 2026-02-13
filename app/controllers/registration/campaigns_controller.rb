@@ -45,13 +45,9 @@ module Registration
     end
 
     def edit
-      respond_to do |format|
-        format.html
-        format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_form",
-                           campaign: @campaign, lecture: @campaign.campaignable)
-        end
-      end
+      render partial: "registration/campaigns/form",
+             locals: { campaign: @campaign,
+                       lecture: @campaign.campaignable }
     end
 
     def create
@@ -67,9 +63,13 @@ module Registration
 
     def update
       if @campaign.update(campaign_params)
-        respond_with_success(t("registration.campaign.updated"))
+        render partial: "registration/campaigns/overview",
+               locals: { campaign: @campaign }
       else
-        respond_with_form_error(t("registration.campaign.update_failed"), :edit)
+        render partial: "registration/campaigns/form",
+               locals: { campaign: @campaign,
+                         lecture: @campaign.campaignable },
+               status: :unprocessable_content
       end
     end
 
