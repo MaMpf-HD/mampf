@@ -92,7 +92,8 @@
                     class: 'fas fa-plus-circle text-dark',
                     id: 'new-lecture-button',
                     data: { turbo_frame: 'new_lecture',
-                            bs_toggle: 'tooltip',
+                bs_toggle: 'modal',
+                bs_target: '#newLectureModal',
                             testid: 'new-lecture-button-admin-index' },
                     title: t('buttons.create_lecture') %>
       <% end %>

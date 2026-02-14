@@ -148,13 +148,33 @@ $(document).on("turbo:before-cache", function () {
 });
 
 $(document).on("turbo:load", function () {
-  fillOptionsByAjax($(".selectize"));
+  fillOptionsByAjax($(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
 });
 
 $(document).on("turbo:frame-load", function (event) {
-  // Don't auto-initialize selects inside modals - the modal controller handles that
   const frame = event.target;
-  if (frame.closest(".modal")) return;
+  fillOptionsByAjax($(frame).find(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
+});
 
-  fillOptionsByAjax($(frame).find(".selectize"));
+document.addEventListener("turbo:before-stream-render", function (event) {
+  const stream = event.target;
+  const originalRender = event.detail.render;
+
+  event.detail.render = function (currentElement) {
+    originalRender(currentElement);
+
+    const targetId = stream.getAttribute("target");
+    if (!targetId) return;
+
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    fillOptionsByAjax($(target).find(".selectize").filter(function () {
+      return !this.tomselect;
+    }));
+  };
 });

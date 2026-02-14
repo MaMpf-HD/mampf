@@ -10,7 +10,8 @@
           <%= link_to '', new_lecture_path,
                       class: 'fas fa-plus-circle text-light admin-index-button',
                       id: 'new-lecture-button',
-                      data: { toggle: 'tooltip', turbo_frame: dom_id(Lecture.new), testid: 'new-lecture-button-admin-index' },
+                      data: { toggle: 'tooltip', turbo_frame: dom_id(Lecture.new), testid: 
+                              'new-lecture-button-admin-index' , turbo_prefetch: false},
                       title: t('admin.main.create_lecture') %>
         <% end %>
       </div>

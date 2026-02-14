@@ -18,8 +18,7 @@
       <div class="modal-body"
            id="new-lecture-modal-content">
         <div id="new-lecture-area">
-          <%= turbo_frame_tag Lecture.new,
-                              data: { action: 'turbo:frame-load->modal#show' } %>
+          <%= turbo_frame_tag Lecture.new %>
         </div>
       </div>
     </div>

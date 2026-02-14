@@ -1,7 +1,8 @@
-<% unless from == 'course' %>
-  <div id="new-lecture-area"
-       class="bg-green-lighten-4 p-3 mb-3 rounded">
-<% end %>
+<% wrapper_attributes = from == 'course' ? {} : {
+     id: 'new-lecture-area',
+     class: 'bg-green-lighten-4 p-3 mb-3 rounded'
+   } %>
+<%= content_tag :div, **wrapper_attributes do %>
 <% unless from == 'course' %>
   <div class="row">
     <div class="col-12">
@@ -19,6 +20,8 @@
   <%= form_with model: lecture do |f| %>
     <% term_independent = (from != 'course' && first_course_independent?) ||
                             (from == 'course' && lecture.course.term_independent) %>
+    <% course_error = lecture.errors[:course].join(' ') %>
+    <% term_error = lecture.errors[:term].join(' ') %>
     <div class="row">
       <div class="col-8" data-cy="new-lecture-course-select-div">
         <%= f.label :course_id, t('basics.course'),
@@ -30,7 +33,7 @@
                                           .natural_sort_by(&:first),
                                         lecture.course&.id),
                      {},
-                     { class: 'selectize',
+                     { class: "selectize form-select#{course_error.present? ? ' is-invalid' : ''}",
                        disabled: from == 'course',
                        required: true,
                        data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) } 
@@ -38,8 +41,9 @@
         <% if from == 'course' %>
           <%= f.hidden_field :course_id, value: lecture.course.id %>
         <% end %>
-        <div class="invalid-feedback d-block"
+        <div class="invalid-feedback"
              id="new-lecture-course-error">
+          <%= course_error %>
         </div>
       </div>
       <div class="col-4" id="newLectureTerm"  
@@ -51,10 +55,11 @@
         <%= f.select :term_id,
                      options_for_select(Term.select_terms),
                      {},
-                     { class: 'form-select',
+                     { class: "form-select#{term_error.present? ? ' is-invalid' : ''}",
                        disabled: term_independent } %>
-        <div class="invalid-feedback d-block"
+        <div class="invalid-feedback"
              id="new-lecture-term-error">
+          <%= term_error %>
         </div>
       </div>
       <div class="col-12 mt-4">
@@ -97,6 +102,4 @@
     <%= f.hidden_field :content_mode, value: 'video' %>
   <% end %>
 <% end %>
-<% unless from == 'course' %>
-  </div>
 <% end %>

@@ -67,9 +67,9 @@ class LecturesController < ApplicationController
       @lecture.annotations_status = 0
     end
 
-    render template: "lectures/new/_new",
-           locals: { lecture: @lecture, from: @from },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render turbo_stream: turbo_stream.update(turbo_frame_request_id, template: "lectures/new/_new",
+                                                                     locals: { lecture: @lecture,
+                                                                               from: @from })
   end
 
   def edit
@@ -113,18 +113,13 @@ class LecturesController < ApplicationController
 
       render turbo_stream: streams
     else
-      # Error case: Display validation errors
-      @errors = @lecture.errors
-      @from = params[:lecture][:from]
+      @from = params.dig(:lecture, :from)
 
-      render turbo_stream: [
-        turbo_stream.update("new-lecture-course-error",
-                            @errors[:course].present? ? @errors[:course].join(" ") : ""),
-        turbo_stream.update("new-lecture-term-error",
-                            @errors[:term].present? ? @errors[:term].join(" ") : ""),
-        turbo_stream.update("lecture-teacher-error",
-                            @errors[:teacher].present? ? @errors[:teacher].join(" ") : "")
-      ], status: :unprocessable_content
+      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+                                               template: "lectures/new/_new", locals: {
+                                                 lecture: @lecture, from: @from
+                                               }),
+             status: :unprocessable_content
     end
   end
 
