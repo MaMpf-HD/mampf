@@ -34,12 +34,12 @@ RSpec.describe(GradeTableComponent, type: :component) do
         render_inline(component)
         expect(rendered_content).not_to include(
           I18n.t("assessment.no_grades_yet")
+        )
       end
 
       it "shows em-dash for the grade" do
         render_inline(component)
         expect(rendered_content).to include("\u2014")
->>>>>>> muesli/read-only-grades
       end
     end
   end
