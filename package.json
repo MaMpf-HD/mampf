@@ -16,6 +16,8 @@
     "trix": "^2.1.8"
   },
   "devDependencies": {
+    "@eslint/css": "^0.14.1",
+    "@html-eslint/eslint-plugin": "^0.54.2",
     "@playwright/test": "^1.56.1",
     "@popperjs/core": "^2.11.8",
     "@rails/ujs": "^7.1.3-4",

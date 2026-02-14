@@ -1,8 +1,13 @@
+import css from "@eslint/css";
 import eslint from "@eslint/js";
+import html from "@html-eslint/eslint-plugin";
+import htmlParser from "@html-eslint/parser";
+import { TEMPLATE_ENGINE_SYNTAX } from "@html-eslint/parser";
 import stylistic from "@stylistic/eslint-plugin";
 import erb from "eslint-plugin-erb";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/config/manifest.js",
@@ -46,7 +51,7 @@ const customGlobals = {
   mermaid: "readable",
 };
 
-export default tseslint.config(
+export default defineConfig([
   {
     // Globally ignore the following paths
     ignores: [
@@ -79,9 +84,8 @@ export default tseslint.config(
       ...stylistic.configs.customize({
         "indent": 2,
         "jsx": false,
-        "quote-props": "always",
         "semi": true,
-        "brace-style": "1tbs",
+        "braceStyle": "1tbs",
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
@@ -123,5 +127,74 @@ export default tseslint.config(
     // https://typescript-eslint.io/troubleshooting/typed-linting/#i-get-errors-telling-me--was-not-found-by-the-project-service-consider-either-including-it-in-the-tsconfigjson-or-including-it-in-allowdefaultproject
     files: ["**/*.js", "**/*.mjs", "**/*.mts"],
     extends: [tseslint.configs.disableTypeChecked],
-  }
-);
+  },
+  {
+    files: ["**/*.html", "**/*.html.erb"],
+    ...html.configs["flat/recommended"],
+    plugins: {
+        "@html-eslint": html,
+        "@stylistic": stylistic,
+    },
+    languageOptions: {
+      parser: htmlParser,
+      parserOptions: {
+        templateEngineSyntax: TEMPLATE_ENGINE_SYNTAX.ERB
+      },
+    },
+    rules: {
+        "@stylistic/eol-last": ["error", "always"],
+        "@stylistic/no-trailing-spaces": "error",
+        "@stylistic/no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
+        ...html.configs["flat/recommended"].rules,
+        // 🎈 Best Practices
+        "@html-eslint/no-extra-spacing-text": "error",
+        "@html-eslint/no-script-style-type": "error",
+        "@html-eslint/no-target-blank": "error",
+        // we have partials that contain <li> elements, with a parent <ul>
+        // or <ol> in the parent template, so we can't enforce this rule
+        "@html-eslint/require-li-container": "off",
+        // we can't use this rules since ids might occur multiple times when
+        // used with if-else constructs in ERB templates
+        "@html-eslint/no-duplicate-id": "off",
+        "@html-eslint/use-baseline": "off",
+        // 🎈 Accessibility
+        "@html-eslint/no-abstract-roles": "error",
+        "@html-eslint/no-accesskey-attrs": "error",
+        "@html-eslint/no-aria-hidden-body": "error",
+        "@html-eslint/no-non-scalable-viewport": "error",
+        "@html-eslint/no-positive-tabindex": "error",
+        // hard to enforce in partials
+        "@html-eslint/no-skip-heading-levels": "off",
+        "@html-eslint/require-img-alt": "off",
+        // 🎈 Styles
+        "@html-eslint/attrs-newline": ["error", {
+            closeStyle: "newline",
+            ifAttrsMoreThan: 5,
+        }],
+        "@html-eslint/element-newline": ["error", { "inline": ["$inline"] }],
+        // "@html-eslint/id-naming-convention": ["warn", "camelCase"],
+        "@html-eslint/indent": ["error", 2],
+        "@html-eslint/sort-attrs": "error",
+        "@html-eslint/no-extra-spacing-attrs": ["error", {
+            enforceBeforeSelfClose: true,
+            disallowMissing: true,
+            disallowTabs: true,
+            disallowInAssignment: true,
+        }],
+        // 🎈 SEO
+        "@html-eslint/require-lang": "off",
+        "@html-eslint/require-title": "off",
+    },
+  },
+  {
+    files: ["**/*.css"],
+    plugins: { css },
+    language: "css/css",
+    extends: [css.configs.recommended],
+    rules: {
+      "css/no-important": "warn",
+      "css/use-baseline": "off",
+      "css/no-invalid-properties": ["error", { allowUnknownVariables: true }]
+    }
+  },
+]);
