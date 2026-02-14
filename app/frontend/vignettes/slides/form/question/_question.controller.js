@@ -20,8 +20,7 @@ export default class extends Controller {
     if (questionType === "") {
       this.textLabelTarget.textContent = "Your Question or leave empty";
       textArea.required = false;
-    }
-    else {
+    } else {
       this.textLabelTarget.textContent = "Your Question";
       textArea.required = true;
       $(this.textLabelTarget).collapse("show");
@@ -34,8 +33,7 @@ export default class extends Controller {
         multipleChoiceInput.disabled = false;
       }
       $(this.multipleChoiceTarget).collapse("show");
-    }
-    else {
+    } else {
       if (multipleChoiceInput) {
         multipleChoiceInput.required = false;
         multipleChoiceInput.disabled = true;
@@ -46,8 +44,7 @@ export default class extends Controller {
     if (questionType === "Vignettes::NumberQuestion") {
       this.numberTarget.querySelector("input").disabled = false;
       $(this.numberTarget).collapse("show");
-    }
-    else {
+    } else {
       this.numberTarget.querySelector("input").disabled = true;
       $(this.numberTarget).collapse("hide");
     }
@@ -55,8 +52,7 @@ export default class extends Controller {
     if (questionType === "Vignettes::LikertScaleQuestion") {
       this.likertTarget.querySelector("select").disabled = false;
       $(this.likertTarget).collapse("show");
-    }
-    else {
+    } else {
       this.likertTarget.querySelector("select").disabled = true;
       $(this.likertTarget).collapse("hide");
     }

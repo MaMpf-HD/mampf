@@ -131,8 +131,7 @@ export class AnnotationArea {
     });
     if (annotation.isFirst()) {
       this.previousButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
-    }
-    else {
+    } else {
       this.previousButton.css("opacity", 1);
     }
   }
@@ -145,8 +144,7 @@ export class AnnotationArea {
     });
     if (annotation.isLast()) {
       this.nextButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
-    }
-    else {
+    } else {
       this.nextButton.css("opacity", 1);
     }
   }

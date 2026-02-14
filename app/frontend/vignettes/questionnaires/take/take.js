@@ -75,12 +75,10 @@ function validateTextAnswer() {
   if (validityState.tooShort) {
     const tooShortMessage = textBody.dataset.tooShortMessage;
     textBody.setCustomValidity(tooShortMessage);
-  }
-  else if (validityState.valueMissing) {
+  } else if (validityState.valueMissing) {
     const valueMissingMessage = textBody.dataset.valueMissingMessage;
     textBody.setCustomValidity(valueMissingMessage);
-  }
-  else {
+  } else {
     // render input valid, so that form will submit
     textBody.setCustomValidity("");
     isValid = true;
@@ -110,8 +108,7 @@ function validateMultipleChoiceAnswer(checkboxes) {
   const lastCheckbox = checkboxes[checkboxes.length - 1];
   if (!isValid) {
     lastCheckbox.setCustomValidity(lastCheckbox.dataset.messageAtLeastOne);
-  }
-  else {
+  } else {
     lastCheckbox.setCustomValidity("");
   }
 

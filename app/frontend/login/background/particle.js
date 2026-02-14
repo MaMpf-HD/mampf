@@ -215,8 +215,7 @@ export class MathParticle {
 
     try {
       katex.render(this.formula, div, { throwOnError: false, displayMode: true });
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Failed to render formula with KaTeX:", this.formula, err);
       div.textContent = this.formula;
     }

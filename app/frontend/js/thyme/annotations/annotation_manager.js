@@ -69,8 +69,7 @@ export class AnnotationManager {
         }
         if (this.sizeFunc && this.sizeFunc(a)) {
           a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
-        }
-        else {
+        } else {
           a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
         }
       }

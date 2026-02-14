@@ -142,8 +142,7 @@ export class NetworkGraph {
         fadingIn: true,
         fadingOut: false,
       });
-    }
-    else {
+    } else {
       const connection = this.connections.get(key);
       connection.distSq = distSq;
       connection.targetOpacity = this.calculateOpacityFromSq(distSq, connectionDistanceSq);
@@ -179,8 +178,7 @@ export class NetworkGraph {
           connection.targetOpacity,
           connection.currentOpacity + this.fadeSpeed,
         );
-      }
-      else if (connection.fadingOut && connection.currentOpacity > connection.targetOpacity) {
+      } else if (connection.fadingOut && connection.currentOpacity > connection.targetOpacity) {
         connection.currentOpacity = Math.max(
           connection.targetOpacity,
           connection.currentOpacity - this.fadeSpeed,
@@ -215,8 +213,7 @@ export class NetworkGraph {
     if (this.frameCounter > 50) {
       this.frameCounter = 0;
       this.updateConnections();
-    }
-    else {
+    } else {
       this.updateConnectionElements();
     }
   }

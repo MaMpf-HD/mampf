@@ -7,8 +7,7 @@
 export function onVideoMetadataLoaded(video, callback) {
   if (video.readyState >= 1) {
     callback();
-  }
-  else {
+  } else {
     video.addEventListener("loadedmetadata", callback, { once: true });
   }
 }
@@ -73,8 +72,7 @@ export function playOnClick() {
   video.addEventListener("click", function () {
     if (video.paused) {
       video.play();
-    }
-    else {
+    } else {
       video.pause();
     }
   });

@@ -8,8 +8,7 @@ export class PlayButton extends Component {
     element.addEventListener("click", function () {
       if (video.paused) {
         video.play();
-      }
-      else {
+      } else {
         video.pause();
       }
     });

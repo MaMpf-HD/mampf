@@ -61,8 +61,7 @@ $(document).on("turbo:load", function () {
   $("#lecture_absolute_numbering").on("change", function () {
     if ($(this).prop("checked")) {
       $("#lecture_start_section").prop("disabled", false);
-    }
-    else {
+    } else {
       $("#lecture_start_section").prop("disabled", true);
     }
   });
@@ -303,8 +302,7 @@ $(document).on("turbo:load", function () {
         $("#newLectureTerm").hide();
         $("#lecture_term_id").prop("disabled", true);
         $("#newLectureSort").hide();
-      }
-      else {
+      } else {
         $("#newLectureTerm").show();
         $("#lecture_term_id").prop("disabled", false);
         $("#newLectureSort").show();
@@ -326,8 +324,7 @@ $(document).on("turbo:load", function () {
   $("#import_sections").on("change", function () {
     if ($(this).prop("checked")) {
       $("#import_tags").prop("disabled", false);
-    }
-    else {
+    } else {
       $("#import_tags").prop("disabled", true).prop("checked", false);
     }
   });

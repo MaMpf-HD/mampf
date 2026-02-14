@@ -34,8 +34,7 @@ export class IaButton extends Component {
     element.addEventListener("click", function () {
       if (element.dataset.status === "true") {
         button.plus();
-      }
-      else {
+      } else {
         button.minus();
       }
     });
@@ -68,8 +67,7 @@ export class IaButton extends Component {
     for (const e of this.toHide) {
       if (sh) {
         e.show();
-      }
-      else {
+      } else {
         e.hide();
       }
     }

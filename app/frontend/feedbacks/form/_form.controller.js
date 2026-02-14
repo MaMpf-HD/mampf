@@ -27,11 +27,9 @@ export default class extends Controller {
 
     if (validityState.tooShort) {
       input.setCustomValidity(input.dataset.tooShortMessage);
-    }
-    else if (validityState.valueMissing) {
+    } else if (validityState.valueMissing) {
       input.setCustomValidity(input.dataset.valueMissingMessage);
-    }
-    else {
+    } else {
       input.setCustomValidity("");
     }
 

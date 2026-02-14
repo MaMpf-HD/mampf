@@ -5,8 +5,7 @@ export class HandlerRegistry {
     if (selector) {
       element.on(events, selector, handler);
       this.handlers.push({ element, events, selector, handler });
-    }
-    else {
+    } else {
       element.on(events, handler);
       this.handlers.push({ element, events, handler });
     }
@@ -16,8 +15,7 @@ export class HandlerRegistry {
     this.handlers.forEach((handler) => {
       if (handler.selector) {
         handler.element.off(handler.events, handler.selector, handler.handler);
-      }
-      else {
+      } else {
         handler.element.off(handler.events, handler.handler);
       }
     });

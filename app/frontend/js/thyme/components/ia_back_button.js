@@ -30,8 +30,7 @@ export class IaBackButton extends Component {
       let backInfo = currentChapter.data("text").split(":", 1)[0];
       if (backInfo && backInfo.length > 20) {
         backInfo = this.element.dataset.back;
-      }
-      else {
+      } else {
         backInfo = this.element.dataset.backto + backInfo;
       }
       $(this.element).empty().append(backInfo).show();

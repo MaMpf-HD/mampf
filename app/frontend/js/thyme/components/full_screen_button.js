@@ -17,22 +17,17 @@ export class FullScreenButton extends Component {
       if (element.dataset.status === "true") {
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        }
-        else if (document.mozCancelFullScreen) {
+        } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen();
-        }
-        else if (document.webkitExitFullscreen) {
+        } else if (document.webkitExitFullscreen) {
           document.webkitExitFullscreen();
         }
-      }
-      else {
+      } else {
         if (container.requestFullscreen) {
           container.requestFullscreen();
-        }
-        else if (container.mozRequestFullScreen) {
+        } else if (container.mozRequestFullScreen) {
           container.mozRequestFullScreen();
-        }
-        else if (container.webkitRequestFullscreen) {
+        } else if (container.webkitRequestFullscreen) {
           container.webkitRequestFullscreen();
         }
       }
@@ -59,8 +54,7 @@ export class FullScreenButton extends Component {
       /* Set height to 100vh in fullscreen mode as it otherwise
          is too large. */
       $(thymeAttributes.video).css("height", "100vh");
-    }
-    else {
+    } else {
       // User exists fullscreen mode
       this.element.innerHTML = "fullscreen";
       this.element.dataset.status = "false";

@@ -27,8 +27,7 @@ export default class extends Controller {
     const toggle = event.currentTarget;
     if (toggle.checked) {
       this.disableAssociatedSelect(toggle);
-    }
-    else {
+    } else {
       this.enableAssociatedSelect(toggle);
     }
   }

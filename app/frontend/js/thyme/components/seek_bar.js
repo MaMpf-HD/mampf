@@ -41,8 +41,7 @@ export class SeekBar extends Component {
       if (video.dataset.time) {
         video.currentTime = video.dataset.time;
         element.value = video.dataset.time / video.duration * 100;
-      }
-      else {
+      } else {
         element.value = 0;
       }
     });

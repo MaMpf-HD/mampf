@@ -57,8 +57,7 @@ export class ChapterManager {
       if (times[i] < currentTime) {
         if (currentTime - times[i] > 3) {
           return times[i];
-        }
-        else if (i > 0) {
+        } else if (i > 0) {
           return times[i - 1];
         }
       }

@@ -134,8 +134,7 @@ function _setupChangeDetection(isInfoSlide) {
       formSubmitButton.removeClass("d-none");
       currentUnsavedSlideForm = form;
       hasUnsavedChanges = true;
-    }
-    else if (hasUnsavedChanges) {
+    } else if (hasUnsavedChanges) {
       unsavedChangesWarning.addClass("d-none");
       formSubmitButton.addClass("d-none");
       currentUnsavedSlideForm = null;
@@ -259,8 +258,7 @@ function collapseAllSlides() {
 function executePendingAction(pendingSlide, pendingAction) {
   if (pendingAction === "show") {
     pendingSlide.collapse("show");
-  }
-  else if (pendingAction === "hide") {
+  } else if (pendingAction === "hide") {
     pendingSlide.collapse("hide");
   }
 }

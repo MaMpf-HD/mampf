@@ -33,8 +33,7 @@ export class AnnotationCategoryToggle extends Component {
 
       if (categoryToggle.isChecked()) {
         heatmap.addCategory(this.category);
-      }
-      else {
+      } else {
         heatmap.removeCategory(this.category);
       }
       heatmap.draw();

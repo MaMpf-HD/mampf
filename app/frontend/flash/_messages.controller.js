@@ -57,8 +57,7 @@ export default class extends Controller {
     alert.style.position = "relative";
     if (initialPercent > 0) {
       bar = alert.querySelector("div");
-    }
-    else {
+    } else {
       bar = this.createProgressBar();
       alert.prepend(bar);
     }
@@ -85,8 +84,7 @@ export default class extends Controller {
       bar.style.width = percent + "%";
       if (elapsed < AUTO_DISMISS_TIMEOUT_MS) {
         animationFrameId = requestAnimationFrame(updateBar);
-      }
-      else {
+      } else {
         closeAlert();
       }
     };
@@ -96,8 +94,7 @@ export default class extends Controller {
         alert.classList.remove("show");
         alert.classList.add("hide");
         setTimeout(() => alert.remove(), 500);
-      }
-      else {
+      } else {
         alert.remove();
       }
       cancelAnimationFrame(animationFrameId);

@@ -17,13 +17,11 @@ export default class extends Controller {
       if (minValue >= maxValue) {
         this.minTarget.setCustomValidity("Minimum value must be less than maximum");
         this.maxTarget.setCustomValidity("Maximum value must be greater than minimum");
-      }
-      else {
+      } else {
         this.minTarget.setCustomValidity("");
         this.maxTarget.setCustomValidity("");
       }
-    }
-    else {
+    } else {
       this.minTarget.setCustomValidity("");
       this.maxTarget.setCustomValidity("");
     }

@@ -9,8 +9,7 @@ export class MuteButton extends Component {
       if (video.muted) {
         video.muted = true;
         element.innerHTML = "volume_off";
-      }
-      else {
+      } else {
         video.muted = false;
         element.innerHTML = "volume_up";
       }

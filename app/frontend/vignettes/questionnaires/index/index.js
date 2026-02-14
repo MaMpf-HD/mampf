@@ -14,14 +14,11 @@ $(document).on("turbo:load", function () {
   codenameInput.addEventListener("input", function () {
     if (this.validity.valueMissing) {
       this.setCustomValidity(emptyMessage);
-    }
-    else if (this.value.length < minLength) {
+    } else if (this.value.length < minLength) {
       this.setCustomValidity(minMessage);
-    }
-    else if (this.value.length > maxLength) {
+    } else if (this.value.length > maxLength) {
       this.setCustomValidity(maxMessage);
-    }
-    else {
+    } else {
       this.setCustomValidity("");
     }
   });

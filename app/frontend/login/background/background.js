@@ -48,8 +48,7 @@ class MathBackground {
       for (let i = current; i < desiredCount; i++) {
         arr.push(factory());
       }
-    }
-    else if (desiredCount < current) {
+    } else if (desiredCount < current) {
       for (let i = current - 1; i >= desiredCount; i--) {
         if (arr[i] && typeof arr[i].destroy === "function") arr[i].destroy();
         arr.splice(i, 1);

@@ -12,27 +12,20 @@ export function addGeneralShortcuts() {
     if (key === " ") {
       if (video.paused) {
         video.play();
-      }
-      else {
+      } else {
         video.pause();
       }
-    }
-    else if (key === "ArrowRight") {
+    } else if (key === "ArrowRight") {
       $("#plus-ten").trigger("click");
-    }
-    else if (key === "ArrowLeft") {
+    } else if (key === "ArrowLeft") {
       $("#minus-ten").trigger("click");
-    }
-    else if (key === "f") {
+    } else if (key === "f") {
       $("#full-screen").trigger("click");
-    }
-    else if (key === "m") {
+    } else if (key === "m") {
       $("#mute").trigger("click");
-    }
-    else if (key === "PageUp") {
+    } else if (key === "PageUp") {
       video.volume = Math.min(video.volume + 0.1, 1);
-    }
-    else if (key === "PageDown") {
+    } else if (key === "PageDown") {
       video.volume = Math.max(video.volume - 0.1, 0);
     }
   });
@@ -49,25 +42,20 @@ export function addPlayerShortcuts() {
     const key = evt.key;
     if (key === "i") {
       $("#ia-active").trigger("click");
-    }
-    else if (key === "ArrowUp") {
+    } else if (key === "ArrowUp") {
       $("#next-chapter").trigger("click");
-    }
-    else if (key === "ArrowDown") {
+    } else if (key === "ArrowDown") {
       $("#previous-chapter").trigger("click");
     }
 
     // annotation-related shortcuts
     if (thymeAttributes.disableAnnotationKeyListeners) {
       return;
-    }
-    else if (key === "a") {
+    } else if (key === "a") {
       $("#annotation-previous-button").trigger("click");
-    }
-    else if (key === "s") {
+    } else if (key === "s") {
       $("#annotation-goto-button").trigger("click");
-    }
-    else if (key === "d") {
+    } else if (key === "d") {
       $("#annotation-next-button").trigger("click");
     }
   });
@@ -84,23 +72,17 @@ export function addFeedbackShortcuts() {
     const key = evt.key;
     if (key === "q") {
       $("#annotation-category-mistake-switch").trigger("click");
-    }
-    else if (key === "w") {
+    } else if (key === "w") {
       $("#annotation-category-content-switch").trigger("click");
-    }
-    else if (key === "e") {
+    } else if (key === "e") {
       $("#annotation-category-presentation-switch").trigger("click");
-    }
-    else if (key === "r") {
+    } else if (key === "r") {
       $("#annotation-category-note-switch").trigger("click");
-    }
-    else if (key === "a") {
+    } else if (key === "a") {
       $("#annotation-previous-button").trigger("click");
-    }
-    else if (key === "s") {
+    } else if (key === "s") {
       $("#annotation-goto-button").trigger("click");
-    }
-    else if (key === "d") {
+    } else if (key === "d") {
       $("#annotation-next-button").trigger("click");
     }
   });

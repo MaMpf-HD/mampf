@@ -16,8 +16,7 @@ export class TimeButton extends Component {
     this.element.addEventListener("click", function () {
       if (time >= 0) {
         video.currentTime = Math.min(video.currentTime + time, video.duration);
-      }
-      else {
+      } else {
         video.currentTime = Math.max(video.currentTime + time, 0);
       }
     });

@@ -47,8 +47,7 @@ export class DisplayManager {
     function handleSizeChange(event) {
       if (event.matches) {
         manager.adaptToSmallDisplay();
-      }
-      else {
+      } else {
         manager.adaptToLargeDisplay();
       }
     }

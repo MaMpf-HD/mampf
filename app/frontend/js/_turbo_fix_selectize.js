@@ -13,8 +13,7 @@ function resetSelectized(index, select) {
         return this.value === val;
       }).attr("selected", true);
     }
-  }
-  else {
+  } else {
     if (selectedValue !== "") {
       $(select).find("option[value='" + selectedValue + "']").attr("selected", true);
     }
@@ -33,8 +32,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
 
     if (this.dataset.drag === "true") {
       plugins = ["remove_button", "drag_drop"];
-    }
-    else {
+    } else {
       plugins = ["remove_button"];
     }
     if (this.dataset.ajax === "true" && this.dataset.filled === "false") {
@@ -50,21 +48,16 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
           locale: locale,
         });
         send_data = true;
-      }
-      else if (this.dataset.model === "user") {
+      } else if (this.dataset.model === "user") {
         fill_path = Routes.fill_user_select_path();
         send_data = true;
-      }
-      else if (this.dataset.model === "user_generic") {
+      } else if (this.dataset.model === "user_generic") {
         fill_path = Routes.list_generic_users_path();
-      }
-      else if (this.dataset.model === "teachable") {
+      } else if (this.dataset.model === "teachable") {
         fill_path = Routes.fill_teachable_select_path();
-      }
-      else if (this.dataset.model === "medium") {
+      } else if (this.dataset.model === "medium") {
         fill_path = Routes.fill_media_select_path();
-      }
-      else if (this.dataset.model === "course_tag") {
+      } else if (this.dataset.model === "course_tag") {
         courseId = this.dataset.course;
         fill_path = Routes.fill_course_tags_path();
       }
@@ -121,8 +114,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
           },
         });
       })();
-    }
-    else {
+    } else {
       let renderOptions = {};
 
       const noResultsMessage = this.dataset.noResults;

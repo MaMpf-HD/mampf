@@ -46,8 +46,7 @@ export function fixVideoAttachments() {
 
         // Clean up
         document.body.removeChild(hiddenVideo);
-      }
-      catch (err) {
+      } catch (err) {
         console.error("Failed to create video thumbnail", err);
         document.body.removeChild(hiddenVideo);
       }

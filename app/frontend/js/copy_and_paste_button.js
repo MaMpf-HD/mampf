@@ -12,8 +12,7 @@ $(document).on("turbo:load", function () {
     let popup;
     if (dataId) {
       popup = `.token-clipboard-popup[data-id="${$(this).data("id")}"]`;
-    }
-    else {
+    } else {
       // This is a workaround for the transition to the new ClipboardAPI
       // as intermediate solution that respects that the whole button should
       // be clickable, not just the icon itself.
