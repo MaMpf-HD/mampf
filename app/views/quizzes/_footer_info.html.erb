@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-12 text-center">
-    <button class="btn btn-sm btn-light border border-secondary"
-            id="toggle_results-<%= round_id %>"
-            data-hide="<%= t('admin.quiz.hide') %>"
-            data-details="<%= t('basics.details') %>">
+    <button id="toggle_results-<%= round_id %>"
+      class="btn btn-sm btn-light border border-secondary"
+      data-details="<%= t('basics.details') %>"
+      data-hide="<%= t('admin.quiz.hide') %>">
       <div>
         <span id="correctness-<%= round_id %>">
         </span>
@@ -14,24 +14,28 @@
     </button>
     <% question = Question.find_by_id(question_id) %>
     <% if question&.video %>
-        <a href="<%= play_medium_path(question) %>"
-           class="no-deco ms-3 fas fa-play fa-2x text-info"
-           data-bs-toggle="tooltip"
-           data-placement="bottom"
-           title="<%= t('admin.quiz.video_info') %>"
-           style="position: relative; top: 6px;"
-           target="_blank">
-        </a>
+    <a
+      class="no-deco ms-3 fas fa-play fa-2x text-info"
+      style="position: relative; top: 6px;"
+      data-bs-toggle="tooltip"
+      data-placement="bottom"
+      href="<%= play_medium_path(question) %>"
+      target="_blank"
+      title="<%= t('admin.quiz.video_info') %>"
+    >
+    </a>
     <% end %>
     <% if question.manuscript %>
-      <a href="<%= display_medium_path(question) %>"
-         class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= t('admin.quiz.manuscript_info') %>"
-         style="position: relative; top: 6px;"
-         target="_blank">
-      </a>
+    <a
+      class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
+      style="position: relative; top: 6px;"
+      data-bs-toggle="tooltip"
+      data-placement="bottom"
+      href="<%= display_medium_path(question) %>"
+      target="_blank"
+      title="<%= t('admin.quiz.manuscript_info') %>"
+    >
+    </a>
     <% end %>
   </div>
 </div>

@@ -1,18 +1,18 @@
 <% correct_answers = answers.select(&:value) %>
 <% if result.present? %>
-  <ul>
-    <li>
-      $<%= result %>$
-    </li>
-  </ul>
+<ul>
+  <li>
+    $<%= result %>$
+  </li>
+</ul>
 <% elsif correct_answers.present? %>
-  <ul>
-    <% correct_answers.each do |a| %>
-      <li class="p-2">
-        <%= a.text %>
-      </li>
-    <% end %>
-  </ul>
+<ul>
+  <% correct_answers.each do |a| %>
+  <li class="p-2">
+    <%= a.text %>
+  </li>
+  <% end %>
+</ul>
 <% else %>
-  <%= t('admin.quiz.none_correct') %>
+<%= t('admin.quiz.none_correct') %>
 <% end %>

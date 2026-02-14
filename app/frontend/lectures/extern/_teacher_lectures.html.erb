@@ -7,16 +7,16 @@
   <div class="card-body">
     <ul>
       <% lectures.each do |l| %>
-        <li>
-          <% if current_user.lectures.include?(l) %>
-            <%= link_to l.title, l.path(current_user),
-                        class: 'text-dark' %>
-          <% else %>
-            <span>
-              <%= l.title %>
-            </span>
-          <% end %>
-        </li>
+      <li>
+        <% if current_user.lectures.include?(l) %>
+        <%= link_to l.title, l.path(current_user),
+        class: 'text-dark' %>
+        <% else %>
+        <span>
+          <%= l.title %>
+        </span>
+        <% end %>
+      </li>
       <% end %>
     </ul>
   </div>

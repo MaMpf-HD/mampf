@@ -1,7 +1,12 @@
 <%= vite_stylesheet_tag "feedbacks/navbar/_button.scss" %>
 
-<button type="button" id="feedback-btn" class="btn ms-1 me-1"
-    title="<%= t('feedback.tooltip') %>"
-    data-bs-toggle="modal" data-bs-target="#submit-feedback">
+<button
+  id="feedback-btn"
+  type="button"
+  class="btn ms-1 me-1"
+  data-bs-target="#submit-feedback"
+  data-bs-toggle="modal"
+  title="<%= t('feedback.tooltip') %>"
+>
   <i class="bi bi-star-fill"></i>
 </button>

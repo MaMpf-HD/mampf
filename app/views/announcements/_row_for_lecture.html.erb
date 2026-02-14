@@ -1,5 +1,5 @@
 <div class="list-group-item list-group-item-info"
-     data-listItemNotification="<%= notification.id %>">
+  data-listItemNotification="<%= notification.id %>">
   <div class="row">
     <div class="col-2">
       <%= human_readable_date(notification.notifiable.created_at) %>
@@ -19,11 +19,11 @@
                     { id: notification.id,
                       lecture: lecture.id,
                       onenew: t('notifications.lecture.one_new'),
-                      morenew: t('notifications.lecture.more_new') } do %>
-        <i class="fas fa-check text-dark"
-           data-bs-toggle="tooltip"
-           title="<%= t('basics.mark_as_read') %>">
-        </i>
+      morenew: t('notifications.lecture.more_new') } do %>
+      <i class="fas fa-check text-dark"
+        data-bs-toggle="tooltip"
+        title="<%= t('basics.mark_as_read') %>">
+      </i>
       <% end %>
     </div>
   </div>

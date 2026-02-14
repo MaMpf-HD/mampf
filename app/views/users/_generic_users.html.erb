@@ -1,11 +1,11 @@
 <div id="user-search-form">
   <% if generic_users_count.positive? %>
-    <%= form_with url: elevate_user_path,
+  <%= form_with url: elevate_user_path,
                   scope: 'generic_user',
-                  method: 'get' do |f| %>
-      <div class="mb-3 row">
-        <div class="col-12">
-          <%= f.select :id,
+  method: 'get' do |f| %>
+  <div class="mb-3 row">
+    <div class="col-12">
+      <%= f.select :id,
                        options_for_select([[]], nil),
                        { prompt: t('basics.select') },
                        { class: 'selectize',
@@ -14,36 +14,36 @@
                                  filled: false,
                                  placeholder: t('basics.enter_two_letters'),
                                  no_results: t('basics.no_results'),
-                                 modal: true } } %>
-        </div>
-      </div>
-      <div class="mb-3 row generic-user no_display">
-        <div class="col-6">
-          <div class="form-check">
-            <%= f.check_box :admin,
-                            class: 'form-check-input' %>
-            <%= f.label :admin,
+      modal: true } } %>
+    </div>
+  </div>
+  <div class="mb-3 row generic-user no_display">
+    <div class="col-6">
+      <div class="form-check">
+        <%= f.check_box :admin,
+        class: 'form-check-input' %>
+        <%= f.label :admin,
                         t('admin.user.elevate'),
-                        { class: 'form-check-label' } %>
-            <%= helpdesk(t('admin.user.info.elevate'), false) %>
-          </div>
-        </div>
-        <div class="col-3">
-          <span id="submit-user-elevate"
-                class="no_display">
-          <%= f.submit t('buttons.save'),
-                       class: 'btn btn-sm btn-primary' %>
-          </span>
-        </div>
-        <div class="col-3 text-end">
-          <%= link_to t('buttons.delete'),
+        { class: 'form-check-label' } %>
+        <%= helpdesk(t('admin.user.info.elevate'), false) %>
+      </div>
+    </div>
+    <div class="col-3">
+      <span id="submit-user-elevate"
+        class="no_display">
+        <%= f.submit t('buttons.save'),
+        class: 'btn btn-sm btn-primary' %>
+      </span>
+    </div>
+    <div class="col-3 text-end">
+      <%= link_to t('buttons.delete'),
                       nil,
                       method: :delete,
                       data: { confirm: t('confirmation.generic') },
                       id: 'delete-generic-user',
-                      class: 'btn btn-sm btn-danger' %>
-        </div>
-      </div>
-    <% end %>
+      class: 'btn btn-sm btn-danger' %>
+    </div>
+  </div>
+  <% end %>
   <% end %>
 </div>

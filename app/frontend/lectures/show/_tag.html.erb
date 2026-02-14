@@ -6,7 +6,7 @@
             data: { id: tag.id,
                     lessons: tag.lessons.map(&:id),
                     toggle: 'tooltip',
-                    placement: 'bottom' } %>
+placement: 'bottom' } %>
 <%= link_to shorten(tag.title, 20),
             tag_path(tag),
             id: 'lecture-' + dom_id(tag),
@@ -16,4 +16,4 @@
             data: { id: tag.id,
                     lessons: tag.lessons.map(&:id),
                     toggle: 'tooltip',
-                    placement: 'bottom' } %>
+placement: 'bottom' } %>

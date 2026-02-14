@@ -11,7 +11,7 @@
     <%= link_to t('buttons.create_announcement'),
                 new_announcement_path,
                 class: 'btn btn-sm btn-secondary',
-                remote: true %>
+    remote: true %>
   </div>
 </div>
 <div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
@@ -42,14 +42,14 @@
   </div>
 </div>
 <div id="row-new-announcement"
-     class="border-bottom mx-2 py-2"
-     style="display: none;" >
+  class="border-bottom mx-2 py-2"
+  style="display: none;">
 </div>
 <% @announcements.each do |a| %>
-  <div class="row border-bottom mx-2 px-4 py-2"
-       id="row-announcement-<%= a.id %>">
-    <%= render partial: 'announcements/row',
-               locals: { announcement: a }%>
-  </div>
+<div id="row-announcement-<%= a.id %>"
+  class="row border-bottom mx-2 px-4 py-2">
+  <%= render partial: 'announcements/row',
+  locals: { announcement: a }%>
+</div>
 <% end %>
 <%= render partial: 'announcements/modal' %>

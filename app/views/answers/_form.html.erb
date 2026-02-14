@@ -1,53 +1,53 @@
 <% id = answer.id || 0 %>
 <%= bootstrap_form_with model: answer do |f| %>
-  <div id="answer-value-<%= id %>" data-id="<%= id %>">
-    <%= f.form_group :value,
-                     label: { text: t('admin.answer.correctness') + ':' } do %>
-      <%= f.radio_button :value, true,
+<div id="answer-value-<%= id %>" data-id="<%= id %>">
+  <%= f.form_group :value,
+  label: { text: t('admin.answer.correctness') + ':' } do %>
+  <%= f.radio_button :value, true,
                          label: t('admin.answer.true_lc'),
                          inline: true,
-                         id: 'answer-true-' + id.to_s %>
-      <%= f.radio_button :value,
+  id: 'answer-true-' + id.to_s %>
+  <%= f.radio_button :value,
                          false,
                          label: t('admin.answer.false_lc'),
                          inline: true,
-                         id: 'answer-false-' + id.to_s %>
-    <% end %>
-  </div>
-  <%= f.text_area :text,
-                  id: 'tex-area-answer-' + id.to_s  %>
-  <% if id == 0 %>
-    <%= t('admin.answer.preview_text') %>:
-    <div  class="border bg-correct border-secondary rounded py-2 mb-2"
-          id="answer-header-0">
-      <span id="answer-box-0" class="me-2">
-        <%= ballot_box(true) %>
-      </span>
-      <span id='tex-preview-answer-0'></span>
-    </div>
+  id: 'answer-false-' + id.to_s %>
   <% end %>
-  <%= f.text_area :explanation,
+</div>
+<%= f.text_area :text,
+id: 'tex-area-answer-' + id.to_s  %>
+<% if id == 0 %>
+<%= t('admin.answer.preview_text') %>:
+<div id="answer-header-0"
+  class="border bg-correct border-secondary rounded py-2 mb-2">
+  <span id="answer-box-0" class="me-2">
+    <%= ballot_box(true) %>
+  </span>
+  <span id="tex-preview-answer-0"></span>
+</div>
+<% end %>
+<%= f.text_area :explanation,
                   label: { text: t('admin.answer.explanation') },
-                  id: 'tex-area-explanation-' + id.to_s %>
-  <% if id == 0 %>
-    <%= t('admin.answer.preview_explanation') %>:
-    <div  class="border border-secondary rounded bg-light py-2">
-      <span id="tex-preview-explanation-0">
-      </span>
-    </div>
-  <% end %>
-  <%= f.hidden_field :question_id,
+id: 'tex-area-explanation-' + id.to_s %>
+<% if id == 0 %>
+<%= t('admin.answer.preview_explanation') %>:
+<div class="border border-secondary rounded bg-light py-2">
+  <span id="tex-preview-explanation-0">
+  </span>
+</div>
+<% end %>
+<%= f.hidden_field :question_id,
                      value: question_id,
-                     id: 'answer_' + id.to_s + '_question_id' %>
-  <div class="text-center mt-4">
-    <%= f.submit t('buttons.save'),
-                 class: "btn btn-sm btn-primary" %>
-    <% if id == 0 %>
-      <button type="button"
-              class="btn btn-sm btn-secondary ms-3"
-              id="new-answer-cancel">
-        <%= t('buttons.cancel') %>
-      </button>
-    <% end %>
-  </div>
+id: 'answer_' + id.to_s + '_question_id' %>
+<div class="text-center mt-4">
+  <%= f.submit t('buttons.save'),
+  class: "btn btn-sm btn-primary" %>
+  <% if id == 0 %>
+  <button id="new-answer-cancel"
+    type="button"
+    class="btn btn-sm btn-secondary ms-3">
+    <%= t('buttons.cancel') %>
+  </button>
+  <% end %>
+</div>
 <% end %>

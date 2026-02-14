@@ -1,25 +1,28 @@
-<div class="modal fade"
-     id="screenshotModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="screenshotModalLabel" aria-hidden="true">
+<div
+  id="screenshotModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="screenshotModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="screenshotModalLabel">
+        <h5 id="screenshotModalLabel"
+          class="modal-title">
           <%= t('basics.screenshot') %>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <div class="modal-body">
         <img class="img-fluid mb-3"
-             src="<%= medium.screenshot_url_with_host %>">
+          src="<%= medium.screenshot_url_with_host %>">
       </div>
     </div>
   </div>

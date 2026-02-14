@@ -6,61 +6,62 @@
     </span>
     <%= helpdesk(t('admin.medium.info.manuscript'), false) %>
   </div>
-  <div class="col-2 text-end"
-       id="manuscript-uploadButton"
-       data-choosefiles="<%= t('basics.file') %>">
+  <div id="manuscript-uploadButton"
+    class="col-2 text-end"
+    data-choosefiles="<%= t('basics.file') %>">
     <div id="manuscript-uploadButton-button"
-         data-testid="manuscript-upload-file"
-         class="btn btn-sm btn-outline-secondary">
-       <%= t('basics.file') %>
+      class="btn btn-sm btn-outline-secondary"
+      data-testid="manuscript-upload-file">
+      <%= t('basics.file') %>
     </div>
-    <input type="hidden"
-           name="medium[manuscript]"
-           value="<%= medium.cached_manuscript_data %>"
-           id="upload-manuscript-hidden">
-    <input type="file"
-           name="medium[manuscript]"
-           id="upload-manuscript"
-           accept="application/pdf">
-  
-      <div id="manuscript-uploadButton-button-actual"
-           data-testid="manuscript-upload"
-            class="btn btn-sm btn-outline-secondary"
-            style="display:none"
-            data-tr-success="<%= t('buttons.upload_success') %>"
-            data-tr-failure="<%= t('submission.upload_failure')%>"
-            data-tr-post-processing="<%= t('basics.post_processing')%>"
-            >
-              <%= t('buttons.upload') %>
-      </div>
+    <input id="upload-manuscript-hidden"
+      type="hidden"
+      name="medium[manuscript]"
+      value="<%= medium.cached_manuscript_data %>">
+    <input id="upload-manuscript"
+      type="file"
+      accept="application/pdf"
+      name="medium[manuscript]">
+
+    <div
+      id="manuscript-uploadButton-button-actual"
+      class="btn btn-sm btn-outline-secondary"
+      style="display:none"
+      data-testid="manuscript-upload"
+      data-tr-failure="<%= t('submission.upload_failure')%>"
+      data-tr-post-processing="<%= t('basics.post_processing')%>"
+      data-tr-success="<%= t('buttons.upload_success') %>"
+    >
+      <%= t('buttons.upload') %>
+    </div>
   </div>
   <div class="col-6 text-end">
     <% if medium.manuscript.present? %>
-      <button type="button"
-              class="btn btn-sm btn-outline-secondary"
-              data-bs-toggle="modal"
-              data-bs-target="#snapshotModal">
-        <%= t('basics.screenshot') %>
-      </button>
-      <%= link_to t('buttons.view'),
+    <button type="button"
+      class="btn btn-sm btn-outline-secondary"
+      data-bs-target="#snapshotModal"
+      data-bs-toggle="modal">
+      <%= t('basics.screenshot') %>
+    </button>
+    <%= link_to t('buttons.view'),
                   medium.manuscript_url_with_host,
                   class: 'btn btn-sm btn-outline-secondary',
-                  target: "_blank" %>
+    target: "_blank" %>
     <% end %>
   </div>
 </div>
 <%= render partial: 'media/upload_manuscript',
-           locals: { medium: medium } %>
+locals: { medium: medium } %>
 <%= f.hidden_field :detach_manuscript, value: false %>
 <% if !manuscript.empty? && medium.sort == 'Script' &&
-      medium.teachable.content_mode == 'manuscript' %>
-  <div id="medium-manuscript-destinations">
-    <%= render partial: 'media/manuscript_structure',
+medium.teachable.content_mode == 'manuscript' %>
+<div id="medium-manuscript-destinations">
+  <%= render partial: 'media/manuscript_structure',
                locals: { medium: medium,
-                         manuscript: manuscript } %>
-  </div>
+  manuscript: manuscript } %>
+</div>
 <% end %>
 <% if medium.sort == 'Script' && medium.quarantine.any? %>
-    <%= render partial: 'media/quarantine_dialog',
-               locals: { medium: medium } %>
+<%= render partial: 'media/quarantine_dialog',
+locals: { medium: medium } %>
 <% end %>

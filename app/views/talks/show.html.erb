@@ -6,53 +6,53 @@
       </span>
       <%= @talk.to_label %>
       <% if current_user.admin ||
-          @talk.lecture.edited_by?(current_user) %>
-        <%= link_to '',
+      @talk.lecture.edited_by?(current_user) %>
+      <%= link_to '',
                     edit_talk_path(@talk),
                     class: 'far fa-edit fa-sm text-dark mt-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('buttons.edit'),
-                    style: 'text-decoration: none;' %>
+      style: 'text-decoration: none;' %>
       <% elsif current_user.in?(@talk.speakers) %>
-        <%= link_to '',
+      <%= link_to '',
                     assemble_talk_path(@talk),
                     class: 'far fa-edit fa-sm text-dark mt-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('buttons.edit'),
-                    style: 'text-decoration: none;' %>
+      style: 'text-decoration: none;' %>
       <% end %>
       <%= t('in') %>
       <% if current_user.lectures.include?(@talk.lecture) %>
-        <%= link_to @talk.lecture.title,
+      <%= link_to @talk.lecture.title,
                     @talk.lecture.path(current_user),
-                    class: 'text-dark' %>
+      class: 'text-dark' %>
       <% else %>
-        <span>
-          <%= @talk.lecture.title %>
-        </span>
+      <span>
+        <%= @talk.lecture.title %>
+      </span>
       <% end %>
     </h4>
   </div>
   <div class="col-2 text-end ">
     <% if @talk.previous.present? %>
-      <a href="<%= talk_path(@talk.previous) %>"
-         class="text-secondary material-icons me-2"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('previous_lesson') %>">
-        keyboard_arrow_left
-      </a>
+    <a class="text-secondary material-icons me-2"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= talk_path(@talk.previous) %>"
+      title="<%= t('previous_lesson') %>">
+      keyboard_arrow_left
+    </a>
     <% end %>
     <% if @talk.next.present? %>
-      <a href="<%= talk_path(@talk.next) %>"
-         class="text-secondary material-icons"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('next_lesson') %>">
-        keyboard_arrow_right
-      </a>
+    <a class="text-secondary material-icons"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= talk_path(@talk.next) %>"
+      title="<%= t('next_lesson') %>">
+      keyboard_arrow_right
+    </a>
     <% end %>
   </div>
 </div>
@@ -61,22 +61,22 @@
     <div class="row">
       <div class="col-12">
         <%= render partial: 'talks/data',
-                   locals: { talk: @talk } %>
+        locals: { talk: @talk } %>
       </div>
       <% if @talk.display_description && @talk.description.present? %>
-        <div class="col-12 mt-3">
-          <div class="card bg-light">
-            <div class="card-header bg-generic-card-header">
-              <h5>
-                <%= t('content') %>
-                <%= helpdesk(t('admin.talk.info.description_info'), false) %>
-              </h5>
-            </div>
-            <div class="card-body">
-              <%= @talk.description&.html_safe %>
-            </div>
+      <div class="col-12 mt-3">
+        <div class="card bg-light">
+          <div class="card-header bg-generic-card-header">
+            <h5>
+              <%= t('content') %>
+              <%= helpdesk(t('admin.talk.info.description_info'), false) %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <%= @talk.description&.html_safe %>
           </div>
         </div>
+      </div>
       <% end %>
     </div>
   </div>
@@ -88,7 +88,7 @@
                                          .select { |m| m.visible_for_user?(current_user) },
                              tags: true,
                              from: 'talk',
-                             questions: false } %>
+        questions: false } %>
       </div>
     </div>
   </div>

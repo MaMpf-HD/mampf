@@ -1,57 +1,71 @@
-<i class="fas fa-eye-slash fa-lg redtext ms-2"
-   id="unpublished_medium_item"
-   style="display: <%= show_no_block(!!item&.medium && !item.medium.published?) %>"
-   tabindex="-1"
-   data-bs-toggle="tooltip"
-   title="<%= t('admin.referral.info.unpublished_medium') %>">
+<i
+  id="unpublished_medium_item"
+  class="fas fa-eye-slash fa-lg redtext ms-2"
+  style="display: <%= show_no_block(!!item&.medium && !item.medium.published?) %>"
+  data-bs-toggle="tooltip"
+  tabindex="-1"
+  title="<%= t('admin.referral.info.unpublished_medium') %>"
+>
 </i>
-<i class="fas fa-lock fa-lg redtext ms-2"
-   id="locked_medium_item"
-   style="display: <%= show_no_block(!!item&.medium&.locked?) %>"
-   tabindex="-1"
-   data-bs-toggle="tooltip"
-   title="<%= t('admin.referral.info.locked_medium') %>">
+<i
+  id="locked_medium_item"
+  class="fas fa-lock fa-lg redtext ms-2"
+  style="display: <%= show_no_block(!!item&.medium&.locked?) %>"
+  data-bs-toggle="tooltip"
+  tabindex="-1"
+  title="<%= t('admin.referral.info.locked_medium') %>"
+>
 </i>
-<i class="fas fa-notes-medical fa-lg redtext ms-2"
-   id="locked_medium_item"
-   style="display: <%= show_no_block(!!item&.quarantine) %>"
-   tabindex="-1"
-   data-bs-toggle="tooltip"
-   title="<%= t('admin.referral.info.quarantine_item') %>">
+<i
+  id="locked_medium_item"
+  class="fas fa-notes-medical fa-lg redtext ms-2"
+  style="display: <%= show_no_block(!!item&.quarantine) %>"
+  data-bs-toggle="tooltip"
+  tabindex="-1"
+  title="<%= t('admin.referral.info.quarantine_item') %>"
+>
 </i>
-<a id="video-ref"
-   href="<%= item&.video_link %>"
-   class="fas fa-film fa-lg mx-2 text-dark"
-   style="text-decoration: none;
+<a
+  id="video-ref"
+  class="fas fa-film fa-lg mx-2 text-dark"
+  style="text-decoration: none;
           display: <%= show_no_block(!!item&.video? && item.sort != 'pdf_destination') %>"
-   data-bs-toggle="tooltip"
-   title="<%= t('video.video') %>"
-   target="_blank">
+  data-bs-toggle="tooltip"
+  href="<%= item&.video_link %>"
+  target="_blank"
+  title="<%= t('video.video') %>"
+>
 </a>
-<a id="manuscript-ref"
-   href="<%= item&.manuscript_link %>"
-   class="far fa-file-pdf fa-lg mx-2 text-dark"
-   style="text-decoration: none;
+<a
+  id="manuscript-ref"
+  class="far fa-file-pdf fa-lg mx-2 text-dark"
+  style="text-decoration: none;
           display: <%= show_no_block(!!item&.manuscript?) %>"
-   data-bs-toggle="tooltip"
-   title="<%= t('manuscript.manuscript') %>"
-   target="_blank">
+  data-bs-toggle="tooltip"
+  href="<%= item&.manuscript_link %>"
+  target="_blank"
+  title="<%= t('manuscript.manuscript') %>"
+>
 </a>
-<a id="quiz-ref"
-   href="<%= item&.quiz_link %>"
-   class="fas fa-gamepad fa-lg mx-2 text-dark"
-   style="text-decoration: none;
+<a
+  id="quiz-ref"
+  class="fas fa-gamepad fa-lg mx-2 text-dark"
+  style="text-decoration: none;
           display: <%= show_no_block(!!item&.quiz?) %>"
-   data-bs-toggle="tooltip"
-   title="<%= t('quiz.quiz') %>"
-   target="_blank">
+  data-bs-toggle="tooltip"
+  href="<%= item&.quiz_link %>"
+  target="_blank"
+  title="<%= t('quiz.quiz') %>"
+>
 </a>
-<a id="medium-link-ref"
-   href="<%= item&.medium_link %>"
-   class="fas fa-link fa-lg mx-2 text-dark"
-   style="text-decoration: none;
+<a
+  id="medium-link-ref"
+  class="fas fa-link fa-lg mx-2 text-dark"
+  style="text-decoration: none;
           display: <%= show_no_block(!!item&.medium_link?) %>"
-   data-bs-toggle="tooltip"
-   title="externer Link"
-   target="_blank">
+  data-bs-toggle="tooltip"
+  href="<%= item&.medium_link %>"
+  target="_blank"
+  title="externer Link"
+>
 </a>

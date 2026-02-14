@@ -1,9 +1,9 @@
 <div id="organizational_accordion"
-     role="tablist">
+  role="tablist">
   <div class="card bg-light">
-    <div class="card-header"
-         role="tab"
-         id="organizational_heading">
+    <div id="organizational_heading"
+      class="card-header"
+      role="tab">
       <div class="row">
         <div class="col-6">
           <h5>
@@ -11,30 +11,33 @@
           </h5>
         </div>
         <div class="col-6 text-end">
-          <a class="btn btn-sm btn-outline-primary"
-             data-bs-toggle="collapse"
-             href="#organizational_collapse"
-             id="organizational_collapse_button"
-             aria-expanded="false" aria-controls="organizational_collapse">
+          <a
+            id="organizational_collapse_button"
+            class="btn btn-sm btn-outline-primary"
+            aria-controls="organizational_collapse"
+            aria-expanded="false"
+            data-bs-toggle="collapse"
+            href="#organizational_collapse"
+          >
             <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
     </div>
     <div id="organizational_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#organizational_accordion">
+      class="collapse"
+      aria-labelledby="heading"
+      data-bs-parent="#organizational_accordion"
+      role="tabpanel">
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-6">
             <div class="form-check">
               <%= f.check_box :organizational,
-                              class: 'form-check-input' %>
+              class: 'form-check-input' %>
               <%= f.label :organizational,
                           t('admin.course.additional_information_visible'),
-                          class: "form-check-label" %>
+              class: "form-check-label" %>
             </div>
           </div>
         </div>
@@ -42,7 +45,7 @@
           <div class="col-12">
             <%= f.trix_editor :organizational_concept,
                               id: 'course-concept-trix',
-                              data: { content: course.organizational_concept} %>
+            data: { content: course.organizational_concept} %>
           </div>
         </div>
       </div>

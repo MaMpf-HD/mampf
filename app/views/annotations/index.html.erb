@@ -1,7 +1,6 @@
 <%= vite_stylesheet_tag "styles/annotations_overview.scss" %>
 
 <div class="container-md small-width" data-cy="annotations-container">
-  
 
   <!-- --------------------------------------------------------------------- -->
   <!-- Students annotations -->
@@ -27,13 +26,12 @@
 
   <%= render 'annotations/index_accordion',
     annotations_by_lecture: @student_annotations_by_lecture,
-    is_students_annotations: true %>
+  is_students_annotations: true %>
 
   <% end %>
 
   <hr>
   <% end %>
-
 
   <!-- --------------------------------------------------------------------- -->
   <!-- Own annotations -->
@@ -48,7 +46,7 @@
       <%= t('admin.annotation.none_yet_html') %>
     </p>
   </div>
-    
+
   <% else %>
 
   <p>
@@ -57,10 +55,9 @@
 
   <%= render 'annotations/index_accordion',
     annotations_by_lecture: @annotations_by_lecture,
-    is_students_annotations: false %>
+  is_students_annotations: false %>
 
   <% end %>
-
 
 </div>
 

@@ -4,17 +4,17 @@
       <%= lessons_description %>
     </h5>
   </div>
-  <div class="card-body" id="relatedLessonsBody">
+  <div id="relatedLessonsBody" class="card-body">
     <% if lessons.any? %>
-      <ul>
-        <% lessons.each do |l| %>
-          <li class="text-dark">
-            <%= link_to l.title, l, class: "text-dark" %>
-          </li>
-        <% end %>
-      </ul>
+    <ul>
+      <% lessons.each do |l| %>
+      <li class="text-dark">
+        <%= link_to l.title, l, class: "text-dark" %>
+      </li>
+      <% end %>
+    </ul>
     <% else %>
-      <%= t('no_related_lessons') %>
+    <%= t('no_related_lessons') %>
     <% end %>
   </div>
 </div>

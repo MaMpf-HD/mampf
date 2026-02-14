@@ -12,13 +12,13 @@
   <div class="card-body p-2">
     <ul>
       <% sections.each do |s| %>
-        <li>
-          <%= link_to s.lecture.title,
+      <li>
+        <%= link_to s.lecture.title,
                       edit_or_show_lecture_path(s.lecture),
-                      class: lectures_color(s.lecture) %>
-          :
-          <%= s.to_label %>
-        </li>
+        class: lectures_color(s.lecture) %>
+        :
+        <%= s.to_label %>
+      </li>
       <% end %>
     </ul>
   </div>

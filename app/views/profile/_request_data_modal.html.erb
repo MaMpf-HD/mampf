@@ -1,15 +1,15 @@
 <!-- Modal -->
-<div class="modal fade" id="requestDataModal" tabindex="-1"
-      aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="requestDataModal" class="modal fade" aria-hidden="true"
+  aria-labelledby="exampleModalLabel" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">
+        <h1 id="exampleModalLabel" class="modal-title fs-5">
           <%= t('profile.my_data') %>
         </h1>
         <button type="button" class="btn-close"
-                data-bs-dismiss="modal" aria-label="Close"></button>
+          aria-label="Close" data-bs-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
@@ -23,23 +23,29 @@
                       id: "request-data-btn",
                       type: "button",
                       data: { 'bs-dismiss': 'modal' },
-                      remote: true %>
+        remote: true %>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
-  
+
     </div>
   </div>
 </div>
 
 <!-- Notification upon successful data retrieval -->
-<div aria-live="polite" aria-atomic="true"
-    class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-  <div class="toast profile-card" id="request-data-toast" role="alert"
-      aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;"
+  aria-atomic="true" aria-live="polite">
+  <div
+    id="request-data-toast"
+    class="toast profile-card"
+    aria-atomic="true"
+    aria-live="assertive"
+    data-bs-autohide="false"
+    role="alert"
+  >
 
     <div class="toast-header">
       <strong class="me-auto"><%= t('profile.data_request') %></strong>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="toast"></button>
     </div>
 
     <div class="toast-body">

@@ -5,15 +5,15 @@
     </h5>
   </div>
   <div class="card-body">
-    
+
     <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :title, t('basics.title'),
-                    class: "form-label" %>
+        class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.title'), false) %>
         <%= f.text_field :title,
-                         { class: 'form-control' } %>
-        <div class="invalid-feedback" id="talk-title-error">
+        { class: 'form-control' } %>
+        <div id="talk-title-error" class="invalid-feedback">
         </div>
       </div>
     </div>
@@ -22,27 +22,27 @@
     <div class="row">
       <div class="col-12">
         <%= f.label :date, t('basics.date'),
-                    class: "form-label" %>
-        <a class="fas fa-plus-circle clickable text-dark"
-           id="new-talk-date-button"
-           data-bs-toggle="tooltip"
-           data-index="<%= talk.dates.size + 1 %>"
-           title="<%= t('admin.tag.create') %>">
+        class: "form-label" %>
+        <a id="new-talk-date-button"
+          class="fas fa-plus-circle clickable text-dark"
+          data-bs-toggle="tooltip"
+          data-index="<%= talk.dates.size + 1 %>"
+          title="<%= t('admin.tag.create') %>">
         </a>
       </div>
 
-      <div class="col-12" id="talk-dates">
+      <div id="talk-dates" class="col-12">
         <% talk.dates.each_with_index do |date, i| %>
-          <%= f.fields_for :dates, index: i do |date_form| %>
-            <%= render partial: "date_field",
-                       locals: { date_form: date_form, date: date } %>
-          <% end %>
+        <%= f.fields_for :dates, index: i do |date_form| %>
+        <%= render partial: "date_field",
+        locals: { date_form: date_form, date: date } %>
+        <% end %>
         <% end %>
         <%= render partial: "date_field_template", locals: { f: f } %>
       </div>
 
       <div class="col-12 mb-3">
-        <div class="invalid-feedback" id="talk-date-error">
+        <div id="talk-date-error" class="invalid-feedback">
         </div>
       </div>
     </div>
@@ -64,38 +64,40 @@
                     data: { toggle: 'tooltip' },
                     title: t('buttons.create_medium'),
                     style: 'text-decoration: none;',
-                    remote: true %>
+        remote: true %>
         <% if talk.media.present? %>
-          <ul id="sortableTalkMedia">
-            <% talk.media.each do |m| %>
-              <li>
-                <%= link_to m.sort_localized + ', ' + m.local_info,
+        <ul id="sortableTalkMedia">
+          <% talk.media.each do |m| %>
+          <li>
+            <%= link_to m.sort_localized + ', ' + m.local_info,
                             edit_medium_path(m),
                             class: textcolor(m),
-                            data: { id: m.id } %>
-              </li>
-            <% end %>
-          </ul>
-          <%= f.hidden_field :media_order,
-                             value: talk.media.map(&:id).to_json %>
+            data: { id: m.id } %>
+          </li>
+          <% end %>
+        </ul>
+        <%= f.hidden_field :media_order,
+        value: talk.media.map(&:id).to_json %>
         <% else %>
-          <p>
-            <%= t('admin.talk.no_media') %>
-          </p>
+        <p>
+          <%= t('admin.talk.no_media') %>
+        </p>
         <% end %>
       </div>
     </div>
     <div class="mb-3">
       <%= f.label :tag_ids, t('basics.related_tags'),
-                   class: "form-label" %>
+      class: "form-label" %>
       <%= helpdesk(t('admin.talk.info.tags'), false) %>
-      <a class="fas fa-plus-circle clickable text-dark"
-         id="new-tag-button"
-         data-bs-toggle="tooltip"
-         title="Tag anlegen"
-         data-course="<%= talk.lecture.course.id %>"
-         data-talk="<%= talk.id %>"
-         data-from="talk">
+      <a
+        id="new-tag-button"
+        class="fas fa-plus-circle clickable text-dark"
+        data-bs-toggle="tooltip"
+        data-course="<%= talk.lecture.course.id %>"
+        data-from="talk"
+        data-talk="<%= talk.id %>"
+        title="Tag anlegen"
+      >
       </a>
       <%= f.select :tag_ids,
                    options_for_select(talk.tags
@@ -112,9 +114,9 @@
                              drag: false,
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results') } } %>
-      <div class="invalid-feedback"
-            id="talk-tags-error">
+      no_results: t('basics.no_results') } } %>
+      <div id="talk-tags-error"
+        class="invalid-feedback">
       </div>
     </div>
     <div class="row">
@@ -122,13 +124,13 @@
         <%= f.label :predecessor,
                     t('admin.chapter.position',
                     chapter_name: t('basics.talk')),
-                    class: "form-label" %>
+        class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.position'), false) %>
         <%= f.select :predecessor,
                      options_for_select(talk_positions_for_select(talk),
                                         talk.position - 1) ,
                                         {},
-                                        { class: 'form-select' } %>
+        { class: 'form-select' } %>
       </div>
     </div>
   </div>

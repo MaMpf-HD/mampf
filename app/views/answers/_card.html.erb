@@ -1,9 +1,9 @@
-<div class="card bg-mdb-color-lighten-6 mb-2" id="answer-card-<%= answer.id %>">
-  <div class="card-header" id="answer-heading-<%= answer.id %>">
+<div id="answer-card-<%= answer.id %>" class="card bg-mdb-color-lighten-6 mb-2">
+  <div id="answer-heading-<%= answer.id %>" class="card-header">
     <div class="row">
-      <div class="col-8 py-2 <%= bgcolor(answer.value) %> %>
-                  border border-secondary rounded"
-           id="answer-header-<%= answer.id %>">
+      <div id="answer-header-<%= answer.id %>"
+        class="col-8 py-2 <%= bgcolor(answer.value) %> %>
+                  border border-secondary rounded">
         <span id="answer-box-<%= answer.id %>" class="me-2">
           <%= ballot_box(answer.value) %>
         </span>
@@ -12,22 +12,24 @@
         </span>
       </div>
       <div class="col-4">
-        <button id="targets-answer-<%= answer.id %>"
-                class="btn btn-sm btn-primary collapsed m-1"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapse-answer-<%= answer.id %>"
-                aria-expanded="true"
-                aria-controls="collapse-answer-<%= answer.id %>"
-                data-locale="<%= answer.question.locale_with_inheritance %>"
-                data-discard="<%= t('buttons.discard') %>"
-                data-edit="<%= t('buttons.edit') %>">
+        <button
+          id="targets-answer-<%= answer.id %>"
+          class="btn btn-sm btn-primary collapsed m-1"
+          aria-controls="collapse-answer-<%= answer.id %>"
+          aria-expanded="true"
+          data-bs-target="#collapse-answer-<%= answer.id %>"
+          data-bs-toggle="collapse"
+          data-discard="<%= t('buttons.discard') %>"
+          data-edit="<%= t('buttons.edit') %>"
+          data-locale="<%= answer.question.locale_with_inheritance %>"
+        >
           <%= t('buttons.edit') %>
         </button>
         <%= link_to t('buttons.delete'),
                     answer_path(answer), method: :delete,
                     data: { confirm: t('confirmation.generic') },
                     class: 'btn btn-sm btn-danger',
-                    remote: true %>
+        remote: true %>
       </div>
     </div>
     <div class="row">
@@ -39,15 +41,15 @@
     </div>
   </div>
   <div id="collapse-answer-<%= answer.id %>"
-       class="collapse"
-       aria-labelledby="answer-heading-<%= answer.id %>"
-       data-bs-parent="#answers-accordion"
-       data-id="<%= answer.id %>">
-    <div class="card-body bg-mdb-color-lighten-6"
-         id="answer-body-<%= answer.id %>">
+    class="collapse"
+    aria-labelledby="answer-heading-<%= answer.id %>"
+    data-bs-parent="#answers-accordion"
+    data-id="<%= answer.id %>">
+    <div id="answer-body-<%= answer.id %>"
+      class="card-body bg-mdb-color-lighten-6">
       <%= render partial: 'answers/form',
                  locals: { answer: answer,
-                           question_id: answer.question.id } %>
+      question_id: answer.question.id } %>
     </div>
   </div>
 </div>

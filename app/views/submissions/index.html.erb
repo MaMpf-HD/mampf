@@ -1,36 +1,36 @@
 <% if @assignments.any? %>
-  <div class="row mb-3">
-    <div class="col-12 col-md-6 border-end">
-      <div class="row">
-        <div class="col-12">
-          <h4 class="mb-3">
-            <%= t('submission.current') %>
-          </h4>
-        </div>
-        <% @current_assignments.each do |a| %>
-          <div class="col-12 mb-3 submissionArea"
-               data-id="<%= a.id %>">
-            <%= render partial: 'submissions/card',
-                       locals: { assignment: a,
-                                 submission: a.submission(current_user) }%>
-          </div>
-        <% end %>
-        <% if @current_assignments.none? %>
-        	<div class="col-12">
-	          <%= t('assignment.no_current') %>
-	        </div>
-        <% end %>
+<div class="row mb-3">
+  <div class="col-12 col-md-6 border-end">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="mb-3">
+          <%= t('submission.current') %>
+        </h4>
       </div>
+      <% @current_assignments.each do |a| %>
+      <div class="col-12 mb-3 submissionArea"
+        data-id="<%= a.id %>">
+        <%= render partial: 'submissions/card',
+                       locals: { assignment: a,
+        submission: a.submission(current_user) }%>
+      </div>
+      <% end %>
+      <% if @current_assignments.none? %>
+      <div class="col-12">
+        <%= t('assignment.no_current') %>
+      </div>
+      <% end %>
     </div>
-    <div class="col-12 col-md-6">
-      <div class="row">
-        <div class="col-10">
-          <h4 class="mb-3">
-            <%= t('submission.previous') %>
-          </h4>
-        </div>
-        <div class="col-2 text-end">
-          <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="row">
+      <div class="col-10">
+        <h4 class="mb-3">
+          <%= t('submission.previous') %>
+        </h4>
+      </div>
+      <div class="col-2 text-end">
+        <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
                     tabindex: -1,
                     'data-bs-toggle': 'popover',
                     'data-bs-trigger': 'focus',
@@ -40,100 +40,104 @@
                                          profile: link_to(t('notifications.profile'),
                                                   edit_profile_path)),
                     'data-bs-html': true,
-                    title: t('info') %>
-        </div>
-        <% @previous_assignments.each do |a| %>
-          <div class="col-12 mb-3 submissionArea"
-               data-id="<%= a.id %>">
-            <%= render partial: 'submissions/card',
+        title: t('info') %>
+      </div>
+      <% @previous_assignments.each do |a| %>
+      <div class="col-12 mb-3 submissionArea"
+        data-id="<%= a.id %>">
+        <%= render partial: 'submissions/card',
                        locals: { assignment: a,
-                                 submission: a.submission(current_user) } %>
-          </div>
+        submission: a.submission(current_user) } %>
+      </div>
+      <% end %>
+      <% if @previous_assignments.none? %>
+      <div class="col-12">
+        <%= t('assignment.no_previous') %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div id="submissionsAccordion" class="accordion mb-3">
+  <div class="accordion-item">
+    <div class="accordion-header clickable">
+      <button
+        id="old_submissions_heading"
+        type="button"
+        class="accordion-button collapsed"
+        aria-controls="old_submissions_collapse"
+        aria-expanded="false"
+        data-bs-target="#old_submissions_collapse"
+        data-bs-toggle="collapse"
+      >
+        <h4>
+          <%= t('submission.old_ones') %>
+        </h4>
+      </button>
+    </div>
+    <div id="old_submissions_collapse"
+      class="collapse"
+      aria-labelledby="old_submissions_heading"
+      data-bs-parent="#submissionsAccordion">
+      <div class="row p-3">
+        <% if @old_assignments.any? %>
+        <% @old_assignments.each do |a| %>
+        <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
+          data-id="<%= a.id %>">
+          <%= render partial: 'submissions/card',
+                           locals: { assignment: a,
+          submission: a.submission(current_user) } %>
+        </div>
         <% end %>
-        <% if @previous_assignments.none? %>
-        	<div class="col-12">
-	          <%= t('assignment.no_previous') %>
-	        </div>
+        <% else %>
+        <div class="col-12">
+          <%= t('submission.no_old_ones') %>
+        </div>
         <% end %>
       </div>
     </div>
   </div>
-  <div class="accordion mb-3" id="submissionsAccordion">
-    <div class="accordion-item">
-      <div class="accordion-header clickable">
-        <button class="accordion-button collapsed"
-                type="button"
-                id="old_submissions_heading"
-                data-bs-toggle="collapse"
-                data-bs-target="#old_submissions_collapse"
-                aria-expanded="false"
-                aria-controls="old_submissions_collapse">
-          <h4>
-            <%= t('submission.old_ones') %>
-          </h4>
-        </button>
-      </div>
-      <div id="old_submissions_collapse"
-           class="collapse"
-           data-bs-parent="#submissionsAccordion"
-           aria-labelledby="old_submissions_heading">
-        <div class="row p-3">
-          <% if @old_assignments.any? %>
-            <% @old_assignments.each do |a| %>
-              <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
-                   data-id="<%= a.id %>">
-                <%= render partial: 'submissions/card',
-                           locals: { assignment: a,
-                                     submission: a.submission(current_user) } %>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="col-12">
-              <%= t('submission.no_old_ones') %>
-            </div>
-          <% end %>
-        </div>
-      </div>
+  <div class="accordion-item">
+    <div class="accordion-header clickable">
+      <button
+        id="future_submissions_heading"
+        type="button"
+        class="accordion-button collapsed"
+        aria-controls="future_submissions_collapse"
+        aria-expanded="false"
+        data-bs-target="#future_submissions_collapse"
+        data-bs-toggle="collapse"
+      >
+        <h4>
+          <%= t('submission.future_ones') %>
+        </h4>
+      </button>
     </div>
-    <div class="accordion-item">
-      <div class="accordion-header clickable">
-        <button class="accordion-button collapsed"
-                type="button"
-                id="future_submissions_heading"
-                data-bs-toggle="collapse"
-                data-bs-target="#future_submissions_collapse"
-                aria-expanded="false"
-                aria-controls="future_submissions_collapse">
-          <h4>
-            <%= t('submission.future_ones') %>
-          </h4>
-        </button>
-      </div>
-      <div id="future_submissions_collapse"
-           class="collapse"
-           data-bs-parent="#submissionsAccordion"
-           aria-labelledby="future_submissions_heading">
-        <div class="row p-3">
-          <% if @future_assignments.any? %>
-            <% @future_assignments.each do |a| %>
-              <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
-                   data-id="<%= a.id %>">
-                <%= render partial: 'submissions/card',
+    <div id="future_submissions_collapse"
+      class="collapse"
+      aria-labelledby="future_submissions_heading"
+      data-bs-parent="#submissionsAccordion">
+      <div class="row p-3">
+        <% if @future_assignments.any? %>
+        <% @future_assignments.each do |a| %>
+        <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
+          data-id="<%= a.id %>">
+          <%= render partial: 'submissions/card',
                            locals: { assignment: a,
-                                     submission: a.submission(current_user) } %>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="col-12">
-              <%= t('submission.no_future_ones') %>
-            </div>
-          <% end %>
+          submission: a.submission(current_user) } %>
         </div>
+        <% end %>
+        <% else %>
+        <div class="col-12">
+          <%= t('submission.no_future_ones') %>
+        </div>
+        <% end %>
       </div>
     </div>
   </div>
+</div>
 <% else %>
-  <div class="jumbotron">
-    <%= t('assignment.not_in_this_lecture') %>
-  </div>
+<div class="jumbotron">
+  <%= t('assignment.not_in_this_lecture') %>
+</div>
 <% end %>

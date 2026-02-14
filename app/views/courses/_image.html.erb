@@ -1,9 +1,9 @@
 <div id="image_accordion"
-     role="tablist">
+  role="tablist">
   <div class="card bg-light">
-    <div class="card-header"
-         role="tab"
-         id="image_heading">
+    <div id="image_heading"
+      class="card-header"
+      role="tab">
       <div class="row">
         <div class="col-6">
           <h5>
@@ -12,58 +12,62 @@
           </h5>
         </div>
         <div class="col-6 text-end">
-          <a class="btn btn-sm btn-outline-primary"
-             data-bs-toggle="collapse"
-             href="#image_collapse"
-             id="image_collapse_button"
-             aria-expanded="false" aria-controls="image_collapse">
+          <a
+            id="image_collapse_button"
+            class="btn btn-sm btn-outline-primary"
+            aria-controls="image_collapse"
+            aria-expanded="false"
+            data-bs-toggle="collapse"
+            href="#image_collapse"
+          >
             <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
     </div>
     <div id="image_collapse"
-         class="<%= show_collapse(course.image) %>"
-         role="tabpanel"
-         aria-labelledby="image_heading"
-         data-bs-parent="#image_accordion">
+      class="<%= show_collapse(course.image) %>"
+      aria-labelledby="image_heading"
+      data-bs-parent="#image_accordion"
+      role="tabpanel">
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-12">
             <%= image_tag(course.image_url_with_host.presence ||
                             "/no_course_information.png",
                           class: 'img-fluid',
-                          id: 'image-preview') %>
+            id: 'image-preview') %>
           </div>
-          <div class="col-12 mt-2" id="image-none">
+          <div id="image-none" class="col-12 mt-2">
             <% unless course.image %>
-              <%= t('admin.course.no_image') %>
+            <%= t('admin.course.no_image') %>
             <% end %>
           </div>
           <div class="row">
-            <div class="col-12" id="image-uploadButton"
-                 data-choosefiles="<%= t('basics.file') %>">
+            <div id="image-uploadButton" class="col-12"
+              data-choosefiles="<%= t('basics.file') %>">
               <%= f.hidden_field :image,
                                  value: course.cached_image_data,
-                                 id: 'upload-image-hidden' %>
+              id: 'upload-image-hidden' %>
               <%= f.file_field :image,
-                               id: 'upload-image' %>
+              id: 'upload-image' %>
               <%= f.hidden_field :detach_image, value: false %>
               <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
-              <button id="image-uploadButton-button-actual"
-                    data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
-                    class="btn btn-sm btn-outline-secondary"
-                    >
-              <%= t('buttons.upload') %>
-            </button>
+              <button
+                id="image-uploadButton-button-actual"
+                class="btn btn-sm btn-outline-secondary"
+                data-tr-failure="<%= t('submission.upload_failure')%>"
+                data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                data-tr-post-processing="<%= t('basics.post_processing')%>"
+                data-tr-success="<%= t('buttons.upload_success') %>"
+              >
+                <%= t('buttons.upload') %>
+              </button>
             </div>
           </div>
         </div>
         <%= render partial: 'courses/upload_image',
-                   locals: { course: course } %>
+        locals: { course: course } %>
       </div>
     </div>
   </div>

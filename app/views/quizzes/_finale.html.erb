@@ -2,36 +2,36 @@
   <div class="col-sm-12 col-md-12 col-lg-10">
     <div class="card bg-remark border-secondary mt-2">
       <% if user_signed_in? && certificate %>
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12 my-2 text-center" id="quizCertificateArea">
-              <%= link_to t('quiz.certify'),
+      <div class="card-header">
+        <div class="row">
+          <div id="quizCertificateArea" class="col-12 my-2 text-center">
+            <%= link_to t('quiz.certify'),
                           claim_quiz_certificate_path(certificate),
                           class: 'btn btn-primary',
                           method: :post,
-                          remote: true %>
-              <%= helpdesk(t('quiz.certificate_info') + ' ' +
-                            t('quiz.certificate_info_on_use'), false) %>
-            </div>
+            remote: true %>
+            <%= helpdesk(t('quiz.certificate_info') + ' ' +
+            t('quiz.certificate_info_on_use'), false) %>
           </div>
         </div>
+      </div>
       <% end %>
       <div class="card-body">
         <%= t('admin.quiz.finale_html',
               xkcd_link: link_to(t('admin.quiz.xkcd'),
                                   'https://xkcd.com',
-                                  target: :_blank)) %>
+        target: :_blank)) %>
         <div>
           <% if xkcd[:error] %>
-            <div class="alert alert-danger">
-              <%= t('admin.quiz.xkcd_error') %>
-            </div>
+          <div class="alert alert-danger">
+            <%= t('admin.quiz.xkcd_error') %>
+          </div>
           <% else %>
-            <%= link_to image_tag(xkcd['img'],
+          <%= link_to image_tag(xkcd['img'],
                                   class: "img-fluid"),
                         xkcd['img'],
                         target: :_blank,
-                        title: xkcd['alt'] %>
+          title: xkcd['alt'] %>
           <% end %>
         </div>
       </div>

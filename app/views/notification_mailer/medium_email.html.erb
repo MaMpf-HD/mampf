@@ -5,19 +5,19 @@
   <%= link_to t('medium.details'), medium_url(@medium) %>
   &nbsp;
   <% if @medium.video.present? %>
-    <%= link_to t('video.play'), play_medium_url(@medium) %>
-    &nbsp;
+  <%= link_to t('video.play'), play_medium_url(@medium) %>
+  &nbsp;
   <% end %>
   <% if @medium.manuscript.present? %>
-    <%= link_to t('manuscript.view'), display_medium_url(@medium) %>
-    &nbsp;
+  <%= link_to t('manuscript.view'), display_medium_url(@medium) %>
+  &nbsp;
   <% end %>
   <% if @medium.sort == 'Quiz' && @medium.quiz_graph %>
-    <%= link_to t('quiz.start'), take_quiz_url(@medium) %>
-    &nbsp;
+  <%= link_to t('quiz.start'), take_quiz_url(@medium) %>
+  &nbsp;
   <% end %>
   <% if @medium.external_reference_link.present? %>
-    <%= link_to t('external_link_lc'), @medium.external_reference_link %>
-    &nbsp;
+  <%= link_to t('external_link_lc'), @medium.external_reference_link %>
+  &nbsp;
   <% end %>
 </p>

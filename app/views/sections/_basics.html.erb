@@ -6,67 +6,69 @@
   </div>
   <div class="card-body">
     <div class="row">
-    <div class="col-12 mb-3">
-      <%= f.label :title, t('basics.title'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.section.info.title'), false) %>
-      <%= f.text_field :title, { class: 'form-control',
+      <div class="col-12 mb-3">
+        <%= f.label :title, t('basics.title'),
+        class: "form-label" %>
+        <%= helpdesk(t('admin.section.info.title'), false) %>
+        <%= f.text_field :title, { class: 'form-control',
                                  id: 'section_title_' + section.id.to_s,
                                  data: { id: section.id,
-                                         chapter: section.chapter.id } } %>
-      <div class="invalid-feedback"
-           id="section-title-error-<%= section.id %>">
+        chapter: section.chapter.id } } %>
+        <div id="section-title-error-<%= section.id %>"
+          class="invalid-feedback">
+        </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12 mb-3">
-      <%= f.label :chapter_id,
+    <div class="row">
+      <div class="col-12 mb-3">
+        <%= f.label :chapter_id,
                   t("basics.#{section.lecture.chapter_name}"),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.section.info.chapter'), false) %>
-      <%= f.select :chapter_id,
+        class: "form-label" %>
+        <%= helpdesk(t('admin.section.info.chapter'), false) %>
+        <%= f.select :chapter_id,
                    options_for_select(lecture_chapters_for_select(section),
                                       section.chapter.id), {},
-                   { class: 'form-select'} %>
-    </div>
-    <div class="col-8 mb-3">
-      <%= f.label :predecessor,
+        { class: 'form-select'} %>
+      </div>
+      <div class="col-8 mb-3">
+        <%= f.label :predecessor,
                   t('admin.section.position'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.section.info.position'), false) %>
-      <%= f.select :predecessor,
+        class: "form-label" %>
+        <%= helpdesk(t('admin.section.info.position'), false) %>
+        <%= f.select :predecessor,
                    options_for_select(section_positions_for_select(section),
                                       section.position - 1) ,
                                       {},
-                                      { class: 'form-select' } %>
-    </div>
-    <div class="col-4 mb-3">
-      <%= f.label :display_number,
+        { class: 'form-select' } %>
+      </div>
+      <div class="col-4 mb-3">
+        <%= f.label :display_number,
                   t('admin.section.display_number'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.section.info.display_number'), false) %>
-      <%= f.text_field :display_number,
+        class: "form-label" %>
+        <%= helpdesk(t('admin.section.info.display_number'), false) %>
+        <%= f.text_field :display_number,
                        { class: 'form-control',
                          id: 'section_number_alt_' + section.id.to_s,
                          data: { id: section.id,
-                                 chapter: section.chapter.id } } %>
+        chapter: section.chapter.id } } %>
+      </div>
     </div>
-  </div>
-  <div class="mb-3">
-    <%= f.label :tag_ids,
+    <div class="mb-3">
+      <%= f.label :tag_ids,
                 t('basics.related_tags'),
-                class: "form-label" %>
-    <%= helpdesk(t('admin.section.info.related_tags'), false) %>
-    <a class="fas fa-plus-circle clickable text-dark"
-       id="new-tag-button"
-       data-bs-toggle="tooltip"
-       title="Tag anlegen"
-       data-course="<%= section.chapter.lecture.course.id %>"
-       data-section="<%= section.id %>"
-       data-from="section">
-    </a>
-    <%= f.select :tag_ids,
+      class: "form-label" %>
+      <%= helpdesk(t('admin.section.info.related_tags'), false) %>
+      <a
+        id="new-tag-button"
+        class="fas fa-plus-circle clickable text-dark"
+        data-bs-toggle="tooltip"
+        data-course="<%= section.chapter.lecture.course.id %>"
+        data-from="section"
+        data-section="<%= section.id %>"
+        title="Tag anlegen"
+      >
+      </a>
+      <%= f.select :tag_ids,
                  options_for_select(section.tags
                                            .map { |t| [t.extended_title, t.id] },
                                     section.tag_ids),
@@ -82,53 +84,53 @@
                            locale: I18n.locale,
                            placeholder: t('basics.enter_two_letters'),
                            no_results: t('basics.no_results') },
-                   id: 'section_tag_ids_' + section.id.to_s } %>
-    <div class="invalid-feedback"
-         id="section-tags-error-<%= section.id %>">
+      id: 'section_tag_ids_' + section.id.to_s } %>
+      <div id="section-tags-error-<%= section.id %>"
+        class="invalid-feedback">
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <%= t('basics.lessons') %>
-      <%= helpdesk(t('admin.section.info.lessons'), false) %>
-      <%= link_to new_lesson_path(lecture_id: section.lecture.id,
+    <div class="row">
+      <div class="col-12">
+        <%= t('basics.lessons') %>
+        <%= helpdesk(t('admin.section.info.lessons'), false) %>
+        <%= link_to new_lesson_path(lecture_id: section.lecture.id,
                                   section_id: section.id),
                   remote: true,
                   id: 'new-lesson-button',
                   class: 'text-dark',
                   data: { toggle: 'tooltip' },
                   title: t('buttons.create_lesson'),
-                  style: 'text-decoration: none;' do %>
+        style: 'text-decoration: none;' do %>
         <i class="fas fa-plus-circle">
         </i>
-      <% end %>
-    </div>
-    <div class="col-12">
-      <% if section.lessons.any? %>
+        <% end %>
+      </div>
+      <div class="col-12">
+        <% if section.lessons.any? %>
         <ul>
           <% section.lessons.each do |l| %>
-            <li>
-              <%= link_to l.to_label,
-                          edit_lesson_path(l) %>
-            </li>
+          <li>
+            <%= link_to l.to_label,
+            edit_lesson_path(l) %>
+          </li>
           <% end %>
         </ul>
-      <% else %>
+        <% else %>
         <%= t('admin.section.no_lessons') %>
-      <% end %>
+        <% end %>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="form-check mb-2">
-        <%= f.check_box :hidden,
-                        class: 'form-check-input' %>
-        <%= f.label :hidden,
+    <div class="row">
+      <div class="col-12">
+        <div class="form-check mb-2">
+          <%= f.check_box :hidden,
+          class: 'form-check-input' %>
+          <%= f.label :hidden,
                     t('admin.section.exempt'),
-                    { class: 'form-check-label' } %>
-        <%= helpdesk(t('admin.section.info.exempt'), false) %>
+          { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.section.info.exempt'), false) %>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>

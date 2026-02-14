@@ -1,45 +1,45 @@
 <% suppress_label ||= false %>
 <div class="form-group">
   <% unless suppress_label %>
-    <div class="mb-1">
-      <%= t('basics.access_rights') %>
-      <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
-    </div>
+  <div class="mb-1">
+    <%= t('basics.access_rights') %>
+    <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
+  </div>
   <% end %>
   <div class="form-check">
     <%= f.radio_button :released,
                        'all',
-                       class: 'form-check-input' %>
+    class: 'form-check-input' %>
     <%= f.label :released,
                 t('access.all'),
                 value: 'all',
-                class: 'form-check-label' %>
+    class: 'form-check-label' %>
   </div>
   <div class="form-check">
     <%= f.radio_button :released,
                        'users',
-                       class: 'form-check-input' %>
+    class: 'form-check-input' %>
     <%= f.label :released,
                 t('access.users'),
                 value: 'users',
-                class: 'form-check-label' %>
+    class: 'form-check-label' %>
   </div>
   <div class="form-check">
     <%= f.radio_button :released,
                        'subscribers',
-                       class: 'form-check-input' %>
+    class: 'form-check-input' %>
     <%= f.label :released,
                 t('access.subscribers'),
                 value: 'subscribers',
-                class: 'form-check-label' %>
+    class: 'form-check-label' %>
   </div>
   <div class="form-check">
     <%= f.radio_button :released,
                        'locked',
-                       class: 'form-check-input' %>
+    class: 'form-check-input' %>
     <%= f.label :released,
                 t('access.locked'),
                 value: 'locked',
-                class: 'form-check-label' %>
+    class: 'form-check-label' %>
   </div>
 </div>

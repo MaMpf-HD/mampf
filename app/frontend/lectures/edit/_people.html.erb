@@ -1,57 +1,57 @@
 <% if current_user.can_update_personell?(lecture) %>
-  <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
-    <div class="row">
-      <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
+<%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
+<div class="row">
+  <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
 
-      <div id="lecture_teacher_select" class="col-6 mb-3" data-cy="teacher-select">
-        <%= teacher_select(f, is_new_lecture=false, lecture) %>
-      </div>
+  <div id="lecture_teacher_select" class="col-6 mb-3" data-cy="teacher-select">
+    <%= teacher_select(f, is_new_lecture=false, lecture) %>
+  </div>
 
-      <div class="col-6 mb-3">
-        <%= f.label :editor_ids,
+  <div class="col-6 mb-3">
+    <%= f.label :editor_ids,
                     t('basics.lecture_editors'),
-                  class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
-        <div id="lecture_editors_select" data-cy="editor-select" %>
-          <%= editors_select(f, lecture) %>
-        </div>
-      </div>
+    class: "form-label" %>
+    <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
+    <div id="lecture_editors_select" % data-cy="editor-select">
+      <%= editors_select(f, lecture) %>
+    </div>
+  </div>
 
-    </div>
-    <div class="row mb-3">
-      <div class="col-12">
-        <%= t('basics.subscribers_count_nc') %>
-        <span id="lectureUserCounter">
-          <%= lecture.users.count %>
-        </span>
-        <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
-        <% if lecture.users.any? && !lecture.stale? %>
-          <button type="button"
-                  id="lectureUserModalButton"
-                  class="ms-3 btn btn-outline-primary btn-sm"
-                  data-bs-toggle="modal"
-                  data-bs-target="#lectureUserModal">
-            <%= t('basics.details') %>
-          </button>
-        <% end %>
-      </div>
-    </div>
+</div>
+<div class="row mb-3">
+  <div class="col-12">
+    <%= t('basics.subscribers_count_nc') %>
+    <span id="lectureUserCounter">
+      <%= lecture.users.count %>
+    </span>
+    <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
+    <% if lecture.users.any? && !lecture.stale? %>
+    <button id="lectureUserModalButton"
+      type="button"
+      class="ms-3 btn btn-outline-primary btn-sm"
+      data-bs-target="#lectureUserModal"
+      data-bs-toggle="modal">
+      <%= t('basics.details') %>
+    </button>
+    <% end %>
+  </div>
+</div>
 
-    <!-- Unsaved changes -->
-    <div class="col-12 text-center" id="lecture-basics-warning">
-      <%= t('warnings.unsaved_changes') %>
-      <%= hidden_field_tag :subpage, "people" %>
-      <%= f.submit t('buttons.save'),
-          class: "btn btn-sm btn-primary" %>
-      <button type="button"
-              class="btn btn-sm btn-secondary ms-2"
-              id="lecture-basics-cancel"
-              data-id="<%= lecture.id %>">
-        <%= t('buttons.discard') %>
-      </button>
-    </div>
-  <% end %>
+<!-- Unsaved changes -->
+<div id="lecture-basics-warning" class="col-12 text-center">
+  <%= t('warnings.unsaved_changes') %>
+  <%= hidden_field_tag :subpage, "people" %>
+  <%= f.submit t('buttons.save'),
+  class: "btn btn-sm btn-primary" %>
+  <button id="lecture-basics-cancel"
+    type="button"
+    class="btn btn-sm btn-secondary ms-2"
+    data-id="<%= lecture.id %>">
+    <%= t('buttons.discard') %>
+  </button>
+</div>
+<% end %>
 <% else %>
-  <%= t('admin.lecture.no_access_to_users_html',
-        project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+<%= t('admin.lecture.no_access_to_users_html',
+project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
 <% end %>

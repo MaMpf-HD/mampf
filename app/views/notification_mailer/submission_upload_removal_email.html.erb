@@ -1,12 +1,12 @@
 <% if @recipient == @remover %>
-  <%= t('mailer.submission_upload_removal_html',
+<%= t('mailer.submission_upload_removal_html',
         assignment: @assignment.title,
         filename: @filename,
-        lecture: @assignment.lecture.short_title)  %>
+lecture: @assignment.lecture.short_title)  %>
 <% else %>
-  <%= t('mailer.submission_upload_removal_by_others_html',
+<%= t('mailer.submission_upload_removal_by_others_html',
         assignment: @assignment.title,
         filename: @filename,
         lecture: @assignment.lecture.short_title,
-        remover: @remover.tutorial_name) %>
+remover: @remover.tutorial_name) %>
 <% end %>

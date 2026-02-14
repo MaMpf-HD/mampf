@@ -2,8 +2,14 @@
 
 <% I18n.with_locale(current_user.try(:locale)) do %>
 
-<%# Sponsors modal %>
-<div id="sponsors" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Sponsors list modal" aria-hidden="true">
+<div
+  id="sponsors"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="Sponsors list modal"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-lg">
     <div class="modal-content p-4">
       <%= render partial: 'main/sponsors' %>
@@ -12,7 +18,7 @@
 </div>
 
 <%# Footbar %>
-<div class="container-fluid p-3" id="footer-bar">
+<div id="footer-bar" class="container-fluid p-3">
   <div class="row">
     <div class="col text-md-start">
       <%= t('footer.text_html',
@@ -46,21 +52,23 @@
              bugs: link_to(t('here'),
                             'https://github.com/MaMpf-HD/mampf/issues',
                             target: :_blank),
-             feedback: mail_to(DefaultSetting::FEEDBACK_EMAIL, nil)) %>
+      feedback: mail_to(DefaultSetting::FEEDBACK_EMAIL, nil)) %>
     </div>
     <div class="col text-md-end">
-      <a href="#sponsors" data-toggle="modal"
-          data-target="#sponsors"><%= t('basics.sponsors') %></a>
+      <a data-target="#sponsors" data-toggle="modal"
+        href="#sponsors"><%= t('basics.sponsors') %></a>
       <span style="margin-left: 20px;"></span>
-      <a href="https://hse-heidelberg.de/"
-         target="_blank"
-         style="text-decoration: none">
-        <img src="/HD-HSE-Logo_RGB_210dpi.png" height="60" align="middle">
+      <a style="text-decoration: none"
+        href="https://hse-heidelberg.de/"
+        rel="noreferrer"
+        target="_blank">
+        <img style="vertical-align: middle;" height="60" src="/HD-HSE-Logo_RGB_210dpi.png">
       </a>
       <a href="https://uni-heidelberg.de"
-         target="_blank">
-        <img src="/uni_hd_logo.png" height="60" align="middle"
-             style="margin-left: 20px;">
+        rel="noreferrer"
+        target="_blank">
+        <img style="margin-left: 20px; vertical-align: middle;" height="60"
+          src="/uni_hd_logo.png">
       </a>
     </div>
   </div>
@@ -69,10 +77,10 @@
     <div class="col-sm text-center text-md-end">
       <%= link_to t('disclosure'),
                    'https://www.uni-heidelberg.de/impressum.html',
-                   target: :_blank, class:'me-2' %>
+      target: :_blank, class:'me-2' %>
       <%= link_to t('policy'),
                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
-                  target: :_blank %>
+      target: :_blank %>
     </div>
   </div>
 

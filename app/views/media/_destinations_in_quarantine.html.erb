@@ -17,39 +17,39 @@
   </div>
 </div>
 <% quarantine.each do |d| %>
-  <div class="row">
-    <div class="col-3">
-      <%= d.local_reference %>
-      (<%= d.pdf_destination %>)
-    </div>
-    <div class="col-7">
-      <ul>
-        <% unless d.referencing_media.any? %>
-          <%= t('admin.item.safe_delete_from_quarantine') %>
+<div class="row">
+  <div class="col-3">
+    <%= d.local_reference %>
+    (<%= d.pdf_destination %>)
+  </div>
+  <div class="col-7">
+    <ul>
+      <% unless d.referencing_media.any? %>
+      <%= t('admin.item.safe_delete_from_quarantine') %>
+      <% end %>
+      <% d.referencing_media.each do |m| %>
+      <li>
+        <% if m.edited_with_inheritance_by?(current_user) %>
+        <%= link_to m.title_for_viewers,
+        enrich_medium_path(m) %>
+        <% else %>
+        <%= link_to m.title_for_viewers,
+        play_medium_path(m) %>
         <% end %>
-        <% d.referencing_media.each do |m| %>
-          <li>
-            <% if m.edited_with_inheritance_by?(current_user) %>
-              <%= link_to m.title_for_viewers,
-                          enrich_medium_path(m) %>
-            <% else %>
-              <%= link_to m.title_for_viewers,
-                          play_medium_path(m) %>
-            <% end %>
-            (<%= t('admin.medium.edited_by',
+        (<%= t('admin.medium.edited_by',
                    editors: m.editors_with_inheritance.map(&:name)
-                             .join(', ')) %>)
-          </li>
-        <% end %>
-      </ul>
-    </div>
-    <div class="col-2">
-      <%= link_to t('buttons.delete'),
+        .join(', ')) %>)
+      </li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="col-2">
+    <%= link_to t('buttons.delete'),
                   item_path(d, params: { from: 'quarantine' }),
                   class: 'btn btn-danger btn-sm',
                   method: :delete,
                   data: { confirm: t('confirmation.generic') },
-                  remote: true %>
-    </div>
+    remote: true %>
   </div>
+</div>
 <% end %>

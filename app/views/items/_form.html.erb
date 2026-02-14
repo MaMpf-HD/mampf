@@ -1,129 +1,129 @@
 <div class="action-box">
   <%= form_with model: item do |f|%>
-    <div class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= t('admin.item.start_time') %>
-        <%= helpdesk(t('admin.item.info.start_time'), false) %>
-      </div>
-      <div class="col-auto">
-        <%= f.text_field :start_time,
+  <div class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= t('admin.item.start_time') %>
+      <%= helpdesk(t('admin.item.info.start_time'), false) %>
+    </div>
+    <div class="col-auto">
+      <%= f.text_field :start_time,
                          { value: item.start_time.simple_vtt_string, size: 12,
-                           maxlength: 12, class: 'form-control' } %>
-        <div class="invalid-feedback" id="start-time-error">
-        </div>
-      </div>
-      <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer" data-bs-toggle="tooltip"
-           data-placement="right" title="<%= t('admin.item.take_time') %>"
-           data-timer="item_start_time">
-          timer
-        </i>
+      maxlength: 12, class: 'form-control' } %>
+      <div id="start-time-error" class="invalid-feedback">
       </div>
     </div>
-    <div class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= f.label :sort, t('basics.type'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.item.info.type'), false) %>
-      </div>
-      <div class="col-auto">
-        <%= f.select :sort,
+    <div class="col-1 col-form-label">
+      <i class="material-icons clickable timer" data-bs-toggle="tooltip"
+        data-placement="right" data-timer="item_start_time"
+        title="<%= t('admin.item.take_time') %>">
+        timer
+      </i>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= f.label :sort, t('basics.type'),
+      class: "form-label" %>
+      <%= helpdesk(t('admin.item.info.type'), false) %>
+    </div>
+    <div class="col-auto">
+      <%= f.select :sort,
                      Item.inverted_sorts.to_a.natural_sort_by { |s| s.first },
                      {},
-                     { class: 'form-select' } %>
-      </div>
+      { class: 'form-select' } %>
     </div>
-    <% if item.medium.sort == 'LessonMaterial' &&
-          item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
-      <div id="item_section_select"
-           class="mb-3 row"
-           style="display: <%= show_no_block(item.sort != 'chapter') %>">
-        <div class="col-2 col-form-label">
-          <%= f.label :section_id, t('basics.section'),
-                      class: "form-label" %>
-          <%= helpdesk(t('admin.item.info.section'), true) %>
-        </div>
-        <div class="col-10">
-          <%= f.select :section_id,
+  </div>
+  <% if item.medium.sort == 'LessonMaterial' &&
+  item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
+  <div id="item_section_select"
+    class="mb-3 row"
+    style="display: <%= show_no_block(item.sort != 'chapter') %>">
+    <div class="col-2 col-form-label">
+      <%= f.label :section_id, t('basics.section'),
+      class: "form-label" %>
+      <%= helpdesk(t('admin.item.info.section'), true) %>
+    </div>
+    <div class="col-10">
+      <%= f.select :section_id,
                         options_for_select(select_sections(item),
                                            item.section_id) ,
                         {},
-                        { class: 'selectize'} %>
-        </div>
-      </div>
-    <% else %>
-      <%= f.hidden_field :section_id, value: '' %>
-    <% end %>
-    <div id="item_number_field"
-         style="display: <%= show_no_block(item.sort != 'label') %>"
-         class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= f.label :ref_number, t('basics.number'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.item.info.number'), false) %>
-      </div>
-      <div class="col-4">
-        <%= f.text_field :ref_number, class: 'form-control' %>
-      </div>
-      <div class="col-6 col-form-label">
-        <div class="form-check">
-          <%= f.check_box :hidden,
-                          class: 'form-check-input' %>
-          <%= f.label :hidden,
+      { class: 'selectize'} %>
+    </div>
+  </div>
+  <% else %>
+  <%= f.hidden_field :section_id, value: '' %>
+  <% end %>
+  <div id="item_number_field"
+    class="mb-3 row"
+    style="display: <%= show_no_block(item.sort != 'label') %>">
+    <div class="col-2 col-form-label">
+      <%= f.label :ref_number, t('basics.number'),
+      class: "form-label" %>
+      <%= helpdesk(t('admin.item.info.number'), false) %>
+    </div>
+    <div class="col-4">
+      <%= f.text_field :ref_number, class: 'form-control' %>
+    </div>
+    <div class="col-6 col-form-label">
+      <div class="form-check">
+        <%= f.check_box :hidden,
+        class: 'form-check-input' %>
+        <%= f.label :hidden,
                       t('basics.hide'),
-                      { class: 'form-check-label' } %>
-          <%= helpdesk(t('admin.item.info.hide'), false) %>
-        </div>
+        { class: 'form-check-label' } %>
+        <%= helpdesk(t('admin.item.info.hide'), false) %>
       </div>
     </div>
-    <div id="item_description_field" class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= f.label :description, t('basics.description'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.item.info.description'), false) %>
-      </div>
-      <div class="col-10">
-        <%= f.text_field :description, { class: 'form-control' } %>
-      </div>
+  </div>
+  <div id="item_description_field" class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= f.label :description, t('basics.description'),
+      class: "form-label" %>
+      <%= helpdesk(t('admin.item.info.description'), false) %>
     </div>
-    <% if item.manuscript? %>
-      <div id="item_page_field" class="mb-3 row"
-           style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
-        <div class="col-2 col-form-label">
-          <%= f.label :page, t('admin.item.page'),
-                      class: "form-label" %>
-          <%= helpdesk(t('admin.item.info.page'), false) %>
-        </div>
-        <div class="col-auto">
-          <%= f.number_field :page,
+    <div class="col-10">
+      <%= f.text_field :description, { class: 'form-control' } %>
+    </div>
+  </div>
+  <% if item.manuscript? %>
+  <div id="item_page_field" class="mb-3 row"
+    style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
+    <div class="col-2 col-form-label">
+      <%= f.label :page, t('admin.item.page'),
+      class: "form-label" %>
+      <%= helpdesk(t('admin.item.info.page'), false) %>
+    </div>
+    <div class="col-auto">
+      <%= f.number_field :page,
                              { in: 1...item.medium.manuscript_pages + 1,
-                               class: 'form-control' } %>
-        </div>
-        <div class="col-2">
-          <%= link_to t('buttons.view_pdf'),
+      class: 'form-control' } %>
+    </div>
+    <div class="col-2">
+      <%= link_to t('buttons.view_pdf'),
                       item.medium.manuscript_url_with_host,
                       class: 'btn btn-sm btn-outline-info',
-                      target: "_blank" %>
-        </div>
-      </div>
-    <% end %>
-    <div>
-      <%= f.hidden_field :medium_id, value: item.medium.id %>
-      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
-      <button id="cancel-item"
-              class="btn btn-sm btn-secondary ms-3"
-              type="button">
-        <%= t('buttons.cancel') %>
-      </button>
-      <% if item.id.present? %>
-      <%= link_to t('buttons.delete'),
+      target: "_blank" %>
+    </div>
+  </div>
+  <% end %>
+  <div>
+    <%= f.hidden_field :medium_id, value: item.medium.id %>
+    <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
+    <button id="cancel-item"
+      type="button"
+      class="btn btn-sm btn-secondary ms-3">
+      <%= t('buttons.cancel') %>
+    </button>
+    <% if item.id.present? %>
+    <%= link_to t('buttons.delete'),
                   item_path(item),
                   method: :delete,
                   remote: true,
                   data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-sm btn-danger me-2' %>
-      <% end %>
-    </div>
+    class: 'btn btn-sm btn-danger me-2' %>
+    <% end %>
+  </div>
   <% end %>
 </div>

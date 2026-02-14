@@ -1,8 +1,8 @@
-  <div class="row pb-2">
-    <div class="col-sm-12 col-md-12 col-lg-6">
-      <ul class="nav">
-        <li class="nav-item pr-1">
-          <%= link_to t('reverse_order'),
+<div class="row pb-2">
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav">
+      <li class="nav-item pr-1">
+        <%= link_to t('reverse_order'),
                       lecture_material_path(@lecture,
                                         params: { project: params[:project],
                                                   lecture_id: params[:lecture_id],
@@ -10,11 +10,11 @@
                                                   all: params[:all],
                                                   per: params[:per],
                                                   visibility: params[:visibility] }),
-                      class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
-        </li>
-        <li class="nav-item ps-1 pr-1">
-          <% unless @pagy.pages == 1 || params[:all] %>
-            <%= link_to t('all'),
+        class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
+      </li>
+      <li class="nav-item ps-1 pr-1">
+        <% unless @pagy.pages == 1 || params[:all] %>
+        <%= link_to t('all'),
                         lecture_material_path(@lecture,
                                           params: { project: params[:project],
                                                     lecture_id: params[:lecture_id],
@@ -22,19 +22,19 @@
                                                     all: true,
                                                     per: params[:per],
                                                     visibility: params[:visibility] }),
-                        class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
-          <% end %>
-        </li>
-        <li class="nav-item ps-1 pr-1">
-          <div class="dropdown ps-2">
-            <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-              <%= t('per_page') %>
-            </button>
-            <div class="dropdown-menu">
-              <% [3,4,8,12,24,48].each do |hits| %>
-                <%= link_to hits.to_s,
+        class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
+        <% end %>
+      </li>
+      <li class="nav-item ps-1 pr-1">
+        <div class="dropdown ps-2">
+          <button type="button" class="btn btn-sm dropdown-toggle text-primary"
+            aria-expanded="false"
+            aria-haspopup="true" data-bs-toggle="dropdown">
+            <%= t('per_page') %>
+          </button>
+          <div class="dropdown-menu">
+            <% [3,4,8,12,24,48].each do |hits| %>
+            <%= link_to hits.to_s,
                             lecture_material_path(@lecture,
                                               params: { page: 1,
                                                         project: params[:project],
@@ -43,22 +43,26 @@
                                                         per: hits,
                                                         visibility: params[:visibility] }),
                             class: ['dropdown-item',
-                                    params[:per] == hits ? 'active' : ''] %>
-              <% end %>
-            </div>
+            params[:per] == hits ? 'active' : ''] %>
+            <% end %>
           </div>
-        </li>
-        <li class="nav-item ps-1">
-          <div class="dropdown ps-2">
-            <button class="btn btn-sm dropdown-toggle text-primary"
-                    type="button"
-                    id="media_visibility" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-              <%= t('basics.visibility') %>
-            </button>
-            <%= helpdesk(t('medium.info.visibility_html'), true) %>
-            <div class="dropdown-menu">
-              <%= link_to t('medium.theme_based'),
+        </div>
+      </li>
+      <li class="nav-item ps-1">
+        <div class="dropdown ps-2">
+          <button
+            id="media_visibility"
+            type="button"
+            class="btn btn-sm dropdown-toggle text-primary"
+            aria-expanded="false"
+            aria-haspopup="true"
+            data-bs-toggle="dropdown"
+          >
+            <%= t('basics.visibility') %>
+          </button>
+          <%= helpdesk(t('medium.info.visibility_html'), true) %>
+          <div class="dropdown-menu">
+            <%= link_to t('medium.theme_based'),
                           lecture_material_path(@lecture,
                                             params: { project: params[:project],
                                                       lecture_id: params[:lecture_id],
@@ -67,8 +71,8 @@
                                                       per: params[:per],
                                                       visibility: 'thematic' }),
                           class: ['dropdown-item',
-                                  !params[:visibility].in?(['lecture', 'all']) ? 'active' : ''] %>
-              <%= link_to t('medium.lecture_only'),
+            !params[:visibility].in?(['lecture', 'all']) ? 'active' : ''] %>
+            <%= link_to t('medium.lecture_only'),
                           lecture_material_path(@lecture,
                                             params: { project: params[:project],
                                                       lecture_id: params[:lecture_id],
@@ -77,8 +81,8 @@
                                                       per: params[:per],
                                                       visibility: 'lecture' }),
                           class: ['dropdown-item',
-                                  params[:visibility] == 'lecture' ? 'active' : ''] %>
-              <%= link_to t('basics.all'),
+            params[:visibility] == 'lecture' ? 'active' : ''] %>
+            <%= link_to t('basics.all'),
                           lecture_material_path(@lecture,
                                             params: { project: params[:project],
                                                       lecture_id: params[:lecture_id],
@@ -87,35 +91,35 @@
                                                       per: params[:per],
                                                       visibility: 'all' }),
                           class: ['dropdown-item',
-                                  params[:visibility] == 'all' ? 'active' : ''] %>
-            </div>
+            params[:visibility] == 'all' ? 'active' : ''] %>
           </div>
-        </li>
-      </ul>
-    </div>
-    <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
-      <% unless params[:all] %>
-        <%== pagy_series_nav(@pagy) %>
-      <% end %>
-    </div>
+        </div>
+      </li>
+    </ul>
   </div>
-  <% if @media.any? %>
-    <%= render partial: 'media/media',
+  <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
+    <% unless params[:all] %>
+    <%== pagy_series_nav(@pagy) %>
+    <% end %>
+  </div>
+</div>
+<% if @media.any? %>
+<%= render partial: 'media/media',
                locals: { media: @media,
                          tags: true,
-                         lecture: @lecture } %>
-  <% else %>
-    <div class="alert alert-secondary mt-2 pr-2">
-      <%= t('admin.medium.no_media') %>
-      <% if @hidden %>
-        <%= t('medium.improve_visibility', course: @lecture.course.title) %>
-      <% end %>
-    </div>
+lecture: @lecture } %>
+<% else %>
+<div class="alert alert-secondary mt-2 pr-2">
+  <%= t('admin.medium.no_media') %>
+  <% if @hidden %>
+  <%= t('medium.improve_visibility', course: @lecture.course.title) %>
   <% end %>
-  <% unless params[:all] %>
-    <div class="row my-2">
-      <div class="col-12">
-        <%== pagy_series_nav(@pagy) %>
-      </div>
-    </div>
-  <% end %>
+</div>
+<% end %>
+<% unless params[:all] %>
+<div class="row my-2">
+  <div class="col-12">
+    <%== pagy_series_nav(@pagy) %>
+  </div>
+</div>
+<% end %>

@@ -1,37 +1,37 @@
-  <div class="card bg-light">
-    <div class="card-header bg-generic-card-header">
-      <div class="row">
-        <div class="col-6">
-          <h5>
-            <%= t('categories.quiz.singular') %>
-          </h5>
-        </div>
-        <div class="col-6">
-          <div class="media-card-header">
-            <a href="<%= take_quiz_path(medium.id) %>"
-               class="no-deco me-2"
-               target="_blank">
-              <i class="material-icons text-secondary"
-                 data-bs-toggle="tooltip"
-                 data-placement="bottom"
-                 title="<%= t('quiz.start') %>">
-                videogame_asset
-              </i>
-            </a>
-          </div>
-        </div>
+<div class="card bg-light">
+  <div class="card-header bg-generic-card-header">
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          <%= t('categories.quiz.singular') %>
+        </h5>
       </div>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-12">
-          <%= t('quiz.number_of_questions',
-                count: medium.becomes(Quiz).question_ids.count) %>
-        </div>
-        <div class="col-12">
-          <%= t('quiz.quiz_level',
-                level: level_to_word(medium.becomes(Quiz))) %>
+      <div class="col-6">
+        <div class="media-card-header">
+          <a class="no-deco me-2"
+            href="<%= take_quiz_path(medium.id) %>"
+            target="_blank">
+            <i class="material-icons text-secondary"
+              data-bs-toggle="tooltip"
+              data-placement="bottom"
+              title="<%= t('quiz.start') %>">
+              videogame_asset
+            </i>
+          </a>
         </div>
       </div>
     </div>
   </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12">
+        <%= t('quiz.number_of_questions',
+        count: medium.becomes(Quiz).question_ids.count) %>
+      </div>
+      <div class="col-12">
+        <%= t('quiz.quiz_level',
+        level: level_to_word(medium.becomes(Quiz))) %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,19 +6,19 @@
 </div>
 <div class="col-3">
   <% if user.admin? %>
-    <span class="badge bg-info">
-      <%= t('basics.administrator_short') %>
-    </span>
+  <span class="badge bg-info">
+    <%= t('basics.administrator_short') %>
+  </span>
   <% end %>
   <% if user.editor? %>
-    <span class="badge bg-info">
-      <%= t('basics.editor') %>
-    </span>
+  <span class="badge bg-info">
+    <%= t('basics.editor') %>
+  </span>
   <% end %>
   <% if user.teacher? %>
-    <span class="badge bg-info">
-      <%= t('basics.teacher') %>
-    </span>
+  <span class="badge bg-info">
+    <%= t('basics.teacher') %>
+  </span>
   <% end %>
 </div>
 <div class="col-2">
@@ -27,5 +27,5 @@
 <div class="col-2">
   <%= link_to t('buttons.edit'),
               edit_user_path(user),
-              class: 'btn btn-sm btn-outline-primary my-1' %>
+  class: 'btn btn-sm btn-outline-primary my-1' %>
 </div>

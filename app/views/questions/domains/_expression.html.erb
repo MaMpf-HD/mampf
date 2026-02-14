@@ -1,25 +1,25 @@
 <div class="input-group">
   <% if type.in?(['MampfTuple', 'MampfSet']) %>
-    <div class="input-group-prepend">
-      <div class="input-group-text">
-        <%= type == 'MampfTuple' ? '$($' : '$\{$' %>
-      </div>
+  <div class="input-group-prepend">
+    <div class="input-group-text">
+      <%= type == 'MampfTuple' ? '$($' : '$\{$' %>
     </div>
+  </div>
   <% end %>
   <%= solution_content_fields.fields_for :dynamic, index: counter do |dynamic_fields| %>
 
   <%= dynamic_fields.text_field :content,
                    value: value,
                    class: 'form-control',
-                   data: { counter: 0 } %>
+  data: { counter: 0 } %>
 
   <% end %>
 
   <% if type.in?(['MampfTuple', 'MampfSet']) %>
-    <div class="input-group-append">
-      <div class="input-group-text">
-        <%= type == 'MampfTuple' ? '$)$' : '$\}$' %>
-      </div>
+  <div class="input-group-append">
+    <div class="input-group-text">
+      <%= type == 'MampfTuple' ? '$)$' : '$\}$' %>
     </div>
+  </div>
   <% end %>
 </div>

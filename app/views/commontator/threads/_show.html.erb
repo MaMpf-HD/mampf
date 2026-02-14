@@ -19,7 +19,7 @@
 <div id="commontator-thread-<%= thread.id %>-show" class="show commontator-hidden">
   <%= link_to t('commontator.thread.actions.show'),
               '#',
-              id: "commontator-thread-#{thread.id}-show-link" %>
+  id: "commontator-thread-#{thread.id}-show-link" %>
 </div>
 
 <div id="commontator-thread-<%= thread.id %>-content" class="content">
@@ -27,14 +27,14 @@
     <span id="commontator-thread-<%= thread.id %>-actions" class="actions">
 
       <% if can_subscribe %>
-        <span id="commontator-thread-<%= thread.id %>-subscription" class="subscription">
-          <%= render partial: 'commontator/subscriptions/link',
-                     locals: { thread: thread, user: user } %>
-        </span>
+      <span id="commontator-thread-<%= thread.id %>-subscription" class="subscription">
+        <%= render partial: 'commontator/subscriptions/link',
+        locals: { thread: thread, user: user } %>
+      </span>
       <% end %>
 
       <% if can_edit %>
-        <%
+      <%
           if show_all
             filter_class = filter_string = 'filter'
           else
@@ -43,31 +43,31 @@
           end
           is_closed = thread.is_closed?
           close_string = is_closed ? :reopen : :close
-        %>
+      %>
 
-        <% if thread.is_filtered? %>
-          <%= link_to t("commontator.thread.actions.#{filter_string}"),
+      <% if thread.is_filtered? %>
+      <%= link_to t("commontator.thread.actions.#{filter_string}"),
                       commontator.thread_path(thread, show_all: (show_all ? nil : true)),
                       id: "commontator-thread-#{thread.id}-#{filter_class}-link",
                       class: filter_class,
-                      remote: true %>
-        <% end %>
+      remote: true %>
+      <% end %>
 
-        <%= link_to t("commontator.thread.actions.#{close_string}"),
+      <%= link_to t("commontator.thread.actions.#{close_string}"),
                     commontator.polymorphic_path([close_string, thread]),
                     data: is_closed ? {} :
                                       { confirm: t('commontator.thread.actions.confirm_close') },
                     method: :put,
                     id: "commontator-thread-#{thread.id}-#{close_string}-link",
                     class: 'ms-2',
-                    remote: true %>
+      remote: true %>
       <% end %>
     </span>
 
     <span id="commontator-thread-<%= thread.id %>-status" class="status noTexStatus">
       <% if thread.is_closed? %>
-        <%= t "commontator.thread.status.closed",
-            closer_name: Commontator.commontator_name(thread.closer) %>
+      <%= t "commontator.thread.status.closed",
+      closer_name: Commontator.commontator_name(thread.closer) %>
       <% end %>
     </span>
   </div>

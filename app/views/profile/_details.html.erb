@@ -1,43 +1,43 @@
 <% if c.subscribable_lectures(current_user).empty? %>
-  <div class="row">
-    <div class="col-12">
-      <%= t('profile.no_lectures') %>
-    </div>
+<div class="row">
+  <div class="col-12">
+    <%= t('profile.no_lectures') %>
   </div>
+</div>
 <% else %>
-  <div class="row">
-    <div class="col-12"
-         id="lectures-for-course-<%= c.id %>"
-         data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
+<div class="row">
+  <div id="lectures-for-course-<%= c.id %>"
+    class="col-12"
+    data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
                               .to_json %>">
 
-      <% c.subscribable_lectures(current_user).sort.each do |lecture| %>
-        <%= f.fields_for lecture, index: lecture.id do |lecture_form| %>
+    <% c.subscribable_lectures(current_user).sort.each do |lecture| %>
+    <%= f.fields_for lecture, index: lecture.id do |lecture_form| %>
 
-        <div id="<%= 'course-' + c.id.to_s + '-' + lecture.id.to_s %>">
-          <%= lecture_form.check_box :subscribed,
+    <div id="<%= 'course-' + c.id.to_s + '-' + lecture.id.to_s %>">
+      <%= lecture_form.check_box :subscribed,
                                      label: lecture.term_teacher_info,
                                      checked: lecture.in?(current_user.lectures),
-                                     data: { course: c.id, lecture: lecture.id } %>
+      data: { course: c.id, lecture: lecture.id } %>
 
-          <% if lecture.restricted? %>
-          <div id="pass-lecture-<%= lecture.id.to_s %>" style="display: none;">
-            <div class="row mb-2">
-              <div class="col-12">
-                <%= lecture_form.label :passphrase, t('profile.passphrase') %>
-                <%= lecture_form.text_field_without_bootstrap :passphrase,
-                      class: 'form-control', value: nil %>
-                <div class="invalid-feedback" id="passphrase-error-<%= lecture.id %>" >
-                </div>
-              </div>
+      <% if lecture.restricted? %>
+      <div id="pass-lecture-<%= lecture.id.to_s %>" style="display: none;">
+        <div class="row mb-2">
+          <div class="col-12">
+            <%= lecture_form.label :passphrase, t('profile.passphrase') %>
+            <%= lecture_form.text_field_without_bootstrap :passphrase,
+            class: 'form-control', value: nil %>
+            <div id="passphrase-error-<%= lecture.id %>" class="invalid-feedback">
             </div>
           </div>
-          <% end %>
         </div>
-
-        <% end %>
+      </div>
       <% end %>
-
     </div>
+
+    <% end %>
+    <% end %>
+
   </div>
+</div>
 <% end %>

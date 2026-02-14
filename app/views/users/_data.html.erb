@@ -1,37 +1,39 @@
 <div class="row p-2">
   <div class="col-12 col-lg-5">
     <div class="card bg-light mb-4">
+
       <div class="card-header">
         <div class="row">
           <div class="col-5">
             <h5>
               <%= t('basics.basics') %>
-            <h5>
+            </h5>
           </div>
           <div class="col-6 text-end">
             <% if user.admin? %>
-              <span class="badge bg-info">
-                <%= t('basics.administrator_short') %>
-              </span>
+            <span class="badge bg-info">
+              <%= t('basics.administrator_short') %>
+            </span>
             <% end %>
             <% if user.editor? %>
-              <span class="badge bg-info">
-                <%= t('basics.editor') %>
-              </span>
+            <span class="badge bg-info">
+              <%= t('basics.editor') %>
+            </span>
             <% end %>
             <% if user.teacher? %>
-              <span class="badge bg-info">
-                <%= t('basics.teacher') %>
-              </span>
+            <span class="badge bg-info">
+              <%= t('basics.teacher') %>
+            </span>
             <% end %>
           </div>
         </div>
       </div>
+
       <div class="card-body">
         <%= render partial: 'users/basics',
                    locals: { user: user,
                              f: f,
-                             profile: profile } %>
+        profile: profile } %>
       </div>
     </div>
   </div>
@@ -44,12 +46,12 @@
       </div>
       <div class="card-body">
         <% if user.edited_courses.any? || user.edited_lectures.any? ||
-              user.given_lectures.any? || user.edited_media.any? %>
-          <%= render partial: 'users/content',
+        user.given_lectures.any? || user.edited_media.any? %>
+        <%= render partial: 'users/content',
                      locals: { user: user,
-                               f: f } %>
+        f: f } %>
         <% else %>
-          <%= t('admin.user.no_content') %>
+        <%= t('admin.user.no_content') %>
         <% end %>
       </div>
     </div>

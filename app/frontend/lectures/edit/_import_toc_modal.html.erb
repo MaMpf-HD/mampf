@@ -1,78 +1,81 @@
-<div class="modal fade"
-     id="importLectureTocModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="importLectureTocModalLabel" aria-hidden="true">
+<div
+  id="importLectureTocModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="importLectureTocModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-lg"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="importLectureTocModalLabel">
+        <h5 id="importLectureTocModalLabel"
+          class="modal-title">
           <%= t('admin.lecture.import_toc') %>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <%= form_with url: import_lecture_toc_path(lecture),
                     remote: true,
-                    method: 'post' do |f| %>
-        <div class="modal-body">
-          <div class="row mt-2 mb-2">
-            <div class="col-12">
-              <%= f.label :imported_lecture_id,
+      method: 'post' do |f| %>
+      <div class="modal-body">
+        <div class="row mt-2 mb-2">
+          <div class="col-12">
+            <%= f.label :imported_lecture_id,
                   t('basics.lecture'),
-                  class: "form-label" %>
-              <%= f.select :imported_lecture_id,
+            class: "form-label" %>
+            <%= f.select :imported_lecture_id,
                            options_for_select(lecture.neighbours
                                                      .map{ |l| [l.title_with_teacher,
                                                                 l.id]}),
                            {},
-                           { class: 'form-select' } %>
-              <div class="form-check my-2">
-                <%= f.check_box :import_chapters,
+            { class: 'form-select' } %>
+            <div class="form-check my-2">
+              <%= f.check_box :import_chapters,
                                 class: 'form-check-input',
                                 checked: true,
-                                disabled: true %>
-                <%= f.label :import_chapters,
+              disabled: true %>
+              <%= f.label :import_chapters,
                             t('admin.lecture.import_chapters'),
-                            class: 'form-check-label' %>
-              </div>
-              <div class="form-check mb-2">
-                <%= f.check_box :import_sections,
+              class: 'form-check-label' %>
+            </div>
+            <div class="form-check mb-2">
+              <%= f.check_box :import_sections,
                                 class: 'form-check-input',
-                                checked: true %>
-                <%= f.label :import_sections,
+              checked: true %>
+              <%= f.label :import_sections,
                             t('admin.lecture.import_sections'),
-                            class: 'form-check-label' %>
-              </div>
-              <div class="form-check">
-                <%= f.check_box :import_tags,
+              class: 'form-check-label' %>
+            </div>
+            <div class="form-check">
+              <%= f.check_box :import_tags,
                                 class: 'form-check-input',
-                                checked: true %>
-                <%= f.label :import_tags,
+              checked: true %>
+              <%= f.label :import_tags,
                             t('admin.lecture.import_tags'),
-                            class: 'form-check-label' %>
-              </div>
+              class: 'form-check-label' %>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <div class="row mt-3">
-            <div class="col-12 text-center">
-              <%= f.submit t('buttons.import'),
-                           class: 'btn btn-sm btn-primary' %>
-              <button type="button"
-                      class="btn btn-sm btn-secondary"
-                      data-bs-dismiss="modal">
-                <%= t('buttons.cancel') %>
-              </button>
-            </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <%= f.submit t('buttons.import'),
+            class: 'btn btn-sm btn-primary' %>
+            <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-bs-dismiss="modal">
+              <%= t('buttons.cancel') %>
+            </button>
           </div>
         </div>
+      </div>
       <% end %>
     </div>
   </div>

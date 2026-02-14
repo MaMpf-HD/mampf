@@ -7,11 +7,11 @@
         </h5>
       </div>
       <div class="col-6 text-end">
-        <button type="button"
-                class="btn btn-sm btn-outline-secondary"
-                id="showMediaStatistics"
-                data-medium="<%= medium.id %>"
-                <%= "disabled" unless medium.collects_statistics %>>
+        <button id="showMediaStatistics"
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-medium="<%= medium.id %>"
+          <%= "disabled" unless medium.collects_statistics %>>
           <%= t('basics.statistics') %>
         </button>
       </div>
@@ -19,35 +19,35 @@
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <% if medium.sort =='Question' %>
-      <%= render partial: 'media/question',
-                 locals: { question: medium.becomes(Question) } %>
+    <%= render partial: 'media/question',
+    locals: { question: medium.becomes(Question) } %>
     <% elsif medium.sort =='Remark' %>
-      <%= render partial: 'media/remark',
-                 locals: { remark: medium.becomes(Remark) } %>
+    <%= render partial: 'media/remark',
+    locals: { remark: medium.becomes(Remark) } %>
     <% elsif medium.sort == 'Quiz' %>
-      <%= render partial: 'media/quiz',
+    <%= render partial: 'media/quiz',
                  locals: { quiz: medium.becomes(Quiz),
-                           f: f } %>
+    f: f } %>
     <% end %>
     <% unless medium.sort.in?(['Script', 'Quiz']) %>
-      <%= render partial: 'media/video',
+    <%= render partial: 'media/video',
                  locals: { medium: medium,
-                           f: f } %>
+    f: f } %>
     <% end %>
     <% unless medium.sort == 'Quiz' %>
-      <%= render partial: 'media/manuscript',
+    <%= render partial: 'media/manuscript',
                  locals: { medium: medium,
                            manuscript: manuscript,
-                           f: f } %>
+    f: f } %>
     <% end %>
     <% unless medium.sort.in?(['Script', 'Quiz']) %>
-      <%= render partial: 'media/external_link',
-                 locals: { f: f } %>
+    <%= render partial: 'media/external_link',
+    locals: { f: f } %>
     <% end %>
     <% if medium.sort.in?(['WorkedExample', 'Remark']) %>
-      <%= render partial: 'media/geogebra',
+    <%= render partial: 'media/geogebra',
                  locals: { medium: medium,
-                           f: f } %>
+    f: f } %>
     <% end %>
   </div>
 </div>

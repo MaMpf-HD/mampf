@@ -1,18 +1,18 @@
 <% question = Question.find(vertex[:id]) %>
 <% if question.question_sort == 'mc' %>
-  <%= render partial: 'quizzes/take/mc_question_closed',
+<%= render partial: 'quizzes/take/mc_question_closed',
              locals: { progress: progress,
                        vertex: vertex,
                        input: input,
                        old_id: old_id,
                        answers: answers,
-                       question: question } %>
+question: question } %>
 <% elsif question.question_sort == 'free' %>
-  <%= render partial: 'quizzes/take/free_question_closed',
+<%= render partial: 'quizzes/take/free_question_closed',
              locals: { input: input,
                        old_id: old_id,
                        answer: answers.first,
                        question: question,
                        solution_input: solution_input,
-                       result: result } %>
+result: result } %>
 <% end %>

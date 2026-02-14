@@ -10,53 +10,53 @@
 <div class="card-body p-2">
   <div class="mb-3">
     <%= f.label :title, t('basics.title'),
-                class: "form-label" %>
+    class: "form-label" %>
     <%= helpdesk(t('admin.course.info.title'), false) %>
     <%= f.text_field :title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-title-error">
+    <div id="course-title-error" class="invalid-feedback">
     </div>
   </div>
   <div class="mb-3">
     <%= f.label :short_title, t('basics.short_title'),
-                class: "form-label"  %>
+    class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.short_title'), false) %>
     <%= f.text_field :short_title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-short-title-error">
+    <div id="course-short-title-error" class="invalid-feedback">
     </div>
   </div>
   <div class="mb-3">
     <%= t('basics.language') %>
     <div class="ms-2">
-    <% I18n.available_locales.each do |locale| %>
+      <% I18n.available_locales.each do |locale| %>
       <div class="form-check form-check-inline">
         <%= f.radio_button :locale,
                            locale.to_s,
-                           class: 'form-check-input' %>
+        class: 'form-check-input' %>
         <%= f.label :locale,
                     t('locales.' + locale.to_s),
                     value: locale.to_s,
-                    class: 'form-check-label' %>
+        class: 'form-check-label' %>
       </div>
-    <% end %>
+      <% end %>
     </div>
   </div>
   <div class="mb-3">
     <%= f.label :preceding_course_ids,
                 t('admin.course.preceding_courses'),
-                class: "form-label"  %>
+    class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.preceding_courses'), false) %>
     <%= f.select :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
                                     course.preceding_courses.map(&:id)),
-                 {}, { multiple: true, class: 'selectize' } %>
+    {}, { multiple: true, class: 'selectize' } %>
 
   </div>
   <% if current_user.admin? %>
-    <div class="mb-3">
-      <%= f.label :editor_ids, t('basics.editors'),
-          class: "form-label"  %>
-      <%= helpdesk(t('admin.course.info.editors'), false) %>
-      <%= f.select :editor_ids,
+  <div class="mb-3">
+    <%= f.label :editor_ids, t('basics.editors'),
+    class: "form-label"  %>
+    <%= helpdesk(t('admin.course.info.editors'), false) %>
+    <%= f.select :editor_ids,
                    options_for_select(course.editors.map { |e| [ e.info, e.id] },
                                       course.editors.map(&:id)),
                    {},
@@ -66,27 +66,27 @@
                      data: { ajax: true,
                              model: 'user',
                              filled: false,
-                             placeholder: t('basics.enter_two_letters') } } %>
-    </div>
+    placeholder: t('basics.enter_two_letters') } } %>
+  </div>
   <% else %>
-    <%= t('basics.editors') %>
-    <%= helpdesk(t('admin.course.info.no_right_to_change_editors',
+  <%= t('basics.editors') %>
+  <%= helpdesk(t('admin.course.info.no_right_to_change_editors',
                    project_email: mail_to(DefaultSetting::PROJECT_EMAIL)),
-                 true) %>
-    <ul>
-      <% course.editors.each do |e| %>
-        <li>
-          <%= e.email %>
-        </li>
-      <% end %>
-    </ul>
+  true) %>
+  <ul>
+    <% course.editors.each do |e| %>
+    <li>
+      <%= e.email %>
+    </li>
+    <% end %>
+  </ul>
   <% end %>
   <div class="row">
     <div class="col-12">
       <%= t('basics.lectures') %>
       <%= helpdesk(t('admin.course.info.lectures'), false) %>
       <% unless course.term_independent && course.lectures.any? %>
-        <%= link_to '',
+      <%= link_to '',
                     new_lecture_path(params: { from: 'course',
                                                course: course.id }),
                     class: 'fas fa-plus-circle text-dark',
@@ -94,34 +94,34 @@
                     data: { remote: true,
                             toggle: 'tooltip',
                             cy: 'new-lecture-button-admin-index' },
-                    title: t('buttons.create_lecture') %>
+      title: t('buttons.create_lecture') %>
       <% end %>
     </div>
     <div class="col-12">
       <% if course.lectures.exists? %>
-        <ul>
-          <% course.lectures_by_date.each do |l| %>
-            <li>
-              <%= link_to l.term_teacher_info,
+      <ul>
+        <% course.lectures_by_date.each do |l| %>
+        <li>
+          <%= link_to l.term_teacher_info,
                           edit_lecture_path(l),
-                          class: lectures_color(l)  %>
-            </li>
-          <% end %>
-        </ul>
-        <% if course.term_independent %>
-          <%= t('admin.course.term_independence') %>
-          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+          class: lectures_color(l)  %>
+        </li>
         <% end %>
+      </ul>
+      <% if course.term_independent %>
+      <%= t('admin.course.term_independence') %>
+      <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+      <% end %>
       <% else %>
-        <%= t('admin.course.no_lectures') %>
-        <div class="form-check">
-          <%= f.check_box :term_independent,
-                          class: 'form-check-input' %>
-          <%= f.label :term_independent,
+      <%= t('admin.course.no_lectures') %>
+      <div class="form-check">
+        <%= f.check_box :term_independent,
+        class: 'form-check-input' %>
+        <%= f.label :term_independent,
                       t('admin.course.term_independent'),
-                      { class: 'form-check-label' } %>
-          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
-        </div>
+        { class: 'form-check-label' } %>
+        <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+      </div>
       <% end %>
     </div>
   </div>
@@ -129,7 +129,7 @@
     <div class="col-12 mb-3">
       <%= f.label :division_ids,
                   t('admin.course.divisions'),
-                  class: "form-label"  %>
+      class: "form-label"  %>
       <%= helpdesk(t('admin.course.info.divisions'), false) %>
       <%= f.select :division_ids,
                    options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
@@ -138,13 +138,13 @@
                    { class: 'selectize',
                      multiple: true,
                      style: 'display: none;',
-                     data: { ajax: false } } %>
+      data: { ajax: false } } %>
     </div>
   </div>
   <div class="row">
     <div class="col-12">
       <%= t('basics.subscribers_count',
-          count: course.users.count) %>
+      count: course.users.count) %>
       <%= helpdesk(t('admin.course.info.subscribers_count'), false) %>
     </div>
   </div>

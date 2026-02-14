@@ -5,23 +5,23 @@
         <%= t('basics.medium') %>
       </span>
       <% unless medium.published? %>
-        <span class="badge bg-warning"
-              data-bs-toggle="tooltip"
-              title="<%= if !medium.teachable.published?
+      <span class="badge bg-warning"
+        data-bs-toggle="tooltip"
+        title="<%= if !medium.teachable.published?
                            t('admin.medium.info.unpublished_lecture')
                          end %>">
-          <%= t('access.unpublished') %>
-        </span>
+        <%= t('access.unpublished') %>
+      </span>
       <% end %>
       <% if medium.locked? %>
-        <span class="badge bg-warning"
-              data-bs-toggle="tooltip"
-              title="<%= t('admin.medium.info.locked') %>">
-          <%= t('access.locked') %>
-        </span>
+      <span class="badge bg-warning"
+        data-bs-toggle="tooltip"
+        title="<%= t('admin.medium.info.locked') %>">
+        <%= t('access.locked') %>
+      </span>
       <% end %>
       <% unless new_medium %>
-        <%= medium.local_info %>
+      <%= medium.local_info %>
       <% end %>
       <%= link_to '',
                   medium_path(medium),
@@ -29,17 +29,17 @@
                   data: { toggle: 'tooltip',
                           placement: 'bottom' },
                   title: t('buttons.show'),
-                  style: 'text-decoration: none;' %>
+      style: 'text-decoration: none;' %>
     </h4>
   </div>
   <div class="col-5">
     <div id="medium-basics-warning">
       <%= t('warnings.unsaved_changes') %>
       <%= f.submit t('buttons.save'),
-                   class: "btn btn-sm btn-primary" %>
-      <button type="button"
-              class="btn btn-sm btn-secondary ms-2"
-              id="medium-basics-cancel">
+      class: "btn btn-sm btn-primary" %>
+      <button id="medium-basics-cancel"
+        type="button"
+        class="btn btn-sm btn-secondary ms-2">
         <%= t('buttons.discard') %>
       </button>
     </div>
@@ -51,80 +51,80 @@
   <div class="col-2 text-end">
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <% if current_user.admin || current_user.in?(medium.teachable.editors) %>
-        <%= link_to t('buttons.parent_course'),
+    <% if current_user.admin || current_user.in?(medium.teachable.editors) %>
+    <%= link_to t('buttons.parent_course'),
                     edit_course_path(teachable_scope),
-                    class: 'btn btn-sm btn-outline-primary mb-2' %>
-      <% end %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% end %>
     <% else %>
-      <%= link_to t('buttons.parent_lecture'),
+    <%= link_to t('buttons.parent_lecture'),
                   edit_or_show_lecture_path(teachable_scope),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
     <% if medium.teachable.class.to_s == 'Lesson' %>
-      <%= link_to t('buttons.parent_lesson'),
+    <%= link_to t('buttons.parent_lesson'),
                   edit_or_show_lesson_path(medium.teachable),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
     <% if medium.teachable.is_a?(Talk) %>
-      <% if current_user.in?(medium.teachable.speakers) %>
-        <%= link_to t('buttons.parent_talk'),
+    <% if current_user.in?(medium.teachable.speakers) %>
+    <%= link_to t('buttons.parent_talk'),
                     assemble_talk_path(medium.teachable),
-                    class: 'btn btn-sm btn-outline-primary mb-2' %>
-      <% elsif current_user.in?(medium.teachable.lecture
-                                      .editors_with_inheritance) %>
-        <%= link_to t('buttons.parent_talk'),
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% elsif current_user.in?(medium.teachable.lecture
+    .editors_with_inheritance) %>
+    <%= link_to t('buttons.parent_talk'),
                     edit_talk_path(medium.teachable),
-                    class: 'btn btn-sm btn-outline-primary mb-2' %>
-      <% end %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% end %>
     <% end %>
     <% unless new_medium %>
-      <% if medium.teachable.published? &&
-             !medium.published? && !medium.publisher %>
-        <button class="btn btn-sm btn-warning mb-2"
-                type="button"
-                id="publish-medium-button">
-          <%= t('buttons.publish') %>
-        </button>
-      <% end %>
+    <% if medium.teachable.published? &&
+    !medium.published? && !medium.publisher %>
+    <button id="publish-medium-button"
+      type="button"
+      class="btn btn-sm btn-warning mb-2">
+      <%= t('buttons.publish') %>
+    </button>
+    <% end %>
     <% end %>
     <% if !new_medium && medium.irrelevant? %>
-      <%= link_to t('buttons.delete'),
+    <%= link_to t('buttons.delete'),
                   medium_path,
                   class: 'btn btn-sm btn-danger mb-2',
                   data: { method: 'delete',
-                          confirm: t('confirmation.generic') } %>
+    confirm: t('confirmation.generic') } %>
     <% end %>
   </div>
 </div>
 <% if medium.publisher&.release_date.present? %>
-  <div class="row px-2">
-    <div class="col-12">
-      <span class="badge bg-warning">
-        <%= t('admin.medium.scheduled_for_release',
+<div class="row px-2">
+  <div class="col-12">
+    <span class="badge bg-warning">
+      <%= t('admin.medium.scheduled_for_release',
               release_date: I18n.l(medium.publisher&.release_date,
                                    format: :publication_time,
-                                   locale: I18n.locale)) %>
-      </span>
-      <% if medium.publisher.create_assignment %>
-        <br>
-        <span class="badge bg-warning">
-          <%= t('admin.medium.assignment_to_be_created',
+      locale: I18n.locale)) %>
+    </span>
+    <% if medium.publisher.create_assignment %>
+    <br>
+    <span class="badge bg-warning">
+      <%= t('admin.medium.assignment_to_be_created',
                 deadline: I18n.l(medium.publisher&.assignment_deadline,
                                  format: :publication_time,
-                                 locale: I18n.locale)) %>
-        </span>
-      <% end %>
-      <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
-      <button class="btn btn-sm btn-outline-primary ms-2"
-              type="button"
-              id="publish-medium-button">
-        <%= t('buttons.edit') %>
-      </button>
-      <%= link_to t('buttons.cancel_publication'),
+      locale: I18n.locale)) %>
+    </span>
+    <% end %>
+    <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
+    <button id="publish-medium-button"
+      type="button"
+      class="btn btn-sm btn-outline-primary ms-2">
+      <%= t('buttons.edit') %>
+    </button>
+    <%= link_to t('buttons.cancel_publication'),
                   cancel_publication_path(medium),
                   class: 'btn btn-sm btn-outline-primary',
-                  method: :delete %>
-    </div>
+    method: :delete %>
   </div>
+</div>
 <% end %>

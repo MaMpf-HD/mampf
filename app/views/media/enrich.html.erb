@@ -9,82 +9,86 @@
       <div id="video-controls-edit">
         <div id="timeline">
           <i id="play-pause"
-             class="material-icons clickable">
+            class="material-icons clickable">
             play_arrow
           </i>
           <span id="current-time">
             0:00:00
           </span>
-          <input type="range"
-                 id="seek-bar"
-                 min="0"
-                 max="100"
-                 step="0.1"
-                 value="0">
+          <input
+            id="seek-bar"
+            type="range"
+            max="100"
+            min="0"
+            step="0.1"
+            value="0"
+          >
           <span id="max-time">
             0:00:00
           </span>
         </div>
         <div id="special-buttons" class="special-buttons-layout">
           <i id="minus-ten"
-             class="material-icons clickable ">
+            class="material-icons clickable ">
             replay_10
           </i>
           <i id="minus-five"
-             class="material-icons clickable">
+            class="material-icons clickable">
             replay_5
           </i>
           <i id="minus-one"
-             class="material-icons clickable">
+            class="material-icons clickable">
             keyboard_arrow_left
           </i>
           <i id="plus-one"
-             class="material-icons clickable">
+            class="material-icons clickable">
             keyboard_arrow_right
           </i>
           <i id="plus-five"
-             class="material-icons clickable">
+            class="material-icons clickable">
             forward_5
           </i>
           <i id="plus-ten"
-             class="material-icons clickable">
+            class="material-icons clickable">
             forward_10
           </i>
         </div>
         <div id="add-buttons">
           <i id="add-item"
-             class="material-icons clickable"
-             title="<%= t('thyme_editor.add_item') %>"
-             data-bs-toggle="tooltip"
-             data-placement="bottom">
+            class="material-icons clickable"
+            data-bs-toggle="tooltip"
+            data-placement="bottom"
+            title="<%= t('thyme_editor.add_item') %>">
             playlist_add
           </i>
           <i id="add-reference"
-             class="material-icons clickable ms-2"
-             title="<%= t('thyme_editor.add_referral') %>"
-             data-bs-toggle="tooltip"
-             data-placement="bottom">
-              insert_link
+            class="material-icons clickable ms-2"
+            data-bs-toggle="tooltip"
+            data-placement="bottom"
+            title="<%= t('thyme_editor.add_referral') %>">
+            insert_link
           </i>
           <i id="add-screenshot"
-             class="material-icons clickable ms-2"
-             title="<%= t('thyme_editor.create_screenshot') %>"
-             data-bs-toggle="tooltip"
-             data-placement="bottom">
+            class="material-icons clickable ms-2"
+            data-bs-toggle="tooltip"
+            data-placement="bottom"
+            title="<%= t('thyme_editor.create_screenshot') %>">
             add_a_photo
           </i>
         </div>
         <div id="volume-controls-edit">
           <i id="mute"
-             class="material-icons clickable">
+            class="material-icons clickable">
             volume_up
           </i>
-          <input type="range"
-                 id="volume-bar"
-                 min="0"
-                 max="1"
-                 step="0.1"
-                 value="1">
+          <input
+            id="volume-bar"
+            type="range"
+            max="1"
+            min="0"
+            step="0.1"
+            value="1"
+          >
         </div>
       </div>
     </div>
@@ -100,21 +104,21 @@
         <%= link_to t('thyme_editor.thyme_preview'),
                     play_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
-                    target: "_blank" %>
+        target: "_blank" %>
         <%= link_to t('thyme_editor.back_to_medium'),
                     edit_medium_path(@medium),
-                    class: 'btn btn-outline-light btn-sm ms-2' %>
+        class: 'btn btn-outline-light btn-sm ms-2' %>
         <% teachable_scope = @medium.teachable.media_scope %>
         <% if teachable_scope.class.to_s == 'Course' %>
-          <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
-            <%= link_to t('buttons.parent_course'),
+        <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
+        <%= link_to t('buttons.parent_course'),
                         edit_course_path(teachable_scope),
-                        class: 'btn btn-outline-light btn-sm ms-2' %>
-          <% end %>
+        class: 'btn btn-outline-light btn-sm ms-2' %>
+        <% end %>
         <% else %>
-          <%= link_to t('buttons.parent_lecture'),
+        <%= link_to t('buttons.parent_lecture'),
                       edit_or_show_lecture_path(teachable_scope),
-                      class: 'btn btn-outline-light btn-sm ms-2' %>
+        class: 'btn btn-outline-light btn-sm ms-2' %>
         <% end %>
       </div>
     </div>
@@ -141,13 +145,13 @@
                     id: 'remove-screenshot',
                     class: 'fas fa-trash-alt fa-lg me-2 text-light',
                     style: 'display: ' +
-                             show_inline(@medium.screenshot.present?) %>
+        show_inline(@medium.screenshot.present?) %>
       </div>
     </div>
     <div id="screenshot-area"
-         class="mt-3">
+      class="mt-3">
       <%= render partial: 'media/screenshot',
-                 locals: { medium: @medium } %>
+      locals: { medium: @medium } %>
     </div>
   </div>
   <div id="toc-edit">
@@ -168,12 +172,12 @@
                     remote: true,
                     title: t('buttons.import_script_items'),
                     style: 'display: ' +
-                             show_inline(@medium.script_items_importable?) %>
+        show_inline(@medium.script_items_importable?) %>
       </div>
     </div>
     <div id="toc-area">
       <%= render partial: 'media/toc',
-                 locals: { medium: @medium } %>
+      locals: { medium: @medium } %>
     </div>
   </div>
   <div id="meta-edit">
@@ -185,7 +189,7 @@
     </div>
     <div id="meta-area">
       <%= render partial: 'media/reference',
-                 locals: { medium: @medium } %>
+      locals: { medium: @medium } %>
     </div>
   </div>
 </div>

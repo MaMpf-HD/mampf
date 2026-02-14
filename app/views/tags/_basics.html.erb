@@ -8,84 +8,84 @@
     </div>
   </div>
 </div>
-<div class="card-body p-2"
-     id="tagBasicsBodyEdit">
+<div id="tagBasicsBodyEdit"
+  class="card-body p-2">
   <div class="mb-2">
     <%= t('basics.title') %>
     <%= helpdesk(t('admin.tag.info.title'), false) %>
-    <div class="invalid-feedback"
-      id="tag-notions-error-<%= tag.id.to_i %>">
+    <div id="tag-notions-error-<%= tag.id.to_i %>"
+      class="invalid-feedback">
     </div>
   </div>
   <div id="titlesInput">
     <%= f.fields_for :notions do |n| %>
-      <div class="row">
-        <div class="mb-3 col-11">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <%= n.object.locale %>
-              </div>
+    <div class="row">
+      <div class="mb-3 col-11">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <%= n.object.locale %>
             </div>
-            <%= n.text_field :title, class: 'form-control',
+          </div>
+          <%= n.text_field :title, class: 'form-control',
                                      data: { id: tag.id.to_i,
-                                             locale: n.object.locale } %>
-          </div>
+          locale: n.object.locale } %>
         </div>
-        <% unless new_tag %>
-          <div class="mb-3 col-1">
-            <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
-            <i class="fas fa-trash-alt text-dark"
-               data-bs-toggle="tooltip"
-               title="<%= t('buttons.delete') %>">
-            </i>
-          </div>
-        <% end %>
       </div>
-      <%= n.hidden_field :locale %>
+      <% unless new_tag %>
+      <div class="mb-3 col-1">
+        <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
+        <i class="fas fa-trash-alt text-dark"
+          data-bs-toggle="tooltip"
+          title="<%= t('buttons.delete') %>">
+        </i>
+      </div>
+      <% end %>
+    </div>
+    <%= n.hidden_field :locale %>
     <% end %>
     <div class="mb-2">
       <%= t('basics.aliases') %>
       <%= helpdesk(t('admin.tag.info.aliases'), false) %>
-      <div class="invalid-feedback"
-        id="tag-aliases-error-<%= tag.id.to_i %>">
+      <div id="tag-aliases-error-<%= tag.id.to_i %>"
+        class="invalid-feedback">
       </div>
     </div>
     <%= f.fields_for :aliases do |n| %>
-      <div class="row">
-        <div class="mb-3 col-11">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <%= n.select :locale,
+    <div class="row">
+      <div class="mb-3 col-11">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <%= n.select :locale,
                            options_for_select(I18n.available_locales
                                                   .map { |l| [l.to_s, l.to_s] },
                                               n.object.locale.to_s),
                            {},
-                           { class: 'form-select' } %>
-            </div>
-            <%= n.text_field :title, class: 'form-control',
+            { class: 'form-select' } %>
+          </div>
+          <%= n.text_field :title, class: 'form-control',
                                      data: { id: tag.id.to_i,
-                                             locale: n.object.locale } %>
-          </div>
+          locale: n.object.locale } %>
         </div>
-        <% unless new_tag %>
-          <div class="mb-3 col-1">
-            <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
-            <i class="fas fa-trash-alt text-dark"
-               data-bs-toggle="tooltip"
-               title="<%= t('buttons.delete') %>">
-            </i>
-          </div>
-        <% end %>
       </div>
+      <% unless new_tag %>
+      <div class="mb-3 col-1">
+        <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
+        <i class="fas fa-trash-alt text-dark"
+          data-bs-toggle="tooltip"
+          title="<%= t('buttons.delete') %>">
+        </i>
+      </div>
+      <% end %>
+    </div>
     <% end %>
   </div>
   <% if new_tag %>
-    <div class="mb-3">
-      <%= f.label :related_tag_ids, t('admin.tag.related_tags'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.tag.info.related_tags'), false) %>
-      <%= f.select :related_tag_ids,
+  <div class="mb-3">
+    <%= f.label :related_tag_ids, t('admin.tag.related_tags'),
+    class: "form-label" %>
+    <%= helpdesk(t('admin.tag.info.related_tags'), false) %>
+    <%= f.select :related_tag_ids,
                    [[]],
                    {},
                    { multiple: true,
@@ -98,77 +98,77 @@
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
                              no_results: t('basics.no_results'),
-                             modal: modal } } %>
-      <div class="invalid-feedback"
-           id="tag-related-tags-error-<%= tag.id.to_i %>">
-      </div>
+    modal: modal } } %>
+    <div id="tag-related-tags-error-<%= tag.id.to_i %>"
+      class="invalid-feedback">
     </div>
+  </div>
   <% end %>
   <div class="row">
-  <div class="mb-3 col-12">
-    <%= f.label :course_ids,
+    <div class="mb-3 col-12">
+      <%= f.label :course_ids,
                 t('basics.courses'),
-                class: "form-label" %>
-    <%= helpdesk(t('admin.tag.info.courses'), false) %>
-    <%= f.select :course_ids,
+      class: "form-label" %>
+      <%= helpdesk(t('admin.tag.info.courses'), false) %>
+      <%= f.select :course_ids,
                  options_for_select(Course.select_by_title,
                                     tag.course_ids),
                  {},
                  { id: "tag_related_course_ids-#{tag.id.to_i}-#{modal && 1 || 0}",
                    multiple: true,
                    class: 'selectize',
-                   data: { id: tag.id.to_i } } %>
-    <div class="invalid-feedback"
-         id="tag-courses-error-<%= tag.id.to_i %>">
+      data: { id: tag.id.to_i } } %>
+      <div id="tag-courses-error-<%= tag.id.to_i %>"
+        class="invalid-feedback">
+      </div>
     </div>
   </div>
-  </div>
   <% unless new_tag %>
-    <% if tag.extra_lectures.present? %>
-      <div class="row">
-        <div class="col-12">
-          <%= t('admin.tag.extra_lectures') %>
-          <%= helpdesk(t('admin.tag.info.extra_lectures'), false) %>
-        </div>
-        <div class="col-12">
-          <ul>
-            <% tag.extra_lectures.each do |l| %>
-              <li>
-                <%= link_to l.title, edit_or_show_lecture_path(l) %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    <% end %>
-    <% if tag.missing_lectures.present? %>
-      <div class="row">
-        <div class="col-12">
-          <%= t('admin.tag.missing_lectures') %>
-          <%= helpdesk(t('admin.tag.info.missing_lectures'), false) %>
-        </div>
-        <div class="col-12">
-          <ul>
-            <% tag.missing_lectures.each do |l| %>
-              <li>
-                <%= link_to l.title, edit_or_show_lecture_path(l) %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    <% end %>
+  <% if tag.extra_lectures.present? %>
+  <div class="row">
+    <div class="col-12">
+      <%= t('admin.tag.extra_lectures') %>
+      <%= helpdesk(t('admin.tag.info.extra_lectures'), false) %>
+    </div>
+    <div class="col-12">
+      <ul>
+        <% tag.extra_lectures.each do |l| %>
+        <li>
+          <%= link_to l.title, edit_or_show_lecture_path(l) %>
+        </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <% end %>
+  <% if tag.missing_lectures.present? %>
+  <div class="row">
+    <div class="col-12">
+      <%= t('admin.tag.missing_lectures') %>
+      <%= helpdesk(t('admin.tag.info.missing_lectures'), false) %>
+    </div>
+    <div class="col-12">
+      <ul>
+        <% tag.missing_lectures.each do |l| %>
+        <li>
+          <%= link_to l.title, edit_or_show_lecture_path(l) %>
+        </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <% end %>
   <% end %>
   <% if from == 'section' %>
-    <%= f.hidden_field :section_id,
-                       value: tag.section_ids.first %>
+  <%= f.hidden_field :section_id,
+  value: tag.section_ids.first %>
   <% end %>
   <% if from == 'lesson' %>
-    <%= f.hidden_field :lesson_id,
-                       value: tag.lesson_ids.first %>
+  <%= f.hidden_field :lesson_id,
+  value: tag.lesson_ids.first %>
   <% end %>
   <% if from == 'talk' %>
-    <%= f.hidden_field :talk_id,
-                       value: tag.talk_ids.first %>
+  <%= f.hidden_field :talk_id,
+  value: tag.talk_ids.first %>
   <% end %>
 </div>

@@ -8,50 +8,54 @@
         <%= question.text_with_sample_params(parameters) %>
       </div>
       <% if question.hint.present? %>
-        <div class="col-1 text-end">
-          <span >
-            <i class="far fa-question-circle"
-               id="reveal-hint-<%= question.id %>"
-               style="cursor: pointer;" data-bs-toggle="tooltip"
-               data-placement="left" title="<%= t('admin.question.hint') %>">
-            </i>
-          </span>
-        </div>
+      <div class="col-1 text-end">
+        <span>
+          <i
+            id="reveal-hint-<%= question.id %>"
+            class="far fa-question-circle"
+            style="cursor: pointer;"
+            data-bs-toggle="tooltip"
+            data-placement="left"
+            title="<%= t('admin.question.hint') %>"
+          >
+          </i>
+        </span>
+      </div>
       <% end %>
     </div>
     <% if question.hint.present? %>
-      <div class="row no_display" id="hint-<%= question.id %>">
-        <div class="col-12">
-          <span>
-            <em>
-              <%= t('admin.question.hint') %>
-            </em>
-          </span>
-          <%= question.hint %>
-        </div>
+    <div id="hint-<%= question.id %>" class="row no_display">
+      <div class="col-12">
+        <span>
+          <em>
+            <%= t('admin.question.hint') %>
+          </em>
+        </span>
+        <%= question.hint %>
       </div>
+    </div>
     <% end %>
   </div>
-  <div class="card-body" id="body-<%= @quiz_round.round_id %>">
+  <div id="body-<%= @quiz_round.round_id %>" class="card-body">
     <div id="results-<%= @quiz_round.round_id %>">
       <% if question.multiple_choice? %>
-        <%= render partial: "quizzes/mc_question_open",
+      <%= render partial: "quizzes/mc_question_open",
                    locals: { quiz_round: @quiz_round,
-                             answers: answers } %>
+      answers: answers } %>
       <% elsif question.free_answer? %>
-        <%= render partial: 'quizzes/free_question_open',
+      <%= render partial: 'quizzes/free_question_open',
                    locals: { quiz_round: @quiz_round,
                              answers: answers,
                              solution: Solution.new(question.solution.type.constantize.trivial_instance),
                              question: question,
-                             parameters: parameters } %>
+      parameters: parameters } %>
       <% end %>
     </div>
     <div id="reduced-<%= @quiz_round.round_id %>" style="display: none;">
     </div>
   </div>
-  <div class="card-footer no_display"
-       id="footer-<%= @quiz_round.round_id %>">
+  <div id="footer-<%= @quiz_round.round_id %>"
+    class="card-footer no_display">
     <%= t('admin.quiz.loop_info') %>
   </div>
 </div>

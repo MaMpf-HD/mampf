@@ -6,10 +6,10 @@
   </div>
   <div class="card-body card-tiny">
     <% if other_courses.any? %>
-      <%= render partial: 'administration/index/courses_card',
-                 locals: { courses: other_courses.natural_sort_by(&:title) } %>
+    <%= render partial: 'administration/index/courses_card',
+    locals: { courses: other_courses.natural_sort_by(&:title) } %>
     <% else %>
-      <%= t('admin.main.no_other_courses') %>
+    <%= t('admin.main.no_other_courses') %>
     <% end %>
   </div>
 </div>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <%= vite_stylesheet_tag "styles/email.scss" %>
   </head>
 
   <body>
-    <div class='container text-center'>
+    <div class="container text-center">
       <%= email_image_tag("/images/mampf-logo.png",
                           size: "96x96",
                           alt: "MaMpf Logo",
-                          class: "img-fluid mb-2 pt-4 pb-3") %>
+      class: "img-fluid mb-2 pt-4 pb-3") %>
       <div class="jumbotron">
 
         <%= yield %>
@@ -22,7 +22,7 @@
       <small class="text-body-secondary">
         <%= t('mailer.unsubscribe_html',
               profile: link_to(t('notifications.profile'),
-                               edit_profile_url)) %>
+        edit_profile_url)) %>
         <br>
         <%= t('mailer.non_working_links') %>
       </small>

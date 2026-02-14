@@ -6,19 +6,19 @@
   </div>
   <div class="col-6 text-end">
     <button type="button"
-            class="btn btn-sm btn-outline-secondary"
-            data-bs-toggle="modal"
-            data-bs-target="#manuscriptModal">
+      class="btn btn-sm btn-outline-secondary"
+      data-bs-target="#manuscriptModal"
+      data-bs-toggle="modal">
       <%= t('basics.details') %>
     </button>
     <% unless manuscript.contradiction_count.positive? %>
-      <button id="import-from-manuscript"
-              type="button"
-              class="btn btn-sm btn-outline-secondary"
-              data-count="<%= manuscript.count %>"
-              data-mediumid="<%= medium.id %>">
-        <%= t('buttons.import') %>
-      </button>
+    <button id="import-from-manuscript"
+      type="button"
+      class="btn btn-sm btn-outline-secondary"
+      data-count="<%= manuscript.count %>"
+      data-mediumid="<%= medium.id %>">
+      <%= t('buttons.import') %>
+    </button>
     <% end %>
   </div>
 </div>
@@ -28,26 +28,26 @@
   </div>
 </div>
 <% unless medium.imported_manuscript %>
-  <div class="row">
-    <div class="col-12 redtext">
-      <%= t('admin.medium.info.import_warning') %>
-    </div>
+<div class="row">
+  <div class="col-12 redtext">
+    <%= t('admin.medium.info.import_warning') %>
   </div>
+</div>
 <% end %>
 <div class="row mt-2">
   <div class="col-12">
     <% if manuscript.contradiction_count.positive? %>
-      <span class="redtext">
-        <%= t('basics.attention') %>:
-      </span>
-      <% if manuscript.contradiction_count == 1 %>
-        <%= t('manuscript.one_contradiction') %>
-      <% elsif manuscript.contradiction_count > 1 %>
-        <%= t('manuscript.more_contradictions',
-            count: manuscript.contradiction_count) %>
-      <% end %>
+    <span class="redtext">
+      <%= t('basics.attention') %>:
+    </span>
+    <% if manuscript.contradiction_count == 1 %>
+    <%= t('manuscript.one_contradiction') %>
+    <% elsif manuscript.contradiction_count > 1 %>
+    <%= t('manuscript.more_contradictions',
+    count: manuscript.contradiction_count) %>
+    <% end %>
     <% else %>
-      <%= t('manuscript.no_contradictions') %>
+    <%= t('manuscript.no_contradictions') %>
     <% end %>
   </div>
 </div>

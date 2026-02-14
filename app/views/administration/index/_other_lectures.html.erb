@@ -1,4 +1,4 @@
- <div class="card">
+<div class="card">
   <div class="card-header bg-teal-lighten-4">
     <%= t('admin.main.other_lectures') %>
     (<%= other_lectures.size  %>)
@@ -6,12 +6,12 @@
   </div>
   <div class="card-body card-tiny">
     <% if other_lectures.any? %>
-      <%= render partial: 'administration/index/lectures_card',
+    <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(other_lectures),
-                           teacher: true } %>
+    teacher: true } %>
     <% else %>
-      <%= t('admin.main.no_other_lectures') %>
+    <%= t('admin.main.no_other_lectures') %>
     <% end %>
   </div>
 </div>

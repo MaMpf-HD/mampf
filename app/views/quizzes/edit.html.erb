@@ -10,40 +10,40 @@
   <div class="col-5">
     <div id="quiz-error-messages" class="mt-2">
       <%= render partial: 'quizzes/errors_in_editing',
-                 locals: { quiz: @quiz } %>
+      locals: { quiz: @quiz } %>
     </div>
     <div id="quiz-warnings" class="mt-2">
       <%= render partial: 'quizzes/edit/warnings',
-                 locals: { quiz: @quiz } %>
+      locals: { quiz: @quiz } %>
     </div>
   </div>
   <div class="col-3 text-end">
     <% unless @quiz.sort == 'RandomQuiz' %>
-      <%= link_to t('buttons.parent_medium'),
+    <%= link_to t('buttons.parent_medium'),
                   edit_medium_path(@quiz),
-                  class: 'btn btn-sm btn-primary m-2' %>
+    class: 'btn btn-sm btn-primary m-2' %>
     <% end %>
     <%= link_to t('buttons.take_quiz'),
                 take_quiz_path(@quiz),
                 class: 'btn btn-sm btn-primary m-2',
-                target: :_blank %>
+    target: :_blank %>
   </div>
 </div>
-<div class="row mx-2 mt-2 mb-4"
-     id="quizGraphArea">
+<div id="quizGraphArea"
+  class="row mx-2 mt-2 mb-4">
   <div class="col-8">
     <%= render partial: 'quizzes/edit/quiz_graph',
                locals: { quiz: @quiz,
                          graph_elements: @graph_elements,
-                         linear: @linear } %>
+    linear: @linear } %>
   </div>
   <div class="col-4">
-    <div id ="vertexActionArea">
+    <div id="vertexActionArea">
     </div>
   </div>
 </div>
 <%= render partial: 'quizzes/new_vertex/new_vertex',
-           locals: { quiz: @quiz } %>
+locals: { quiz: @quiz } %>
 <div id="vertexTargetArea">
 </div>
 <div id="quizzableArea">

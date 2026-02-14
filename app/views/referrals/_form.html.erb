@@ -1,65 +1,65 @@
 <div class="action-box">
   <%= form_with model: referral  do |f|%>
-    <div class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= t('admin.referral.start_time') %>
-        <%= helpdesk(t('admin.referral.info.start_time'), false) %>
-      </div>
-      <div class="col-3">
-        <%= f.text_field :start_time,
+  <div class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= t('admin.referral.start_time') %>
+      <%= helpdesk(t('admin.referral.info.start_time'), false) %>
+    </div>
+    <div class="col-3">
+      <%= f.text_field :start_time,
                          { value: referral.start_time.simple_vtt_string,
                            size: 12,
                            maxlength: 12,
-                           class: 'form-control' } %>
-        <div class="invalid-feedback"
-             id="start-time-error">
-        </div>
-      </div>
-      <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer"
-           data-bs-toggle="tooltip"
-           data-placement="right"
-           title="<%= t('admin.referral.take_time') %>"
-           data-timer="referral_start_time">
-          timer
-        </i>
+      class: 'form-control' } %>
+      <div id="start-time-error"
+        class="invalid-feedback">
       </div>
     </div>
-    <div class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= t('admin.referral.end_time') %>
-        <%= helpdesk(t('admin.referral.info.end_time'), false) %>
-      </div>
-      <div class="col-3">
-        <%= f.text_field :end_time,
+    <div class="col-1 col-form-label">
+      <i class="material-icons clickable timer"
+        data-bs-toggle="tooltip"
+        data-placement="right"
+        data-timer="referral_start_time"
+        title="<%= t('admin.referral.take_time') %>">
+        timer
+      </i>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= t('admin.referral.end_time') %>
+      <%= helpdesk(t('admin.referral.info.end_time'), false) %>
+    </div>
+    <div class="col-3">
+      <%= f.text_field :end_time,
                          { value: referral.end_time.simple_vtt_string,
                            size: 12,
                            maxlength: 12,
-                           class: 'form-control' } %>
-        <div class="invalid-feedback"
-             id="end-time-error">
-        </div>
-      </div>
-      <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer"
-           data-bs-toggle="tooltip"
-           data-placement="right"
-           title="<%= t('admin.referral.take_time') %>"
-           data-timer="referral_end_time">
-          timer
-        </i>
+      class: 'form-control' } %>
+      <div id="end-time-error"
+        class="invalid-feedback">
       </div>
     </div>
-    <div id="teachable_selector"
-         class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= f.label :teachable,
+    <div class="col-1 col-form-label">
+      <i class="material-icons clickable timer"
+        data-bs-toggle="tooltip"
+        data-placement="right"
+        data-timer="referral_end_time"
+        title="<%= t('admin.referral.take_time') %>">
+        timer
+      </i>
+    </div>
+  </div>
+  <div id="teachable_selector"
+    class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= f.label :teachable,
                     t('admin.referral.preselection'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.referral.info.end_time'), false) %>
-      </div>
-      <div class="col-9">
-        <%= f.select :teachable,
+      class: "form-label" %>
+      <%= helpdesk(t('admin.referral.info.end_time'), false) %>
+    </div>
+    <div class="col-9">
+      <%= f.select :teachable,
                      grouped_options_for_select(grouped_teachable_list,
                                                 teachable_selector(referral)),
                      { prompt: t('basics.select') },
@@ -67,137 +67,143 @@
                        data:
                          { 'can-create-external-link' =>
                               ItemAbility.new(current_user)
-                                         .can?(:create, Item.new) } } %>
-      </div>
+      .can?(:create, Item.new) } } %>
     </div>
-    <div id="item_select" class="mb-3 row">
-      <div class="col-2 col-form-label">
-        <%= f.label :item_id,
+  </div>
+  <div id="item_select" class="mb-3 row">
+    <div class="col-2 col-form-label">
+      <%= f.label :item_id,
                     t('admin.referral.item'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.referral.info.item'), false) %>
-      </div>
-      <div class="col-9">
-        <%= f.select :item_id,
+      class: "form-label" %>
+      <%= helpdesk(t('admin.referral.info.item'), false) %>
+    </div>
+    <div class="col-9">
+      <%= f.select :item_id,
                      add_prompt(item_selection),
                      {},
-                     { class: 'selectize' } %>
-      </div>
-      <div class="col-1 col-form-label">
-        <i id="create_external_link"
-           class="material-icons clickable"
-           data-bs-toggle="tooltip"
-           data-placement="left"
-           title="<%= t('admin.item.create_external') %>"
-           style="display: <%= show(referral.item&.sort == 'link') %>">
-          note_add
+      { class: 'selectize' } %>
+    </div>
+    <div class="col-1 col-form-label">
+      <i
+        id="create_external_link"
+        class="material-icons clickable"
+        style="display: <%= show(referral.item&.sort == 'link') %>"
+        data-bs-toggle="tooltip"
+        data-placement="left"
+        title="<%= t('admin.item.create_external') %>"
+      >
+        note_add
+      </i>
+    </div>
+  </div>
+  <div id="link_details" style="display: <%= show(show_link(referral)) %>">
+    <div id="referral_description_field"
+      class="mb-3 row">
+      <div class="col-2 col-form-label">
+        <%= f.label :description,
+                      t('basics.title'),
+        class: "form-label" %>
+        <%= helpdesk(t('admin.referral.info.description'), true) %>
+        <i
+          id="link_reappearance_title"
+          class="fas fa-exclamation-circle"
+          style="display: <%= show_inline(referral.reappears) %>"
+          data-bs-toggle="tooltip"
+          data-placement="left"
+          title="<%= t('admin.item.info.title_warning') %>"
+        >
         </i>
       </div>
-    </div>
-    <div id="link_details" style="display: <%= show(show_link(referral)) %>">
-      <div id="referral_description_field"
-           class="mb-3 row">
-        <div class="col-2 col-form-label">
-          <%= f.label :description,
-                      t('basics.title'),
-                      class: "form-label" %>
-          <%= helpdesk(t('admin.referral.info.description'), true) %>
-          <i id="link_reappearance_title"
-             class="fas fa-exclamation-circle"
-             style="display: <%= show_inline(referral.reappears) %>"
-             data-bs-toggle="tooltip"
-             data-placement="left"
-             title="<%= t('admin.item.info.title_warning') %>">
-          </i>
-        </div>
-        <div class="col-6">
-          <%= f.text_field :description,
+      <div class="col-6">
+        <%= f.text_field :description,
                            { value: referral.prefilled_description,
                              size: 50,
-                             class: 'form-control' } %>
-          <div class="invalid-feedback"
-               id="description-error">
-          </div>
+        class: 'form-control' } %>
+        <div id="description-error"
+          class="invalid-feedback">
         </div>
       </div>
-      <div id="referral_link_field"
-           class="mb-3 row">
-        <div class="col-2 col-form-label">
-          <%= f.label :link,
+    </div>
+    <div id="referral_link_field"
+      class="mb-3 row">
+      <div class="col-2 col-form-label">
+        <%= f.label :link,
                       t('basics.link'),
-                      class: "form-label" %>
-          <%= helpdesk(t('admin.referral.info.link'), true) %>
-          <i id="link_reappearance_link"
-             class="fas fa-exclamation-circle"
-             style="display: <%= show_inline(referral.reappears) %>"
-             data-bs-toggle="tooltip"
-             data-placement="left"
-             title="<%= t('admin.item.info.link_warning') %>">
-          </i>
-        </div>
-        <div class="col-8">
-          <%= f.text_field :link,
+        class: "form-label" %>
+        <%= helpdesk(t('admin.referral.info.link'), true) %>
+        <i
+          id="link_reappearance_link"
+          class="fas fa-exclamation-circle"
+          style="display: <%= show_inline(referral.reappears) %>"
+          data-bs-toggle="tooltip"
+          data-placement="left"
+          title="<%= t('admin.item.info.link_warning') %>"
+        >
+        </i>
+      </div>
+      <div class="col-8">
+        <%= f.text_field :link,
                            { value: referral.prefilled_link,
                              size: 50,
-                             class: 'form-control' } %>
-          <div class="invalid-feedback"
-               id="link-error">
-          </div>
-        </div>
-        <div class="col-2 col-form-label">
-          <button id="test-link"
-                  type="button"
-                  class="btn btn-sm btn-outline-info">
-            Test
-          </button>
+        class: 'form-control' } %>
+        <div id="link-error"
+          class="invalid-feedback">
         </div>
       </div>
+      <div class="col-2 col-form-label">
+        <button id="test-link"
+          type="button"
+          class="btn btn-sm btn-outline-info">
+          Test
+        </button>
+      </div>
     </div>
-    <div id="item_details"
-     style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
-      <%= render partial: 'referrals/item_details',
-                 locals: { item: referral.item } %>
-    </div>
-    <div id="explanation_details"
-         style="display: <%= show(show_explanation(referral)) %>;">
-      <div class="mb-3 row">
-        <div class="col-2 col-form-label">
-          <%= f.label :explanation,
+  </div>
+  <div id="item_details"
+    style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
+    <%= render partial: 'referrals/item_details',
+    locals: { item: referral.item } %>
+  </div>
+  <div id="explanation_details"
+    style="display: <%= show(show_explanation(referral)) %>;">
+    <div class="mb-3 row">
+      <div class="col-2 col-form-label">
+        <%= f.label :explanation,
                       t('admin.referral.explanation'),
-                      class: "form-label" %>
-          <%= helpdesk(t('admin.referral.info.explanation'), true) %>
-        </div>
-        <div class="col-8">
-          <%= f.text_area :explanation, { value: referral.explain,
+        class: "form-label" %>
+        <%= helpdesk(t('admin.referral.info.explanation'), true) %>
+      </div>
+      <div class="col-8">
+        <%= f.text_area :explanation, { value: referral.explain,
                                           class: 'form-control',
-                                          escape: true } %>
-          <div class="invalid-feedback"
-               id="explanation-error">
-          </div>
+        escape: true } %>
+        <div id="explanation-error"
+          class="invalid-feedback">
         </div>
       </div>
     </div>
-    <%= f.hidden_field :ref_id,
-                       value: referral.id %>
-    <%= f.hidden_field :medium_id,
-                       value: referral.medium_id %>
-    <%= f.submit t('buttons.save'),
-                 class: 'btn btn-sm btn-primary' %>
-    <button id="cancel-item"
-            class="btn btn-sm btn-secondary ms-3"
-            type="button">
-      <%= t('buttons.cancel') %>
-    </button>
-    <% if referral.id.present? %>
-      <%= link_to t('buttons.delete'),
+  </div>
+  <%= f.hidden_field :ref_id,
+  value: referral.id %>
+  <%= f.hidden_field :medium_id,
+  value: referral.medium_id %>
+  <%= f.submit t('buttons.save'),
+  class: 'btn btn-sm btn-primary' %>
+  <button id="cancel-item"
+    type="button"
+    class="btn btn-sm btn-secondary ms-3">
+    <%= t('buttons.cancel') %>
+  </button>
+  <% if referral.id.present? %>
+  <%= link_to t('buttons.delete'),
                   referral_path(referral),
                   method: :delete,
                   remote: true,
                   data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-sm btn-danger me-2' %>
-    <% end %>
+  class: 'btn btn-sm btn-danger me-2' %>
+  <% end %>
   <% end %>
 </div>
 <%= render partial: 'items/modal',
-           locals: { item: item } %>
+locals: { item: item } %>

@@ -1,19 +1,19 @@
 
 <div class="list-group-item tutorialRow"
-       data-id="<%= tutorial.id.to_i %>">
+  data-id="<%= tutorial.id.to_i %>">
   <%= form_with model: tutorial, data: { cy: 'tutorial-form' } do |f| %>
-    <div class="row">
-      <div class="form-group col-4">
-        <%= f.text_field :title,
+  <div class="row">
+    <div class="form-group col-4">
+      <%= f.text_field :title,
                          class: 'form-control',
-                         id: "tutorial_title_#{tutorial.id}" %>
-        <div class="invalid-feedback"
-             id="tutorial-title-error">
-        </div>
+      id: "tutorial_title_#{tutorial.id}" %>
+      <div id="tutorial-title-error"
+        class="invalid-feedback">
       </div>
-      <div class="form-group col-4" data-cy="tutor-select-div">
-        <% if current_user.admin? %>
-          <%= f.select :tutor_ids,
+    </div>
+    <div class="form-group col-4" data-cy="tutor-select-div">
+      <% if current_user.admin? %>
+      <%= f.select :tutor_ids,
                      tutors_preselection(tutorial),
                      {},
                      { class: 'selectize',
@@ -23,28 +23,28 @@
                                filled: false,
                                model: 'user',
                                placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
-        <% else %>
-          <%= f.select :tutor_ids,
+      no_results: t('basics.no_results') } } %>
+      <% else %>
+      <%= f.select :tutor_ids,
                       tutors_preselection(tutorial),
                       {},
                       { class: 'selectize',
                         multiple: true,
                         id: "tutorial_tutor_ids_#{tutorial.id}",
                         data: { cy: "tutor-select",
-                                no_results: t('basics.no_results_tutor') } } %>
-        <% end %>
-      </div>
-      <div class="form-group col-4">
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
-        <%= link_to t('buttons.cancel'),
+      no_results: t('basics.no_results_tutor') } } %>
+      <% end %>
+    </div>
+    <div class="form-group col-4">
+      <%= f.submit t('buttons.save'),
+      class: 'btn btn-sm btn-primary' %>
+      <%= link_to t('buttons.cancel'),
                     cancel_editing_tutorial_path(tutorial),
                     class: 'btn btn-sm btn-secondary',
-                    remote: true %>
-      </div>
+      remote: true %>
     </div>
-    <%= f.hidden_field :lecture_id,
-                      value: tutorial.lecture.id %>
+  </div>
+  <%= f.hidden_field :lecture_id,
+  value: tutorial.lecture.id %>
   <% end %>
 </div>

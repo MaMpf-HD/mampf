@@ -1,49 +1,52 @@
-<div class="modal fade"
-     id="statisticsModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="statisticsModalLabel" aria-hidden="true"
-     data-backdrop="static"
-     data-keyboard="true">
+<div
+  id="statisticsModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="statisticsModalLabel"
+  data-backdrop="static"
+  data-keyboard="true"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-xxl"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
         <% if @medium.sort == 'Quiz' %>
-          <ul class="nav nav-pills mt-3" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link active" id="media-tab" data-bs-toggle="pill"
-                href="#calls-stats">
-                <%= t('statistics.calls') %>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="teachable-tab" data-bs-toggle="pill"
-                href="#success-stats">
-                <%= t('statistics.success') %>
-              </a>
-            </li>
-          </ul>
+        <ul class="nav nav-pills mt-3" role="tablist">
+          <li class="nav-item">
+            <a id="media-tab" class="nav-link active" data-bs-toggle="pill"
+              href="#calls-stats">
+              <%= t('statistics.calls') %>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a id="teachable-tab" class="nav-link" data-bs-toggle="pill"
+              href="#success-stats">
+              <%= t('statistics.success') %>
+            </a>
+          </li>
+        </ul>
         <% else %>
-          <h5 class="modal-title" id="statisticsModalLabel">
-            <%= t("statistics.calls") %>
-          </h5>
+        <h5 id="statisticsModalLabel" class="modal-title">
+          <%= t("statistics.calls") %>
+        </h5>
         <% end %>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <% if @medium.sort == 'Quiz' %>
-        <div class="modal-body" id="statistics-modal-content">
-          <div class="tab-content">
-            <div class="tab-pane fade active show" id="calls-stats"></div>
-            <div class="tab-pane fade" id="success-stats"></div>
-          </div>
+      <div id="statistics-modal-content" class="modal-body">
+        <div class="tab-content">
+          <div id="calls-stats" class="tab-pane fade active show"></div>
+          <div id="success-stats" class="tab-pane fade"></div>
         </div>
+      </div>
       <% else %>
-        <div class="modal-body" id="calls-stats"></div>
+      <div id="calls-stats" class="modal-body"></div>
       <% end %>
     </div>
   </div>

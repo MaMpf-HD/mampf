@@ -1,52 +1,52 @@
 <% unless content.blank? %>
-  <% content.each_with_index do |c,i| %>
-    <% if c.present? %>
-      <p>
-        <%= c&.html_safe %>
-      </p>
-    <% end %>
-    <% unless i == content.length - 1 %>
-      <hr>
-    <% end %>
-  <% end %>
+<% content.each_with_index do |c,i| %>
+<% if c.present? %>
+<p>
+  <%= c&.html_safe %>
+</p>
+<% end %>
+<% unless i == content.length - 1 %>
+<hr>
+<% end %>
+<% end %>
 <% end %>
 <% if items.present? %>
-  <ul class="list-group">
-    <% items.each do |i| %>
-      <li class="list-group-item">
-        <div class="row">
-          <div class="col-3"
-               style="background: <%= i.background %>">
-            <%= i.short_reference %>
-          </div>
-          <div class="col-7">
-            <% if i.sort == 'section' && section_links &&
-                  Section.exists?(i.section_id) %>
-              <%= link_to i.short_description,
-                          section_path(Section.find_by_id(i.section_id)) %>
-            <% else %>
-              <%= i.short_description %>
-            <% end %>
-          </div>
-          <div class="col-2">
-            <% if i.medium.visible? %>
-              <%= render partial: 'items/item_links',
-                         locals: { item: i } %>
-            <% end %>
-            <% i.related_items.each do |j| %>
-              <span class="me-2">
-              </span>
-              <% if j.medium.visible? %>
-                <%= render partial: 'items/item_links',
-                           locals: { item: j } %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      </li>
-    <% end%>
-  </ul>
+<ul class="list-group">
+  <% items.each do |i| %>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-3"
+        style="background: <%= i.background %>">
+        <%= i.short_reference %>
+      </div>
+      <div class="col-7">
+        <% if i.sort == 'section' && section_links &&
+        Section.exists?(i.section_id) %>
+        <%= link_to i.short_description,
+        section_path(Section.find_by_id(i.section_id)) %>
+        <% else %>
+        <%= i.short_description %>
+        <% end %>
+      </div>
+      <div class="col-2">
+        <% if i.medium.visible? %>
+        <%= render partial: 'items/item_links',
+        locals: { item: i } %>
+        <% end %>
+        <% i.related_items.each do |j| %>
+        <span class="me-2">
+        </span>
+        <% if j.medium.visible? %>
+        <%= render partial: 'items/item_links',
+        locals: { item: j } %>
+        <% end %>
+        <% end %>
+      </div>
+    </div>
+  </li>
+  <% end%>
+</ul>
 <% end %>
 <% if (content.nil? || (content - ['']).blank?) && !items.any? %>
-  <%= t('no_content') %>
+<%= t('no_content') %>
 <% end %>

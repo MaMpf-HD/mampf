@@ -8,27 +8,27 @@
       </div>
       <div class="col-6">
         <div class="media-card-header">
-          <a href="<%= display_medium_path(medium) %>"
-             class="no-deco me-2"
-             target="_blank">
+          <a class="no-deco me-2"
+            href="<%= display_medium_path(medium) %>"
+            target="_blank">
             <i class="material-icons text-secondary"
-               data-bs-toggle="tooltip"
-               data-placement="bottom"
-               title="<%= t('manuscript.view') %>">
+              data-bs-toggle="tooltip"
+              data-placement="bottom"
+              title="<%= t('manuscript.view') %>">
               library_books
             </i>
           </a>
           <div class="download-button">
-            <a href="<%= medium.manuscript_download_url %>"
-               download="<%= manuscript_download_file(medium) %>"
-               class="triggerDownload"
-               data-medium="<%= medium.id %>"
-               data-sort="manuscript">
+            <a class="triggerDownload"
+              data-medium="<%= medium.id %>"
+              data-sort="manuscript"
+              download="<%= manuscript_download_file(medium) %>"
+              href="<%= medium.manuscript_download_url %>">
               <span>
                 <span class="badge bg-secondary"
-                      data-bs-toggle="tooltip"
-                      data-placement="bottom"
-                      title="<%= t('manuscript.download') %>">
+                  data-bs-toggle="tooltip"
+                  data-placement="bottom"
+                  title="<%= t('manuscript.download') %>">
                   &darr;pdf
                 </span>
               </span>
@@ -42,7 +42,7 @@
                           '/no_course_information.png',
                         class: 'card-img-top manuscript-thumbnail'),
               display_medium_path(medium),
-              target: "_blank" %>
+  target: "_blank" %>
   <div class="card-body">
     <div class="row">
       <div id="manuscript-meta" class="col-12 rounded">
@@ -66,8 +66,8 @@
     </div>
   </div>
   <% if medium.sort == 'Exercise' && medium.file_last_edited != nil %>
-    <div class="card-footer">
-        <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.updated_at, format: :short %></p>
-    </div>
+  <div class="card-footer">
+    <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.updated_at, format: :short %></p>
+  </div>
   <% end %>
 </div>

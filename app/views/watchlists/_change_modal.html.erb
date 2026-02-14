@@ -1,30 +1,33 @@
-<div class="modal fade"
-     id="watchlistModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="watchlistModalLabel" aria-hidden="true"
-     data-keyboard="true">
+<div
+  id="watchlistModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="watchlistModalLabel"
+  data-keyboard="true"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-sm"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="watchlistModalTitle">
+        <h5 id="watchlistModalTitle"
+          class="modal-title">
           <%= t('watchlist.change') %>
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body"
-           id="watchlistModalBody">
+      <div id="watchlistModalBody"
+        class="modal-body">
         <%= render partial: 'watchlists/change_form' %>
       </div>
       <div class="modal-footer">
         <div class="container text-center">
-          <button class="btn btn-primary"
-                  id="confirmChangeWatchlistButton"
-                  type="submit"
-                  form="changeWatchlistForm"
-                  disabled ><%= t('watchlist.save_change') %></button>
+          <button id="confirmChangeWatchlistButton"
+            type="submit"
+            class="btn btn-primary"
+            disabled
+            form="changeWatchlistForm"><%= t('watchlist.save_change') %></button>
           <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
         </div>
       </div>

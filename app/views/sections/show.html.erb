@@ -5,48 +5,48 @@
         <%= t('section') %>
       </span>
       <%= @section.to_label %>
-    <% if current_user.admin ||
-          @section.lecture.edited_by?(current_user) %>
+      <% if current_user.admin ||
+      @section.lecture.edited_by?(current_user) %>
       <%= link_to '',
                   edit_section_path(@section),
                   class: 'far fa-edit fa-sm text-dark mt-3',
                   data: { toggle: 'tooltip',
                           placement: 'bottom' },
                   title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
-    <% end %>
+      style: 'text-decoration: none;' %>
+      <% end %>
     </h2>
   </div>
   <div class="col-10 col-xl-5 pt-2">
     (<%= t('from') %>
     <% if current_user.lectures.include?(@section.lecture) %>
-      <%= link_to @section.lecture.to_label,
-                  @section.lecture.path(current_user) %>
+    <%= link_to @section.lecture.to_label,
+    @section.lecture.path(current_user) %>
     <% else %>
-      <span>
-        <%= @section.lecture.to_label %>
-      </span>
+    <span>
+      <%= @section.lecture.to_label %>
+    </span>
     <% end %>
     )
   </div>
   <div class="col-2 col-xl-2 text-end ">
     <% if !@section.hidden_with_inheritance? && @section.previous %>
-      <a href="<%= section_path(@section.previous) %>"
-         class="text-secondary material-icons me-2"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('previous_section') %>">
-        keyboard_arrow_left
-      </a>
+    <a class="text-secondary material-icons me-2"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= section_path(@section.previous) %>"
+      title="<%= t('previous_section') %>">
+      keyboard_arrow_left
+    </a>
     <% end %>
     <% if !@section.hidden_with_inheritance? && @section.next %>
-      <a href="<%= section_path(@section.next) %>"
-         class="text-secondary material-icons"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('next_section') %>">
-        keyboard_arrow_right
-      </a>
+    <a class="text-secondary material-icons"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= section_path(@section.next) %>"
+      title="<%= t('next_section') %>">
+      keyboard_arrow_right
+    </a>
     <% end %>
   </div>
 </div>
@@ -57,12 +57,12 @@
         <%= render partial: 'tags/tags',
                    locals: { related_tags: @section.tags,
                              tags_description: t('related_tags'),
-                             small: false } %>
+        small: false } %>
       </div>
       <div class="col-12 mt-2 mb-2">
         <%= render partial: 'lessons/lessons',
                    locals: { lessons: @section.lessons,
-                             lessons_description: t('related_lessons') } %>
+        lessons_description: t('related_lessons') } %>
       </div>
     </div>
   </div>
@@ -72,13 +72,13 @@
                          small: false,
                          embedded: false,
                          section_links: false,
-                         content: [@section.details].compact } %>
+    content: [@section.details].compact } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',
                locals: { media: @section.visible_media_for_user(current_user),
                          from: 'section',
                          questions: false,
-                         references: Item.none } %>
+    references: Item.none } %>
   </div>
 </div>

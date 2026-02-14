@@ -10,15 +10,15 @@
   <div class="col-3 text-end">
     <% teachable_scope = @medium.teachable&.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-        <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
-          <%= link_to t('buttons.parent_course'),
+    <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
+    <%= link_to t('buttons.parent_course'),
                       edit_course_path(teachable_scope),
-                      class: 'btn btn-sm btn-outline-primary mb-2' %>
-        <% end %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% end %>
     <% else %>
-      <%= link_to t('buttons.parent_lecture'),
+    <%= link_to t('buttons.parent_lecture'),
                   edit_or_show_lecture_path(teachable_scope),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
   </div>
 </div>
@@ -55,23 +55,23 @@
           <div class="col-8">
             <ul>
               <% @medium.editors.each do |e| %>
-                <li>
-                  <%= e.name_or_email %>
-                </li>
+              <li>
+                <%= e.name_or_email %>
+              </li>
               <% end %>
             </ul>
           </div>
         </div>
         <% if @medium.description.present? %>
-          <div class="row mb-2">
-            <div class="col-4">
-              <%= t('basics.description') %>
-              <%= helpdesk(t('admin.medium.info.inspection_description'), true) %>
-            </div>
-            <div class="col-8">
-              <%= @medium.description %>
-            </div>
+        <div class="row mb-2">
+          <div class="col-4">
+            <%= t('basics.description') %>
+            <%= helpdesk(t('admin.medium.info.inspection_description'), true) %>
           </div>
+          <div class="col-8">
+            <%= @medium.description %>
+          </div>
+        </div>
         <% end %>
         <% if @medium.tags.present? %>
         <div class="row mb-2">
@@ -82,7 +82,7 @@
           <div class="col-8">
             <%= render partial: 'tags/tag',
                        collection: @medium.tags,
-                       cached: true %>
+            cached: true %>
           </div>
         </div>
         <% end %>
@@ -95,9 +95,9 @@
           <div class="col-8">
             <ul>
               <% @medium.linked_media_new.each do |m| %>
-                <li>
-                  <%= link_to m.title, inspect_medium_path(m) %>
-                </li>
+              <li>
+                <%= link_to m.title, inspect_medium_path(m) %>
+              </li>
               <% end %>
             </ul>
           </div>
@@ -111,7 +111,7 @@
           </div>
           <div class="col-8">
             <%= link_to @medium.external_reference_link,
-                        @medium.external_reference_link %>
+            @medium.external_reference_link %>
           </div>
         </div>
         <% end %>
@@ -131,9 +131,9 @@
           </div>
           <div class="col-9 text-end">
             <% if @medium.video.present? %>
-              <%= link_to 'Thyme', play_medium_path(@medium),
+            <%= link_to 'Thyme', play_medium_path(@medium),
                           class: 'btn btn-outline-secondary btn-sm',
-                          target: "_blank" %>
+            target: "_blank" %>
             <% end %>
           </div>
         </div>
@@ -176,76 +176,76 @@
             </div>
           </div>
         </div>
-      <div id="video-preview-area">
-        <video id="video-preview" controls
-               src="<%= @medium.video_url %>">
-        </video>
-      </div>
-      <% else %>
+        <div id="video-preview-area">
+          <video id="video-preview" controls
+            src="<%= @medium.video_url %>">
+          </video>
+        </div>
+        <% else %>
         <%= t('video.no_video') %>
-      <% end %>
-      <% if @medium.screenshot.present? %>
+        <% end %>
+        <% if @medium.screenshot.present? %>
         <div class="my-2">
           <%= t('basics.screenshot') %>
         </div>
         <img id="screenshot-preview" class="img-fluid mb-3"
-             src="<%= @medium.screenshot_url_with_host %>">
-      <% end %>
+          src="<%= @medium.screenshot_url_with_host %>">
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
-<% end %>
-<div class="col-4">
-  <div class="card bg-light">
-    <div class="card-header">
-      <div class="row">
-        <div class="col-12">
-          <%= t('manuscript.manuscript') %>
-          <span class="badge bg-secondary">
-            pdf
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <% if @medium.manuscript.present? %>
-      <div class="row p-2">
-        <div id="manuscript-meta" class="col-12 meta rounded">
-          <div class="row">
-            <div class="col-12">
-              <%= t('basics.file') %>:
-              <span id="manuscript-file">
-                <%= @medium.manuscript_filename %>
-              </span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <%= t('basics.size') %>:
-              <span id="manuscript-size">
-                <%= number_to_human_size(@medium.manuscript_size) %>
-              </span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <%= t('manuscript.length') %>:
-              <span id="manuscript-pages">
-                <%= "#{@medium.manuscript_pages} #{t('manuscript.pages')}" %>
-              </span>
-            </div>
+  <% end %>
+  <div class="col-4">
+    <div class="card bg-light">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <%= t('manuscript.manuscript') %>
+            <span class="badge bg-secondary">
+              pdf
+            </span>
           </div>
         </div>
       </div>
-      <%= link_to image_tag(@medium.manuscript_screenshot_url,
+      <div class="card-body">
+        <% if @medium.manuscript.present? %>
+        <div class="row p-2">
+          <div id="manuscript-meta" class="col-12 meta rounded">
+            <div class="row">
+              <div class="col-12">
+                <%= t('basics.file') %>:
+                <span id="manuscript-file">
+                  <%= @medium.manuscript_filename %>
+                </span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <%= t('basics.size') %>:
+                <span id="manuscript-size">
+                  <%= number_to_human_size(@medium.manuscript_size) %>
+                </span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <%= t('manuscript.length') %>:
+                <span id="manuscript-pages">
+                  <%= "#{@medium.manuscript_pages} #{t('manuscript.pages')}" %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <%= link_to image_tag(@medium.manuscript_screenshot_url,
                             class: 'img-fluid',
                             id: 'manuscript-preview'),
                   @medium.manuscript_url_with_host,
-                  target: "_blank" %>
-      <% else %>
+        target: "_blank" %>
+        <% else %>
         <%= t('manuscript.no_manuscript') %>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
 </div>

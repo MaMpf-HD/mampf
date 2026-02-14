@@ -1,11 +1,11 @@
 <div id="lecture-search-results-wrapper">
   <div id="lecture-search-results" data-testid="lecture-search-results">
     <% if @lectures.any? %>
-      <%= render partial: "lectures/search/lecture", collection: @lectures %>
+    <%= render partial: "lectures/search/lecture", collection: @lectures %>
     <% else %>
-      <div class="text-center text-muted my-4">
+    <div class="text-center text-muted my-4">
       <%= t("lecture.search.no_results") %>
-      </div>
+    </div>
     <% end %>
   </div>
 

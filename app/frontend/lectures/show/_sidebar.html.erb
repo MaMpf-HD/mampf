@@ -5,16 +5,16 @@
 
   <%# Overview %>
   <% if lecture %>
-    <% fullpath = lecture_path(lecture)%>
-    <% active_class = get_class_for_path(lecture_path(lecture)) %>
-    <li class="sidebar-item nav-link <%= active_class %>
+  <% fullpath = lecture_path(lecture)%>
+  <% active_class = get_class_for_path(lecture_path(lecture)) %>
+  <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture ? "disabled" : ""%>">
-      <%= link_to url_for(fullpath),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('basics.overview') %>
-      <% end %>
-    </li>
+    <%= link_to url_for(fullpath),
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('basics.overview') %>
+    <% end %>
+  </li>
   <% end %>
 
   <%# LessonMaterials %>
@@ -24,9 +24,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.lesson_material?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.lesson_material.plural') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.lesson_material.plural') %>
     <% end %>
   </li>
 
@@ -37,9 +37,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.script?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-file-earmark<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.script.singular') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-file-earmark<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.script.singular') %>
     <% end %>
   </li>
 
@@ -53,15 +53,15 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.exercise?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.exercise.plural') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.exercise.plural') %>
     <% end %>
   </li>
 
   <%# Tutorials %>
   <% if lecture %>
-    <% if current_user.in?(lecture.tutors)
+  <% if current_user.in?(lecture.tutors)
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
         exists = true
       elsif current_user.editor_or_teacher_in?(lecture)
@@ -70,29 +70,29 @@
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
         exists = lecture.assignments.any? && lecture.tutorials.any?
-      end %>
-    <% active_class = get_class_for_any_path(
+  end %>
+  <% active_class = get_class_for_any_path(
         [lecture_tutorials_path(lecture),
         lecture_tutorial_overview_path(lecture),
-        lecture_submissions_path(lecture)]) %>
-    <li class="sidebar-item nav-link <%= active_class %>
+  lecture_submissions_path(lecture)]) %>
+  <li class="sidebar-item nav-link <%= active_class %>
             <%= !exists ? "disabled" : ""%>">
-      <%= link_to url_for(path),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= link_text %>
-      <% end %>
-    </li>
+    <%= link_to url_for(path),
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= link_text %>
+    <% end %>
+  </li>
   <% end %>
 
   <% if lecture %>
-    <%# Müsli (external link) %>
-    <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
-        <i class="bi bi-list-check"></i>
-        <%= t('categories.muesli') %>
-      </a>
-    </li>
+  <%# Müsli (external link) %>
+  <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
+    <a % href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank">
+      <i class="bi bi-list-check"></i>
+      <%= t('categories.muesli') %>
+    </a>
+  </li>
   <% end %>
 
   <%# Divider %>
@@ -105,9 +105,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.quiz?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.quiz.plural') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.quiz.plural') %>
     <% end %>
   </li>
 
@@ -121,9 +121,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.course.enough_questions? ? "disabled" : ""%>">
     <%= link_to url_for(path),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-star<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.test.singular') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-star<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.test.singular') %>
     <% end %>
   </li>
 
@@ -134,9 +134,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.worked_example?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.worked_example.plural') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.worked_example.plural') %>
     <% end %>
   </li>
 
@@ -147,9 +147,9 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.repetition?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.repetition.singular') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.repetition.singular') %>
     <% end %>
   </li>
 
@@ -160,61 +160,61 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.miscellaneous?(current_user) ? "disabled" : ""%>">
     <%= link_to url_for(fullpath),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-circle<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.miscellaneous.singular') %>
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-circle<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.miscellaneous.singular') %>
     <% end %>
   </li>
 
   <% if lecture %>
-    <%# Divider %>
-    <span class="border-top my-3"></span>
+  <%# Divider %>
+  <span class="border-top my-3"></span>
 
-    <%# Forum %>
-    <% forum_present = lecture.forum? %>
-    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
-    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>" target="_blank">
-        <%# Will never become active as this is an external link %>
-        <i class="bi bi-chat"></i>
-        <%= t('categories.board') %>
-      </a>
-    </li>
+  <%# Forum %>
+  <% forum_present = lecture.forum? %>
+  <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
+  <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
+    <a href="<%= url_for(path)%>" target="_blank">
+      <%# Will never become active as this is an external link %>
+      <i class="bi bi-chat"></i>
+      <%= t('categories.board') %>
+    </a>
+  </li>
 
-    <%# Announcements %>
-    <% path = lecture_announcements_path(lecture) %>
-    <% active_class = get_class_for_path(path) %>
-    <li class="sidebar-item nav-link <%= active_class %>
+  <%# Announcements %>
+  <% path = lecture_announcements_path(lecture) %>
+  <% active_class = get_class_for_path(path) %>
+  <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture.announcements.exists? ? "disabled" : ""%>">
-      <%= link_to url_for(path),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.announcements') %>
-      <% end %>
-    </li>
+    <%= link_to url_for(path),
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.announcements') %>
+    <% end %>
+  </li>
 
-    <%# Organizational %>
-    <% path = lecture_organizational_path(lecture) %>
-    <% active_class = get_class_for_path(path) %>
-    <li class="sidebar-item nav-link <%= active_class %>
+  <%# Organizational %>
+  <% path = lecture_organizational_path(lecture) %>
+  <% active_class = get_class_for_path(path) %>
+  <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture.organizational ? "disabled" : ""%>">
-      <%= link_to url_for(path),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.organizational_html') %>
-      <% end %>
-    </li>
+    <%= link_to url_for(path),
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.organizational_html') %>
+    <% end %>
+  </li>
 
-    <%# Modul %>
-    <% path = lecture_course_path(lecture) %>
-    <% active_class = get_class_for_path(path) %>
-    <li class="sidebar-item nav-link <%= active_class %>">
-      <%= link_to url_for(path),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-hexagon<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.course') %>
-      <% end %>
-    </li>
+  <%# Modul %>
+  <% path = lecture_course_path(lecture) %>
+  <% active_class = get_class_for_path(path) %>
+  <li class="sidebar-item nav-link <%= active_class %>">
+    <%= link_to url_for(path),
+    data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+    <i class="bi bi-hexagon<%= active_class.present? ? "-fill" : "" %>"></i>
+    <%= t('categories.course') %>
+    <% end %>
+  </li>
   <% end %>
 </ul>
 <% end %>

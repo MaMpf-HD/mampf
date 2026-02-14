@@ -1,77 +1,77 @@
 <%= form_with model: section,
               html: { id: 'section-form',
-                      data: { id: section.id } } do |f| %>
-  <div class="row px-2 py-2 mt-2">
-    <div class="col-12 col-lg-4">
-      <h4 class="ps-2">
-        <span class="badge bg-secondary">
-          <%= t('basics.section') %>
-        </span>
-        <%= section.to_label %>
-        <%= link_to '',
+data: { id: section.id } } do |f| %>
+<div class="row px-2 py-2 mt-2">
+  <div class="col-12 col-lg-4">
+    <h4 class="ps-2">
+      <span class="badge bg-secondary">
+        <%= t('basics.section') %>
+      </span>
+      <%= section.to_label %>
+      <%= link_to '',
                     section_path(section),
                     class: 'fas fa-eye text-dark mt-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('buttons.show'),
-                    style: 'text-decoration: none;' %>
-      </h4>
+      style: 'text-decoration: none;' %>
+    </h4>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div id="section-basics-warning">
+      <%= t('warnings.unsaved_changes') %>
+      <%= f.submit t('buttons.save'),
+      class: 'btn btn-sm btn-primary' %>
+      <button id="cancel-section-edit"
+        type="button"
+        class="btn btn-sm btn-secondary ms-2">
+        <%= t('buttons.discard') %>
+      </button>
     </div>
-    <div class="col-12 col-lg-4">
-      <div id="section-basics-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
-        <button type="button"
-                class="btn btn-sm btn-secondary ms-2"
-                id="cancel-section-edit">
-          <%= t('buttons.discard') %>
-        </button>
-      </div>
-    </div>
-    <div class="col-12 col-lg-4 text-end">
-      <%= link_to t('buttons.parent_lecture'),
+  </div>
+  <div class="col-12 col-lg-4 text-end">
+    <%= link_to t('buttons.parent_lecture'),
                   edit_lecture_path(section.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2',
-                  style: 'position: relative; top: -14px;' %>
-      <%= link_to t('buttons.delete'),
+    style: 'position: relative; top: -14px;' %>
+    <%= link_to t('buttons.delete'),
                   section_path(section),
                   method: :delete,
                   data: { confirm: t('confirmation.section') },
                   class: 'btn btn-sm btn-danger mb-2',
-                  style: 'position: relative; top: -14px;' %>
+    style: 'position: relative; top: -14px;' %>
     <% if !section.hidden_with_inheritance? && section.previous %>
-      <a href="<%= edit_section_path(section.previous) %>"
-         class="text-secondary material-icons me-2"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('previous_section') %>">
-        keyboard_arrow_left
-      </a>
+    <a class="text-secondary material-icons me-2"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= edit_section_path(section.previous) %>"
+      title="<%= t('previous_section') %>">
+      keyboard_arrow_left
+    </a>
     <% end %>
     <% if !section.hidden_with_inheritance? && section.next %>
-      <a href="<%= edit_section_path(section.next) %>"
-         class="text-secondary material-icons"
-         style="text-decoration:none; font-size: 3em;"
-         data-bs-toggle="tooltip"
-         title="<%= t('next_section') %>">
-        keyboard_arrow_right
-      </a>
+    <a class="text-secondary material-icons"
+      style="text-decoration:none; font-size: 3em;"
+      data-bs-toggle="tooltip"
+      href="<%= edit_section_path(section.next) %>"
+      title="<%= t('next_section') %>">
+      keyboard_arrow_right
+    </a>
     <% end %>
-    </div>
   </div>
-  <div class="row p-2">
-    <div class="col-6">
-      <%= render partial: 'sections/basics',
+</div>
+<div class="row p-2">
+  <div class="col-6">
+    <%= render partial: 'sections/basics',
                  locals: { section: section,
-                           f: f } %>
-    </div>
-    <div class="col-6">
-      <%= render partial: 'sections/content',
-                 locals: { section: section,
-                           f: f } %>
-    </div>
+    f: f } %>
   </div>
+  <div class="col-6">
+    <%= render partial: 'sections/content',
+                 locals: { section: section,
+    f: f } %>
+  </div>
+</div>
 <% end %>
 <%= render partial: 'tags/modal' %>
 <%= render partial: 'lessons/modal' %>

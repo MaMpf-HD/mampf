@@ -4,125 +4,125 @@
 <%= render partial: "feedbacks/form/modal" %>
 
 <div class="navbars-container">
-  <nav class="navbar navbar-expand" id="firstnav">
+  <nav id="firstnav" class="navbar navbar-expand">
     <%= link_to image_tag("/images/mampf-logo.svg",
                           class: 'me-2',
                           id: 'mampf-logo'),
-                home_path %>
+    home_path %>
     <%= link_to t('mampf'),
                 home_path,
                 class: 'navbar-brand',
                 style: "text-decoration: none;",
-                id: 'mampfbrand' %>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
-            || !get_class_for_path(root_path()).empty? %>
-          <a href="<%= start_path %>"
-            class="nav-link bi bi-house-fill <%= is_home_active ? ApplicationHelper::ACTIVE_CSS_CLASS : '' %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.home') %>">
-          </a>
-        </li>
+    id: 'mampfbrand' %>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
+        || !get_class_for_path(root_path()).empty? %>
+        <a class="nav-link bi bi-house-fill <%= is_home_active ? ApplicationHelper::ACTIVE_CSS_CLASS : '' %>"
+          data-bs-toggle="tooltip"
+          href="<%= start_path %>"
+          title="<%= t('navbar.home') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= edit_profile_path %>"
-            class="nav-link bi bi-person-circle <%= get_class_for_path(edit_profile_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.profile') %>">
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link bi bi-person-circle <%= get_class_for_path(edit_profile_path()) %>"
+          data-bs-toggle="tooltip"
+          href="<%= edit_profile_path %>"
+          title="<%= t('navbar.profile') %>">
+        </a>
+      </li>
 
-        <% if current_user.admin || current_user.editor? || current_user.teacher? %>
-          <li class="nav-item">
-            <a href="<%= administration_path %>"
-              class="nav-link bi bi-tools"
-              data-bs-toggle="tooltip"
-              title="<%= t('navbar.administration') %>">
-            </a>
-          </li>
-        <% end %>
+      <% if current_user.admin || current_user.editor? || current_user.teacher? %>
+      <li class="nav-item">
+        <a class="nav-link bi bi-tools"
+          data-bs-toggle="tooltip"
+          href="<%= administration_path %>"
+          title="<%= t('navbar.administration') %>">
+        </a>
+      </li>
+      <% end %>
 
-        <li class="nav-item">
-          <a href="<%= annotations_path %>"
-            class="nav-link bi bi-stickies-fill <%= get_class_for_path(annotations_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('admin.annotation.annotations') %>">
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link bi bi-stickies-fill <%= get_class_for_path(annotations_path()) %>"
+          data-bs-toggle="tooltip"
+          href="<%= annotations_path %>"
+          title="<%= t('admin.annotation.annotations') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= watchlists_path %>"
-            id="watchlistsIcon"
-            class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.watchlist') %>">
-          </a>
-        </li>
+      <li class="nav-item">
+        <a id="watchlistsIcon"
+          class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"
+          data-bs-toggle="tooltip"
+          href="<%= watchlists_path %>"
+          title="<%= t('navbar.watchlist') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= comments_path %>"
-            id="commentsIcon"
-            class="nav-link bi bi-chat-quote-fill
+      <li class="nav-item">
+        <a id="commentsIcon"
+          class="nav-link bi bi-chat-quote-fill
                 <%= current_user.unread_comments ? 'new-comment' : '' %>
                 <%= get_class_for_path(comments_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.comments') %>">
-          </a>
-        </li>
+          data-bs-toggle="tooltip"
+          href="<%= comments_path %>"
+          title="<%= t('navbar.comments') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= news_path %>"
-            class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.news') %>">
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
+          data-bs-toggle="tooltip"
+          href="<%= news_path %>"
+          title="<%= t('navbar.news') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= DefaultSetting::BLOG_LINK %>"
-            class="nav-link bi bi-newspaper"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.blog') %>">
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link bi bi-newspaper"
+          data-bs-toggle="tooltip"
+          href="<%= DefaultSetting::BLOG_LINK %>"
+          title="<%= t('navbar.blog') %>">
+        </a>
+      </li>
 
-        <li class="nav-item">
-          <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
-            class="nav-link bi bi-box-arrow-right"
-            data-bs-toggle="tooltip"
-            data-method="delete"
-            title="<%= t('navbar.logout') %>">
-          </a>
-        </li>
-      </ul>
+      <li class="nav-item">
+        <a class="nav-link bi bi-box-arrow-right"
+          data-bs-toggle="tooltip"
+          data-method="delete"
+          href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
+          title="<%= t('navbar.logout') %>">
+        </a>
+      </li>
+    </ul>
 
-      <ul class="navbar-nav ms-auto me-auto" id="lecturesDropdown">
-        <%= render partial: 'shared/dropdown_lectures',
-                  locals: { lecture: @lecture || current_lecture } %>
-      </ul>
+    <ul id="lecturesDropdown" class="navbar-nav ms-auto me-auto">
+      <%= render partial: 'shared/dropdown_lectures',
+      locals: { lecture: @lecture || current_lecture } %>
+    </ul>
 
-      <%= render partial: 'shared/dropdown_notifications' %>
+    <%= render partial: 'shared/dropdown_notifications' %>
 
-      <%= render partial: 'feedbacks/navbar/button' %>
+    <%= render partial: 'feedbacks/navbar/button' %>
 
-      <%= form_tag(search_index_path,
+    <%= form_tag(search_index_path,
                   method: 'get',
                   class: 'form-inline mt-2 mt-md-0',
-                  id: 'searchField') do %>
-        <%= search_field_tag 'search',
+    id: 'searchField') do %>
+    <%= search_field_tag 'search',
                             nil,
                             class: 'form-control me-sm-2',
-                            placeholder: t('navbar.search') %>
-      <% end %>
+    placeholder: t('navbar.search') %>
+    <% end %>
   </nav>
-  <nav class="navbar navbar-expand" id="secondnav"
-      style="display: none;">
+  <nav id="secondnav" class="navbar navbar-expand"
+    style="display: none;">
   </nav>
 </div>
   </nav>
-  <nav class="navbar navbar-expand" id="secondnav"
-      style="display: none;">
-  </nav>
+<nav id="secondnav" class="navbar navbar-expand"
+  style="display: none;">
+</nav>
 </div>
 <% end %>

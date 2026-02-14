@@ -11,20 +11,20 @@
     <div class="row px-2">
       <div class="col-12">
         <% if media.any? %>
-          <div class="row">
-            <% media.each do |m| %>
-              <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
-                <%= render partial: 'media/medium',
+        <div class="row">
+          <% media.each do |m| %>
+          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
+            <%= render partial: 'media/medium',
                            locals: { medium: m,
                                      tags: tags,
                                      from: '',
                                      ref_link: nil,
-                                     lecture: nil } %>
-              </div>
-            <% end %>
+            lecture: nil } %>
           </div>
+          <% end %>
+        </div>
         <% else %>
-          <%= t('no_related_media') %>
+        <%= t('no_related_media') %>
         <% end %>
       </div>
     </div>

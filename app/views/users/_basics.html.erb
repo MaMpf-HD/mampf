@@ -1,51 +1,51 @@
 <div class="mb-3">
   <%= f.label :name, t('basics.display_name'),
-              class: "form-label" %>
+  class: "form-label" %>
   <%= helpdesk(t('admin.user.info.display_name'), false) %>
   <%= f.text_field :name, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-name-error">
+  <div id="user-name-error" class="invalid-feedback">
   </div>
 </div>
 <div class="mb-3">
   <%= f.label :email,
               t('basics.email'),
-              class: "form-label" %>
+  class: "form-label" %>
   <%= helpdesk(t('admin.user.info.email'), false) %>
   <%= f.text_field :email,
                    { class: 'form-control',
-                     disabled: true } %>
-  <div class="invalid-feedback"
-       id="user-email-error">
+  disabled: true } %>
+  <div id="user-email-error"
+    class="invalid-feedback">
   </div>
 </div>
 <div class="form-group">
   <%= f.label :current_lecture_id,
               t('admin.user.current_lecture'),
-              class: "form-label" %>
-<%= helpdesk(t('admin.user.info.current_lecture'), false) %>
+  class: "form-label" %>
+  <%= helpdesk(t('admin.user.info.current_lecture'), false) %>
   <%= f.select :current_lecture_id,
                options_for_select(select_proper_teaching_related_lectures(user),
                                   user.current_lecture_id),
                { prompt: t('basics.select') },
-               { class: 'selectize' } %>
+  { class: 'selectize' } %>
 </div>
 <div class="mb-3">
   <%= f.label :homepage,
               t('admin.user.homepage'),
-              class: "form-label" %>
+  class: "form-label" %>
   <%= helpdesk(t('admin.user.info.homepage'), false) %>
   <div class="row">
     <div class="col-10">
       <%= f.text_field :homepage,
-                       { class: 'form-control' } %>
-      <div class="invalid-feedback"
-           id="user-homepage-error">
+      { class: 'form-control' } %>
+      <div id="user-homepage-error"
+        class="invalid-feedback">
       </div>
     </div>
     <div class="col-2">
       <button id="test-homepage"
-              type="button"
-              class="btn btn-sm btn-outline-info">
+        type="button"
+        class="btn btn-sm btn-outline-info">
         <%= t('buttons.test') %>
       </button>
     </div>
@@ -54,30 +54,31 @@
 <%= t('admin.user.profile_image') %>
 <%= helpdesk(t('admin.user.info.profile_image'), false) %>
 <div class="row">
-<%= image_tag(user.image_url_with_host.presence ||
+  <%= image_tag(user.image_url_with_host.presence ||
                           "/unknown-person.gif",
                           width: 128,
                           class: 'img-fluid mx-auto pt-3',
-                          id: 'image-preview') %>
-            <div class="col-12" id="image-uploadButton"
-                 data-choosefiles="<%= t('basics.file') %>">
-              <%= f.hidden_field :image,
+  id: 'image-preview') %>
+  <div id="image-uploadButton" class="col-12"
+    data-choosefiles="<%= t('basics.file') %>">
+    <%= f.hidden_field :image,
                                  value: user.cached_image_data,
-                                 id: 'upload-image-hidden' %>
-              <%= f.file_field :image,
-                               id: 'upload-image' %>
-              <%= f.hidden_field :detach_image, value: false, id:'course_detach_image' %>
-              <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
-              <button id="image-uploadButton-button-actual"
-                    data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
-                    class="btn btn-sm btn-outline-secondary"
-                    >
-              <%= t('buttons.upload') %>
-            </button>
-            </div>
-          </div>
-          <%= render partial: 'users/upload_image',
-                     locals: { user: user } %>
+    id: 'upload-image-hidden' %>
+    <%= f.file_field :image,
+    id: 'upload-image' %>
+    <%= f.hidden_field :detach_image, value: false, id:'course_detach_image' %>
+    <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
+    <button
+      id="image-uploadButton-button-actual"
+      class="btn btn-sm btn-outline-secondary"
+      data-tr-failure="<%= t('submission.upload_failure')%>"
+      data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+      data-tr-post-processing="<%= t('basics.post_processing')%>"
+      data-tr-success="<%= t('buttons.upload_success') %>"
+    >
+      <%= t('buttons.upload') %>
+    </button>
+  </div>
+</div>
+<%= render partial: 'users/upload_image',
+locals: { user: user } %>

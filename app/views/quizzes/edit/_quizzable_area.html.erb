@@ -3,20 +3,20 @@
     <h4>
       <%= t("admin.#{quizzable.type.downcase}.edit") %>:
       <%= quizzable.description %>
-      <button type="button"
-              id="finishQuizzableEditing"
-              class="btn btn-sm btn-primary"
-              data-vertex="<%= vertex_id %>"
-              data-mode="<%= @mode %>">
+      <button id="finishQuizzableEditing"
+        type="button"
+        class="btn btn-sm btn-primary"
+        data-mode="<%= @mode %>"
+        data-vertex="<%= vertex_id %>">
         <%= t('buttons.finish_editing') %>
       </button>
     </h4>
   </div>
 </div>
 <% if quizzable.type == 'Question' %>
-  <%= render partial: "questions/data",
-             locals: { question: quizzable } %>
+<%= render partial: "questions/data",
+locals: { question: quizzable } %>
 <% else %>
-  <%= render partial: "remarks/data",
-             locals: { remark: quizzable }%>
+<%= render partial: "remarks/data",
+locals: { remark: quizzable }%>
 <% end %>

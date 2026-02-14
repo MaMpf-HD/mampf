@@ -1,13 +1,16 @@
 <%= t('exception.exception_report',
-			host: ENV.fetch("URL_HOST")) %>
+host: ENV.fetch("URL_HOST")) %>
 <strong>
-	<%= @exception.response %> (<%= @exception.status %>)
+  <%= @exception.response %> (<%= @exception.status %>)
 </strong>
 <p>
-	<%= @exception.message %>
+  <%= @exception.message %>
 </p>
-<div><pre><%= @exception.trace %></pre></div>
 <div>
-<h3>Request Params</h3>
-<%= ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter(@exception.request.params) %>
-%></div>
+<pre><%= @exception.trace %></pre>
+</div>
+<div>
+  <h3>Request Params</h3>
+  <%= ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter(@exception.request.params) %>
+  %>
+</div>

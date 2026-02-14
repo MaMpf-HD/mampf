@@ -1,97 +1,97 @@
 <%= bootstrap_form_with model: question do |f| %>
-  <div class="card-header">
-    <div class="row">
-      <div class="col-3">
-        <h5>
-          <%= t('basics.basics') %>
-        </h5>
-      </div>
-      <div class="col-5">
-        <span class="no_display incorrect"
-              id="question-basics-warning">
-          <%= t('warnings.unsaved_changes') %>
-        </span>
-      </div>
-      <div class="col-4">
-        <span class="no_display"
-              id="question-basics-options">
-          <%= f.submit t('buttons.save'),
+<div class="card-header">
+  <div class="row">
+    <div class="col-3">
+      <h5>
+        <%= t('basics.basics') %>
+      </h5>
+    </div>
+    <div class="col-5">
+      <span id="question-basics-warning"
+        class="no_display incorrect">
+        <%= t('warnings.unsaved_changes') %>
+      </span>
+    </div>
+    <div class="col-4">
+      <span id="question-basics-options"
+        class="no_display">
+        <%= f.submit t('buttons.save'),
                       class: "btn btn-primary btn-sm",
-                      id: "question-basics-save" %>
-          <button type="button"
-                  class="btn btn-secondary btn-sm"
-                  id="question-basics-cancel"
-                  data-id="<%= question.id %>">
-            <%= t('buttons.discard') %>
-          </button>
-        </span>
-      </div>
+        id: "question-basics-save" %>
+        <button id="question-basics-cancel"
+          type="button"
+          class="btn btn-secondary btn-sm"
+          data-id="<%= question.id %>">
+          <%= t('buttons.discard') %>
+        </button>
+      </span>
     </div>
   </div>
-  <div class="card-body p-2">
-    <div id="tex-preview-question-<%= question.id %>"
-         class="bg-edit-question p-2">
-      <%= question.parsed_text_with_params %>
-    </div>
-    <div id="questionParameters"
-         class="bg-edit-question p-2">
-      <%= render partial: 'questions/edit/parameters',
-                 locals: { parameters: question.parameters } %>
-    </div>
-    <div class="mb-3">
-    </div>
-    <%= f.text_area :text,
+</div>
+<div class="card-body p-2">
+  <div id="tex-preview-question-<%= question.id %>"
+    class="bg-edit-question p-2">
+    <%= question.parsed_text_with_params %>
+  </div>
+  <div id="questionParameters"
+    class="bg-edit-question p-2">
+    <%= render partial: 'questions/edit/parameters',
+    locals: { parameters: question.parameters } %>
+  </div>
+  <div class="mb-3">
+  </div>
+  <%= f.text_area :text,
                     id: 'tex-area-question-' + question.id.to_s,
                     label: t('basics.latex'),
                     rows: 5,
-                    data: { parse: true, id: question.id } %>
-    <%= f.form_group :question_sort,
-                     label: { text: t('basics.type') + ':' } do %>
-      <span id="questionSort" class="ms-2">
-        <%= f.radio_button :question_sort,
+  data: { parse: true, id: question.id } %>
+  <%= f.form_group :question_sort,
+  label: { text: t('basics.type') + ':' } do %>
+  <span id="questionSort" class="ms-2">
+    <%= f.radio_button :question_sort,
                            'mc',
                            label: t('basics.multiple_choice'),
                            inline: true,
-                           custom: true %>
-        <%= f.radio_button :question_sort,
+    custom: true %>
+    <%= f.radio_button :question_sort,
                            'free',
                            label: t('basics.free'),
                            inline: true,
-                           custom: true %>
-      </span>
-    <% end %>
-    <%= f.form_group :level,
-                     label: { text: t('basics.level') + ':' } do %>
-      <span id="level" class="ms-2">
-        <%= f.radio_button :level,
+    custom: true %>
+  </span>
+  <% end %>
+  <%= f.form_group :level,
+  label: { text: t('basics.level') + ':' } do %>
+  <span id="level" class="ms-2">
+    <%= f.radio_button :level,
                            0,
                            label: t('basics.level_easy'),
                            inline: true,
-                           custom: true %>
-        <%= f.radio_button :level,
+    custom: true %>
+    <%= f.radio_button :level,
                            1,
                            label: t('basics.level_medium'),
                            inline: true,
-                           custom: true %>
-        <%= f.radio_button :level,
+    custom: true %>
+    <%= f.radio_button :level,
                            2,
                            label: t('basics.level_hard'),
                            inline: true,
-                           custom: true %>
-      </span>
-    <% end %>
-    <%= f.form_group :independent do %>
-      <%= f.check_box :independent,
+    custom: true %>
+  </span>
+  <% end %>
+  <%= f.form_group :independent do %>
+  <%= f.check_box :independent,
                       label: t('admin.question.independent'),
-                      custom: true %>
-    <% end %>
-    <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
-                    label: t('admin.question.hint') %>
-    <div id="tex-preview-hint-<%= question.id %>"
-         class="p-2 mb-3">
-      <%= question.hint %>
-    </div>
-    <%= render partial: 'questions/options',
-               locals: { question: question } %>
+  custom: true %>
+  <% end %>
+  <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
+  label: t('admin.question.hint') %>
+  <div id="tex-preview-hint-<%= question.id %>"
+    class="p-2 mb-3">
+    <%= question.hint %>
   </div>
+  <%= render partial: 'questions/options',
+  locals: { question: question } %>
+</div>
 <% end %>

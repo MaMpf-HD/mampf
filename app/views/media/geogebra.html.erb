@@ -1,19 +1,19 @@
 <div class="row my-3">
   <div id="geogebraDescription"
-       class="col-12">
+    class="col-12">
     <%= sanitize @medium.content %>
   </div>
 </div>
 <div class="row ps-2 ms-2">
   <div id="ggb-element"
-       data-filename="<%= @medium.geogebra_url_with_host %>"
-       data-type="<%= @medium.geogebra_app_name %>">
+    data-filename="<%= @medium.geogebra_url_with_host %>"
+    data-type="<%= @medium.geogebra_app_name %>">
   </div>
 </div>
 <div class="row mt-4">
   <div class="col-12">
     <%= t('geogebra.attribution_html',
           geogebra_link: link_to('GeoGebra',
-                                 'https://www.geogebra.org')) %>
+    'https://www.geogebra.org')) %>
   </div>
 </div>

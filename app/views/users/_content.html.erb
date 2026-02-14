@@ -1,47 +1,47 @@
 <% if user.teacher? %>
-  <%= t('admin.user.given_lectures') %> (<%= user.given_lectures.count %>)
-  <%= helpdesk(t('admin.user.info.given_lectures'), false) %>
-  <ul>
-    <% user.given_lectures.each do |l| %>
-      <li>
-        <%= link_to l.title_term_info,
+<%= t('admin.user.given_lectures') %> (<%= user.given_lectures.count %>)
+<%= helpdesk(t('admin.user.info.given_lectures'), false) %>
+<ul>
+  <% user.given_lectures.each do |l| %>
+  <li>
+    <%= link_to l.title_term_info,
                     edit_lecture_path(l),
-                    class: lectures_color(l) %>
-      </li>
-    <% end %>
-  </ul>
+    class: lectures_color(l) %>
+  </li>
+  <% end %>
+</ul>
 <% end %>
 <% if user.edited_courses.any? %>
-  <%= t('admin.user.edited_courses') %> (<%= user.edited_courses.count %>)
-  <%= helpdesk(t('admin.user.info.edited_courses'), false) %>
-  <ul>
-    <% user.edited_courses.each do |c| %>
-      <li>
-        <%= link_to c.title,
-                    edit_course_path(c) %>
-      </li>
-    <% end %>
-  </ul>
+<%= t('admin.user.edited_courses') %> (<%= user.edited_courses.count %>)
+<%= helpdesk(t('admin.user.info.edited_courses'), false) %>
+<ul>
+  <% user.edited_courses.each do |c| %>
+  <li>
+    <%= link_to c.title,
+    edit_course_path(c) %>
+  </li>
+  <% end %>
+</ul>
 <% end %>
 <% if user.edited_lectures.any? %>
-  <%= t('admin.user.edited_lectures') %>
-  (<%= user.edited_lectures.count %>)
-  <%= helpdesk(t('admin.user.info.edited_lectures'), false) %>
-  <ul>
-    <% user.edited_lectures.each do |l| %>
-      <li>
-        <%= link_to l.title_term_info,
+<%= t('admin.user.edited_lectures') %>
+(<%= user.edited_lectures.count %>)
+<%= helpdesk(t('admin.user.info.edited_lectures'), false) %>
+<ul>
+  <% user.edited_lectures.each do |l| %>
+  <li>
+    <%= link_to l.title_term_info,
                     edit_lecture_path(l),
-                    class: lectures_color(l) %>
-      </li>
-    <% end %>
-  </ul>
+    class: lectures_color(l) %>
+  </li>
+  <% end %>
+</ul>
 <% end %>
 <% if user.edited_media.any? %>
-  <%= t('admin.user.edited_media') %>
-  (<%= user.edited_media.count %>)
-  <%= helpdesk(t('admin.user.info.edited_media'), false) %>
-  <%= render partial: 'media/table',
+<%= t('admin.user.edited_media') %>
+(<%= user.edited_media.count %>)
+<%= helpdesk(t('admin.user.info.edited_media'), false) %>
+<%= render partial: 'media/table',
              locals: { media: user.edited_media,
-                       small: false } %>
+small: false } %>
 <% end %>

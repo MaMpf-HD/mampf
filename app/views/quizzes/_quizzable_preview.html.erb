@@ -1,38 +1,38 @@
 <% cache quizzable do %>
-  <% if quizzable %>
-    <div class="<%= quizzable_color(quizzable.sort) %> p-2 border mt-2">
-      <div class="row mb-3">
-        <div class="col-12">
-          <%= quizzable.parsed_text_with_params %>
-        </div>
-      </div>
-      <% if quizzable.sort == 'Question' %>
-        <div class="row mb-3">
-          <div class="col-12">
-            <% if quizzable.question_sort == 'mc' %>
-              <%= render partial: 'questions/answers',
-                         locals: { answers: quizzable.answers } %>
-            <% else %>
-              <i>
-                <%= t('basics.answer') %>:
-              </i>
-              <%= quizzable.solution&.tex %>
-              <% if quizzable.solution&.explanation %>
-                <i>
-                  <%= t('admin.quiz.reason') %>:
-                </i>
-                <%= quizzable.solution.explanation %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-        <% if quizzable.hint.present? %>
-          <i>
-            <%= t('admin.question.hint') %>:
-          </i>
-          <%= quizzable.hint %>
-        <% end %>
+<% if quizzable %>
+<div class="<%= quizzable_color(quizzable.sort) %> p-2 border mt-2">
+  <div class="row mb-3">
+    <div class="col-12">
+      <%= quizzable.parsed_text_with_params %>
+    </div>
+  </div>
+  <% if quizzable.sort == 'Question' %>
+  <div class="row mb-3">
+    <div class="col-12">
+      <% if quizzable.question_sort == 'mc' %>
+      <%= render partial: 'questions/answers',
+      locals: { answers: quizzable.answers } %>
+      <% else %>
+      <i>
+        <%= t('basics.answer') %>:
+      </i>
+      <%= quizzable.solution&.tex %>
+      <% if quizzable.solution&.explanation %>
+      <i>
+        <%= t('admin.quiz.reason') %>:
+      </i>
+      <%= quizzable.solution.explanation %>
+      <% end %>
       <% end %>
     </div>
+  </div>
+  <% if quizzable.hint.present? %>
+  <i>
+    <%= t('admin.question.hint') %>:
+  </i>
+  <%= quizzable.hint %>
   <% end %>
+  <% end %>
+</div>
+<% end %>
 <% end %>

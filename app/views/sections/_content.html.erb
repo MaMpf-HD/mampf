@@ -12,15 +12,15 @@
     <%= f.trix_editor :details,
                       class: 'bg-light',
                       id: 'section-details-trix',
-                      data: { content: section.details } %>
+    data: { content: section.details } %>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>
       </div>
     </div>
-    <div class="alert alert-dark bg-mdb-color-lighten-6"
-         id="section-details-preview">
-        <%= sanitize section.details %>
+    <div id="section-details-preview"
+      class="alert alert-dark bg-mdb-color-lighten-6">
+      <%= sanitize section.details %>
     </div>
     <div class="row mb-2">
       <div class="col-12">
@@ -33,7 +33,7 @@
         <%= render partial: 'items/items_list',
                    locals: { items: @section.visible_items,
                              section_links: false,
-                             content: [] } %>
+        content: [] } %>
       </div>
     </div>
   </div>

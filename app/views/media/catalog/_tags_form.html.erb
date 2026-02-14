@@ -1,10 +1,10 @@
-<div class="row mb-2"
-     id="edit_tag_form">
+<div id="edit_tag_form"
+  class="row mb-2">
   <%= form_with url: update_tags_path,
                 remote: true,
-                method: 'post' do |f| %>
-    <div class="col-12">
-      <%= f.select :tag_ids,
+  method: 'post' do |f| %>
+  <div class="col-12">
+    <%= f.select :tag_ids,
                    options_for_select([[]]),
                    {},
                    { multiple: true,
@@ -15,17 +15,17 @@
                              model: 'tag',
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results') } } %>
-      <%= f.hidden_field :id, value: 0, id: 'medium_id_field' %>
-    </div>
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save'),
-                   class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              id="cancelMediumTags"
-              class="btn btn-sm btn-secondary">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
+    no_results: t('basics.no_results') } } %>
+    <%= f.hidden_field :id, value: 0, id: 'medium_id_field' %>
+  </div>
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save'),
+    class: 'btn btn-sm btn-primary' %>
+    <button id="cancelMediumTags"
+      type="button"
+      class="btn btn-sm btn-secondary">
+      <%= t('buttons.cancel') %>
+    </button>
+  </div>
   <% end %>
 </div>

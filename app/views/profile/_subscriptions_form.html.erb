@@ -5,15 +5,15 @@
 </div>
 <%= form_with url: subscribe_lecture_path,
               method: 'patch',
-              scope: 'lecture' do |f|%>
-  <%= f.text_field :passphrase,
+scope: 'lecture' do |f|%>
+<%= f.text_field :passphrase,
                    class: 'form-control',
-                   value: passphrase %>
-  <div class="invalid-feedback"
-       id="passphrase-error" >
-  </div>
-  <%= f.hidden_field :id,
-                     value: lecture.id %>
-  <%= f.hidden_field :parent,
-                     value: parent %>
+value: passphrase %>
+<div id="passphrase-error"
+  class="invalid-feedback">
+</div>
+<%= f.hidden_field :id,
+value: lecture.id %>
+<%= f.hidden_field :parent,
+value: parent %>
 <% end %>

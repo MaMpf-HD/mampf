@@ -1,13 +1,13 @@
 <%= form_with url: invite_to_submission_path(submission),
               method: :post,
-              scope: 'submission' do |f| %>
-  <div class="card-body submissionBody"
-       data-id="<%= assignment.id %>">
-    <div class="row mb-2">
-      <div class="col-12">
-        <%= f.label :invitee_ids,
-                    t('submission.invitations_to') %>
-        <%= f.select :invitee_ids,
+scope: 'submission' do |f| %>
+<div class="card-body submissionBody"
+  data-id="<%= assignment.id %>">
+  <div class="row mb-2">
+    <div class="col-12">
+      <%= f.label :invitee_ids,
+      t('submission.invitations_to') %>
+      <%= f.select :invitee_ids,
                      options_for_select(admissible_invitee_selection(current_user,
                                                                      submission,
                                                                      lecture),
@@ -15,17 +15,17 @@
                                                              submission,
                                                              lecture)),
                      {},
-                     { multiple: true } %>
-      </div>
+      { multiple: true } %>
     </div>
   </div>
-  <div class="card-footer submissionFooter text-center p-2"
-       data-id="<%= assignment.id %>">
-    <%= f.submit t('buttons.send'),
-                  class: 'btn btn-primary' %>
-    <%= link_to t('buttons.cancel'),
+</div>
+<div class="card-footer submissionFooter text-center p-2"
+  data-id="<%= assignment.id %>">
+  <%= f.submit t('buttons.send'),
+  class: 'btn btn-primary' %>
+  <%= link_to t('buttons.cancel'),
                 cancel_editing_submission_path(submission),
                 class: 'btn btn-secondary',
-                remote: true %>
-  </div>
+  remote: true %>
+</div>
 <% end %>

@@ -7,14 +7,14 @@
   <div class="card-body">
     <div class="mb-3">
       <%= f.label :date, t('basics.date'),
-                  class: "form-label" %>
+      class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.date'), false) %>
       <div class="row">
         <div class="col-12">
           <%= f.date_field :date %>
         </div>
       </div>
-      <div class="invalid-feedback" id="lesson-date-error">
+      <div id="lesson-date-error" class="invalid-feedback">
       </div>
     </div>
     <div class="row">
@@ -29,30 +29,30 @@
                     data: { toggle: 'tooltip' },
                     title: t('buttons.create_medium'),
                     style: 'text-decoration: none;',
-                    remote: true %>
+        remote: true %>
         <% if lesson.media.present? %>
-          <ul id="sortableLessonMedia">
-            <% lesson.media.each do |m| %>
-              <li>
-                <%= link_to m.sort_localized + ', ' + m.local_info,
+        <ul id="sortableLessonMedia">
+          <% lesson.media.each do |m| %>
+          <li>
+            <%= link_to m.sort_localized + ', ' + m.local_info,
                             edit_medium_path(m),
                             class: textcolor(m),
-                            data: { id: m.id } %>
-              </li>
-            <% end %>
-          </ul>
-          <%= f.hidden_field :media_order,
-                             value: lesson.media.map(&:id).to_json %>
+            data: { id: m.id } %>
+          </li>
+          <% end %>
+        </ul>
+        <%= f.hidden_field :media_order,
+        value: lesson.media.map(&:id).to_json %>
         <% else %>
-          <p>
-            <%= t('admin.lesson.no_media') %>
-          </p>
+        <p>
+          <%= t('admin.lesson.no_media') %>
+        </p>
         <% end %>
       </div>
     </div>
     <div class="mb-3">
       <%= f.label :section_ids, t('basics.sections'),
-                  class: "form-label" %>
+      class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.sections'), false) %>
       <%= f.select :section_ids,
                    options_for_select(lesson.lecture.section_selection,
@@ -61,21 +61,23 @@
                    { multiple: true,
                      class: 'selectize',
                      data: { tags:
-                             lesson.lecture.section_tag_selection.to_json } }%>
-      <div class="invalid-feedback" id="lesson-sections-error">
+      lesson.lecture.section_tag_selection.to_json } }%>
+      <div id="lesson-sections-error" class="invalid-feedback">
       </div>
     </div>
     <div class="mb-3">
       <%= f.label :tag_ids, t('basics.related_tags'),
-                  class: "form-label" %>
+      class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.tags'), false) %>
-      <a class="fas fa-plus-circle clickable text-dark"
-         id="new-tag-button"
-         data-bs-toggle="tooltip"
-         title="Tag anlegen"
-         data-course="<%= lesson.lecture.course.id %>"
-         data-lesson="<%= lesson.id %>"
-         data-from="lesson">
+      <a
+        id="new-tag-button"
+        class="fas fa-plus-circle clickable text-dark"
+        data-bs-toggle="tooltip"
+        data-course="<%= lesson.lecture.course.id %>"
+        data-from="lesson"
+        data-lesson="<%= lesson.id %>"
+        title="Tag anlegen"
+      >
       </a>
       <%= f.select :tag_ids,
                    options_for_select(lesson.tags
@@ -92,9 +94,9 @@
                              drag: false,
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results') } } %>
-      <div class="invalid-feedback"
-            id="lesson-tags-error">
+      no_results: t('basics.no_results') } } %>
+      <div id="lesson-tags-error"
+        class="invalid-feedback">
       </div>
     </div>
   </div>

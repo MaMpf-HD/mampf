@@ -1,15 +1,21 @@
-<div class="modal fade" id="vignetteModal" tabindex="-1" role="dialog"
-     aria-labelledby="vignetteModalLabel" aria-hidden="true">
+<div
+  id="vignetteModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="vignetteModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title" id="vignetteModalLabel">
+        <h5 id="vignetteModalLabel" class="modal-title">
           <%= t("vignettes.create_new") %>
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
       </div>
-      
+
       <%= render 'vignettes/questionnaires/new/vignette_form', lecture: @lecture %>
     </div>
   </div>

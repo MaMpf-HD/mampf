@@ -1,24 +1,24 @@
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <div class="card bg-light">
-        <div class="card-header bg-generic-card-header">
-          <h5>
-            <%= t('basics.basics') %>
-          </h5>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'talks/base_data',
+<div class="row">
+  <div class="col-12 col-lg-6">
+    <div class="card bg-light">
+      <div class="card-header bg-generic-card-header">
+        <h5>
+          <%= t('basics.basics') %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= render partial: 'talks/base_data',
                      locals: { talk: talk,
-                               assemble: true } %>
-          <div class="row">
-            <div class="col-12">
-              <div class="mb-3">
-                <strong>
-                  <%= f.label :tag_ids, t('basics.related_tags'),
-                              class: "form-label" %>:
-                  <%= helpdesk(t('admin.talk.info.tags'), false) %>
-                </strong>
-                <%= f.select :tag_ids,
+        assemble: true } %>
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <strong>
+                <%= f.label :tag_ids, t('basics.related_tags'),
+                class: "form-label" %>:
+                <%= helpdesk(t('admin.talk.info.tags'), false) %>
+              </strong>
+              <%= f.select :tag_ids,
                              options_for_select(talk.tags
                                                     .map { |t| t.extended_title_id_hash }
                                                     .map { |t| [t[:title], t[:id]] },
@@ -33,9 +33,9 @@
                                        drag: false,
                                        locale: I18n.locale,
                                        placeholder: t('basics.enter_two_letters'),
-                                       no_results: t('basics.no_results') } } %>
-                <div class="invalid-feedback"
-                     id="talk-tags-error">
+              no_results: t('basics.no_results') } } %>
+              <div id="talk-tags-error"
+                class="invalid-feedback">
               </div>
             </div>
           </div>
@@ -52,76 +52,76 @@
                         data: { toggle: 'tooltip' },
                         title: t('buttons.create_medium'),
                         style: 'text-decoration: none;',
-                        remote: true %>
+            remote: true %>
             <% if talk.media.present? %>
-              <ul id="sortableTalkMedia">
-                <% talk.media.each do |m| %>
-                  <li>
-                    <%= link_to m.sort_localized + ', ' + m.local_info,
+            <ul id="sortableTalkMedia">
+              <% talk.media.each do |m| %>
+              <li>
+                <%= link_to m.sort_localized + ', ' + m.local_info,
                                 edit_or_show_medium_path(m),
                                 class: textcolor(m),
-                                data: { id: m.id } %>
-                  </li>
-                <% end %>
-              </ul>
-              <%= f.hidden_field :media_order,
-                                 value: talk.media.map(&:id).to_json %>
+                data: { id: m.id } %>
+              </li>
+              <% end %>
+            </ul>
+            <%= f.hidden_field :media_order,
+            value: talk.media.map(&:id).to_json %>
             <% else %>
-              <p>
-                <%= t('admin.talk.no_media') %>
-              </p>
+            <p>
+              <%= t('admin.talk.no_media') %>
+            </p>
             <% end %>
           </div>
         </div>
       </div>
     </div>
-    </div>
-    <div class="col-12 col-lg-6">
-      <div class="card bg-light">
-        <div class="card-header bg-generic-card-header">
-          <h5>
-            <%= t('content') %>
-            <%= helpdesk(t('admin.talk.info.description'), false) %>
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row mb-3">
-            <div class="col-12">
-              <div class="form-check">
-                <%= f.check_box :display_description,
-                                class: 'form-check-input' %>
-                <%= f.label :display_description,
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card bg-light">
+      <div class="card-header bg-generic-card-header">
+        <h5>
+          <%= t('content') %>
+          <%= helpdesk(t('admin.talk.info.description'), false) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="form-check">
+              <%= f.check_box :display_description,
+              class: 'form-check-input' %>
+              <%= f.label :display_description,
                             t('admin.talk.display_description'),
-                            { class: 'form-check-label' } %>
-                <%= helpdesk(t('admin.talk.info.display_description'),
-                             false) %>
-              </div>
-              <% if talk.description.present? && !talk.display_description %>
-                <div class="col-12 text-dark ms-2 border border-warning
-                            rounded bg-yellow-lighten-5 my-2">
-                  <span class="badge bg-secondary">
-                    <%= t('info') %>
-                  </span>
-                  <%= t('admin.talk.description_warning') %>
-                </div>
-              <% end %>
+              { class: 'form-check-label' } %>
+              <%= helpdesk(t('admin.talk.info.display_description'),
+              false) %>
             </div>
+            <% if talk.description.present? && !talk.display_description %>
+            <div class="col-12 text-dark ms-2 border border-warning
+                            rounded bg-yellow-lighten-5 my-2">
+              <span class="badge bg-secondary">
+                <%= t('info') %>
+              </span>
+              <%= t('admin.talk.description_warning') %>
+            </div>
+            <% end %>
           </div>
-          <%= f.trix_editor :description,
+        </div>
+        <%= f.trix_editor :description,
                             class: 'bg-light',
                             id: 'talk-description-trix',
                             data: { content: talk.description,
-                                    preview: 'talk-description-preview' } %>
-          <div class="row my-2">
-            <div class="col-12">
-              <%= t('basics.preview') %>
-            </div>
+        preview: 'talk-description-preview' } %>
+        <div class="row my-2">
+          <div class="col-12">
+            <%= t('basics.preview') %>
           </div>
-          <div class="alert alert-dark bg-mdb-color-lighten-6"
-               id="talk-description-preview">
-            <%= sanitize talk.description %>
-          </div>
+        </div>
+        <div id="talk-description-preview"
+          class="alert alert-dark bg-mdb-color-lighten-6">
+          <%= sanitize talk.description %>
         </div>
       </div>
     </div>
   </div>
+</div>

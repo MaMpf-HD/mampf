@@ -12,15 +12,15 @@
         </span>
       </div>
       <div class="col-2 text-end">
-        <a href="<%= notification_path(notification) %>"
-           data-method="delete"
-           data-remote="true"
-           class="removeNotification no-deco"
-           data-id="<%= notification.id %>">
+        <a class="removeNotification no-deco"
+          data-id="<%= notification.id %>"
+          data-method="delete"
+          data-remote="true"
+          href="<%= notification_path(notification) %>">
           <i class="far fa-times-circle fa-lg text-dark"
-             data-bs-toggle="tooltip"
-             data-placement="bottom"
-             title="<%= t('notifications.check') %>">
+            data-bs-toggle="tooltip"
+            data-placement="bottom"
+            title="<%= t('notifications.check') %>">
           </i>
         </a>
       </div>

@@ -1,54 +1,54 @@
 <% relevant_notifications = current_user.notifications
-                                        .sort_by(&:created_at).reverse %>
+.sort_by(&:created_at).reverse %>
 <% if relevant_notifications.present? %>
-  <ul class="navbar-nav"
-      id="notificationDropdown"
-      data-cy="notification-dropdown">
-    <li class="nav-item">
-      <div class="btn-group">
-        <a class="btn btn-primary btn-sm"
-           href="<%= notifications_path %>">
-          <i class="far fa-bell text-light">
-          </i>
-          <span class="badge text-dark lecture-tag notificationCounter"
-                data-count="<%= relevant_notifications.count %>"
-                data-cy="notification-dropdown-counter"">
-            <%= relevant_notifications.count %>
-          </span>
+<ul id="notificationDropdown"
+  class="navbar-nav"
+  data-cy="notification-dropdown">
+  <li class="nav-item">
+    <div class="btn-group">
+      <a class="btn btn-primary btn-sm"
+        href="<%= notifications_path %>">
+        <i class="far fa-bell text-light">
+        </i>
+        <span class="badge text-dark lecture-tag notificationCounter"
+          "
+          data-count="<%= relevant_notifications.count %>" data-cy="notification-dropdown-counter">
+          <%= relevant_notifications.count %>
+        </span>
+      </a>
+      <button type="button"
+        class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split"
+        aria-expanded="false"
+        aria-haspopup="true" data-bs-toggle="dropdown">
+        <span class="sr-only">
+          <%= t('buttons.toggle') %>
+        </span>
+      </button>
+      <div class="dropdown-menu" data-cy="notification-dropdown-menu">
+        <% relevant_notifications.first(5).each do |n| %>
+        <a class="dropdown-item border-top"
+          style="font-size: 0.8em;"
+          data-itemNotification="<%= n.id %>"
+          data-removeNotification="<%= n.id %>"
+          href="<%= n.path(current_user) %>">
+          <%= render partial: 'notifications/menu_item',
+          locals:  { notification: n } %>
         </a>
-        <button type="button"
-                class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-          <span class="sr-only">
-            <%= t('buttons.toggle') %>
-          </span>
-        </button>
-        <div class="dropdown-menu" data-cy="notification-dropdown-menu">
-          <% relevant_notifications.first(5).each do |n| %>
-            <a href="<%= n.path(current_user) %>"
-               class="dropdown-item border-top"
-               style="font-size: 0.8em;"
-               data-removeNotification="<%= n.id %>"
-               data-itemNotification="<%= n.id %>">
-              <%= render partial: 'notifications/menu_item',
-                         locals:  { notification: n } %>
-            </a>
-          <% end %>
-          <div class="dropdown-divider">
-          </div>
-          <a href="<%= notifications_path %>"
-             class="dropdown-item">
-            <%= t('notifications.show_all') %>
-          </a>
-          <a href="<%= destroy_all_notifications_path %>"
-             class="dropdown-item"
-             data-remote="true"
-             data-method="post">
-            <%= t('notifications.check_notifications') %>
-          </a>
+        <% end %>
+        <div class="dropdown-divider">
         </div>
+        <a class="dropdown-item"
+          href="<%= notifications_path %>">
+          <%= t('notifications.show_all') %>
+        </a>
+        <a class="dropdown-item"
+          data-method="post"
+          data-remote="true"
+          href="<%= destroy_all_notifications_path %>">
+          <%= t('notifications.check_notifications') %>
+        </a>
       </div>
-    </li>
-  </ul>
+    </div>
+  </li>
+</ul>
 <% end %>

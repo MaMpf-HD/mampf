@@ -1,48 +1,48 @@
-<div class="col-sm-12 col-lg-6 p-2" >
+<div class="col-sm-12 col-lg-6 p-2">
   <div class="card bg-mdb-color-lighten-5 %>">
     <div id="<%= dom_id(talk) %>"
-         class="card-header <%= talk_card_color(talk, current_user) %>"
-         data-cy="talk-header" data-id="<%= talk.id %>">
+      class="card-header <%= talk_card_color(talk, current_user) %>"
+      data-cy="talk-header" data-id="<%= talk.id %>">
       <div class="row">
         <div class="col-12 talkheader">
           <div>
-          <% if edit %>
+            <% if edit %>
             <%= link_to talk.to_label,
                         edit_talk_path(talk),
-                        class: 'text-light' %>
-          <% else %>
+            class: 'text-light' %>
+            <% else %>
             <%= link_to talk.to_label,
                         talk_path(talk),
-                        class: 'text-light' %>
+            class: 'text-light' %>
             <% if current_user.in?(talk.speakers) %>
-              <%= link_to '',
+            <%= link_to '',
                           assemble_talk_path(talk),
                           class: 'far fa-edit text-light text-end',
                           data: { toggle: 'tooltip',
                                   placement: 'bottom' },
                           title: t('buttons.edit'),
                           style: 'text-decoration: none; ' +
-                                'display: inline;' %>
+            'display: inline;' %>
             <% end %>
-          <% end %>
+            <% end %>
           </div>
           <div>
             <% talk.dates.each do |d| %>
-              <%= link_to localize(d, format: :concise),
+            <%= link_to localize(d, format: :concise),
                           talk_path(talk),
-                          class: 'badge bg-secondary' %>
+            class: 'badge bg-secondary' %>
             <% end %>
           </div>
         </div>
       </div>
       <% if talk.speakers.any? %>
-        <div class="row">
-          <div class="col-12">
-            <span class="text-light">
-              (<%= speaker_list(talk) %>)
-            </span>
-          </div>
+      <div class="row">
+        <div class="col-12">
+          <span class="text-light">
+            (<%= speaker_list(talk) %>)
+          </span>
         </div>
+      </div>
       <% end %>
     </div>
     <div class="card-body">
@@ -51,7 +51,7 @@
         <div class="col-12 mt-2">
           <%= render partial: 'tags/show/tag',
                     collection: talk.tags,
-                    cached: true %>
+          cached: true %>
         </div>
       </div>
     </div>

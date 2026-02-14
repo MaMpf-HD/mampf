@@ -13,56 +13,56 @@
                       class: 'bg-light',
                       id: 'talk-details-trix',
                       data: { content: talk.details,
-                              preview:  'talk-details-preview' } %>
+    preview:  'talk-details-preview' } %>
     <%= f.hidden_field :lecture_id,
-                       value: talk.lecture.id %>
+    value: talk.lecture.id %>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>
       </div>
     </div>
-    <div class="alert alert-dark bg-mdb-color-lighten-6"
-         id="talk-details-preview">
-          <%= sanitize talk.details %>
+    <div id="talk-details-preview"
+      class="alert alert-dark bg-mdb-color-lighten-6">
+      <%= sanitize talk.details %>
     </div>
     <% if current_user.in?(talk.speakers) || talk.display_description %>
-      <div class="mb-2">
-        <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
-        <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
-      </div>
-      <% if current_user.in?(talk.speakers) %>
-        <%= f.trix_editor :description,
+    <div class="mb-2">
+      <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
+      <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
+    </div>
+    <% if current_user.in?(talk.speakers) %>
+    <%= f.trix_editor :description,
                           class: 'bg-falsehood',
                           id: 'talk-description-trix',
                           data: { content: talk.description,
-                                  preview: 'talk-description-preview' } %>
-        <%= f.hidden_field :lecture_id,
-                           value: talk.lecture.id %>
-        <div class="row my-2">
-          <div class="col-12">
-            <%= t('basics.preview') %>
-          </div>
-        </div>
-        <div class="alert alert-dark bg-mdb-color-lighten-6"
-             id="talk-description-preview">
-          <%= sanitize talk.description %>
-        </div>
-      <% elsif talk.display_description %>
-        <div class="alert alert-dark bg-mdb-color-lighten-6">
-          <%= sanitize talk.description %>
-        </div>
-      <% end %>
-      <div class="form-check">
-        <%= f.check_box :display_description,
+    preview: 'talk-description-preview' } %>
+    <%= f.hidden_field :lecture_id,
+    value: talk.lecture.id %>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= t('basics.preview') %>
+      </div>
+    </div>
+    <div id="talk-description-preview"
+      class="alert alert-dark bg-mdb-color-lighten-6">
+      <%= sanitize talk.description %>
+    </div>
+    <% elsif talk.display_description %>
+    <div class="alert alert-dark bg-mdb-color-lighten-6">
+      <%= sanitize talk.description %>
+    </div>
+    <% end %>
+    <div class="form-check">
+      <%= f.check_box :display_description,
                         class: 'form-check-input',
                         disabled: !current_user.in?(talk.speakers) &&
-                                  !talk.display_description %>
-        <%= f.label :display_description,
+      !talk.display_description %>
+      <%= f.label :display_description,
                     t('admin.talk.display_description_teacher'),
-                    { class: 'form-check-label' } %>
-        <%= helpdesk(t('admin.talk.info.display_description_teacher'),
-                     false) %>
-      </div>
+      { class: 'form-check-label' } %>
+      <%= helpdesk(t('admin.talk.info.display_description_teacher'),
+      false) %>
+    </div>
     <% end %>
   </div>
 </div>

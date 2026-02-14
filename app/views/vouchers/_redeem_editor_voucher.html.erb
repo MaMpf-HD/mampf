@@ -4,21 +4,21 @@
 
 <% if current_user == voucher.lecture.teacher %>
 
-  <p>
-    <%= t('profile.teacher_cant_become_editor') %>
-    <%= cancel_voucher_button %>
-  </p>
+<p>
+  <%= t('profile.teacher_cant_become_editor') %>
+  <%= cancel_voucher_button %>
+</p>
 
 <% elsif current_user.in?(Redemption.editors_by_redemption_in(voucher.lecture)) %>
 
-  <p>
-    <%= t('profile.already_editor_by_redemption') %>
-    <%= cancel_voucher_button %>
-  </p>
+<p>
+  <%= t('profile.already_editor_by_redemption') %>
+  <%= cancel_voucher_button %>
+</p>
 
 <% else %>
 
-  <%= redeem_voucher_button(voucher) %>
-  <%= cancel_voucher_button %>
+<%= redeem_voucher_button(voucher) %>
+<%= cancel_voucher_button %>
 
 <% end %>

@@ -1,36 +1,36 @@
 <%= form_with url: join_submission_path,
               method: :post,
-              scope: 'join' do |f| %>
+scope: 'join' do |f| %>
 
-  <div class="card-body submissionBody" data-id="<%= assignment.id %>">
+<div class="card-body submissionBody" data-id="<%= assignment.id %>">
 
-    <%= render partial: 'submissions/invites', locals: { assignment: assignment } %>
-    
-    <div class="form-floating mb-3">
-      <%= f.text_field :code,
+  <%= render partial: 'submissions/invites', locals: { assignment: assignment } %>
+
+  <div class="form-floating mb-3">
+    <%= f.text_field :code,
         placeholder: "",
         class: "form-control",
         autocomplete: "off",
-        "data-cy": "submission-token-input" %>
-      <%= f.label :code, t('basics.code') %>
-      <div class="invalid-feedback" id="submission-code-error"></div>
-      <%= f.hidden_field :assignment_id, value: assignment.id %>
-    </div>
-
+    "data-cy": "submission-token-input" %>
+    <%= f.label :code, t('basics.code') %>
+    <div id="submission-code-error" class="invalid-feedback"></div>
+    <%= f.hidden_field :assignment_id, value: assignment.id %>
   </div>
 
-  <div class="card-footer submissionFooter text-center p-2"
-       data-id="<%= assignment.id %>">
-    <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
-      <%= f.submit t('buttons.join'),
+</div>
+
+<div class="card-footer submissionFooter text-center p-2"
+  data-id="<%= assignment.id %>">
+  <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
+  <%= f.submit t('buttons.join'),
           class: 'btn btn-primary',
-          "data-cy": "submission-join-via-code" %>
-    <% end %>
-    <%= link_to t('buttons.cancel'),
+  "data-cy": "submission-join-via-code" %>
+  <% end %>
+  <%= link_to t('buttons.cancel'),
                 cancel_new_submission_path(params: { assignment_id: assignment.id }),
                 class: 'btn btn-secondary',
                 "data-cy": "submission-cancel-join",
-                remote: true %>
-  </div>
+  remote: true %>
+</div>
 
 <% end %>

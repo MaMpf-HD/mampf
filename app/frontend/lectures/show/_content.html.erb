@@ -5,31 +5,31 @@
     </h5>
   </div>
   <div class="card-body">
-        <% if lecture.seminar? %>
-          <% if !lecture.talks.any? %>
-            <%= t('admin.lecture.no_content_yet') %>
-          <% else %>
-            <div class="row masonry-grid">
-              <%= render partial: 'lectures/show/talk',
+    <% if lecture.seminar? %>
+    <% if !lecture.talks.any? %>
+    <%= t('admin.lecture.no_content_yet') %>
+    <% else %>
+    <div class="row masonry-grid">
+      <%= render partial: 'lectures/show/talk',
                         collection: lecture.talks,
-                        cached: false %> 
-            </div>
-          <% end %>
-        <% else %>
-          <% cache lecture do %>
-            <% if !lecture.chapters.any? %>
-              <%= t('admin.lecture.no_content_yet') %>
-            <% else %>
-              <div class="row masonry-grid">
-                <%= render partial: 'lectures/show/chapter',
+      cached: false %>
+    </div>
+    <% end %>
+    <% else %>
+    <% cache lecture do %>
+    <% if !lecture.chapters.any? %>
+    <%= t('admin.lecture.no_content_yet') %>
+    <% else %>
+    <div class="row masonry-grid">
+      <%= render partial: 'lectures/show/chapter',
                           collection: lecture.chapters
                                               .select { |c| c.hidden.in?([false, nil])  },
-                          cached: true %>
-              </div>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
+      cached: true %>
     </div>
+    <% end %>
+    <% end %>
+    <% end %>
+  </div>
+</div>
   </div>
 </div>

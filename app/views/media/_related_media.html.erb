@@ -11,41 +11,41 @@
     <div class="row px-2">
       <div class="col-12">
         <% if references.any? || media.any? %>
-          <% media_hash = related_media_hash(references, media) %>
-          <div class="accordion"
-               id="relatedMediaAccordion">
-            <dl>
-              <% media_hash.each do |sort, media_in_sort| %>
-                <li>
-                  <button class="btn btn-link collapsed"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#collapse-<%= sort %>"
-                          style="left: -10px; position: relative;">
-                    <%= Medium.sort_localized[sort] %>
-                    (<%= media_in_sort.size %>)
-                  </button>
-                  <div id="collapse-<%= sort %>"
-                       class="collapse ps-3"
-                       data-bs-parent="#relatedMediaAccordion">
-                      <div class="row">
-                        <% media_in_sort.each do |m| %>
-                          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
-                            <%= render partial: 'media/medium',
+        <% media_hash = related_media_hash(references, media) %>
+        <div id="relatedMediaAccordion"
+          class="accordion">
+          <dl>
+            <% media_hash.each do |sort, media_in_sort| %>
+            <li>
+              <button class="btn btn-link collapsed"
+                style="left: -10px; position: relative;"
+                data-bs-target="#collapse-<%= sort %>"
+                data-bs-toggle="collapse">
+                <%= Medium.sort_localized[sort] %>
+                (<%= media_in_sort.size %>)
+              </button>
+              <div id="collapse-<%= sort %>"
+                class="collapse ps-3"
+                data-bs-parent="#relatedMediaAccordion">
+                <div class="row">
+                  <% media_in_sort.each do |m| %>
+                  <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
+                    <%= render partial: 'media/medium',
                                        locals: { medium: m.first,
                                                  tags: false,
                                                  from: 'tag',
                                                  ref_link: m.second,
-                                                 lecture: nil } %>
-                          </div>
-                        <% end %>
-                      </div>
+                    lecture: nil } %>
                   </div>
-                </li>
-              <% end %>
-            </dl>
-          </div>
+                  <% end %>
+                </div>
+              </div>
+            </li>
+            <% end %>
+          </dl>
+        </div>
         <% else %>
-          <%= t('no_related_media') %>
+        <%= t('no_related_media') %>
         <% end %>
       </div>
     </div>

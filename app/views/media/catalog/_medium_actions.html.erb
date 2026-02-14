@@ -1,44 +1,44 @@
 <div class="row mt-3 mb-2">
   <div class="col-12">
     <% if current_user.admin || medium.edited_with_inheritance_by?(current_user) %>
-      <%= link_to t('admin.medium.edit'),
+    <%= link_to t('admin.medium.edit'),
                   edit_medium_path(medium),
-                  class: 'btn btn-sm btn-primary' %>
-      <% if medium.sort == 'Question' %>
-        <%= link_to t('admin.question.edit'),
+    class: 'btn btn-sm btn-primary' %>
+    <% if medium.sort == 'Question' %>
+    <%= link_to t('admin.question.edit'),
                     edit_question_path(medium.becomes(Question)),
-                    class: 'btn btn-sm btn-primary' %>
-      <% elsif medium.sort == 'Remark' %>
-        <%= link_to t('admin.remark.edit'),
+    class: 'btn btn-sm btn-primary' %>
+    <% elsif medium.sort == 'Remark' %>
+    <%= link_to t('admin.remark.edit'),
                     edit_remark_path(medium.becomes(Remark)),
-                    class: 'btn btn-sm btn-primary' %>
-      <% elsif medium.sort == 'Quiz' %>
-        <%= link_to t('admin.quiz.edit'),
+    class: 'btn btn-sm btn-primary' %>
+    <% elsif medium.sort == 'Quiz' %>
+    <%= link_to t('admin.quiz.edit'),
                     edit_quiz_path(medium.becomes(Quiz)),
-                    class: 'btn btn-sm btn-primary' %>
-      <% end %>
-      <button class="btn btn-sm btn-primary"
-              id="editMediumTags">
-        <%= t('buttons.edit_tags') %>
-      </button>
+    class: 'btn btn-sm btn-primary' %>
+    <% end %>
+    <button id="editMediumTags"
+      class="btn btn-sm btn-primary">
+      <%= t('buttons.edit_tags') %>
+    </button>
     <% else %>
-      <%= link_to t('admin.medium.inspect'),
+    <%= link_to t('admin.medium.inspect'),
                   inspect_medium_path(medium),
-                  class: 'btn btn-sm btn-primary' %>
+    class: 'btn btn-sm btn-primary' %>
     <% end %>
   </div>
 </div>
 <div class="row mb-2">
   <div class="col-12">
     <% if medium.video %>
-      <%= link_to t('basics.thyme'),
+    <%= link_to t('basics.thyme'),
                   play_medium_path(medium),
-                  class: 'btn btn-sm btn-primary' %>
-      <% if current_user.admin || medium.edited_with_inheritance_by?(current_user) %>
-        <%= link_to t('basics.thyme_editor'),
+    class: 'btn btn-sm btn-primary' %>
+    <% if current_user.admin || medium.edited_with_inheritance_by?(current_user) %>
+    <%= link_to t('basics.thyme_editor'),
                     enrich_medium_path(medium),
-                    class: 'btn btn-sm btn-primary' %>
-      <% end %>
+    class: 'btn btn-sm btn-primary' %>
+    <% end %>
     <% end %>
   </div>
 </div>

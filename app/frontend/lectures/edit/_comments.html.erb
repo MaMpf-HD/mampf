@@ -6,76 +6,75 @@
 <div>
   <div id="comments-buttons">
     <% if lecture.comments_closed? %>
-      <%= link_to lecture_open_comments_path(lecture),
-        class: "btn btn-sm btn-outline-secondary", role: :button do %>
-        <i class="fas fa-unlock"></i>
-        <%= t('buttons.open_comments') %>
-      <% end %>
+    <%= link_to lecture_open_comments_path(lecture),
+    class: "btn btn-sm btn-outline-secondary", role: :button do %>
+    <i class="fas fa-unlock"></i>
+    <%= t('buttons.open_comments') %>
+    <% end %>
     <% else %>
-      <%= link_to lecture_close_comments_path(lecture),
-        class: "btn btn-sm btn-outline-secondary", role: :button do %>
-        <i class="fas fa-lock"></i>
-        <%= t('buttons.close_comments') %>
-      <% end %>
+    <%= link_to lecture_close_comments_path(lecture),
+    class: "btn btn-sm btn-outline-secondary", role: :button do %>
+    <i class="fas fa-lock"></i>
+    <%= t('buttons.close_comments') %>
+    <% end %>
     <% end %>
   </div>
 </div>
 
-
 <%= form_with model: lecture,
-            html: { id: 'lecture-comments-form' } do |f| %>
+html: { id: 'lecture-comments-form' } do |f| %>
 
-  <div class="form-check pt-3">
-    <%= f.check_box :comments_disabled,
-                    class: 'form-check-input' %>
-    <%= f.label :comments_disabled,
+<div class="form-check pt-3">
+  <%= f.check_box :comments_disabled,
+  class: 'form-check-input' %>
+  <%= f.label :comments_disabled,
                 t('admin.lecture.comments_disabled'),
-                { class: 'form-check-label' } %>
-    <%= helpdesk(t('admin.lecture.info.comments_disabled'),
-              false) %>
-  </div>
+  { class: 'form-check-label' } %>
+  <%= helpdesk(t('admin.lecture.info.comments_disabled'),
+  false) %>
+</div>
 
-  <!--- Annotation button related setting -->
-  <div class="pt-3 form-group" data-cy="annotation-lecture-settings">
-    <%= t('admin.lecture.enable_annotation_button') %>
-    <%= helpdesk(t('admin.lecture.enable_annotation_button_helpdesk'), false) %>
+<!--- Annotation button related setting -->
+<div class="pt-3 form-group" data-cy="annotation-lecture-settings">
+  <%= t('admin.lecture.enable_annotation_button') %>
+  <%= helpdesk(t('admin.lecture.enable_annotation_button_helpdesk'), false) %>
 
-    <div class="form-row">
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :annotations_status,
+  <div class="form-row">
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :annotations_status,
                             1,
-                            class: 'form-check-input' %>
-        <%= f.label :annotations_status,
+      class: 'form-check-input' %>
+      <%= f.label :annotations_status,
                     t('basics.yes_lc'),
                     value: 1,
-                    class: 'form-check-label' %>
-      </div>
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :annotations_status,
+      class: 'form-check-label' %>
+    </div>
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :annotations_status,
                             0,
-                            class: 'form-check-input' %>
-        <%= f.label :annotations_status,
+      class: 'form-check-input' %>
+      <%= f.label :annotations_status,
                     t('basics.no_lc'),
                     value: 0,
-                    class: 'form-check-label' %>
-      </div>
+      class: 'form-check-label' %>
+    </div>
+  </div>
+</div>
+
+<!-- Unsaved changes warnings -->
+<div class="row">
+  <div class="col-12 text-center">
+    <div id="lecture-comments-warning">
+      <%= t('warnings.unsaved_changes') %>
+      <%= hidden_field_tag :subpage, "communication" %>
+      <%= f.submit t('buttons.save'),
+      class: "btn btn-sm btn-primary" %>
+      <button id="cancel-lecture-comments" type="button"
+        class="btn btn-sm btn-secondary">
+        <%= t('buttons.cancel') %>
+      </button>
     </div>
   </div>
 
-  <!-- Unsaved changes warnings -->
-  <div class="row">
-    <div class="col-12 text-center">
-      <div id="lecture-comments-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= hidden_field_tag :subpage, "communication" %>
-        <%= f.submit t('buttons.save'),
-                      class: "btn btn-sm btn-primary" %>
-        <button type="button" id="cancel-lecture-comments"
-                class="btn btn-sm btn-secondary">
-          <%= t('buttons.cancel') %>
-        </button>
-      </div>
-    </div>
-
-  </div>
+</div>
 <% end %>

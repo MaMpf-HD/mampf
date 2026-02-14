@@ -6,25 +6,25 @@
       </h5>
     </div>
     <div class="col-3 text-end">
-      <i class="far fa-edit clickable"
-          id="selectRelatedTags"
-          data-remote="true"
-          data-bs-toggle="tooltip"
-          title="<%= t('admin.tag.edit_related_tags') %>">
+      <i id="selectRelatedTags"
+        class="far fa-edit clickable"
+        data-bs-toggle="tooltip"
+        data-remote="true"
+        title="<%= t('admin.tag.edit_related_tags') %>">
       </i>
     </div>
   </div>
 </div>
-<div class="card-body" id="relatedTagsBodyEdit">
+<div id="relatedTagsBodyEdit" class="card-body">
   <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
-    <%= link_to t.short_title,
+  <%= link_to t.short_title,
                 edit_tag_path(t),
                 class: "badge text-dark lecture-tag",
                 id: 'related-' + dom_id(t),
                 data: { toggle: 'tooltip',
                         placement: 'top',
                         id: t.id },
-                title: t.title %>
-    <br>
+  title: t.title %>
+  <br>
   <% end %>
 </div>

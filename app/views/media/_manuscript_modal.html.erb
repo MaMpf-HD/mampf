@@ -1,52 +1,55 @@
-<div class="modal fade"
-     id="manuscriptModal"
-     tabindex="-1"
-     role="dialog"
-     style="max-height: 85vh;"
-     aria-labelledby="manuscriptModalLabel" aria-hidden="true">
+<div
+  id="manuscriptModal"
+  class="modal fade"
+  style="max-height: 85vh;"
+  aria-hidden="true"
+  aria-labelledby="manuscriptModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-xl"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="manuscriptModalLabel">
+        <h5 id="manuscriptModalLabel"
+          class="modal-title">
           <%= t('admin.medium.manuscript.structure') %>
         </h5>
         <button type="button"
-                class="btn-close"
-                aria-label="Close"
-                data-bs-dismiss="modal">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
-      <div class="modal-body"
-           id="manuscript-modal-content">
+      <div id="manuscript-modal-content"
+        class="modal-body">
         <div class="mb-2">
           <% if manuscript.contradictions['version'].empty?%>
-            <%= t('manuscript.version_correct',
-                  current_version: DefaultSetting::MAMPF_STY_VERSION) %>
+          <%= t('manuscript.version_correct',
+          current_version: DefaultSetting::MAMPF_STY_VERSION) %>
           <% elsif manuscript.contradictions['version'].first.present? %>
-            <span class="redtext">
-              &#x26a1;
-              <%= t('manuscript.version_info_html',
+          <span class="redtext">
+            &#x26a1;
+            <%= t('manuscript.version_info_html',
                     version: manuscript.contradictions['version'].first,
                     current_version: DefaultSetting::MAMPF_STY_VERSION,
                     package: link_to(t('here'),
-                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
-            </span>
+            'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
+          </span>
           <% else %>
-            <span class="redtext">
-              &#x26a1;
-              <%= t('manuscript.version_unknown_html',
+          <span class="redtext">
+            &#x26a1;
+            <%= t('manuscript.version_unknown_html',
                     current_version: DefaultSetting::MAMPF_STY_VERSION,
                     package: link_to(t('here'),
-                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
-            </span>
+            'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
+          </span>
           <% end %>
         </div>
         <%= render partial: 'media/destination_cards',
-                   locals: { manuscript: manuscript} %>
+        locals: { manuscript: manuscript} %>
         <%= render partial: 'media/manuscript_comments',
-                   locals: { manuscript: manuscript} %>
+        locals: { manuscript: manuscript} %>
       </div>
     </div>
   </div>

@@ -1,26 +1,29 @@
-<div class="modal fade"
-     id="sectionContentModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="sectionContentModalLabel" aria-hidden="true"
-     data-keyboard="false"
-     data-backdrop="static">
+<div
+  id="sectionContentModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="sectionContentModalLabel"
+  data-backdrop="static"
+  data-keyboard="false"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-lg"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="sectionContentModalLabel">
+        <h5 id="sectionContentModalLabel" class="modal-title">
           <%= t('admin.section.content') %>
           <span id="section-title-modal">
           </span>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
-      <div class="modal-body" id="section-content-modal-content">
+      <div id="section-content-modal-content" class="modal-body">
       </div>
     </div>
   </div>

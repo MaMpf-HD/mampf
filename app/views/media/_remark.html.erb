@@ -6,9 +6,9 @@
   <div class="col-8 text-end">
     <%= link_to t('buttons.edit'),
                 edit_remark_path(remark),
-                class: 'btn btn-sm btn-outline-secondary' %>
+    class: 'btn btn-sm btn-outline-secondary' %>
   </div>
 </div>
 <%= render partial: 'quizzes/quizzable_preview',
-           locals: { quizzable: remark } %>
+locals: { quizzable: remark } %>
 <hr>

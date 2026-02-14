@@ -2,28 +2,28 @@
 <div class="text-center">
   <div class="col-12">
     <% if input == question.answer_scheme %>
-      <%= t('admin.quiz.correct_answer') %>
+    <%= t('admin.quiz.correct_answer') %>
     <% else %>
-      <%= t('admin.quiz.incorrect_answer') %>
+    <%= t('admin.quiz.incorrect_answer') %>
     <% end %>
     <% if question.video && question.manuscript %>
-      <%= t('admin.quiz.media_for_question_html',
+    <%= t('admin.quiz.media_for_question_html',
             medium_1: link_to(t('admin.quiz.video'),
                                 play_medium_path(question),
                                 target: :_blank),
             medium_2: link_to(t('admin.quiz.manuscript'),
                                 display_medium_path(question),
-                                target: :_blank)) %>
+    target: :_blank)) %>
     <% elsif question.video %>
-      <%= t('admin.quiz.medium_for_question_html',
+    <%= t('admin.quiz.medium_for_question_html',
             medium: link_to(t('admin.quiz.video'),
                             play_medium_path(question),
-                            target: :_blank)) %>
+    target: :_blank)) %>
     <% elsif question.manuscript %>
-      <%= t('admin.quiz.medium_for_question_html',
+    <%= t('admin.quiz.medium_for_question_html',
             medium: link_to(t('admin.quiz.manuscript'),
                             display_medium_path(question),
-                            target: :_blank)) %>
+    target: :_blank)) %>
     <% end %>
   </div>
   <div class="col-12 mt-2">

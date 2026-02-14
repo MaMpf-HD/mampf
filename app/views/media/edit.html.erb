@@ -4,41 +4,41 @@
   <%= render partial: 'media/form',
              locals: { medium: @medium,
                        manuscript: @manuscript,
-                       new_medium: false } %>
+  new_medium: false } %>
 </div>
 <%= render partial: 'media/destinations_warning' %>
 <%= render partial: 'tags/modal' %>
 <%= render partial: 'tags/manage_sections_modal' %>
 <% unless @medium.published? %>
-  <%= render partial: 'media/publish_modal',
-             locals: { medium: @medium } %>
+<%= render partial: 'media/publish_modal',
+locals: { medium: @medium } %>
 <% end %>
 <% unless @medium.new_record? %>
-  <%= render partial: 'media/statistics_modal',
-             locals: { medium: @medium } %>
+<%= render partial: 'media/statistics_modal',
+locals: { medium: @medium } %>
 <% end %>
 <% if @medium.screenshot.present? %>
-  <%= render partial: 'media/screenshot_modal',
-             locals: { medium: @medium } %>
+<%= render partial: 'media/screenshot_modal',
+locals: { medium: @medium } %>
 <% end %>
 <% if @medium.manuscript.present? %>
-  <%= render partial: 'media/snapshot_modal',
-             locals: { medium: @medium } %>
+<%= render partial: 'media/snapshot_modal',
+locals: { medium: @medium } %>
 <% end %>
 <% if @medium.geogebra_screenshot_url.present? %>
-  <%= render partial: 'media/geogebra_screenshot_modal',
-             locals: { medium: @medium } %>
+<%= render partial: 'media/geogebra_screenshot_modal',
+locals: { medium: @medium } %>
 <% end %>
 <% if !@manuscript.empty? && @medium.sort == 'Script' &&
-     @medium.teachable.content_mode == 'manuscript' %>
-  <%= render partial: 'media/manuscript_modal',
-             locals: { manuscript: @manuscript } %>
+@medium.teachable.content_mode == 'manuscript' %>
+<%= render partial: 'media/manuscript_modal',
+locals: { manuscript: @manuscript } %>
 <% end %>
 <% if @medium.quarantine.any? %>
-  <div class="row mt-2 p-2">
-    <div class="col-12">
-      <%= render partial: 'media/quarantine_modal',
-                 locals: { quarantine: @medium.quarantine } %>
-    </div>
+<div class="row mt-2 p-2">
+  <div class="col-12">
+    <%= render partial: 'media/quarantine_modal',
+    locals: { quarantine: @medium.quarantine } %>
   </div>
+</div>
 <% end %>

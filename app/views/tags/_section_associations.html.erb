@@ -1,34 +1,34 @@
 <%= t('admin.tag.info.section_association') %>
 <%= form_with url: postprocess_tags_path,
-              method: :post do |f| %>
-  <%= f.hidden_field :from, value: from %>
-  <%= f.hidden_field :id, value: id %>
-  <ul>
-    <% tags_without_section.each do |t| %>
-      <li>
-        <%= t.title %>
-        <div class="mb-3">
-          <% sections.each do |s| %>
-            <div class="form-check">
-              <%= f.check_box "tags[#{t.id}][#{s.id}]",
-                  class: 'form-check-input' %>
-              <%= f.label "tags[#{t.id}][#{s.id}]",
+method: :post do |f| %>
+<%= f.hidden_field :from, value: from %>
+<%= f.hidden_field :id, value: id %>
+<ul>
+  <% tags_without_section.each do |t| %>
+  <li>
+    <%= t.title %>
+    <div class="mb-3">
+      <% sections.each do |s| %>
+      <div class="form-check">
+        <%= f.check_box "tags[#{t.id}][#{s.id}]",
+        class: 'form-check-input' %>
+        <%= f.label "tags[#{t.id}][#{s.id}]",
                           s.to_label,
-                          { class: 'form-check-label' } %>
-            </div>
-          <% end %>
-        </div>
-      </li>
-    <% end %>
-  </ul>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save'),
-                   class: "btn btn-sm btn-primary" %>
-      <button type="button"
-              class="btn btn-sm btn-secondary cancel-section-association">
-        <%= t('buttons.cancel') %>
-      </button>
+        { class: 'form-check-label' } %>
+      </div>
+      <% end %>
     </div>
+  </li>
+  <% end %>
+</ul>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save'),
+    class: "btn btn-sm btn-primary" %>
+    <button type="button"
+      class="btn btn-sm btn-secondary cancel-section-association">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
+</div>
 <% end %>

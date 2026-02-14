@@ -1,46 +1,46 @@
 <%= form_with model: section do |f| %>
-  <div class="row">
-    <div class="col-12 mb-3">
-      <%= f.label :title,
+<div class="row">
+  <div class="col-12 mb-3">
+    <%= f.label :title,
                   t('basics.title'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
-      <%= f.text_field :title,
+    class: "form-label" %>
+    <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
+    <%= f.text_field :title,
                        { class: 'form-control',
-                         id: 'new_section_title' } %>
-      <div class="invalid-feedback"
-           id="new-section-title-error">
-      </div>
+    id: 'new_section_title' } %>
+    <div id="new-section-title-error"
+      class="invalid-feedback">
     </div>
-    <% if chapter.sections.exists? %>
-      <div class="col-12 mb-3">
-        <%= f.label :predecessor,
+  </div>
+  <% if chapter.sections.exists? %>
+  <div class="col-12 mb-3">
+    <%= f.label :predecessor,
                     t('admin.lecture.insert_after_section'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
+    class: "form-label" %>
+    <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
         </i>
-        <%= f.select :predecessor,
+    <%= f.select :predecessor,
                      options_for_select(new_section_position_for_select(chapter),
                                         chapter.last_section_by_position
                                                .position),
                      {},
-                     { class: 'form-select' } %>
-      </div>
-    <% end %>
+    { class: 'form-select' } %>
   </div>
-  <%= f.hidden_field :chapter_id,
-                     value: chapter.id %>
-  <%= f.hidden_field :from %>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save'),
-                   class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              data-chapter="<%= chapter.id %>"
-              data-bs-dismiss="modal"
-              class="btn btn-sm btn-secondary">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
+  <% end %>
+</div>
+<%= f.hidden_field :chapter_id,
+value: chapter.id %>
+<%= f.hidden_field :from %>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save'),
+    class: 'btn btn-sm btn-primary' %>
+    <button type="button"
+      class="btn btn-sm btn-secondary"
+      data-bs-dismiss="modal"
+      data-chapter="<%= chapter.id %>">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
+</div>
 <% end %>

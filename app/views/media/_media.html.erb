@@ -1,14 +1,14 @@
 <% if media.present? %>
-  <div class="row">
-    <% media.each do |medium| %>
-      <div class="media-grid pb-2">
-        <%= render partial: 'media/medium',
+<div class="row">
+  <% media.each do |medium| %>
+  <div class="media-grid pb-2">
+    <%= render partial: 'media/medium',
                    locals: { medium: medium,
                              tags: tags,
                              from: 'media',
                              ref_link: nil,
-                             lecture: lecture } %>
-      </div>
-    <% end %>
+    lecture: lecture } %>
   </div>
+  <% end %>
+</div>
 <% end %>

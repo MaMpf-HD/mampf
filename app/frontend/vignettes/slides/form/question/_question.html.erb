@@ -1,9 +1,9 @@
 <%= form.fields_for :question do |f| %>
-  <div data-controller="vignettes-question">
+<div data-controller="vignettes-question">
 
-    <!-- Question Type Selection -->
-    <div class="form-floating">
-      <%= f.select :type,
+  <!-- Question Type Selection -->
+  <div class="form-floating">
+    <%= f.select :type,
         options_for_select([
             [t('vignettes.question_types.none'), ''],
             [t('vignettes.question_types.text_area'), 'Vignettes::TextQuestion'],
@@ -19,18 +19,18 @@
             disabled: !form.object.questionnaire.editable,
             data: { action: "vignettes-question#changeQuestionType",
                     "vignettes-question-target": "questionType" }
-        } %>
-      <%= f.label :type, t('vignettes.question_type') %>
-    </div>
-
-    <%= render partial: "vignettes/slides/form/question/types/text",
-              locals: { f: f } %>
-    <%= render partial: "vignettes/slides/form/question/types/multiple_choice",
-              locals: { f: f, form: form } %>
-    <%= render partial: "vignettes/slides/form/question/types/number",
-              locals: { f: f, form: form } %>
-    <%= render partial: "vignettes/slides/form/question/types/likert",
-              locals: { f: f, form: form } %>
-
+    } %>
+    <%= f.label :type, t('vignettes.question_type') %>
   </div>
+
+  <%= render partial: "vignettes/slides/form/question/types/text",
+  locals: { f: f } %>
+  <%= render partial: "vignettes/slides/form/question/types/multiple_choice",
+  locals: { f: f, form: form } %>
+  <%= render partial: "vignettes/slides/form/question/types/number",
+  locals: { f: f, form: form } %>
+  <%= render partial: "vignettes/slides/form/question/types/likert",
+  locals: { f: f, form: form } %>
+
+</div>
 <% end %>

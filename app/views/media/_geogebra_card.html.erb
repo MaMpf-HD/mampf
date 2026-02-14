@@ -1,57 +1,57 @@
-  <div class="card bg-light">
-    <div class="card-header bg-generic-card-header">
-      <div class="row">
-        <div class="col-6">
-          <h5>
-            <%= t('geogebra.geogebra') %>
-          </h5>
-        </div>
-        <div class="col-6">
-          <div class="media-card-header">
-            <a href="<%= geogebra_medium_path(medium) %>"
-               class="no-deco me-2"
-               target="_blank">
-              <i class="material-icons text-secondary"
-                 data-bs-toggle="tooltip"
-                 data-placement="bottom"
-                 title="<%= t('geogebra.view') %>">
-                leak_add
-              </i>
-            </a>
-            <div class="download-button">
-              <a href="<%= medium.geogebra_download_url %>"
-                 download="<%= geogebra_download_file(medium) %>"
-                 class="triggerDownload"
-                 data-medium="<%= medium.id %>"
-                 data-sort="geogebra">
-                <span>
-                  <span class="badge bg-secondary"
-                        data-bs-toggle="tooltip"
-                        data-placement="bottom"
-                        title="<%= t('geogebra.download') %>">
-                    &darr;ggb
-                  </span>
+<div class="card bg-light">
+  <div class="card-header bg-generic-card-header">
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          <%= t('geogebra.geogebra') %>
+        </h5>
+      </div>
+      <div class="col-6">
+        <div class="media-card-header">
+          <a class="no-deco me-2"
+            href="<%= geogebra_medium_path(medium) %>"
+            target="_blank">
+            <i class="material-icons text-secondary"
+              data-bs-toggle="tooltip"
+              data-placement="bottom"
+              title="<%= t('geogebra.view') %>">
+              leak_add
+            </i>
+          </a>
+          <div class="download-button">
+            <a class="triggerDownload"
+              data-medium="<%= medium.id %>"
+              data-sort="geogebra"
+              download="<%= geogebra_download_file(medium) %>"
+              href="<%= medium.geogebra_download_url %>">
+              <span>
+                <span class="badge bg-secondary"
+                  data-bs-toggle="tooltip"
+                  data-placement="bottom"
+                  title="<%= t('geogebra.download') %>">
+                  &darr;ggb
                 </span>
-              </a>
-            </div>
+              </span>
+            </a>
           </div>
         </div>
       </div>
     </div>
-    <% if medium.geogebra_screenshot_url.present? %>
-      <%= link_to image_tag(medium.geogebra_screenshot_url,
+  </div>
+  <% if medium.geogebra_screenshot_url.present? %>
+  <%= link_to image_tag(medium.geogebra_screenshot_url,
                             class: 'card-img-top manuscript-thumbnail'),
                             geogebra_medium_path(medium),
-                  target: "_blank" %>
-    <% end %>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-12">
-          <%= t('geogebra.size') %>:
-          <span id="geogebra-size">
-            <%= number_to_human_size(medium.geogebra_size) %>
-          </span>
-        </div>
+  target: "_blank" %>
+  <% end %>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12">
+        <%= t('geogebra.size') %>:
+        <span id="geogebra-size">
+          <%= number_to_human_size(medium.geogebra_size) %>
+        </span>
       </div>
     </div>
   </div>
+</div>

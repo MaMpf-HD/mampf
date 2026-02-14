@@ -1,20 +1,20 @@
 <% answers.each do |a|%>
-  <div>
-    <span>
-      <% if !defined? crosses %>
-        <%= ballot_box(a.value) %>
-      <% else %>
-        <%= ballot_box(crosses[a.id]) %>
-      <% end %>
-    </span>
-    <%= a.text %>
-    <% if a.explanation.present? %>
-      <div class="grey">
-        <i>
-          <%= t('admin.quiz.reason') %>:
-        </i>
-        <%= a.explanation %>
-      </div>
+<div>
+  <span>
+    <% if !defined? crosses %>
+    <%= ballot_box(a.value) %>
+    <% else %>
+    <%= ballot_box(crosses[a.id]) %>
     <% end %>
+  </span>
+  <%= a.text %>
+  <% if a.explanation.present? %>
+  <div class="grey">
+    <i>
+      <%= t('admin.quiz.reason') %>:
+    </i>
+    <%= a.explanation %>
   </div>
+  <% end %>
+</div>
 <% end %>

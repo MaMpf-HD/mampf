@@ -7,13 +7,13 @@
     </div>
   </div>
   <% courses.each do |c| %>
-    <a href="<%= edit_course_path(c) %>"
-       class="list-group-item list-group-item-action">
-      <div class="row">
-        <div class="col-12">
-          <%= c.title %>
-        </div>
+  <a class="list-group-item list-group-item-action"
+    href="<%= edit_course_path(c) %>">
+    <div class="row">
+      <div class="col-12">
+        <%= c.title %>
       </div>
-    </a>
+    </div>
+  </a>
   <% end %>
 </div>

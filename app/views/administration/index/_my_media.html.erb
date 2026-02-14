@@ -7,21 +7,21 @@
   </div>
   <div class="card-body scrollable">
     <% if current_user.edited_media.any? %>
-      <ul>
-        <%= render partial: 'administration/index/medium',
+    <ul>
+      <%= render partial: 'administration/index/medium',
                    collection: current_user.edited_media.order(:updated_at)
                                            .reverse.first(25),
-                   cached: true %>
-      </ul>
-      <% if current_user.edited_media.size > 25 %>
-        <%= t('admin.main.media_restriction_html',
+      cached: true %>
+    </ul>
+    <% if current_user.edited_media.size > 25 %>
+    <%= t('admin.main.media_restriction_html',
               media_search: link_to(t('admin.main.media_search'),
                                     administration_search_path),
               profile: link_to(t('admin.main.user_profile'),
-                               elevated_profile_path(current_user))) %>
-      <% end %>
+    elevated_profile_path(current_user))) %>
+    <% end %>
     <% else %>
-      <%= t('admin.main.no_media') %>
+    <%= t('admin.main.no_media') %>
     <% end %>
   </div>
 </div>

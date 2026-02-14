@@ -1,22 +1,25 @@
 <%= vite_javascript_tag "js/datetimepicker" %>
 
-<div class="modal fade"
-     id="publishMediumModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="publishMediumModalLabel" aria-hidden="true">
+<div
+  id="publishMediumModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="publishMediumModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-lg"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"
-            id="publishMediumModalLabel">
+        <h4 id="publishMediumModalLabel"
+          class="modal-title">
           <%= t('admin.medium.manage_publication') %>
         </h4>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <div class="modal-body">
@@ -24,181 +27,181 @@
                                           medium.publisher&.release_for ||
                                             'all'),
                       url: publish_medium_path(medium),
-                      method: 'post' do |f| %>
-          <h5>
-            <%= t('admin.medium.publication_settings') %>
-          </h5>
-          <div class="mb-1">
-            <%= t('admin.medium.release_date') %>
-          </div>
-          <div class="form-check">
-            <%= f.radio_button :release_now,
+        method: 'post' do |f| %>
+        <h5>
+          <%= t('admin.medium.publication_settings') %>
+        </h5>
+        <div class="mb-1">
+          <%= t('admin.medium.release_date') %>
+        </div>
+        <div class="form-check">
+          <%= f.radio_button :release_now,
                                '1',
                                class: 'form-check-input',
-                               checked: !medium.release_date_set? %>
-            <%= f.label :release_now,
+          checked: !medium.release_date_set? %>
+          <%= f.label :release_now,
                         t('basics.immediately'),
                         value: '1',
-                        class: 'form-check-label' %>
-          </div>
-          <div class="form-check mb-3">
-            <%= f.radio_button :release_now,
+          class: 'form-check-label' %>
+        </div>
+        <div class="form-check mb-3">
+          <%= f.radio_button :release_now,
                                '0',
                                class: 'form-check-input',
-                               checked: medium.release_date_set? %>
-            <%= f.label :release_now,
+          checked: medium.release_date_set? %>
+          <%= f.label :release_now,
                         t('basics.at_time'),
                         value: '0',
-                        class: 'form-check-label' %>
-            <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
-          </div>
+          class: 'form-check-label' %>
+          <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
+        </div>
 
-          <!-- Datetimepicker for release date -->
-          <div
-            class="mb-3 input-group td-picker"
-            id="release-date-picker"
-            data-td-target-input="nearest"
-            data-td-target-toggle="nearest">
-            <%= f.text_field :release_date,
+        <!-- Datetimepicker for release date -->
+        <div
+          id="release-date-picker"
+          class="mb-3 input-group td-picker"
+          data-td-target-input="nearest"
+          data-td-target-toggle="nearest">
+          <%= f.text_field :release_date,
                              class: 'form-control td-input',
                              id: 'release_date',
                              "data-testid": 'release-date-datetimepicker',
                              autocomplete: 'off',
                              value: medium.planned_release_date,
-                            'data-td-target': '#release-date-picker'%>
-            <span
-              class="input-group-text td-picker-button"
-              role="button"
-              data-td-target="#release-date-picker"
-              data-td-toggle="datetimepicker">
-              <i class="bi bi-calendar-fill"></i>
-            </span>
-            <div class="invalid-feedback td-error"
-                 id="release-date-error"
-                 data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
+          'data-td-target': '#release-date-picker'%>
+          <span
+            class="input-group-text td-picker-button"
+            data-td-target="#release-date-picker"
+            data-td-toggle="datetimepicker"
+            role="button">
+            <i class="bi bi-calendar-fill"></i>
+          </span>
+          <div id="release-date-error"
+            class="invalid-feedback td-error"
+            data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
+          </div>
+        </div>
+
+        <% if medium.sort == 'Exercise' && medium.teachable.is_a?(Lecture) %>
+        <div class="mb-1">
+          <%= t('basics.assignment') %>
+        </div>
+        <div class="form-check mb-2">
+          <%= f.check_box :create_assignment,
+                              class: 'form-check-input',
+          checked: medium.publisher&.create_assignment %>
+          <%= f.label :create_assignment,
+                          t('admin.medium.create_assignment'),
+          { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.medium.info.assignment_settings'),
+          true) %>
+        </div>
+        <div id="medium_assignment_row"
+          class="row mb-2 ms-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>">
+          <div class="mb-3 col-3">
+            <%= f.label :assignment_title, t('basics.title'),
+            class: "form-label" %>
+            <%= f.text_field :assignment_title,
+                                 class: 'form-control',
+            value: medium.publisher&.assignment_title ||medium.local_info %>
+            <div id="assignment-title-error"
+              class="invalid-feedback">
             </div>
           </div>
 
-          <% if medium.sort == 'Exercise' && medium.teachable.is_a?(Lecture) %>
-            <div class="mb-1">
-              <%= t('basics.assignment') %>
-            </div>
-            <div class="form-check mb-2">
-              <%= f.check_box :create_assignment,
-                              class: 'form-check-input',
-                              checked: medium.publisher&.create_assignment %>
-              <%= f.label :create_assignment,
-                          t('admin.medium.create_assignment'),
-                          { class: 'form-check-label' } %>
-              <%= helpdesk(t('admin.medium.info.assignment_settings'),
-                           true) %>
-            </div>
-            <div class="row mb-2 ms-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>"
-                 id="medium_assignment_row">
-              <div class="mb-3 col-3">
-                <%= f.label :assignment_title, t('basics.title'),
-                            class: "form-label" %>
-                <%= f.text_field :assignment_title,
-                                 class: 'form-control',
-                                 value: medium.publisher&.assignment_title ||medium.local_info %>
-                <div class="invalid-feedback"
-                     id="assignment-title-error">
-                </div>
-              </div>
-
-              <%# Datetimepicker for assignment deadline %>
-              <div class="mb-3 col-4">
-                <%= f.label :assignment_deadline, t('basics.deadline'),
-                            class: "form-label" %>
-                <div
-                  class="input-group td-picker"
-                  id="assignment-date-picker"
-                  data-td-target-input="nearest"
-                  data-td-target-toggle="nearest">
-                  <%= f.text_field :assignment_deadline,
+          <%# Datetimepicker for assignment deadline %>
+          <div class="mb-3 col-4">
+            <%= f.label :assignment_deadline, t('basics.deadline'),
+            class: "form-label" %>
+            <div
+              id="assignment-date-picker"
+              class="input-group td-picker"
+              data-td-target-input="nearest"
+              data-td-target-toggle="nearest">
+              <%= f.text_field :assignment_deadline,
                                   class: 'form-control td-input',
                                   autocomplete: 'off',
                                   value: medium.publisher
                                               &.assignment_deadline,
-                                  'data-td-target': '#assignment-date-picker' %>
-                  <span
-                    class="input-group-text td-picker-button"
-                    role="button"
-                    data-td-target="#release-date-picker"
-                    data-td-toggle="datetimepicker">
-                    <i class="bi bi-calendar-fill"></i>
-                  </span>
-                  <div class="invalid-feedback td-error"
-                      id="assignment-deadline-error"
-                      data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
-                  </div>
-                </div>
+              'data-td-target': '#assignment-date-picker' %>
+              <span
+                class="input-group-text td-picker-button"
+                data-td-target="#release-date-picker"
+                data-td-toggle="datetimepicker"
+                role="button">
+                <i class="bi bi-calendar-fill"></i>
+              </span>
+              <div id="assignment-deadline-error"
+                class="invalid-feedback td-error"
+                data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
               </div>
+            </div>
+          </div>
 
-              <div class="mb-3 col-2 col-s-4">
-                <%= f.label :assignment_file_type,
+          <div class="mb-3 col-2 col-s-4">
+            <%= f.label :assignment_file_type,
                             t('submission.file_format'),
-                            class: "form-label" %>
-                <%= f.select :assignment_file_type,
+            class: "form-label" %>
+            <%= f.select :assignment_file_type,
                              options_for_select(Assignment.accepted_file_types
                                                           .map { |t| [t,t] }),
                      {},
-                     { class: 'form-select' } %>
-              </div>
-              <div class="mb-3 col-3">
-                <%= f.label :assignment_deletion_date,
+            { class: 'form-select' } %>
+          </div>
+          <div class="mb-3 col-3">
+            <%= f.label :assignment_deletion_date,
                             t('assignment.deletion_date'),
-                            class: "form-label" %>
-                <%= f.select :assignment_deletion_date,
+            class: "form-label" %>
+            <%= f.select :assignment_deletion_date,
                             Term.possible_deletion_dates_localized,
                             {},
-                            class: 'form-select' %>
-                <div class="invalid-feedback"
-                    id="assignment-deletion-date-error">
-                </div>
-              </div>
+            class: 'form-select' %>
+            <div id="assignment-deletion-date-error"
+              class="invalid-feedback">
             </div>
-          <% end %>
-          <hr>
-          <h5>
-            <%= t('admin.medium.media_settings') %>
-          </h5>
-          <%= render partial: 'media/access_rights',
+          </div>
+        </div>
+        <% end %>
+        <hr>
+        <h5>
+          <%= t('admin.medium.media_settings') %>
+        </h5>
+        <%= render partial: 'media/access_rights',
                      locals: { f: f,
-                               medium: medium } %>
-          <% if medium.sort == 'Quiz' %>
-            <%= render partial: 'media/quiz_rights',
-                       locals: { f: f } %>
-          <% end %>
-          <div class="mt-3 mb-1">
-            <%= t('basics.comments') %>
-          </div>
-          <div class="form-check">
-            <%= f.check_box :lock_comments,
+        medium: medium } %>
+        <% if medium.sort == 'Quiz' %>
+        <%= render partial: 'media/quiz_rights',
+        locals: { f: f } %>
+        <% end %>
+        <div class="mt-3 mb-1">
+          <%= t('basics.comments') %>
+        </div>
+        <div class="form-check">
+          <%= f.check_box :lock_comments,
                             class: 'form-check-input',
-                            checked: medium.planned_comment_lock? %>
-            <%= f.label :lock_comments,
+          checked: medium.planned_comment_lock? %>
+          <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
-                        { class: 'form-check-label' } %>
-          </div>
-          <hr>
-          <div class="form-check">
-            <%= f.check_box :disclaimer,
+          { class: 'form-check-label' } %>
+        </div>
+        <hr>
+        <div class="form-check">
+          <%= f.check_box :disclaimer,
                             class: 'form-check-input',
                             required: true,
-                            checked: medium.publisher.present? %>
-            <%= f.label :disclaimer,
+          checked: medium.publisher.present? %>
+          <%= f.label :disclaimer,
                         t('admin.medium.disclaimer'),
-                        { class: 'form-check-label' } %>
+          { class: 'form-check-label' } %>
+        </div>
+        <div class="row mb-4">
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <%= f.submit t('buttons.save'),
+            class: 'btn btn-sm btn-primary' %>
           </div>
-          <div class="row mb-4">
-          </div>
-          <div class="row mt-3">
-            <div class="col-12 text-center">
-              <%= f.submit t('buttons.save'),
-                           class: 'btn btn-sm btn-primary' %>
-            </div>
-          </div>
+        </div>
         <% end %>
       </div>
     </div>

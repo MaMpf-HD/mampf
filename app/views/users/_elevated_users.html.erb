@@ -9,11 +9,11 @@
       </div>
       <div class="col-6 text-end">
         <button type="button"
-                class="btn btn-sm btn-outline-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#genericUsersModal">
+          class="btn btn-sm btn-outline-primary"
+          data-bs-target="#genericUsersModal"
+          data-bs-toggle="modal">
           <%= t('buttons.edit_users',
-                count: generic_users_count) %>
+          count: generic_users_count) %>
         </button>
       </div>
     </div>
@@ -47,11 +47,11 @@
       </div>
     </div>
     <% elevated_users.each do |u| %>
-      <div class="row border-bottom"
-           id="row-user-<%= u.id %>">
-        <%= render partial: 'users/row',
-                   locals: { user: u }%>
-      </div>
+    <div id="row-user-<%= u.id %>"
+      class="row border-bottom">
+      <%= render partial: 'users/row',
+      locals: { user: u }%>
+    </div>
     <% end %>
   </div>
 </div>

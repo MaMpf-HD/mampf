@@ -1,4 +1,4 @@
-<div class="col-sm-12 col-lg-6" >
+<div class="col-sm-12 col-lg-6">
   <div class="card bg-mdb-color-lighten-5 mb-3">
     <div class="card-header bg-mdb-color-lighten-2">
       <span class="text-light">
@@ -7,13 +7,13 @@
     </div>
     <div class="card-body">
       <% unless chapter.details.blank? %>
-        <%= chapter.details.html_safe %>
+      <%= chapter.details.html_safe %>
       <% end %>
       <ul class="list-group list-group-flush">
         <%= render partial: 'lectures/show/section',
                   collection: chapter.sections
                                       .select { |c| c.hidden.in?([false, nil]) },
-                  cached: true %>
+        cached: true %>
       </ul>
     </div>
   </div>

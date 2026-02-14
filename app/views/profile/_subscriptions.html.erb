@@ -1,61 +1,61 @@
 <% Course.includes(lectures: [:term, :teacher]).all.natural_sort_by(&:title)
-         .each do |c| %>
-  <% subscribed = c.subscribed_by?(@user) %>
-  <div class="accordion-item"
-       id="course-card-<%= c.id %>"
-       style="display: none;">
-    <button class="accordion-button collapsed"
-            type="button"
-            id="course-heading-<%= c.id %>"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapse-course-<%= c.id %>">
-      <div class="row">
-        <div class="col-12">
-      <%= tag.i class: [circle_icon(subscribed), 'me-2', 'text-dark',
+.each do |c| %>
+<% subscribed = c.subscribed_by?(@user) %>
+<div id="course-card-<%= c.id %>"
+  class="accordion-item"
+  style="display: none;">
+  <button id="course-heading-<%= c.id %>"
+    type="button"
+    class="accordion-button collapsed"
+    data-bs-target="#collapse-course-<%= c.id %>"
+    data-bs-toggle="collapse">
+    <div class="row">
+      <div class="col-12">
+        <%= tag.i class: [circle_icon(subscribed), 'me-2', 'text-dark',
                         'courseSubInfo'],
-                data: { course: c.id } %>
-      <%= c.title %>
-        </div>
-      </div>
-    </button>
-    <div id="collapse-course-<%= c.id %>"
-         class="collapse collapseCourse"
-         aria-labelledby="course-heading-<%= c.id %>"
-         data-course="<%= c.id %>">
-      <div class="accordion-body"
-           id="course-body-<%= c.id %>">
-        <%= render partial: 'profile/details',
-                   locals: { c: c,
-                             f: f,
-                             subscribed: subscribed } %>
+        data: { course: c.id } %>
+        <%= c.title %>
       </div>
     </div>
+  </button>
+  <div id="collapse-course-<%= c.id %>"
+    class="collapse collapseCourse"
+    aria-labelledby="course-heading-<%= c.id %>"
+    data-course="<%= c.id %>">
+    <div id="course-body-<%= c.id %>"
+      class="accordion-body">
+      <%= render partial: 'profile/details',
+                   locals: { c: c,
+                             f: f,
+      subscribed: subscribed } %>
+    </div>
   </div>
+</div>
 <% end %>
 <div class="row">
-  <div class="accordion col-12"
-       id="subscriptionsAccordion">
+  <div id="subscriptionsAccordion"
+    class="accordion col-12">
     <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
               .select { |p| p.courses.any? }.natural_sort_by(&:name_with_subject)
-              .each do |p| %>
-      <div class="accordion-item bg-transparent">
-        <button class="accordion-button collapsed bg-transparent"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#program-<%= p.id %>-collapse">
-          <%= p.name_with_subject %>
-        </button>
-        <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
-             class="collapse programCollapse"
-             data-program="<%= p.id %>"
-             data-bs-parent="#subscriptionsAccordion">
-          <div class="accordion-body">
-            <%= render partial: 'profile/divisions',
+    .each do |p| %>
+    <div class="accordion-item bg-transparent">
+      <button type="button"
+        class="accordion-button collapsed bg-transparent"
+        data-bs-target="#program-<%= p.id %>-collapse"
+        data-bs-toggle="collapse">
+        <%= p.name_with_subject %>
+      </button>
+      <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
+        class="collapse programCollapse"
+        data-bs-parent="#subscriptionsAccordion"
+        data-program="<%= p.id %>">
+        <div class="accordion-body">
+          <%= render partial: 'profile/divisions',
                        locals: { divisions: p.divisions.select { |p| p.courses.any? },
-                                 f: f } %>
-          </div>
+          f: f } %>
         </div>
       </div>
+    </div>
     <% end %>
   </div>
 </div>

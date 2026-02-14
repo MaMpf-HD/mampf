@@ -5,14 +5,14 @@
   <div id="thyme" class="thyme-generic" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
       <div id="video-container">
-        <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
+        <video id="video" crossorigin="anonymous" data-paused="true" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
-            <track kind="chapters"
-                   src="<%= @vtt_container.table_of_contents.url(host: host) %>"
-                   srclang="de" default type="text/vtt" >
-            <track kind="metadata"
-                   src="<%= @vtt_container.references.url(host: host) %>"
-                   srclang="de" default type="text/vtt" >
+          <track type="text/vtt"
+            default
+            kind="chapters" src="<%= @vtt_container.table_of_contents.url(host: host) %>" srclang="de">
+          <track type="text/vtt"
+            default
+            kind="metadata" src="<%= @vtt_container.references.url(host: host) %>" srclang="de">
         </video>
         <div id="video-controlBar">
           <div id="video-controls">
@@ -26,8 +26,14 @@
               <span id="markers" class="annotation-marker">
                 <!--- JavaScript inserts markers here -->
               </span>
-              <input type="range" id="seek-bar"
-                     min="0" max="100" step="0.1" value="0">
+              <input
+                id="seek-bar"
+                type="range"
+                max="100"
+                min="0"
+                step="0.1"
+                value="0"
+              >
               <span id="max-time">
                 0:00:00
               </span>
@@ -50,42 +56,48 @@
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>
-              <input type="range" id="volume-bar"
-                     min="0" max="1" step="0.1" value="1">
+              <input
+                id="volume-bar"
+                type="range"
+                max="1"
+                min="0"
+                step="0.1"
+                value="1"
+              >
             </div>
             <div id="speed-control">
               <select id="speed" name="speed">
                 <option value="0.85">0.85x</option>
-                <option value="1" selected>1x</option>
+                <option selected value="1">1x</option>
                 <option value="1.25">1.25x</option>
                 <option value="1.5">1.5x</option>
                 <option value="1.75">1.75x</option>
                 <option value="2">2x</option>
               </select>
             </div>
-            
+
             <!--- ANNOTATION BUTTON -->
             <% if user_signed_in? %>
-              <a id="annotation-button" class="btn"
-                  title="<%= t('admin.annotation.annotation_modal_head_create_annotation') %>">
-                <i class="bi bi-sticky-fill" aria-hidden="true"></i>
-              </a>
+            <a id="annotation-button" class="btn"
+              title="<%= t('admin.annotation.annotation_modal_head_create_annotation') %>">
+              <i class="bi bi-sticky-fill" aria-hidden="true"></i>
+            </a>
             <% end %>
 
             <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
             <div id="annotations-toggle" class="form-check form-switch"
-                style="display: none;">
+              style="display: none;">
               <input id="annotations-toggle-check"
-                    class="form-check-input" type="checkbox" role="switch" checked>
+                type="checkbox" class="form-check-input" checked role="switch">
             </div>
 
             <div id="size-buttons">
               <i id="ia-active" class="material-icons clickable"
-                 data-status="true">
+                data-status="true">
                 add_to_queue
               </i>
               <i id="full-screen" class="material-icons clickable ms-1"
-                 data-status="false">
+                data-status="false">
                 fullscreen
               </i>
             </div>
@@ -93,17 +105,17 @@
         </div>
       </div>
       <%= render partial: "annotations/annotation_area" %>
-      <figcaption id="caption" tabindex="0" role="menu"
-                  aria-label="Captions" data-testid="thyme-content-sidebar">
+      <figcaption id="caption" aria-label="Captions" data-testid="thyme-content-sidebar"
+        role="menu" tabindex="0">
         <div id="infobar">
           <%= @medium.sort_localized %><br>
           <%= @medium.teachable.long_title %><br>
-          <span title="<%= @medium.description %>"
-                data-bs-toggle="tooltip" data-placement="bottom">
+          <span data-bs-toggle="tooltip"
+            data-placement="bottom" title="<%= @medium.description %>">
             <%= @medium.description %>
           </span>
           <i id="ia-close" class="material-icons replay"
-             style="font-size: 1em;">
+            style="font-size: 1em;">
             close
           </i>
         </div>
@@ -111,11 +123,14 @@
         </ol>
         <div id="separator">
           <div>
-            <button id="back-button" type="button"
-                    class="badge text-dark lecture-tag"
-                    style="display: none;"
-                    data-back="<%= t('thyme.back') %>"
-                    data-backto="<%= t('thyme.back_to') %>">
+            <button
+              id="back-button"
+              type="button"
+              class="badge text-dark lecture-tag"
+              style="display: none;"
+              data-back="<%= t('thyme.back') %>"
+              data-backto="<%= t('thyme.back_to') %>"
+            >
             </button>
           </div>
         </div>
@@ -127,6 +142,6 @@
 </div>
 
 <% if user_signed_in? %>
-  <%= render partial: "annotations/annotation_modal" %>
-  <%= render partial: "annotations/annotation_locales" %>
+<%= render partial: "annotations/annotation_modal" %>
+<%= render partial: "annotations/annotation_locales" %>
 <% end %>

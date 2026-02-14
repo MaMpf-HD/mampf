@@ -5,9 +5,9 @@
   <div class="col-1 text-end">
     <%= helpdesk(t('math.different_interpretation'), true) %>
   </div>
-  <div class="col-12 text-center" id="solution-tex">
+  <div id="solution-tex" class="col-12 text-center">
     $$
-      <%= solution.content.tex&.html_safe %>
+    <%= solution.content.tex&.html_safe %>
     $$
   </div>
 </div>

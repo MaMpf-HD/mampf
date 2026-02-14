@@ -2,88 +2,94 @@
 <div class="card bg-remark mt-2 border-secondary">
   <div class="card-body">
     <%= bootstrap_form_with model: @quiz_round.quiz,
-                            url: {action: "proceed"} do |f| %>
-      <div class="row p-2 mb-2">
-        <div class="col-12">
-          <%= remark.text %>
-          <% if remark.text_input %>
-            <%= f.text_area :input_text,
+    url: {action: "proceed"} do |f| %>
+    <div class="row p-2 mb-2">
+      <div class="col-12">
+        <%= remark.text %>
+        <% if remark.text_input %>
+        <%= f.text_area :input_text,
                             class: 'type-it mt-2',
                             id: "tex-area-quiz_input-#{@quiz_round.round_id}",
-                            hide_label: true %>
-            <div class="type-it-label">
-              <%= t('admin.remark.preview') %>
-              <%= helpdesk(t('admin.remark.info.preview'), true) %>
-            </div>
-            <div id="tex-preview-quiz_input-<%= @quiz_round.round_id %>"
-                 class="bg-remark border px-2 py-3 mb-3">
-            </div>
-          <% end %>
-          <%= f.hidden_field :progress,
-                             value: @quiz_round.progress %>
-          <%= f.hidden_field :counter,
-                             value: @quiz_round.counter %>
-          <%= f.hidden_field :attempt_token,
-                             value: @quiz_round.attempt_token %>
+        hide_label: true %>
+        <div class="type-it-label">
+          <%= t('admin.remark.preview') %>
+          <%= helpdesk(t('admin.remark.info.preview'), true) %>
         </div>
-        <% if remark.video || remark.manuscript || remark.geogebra %>
-          <div class="col-12 text-center my-2 remark-infotainment-text">
-            <%= t('admin.remark.documents') %>
-            <% if remark.video %>
-              <%= link_to t('admin.quiz.video'),
+        <div id="tex-preview-quiz_input-<%= @quiz_round.round_id %>"
+          class="bg-remark border px-2 py-3 mb-3">
+        </div>
+        <% end %>
+        <%= f.hidden_field :progress,
+        value: @quiz_round.progress %>
+        <%= f.hidden_field :counter,
+        value: @quiz_round.counter %>
+        <%= f.hidden_field :attempt_token,
+        value: @quiz_round.attempt_token %>
+      </div>
+      <% if remark.video || remark.manuscript || remark.geogebra %>
+      <div class="col-12 text-center my-2 remark-infotainment-text">
+        <%= t('admin.remark.documents') %>
+        <% if remark.video %>
+        <%= link_to t('admin.quiz.video'),
                           play_medium_path(remark),
                           target: :_blank,
-                          class: 'mx-2' %>
-            <% end %>
-            <% if remark.manuscript %>
-              <%= link_to t('admin.quiz.manuscript'),
+        class: 'mx-2' %>
+        <% end %>
+        <% if remark.manuscript %>
+        <%= link_to t('admin.quiz.manuscript'),
                           display_medium_path(remark),
                           target: :_blank,
-                          class: 'mx-2' %>
-            <% end %>
-            <% if remark.geogebra %>
-              <%= link_to t('admin.quiz.geogebra'),
+        class: 'mx-2' %>
+        <% end %>
+        <% if remark.geogebra %>
+        <%= link_to t('admin.quiz.geogebra'),
                           geogebra_medium_path(remark),
                           target: :_blank,
-                          class: 'mx-2' %>
-            <% end %>
-          </div>
-          <div class="col-12 text-center my-2 remark-infotainment-icons"
-               style="display: none;">
-            <% if remark.video %>
-              <a href="<%= play_medium_path(remark) %>"
-                 class="no-deco ms-3 fas fa-play fa-2x text-info"
-                 data-bs-toggle="tooltip"
-                 data-placement="bottom"
-                 title="<%= t('admin.quiz.video_info') %>"
-                 target="_blank">
-              </a>
-            <% end %>
-            <% if remark.manuscript %>
-              <a href="<%= display_medium_path(remark) %>"
-                 class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
-                 data-bs-toggle="tooltip"
-                 data-placement="bottom"
-                 title="<%= t('admin.quiz.manuscript_info') %>"
-                 target="_blank">
-              </a>
-            <% end %>
-            <% if remark.geogebra %>
-              <a href="<%= geogebra_medium_path(remark) %>"
-                 class="no-deco ms-3 fas fa-draw-polygon fa-2x text-info"
-                 data-bs-toggle="tooltip"
-                 data-placement="bottom"
-                 title="<%= t('admin.quiz.geogebra_info') %>"
-                 target="_blank">
-              </a>
-            <% end %>
-          </div>
+        class: 'mx-2' %>
         <% end %>
-        <div class="col-12 text-center">
-          <%= f.submit t('admin.quiz.okay'),
-                       class: "send-it btn btn-secondary ms-2"  %>
-        </div>
       </div>
+      <div class="col-12 text-center my-2 remark-infotainment-icons"
+        style="display: none;">
+        <% if remark.video %>
+        <a
+          class="no-deco ms-3 fas fa-play fa-2x text-info"
+          data-bs-toggle="tooltip"
+          data-placement="bottom"
+          href="<%= play_medium_path(remark) %>"
+          target="_blank"
+          title="<%= t('admin.quiz.video_info') %>"
+        >
+        </a>
+        <% end %>
+        <% if remark.manuscript %>
+        <a
+          class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
+          data-bs-toggle="tooltip"
+          data-placement="bottom"
+          href="<%= display_medium_path(remark) %>"
+          target="_blank"
+          title="<%= t('admin.quiz.manuscript_info') %>"
+        >
+        </a>
+        <% end %>
+        <% if remark.geogebra %>
+        <a
+          class="no-deco ms-3 fas fa-draw-polygon fa-2x text-info"
+          data-bs-toggle="tooltip"
+          data-placement="bottom"
+          href="<%= geogebra_medium_path(remark) %>"
+          target="_blank"
+          title="<%= t('admin.quiz.geogebra_info') %>"
+        >
+        </a>
+        <% end %>
+      </div>
+      <% end %>
+      <div class="col-12 text-center">
+        <%= f.submit t('admin.quiz.okay'),
+        class: "send-it btn btn-secondary ms-2"  %>
+      </div>
+    </div>
     <% end %>
   </div>
 </div>

@@ -7,10 +7,10 @@
 <div class="col-4">
   <ul class="list-unstyled">
     <% term.lectures.each do |l| %>
-      <li>
-        <%= link_to l.title_teacher_info,
-                    edit_lecture_path(l)  %>
-      </li>
+    <li>
+      <%= link_to l.title_teacher_info,
+      edit_lecture_path(l)  %>
+    </li>
     <% end %>
   </ul>
 </div>
@@ -18,13 +18,13 @@
   <%= link_to t('buttons.edit'),
               edit_term_path(term),
               class: 'btn btn-sm btn-outline-primary my-1',
-              remote: true %>
+  remote: true %>
   <% if term.lectures.empty? %>
-    <%= link_to t('buttons.delete'),
+  <%= link_to t('buttons.delete'),
                 term_path(term),
                 method: :delete,
                 data: { confirm: t('confirmation.generic') },
                 remote: true,
-                class: 'btn btn-sm btn-outline-danger my-1' %>
+  class: 'btn btn-sm btn-outline-danger my-1' %>
   <% end %>
 </div>

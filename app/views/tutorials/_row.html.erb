@@ -1,6 +1,6 @@
 <div class="list-group-item tutorialRow"
-     data-id="<%= tutorial.id.to_i %>"
-     data-cy="tutorial-row">
+  data-cy="tutorial-row"
+  data-id="<%= tutorial.id.to_i %>">
   <div class="row">
     <div class="col-4">
       <%= tutorial.title %>
@@ -15,12 +15,12 @@
                           placement: 'botttom' },
                   style: 'text-decoration: none;',
                   title: t('buttons.edit'),
-                  remote: true do %>
-        <i class="far fa-lg fa-edit me-2">
-        </i>
+      remote: true do %>
+      <i class="far fa-lg fa-edit me-2">
+      </i>
       <% end %>
       <% if tutorial.destructible? %>
-        <%= link_to tutorial_path(tutorial),
+      <%= link_to tutorial_path(tutorial),
                     class: 'text-dark',
                     data: { toggle: 'tooltip',
                             placement: 'botttom',
@@ -28,10 +28,10 @@
                     style: 'text-decoration: none;',
                     title: t('buttons.delete'),
                     method: :delete,
-                    remote: true do %>
-          <i class="fas fa-lg fa-trash-alt">
-          </i>
-        <% end %>
+      remote: true do %>
+      <i class="fas fa-lg fa-trash-alt">
+      </i>
+      <% end %>
       <% end %>
     </div>
   </div>

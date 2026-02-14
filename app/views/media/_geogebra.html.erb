@@ -7,56 +7,57 @@
     </span>
     <%= helpdesk(t('admin.medium.info.geogebra'), false) %>
   </div>
-  <div class="col-2 text-end"
-       id="geogebra-uploadButton"
-       data-choosefiles="<%= t('basics.file') %>">
-    
-  
-  <button id="geogebra-uploadButton-button"
-       class="btn btn-sm btn-outline-secondary"
-       >
-       <%= t('basics.file')%></button>
-  <input type="hidden"
-           name="medium[geogebra]"
-           value="<%= medium.cached_geogebra_data %>"
-           id="upload-geogebra-hidden">
-    <input type="file"
-           name="medium[geogebra]"
-           id="upload-geogebra">
-  <div id="geogebra-uploadButton-button-actual"
-         class="btn btn-sm btn-outline-secondary"
-         style="display:none"
-         data-tr-success="<%= t('buttons.upload_success') %>"
-         data-tr-failure="<%= t('submission.upload_failure')%>"
-         data-tr-post-processing="<%= t('basics.post_processing')%>">
-          <%= t('buttons.upload') %>
-  </div>
+  <div id="geogebra-uploadButton"
+    class="col-2 text-end"
+    data-choosefiles="<%= t('basics.file') %>">
+
+    <button id="geogebra-uploadButton-button"
+      class="btn btn-sm btn-outline-secondary"
+    >
+      <%= t('basics.file')%></button>
+    <input id="upload-geogebra-hidden"
+      type="hidden"
+      name="medium[geogebra]"
+      value="<%= medium.cached_geogebra_data %>">
+    <input id="upload-geogebra"
+      type="file"
+      name="medium[geogebra]">
+    <div
+      id="geogebra-uploadButton-button-actual"
+      class="btn btn-sm btn-outline-secondary"
+      style="display:none"
+      data-tr-failure="<%= t('submission.upload_failure')%>"
+      data-tr-post-processing="<%= t('basics.post_processing')%>"
+      data-tr-success="<%= t('buttons.upload_success') %>"
+    >
+      <%= t('buttons.upload') %>
+    </div>
   </div>
   <div class="col-6 text-end">
     <% if medium.geogebra_screenshot_url.present? %>
-      <button type="button"
-              class="btn btn-sm btn-outline-secondary"
-              data-bs-toggle="modal"
-              data-bs-target="#geogebraScreenshotModal">
-        <%= t('basics.screenshot') %>
-      </button>
-      <%= link_to t('buttons.view'),
+    <button type="button"
+      class="btn btn-sm btn-outline-secondary"
+      data-bs-target="#geogebraScreenshotModal"
+      data-bs-toggle="modal">
+      <%= t('basics.screenshot') %>
+    </button>
+    <%= link_to t('buttons.view'),
                   geogebra_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',
-                  target: "_blank" %>
+    target: "_blank" %>
     <% end %>
   </div>
 </div>
 <div class="row mt-2">
   <div class="col-12">
     <%= f.label :geogebra_app_name, t('geogebra.app_name'),
-                class: "form-label" %>
+    class: "form-label" %>
     <%= f.select :geogebra_app_name,
                  ['classic', 'geometry', 'graphing', '3d'],
                  {},
-                 { class: 'form-select' } %>
+    { class: 'form-select' } %>
   </div>
 </div>
 <%= render partial: 'media/upload_geogebra',
-           locals: { medium: medium } %>
+locals: { medium: medium } %>
 <%= f.hidden_field :detach_geogebra, value: false %>

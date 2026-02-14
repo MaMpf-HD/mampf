@@ -1,43 +1,43 @@
 <%= form_with model: announcement  do |f|%>
-  <%= f.label :details,
+<%= f.label :details,
               'Text',
-              class: 'form-label' %>
-  <%= helpdesk(t('admin.announcement.help'), false) %>
-  <%= f.trix_editor :details,
-                    id: 'announcement-details-trix' %>
-  <div class="invalid-feedback"
-       id="announcement-error">
-  </div>
-  <% unless announcement.lecture.present? %>
-    <div class="my-3">
-      <div class="form-check">
-        <%= f.check_box :on_main_page,
-                        class: 'form-check-input' %>
-        <%= f.label :on_main_page,
+class: 'form-label' %>
+<%= helpdesk(t('admin.announcement.help'), false) %>
+<%= f.trix_editor :details,
+id: 'announcement-details-trix' %>
+<div id="announcement-error"
+  class="invalid-feedback">
+</div>
+<% unless announcement.lecture.present? %>
+<div class="my-3">
+  <div class="form-check">
+    <%= f.check_box :on_main_page,
+    class: 'form-check-input' %>
+    <%= f.label :on_main_page,
                     t('admin.announcement.on_main_page'),
-                    { class: 'form-check-label' } %>
-        <%= helpdesk(t('admin.announcement.info.on_main_page'), false) %>
-      </div>
-    </div>
-  <% end %>
-  <%= f.hidden_field :lecture_id, value: @lecture&.id %>
-  <div class="row my-2">
-    <div class="col-12">
-      <%= t('basics.preview') %>
-    </div>
+    { class: 'form-check-label' } %>
+    <%= helpdesk(t('admin.announcement.info.on_main_page'), false) %>
   </div>
-  <div class="alert alert-dark bg-mdb-color-lighten-6"
-       id="announcement-details-preview">
+</div>
+<% end %>
+<%= f.hidden_field :lecture_id, value: @lecture&.id %>
+<div class="row my-2">
+  <div class="col-12">
+    <%= t('basics.preview') %>
   </div>
-  <div class="text-center mt-3">
-    <%= f.submit t('buttons.save'),
+</div>
+<div id="announcement-details-preview"
+  class="alert alert-dark bg-mdb-color-lighten-6">
+</div>
+<div class="text-center mt-3">
+  <%= f.submit t('buttons.save'),
                  class: 'btn btn-primary',
                  data:
-                   { confirm: t('confirmation.announcement') } %>
-    <button type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal">
-      <%= t('buttons.cancel') %>
-    </button>
-  </div>
+  { confirm: t('confirmation.announcement') } %>
+  <button type="button"
+    class="btn btn-secondary"
+    data-bs-dismiss="modal">
+    <%= t('buttons.cancel') %>
+  </button>
+</div>
 <% end %>

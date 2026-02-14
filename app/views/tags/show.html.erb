@@ -6,12 +6,12 @@
       </span>
       <%= @tag.title %>
       <% if current_user.editor? %>
-        <%= link_to '',
+      <%= link_to '',
                     edit_tag_path(@tag),
                     class: 'far fa-edit text-secondary',
                     data: { toggle: 'tooltip', placement: 'bottom' },
                     title: t('buttons.edit'),
-                    style: 'text-decoration: none;' %>
+      style: 'text-decoration: none;' %>
       <% end %>
     </h2>
   </div>
@@ -28,72 +28,72 @@
           </div>
           <div class="card-body">
             <% @tag.locales.each do |l| %>
-              <%= link_to l.to_s,
+            <%= link_to l.to_s,
                           tag_path(@tag, params: { locale: l }),
-                          class: 'badge text-dark lecture-tag' %>
-              <%= @tag.notions.where(locale: l)&.first&.title %>
-              <br>
+            class: 'badge text-dark lecture-tag' %>
+            <%= @tag.notions.where(locale: l)&.first&.title %>
+            <br>
             <% end %>
             <% if @tag.aliases.any? %>
-              <hr>
-              <% @tag.aliases.each do |a| %>
-                <span class="badge text-dark lecture-tag">
-                  <%= a.locale %>
-                </span>
-                <%= a.title %>
-                <br>
-              <% end %>
+            <hr>
+            <% @tag.aliases.each do |a| %>
+            <span class="badge text-dark lecture-tag">
+              <%= a.locale %>
+            </span>
+            <%= a.title %>
+            <br>
+            <% end %>
             <% end %>
           </div>
         </div>
       </div>
       <div class="col-12">
-        <div class="card bg-light mb-2"
-             id="relatedTags">
+        <div id="relatedTags"
+          class="card bg-light mb-2">
           <div class="card-header bg-generic-card-header">
             <h5>
               <%= t('related_tags') %>
             </h5>
           </div>
-          <div class="card-body"
-               id="relatedTagsBody">
+          <div id="relatedTagsBody"
+            class="card-body">
             <% if @related_tags.present? %>
-              <% @related_tags.natural_sort_by(&:title).each do |t| %>
-                <%= link_to t.short_title,
+            <% @related_tags.natural_sort_by(&:title).each do |t| %>
+            <%= link_to t.short_title,
                             tag_path(t),
                             class: "badge text-dark lecture-tag",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',
                                     id: t.id },
-                            title: t.title %>
-                <br>
-              <% end %>
+            title: t.title %>
+            <br>
+            <% end %>
             <% else %>
-              <%= t('no_related_tags') %>
+            <%= t('no_related_tags') %>
             <% end %>
             <% if @tags_in_neighbourhood.present? %>
-              <h6 class="mt-2">
-                <%= t('tags_in_neighbourhood') %>
-              </h6>
-              <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
-                <%= link_to t.short_title,
+            <h6 class="mt-2">
+              <%= t('tags_in_neighbourhood') %>
+            </h6>
+            <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
+            <%= link_to t.short_title,
                             tag_path(t),
                             class: "badge text-dark lecture-tag",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',
                                     id: t.id},
-                            title: t.title %>
-                <br>
-              <% end %>
+            title: t.title %>
+            <br>
+            <% end %>
             <% end %>
           </div>
         </div>
       </div>
       <div class="col-12">
         <%= render partial: 'sections/sections',
-                   locals: { sections: @tag.visible_sections(current_user) } %>
+        locals: { sections: @tag.visible_sections(current_user) } %>
       </div>
     </div>
   </div>
@@ -108,39 +108,39 @@
           </div>
           <div class="col-12 col-sm-6 mb-2 d-flex">
             <div class="dropdown me-2">
-              <button class="btn btn-sm btn-secondary dropdown-toggle"
-                      type="button"
-                      data-bs-toggle="dropdown">
+              <button type="button"
+                class="btn btn-sm btn-secondary dropdown-toggle"
+                data-bs-toggle="dropdown">
                 <%= t('admin.tag.visibility') %>
               </button>
               <div class="dropdown-menu">
                 <a class="dropdown-item <%= active(@selection_type == 1) %>"
-                   href="?selection=1&depth=<%= @depth %>">
+                  href="?selection=1&depth=<%= @depth %>">
                   <%= t('admin.tag.previous_courses') %>
                 </a>
                 <a class="dropdown-item <%= active(@selection_type == 3) %>"
-                   href="?selection=3&depth=<%= @depth %>">
+                  href="?selection=3&depth=<%= @depth %>">
                   <%= t('admin.tag.subscribed_courses') %>
                 </a>
                 <a class="dropdown-item <%= active(@selection_type == 2) %>"
-                   href="?selection=2&depth=<%= @depth %>">
+                  href="?selection=2&depth=<%= @depth %>">
                   <%= t('admin.tag.all_courses') %>
                 </a>
               </div>
             </div>
             <div class="dropdown">
-              <button class="btn btn-sm btn-secondary dropdown-toggle"
-                      type="button"
-                      data-bs-toggle="dropdown">
+              <button type="button"
+                class="btn btn-sm btn-secondary dropdown-toggle"
+                data-bs-toggle="dropdown">
                 <%= t('admin.tag.depth') %>
               </button>
               <div class="dropdown-menu">
                 <a class="dropdown-item <%= active(@depth == 1) %>"
-                   href="?selection=<%= @selection_type %>&depth=1">
+                  href="?selection=<%= @selection_type %>&depth=1">
                   1
                 </a>
                 <a class="dropdown-item <%= active(@depth == 2) %>"
-                   href="?selection=<%= @selection_type %>depth=2">
+                  href="?selection=<%= @selection_type %>depth=2">
                   2
                 </a>
               </div>
@@ -152,16 +152,16 @@
                                               params: { selection: @selection_type,
                                                         depth: @depth }),
                         class: 'btn btn-sm btn-outline-secondary',
-                        target: :_blank%>
+            target: :_blank%>
           </div>
         </div>
       </div>
       <div class="card-body">
         <div id="cy"
-             data-elements="<%= @graph_elements.to_json %>"
-             data-tag="<%= @tag.id %>"
-             data-type="tag"
-             data-locale="<%= I18n.locale %>">
+          data-elements="<%= @graph_elements.to_json %>"
+          data-locale="<%= I18n.locale %>"
+          data-tag="<%= @tag.id %>"
+          data-type="tag">
         </div>
       </div>
     </div>
@@ -169,18 +169,18 @@
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <div class="row">
       <% if @questions.any? %>
-        <div class="col-12 mb-2">
-          <%= render partial: 'tags/show/random_quiz',
+      <div class="col-12 mb-2">
+        <%= render partial: 'tags/show/random_quiz',
                      locals: { tag: @tag,
-                               questions: @questions } %>
-        </div>
+        questions: @questions } %>
+      </div>
       <% end %>
       <div class="col-12">
         <%= render partial: 'media/related_media',
                    locals: { media: @media,
                              references: @references,
                              from: 'tag',
-                             questions: @questions.any? } %>
+        questions: @questions.any? } %>
       </div>
     </div>
   </div>

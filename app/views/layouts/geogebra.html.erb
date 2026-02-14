@@ -1,28 +1,28 @@
 <!doctype html>
 <html>
   <head>
-    <link rel="manifest" href="/manifest.json">
+    <link href="/manifest.json" rel="manifest">
 
     <%= csrf_meta_tags %>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" crossorigin="anonymous" />
-    <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.css"
-    integrity="sha384-r/BYDnh2ViiCwqZt5VJVWuADDic3NnnTIEOv4hOh05nSfB6tjWpKmn1kUHOVkMXc"
-    crossorigin="anonymous">
-<script defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.js"
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" rel="stylesheet">
+    <link crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.css"
+      integrity="sha384-r/BYDnh2ViiCwqZt5VJVWuADDic3NnnTIEOv4hOh05nSfB6tjWpKmn1kUHOVkMXc"
+      rel="stylesheet">
+    <script crossorigin="anonymous"
+      defer
       integrity="sha384-zDIgORxjImEWftZXZpWLs2l57fMX9B3yWFPN5Ecabe211Hm5ZG/OIz2b07DYPUcH"
-      crossorigin="anonymous">
-</script>
-<script defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/contrib/auto-render.min.js"
+      src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.js">
+    </script>
+    <script crossorigin="anonymous"
+      defer
       integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"
-      crossorigin="anonymous">
-      </script>
-  <%= vite_javascript_tag "js/geogebra.coffee" %>
+      src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/contrib/auto-render.min.js">
+    </script>
+    <%= vite_javascript_tag "js/geogebra.coffee" %>
   </head>
   <body>
     <div class="container-fluid">

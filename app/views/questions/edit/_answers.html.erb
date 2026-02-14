@@ -11,7 +11,7 @@
                     new_answer_path(question_id: question.id),
                     id: 'new-answer',
                     class: 'btn btn-sm btn-secondary btn-sm',
-                    remote: true %>
+        remote: true %>
       </div>
     </div>
   </div>
@@ -19,6 +19,6 @@
     <div id="new-answer-field">
     </div>
     <%= render partial: 'questions/answers_accordion',
-               locals: { question: question } %>
+    locals: { question: question } %>
   </div>
 </div>

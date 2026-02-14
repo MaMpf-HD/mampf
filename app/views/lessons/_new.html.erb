@@ -6,52 +6,52 @@
   </div>
 </div>
 <%= form_with model: lesson do |f| %>
-  <div class="row mb-2">
-    <div class="col-4">
-      <div class="row">
-        <div class="col-12">
-          <%= f.label :date,
+<div class="row mb-2">
+  <div class="col-4">
+    <div class="row">
+      <div class="col-12">
+        <%= f.label :date,
                       t('basics.date'),
-                      class: 'form-label' %>
-          <%= helpdesk(t('admin.lesson.info.date'), false) %>
-        </div>
-        <div class="col-12">
-          <%= f.date_field :date %>
-        </div>
-        <div class="col-12">
-          <div class="invalid-feedback" id="lesson-date-error">
-          </div>
+        class: 'form-label' %>
+        <%= helpdesk(t('admin.lesson.info.date'), false) %>
+      </div>
+      <div class="col-12">
+        <%= f.date_field :date %>
+      </div>
+      <div class="col-12">
+        <div id="lesson-date-error" class="invalid-feedback">
         </div>
       </div>
     </div>
-    <div class="col-8">
-      <%= f.label :section_ids,
+  </div>
+  <div class="col-8">
+    <%= f.label :section_ids,
                   t('basics.sections'),
-                  class: 'form-label' %>
-      <%= helpdesk(t('admin.lesson.info.sections'), false) %>
-      <%= f.select :section_ids,
+    class: 'form-label' %>
+    <%= helpdesk(t('admin.lesson.info.sections'), false) %>
+    <%= f.select :section_ids,
                     options_for_select(lesson.lecture.section_selection,
                                       lesson.section_ids),
                     {},
                     { multiple: true,
-                      class: 'selectize' } %>
-      <div class="invalid-feedback" id="lesson-sections-error">
-      </div>
+    class: 'selectize' } %>
+    <div id="lesson-sections-error" class="invalid-feedback">
     </div>
   </div>
-  <%= f.hidden_field :lecture_id,
-                     value: lesson.lecture_id %>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save'),
-                   class: 'btn btn-sm btn-primary' %>
-      <%= f.submit t('buttons.save_and_edit'),
-                   class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              class="btn btn-sm btn-secondary"
-              data-bs-dismiss="modal">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
+</div>
+<%= f.hidden_field :lecture_id,
+value: lesson.lecture_id %>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save'),
+    class: 'btn btn-sm btn-primary' %>
+    <%= f.submit t('buttons.save_and_edit'),
+    class: 'btn btn-sm btn-primary' %>
+    <button type="button"
+      class="btn btn-sm btn-secondary"
+      data-bs-dismiss="modal">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
+</div>
 <% end %>

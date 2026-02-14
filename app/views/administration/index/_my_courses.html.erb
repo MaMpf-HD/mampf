@@ -8,31 +8,31 @@
       </div>
       <div class="col-4 text-end">
         <% if current_user.admin? %>
-          <i class="fas fa-plus-circle text-light admin-index-button clickable",
-             id="new-course-button"
-             data-bs-toggle="tooltip"
-             title="<%= t('admin.main.create_course') %>">
-          </i>
+        <i id="new-course-button" class="fas fa-plus-circle text-light admin-index-button clickable"
+          ,
+          data-bs-toggle="tooltip"
+          title="<%= t('admin.main.create_course') %>">
+        </i>
         <% end %>
       </div>
     </div>
   </div>
   <div class="card-body scrollable">
     <% if current_user.admin? %>
-      <div id="new-course-area"
-           class="bg-green-lighten-4 p-3 mb-3 rounded"
-           style="display: none;">
-        <%= render partial: 'courses/new',
-                   locals: { course: Course.new } %>
-      </div>
+    <div id="new-course-area"
+      class="bg-green-lighten-4 p-3 mb-3 rounded"
+      style="display: none;">
+      <%= render partial: 'courses/new',
+      locals: { course: Course.new } %>
+    </div>
     <% end %>
     <% if current_user.edited_courses.any? %>
-      <%= render partial: 'administration/index/courses_card',
+    <%= render partial: 'administration/index/courses_card',
                  locals: { courses:
                              current_user.edited_courses
-                                         .natural_sort_by(&:title) } %>
+    .natural_sort_by(&:title) } %>
     <% else %>
-      <%= t('admin.main.no_edited_courses') %>
+    <%= t('admin.main.no_edited_courses') %>
     <% end %>
   </div>
 </div>

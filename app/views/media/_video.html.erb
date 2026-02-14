@@ -6,56 +6,57 @@
     </span>
     <%= helpdesk(t('admin.medium.info.video'), false) %>
   </div>
-  <div class="col-2 text-end"
-       id="video-uploadButton"
-       data-choosefiles="<%= t('basics.file') %>">
+  <div id="video-uploadButton"
+    class="col-2 text-end"
+    data-choosefiles="<%= t('basics.file') %>">
     <button id="video-uploadButton-button"
-       class="btn btn-sm btn-outline-secondary"
-       >
-       <%= t('basics.file')%></button>
-    <input type="hidden"
-           name="medium[video]"
-           value="<%= medium.cached_video_data %>"
-           id="upload-video-hidden">
-    <input type="file"
-           name="medium[video]"
-           id="upload-video">
-  <div  id="video-uploadButton-button-actual"
-        class="btn btn-sm btn-outline-secondary"
-        style="display:none"
-        data-tr-success="<%= t('buttons.upload_success') %>"
-        data-tr-failure="<%= t('submission.upload_failure')%>"
-        data-tr-post-processing="<%= t('basics.post_processing')%>"
-        >
-          <%= t('buttons.upload') %>
-  </div>
+      class="btn btn-sm btn-outline-secondary"
+    >
+      <%= t('basics.file')%></button>
+    <input id="upload-video-hidden"
+      type="hidden"
+      name="medium[video]"
+      value="<%= medium.cached_video_data %>">
+    <input id="upload-video"
+      type="file"
+      name="medium[video]">
+    <div
+      id="video-uploadButton-button-actual"
+      class="btn btn-sm btn-outline-secondary"
+      style="display:none"
+      data-tr-failure="<%= t('submission.upload_failure')%>"
+      data-tr-post-processing="<%= t('basics.post_processing')%>"
+      data-tr-success="<%= t('buttons.upload_success') %>"
+    >
+      <%= t('buttons.upload') %>
+    </div>
   </div>
   <div class="col-6 text-end">
     <% if medium.screenshot.present? %>
-      <button type="button"
-              class="btn btn-sm btn-outline-secondary"
-              data-bs-toggle="modal"
-              data-bs-target="#screenshotModal">
-        <%= t('basics.screenshot') %>
-      </button>
+    <button type="button"
+      class="btn btn-sm btn-outline-secondary"
+      data-bs-target="#screenshotModal"
+      data-bs-toggle="modal">
+      <%= t('basics.screenshot') %>
+    </button>
     <% end %>
     <% if medium.video.present? %>
-      <%= link_to t('basics.thyme_editor'),
+    <%= link_to t('basics.thyme_editor'),
                   enrich_medium_path(medium),
                   class: 'btn btn-sm btn-outline-secondary',
-                  "data-turbo": false %>
-      <%= link_to 'Feedback',
+    "data-turbo": false %>
+    <%= link_to 'Feedback',
                   feedback_medium_path(medium),
                   class: 'btn btn-sm btn-outline-secondary',
-                  target: "_blank" %>
-      <%= link_to t('basics.thyme'),
+    target: "_blank" %>
+    <%= link_to t('basics.thyme'),
                   play_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',
-                  target: "_blank" %>
+    target: "_blank" %>
     <% end %>
   </div>
 </div>
 <%= render partial: 'media/upload_video',
-           locals: { medium: medium } %>
+locals: { medium: medium } %>
 <%= f.hidden_field :detach_video, value: false %>
 <hr>

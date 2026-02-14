@@ -1,120 +1,120 @@
 <%= form_with model: question, html: { id: 'solution-form' } do |f| %>
-  <div class="card-header">
-    <div class="row">
-      <div class="col-3">
-        <h5>
-          <%= t('basics.solution') %>
-        </h5>
-      </div>
-      <div class="col-5">
-        <span class="no_display incorrect"
-              id="question-solution-warning">
-          <%= t('warnings.unsaved_changes') %>
-        </span>
-      </div>
-      <div class="col-4">
-        <span class="no_display"
-              id="question-solution-options">
-          <%= f.submit t('buttons.save'),
+<div class="card-header">
+  <div class="row">
+    <div class="col-3">
+      <h5>
+        <%= t('basics.solution') %>
+      </h5>
+    </div>
+    <div class="col-5">
+      <span id="question-solution-warning"
+        class="no_display incorrect">
+        <%= t('warnings.unsaved_changes') %>
+      </span>
+    </div>
+    <div class="col-4">
+      <span id="question-solution-options"
+        class="no_display">
+        <%= f.submit t('buttons.save'),
                       class: "btn btn-primary btn-sm",
-                      id: "question-solution-save" %>
-          <button type="button"
-                  class="btn btn-secondary btn-sm"
-                  id="question-solution-cancel"
-                  data-id="<%= question.id %>">
-            <%= t('buttons.discard') %>
-          </button>
-        </span>
-      </div>
+        id: "question-solution-save" %>
+        <button id="question-solution-cancel"
+          type="button"
+          class="btn btn-secondary btn-sm"
+          data-id="<%= question.id %>">
+          <%= t('buttons.discard') %>
+        </button>
+      </span>
     </div>
   </div>
-  <div class="card-body">
-    <div class="mb-3">
-      <span class="me-2">
-        <%= t('basics.type') + ':' %>
-      </span>
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :solution_type,
+</div>
+<div class="card-body">
+  <div class="mb-3">
+    <span class="me-2">
+      <%= t('basics.type') + ':' %>
+    </span>
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :solution_type,
                            'MampfExpression',
                            class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfExpression',
-                           data: { type: 'MampfExpression' } %>
-        <%= f.label :solution_type,
+      data: { type: 'MampfExpression' } %>
+      <%= f.label :solution_type,
                     t('math.expression'),
                     value: 'MampfExpression',
-                    class: 'form-check-label' %>
-      </div>
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :solution_type,
+      class: 'form-check-label' %>
+    </div>
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :solution_type,
                            'MampfMatrix',
                            class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfMatrix',
-                           data: { type: 'MampfMatrix' } %>
-        <%= f.label :solution_type,
+      data: { type: 'MampfMatrix' } %>
+      <%= f.label :solution_type,
                     t('math.matrix'),
                     value: 'MampfMatrix',
-                    class: 'form-check-label' %>
-      </div>
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :solution_type,
+      class: 'form-check-label' %>
+    </div>
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :solution_type,
                            'MampfTuple',
                            class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfTuple',
-                           data: { type: 'MampfTuple' } %>
-        <%= f.label :solution_type,
+      data: { type: 'MampfTuple' } %>
+      <%= f.label :solution_type,
                     t('math.tuple'),
                     value: 'MampfTuple',
-                    class: 'form-check-label' %>
-      </div>
-      <div class="form-check form-check-inline">
-        <%= f.radio_button :solution_type,
+      class: 'form-check-label' %>
+    </div>
+    <div class="form-check form-check-inline">
+      <%= f.radio_button :solution_type,
                            'MampfSet',
                            class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfSet',
-                           data: { type: 'MampfSet' } %>
-        <%= f.label :solution_type,
+      data: { type: 'MampfSet' } %>
+      <%= f.label :solution_type,
                     t('math.set'),
                     value: 'MampfSet',
-                    class: 'form-check-label' %>
-      </div>
+      class: 'form-check-label' %>
     </div>
-    <div class="mb-3">
-      <%= render partial: 'questions/domains/general_form',
+  </div>
+  <div class="mb-3">
+    <%= render partial: 'questions/domains/general_form',
                  locals: { f: f,
                            type: solution.type,
-                           content: solution.content } %>
-    </div>
-    <div id="solution-box">
-      <%= render partial: 'questions/tex_solution',
-                 locals: { solution: solution } %>
-    </div>
+    content: solution.content } %>
+  </div>
+  <div id="solution-box">
+    <%= render partial: 'questions/tex_solution',
+    locals: { solution: solution } %>
+  </div>
 
-    <%= f.fields_for :solution_content do |content_fields| %>
+  <%= f.fields_for :solution_content do |content_fields| %>
 
-    <%= content_fields.hidden_field :nerd,
+  <%= content_fields.hidden_field :nerd,
                        value: solution.content.nerd,
-                       id: 'solution_content_nerd' %>
-    <div class="row">
-      <div class="col-12">
-        <%= content_fields.label :explanation,
+  id: 'solution_content_nerd' %>
+  <div class="row">
+    <div class="col-12">
+      <%= content_fields.label :explanation,
                    t('admin.answer.explanation'),
-                   class: "form-label" %>
-        <%= content_fields.text_area :explanation,
+      class: "form-label" %>
+      <%= content_fields.text_area :explanation,
                         class: 'form-control',
                         id: 'tex-area-explanation-s-' +
                               question.answers.first.id.to_s,
-                        value: question.answers.first.explanation %>
-      </div>
-    </div>
-
-    <% end %>
-
-    <div class="row">
-      <div class="col-8 py-2">
-        <span id="tex-preview-explanation-s-<%= question.answers.first.id %>">
-          <%= question.answers.first.explanation %>
-        </span>
-      </div>
+      value: question.answers.first.explanation %>
     </div>
   </div>
+
+  <% end %>
+
+  <div class="row">
+    <div class="col-8 py-2">
+      <span id="tex-preview-explanation-s-<%= question.answers.first.id %>">
+        <%= question.answers.first.explanation %>
+      </span>
+    </div>
+  </div>
+</div>
 <% end %>

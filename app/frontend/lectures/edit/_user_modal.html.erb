@@ -1,21 +1,24 @@
-<div class="modal fade"
-     id="lectureUserModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="lectureUserModalLabel" aria-hidden="true"
-     data-keyboard="false"
-     data-backdrop="static">
+<div
+  id="lectureUserModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="lectureUserModalLabel"
+  data-backdrop="static"
+  data-keyboard="false"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-xl"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="lectureUserModalLabel">
+        <h5 id="lectureUserModalLabel" class="modal-title">
           <%= t('admin.lecture.subscribers') %>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <div class="modal-body">
@@ -28,15 +31,15 @@
           </div>
         </div>
         <div id="lectureUserModalContent"
-             data-filled="false"
-             data-lecture="<%= lecture.id %>">
+          data-filled="false"
+          data-lecture="<%= lecture.id %>">
         </div>
         <div class="row my-3">
           <div class="col-12 text-center">
             <button type="button"
-                    class="btn btn-sm btn-secondary"
-                    data-bs-dismiss="modal"
-                    aria-label="Close">
+              class="btn btn-sm btn-secondary"
+              aria-label="Close"
+              data-bs-dismiss="modal">
               <%= t('buttons.close') %>
             </button>
           </div>

@@ -1,33 +1,33 @@
 <div class="card <%= news_card_color(announcement) %>">
-	<div class="card-header">
-		<div class="row">
-			<div class="col-10">
-				<%= human_readable_date(announcement.created_at) %>
+  <div class="card-header">
+    <div class="row">
+      <div class="col-10">
+        <%= human_readable_date(announcement.created_at) %>
         <% if announcement.lecture %>
-          <%= t('from') %>
-          <%= announcement.announcer&.name %>
+        <%= t('from') %>
+        <%= announcement.announcer&.name %>
         <% end %>
-			</div>
-			<div class="col-2 text-end">
-				<% if user_signed_in? && announcement.active?(current_user) %>
-					<%= link_to notification_path(current_user
+      </div>
+      <div class="col-2 text-end">
+        <% if user_signed_in? && announcement.active?(current_user) %>
+        <%= link_to notification_path(current_user
           		                          	.matching_notification(announcement)),
                 			class: 'removeNewsNotification',
                 			remote: true,
                 			method: :delete,
                 			data:
                   			{ id: current_user
-                                .matching_notification(announcement)&.id } do %>
-		      	<i class="fas fa-check text-dark"
-    		    	 data-bs-toggle="tooltip"
-        			 title="<%= t('basics.mark_as_read') %>">
-      			</i>
-    			<% end %>
-				<% end %>
-			</div>
-		</div>
-	</div>
-	<div class="card-body">
-		<%= announcement.details.html_safe %>
-	</div>
+        .matching_notification(announcement)&.id } do %>
+        <i class="fas fa-check text-dark"
+          data-bs-toggle="tooltip"
+          title="<%= t('basics.mark_as_read') %>">
+        </i>
+        <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= announcement.details.html_safe %>
+  </div>
 </div>

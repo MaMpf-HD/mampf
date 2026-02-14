@@ -23,7 +23,7 @@
   </div>
 
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
-                        html: { id: 'profileForm'} do |f| %>
+  html: { id: 'profileForm'} do |f| %>
 
   <div class="row display-flex mb-md-3">
 
@@ -32,7 +32,7 @@
       <%= f.submit t('profile.changes_made_btn'),
             class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
             id: "profileChange",
-            "data-cy": "profile-change-submit" %>
+      "data-cy": "profile-change-submit" %>
     </div>
 
     <!-- 🌟 Account -->
@@ -48,24 +48,24 @@
           <div class="mb-3">
             <%= f.label :name,
                   t('profile.name'),
-                  class: "form-label fw-bold" %>
+            class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
                                                class: 'form-control',
-                                               "data-cy": "display-name" %>
-            <div class="invalid-feedback"
-                id="username-error">
+            "data-cy": "display-name" %>
+            <div id="username-error"
+              class="invalid-feedback">
             </div>
           </div>
 
           <div class="mb-3">
             <%= f.label :name_in_tutorials,
                         t('profile.name_in_tutorials'),
-                        class: "form-label fw-bold" %>
+            class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
             <%= f.text_field_without_bootstrap :name_in_tutorials,
                                               class: 'form-control',
-                                              "data-cy": "display-name-tutorials" %>
+            "data-cy": "display-name-tutorials" %>
           </div>
 
           <%= render partial: 'profile/subscription_type', locals: { f: f } %>
@@ -95,14 +95,14 @@
 
     <!-- 🌟 Courses -->
     <div class="col">
-      <div class="card profile-card" id="courses-accordion"
-           data-cy="courses-accordion" data-testid="courses-accordion">
+      <div id="courses-accordion" class="card profile-card"
+        data-cy="courses-accordion" data-testid="courses-accordion">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.courses') %>
           </h5>
         </div>
-    
+
         <div class="card-body">
           <%= render partial: 'profile/subscriptions' , locals: { f: f } %>
         </div>
@@ -114,7 +114,7 @@
     <div class="w-100 mt-3 mb-3 d-md-none">
       <%= f.submit t('profile.changes_made_btn'),
         class: 'btn btn-warning w-100 d-none text-wrap',
-        id: "profileChangeBottom" %>
+      id: "profileChangeBottom" %>
     </div>
 
   </div>
@@ -126,7 +126,7 @@
 <!-- 🔘 Delete Account Modal -->
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
-                     title: t('profile.delete_account') } %>
+title: t('profile.delete_account') } %>
 
 <!-- 🔘 User Request Data Modal -->
 <%= render partial: 'profile/request_data_modal' %>

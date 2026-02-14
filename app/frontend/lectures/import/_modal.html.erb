@@ -1,51 +1,54 @@
-<div class="modal fade"
-     id="importMediaModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="importMediaModalLabel" aria-hidden="true"
-     data-keyboard="false"
-     data-backdrop="static">
+<div
+  id="importMediaModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="importMediaModalLabel"
+  data-backdrop="static"
+  data-keyboard="false"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-xxl"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="importMediaModalLabel">
+        <h5 id="importMediaModalLabel" class="modal-title">
           <%= t('buttons.import_media') %>
           <span id="section-title-modal">
           </span>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
-      <div class="modal-body" id="section-content-modal-content">
+      <div id="section-content-modal-content" class="modal-body">
         <h3 class="lecture-pane-header">
-        <%= t('admin.lecture.imported_media') %>
-        <span id="importMedia" data-lecture="<%= lecture.id %>">
+          <%= t('admin.lecture.imported_media') %>
+          <span id="importMedia" data-lecture="<%= lecture.id %>">
             <span id="importedMediaCount">
-            ( <%= lecture.imported_media.size %>)
+              ( <%= lecture.imported_media.size %>)
             </span>
-        </span>
+          </span>
         </h3>
 
-      <div id="importedMediaTable"
-           data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
-            <%= render partial: 'lectures/import/imported_media',
+        <div id="importedMediaTable"
+          data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
+          <%= render partial: 'lectures/import/imported_media',
                        locals: { media: lecture.imported_media,
-                                 lecture: lecture } %>
-      </div>
+          lecture: lecture } %>
+        </div>
 
-    <hr class="lecture-pane-separator">
+        <hr class="lecture-pane-separator">
 
-      <div id="importedMediaArea">
-           <%= render partial: 'search/media_search_form',
-               locals: { purpose: 'import' } %>
-        <div id="media-search-results">
+        <div id="importedMediaArea">
+          <%= render partial: 'search/media_search_form',
+          locals: { purpose: 'import' } %>
+          <div id="media-search-results">
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </div>

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <%= vite_stylesheet_tag "styles/email.scss" %>
-</head>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <%= vite_stylesheet_tag "styles/email.scss" %>
+  </head>
 
-<body>
-<div class="container text-center">
-  <%= email_image_tag("/images/mampf-logo.png",
+  <body>
+    <div class="container text-center">
+      <%= email_image_tag("/images/mampf-logo.png",
                       size: "96x96",
                       alt: "MaMpf Logo",
-                      class: "img-fluid mb-2 pt-4 pb-3" ) %>
-  <div class="jumbotron">
-    <%= yield %>
-  </div>
-</div>
-</body>
+      class: "img-fluid mb-2 pt-4 pb-3" ) %>
+      <div class="jumbotron">
+        <%= yield %>
+      </div>
+    </div>
+  </body>
 
 </html>

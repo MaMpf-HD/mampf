@@ -4,59 +4,59 @@
 <%= bootstrap_form_with url: quiz_vertex_path(quiz_id: quiz.id,
                                               id: vertex_id),
                         scope: 'vertex',
-                        method: 'patch' do |f| %>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save_targets'),
-                   class: 'btn btn-sm btn-primary m-3' %>
-      <button type="button"
-              id="cancelVertexTargets"
-              class="btn btn-sm btn-secondary">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
+method: 'patch' do |f| %>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save_targets'),
+    class: 'btn btn-sm btn-primary m-3' %>
+    <button id="cancelVertexTargets"
+      type="button"
+      class="btn btn-sm btn-secondary">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
-  <%= f.form_group :branching,
-                   hide_label: true do %>
-    <div class="row">
-      <% q.answer_table.drop(1).each do |c| %>
-        <% preselect = quiz.preselected_branch(vertex_id, c,
-                                               q.answer_scheme != c) %>
-        <% prehide = quiz.preselected_hide_solution(vertex_id, c) %>
-        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-          <div class="card m-2 <%= bgcolor(q.answer_scheme == c) %>">
-            <div class="card-header">
-              <%= render partial: 'questions/answers',
+</div>
+<%= f.form_group :branching,
+hide_label: true do %>
+<div class="row">
+  <% q.answer_table.drop(1).each do |c| %>
+  <% preselect = quiz.preselected_branch(vertex_id, c,
+  q.answer_scheme != c) %>
+  <% prehide = quiz.preselected_hide_solution(vertex_id, c) %>
+  <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+    <div class="card m-2 <%= bgcolor(q.answer_scheme == c) %>">
+      <div class="card-header">
+        <%= render partial: 'questions/answers',
                          locals: { answers: q.answers,
-                                   crosses: c } %>
-            </div>
-            <div class="card-body">
-              <%= f.select ('branching-' + c.to_s).to_sym,
+        crosses: c } %>
+      </div>
+      <div class="card-body">
+        <%= f.select ('branching-' + c.to_s).to_sym,
                             options_for_select(vertices_labels(quiz,
                                                                vertex_id,
                                                                c == q.answer_scheme),
                                                preselect),
                             { label: t('admin.quiz.target') + ':' },
                             { id: 'branching_select-' + crosses_id(c),
-                              data: { quizid: quiz.id } } %>
-              <div id="<%= 'branching_quizzable-' + crosses_id(c) %>" >
-                <% unless preselect.in?([0,-1]) %>
-                  <%= render partial: 'vertices/quizzable',
-                             locals: { quizzable: quiz.quizzable(preselect) } %>
-                <% end %>
-              </div>
-              <% unless q.answer_scheme == c %>
-                <%= f.check_box ('hide-' + c.to_s).to_sym,
+        data: { quizid: quiz.id } } %>
+        <div id="<%= 'branching_quizzable-' + crosses_id(c) %>">
+          <% unless preselect.in?([0,-1]) %>
+          <%= render partial: 'vertices/quizzable',
+          locals: { quizzable: quiz.quizzable(preselect) } %>
+          <% end %>
+        </div>
+        <% unless q.answer_scheme == c %>
+        <%= f.check_box ('hide-' + c.to_s).to_sym,
                                 id: 'hide-' + crosses_id(c),
                                 checked: prehide,
-                                label: t('admin.quiz.hide_solution') %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      <% end %>
+        label: t('admin.quiz.hide_solution') %>
+        <% end %>
+      </div>
     </div>
+  </div>
   <% end %>
-  <%= f.hidden_field :vertex_id, value: vertex_id,
-                     id: 'vertex_' + vertex_id.to_s + '_vertex_id' %>
+</div>
+<% end %>
+<%= f.hidden_field :vertex_id, value: vertex_id,
+id: 'vertex_' + vertex_id.to_s + '_vertex_id' %>
 <% end %>

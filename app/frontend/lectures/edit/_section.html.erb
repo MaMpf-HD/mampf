@@ -1,34 +1,34 @@
-<li class="list-group-item <%= section_background_color(section) %>"
-    id="<%= dom_id(section) %>">
+<li id="<%= dom_id(section) %>"
+  class="list-group-item <%= section_background_color(section) %>">
   <div class="row">
     <div class="col-6">
       <strong>
         <span class="<%= section_color(section) %>">
           <%= link_to section.to_label,
                       edit_section_path(section),
-                      class: 'text-dark' %>
+          class: 'text-dark' %>
         </span>
       </strong>
     </div>
     <div class="col-6">
       <% section.lessons.sort_by(&:date).each do |l| %>
-        <% cache l do %>
-          <%= render partial: 'lectures/edit/lesson',
-                     locals: { lesson: l } %>
-        <% end %>
+      <% cache l do %>
+      <%= render partial: 'lectures/edit/lesson',
+      locals: { lesson: l } %>
+      <% end %>
       <% end %>
     </div>
     <% unless section.details.blank? %>
-      <div class="col-12 mt-2">
-          <%= section.details.html_safe %>
-      </div>
+    <div class="col-12 mt-2">
+      <%= section.details.html_safe %>
+    </div>
     <% end %>
     <div class="col-12 mt-2">
       <% section.tags.each do |t| %>
-        <% cache t do %>
-          <%= render partial: 'lectures/edit/tag',
-                     locals: { tag: t } %>
-        <% end %>
+      <% cache t do %>
+      <%= render partial: 'lectures/edit/tag',
+      locals: { tag: t } %>
+      <% end %>
       <% end %>
     </div>
   </div>

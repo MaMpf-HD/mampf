@@ -1,36 +1,36 @@
 <%= form_with model: course, html: { id: 'course-form' } do |f| %>
-  <div class="row p-2 mb-3">
-    <div class="col-3">
-      <h4 class="ps-2">
-        <span class="badge bg-secondary">
-          <%= t('basics.course') %>
-        </span>
-        <%= course.title %>
-      </h4>
+<div class="row p-2 mb-3">
+  <div class="col-3">
+    <h4 class="ps-2">
+      <span class="badge bg-secondary">
+        <%= t('basics.course') %>
+      </span>
+      <%= course.title %>
+    </h4>
+  </div>
+  <div class="col-6">
+    <div id="course-basics-warning">
+      <%= t('warnings.unsaved_changes') %>
+      <%= f.submit t('buttons.save'),
+      class: "btn btn-sm btn-primary" %>
+      <button id="course-basics-cancel"
+        type="button"
+        class="btn btn-sm btn-secondary ms-2"
+        data-id="<%= course.id %>">
+        <%= t('buttons.discard') %>
+      </button>
     </div>
-    <div class="col-6">
-      <div id="course-basics-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'),
-                     class: "btn btn-sm btn-primary" %>
-        <button type="button"
-                class="btn btn-sm btn-secondary ms-2"
-                id="course-basics-cancel"
-                data-id="<%= course.id %>">
-          <%= t('buttons.discard') %>
-        </button>
-      </div>
-    </div>
-    <div class="col-3 text-center">
-      <% if course.irrelevant? && current_user.admin %>
-        <%= link_to t('buttons.delete'),
+  </div>
+  <div class="col-3 text-center">
+    <% if course.irrelevant? && current_user.admin %>
+    <%= link_to t('buttons.delete'),
                     course_path,
                     method: :delete,
                     data: { confirm: t('confirmation.generic') },
-                    class: 'btn btn-sm btn-danger' %>
-      <% end %>
-    </div>
+    class: 'btn btn-sm btn-danger' %>
+    <% end %>
   </div>
-  <%= render partial: 'courses/data',
-             locals: { course: course, f: f } %>
+</div>
+<%= render partial: 'courses/data',
+locals: { course: course, f: f } %>
 <% end %>

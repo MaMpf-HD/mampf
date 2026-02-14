@@ -6,47 +6,47 @@
 
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),
-                       html: { role: 'form' }) do |f| %>
+html: { role: 'form' }) do |f| %>
 
-  <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true, required: true,
-                      class: "form-control", placeholder: "" %>
-    <%= f.label :email, t('.email') %>
-  </div>
+<div class="form-floating mb-3">
+  <%= f.email_field :email, autofocus: true, required: true,
+  class: "form-control", placeholder: "" %>
+  <%= f.label :email, t('.email') %>
+</div>
 
-  <div class="form-floating mb-3">
-    <%= f.password_field :password, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password, t('.password') %>
-  </div>
+<div class="form-floating mb-3">
+  <%= f.password_field :password, required: true,
+  class: "form-control", placeholder: "" %>
+  <%= f.label :password, t('.password') %>
+</div>
 
-  <div class="form-floating mb-3">
-    <%= f.password_field :password_confirmation, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password_confirmation, t('.password_confirm') %>
-  </div>
+<div class="form-floating mb-3">
+  <%= f.password_field :password_confirmation, required: true,
+  class: "form-control", placeholder: "" %>
+  <%= f.label :password_confirmation, t('.password_confirm') %>
+</div>
 
-  <div class="form-check mb-3">
-    <%= f.check_box :consents, required: true,
-                    class: "form-check-input" %>
-    <%= f.label :consents,
+<div class="form-check mb-3">
+  <%= f.check_box :consents, required: true,
+  class: "form-check-input" %>
+  <%= f.label :consents,
                 t('.consent_html', policy: link_to(t('.policy'),
                                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
                                   target: :_blank)),
-                class: "form-check-label" %>
-  </div>
+  class: "form-check-label" %>
+</div>
 
-  <%= f.hidden_field :locale, value: I18n.locale %>
-  <altcha-widget
-    hidefooter
-    class="d-flex mb-3"
-    style="--altcha-border-radius:5px;"
-    challengeurl="<%= altcha_url() %>">
-  </altcha-widget>
+<%= f.hidden_field :locale, value: I18n.locale %>
+<altcha-widget
+  class="d-flex mb-3"
+  style="--altcha-border-radius:5px;"
+  challengeurl="<%= altcha_url() %>"
+  hidefooter>
+</altcha-widget>
 
-  <div class="mb-3">
-    <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user' %>
-  </div>
+<div class="mb-3">
+  <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user' %>
+</div>
 
 <% end %>
 

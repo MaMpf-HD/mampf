@@ -1,22 +1,22 @@
 <div id="image-uploadArea" class="form-group">
   <div class="row mb-2">
-    <div class="col-12"
-         id="image-informer">
+    <div id="image-informer"
+      class="col-12">
     </div>
   </div>
   <div class="row">
-    <div class="col-12" id="image-progressBar">
+    <div id="image-progressBar" class="col-12">
     </div>
   </div>
-  <div class="row" id="image-wait">
+  <div id="image-wait" class="row">
     <div class="col-12">
       <%= t('basics.please_wait') %>
     </div>
   </div>
   <div class="row p-2">
     <div id="image-meta"
-         class="col-12 meta rounded"
-         style="display:<%= show(course.image.present?) %>">
+      class="col-12 meta rounded"
+      style="display:<%= show(course.image.present?) %>">
       <div class="row">
         <div class="col-11">
           <%= t('basics.file') %>:
@@ -25,7 +25,7 @@
           </span>
         </div>
         <div class="col-1 text-end">
-          <button type="button" class="btn-close" aria-label="Close" id="detach-image"></button>
+          <button id="detach-image" type="button" class="btn-close" aria-label="Close"></button>
         </div>
       </div>
       <div class="row">

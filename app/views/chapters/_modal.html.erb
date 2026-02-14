@@ -1,23 +1,26 @@
-<div class="modal fade"
-     id="chapterModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="chapterModalLabel" aria-hidden="true"
-     data-backdrop="static">
+<div
+  id="chapterModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="chapterModalLabel"
+  data-backdrop="static"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-lg"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="chapterModalLabel">
+        <h5 id="chapterModalLabel" class="modal-title">
           <%= t("buttons.create_#{lecture.chapter_name}") %>
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
-      <div class="modal-body" id="chapter-modal-content">
+      <div id="chapter-modal-content" class="modal-body">
       </div>
     </div>
   </div>

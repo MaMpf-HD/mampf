@@ -9,23 +9,23 @@
                 new_term_path,
                 class: 'btn btn-sm btn-secondary',
                 id: 'create-new-term',
-                remote: true %>
+    remote: true %>
   </div>
 </div>
 <div class="row p-2">
   <div class="col-12">
     <%= form_with url: set_active_term_path,
                   method: 'post',
-                  html: { class: 'form-inline' } do |f|%>
-      <%= f.label :active_term,
-                  t('admin.term.active_term') %>
-      <%= f.select :active_term,
+    html: { class: 'form-inline' } do |f|%>
+    <%= f.label :active_term,
+    t('admin.term.active_term') %>
+    <%= f.select :active_term,
                    options_for_select(Term.select_terms, Term.active&.id),
                    {},
-                   { class: 'form-select form-select-sm ms-3' }  %>
-      <%= f.submit t('buttons.save'),
+    { class: 'form-select form-select-sm ms-3' }  %>
+    <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary ms-3',
-                   data: { confirm: t('confirmation.generic') } %>
+    data: { confirm: t('confirmation.generic') } %>
     <% end %>
   </div>
 </div>
@@ -59,13 +59,13 @@
   </div>
 </div>
 <div id="row-new-term"
-     class="border-bottom"
-     style="display: none;">
+  class="border-bottom"
+  style="display: none;">
 </div>
 <% @terms.each do |t| %>
-  <div class="row border-bottom mx-2 px-4"
-       id="row-term-<%= t.id %>">
-    <%= render partial: 'terms/row',
-               locals: { term: t }%>
-  </div>
+<div id="row-term-<%= t.id %>"
+  class="row border-bottom mx-2 px-4">
+  <%= render partial: 'terms/row',
+  locals: { term: t }%>
+</div>
 <% end %>

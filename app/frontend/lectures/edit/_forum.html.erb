@@ -6,32 +6,32 @@
 <div id="forum-buttons">
   <% if lecture.forum? && lecture.forum %>
 
-    <% if lecture.forum&.locked %>
-      <%= link_to unlock_forum_path(lecture),
-        class: "btn btn-sm btn-outline-primary", role: :button do %>
-        <i class="fas fa-unlock"></i>
-        <%= t('buttons.unlock_board') %>
-      <% end %>
-    <% else %>
-      <%= link_to lock_forum_path(lecture),
-        class: "btn btn-sm btn-outline-primary", role: :button do %>
-        <i class="fas fa-lock"></i>
-        <%= t('buttons.lock_board') %>
-      <% end %>
-    <% end %>
+  <% if lecture.forum&.locked %>
+  <%= link_to unlock_forum_path(lecture),
+  class: "btn btn-sm btn-outline-primary", role: :button do %>
+  <i class="fas fa-unlock"></i>
+  <%= t('buttons.unlock_board') %>
+  <% end %>
+  <% else %>
+  <%= link_to lock_forum_path(lecture),
+  class: "btn btn-sm btn-outline-primary", role: :button do %>
+  <i class="fas fa-lock"></i>
+  <%= t('buttons.lock_board') %>
+  <% end %>
+  <% end %>
 
-    <%= link_to destroy_forum_path(lecture),
+  <%= link_to destroy_forum_path(lecture),
       id: "delete-forum", class: "btn btn-sm btn-outline-danger", role: :button,
-      "data-sure-to-delete": t('buttons.delete_board_sure_to_delete') do %>
-      <i class="fas fa-trash"></i>
-      <%= t('buttons.delete_board') %>
-    <% end %>
+  "data-sure-to-delete": t('buttons.delete_board_sure_to_delete') do %>
+  <i class="fas fa-trash"></i>
+  <%= t('buttons.delete_board') %>
+  <% end %>
 
   <% else %>
-    <%= link_to add_forum_path(lecture),
-      class: "btn btn-sm btn-outline-primary", role: :button do %>
-      <i class="fas fa-plus"></i>
-      <%= t('buttons.add_board') %>
-    <% end %>
+  <%= link_to add_forum_path(lecture),
+  class: "btn btn-sm btn-outline-primary", role: :button do %>
+  <i class="fas fa-plus"></i>
+  <%= t('buttons.add_board') %>
+  <% end %>
   <% end %>
 </div>

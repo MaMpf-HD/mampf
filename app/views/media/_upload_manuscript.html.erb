@@ -1,21 +1,21 @@
 <div id="manuscript-uploadArea"
-     class="form-group">
+  class="form-group">
   <div class="row mb-2">
-    <div class="col-12"
-         id="manuscript-informer">
+    <div id="manuscript-informer"
+      class="col-12">
     </div>
   </div>
   <div class="row">
-    <div class="col-12"
-         id="manuscript-progressBar">
+    <div id="manuscript-progressBar"
+      class="col-12">
     </div>
   </div>
   <div class="row">
   </div>
   <div class="row p-2">
     <div id="manuscript-meta"
-         class="col-12 meta rounded"
-         style="display:<%= show(medium.manuscript.present?) %>">
+      class="col-12 meta rounded"
+      style="display:<%= show(medium.manuscript.present?) %>">
       <div class="row">
         <div class="col-11">
           <%= t('basics.file') %>:
@@ -24,7 +24,7 @@
           </span>
         </div>
         <div class="col-1 text-end p-2">
-          <button type="button" class="btn-close" aria-label="Close" id="detach-manuscript"></button>
+          <button id="detach-manuscript" type="button" class="btn-close" aria-label="Close"></button>
         </div>
       </div>
       <div class="row">
@@ -44,15 +44,15 @@
         </div>
       </div>
       <% if medium.manuscript_destinations.present? %>
-        <div id="manuscript-destinations"
-             class="row">
-          <div class="col-12">
-            <%= t('manuscript.destinations') %>:
-            <span>
-              <%= medium.manuscript_destinations.count %>
-            </span>
-          </div>
+      <div id="manuscript-destinations"
+        class="row">
+        <div class="col-12">
+          <%= t('manuscript.destinations') %>:
+          <span>
+            <%= medium.manuscript_destinations.count %>
+          </span>
         </div>
+      </div>
       <% end %>
     </div>
   </div>

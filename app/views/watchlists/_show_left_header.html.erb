@@ -2,100 +2,107 @@
 <li class="nav-item ps-2 ms-3">
   <div class="input-group">
     <% if @watchlists.size > 1 %>
-      <span class="dropdown">
-        <button class="btn btn-primary dropdown-toggle"
-            data-bs-toggle="dropdown"
-            type="button"
-            id="watchlistButton"
-            data-id=<%= @watchlist.id %>
-            data-owned=<%= @watchlist.owned_by?(current_user) %>>
+    <span class="dropdown">
+      <button
+        id="watchlistButton"
+        type="button"
+        class="btn btn-primary dropdown-toggle"
+        data-bs-toggle="dropdown"
+        data-id=<%= @watchlist.id %>
+        data-owned=<%= @watchlist.owned_by?(current_user) %>
+      >
         <%= @watchlist.name %>
-        </button>
-        <div class="dropdown-menu">
+      </button>
+      <div class="dropdown-menu">
         <% (@watchlists - [@watchlist]).each do |w| %>
-          <%= link_to w.name,
+        <%= link_to w.name,
                 watchlist_path(w),
-                class: 'dropdown-item' %>
+        class: 'dropdown-item' %>
         <% end %>
-        </div>
-      </span>
+      </div>
+    </span>
     <% elsif @watchlists.size == 1%>
-      <button class="btn btn-secondary"
-          disabled
-          id="watchlistButton"
-          data-id=<%= @watchlist.id %>
-          data-owned=<%= @watchlist.owned_by?(current_user) %>>
-        <%= @watchlist.name %>
-      </button>
+    <button id="watchlistButton"
+      class="btn btn-secondary"
+      data-id=<%= @watchlist.id %>
+      data-owned=<%= @watchlist.owned_by?(current_user) %>
+      disabled>
+      <%= @watchlist.name %>
+    </button>
     <% else %>
-      <button class="btn btn-secondary" id="watchlistButton" disabled>
-        <%= t('watchlist.none') %>
-      </button>
+    <button id="watchlistButton" class="btn btn-secondary" disabled>
+      <%= t('watchlist.none') %>
+    </button>
     <% end %>
     <div class="input-group-append">
       <%= link_to raw("<i class=\"fa fa-plus\"></i>"),
                   new_watchlist_path,
                   class: "btn btn-outline-secondary",
                   id: "openNewWatchlistForm",
-                  remote: true %>
+      remote: true %>
     </div>
   </div>
 </li>
 <%# Description%>
 <% if @watchlist.present? && @watchlist.description.present? %>
-  <li class="nav-item ps-2">
-    <a class="nav-link btn btn-sm bg-grey-lighten-4"
-       id="descriptionButton"
-       data-bs-toggle="collapse"
-       data-bs-target="#collapseDescription"
-       role="button"
-       aria-expanded="false"
-       aria-controls="collapseDescription">
-      <%= t('watchlist.description') %>
-    </a>
-  </li>
+<li class="nav-item ps-2">
+  <a
+    id="descriptionButton"
+    class="nav-link btn btn-sm bg-grey-lighten-4"
+    aria-controls="collapseDescription"
+    aria-expanded="false"
+    data-bs-target="#collapseDescription"
+    data-bs-toggle="collapse"
+    role="button"
+  >
+    <%= t('watchlist.description') %>
+  </a>
+</li>
 <% end %>
 <% if @watchlist_entries %>
-  <%# Reverse order button%>
-  <li class="nav-item ps-2 pr-1">
-    <%= link_to t('reverse_order'),
+<%# Reverse order button%>
+<li class="nav-item ps-2 pr-1">
+  <%= link_to t('reverse_order'),
           watchlist_path(@watchlist, params: { reverse: !params[:reverse],
                         all: params[:all],
                         per: params[:per] }),
           class: 'nav-link btn btn-sm text-primary bg-light text-dark',
           id: 'reverseButton',
-          data: { reverse: params[:reverse] } %>
-  </li>
-  <%= helpdesk(t('watchlist.order_help'), false) %>
-  <%# All button%>
-  <% unless @pagy.pages == 1 || params[:all] %>
-    <li class="nav-item ps-2 pr-1">
-      <%= link_to t('all'),
+  data: { reverse: params[:reverse] } %>
+</li>
+<%= helpdesk(t('watchlist.order_help'), false) %>
+<%# All button%>
+<% unless @pagy.pages == 1 || params[:all] %>
+<li class="nav-item ps-2 pr-1">
+  <%= link_to t('all'),
             watchlist_path(@watchlist, params: { reverse: params[:reverse],
                           all: true }),
             id: 'allButton',
-            class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
-    </li>
-  <% end %>
-  <%# Per page button %>
-  <li class="nav-item ps-1 pr-1">
-    <div class="dropdown ps-2">
-      <button class="btn btn-sm dropdown-toggle text-primary"
-          type="button"
-          id="perPageButton"
-          data-bs-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-        <%= t('per_page') %>
-      </button>
-      <div class="dropdown-menu">
-        <% [3,4,8,12,24,48].each do |hits| %>
-        <%= link_to hits.to_s,
+  class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
+</li>
+<% end %>
+<%# Per page button %>
+<li class="nav-item ps-1 pr-1">
+  <div class="dropdown ps-2">
+    <button
+      id="perPageButton"
+      type="button"
+      class="btn btn-sm dropdown-toggle text-primary"
+      aria-expanded="false"
+      aria-haspopup="true"
+      data-bs-toggle="dropdown"
+    >
+      <%= t('per_page') %>
+    </button>
+    <div class="dropdown-menu">
+      <% [3,4,8,12,24,48].each do |hits| %>
+      <%= link_to hits.to_s,
               watchlist_path(@watchlist, params: { page: 1,
                             reverse: params[:reverse],
                             per: hits }),
-              class: ['dropdown-item', params[:per] == hits.to_s ? 'active' : ''] %>
-        <% end %>
-      </div>
+      class: ['dropdown-item', params[:per] == hits.to_s ? 'active' : ''] %>
+      <% end %>
     </div>
-  </li>
+  </div>
+</li>
 <% end %>

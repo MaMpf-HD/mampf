@@ -1,38 +1,38 @@
 <div id="user-area">
   <%= form_with model: user, html: { id: 'user-form' } do |f| %>
-    <div class="row p-2 mb-3">
-      <div class="col-3">
-        <h4 class="ps-2">
-          <span class="badge bg-secondary">
-            <%= t('basics.user') %>
-          </span>
-          <%= user.short_info %>
-        </h4>
-      </div>
-      <div class="col-6">
-        <div id="user-basics-warning">
-          <%= t('warnings.unsaved_changes') %>
-          <%= f.submit t('buttons.save'),
-                       class: "btn btn-sm btn-primary" %>
-          <button type="button"
-                  class="btn btn-sm btn-secondary ms-2"
-                  id="user-basics-cancel"
-                  data-id="<%= user.id %>">
-            <%= t('buttons.discard') %>
-          </button>
-        </div>
-      </div>
-      <div class="col-3 text-center">
-        <% unless profile %>
-          <%= link_to t('admin.user.index'),
-                      users_path,
-                      class: 'btn btn-sm btn-outline-primary' %>
-        <% end %>
+  <div class="row p-2 mb-3">
+    <div class="col-3">
+      <h4 class="ps-2">
+        <span class="badge bg-secondary">
+          <%= t('basics.user') %>
+        </span>
+        <%= user.short_info %>
+      </h4>
+    </div>
+    <div class="col-6">
+      <div id="user-basics-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= f.submit t('buttons.save'),
+        class: "btn btn-sm btn-primary" %>
+        <button id="user-basics-cancel"
+          type="button"
+          class="btn btn-sm btn-secondary ms-2"
+          data-id="<%= user.id %>">
+          <%= t('buttons.discard') %>
+        </button>
       </div>
     </div>
-    <%= render partial: 'users/data',
+    <div class="col-3 text-center">
+      <% unless profile %>
+      <%= link_to t('admin.user.index'),
+                      users_path,
+      class: 'btn btn-sm btn-outline-primary' %>
+      <% end %>
+    </div>
+  </div>
+  <%= render partial: 'users/data',
                locals: { user: user,
                          f: f,
-                         profile: profile } %>
+  profile: profile } %>
   <% end %>
 </div>

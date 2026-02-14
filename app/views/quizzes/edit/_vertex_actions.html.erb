@@ -1,56 +1,60 @@
-<button type="button"
-        id="cancelVertexEdit"
-        class="btn btn-sm btn-secondary">
+<button id="cancelVertexEdit"
+  type="button"
+  class="btn btn-sm btn-secondary">
   <%= t('buttons.back') %>
 </button>
 <% if quizzable %>
-  <% if current_user.in?(quizzable.editors_with_inheritance) ||
-          current_user.admin %>
-    <button class="btn btn-sm btn-secondary"
-            id="edit-vertex-content-<%= vertex_id %>"
-            data-type="<%= quizzable.type %>"
-            data-id="<%= quizzable.id %>"
-            data-vertex="<%= vertex_id %>">
-      <%= t('buttons.edit') %>
-    </button>
-  <% elsif current_user.editor? || current_user.teacher? %>
-    <button id="button-reassign"
-            type="button"
-            class="btn btn-sm btn-secondary"
-            data-bs-toggle="modal"
-            data-bs-target="#reassignModal"
-            data-id="<%= @quizzable.id %>"
-            data-type="<%= @quizzable.type %>"
-            data-rights="none"
-            data-confirm="<%= t('confirmation.create_quizzable_copy') %>">
-      <%= t('buttons.create_copy') %>
-    </button>
-  <% end %>
-  <% if current_user.in?(quizzable.editors_with_inheritance) ||
-          current_user.admin || current_user.editor? || current_user.teacher? %>
-    <%= link_to t('basics.medium'),
+<% if current_user.in?(quizzable.editors_with_inheritance) ||
+current_user.admin %>
+<button id="edit-vertex-content-<%= vertex_id %>"
+  class="btn btn-sm btn-secondary"
+  data-id="<%= quizzable.id %>"
+  data-type="<%= quizzable.type %>"
+  data-vertex="<%= vertex_id %>">
+  <%= t('buttons.edit') %>
+</button>
+<% elsif current_user.editor? || current_user.teacher? %>
+<button
+  id="button-reassign"
+  type="button"
+  class="btn btn-sm btn-secondary"
+  data-bs-target="#reassignModal"
+  data-bs-toggle="modal"
+  data-confirm="<%= t('confirmation.create_quizzable_copy') %>"
+  data-id="<%= @quizzable.id %>"
+  data-rights="none"
+  data-type="<%= @quizzable.type %>"
+>
+  <%= t('buttons.create_copy') %>
+</button>
+<% end %>
+<% if current_user.in?(quizzable.editors_with_inheritance) ||
+current_user.admin || current_user.editor? || current_user.teacher? %>
+<%= link_to t('basics.medium'),
                 edit_or_inspect_medium_path(quizzable),
-                class: 'btn btn-sm btn-secondary' %>
-  <% end %>
-  <button type="button"
-          id="selectDefaultTarget"
-          class="btn btn-sm btn-secondary">
-    <%= t('buttons.default_target') %>
-  </button>
-  <% if quizzable.sort == 'Question' %>
-    <button id="targetsFromVertex"
-            class="btn btn-sm btn-secondary"
-            data-quiz="<%= quiz.id %>"
-            data-vertex="<%= vertex_id %>"
-            <%= quizzable.answers.count > 4 ? 'disabled ' : '' %>
-            data-bs-toggle="tooltip"
-            title="<%= quizzable.answers.count <= 4 ? t('admin.quiz.info.ramification') : t('admin.quiz.info.too_many_answers') %>">
-      <%= t('buttons.ramification') %>
-    </button>
-  <% end %>
+class: 'btn btn-sm btn-secondary' %>
+<% end %>
+<button id="selectDefaultTarget"
+  type="button"
+  class="btn btn-sm btn-secondary">
+  <%= t('buttons.default_target') %>
+</button>
+<% if quizzable.sort == 'Question' %>
+<button
+  id="targetsFromVertex"
+  class="btn btn-sm btn-secondary"
+  data-quiz="<%= quiz.id %>"
+  data-vertex="<%= vertex_id %>"
+  <%= quizzable.answers.count > 4 ? 'disabled ' : '' %>
+  data-bs-toggle="tooltip"
+  title="<%= quizzable.answers.count <= 4 ? t('admin.quiz.info.ramification') : t('admin.quiz.info.too_many_answers') %>"
+>
+  <%= t('buttons.ramification') %>
+</button>
+<% end %>
 <% end %>
 <%= link_to t('buttons.delete_vertex'),
             quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
             method: :delete,
             data: { confirm: t('confirmation.vertex') },
-            class: 'btn btn-sm btn-danger' %>
+class: 'btn btn-sm btn-danger' %>

@@ -8,33 +8,33 @@
         <%= t('admin.main.title') %>
       </div>
       <% if teacher %>
-        <div class="col-3">
-          <%= t('admin.main.teacher') %>
-        </div>
+      <div class="col-3">
+        <%= t('admin.main.teacher') %>
+      </div>
       <% end %>
     </div>
   </div>
   <% lectures.each do |l| %>
-    <a href="<%= edit_lecture_path(l) %>"
-       class="list-group-item list-group-item-action">
-      <div class="row">
-        <div class="col-2">
-          <%= l.term_to_label_short %>
-        </div>
-        <div class="col-1">
-          <%= l.sort_localized_short %>
-        </div>
-        <div class="col-6">
-          <span class="<%= l.published? ? '' : 'unpublished' %>">
-          <%= l.course.title %>
-          </span>
-        </div>
-        <% if teacher %>
-          <div class="col-3">
-            <%= l.teacher&.name %>
-          </div>
-        <% end %>
+  <a class="list-group-item list-group-item-action"
+    href="<%= edit_lecture_path(l) %>">
+    <div class="row">
+      <div class="col-2">
+        <%= l.term_to_label_short %>
       </div>
-    </a>
+      <div class="col-1">
+        <%= l.sort_localized_short %>
+      </div>
+      <div class="col-6">
+        <span class="<%= l.published? ? '' : 'unpublished' %>">
+          <%= l.course.title %>
+        </span>
+      </div>
+      <% if teacher %>
+      <div class="col-3">
+        <%= l.teacher&.name %>
+      </div>
+      <% end %>
+    </div>
+  </a>
   <% end %>
 </div>

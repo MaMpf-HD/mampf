@@ -1,15 +1,22 @@
-<div class="modal fade" id="reassignModal" role="dialog"
-     aria-labelledby="reassignModalLabel" aria-hidden="true"
-     data-keyboard="false" data-backdrop="static" data-modal-index="2">
+<div
+  id="reassignModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="reassignModalLabel"
+  data-backdrop="static"
+  data-keyboard="false"
+  data-modal-index="2"
+  role="dialog"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="reassignModalLabel">
+        <h5 id="reassignModalLabel" class="modal-title">
           <%= t('buttons.create_copy') %>
         </h5>
         <button type="button" class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
       <div class="modal-body">
@@ -20,8 +27,8 @@
       </div>
       <div class="modal-footer">
         <button type="button"
-                class="btn btn-sm btn-secondary"
-                data-bs-dismiss="modal">
+          class="btn btn-sm btn-secondary"
+          data-bs-dismiss="modal">
           <%= t('buttons.cancel') %>
         </button>
       </div>

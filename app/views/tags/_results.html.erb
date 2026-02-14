@@ -1,50 +1,50 @@
 <% if pagy.count.positive? %>
 <div class="row mx-2 py-3">
-    <div class="col-2">
-      <strong>
+  <div class="col-2">
+    <strong>
       <%= t('basics.hits') %>:
     </strong>
-      <%= pagy.count %>
-    </div>
-    <div class="col-10">
-      <%== pagy_series_nav(pagy, anchor_string: 'data-remote="true"') %>
-    </div>
+    <%= pagy.count %>
   </div>
-  <div class="row bg-mdb-color-lighten-5 mx-2 px-4 py-3">
-    <div class="col-3">
-      <strong>
-        <%= t('basics.title') %>
-      </strong>
-    </div>
-    <div class="col-2">
-      <strong>
-        <%= t('basics.courses') %>
-      </strong>
-    </div>
-    <div class="col-6">
-      <strong>
-        <%= t('admin.tag.related_tags') %>
-      </strong>
-    </div>
-    <div class="col-1">
-      <strong>
-       <%= t('basics.actions') %>
-      </strong>
-    </div>
+  <div class="col-10">
+    <%== pagy_series_nav(pagy, anchor_string: 'data-remote="true"') %>
   </div>
-  <div id="tagTable">
-    <% tags.each do |t| %>
-      <% cache t do %>
-        <div class="row border-bottom mx-2 px-4">
-          <%= render partial: 'tags/row', locals: { tag: t } %>
-        </div>
-      <% end %>
-    <% end %>
+</div>
+<div class="row bg-mdb-color-lighten-5 mx-2 px-4 py-3">
+  <div class="col-3">
+    <strong>
+      <%= t('basics.title') %>
+    </strong>
   </div>
+  <div class="col-2">
+    <strong>
+      <%= t('basics.courses') %>
+    </strong>
+  </div>
+  <div class="col-6">
+    <strong>
+      <%= t('admin.tag.related_tags') %>
+    </strong>
+  </div>
+  <div class="col-1">
+    <strong>
+      <%= t('basics.actions') %>
+    </strong>
+  </div>
+</div>
+<div id="tagTable">
+  <% tags.each do |t| %>
+  <% cache t do %>
+  <div class="row border-bottom mx-2 px-4">
+    <%= render partial: 'tags/row', locals: { tag: t } %>
+  </div>
+  <% end %>
+  <% end %>
+</div>
 <% else %>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= t('basics.no_hits') %>
-    </div>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= t('basics.no_hits') %>
   </div>
+</div>
 <% end %>

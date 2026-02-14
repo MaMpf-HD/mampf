@@ -1,22 +1,22 @@
 <% if @watchlist.present? && @watchlist.owned_by?(current_user) %>
-  <li class="nav-item pr-1">
-    <div class="form-check">
-    <input class="form-check-input" type="checkbox" id="watchlistVisiblityCheck" <%= "checked" if @watchlist.public == true %>>
+<li class="nav-item pr-1">
+  <div class="form-check">
+    <input id="watchlistVisiblityCheck" type="checkbox" class="form-check-input" <%= "checked" if @watchlist.public == true %>>
     <label class="form-check-label" for="flexCheckDefault">
       <%= t('watchlist.public') %>
     </label>
-    </div>
-  </li>
-  <li class="nav-item">
-    <%= helpdesk(t('watchlist.public_help'), false) %>
-  </li>
+  </div>
+</li>
+<li class="nav-item">
+  <%= helpdesk(t('watchlist.public_help'), false) %>
+</li>
 
-  <li class="nav-item ps-2">
-    <%= link_to t('watchlist.change'),
+<li class="nav-item ps-2">
+  <%= link_to t('watchlist.change'),
           edit_watchlist_path(@watchlist),
           class: 'btn btn-secondary',
           id: 'changeWatchlistBtn',
-          remote: true %>
+  remote: true %>
 
   <li class="nav-item ps-2">
     <%= link_to t('watchlist.delete'),
@@ -28,6 +28,7 @@
               placement: 'bottom',
               confirm: t('watchlist.delete_confirm') },
           title: t('watchlist.delete'),
-          method: :delete %>
+    method: :delete %>
   </li>
-<% end %>
+  <% end %>
+</li>

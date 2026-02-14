@@ -7,21 +7,21 @@
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <div class="mb-3">
       <%= f.label :content, "#{t('admin.medium.content')} (#{t('basics.optional')})",
-                  class: "form-label" %>
+      class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.content'), false) %>
       <%= f.trix_editor :content,
                         class: 'bg-light',
                         id: 'medium-content-trix',
-                        data: { content: medium.content } %>
+      data: { content: medium.content } %>
     </div>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>
       </div>
     </div>
-    <div class="alert alert-dark bg-mdb-color-lighten-6"
-         id="medium-content-preview">
-        <%= sanitize medium.content %>
+    <div id="medium-content-preview"
+      class="alert alert-dark bg-mdb-color-lighten-6">
+      <%= sanitize medium.content %>
     </div>
     <div class="row mb-2">
       <div class="col-12">
@@ -32,15 +32,15 @@
     <div class="row">
       <div class="col-12">
         <% if medium.sort == 'Script' %>
-          <%= render partial: 'items/items_list',
+        <%= render partial: 'items/items_list',
                      locals: { items: medium.toc_items,
                                section_links: false,
-                               content: [] } %>
+        content: [] } %>
         <% else %>
-          <%= render partial: 'items/items_list',
+        <%= render partial: 'items/items_list',
                      locals: { items: medium.proper_items_by_time,
                                section_links: false,
-                               content: [] } %>
+        content: [] } %>
         <% end %>
       </div>
     </div>

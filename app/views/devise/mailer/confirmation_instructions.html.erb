@@ -2,13 +2,13 @@
   <%= t('.greeting',
         recipient: @resource.email,
         locale: @resource.locale,
-        default: "Welcome #{@resource.email}!")  %>
+  default: "Welcome #{@resource.email}!")  %>
 </p>
 
 <p>
   <%= t('.instruction',
         locale: @resource.locale,
-        default: 'You can confirm your account email through the link below:') %>
+  default: 'You can confirm your account email through the link below:') %>
 </p>
 
 <p>
@@ -16,5 +16,5 @@
                 locale: @resource.locale,
                 default: 'Confirm my account'),
                 confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale),
-                :class => "btn btn-primary" %>
+  :class => "btn btn-primary" %>
 </p>

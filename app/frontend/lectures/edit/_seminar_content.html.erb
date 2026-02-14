@@ -5,9 +5,9 @@
         <h5>
           <%= t("admin.lecture.#{lecture.sort}_content") %>
           <i id="show-media-button"
-             class="far fa-list-alt clickable"
-             data-bs-toggle="tooltip"
-             title="<%= t('admin.lecture.show_media') %>">
+            class="far fa-list-alt clickable"
+            data-bs-toggle="tooltip"
+            title="<%= t('admin.lecture.show_media') %>">
           </i>
         </h5>
       </div>
@@ -17,22 +17,22 @@
                     remote: true,
                     class: 'btn btn-sm btn-secondary new-in-lecture',
                     data: { cy: 'new-talk-btn' },
-                    id: 'new_talk_button' %>
+        id: 'new_talk_button' %>
       </div>
     </div>
   </div>
   <div class="card-body">
     <% if lecture.talks.any? %>
-      <div class="row masonry-grid">
-        <% lecture.talks.each do |t| %>
-            <%= render partial: 'lectures/edit/talk',
-                       locals: { talk: t } %>
-        <% end %>
-      </div>
+    <div class="row masonry-grid">
+      <% lecture.talks.each do |t| %>
+      <%= render partial: 'lectures/edit/talk',
+      locals: { talk: t } %>
+      <% end %>
+    </div>
     <% else %>
-      <span data-cy="no-talks-yet">
-        <%= t('admin.lecture.no_talks') %>
-      </span>
+    <span data-cy="no-talks-yet">
+      <%= t('admin.lecture.no_talks') %>
+    </span>
     <% end %>
   </div>
 </div>

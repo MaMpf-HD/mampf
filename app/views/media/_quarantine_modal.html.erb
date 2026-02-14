@@ -1,27 +1,30 @@
-<div class="modal fade"
-     id="quarantineModal"
-     tabindex="-1"
-     role="dialog"
-     style="max-height: 85vh;"
-     aria-labelledby="quarantineModalLabel" aria-hidden="true">
+<div
+  id="quarantineModal"
+  class="modal fade"
+  style="max-height: 85vh;"
+  aria-hidden="true"
+  aria-labelledby="quarantineModalLabel"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-xl"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="quarantineModalLabel">
+        <h5 id="quarantineModalLabel"
+          class="modal-title">
           <%= t('manuscript.quarantine') %>
         </h5>
         <button type="button"
-                class="btn-close"
-                aria-label="Close"
-                data-bs-dismiss="modal">
+          class="btn-close"
+          aria-label="Close"
+          data-bs-dismiss="modal">
         </button>
       </div>
-      <div class="modal-body"
-           id="quarantine-modal-content">
+      <div id="quarantine-modal-content"
+        class="modal-body">
         <%= render partial: 'media/destinations_in_quarantine',
-                   locals: { quarantine: quarantine } %>
+        locals: { quarantine: quarantine } %>
       </div>
     </div>
   </div>

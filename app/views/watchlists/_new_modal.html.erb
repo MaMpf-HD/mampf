@@ -1,29 +1,32 @@
-<div class="modal fade"
-     id="watchlistModal"
-     tabindex="-1"
-     role="dialog"
-     aria-labelledby="watchlistModalLabel" aria-hidden="true"
-     data-keyboard="true">
+<div
+  id="watchlistModal"
+  class="modal fade"
+  aria-hidden="true"
+  aria-labelledby="watchlistModalLabel"
+  data-keyboard="true"
+  role="dialog"
+  tabindex="-1"
+>
   <div class="modal-dialog modal-sm"
-       role="document">
+    role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="watchlistModalTitle">
+        <h5 id="watchlistModalTitle"
+          class="modal-title">
           <%= t('watchlist.create') %>
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body"
-           id="watchlistModalBody">
+      <div id="watchlistModalBody"
+        class="modal-body">
         <%= render partial: 'watchlists/new_form' %>
       </div>
       <div class="modal-footer">
         <div class="container text-center">
-          <button class="btn btn-primary"
-                  id="newWatchlistButton"
-                  type="submit"
-                  form="newWatchlistForm"><%= t('watchlist.create') %></button>
+          <button id="newWatchlistButton"
+            type="submit"
+            class="btn btn-primary"
+            form="newWatchlistForm"><%= t('watchlist.create') %></button>
           <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
         </div>
       </div>

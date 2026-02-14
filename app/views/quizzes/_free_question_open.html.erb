@@ -3,45 +3,45 @@
               scope: 'question',
               html: { id: 'solution-form',
                       data:
-                        { parameters: parameters.to_json }} do |f| %>
-  <%= f.hidden_field :solution_type, value: solution.type %>
-  <%= f.hidden_field :nerd, value: question.solution.nerd %>
-  <% if question.solution.type == 'MampfMatrix' %>
-    <%= f.hidden_field :row_count,
-                       value: question.solution.content.row_count %>
-    <%= f.hidden_field :column_count,
-                       value: question.solution.content.column_count %>
-  <% end %>
-  <%= f.hidden_field :result, value: false %>
-  <div class="form-group">
-    <%= render partial: 'questions/domains/general_form',
+{ parameters: parameters.to_json }} do |f| %>
+<%= f.hidden_field :solution_type, value: solution.type %>
+<%= f.hidden_field :nerd, value: question.solution.nerd %>
+<% if question.solution.type == 'MampfMatrix' %>
+<%= f.hidden_field :row_count,
+value: question.solution.content.row_count %>
+<%= f.hidden_field :column_count,
+value: question.solution.content.column_count %>
+<% end %>
+<%= f.hidden_field :result, value: false %>
+<div class="form-group">
+  <%= render partial: 'questions/domains/general_form',
                locals: { f: f,
                          type: solution.type,
-                         content: solution.content } %>
-  </div>
-  <div id="solution-box" style="display: none;">
-    <%= render partial: 'questions/tex_solution',
-               locals: { solution: solution } %>
-  </div>
-  <div class="text-center">
-    <%= f.submit t('buttons.submit'),
+  content: solution.content } %>
+</div>
+<div id="solution-box" style="display: none;">
+  <%= render partial: 'questions/tex_solution',
+  locals: { solution: solution } %>
+</div>
+<div class="text-center">
+  <%= f.submit t('buttons.submit'),
                  class: "send-it btn btn-secondary mt-2",
                  id: 'submit-solution',
-                 style: 'display: none;'  %>
-  </div>
+  style: 'display: none;'  %>
+</div>
 
-  <%= f.fields_for :quiz do |quiz_fields| %>
-    <%= quiz_fields.hidden_field :progress, value: quiz_round.progress %>
-    <%= quiz_fields.hidden_field :counter, value: quiz_round.counter %>
-    <%= quiz_fields.hidden_field :answer_shuffle, value: quiz_round.answer_shuffle.to_json %>
-    <%= quiz_fields.hidden_field :crosses,
+<%= f.fields_for :quiz do |quiz_fields| %>
+<%= quiz_fields.hidden_field :progress, value: quiz_round.progress %>
+<%= quiz_fields.hidden_field :counter, value: quiz_round.counter %>
+<%= quiz_fields.hidden_field :answer_shuffle, value: quiz_round.answer_shuffle.to_json %>
+<%= quiz_fields.hidden_field :crosses,
                       multiple: true,
                       data: { answer: answers.first.id },
-                      id: 'quiz_question_crosses' %>
-    <%= quiz_fields.hidden_field :solution_input, id: 'question_quiz_solution_input' %>
-    <%= quiz_fields.hidden_field :result, id: 'question_quiz_result' %>
-    <%= quiz_fields.hidden_field :attempt_token, value: quiz_round.attempt_token %>
-  <% end %>
+id: 'quiz_question_crosses' %>
+<%= quiz_fields.hidden_field :solution_input, id: 'question_quiz_solution_input' %>
+<%= quiz_fields.hidden_field :result, id: 'question_quiz_result' %>
+<%= quiz_fields.hidden_field :attempt_token, value: quiz_round.attempt_token %>
+<% end %>
 
-  <%= f.hidden_field :id, value: quiz_round.quiz.id %>
+<%= f.hidden_field :id, value: quiz_round.quiz.id %>
 <% end %>

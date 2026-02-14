@@ -1,14 +1,14 @@
 <%= t('quiz.obtained_certificate',
-      code: certificate.code) %>
+code: certificate.code) %>
 <i class="clipboardpopup far fa-copy clickable
           text-secondary clipboard-btn ms-3
           clipboard-button"
-   data-clipboard-text="<%= certificate.code %>"
-   data-bs-toggle="tooltip"
-   data-id="<%= certificate.id %>"
-   title="<%= t('buttons.copy_to_clipboard') %>">
+  data-bs-toggle="tooltip"
+  data-clipboard-text="<%= certificate.code %>"
+  data-id="<%= certificate.id %>"
+  title="<%= t('buttons.copy_to_clipboard') %>">
   <span class="clipboardpopuptext token-clipboard-popup"
-        data-id="<%= certificate.id %>">
+    data-id="<%= certificate.id %>">
     <%= t('basics.code_copied_to_clipboard') %>
   </span>
 </i>

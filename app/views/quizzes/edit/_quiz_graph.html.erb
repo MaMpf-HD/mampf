@@ -1,4 +1,4 @@
-<div class="card bg-light" id="quiz-preview">
+<div id="quiz-preview" class="card bg-light">
   <div class="card-header">
     <div class="row">
       <div class="col-2">
@@ -11,28 +11,28 @@
           <%= link_to t('buttons.create_vertex'),
                       new_quiz_vertex_path(quiz_id: quiz.id),
                       remote: true,
-                      class: 'btn btn-sm btn-secondary basicQuizButton' %>
+          class: 'btn btn-sm btn-secondary basicQuizButton' %>
           <%= link_to t('buttons.linearize_quiz'),
                       linearize_quiz_path(quiz),
                       class: 'btn btn-sm btn-secondary basicQuizButton',
                       method: 'patch',
-                      data: { confirm: t('confirmation.linearize') } %>
-          <button type="button"
-                  id="selectQuizRoot"
-                  class="btn btn-sm btn-secondary basicQuizButton">
+          data: { confirm: t('confirmation.linearize') } %>
+          <button id="selectQuizRoot"
+            type="button"
+            class="btn btn-sm btn-secondary basicQuizButton">
             <%= t('admin.quiz.start_vertex') %>
           </button>
           <span id="selectRootInfo">
             <%= t('admin.quiz.select_root') %>
-            <button type="button"
-                    id="cancelQuizRoot"
-                    class="btn btn-sm btn-secondary">
+            <button id="cancelQuizRoot"
+              type="button"
+              class="btn btn-sm btn-secondary">
               <%= t('buttons.cancel') %>
             </button>
           </span>
-          <button type="button"
-                  id="selectQuizLevel"
-                  class="btn btn-sm btn-secondary basicQuizButton">
+          <button id="selectQuizLevel"
+            type="button"
+            class="btn btn-sm btn-secondary basicQuizButton">
             <%= t('basics.level') %>
           </button>
         </div>
@@ -41,47 +41,53 @@
             <%= t('basics.level') %>
           </span>
           <div class="form-check form-check-inline">
-            <input type="radio"
-                   id="quiz_easy"
-                   name="quizLevel"
-                   <%= quiz.level == 0 ? 'checked ' : '' %>
-                   class="form-check-input quiz-level"
-                   data-quiz="<%= quiz.id %>"
-                   data-level="0">
+            <input
+              id="quiz_easy"
+              type="radio"
+              name="quizLevel"
+              <%= quiz.level == 0 ? 'checked ' : '' %>
+              class="form-check-input quiz-level"
+              data-level="0"
+              data-quiz="<%= quiz.id %>"
+            >
             <label class="form-check-label"
-                   for="quiz_easy">
+              for="quiz_easy">
               <%= t('basics.level_easy') %>
             </label>
           </div>
           <div class="form-check form-check-inline">
-            <input type="radio"
-                   id="quiz_medium"
-                   name="quizLevel"
-                   <%= quiz.level == 1 ? 'checked ' : '' %>
-                   class="form-check-input quiz-level"
-                   data-quiz="<%= quiz.id %>"
-                   data-level="1">
+            <input
+              id="quiz_medium"
+              type="radio"
+              name="quizLevel"
+              <%= quiz.level == 1 ? 'checked ' : '' %>
+              class="form-check-input quiz-level"
+              data-level="1"
+              data-quiz="<%= quiz.id %>"
+            >
             <label class="form-check-label"
-                   for="quiz_medium">
+              for="quiz_medium">
               <%= t('basics.level_medium') %>
             </label>
           </div>
           <div class="form-check form-check-inline">
-            <input type="radio"
-                   id="quiz_hard"
-                   name="quizLevel"
-                   <%= quiz.level == 2 ? 'checked ' : '' %>
-                   class="form-check-input quiz-level"
-                   data-quiz="<%= quiz.id %>"
-                   data-level="2">
+            <input
+              id="quiz_hard"
+              type="radio"
+              name="quizLevel"
+              <%= quiz.level == 2 ? 'checked ' : '' %>
+              class="form-check-input quiz-level"
+              data-level="2"
+              data-quiz="<%= quiz.id %>"
+            >
             <label class="form-check-label"
-                   for="quiz_hard">
+              for="quiz_hard">
               <%= t('basics.level_hard') %>
             </label>
           </div>
-          <button type="button"
-                  id="cancelQuizLevel"
-                  class="btn btn-sm btn-secondary">
+          <button id="cancelQuizLevel"
+            type="button"
+            class="btn btn-sm btn-secondary">
             <%= t('buttons.back') %>
           </button>
         </span>
@@ -89,26 +95,26 @@
         </div>
         <span id="selectTargetInfo">
           <%= t('admin.quiz.select_default_target') %>
-          <button type="button"
-                  id="cancelDefaultTarget"
-                  class="btn btn-sm btn-secondary">
+          <button id="cancelDefaultTarget"
+            type="button"
+            class="btn btn-sm btn-secondary">
             <%= t('buttons.cancel') %>
           </button>
-          <button type="button"
-                  id="saveDefaultTarget"
-                  class="btn btn-sm btn-primary">
+          <button id="saveDefaultTarget"
+            type="button"
+            class="btn btn-sm btn-primary">
             <%= t('buttons.save') %>
           </button>
         </span>
         <span id="deleteEdgeButtons">
-          <button type="button"
-                  id="deleteEdge"
-                  class="btn btn-sm btn-danger">
+          <button id="deleteEdge"
+            type="button"
+            class="btn btn-sm btn-danger">
             <%= t('buttons.delete_edge') %>
           </button>
-          <button type="button"
-                  id="cancelDeleteEdge"
-                  class="btn btn-sm btn-secondary">
+          <button id="cancelDeleteEdge"
+            type="button"
+            class="btn btn-sm btn-secondary">
             <%= t('buttons.cancel') %>
           </button>
         </span>
@@ -117,10 +123,10 @@
   </div>
   <div class="card-body">
     <div id="cy"
-         data-elements="<%= graph_elements %>"
-         data-type="quiz"
-         data-linear="<%= linear %>"
-         data-quiz="<%= quiz.id %>">
+      data-elements="<%= graph_elements %>"
+      data-linear="<%= linear %>"
+      data-quiz="<%= quiz.id %>"
+      data-type="quiz">
     </div>
   </div>
 </div>

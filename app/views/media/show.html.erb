@@ -5,25 +5,25 @@
         <%= @medium.sort_localized %>
       </span>
       <% unless @medium.published? %>
-        <span class="badge bg-warning">
-          <%= t('access.unpublished') %>
-        </span>
+      <span class="badge bg-warning">
+        <%= t('access.unpublished') %>
+      </span>
       <% end %>
       <% if @medium.locked? %>
-        <span class="badge bg-warning">
-          <%= t('access.locked') %>
-        </span>
+      <span class="badge bg-warning">
+        <%= t('access.locked') %>
+      </span>
       <% end %>
       <%= @medium.caption %>
       <% if current_user.admin ||
-            @medium.edited_with_inheritance_by?(current_user) %>
-        <%= link_to '',
+      @medium.edited_with_inheritance_by?(current_user) %>
+      <%= link_to '',
                     edit_medium_path(@medium),
                     class: 'far fa-edit fa-sm text-dark',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('buttons.edit'),
-                    style: 'text-decoration: none;' %>
+      style: 'text-decoration: none;' %>
       <% end %>
     </h2>
   </div>
@@ -32,141 +32,141 @@
       <%= t('from') %>:
     </strong>
     <% if @medium.teachable.is_a?(Course) %>
-      <% if current_user.courses.include?(@medium.teachable) %>
-        <%= link_to @medium.teachable.to_label,
+    <% if current_user.courses.include?(@medium.teachable) %>
+    <%= link_to @medium.teachable.to_label,
                     @medium.teachable,
-                    class: 'text-dark' %>
-      <% else %>
-        <span>
-          <%= @medium.teachable.to_label %>
-        </span>
-      <% end %>
+    class: 'text-dark' %>
+    <% else %>
+    <span>
+      <%= @medium.teachable.to_label %>
+    </span>
+    <% end %>
     <% end %>
     <% if @medium.teachable.is_a?(Lecture) %>
-      <% if current_user.lectures.include?(@medium.teachable) %>
-        <%= link_to @medium.teachable.to_label,
+    <% if current_user.lectures.include?(@medium.teachable) %>
+    <%= link_to @medium.teachable.to_label,
                     @medium.teachable.path(current_user),
-                    class: 'text-dark' %>
-      <% else %>
-        <span>
-          <%= @medium.teachable.to_label %>
-        </span>
-      <% end %>
+    class: 'text-dark' %>
+    <% else %>
+    <span>
+      <%= @medium.teachable.to_label %>
+    </span>
+    <% end %>
     <% end %>
     <% if @medium.teachable.is_a?(Lesson) || @medium.teachable.is_a?(Talk) %>
-      <% if current_user.lectures.include?(@medium.teachable.lecture) %>
-        <%= link_to @medium.teachable.lecture.title_for_viewers,
+    <% if current_user.lectures.include?(@medium.teachable.lecture) %>
+    <%= link_to @medium.teachable.lecture.title_for_viewers,
                     @medium.teachable.lecture.path(current_user),
-                    class: 'text-dark' %>,
-        <%= link_to @medium.teachable.local_title_for_viewers,
+    class: 'text-dark' %>,
+    <%= link_to @medium.teachable.local_title_for_viewers,
                     @medium.teachable,
-                    class: 'text-dark' %>
-      <% else %>
-        <%= @medium.teachable.lecture.to_label %>,
-        <span>
-          <%= @medium.teachable.to_label %>
-        </span>
-      <% end %>
+    class: 'text-dark' %>
+    <% else %>
+    <%= @medium.teachable.lecture.to_label %>,
+    <span>
+      <%= @medium.teachable.to_label %>
+    </span>
+    <% end %>
     <% end %>
   </div>
 </div>
 <% if @medium.publisher&.release_date.present? %>
-  <div class="row mb-3">
-    <div class="col-12">
-      <span class="badge bg-warning">
-        <%= t('admin.medium.scheduled_for_release',
+<div class="row mb-3">
+  <div class="col-12">
+    <span class="badge bg-warning">
+      <%= t('admin.medium.scheduled_for_release',
               release_date: I18n.l(@medium.publisher&.release_date,
                                    format: :long,
-                                   locale: I18n.locale)) %>
-      </span>
-      <% if @medium.publisher.create_assignment %>
-        <br>
-        <span class="badge bg-warning">
-          <%= t('admin.medium.assignment_to_be_created',
+      locale: I18n.locale)) %>
+    </span>
+    <% if @medium.publisher.create_assignment %>
+    <br>
+    <span class="badge bg-warning">
+      <%= t('admin.medium.assignment_to_be_created',
                 deadline: I18n.l(@medium.publisher&.assignment_deadline,
                                  format: :publication_time,
-                                 locale: I18n.locale)) %>
-        </span>
-      <% end %>
-    </div>
+      locale: I18n.locale)) %>
+    </span>
+    <% end %>
   </div>
+</div>
 <% end %>
 <div class="row mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
       <% if @medium.video.present? %>
-        <div class="col-6 col-lg-12 mb-2">
-          <%= render partial: 'media/video_card',
-                     locals: { medium: @medium } %>
-        </div>
+      <div class="col-6 col-lg-12 mb-2">
+        <%= render partial: 'media/video_card',
+        locals: { medium: @medium } %>
+      </div>
       <% end %>
       <% if @medium.manuscript.present? %>
-        <div class="col-6 col-lg-12 mb-2">
-          <%= render partial: 'media/manuscript_card',
-                     locals: { medium: @medium } %>
-        </div>
+      <div class="col-6 col-lg-12 mb-2">
+        <%= render partial: 'media/manuscript_card',
+        locals: { medium: @medium } %>
+      </div>
       <% end %>
       <% if @medium.geogebra.present? %>
-        <div class="col-6 col-lg-12 mb-2">
-          <%= render partial: 'media/geogebra_card',
-                     locals: { medium: @medium } %>
-        </div>
+      <div class="col-6 col-lg-12 mb-2">
+        <%= render partial: 'media/geogebra_card',
+        locals: { medium: @medium } %>
+      </div>
       <% end %>
       <% if @medium.quiz_graph %>
-        <div class="col-6 col-lg-12 mb-2">
-          <%= render partial: 'media/quiz_card',
-                     locals: { medium: @medium } %>
-        </div>
+      <div class="col-6 col-lg-12 mb-2">
+        <%= render partial: 'media/quiz_card',
+        locals: { medium: @medium } %>
+      </div>
       <% end %>
       <% if @medium.external_reference_link.present? %>
-        <div class="col-6 col-lg-12 mt-2">
-          <%= render partial: 'media/external_link_card',
-                     locals: { medium: @medium } %>
-        </div>
+      <div class="col-6 col-lg-12 mt-2">
+        <%= render partial: 'media/external_link_card',
+        locals: { medium: @medium } %>
+      </div>
       <% end %>
     </div>
   </div>
   <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <div class="row">
       <% if @medium.tags.present? %>
-        <div class="col-12 mb-2">
-          <%= render partial: 'tags/tags',
+      <div class="col-12 mb-2">
+        <%= render partial: 'tags/tags',
                      locals: { related_tags: @medium.tags,
                                tags_description: t('related_tags'),
-                               small: true} %>
-        </div>
+        small: true} %>
+      </div>
       <% end %>
       <div class="col-12 mb-2">
         <% if @medium.sort == 'Script' %>
-          <%= render partial: 'items/items',
+        <%= render partial: 'items/items',
                      locals: { items: @medium.toc_items,
                                small: true,
                                embedded: false,
                                section_links: true,
-                               content: @medium.extended_content } %>
+        content: @medium.extended_content } %>
         <% else %>
-          <%= render partial: 'items/items',
+        <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
                                comments_below: true,
                                embedded: false,
                                section_links: false,
-                               content: @medium.extended_content } %>
+        content: @medium.extended_content } %>
         <% end %>
       </div>
       <div class="col-12">
         <%= render partial: 'media/comments/comments',
-                   locals: { medium: @medium } %>
+        locals: { medium: @medium } %>
       </div>
     </div>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <% linked_media = current_user.filter_media(@medium.linked_media_new)
-                                  .select { |m| m.visible_for_user?(current_user) } %>
+    .select { |m| m.visible_for_user?(current_user) } %>
     <%= render partial: 'media/related_media',
                locals: { media: linked_media,
                          from: 'medium',
                          references: Item.none,
-                         questions: false } %>
+    questions: false } %>
   </div>
 </div>

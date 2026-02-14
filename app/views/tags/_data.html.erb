@@ -1,118 +1,120 @@
 <% if new_tag %>
-  <div class="row p-2">
-    <div class="col-12">
-      <div class="card bg-light mb-4">
-        <%= render partial: 'tags/basics',
+<div class="row p-2">
+  <div class="col-12">
+    <div class="card bg-light mb-4">
+      <%= render partial: 'tags/basics',
                    locals: { tag: tag,
                              f: f,
                              new_tag: true,
                              from: from,
-                             modal: modal } %>
+      modal: modal } %>
+    </div>
+  </div>
+</div>
+<% else %>
+<div class="row p-2">
+  <div class="col-12 col-xxl-6 mb-2">
+    <div class="card">
+      <div class="card-header bg-generic-card-header">
+        <div class="row">
+          <div class="col-3">
+            <h5 class="text">
+              <%= t('mampf_map') %>
+            </h5>
+          </div>
+          <div class="col-9 text-end">
+            <%= link_to t('admin.tag.render'),
+                          display_cyto_tag_path(tag),
+                          class: 'btn btn-sm btn-outline-secondary',
+            target: :_blank%>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div
+          id="cy"
+          data-action="edit"
+          data-elements="<%= @graph_elements.to_json %>"
+          data-locale="<%= I18n.locale %>"
+          data-tag="<%= tag.id %>"
+          data-type="tag"
+        >
+        </div>
       </div>
     </div>
   </div>
-<% else %>
-  <div class="row p-2">
-    <div class="col-12 col-xxl-6 mb-2">
-      <div class="card">
-        <div class="card-header bg-generic-card-header">
-          <div class="row">
-            <div class="col-3">
-              <h5 class="text">
-               <%= t('mampf_map') %>
-              </h5>
-            </div>
-            <div class="col-9 text-end">
-              <%= link_to t('admin.tag.render'),
-                          display_cyto_tag_path(tag),
-                          class: 'btn btn-sm btn-outline-secondary',
-                          target: :_blank%>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div id="cy"
-               data-elements="<%= @graph_elements.to_json %>"
-               data-tag="<%= tag.id %>"
-               data-action="edit"
-               data-type="tag"
-               data-locale="<%= I18n.locale %>">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-xxl-6">
-      <div class="row">
-        <div class="col-12 mb-2">
-          <div class="card bg-light"
-               id="tagBasicsEdit">
-            <%= render partial: 'tags/basics',
+  <div class="col-12 col-xxl-6">
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div id="tagBasicsEdit"
+          class="card bg-light">
+          <%= render partial: 'tags/basics',
                        locals: { tag: tag,
                                  f: f,
                                  new_tag: false,
-                                 from: from } %>
-          </div>
+          from: from } %>
         </div>
-        <div class="col-6 col-xxl-4">
-          <div class="row">
-            <div class="col-12">
-              <div class="card mb-2 bg-light"
-                   id="relatedTagsEdit">
-                <%= render partial: 'tags/related_tags',
+      </div>
+      <div class="col-6 col-xxl-4">
+        <div class="row">
+          <div class="col-12">
+            <div id="relatedTagsEdit"
+              class="card mb-2 bg-light">
+              <%= render partial: 'tags/related_tags',
                            locals: { tag: tag,
                                      f: f,
                                      new_tag: false,
-                                     from: from } %>
-              </div>
+              from: from } %>
             </div>
           </div>
         </div>
-        <div class="col-6 col-xxl-8">
-          <div class="card mb-2"
-               id="tagEditAction">
-            <div class="card-header bg-mdb-color-darken-2 text-light">
-              <span id="tagActionHeader">
-                <%= t('basics.action') %>
-              </span>
-              <span id="tagActionTypeRelated"
-                    style="display: none;">
-                <%= t('admin.tag.edit_related_tags') %>
-              </span>
-            </div>
-            <div class="card-body"
-                 id="tagEditActionBody">
-              <div id="selectRelatedTagsForm"
-                   style="display: none;">
-                <%= render partial: 'tags/select_related_tags',
-                           locals: { tag: tag, f: f } %>
-              </div>
+      </div>
+      <div class="col-6 col-xxl-8">
+        <div id="tagEditAction"
+          class="card mb-2">
+          <div class="card-header bg-mdb-color-darken-2 text-light">
+            <span id="tagActionHeader">
+              <%= t('basics.action') %>
+            </span>
+            <span id="tagActionTypeRelated"
+              style="display: none;">
+              <%= t('admin.tag.edit_related_tags') %>
+            </span>
+          </div>
+          <div id="tagEditActionBody"
+            class="card-body">
+            <div id="selectRelatedTagsForm"
+              style="display: none;">
+              <%= render partial: 'tags/select_related_tags',
+              locals: { tag: tag, f: f } %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row p-2">
-    <div class="col-12 col-xl-6 mb-2">
-      <%= render partial: 'media/card',
+</div>
+<div class="row p-2">
+  <div class="col-12 col-xl-6 mb-2">
+    <%= render partial: 'media/card',
                  locals: { media: tag.media,
                            small: false,
                            collapsible: false,
                            teachable_type: nil,
                            teachable_id: nil,
-                           inspection: true } %>
-    </div>
-    <div class="col-12 col-xl-6">
-      <div class="row">
-        <div class="col-12 mb-2">
-          <%= render partial: 'sections/card',
-                     locals: { sections: tag.sections } %>
-        </div>
-        <div class="col-12">
-          <%= render partial: 'lessons/card',
-                     locals: { lessons: tag.lessons } %>
-        </div>
+    inspection: true } %>
+  </div>
+  <div class="col-12 col-xl-6">
+    <div class="row">
+      <div class="col-12 mb-2">
+        <%= render partial: 'sections/card',
+        locals: { sections: tag.sections } %>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'lessons/card',
+        locals: { lessons: tag.lessons } %>
       </div>
     </div>
   </div>
+</div>
 <% end %>

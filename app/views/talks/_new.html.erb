@@ -1,88 +1,88 @@
 <%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
 
-  <div class="row">
-    <div class="col-12 mb-3">
-      <%= f.label :title, t('basics.title'),
-                  class: "form-label" %>
-      <%= helpdesk(t('admin.lecture.info.chapter_title'),
-                   false) %>
-      <%= f.text_field :title, { class: 'form-control',
-                                 id: 'new_talk_title' } %>
-      <div class="invalid-feedback"
-           id="new-talk-title-error">
-      </div>
+<div class="row">
+  <div class="col-12 mb-3">
+    <%= f.label :title, t('basics.title'),
+    class: "form-label" %>
+    <%= helpdesk(t('admin.lecture.info.chapter_title'),
+    false) %>
+    <%= f.text_field :title, { class: 'form-control',
+    id: 'new_talk_title' } %>
+    <div id="new-talk-title-error"
+      class="invalid-feedback">
     </div>
+  </div>
 
-    <!-- 📅 Dates -->
-    <div class="col-12">
-      <%= f.label :date, t('basics.date') %>
-      <a class="fas fa-plus-circle clickable text-dark"
-         id="new-talk-date-button"
-         data-bs-toggle="tooltip"
-         data-index="1"
-         title="<%= t('admin.tag.create') %>">
-      </a>
-    </div>
+  <!-- 📅 Dates -->
+  <div class="col-12">
+    <%= f.label :date, t('basics.date') %>
+    <a id="new-talk-date-button"
+      class="fas fa-plus-circle clickable text-dark"
+      data-bs-toggle="tooltip"
+      data-index="1"
+      title="<%= t('admin.tag.create') %>">
+    </a>
+  </div>
 
-    <div class="col-12" id="talk-dates">
-      <%= f.fields_for :dates, index: 0 do |date_form| %>
-        <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
-      <% end %>
-      <%= render partial: "date_field_template", locals: { f: f } %>
-    </div>
-    
-    <div class="col-12 mb-3">
-      <div class="invalid-feedback" id="talk-date-error"></div>
-    </div>
+  <div id="talk-dates" class="col-12">
+    <%= f.fields_for :dates, index: 0 do |date_form| %>
+    <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
+    <% end %>
+    <%= render partial: "date_field_template", locals: { f: f } %>
+  </div>
 
-    <div class="col-12 mb-3" data-cy="speaker-select-div">
-      <%= speaker_select(f, talk, with_preselection=false) %>
-    </div>
-    <% if lecture.talks.exists? %>
-      <div class="col-12 mb-3">
-        <%= f.label :predecessor,
+  <div class="col-12 mb-3">
+    <div id="talk-date-error" class="invalid-feedback"></div>
+  </div>
+
+  <div class="col-12 mb-3" data-cy="speaker-select-div">
+    <%= speaker_select(f, talk, with_preselection=false) %>
+  </div>
+  <% if lecture.talks.exists? %>
+  <div class="col-12 mb-3">
+    <%= f.label :predecessor,
                     t('admin.lecture.insert_after_chapter',
                     chapter_name: t("basics.talk")),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
+    class: "form-label" %>
+    <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
                        chapter_name: t("basics.talk")),
-                     false) %>
-        <%= f.select :predecessor,
+    false) %>
+    <%= f.select :predecessor,
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_talks,
                                         lecture.last_talk_by_position.position) ,
-                                 {}, { class: 'form-select' } %>
-      </div>
-    <% end %>
+    {}, { class: 'form-select' } %>
   </div>
-  <div class="mb-2">
-    <%= t('basics.details') %>
-    <%= helpdesk(t('admin.talk.info.details'), false) %>
-  </div>
-  <%= f.trix_editor :details,
+  <% end %>
+</div>
+<div class="mb-2">
+  <%= t('basics.details') %>
+  <%= helpdesk(t('admin.talk.info.details'), false) %>
+</div>
+<%= f.trix_editor :details,
                     class: 'bg-light',
                     id: 'talk-details-trix',
                     data: { content: talk.details,
-                            preview: 'talk-details-preview' } %>
-  <%= f.hidden_field :lecture_id,
-                     value: talk.lecture.id %>
-  <div class="row my-2">
-    <div class="col-12">
-      <%= t('basics.preview') %>
-    </div>
+preview: 'talk-details-preview' } %>
+<%= f.hidden_field :lecture_id,
+value: talk.lecture.id %>
+<div class="row my-2">
+  <div class="col-12">
+    <%= t('basics.preview') %>
   </div>
-  <div class="alert alert-dark bg-mdb-color-lighten-6"
-       id="talk-details-preview">
+</div>
+<div id="talk-details-preview"
+  class="alert alert-dark bg-mdb-color-lighten-6">
+</div>
+<%= f.hidden_field :lecture_id, value: lecture.id %>
+<div class="row">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
+    <button type="button"
+      class="btn btn-sm btn-secondary"
+      data-bs-dismiss="modal">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
-  <%= f.hidden_field :lecture_id, value: lecture.id %>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              class="btn btn-sm btn-secondary"
-              data-bs-dismiss="modal">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
-  </div>
+</div>
 <% end %>

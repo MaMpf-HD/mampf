@@ -1,5 +1,5 @@
 <div class="form-floating mt-3">
-    <%= f.text_area :text,
+  <%= f.text_area :text,
         placeholder: '_',
         class: 'form-control',
         style: 'height: 150px',
@@ -11,8 +11,8 @@
               min_length: Vignettes::TextAnswer::TEXT_MIN_LENGTH),
         'data-value-missing-message':
             t('vignettes.body_missing_error')
-    %>
-    <%= f.label :text do %>
-      <i class="bi bi-pencil"></i>
-    <% end %>
+  %>
+  <%= f.label :text do %>
+  <i class="bi bi-pencil"></i>
+  <% end %>
 </div>

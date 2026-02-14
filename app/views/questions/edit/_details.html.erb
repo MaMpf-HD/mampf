@@ -1,10 +1,10 @@
 <div id="questionAnswers"
-     style="display: <%= show_no_block(question.question_sort == 'mc') %>">
+  style="display: <%= show_no_block(question.question_sort == 'mc') %>">
   <%= render partial: 'questions/edit/answers',
-             locals: { question: question } %>
+  locals: { question: question } %>
 </div>
 <div id="questionSolution"
-     style="display: <%= show_no_block(question.question_sort.in?(['free', 'parametrized'])) %>">
+  style="display: <%= show_no_block(question.question_sort.in?(['free', 'parametrized'])) %>">
   <%= render partial: 'questions/edit/solution',
-             locals: { question: question } %>
+  locals: { question: question } %>
 </div>

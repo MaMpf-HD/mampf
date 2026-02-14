@@ -3,7 +3,7 @@
 <div class="modal-header">
   <i class="bi bi-star-fill me-3"></i>
   <h1 class="modal-title fs-5"><%= t('feedback.modal_title') %></h1>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+  <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal">
   </button>
 </div>
 
@@ -12,17 +12,17 @@
 <div class="modal-body">
   <%= t('feedback.description_html',
     github_mampf: link_to('GitHub', 'https://github.com/MaMpf-HD/mampf/issues', {target: '_blank'}),
-    feedback_mail: mail_to(DefaultSetting::FEEDBACK_EMAIL, t('basics.mail_noun'))) %>
+  feedback_mail: mail_to(DefaultSetting::FEEDBACK_EMAIL, t('basics.mail_noun'))) %>
 
-    <!-- Title -->
-    <div class="form-floating mb-3">
-      <%= f.text_field :title, class: 'form-control', placeholder: '_' %>
-      <%= f.label :title, t('feedback.title') %>
-    </div>
+  <!-- Title -->
+  <div class="form-floating mb-3">
+    <%= f.text_field :title, class: 'form-control', placeholder: '_' %>
+    <%= f.label :title, t('feedback.title') %>
+  </div>
 
-    <!-- Comment -->
-    <div class="form-floating mb-3">
-      <%= f.text_area :feedback,
+  <!-- Comment -->
+  <div class="form-floating mb-3">
+    <%= f.text_area :feedback,
             class: 'form-control',
             placeholder: '_',
             style: 'height: 200px',
@@ -34,25 +34,25 @@
               "too-short-message": t('feedback.body_too_short_error',
                                   min_length: Feedback::BODY_MIN_LENGTH),
               "value-missing-message": t('feedback.body_missing_error')
-            } %>
-      <%= f.label :feedback, t('feedback.comment') %>
-    </div>
+    } %>
+    <%= f.label :feedback, t('feedback.comment') %>
+  </div>
 
-    <!-- Email contact -->
-    <div class="form-check">
-      <%= f.check_box :can_contact,
+  <!-- Email contact -->
+  <div class="form-check">
+    <%= f.check_box :can_contact,
         checked: 'checked',
-        class: 'form-check-input' %>
-      <%= f.label :can_contact,
+    class: 'form-check-input' %>
+    <%= f.label :can_contact,
         t('feedback.mail_checkbox', user_mail: @current_user.email),
-        class: 'form-check-label' %>
-    </div>
+    class: 'form-check-label' %>
+  </div>
 </div>
 
 <div class="modal-footer">
   <!-- Submit (Send) -->
   <%= f.submit 'Submit', class: "btn btn-primary", data: { "feedback-target": "submit" } do %>
-    <%= t('buttons.send_variant') %>
+  <%= t('buttons.send_variant') %>
   <% end %>
 
   <!-- Cancel -->

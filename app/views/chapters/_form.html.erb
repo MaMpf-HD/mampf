@@ -1,48 +1,48 @@
 <%= form_with model: chapter, html: { id: 'chapter-form' } do |f| %>
-  <div class="row px-2 py-2 mt-2">
-    <div class="col-12 col-lg-4">
-      <h4 class="ps-2">
-        <span class="badge bg-secondary">
-          <%= t('basics.chapter') %>
-        </span>
-        <%= chapter.to_label %>
-      </h4>
+<div class="row px-2 py-2 mt-2">
+  <div class="col-12 col-lg-4">
+    <h4 class="ps-2">
+      <span class="badge bg-secondary">
+        <%= t('basics.chapter') %>
+      </span>
+      <%= chapter.to_label %>
+    </h4>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div id="chapter-basics-warning">
+      <%= t('warnings.unsaved_changes') %>
+      <%= f.submit t('buttons.save'),
+      class: 'btn btn-sm btn-primary' %>
+      <button id="cancel-chapter-edit"
+        type="button"
+        class="btn btn-sm btn-secondary ms-2">
+        <%= t('buttons.discard') %>
+      </button>
     </div>
-    <div class="col-12 col-lg-4">
-      <div id="chapter-basics-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
-        <button type="button"
-                class="btn btn-sm btn-secondary ms-2"
-                id="cancel-chapter-edit">
-          <%= t('buttons.discard') %>
-        </button>
-      </div>
-    </div>
-    <div class="col-12 col-lg-4 text-end">
-      <%= link_to t('buttons.parent_lecture'),
+  </div>
+  <div class="col-12 col-lg-4 text-end">
+    <%= link_to t('buttons.parent_lecture'),
                   edit_lecture_path(chapter.lecture),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
-      <% if chapter.sections.empty? %>
-        <%= link_to t('buttons.delete'),
+    class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% if chapter.sections.empty? %>
+    <%= link_to t('buttons.delete'),
                     chapter_path(chapter),
                     method: :delete,
                     data: { confirm: t('confirmation.generic') },
-                    class: 'btn btn-sm btn-danger mb-2' %>
-      <% end %>
-    </div>
+    class: 'btn btn-sm btn-danger mb-2' %>
+    <% end %>
   </div>
-  <div class="row p-2">
-    <div class="col-6">
-      <%= render partial: 'chapters/basics',
+</div>
+<div class="row p-2">
+  <div class="col-6">
+    <%= render partial: 'chapters/basics',
                  locals: { chapter: chapter,
-                           f: f } %>
-    </div>
-    <div class="col-6">
-      <%= render partial: 'chapters/content',
-                 locals: { chapter: chapter,
-                           f: f } %>
-    </div>
+    f: f } %>
   </div>
+  <div class="col-6">
+    <%= render partial: 'chapters/content',
+                 locals: { chapter: chapter,
+    f: f } %>
+  </div>
+</div>
 <% end %>

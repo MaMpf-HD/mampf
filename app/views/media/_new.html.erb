@@ -1,60 +1,60 @@
 <%= form_with model: medium do |f| %>
-  <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
-  <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
-  <div class="mb-3">
-    <%= f.label :sort, t('admin.medium.sort'),
-                class: 'form-label' %>
-    <%= helpdesk(t('admin.medium.info.sort'), true) %>
-    <%= f.select :sort,
+<%= f.hidden_field :teachable_id, value: medium.teachable_id %>
+<%= f.hidden_field :teachable_type, value: medium.teachable_type %>
+<div class="mb-3">
+  <%= f.label :sort, t('admin.medium.sort'),
+  class: 'form-label' %>
+  <%= helpdesk(t('admin.medium.info.sort'), true) %>
+  <%= f.select :sort,
                  options_for_select(medium.select_sorts, medium.sort),
                  {},
-                 { class: 'form-select' } %>
-    <div class="invalid-feedback"
-         id="medium-sort-error">
-    </div>
-    <div id="mampfStyInfo" class="mt-2"
-         style="display: <%= show(medium.sort == 'Script') %>">
-      <%= t('admin.medium.info.latex_package_html',
+  { class: 'form-select' } %>
+  <div id="medium-sort-error"
+    class="invalid-feedback">
+  </div>
+  <div id="mampfStyInfo" class="mt-2"
+    style="display: <%= show(medium.sort == 'Script') %>">
+    <%= t('admin.medium.info.latex_package_html',
             package: link_to(t('basics.mampf_package'),
-                             'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
-    </div>
+    'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
   </div>
-  <div class="mb-3">
-    <%= f.label :description,
-                t('basics.title'), 
-                class: 'form-label' %>
-    <%= helpdesk(t('admin.medium.info.description'), false) %>
-    <%= f.text_field :description,
-                     class: 'form-control' %>
-    <div class="invalid-feedback"
-         id="medium-description-error">
-    </div>
+</div>
+<div class="mb-3">
+  <%= f.label :description,
+                t('basics.title'),
+  class: 'form-label' %>
+  <%= helpdesk(t('admin.medium.info.description'), false) %>
+  <%= f.text_field :description,
+  class: 'form-control' %>
+  <div id="medium-description-error"
+    class="invalid-feedback">
   </div>
-  <div class="mb-3">
-    <%= f.label :teachable,
+</div>
+<div class="mb-3">
+  <%= f.label :teachable,
                 t('basics.associated_to'),
-                class: 'form-label' %>
-    <%= helpdesk(t('admin.medium.info.teachable'), true) %>
-    <%= f.select :teachable,
+  class: 'form-label' %>
+  <%= helpdesk(t('admin.medium.info.teachable'), true) %>
+  <%= f.select :teachable,
                  options_for_select([[medium.teachable&.title_for_viewers,
                                       medium.teachable_select]],
                                     medium.teachable_select),
                  { prompt: t('basics.select') },
                  { class: 'form-select',
-                   disabled: true } %>
-    <div class="invalid-feedback"
-         id="medium-teachable-error">
-    </div>
+  disabled: true } %>
+  <div id="medium-teachable-error"
+    class="invalid-feedback">
   </div>
-  <div class="row mb-2">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save_and_edit'),
-                   class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              class="btn btn-sm btn-secondary"
-              data-bs-dismiss="modal">
-        <%= t('buttons.cancel') %>
-      </button>
-    </div>
+</div>
+<div class="row mb-2">
+  <div class="col-12 text-center">
+    <%= f.submit t('buttons.save_and_edit'),
+    class: 'btn btn-sm btn-primary' %>
+    <button type="button"
+      class="btn btn-sm btn-secondary"
+      data-bs-dismiss="modal">
+      <%= t('buttons.cancel') %>
+    </button>
   </div>
+</div>
 <% end %>

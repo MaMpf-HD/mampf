@@ -4,7 +4,7 @@
       <div class="col-12">
         <div class="card bg-light mb-4">
           <%= render partial: 'courses/basics',
-                     locals: { course: course, f: f } %>
+          locals: { course: course, f: f } %>
         </div>
       </div>
       <div class="col-12 mb-4">
@@ -14,7 +14,7 @@
                              collapsible: false,
                              teachable_type: 'Course',
                              teachable_id: course.id,
-                             inspection: false } %>
+        inspection: false } %>
       </div>
     </div>
   </div>
@@ -22,11 +22,11 @@
     <div class="row">
       <div class="col-12 mb-3">
         <%= render partial: 'courses/organizational',
-                   locals: { course: course, f: f } %>
+        locals: { course: course, f: f } %>
       </div>
       <div class="col-12 mb-3">
         <%= render partial: 'courses/image',
-                   locals: { course: course, f: f } %>
+        locals: { course: course, f: f } %>
       </div>
       <div class="col-12">
         <div class="card bg-light">
@@ -39,12 +39,14 @@
                 </h5>
               </div>
               <div class="col-8 text-end">
-                <a class="fas fa-plus-circle fa-lg clickable text-dark"
-                   id="new-tag-button"
-                   data-bs-toggle="tooltip"
-                   title="<%= t('buttons.create_tag') %>"
-                   data-course="<%= course.id %>"
-                   data-from="course">
+                <a
+                  id="new-tag-button"
+                  class="fas fa-plus-circle fa-lg clickable text-dark"
+                  data-bs-toggle="tooltip"
+                  data-course="<%= course.id %>"
+                  data-from="course"
+                  title="<%= t('buttons.create_tag') %>"
+                >
                 </a>
               </div>
             </div>
@@ -53,7 +55,7 @@
             <div id="course-tags">
             </div>
             <%= render partial: 'courses/tags',
-                       locals: { course: course, f: f } %>
+            locals: { course: course, f: f } %>
           </div>
         </div>
       </div>

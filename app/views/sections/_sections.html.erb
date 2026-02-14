@@ -4,21 +4,21 @@
       <%= t('related_sections') %>
     </h5>
   </div>
-  <div class="card-body"
-       id="relatedSectionsBody">
+  <div id="relatedSectionsBody"
+    class="card-body">
     <% if sections.present? %>
-      <ul>
-        <% sections.each do |s| %>
-          <li>
-            <%= s.lecture.short_title + ': ' %>
-            <%= link_to s.to_label,
+    <ul>
+      <% sections.each do |s| %>
+      <li>
+        <%= s.lecture.short_title + ': ' %>
+        <%= link_to s.to_label,
                         section_path(s),
-                        class: 'text-dark' %>
-          </li>
-        <% end %>
-      </ul>
+        class: 'text-dark' %>
+      </li>
+      <% end %>
+    </ul>
     <% else %>
-      <%= t('no_related_sections') %>
+    <%= t('no_related_sections') %>
     <% end %>
   </div>
 </div>
