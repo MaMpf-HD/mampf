@@ -102,12 +102,12 @@ module GradeScheme
       # Check for either absolute points or percentage-based bands
       has_bands = config["bands"].is_a?(Array)
       errors.add(:config, "must have bands array") unless has_bands
-      
+
       if has_bands
         first_band = config["bands"].first
         has_points = first_band&.key?("min_points")
         has_pct = first_band&.key?("min_pct")
-        
+
         unless has_points || has_pct
           errors.add(:config, "bands must have either min_points/max_points or min_pct/max_pct")
         end
@@ -240,7 +240,7 @@ The `GradeScheme::Applier` automatically detects whether `min_points`/`max_point
 ### Interactive Curve Generation (Frontend Convenience)
 
 ```admonish warning "Implementation Status"
-**Backend:** ✅ Already supported via `absolute` scheme  
+**Backend:** ✅ Already supported via `absolute` scheme
 **Frontend:** 🚧 Planned - Interactive UI needs to be built
 ```
 
@@ -278,22 +278,22 @@ Teacher sets just two anchors ("54+ gets 1.0", "30+ gets 4.0"), system fills in 
 function generateLinearBands(excellentPts, passingPts, maxPts, gradeSteps) {
   const range = excellentPts - passingPts;
   const stepSize = range / (gradeSteps.length - 1);
-  
+
   const bands = gradeSteps.map((grade, index) => {
     const minPts = Math.round(passingPts + (stepSize * index));
-    const maxPts = index === 0 ? maxPts : 
+    const maxPts = index === 0 ? maxPts :
                    Math.round(passingPts + (stepSize * (index + 1)) - 1);
     return { min_points: minPts, max_points: maxPts, grade };
   });
-  
+
   // Add fail band below passing threshold
   bands.push({ min_points: 0, max_points: passingPts - 1, grade: "5.0" });
-  
+
   return bands.sort((a, b) => b.min_points - a.min_points);
 }
 
 // Usage
-const bands = generateLinearBands(54, 30, 60, 
+const bands = generateLinearBands(54, 30, 60,
   ["1.0", "1.3", "1.7", "2.0", "2.3", "3.0", "3.7", "4.0"]
 );
 // Send to backend: { kind: "absolute", config: { bands } }
@@ -355,12 +355,12 @@ const initialBands = generateLinearBands(54, 30, 60, grades);
 function adjustBand(bands, gradeToAdjust, newMinPoints) {
   const index = bands.findIndex(b => b.grade === gradeToAdjust);
   bands[index].min_points = newMinPoints;
-  
+
   // Auto-adjust next band to avoid gaps
   if (index < bands.length - 1) {
     bands[index + 1].max_points = newMinPoints - 1;
   }
-  
+
   return bands;
 }
 
@@ -391,47 +391,47 @@ const adjustedBands = adjustBand(initialBands, "1.0", 50);
 flowchart TD
     Start([Teacher opens grading UI]) --> LoadData[Load all student scores from assessment]
     LoadData --> ShowHistogram[Display histogram of score distribution]
-    
+
     ShowHistogram --> ChooseMode{Teacher chooses mode}
-    
+
     ChooseMode -->|Two-Point Auto| TwoPoint[Select two-point auto-generation]
     ChooseMode -->|Manual Drawing| Manual[Select manual curve mode]
-    
+
     TwoPoint --> DragMarkers[Drag two markers on histogram]
     DragMarkers --> CalcInterpolation[Frontend calculates linear interpolation]
     CalcInterpolation --> GenerateBands[Generate bands array with all grades]
     GenerateBands --> ShowPreview
-    
+
     Manual --> DragBoundaries[Drag individual grade boundaries]
     DragBoundaries --> BuildManualBands[Build bands from boundary positions]
     BuildManualBands --> ShowPreview
-    
+
     ShowPreview[Show preview with histogram overlay] --> DisplayStats[Display grade distribution stats]
-    
+
     DisplayStats --> TeacherReview{Teacher satisfied?}
-    
+
     TeacherReview -->|No - adjust| AdjustChoice{Adjustment type?}
     AdjustChoice -->|Tweak specific band| DragOneBoundary[Drag single boundary marker]
     AdjustChoice -->|Reset and retry| ResetButton[Click reset button]
-    
+
     DragOneBoundary --> AutoAdjustNeighbor[Auto-adjust neighboring band to avoid gaps]
     AutoAdjustNeighbor --> UpdatePreview[Update preview with new distribution]
     UpdatePreview --> DisplayStats
-    
+
     ResetButton --> TwoPoint
-    
+
     TeacherReview -->|Yes| ValidateBands{Bands valid?}
-    
+
     ValidateBands -->|No gaps/overlaps| BuildConfig[Build config JSON]
     ValidateBands -->|Issues found| ShowWarning[Show validation warning]
     ShowWarning --> TeacherReview
-    
+
     BuildConfig --> SendToBackend[Send POST request to backend]
     SendToBackend --> BackendValidate[Backend validates config]
-    
+
     BackendValidate --> SaveScheme[Save GradeScheme::Scheme record]
     SaveScheme --> Success([Scheme created successfully])
-    
+
     style Start fill:#e1f5ff
     style Success fill:#d4edda
     style ShowHistogram fill:#fff3cd
@@ -487,7 +487,7 @@ The exam grading workflow progresses through four distinct phases with dedicated
 **High-level phases:**
 
 1. **Phase 1: Point Entry** — Teachers enter task points for each student; grade column remains empty
-2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points  
+2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points
 3. **Phase 3: Scheme Configuration** — Set excellence/passing thresholds (Two-Point Auto) or manually define grade boundaries (Manual Curve)
 4. **Phase 4: Scheme Applied** — Grades auto-computed; point edits trigger automatic grade recalculation
 
@@ -495,44 +495,44 @@ The exam grading workflow progresses through four distinct phases with dedicated
 flowchart TD
     Start([Exam grading complete]) --> CreateScheme[Professor creates draft scheme]
     CreateScheme --> AnalyzeDist[Analyze distribution statistics]
-    
+
     AnalyzeDist --> ViewStats[View: min, max, mean, median, percentiles]
     ViewStats --> InitialConfig[Set initial config bands]
-    
+
     InitialConfig --> Preview[Preview grade distribution]
     Preview --> ReviewResults[Review: How many pass/fail?]
-    
+
     ReviewResults --> Satisfied{Satisfied with<br/>distribution?}
-    
+
     Satisfied -->|No - too harsh| LowerThreshold[Lower cutoff thresholds]
     Satisfied -->|No - too lenient| RaiseThreshold[Raise cutoff thresholds]
-    
+
     LowerThreshold --> UpdateConfig[Update scheme config]
     RaiseThreshold --> UpdateConfig
     UpdateConfig --> Preview
-    
+
     Satisfied -->|Yes| Apply[Apply scheme to all participations]
     Apply --> Transaction[Database transaction starts]
-    
+
     Transaction --> CheckHash{version_hash<br/>already applied?}
     CheckHash -->|Yes| SkipAll[Skip - idempotent]
     CheckHash -->|No| IterateParticipations[Iterate all participations]
-    
+
     IterateParticipations --> CheckOverride{Has manual<br/>override?}
     CheckOverride -->|Yes| SkipStudent[Skip this student]
     CheckOverride -->|No| ComputeGrade[Compute grade from points]
-    
+
     ComputeGrade --> UpdateGrade[Update grade_value]
     UpdateGrade --> MoreStudents{More students?}
     SkipStudent --> MoreStudents
-    
+
     MoreStudents -->|Yes| CheckOverride
     MoreStudents -->|No| MarkApplied[Mark scheme as applied]
-    
+
     MarkApplied --> Commit[Commit transaction]
     SkipAll --> Done([Application complete])
     Commit --> Done
-    
+
     style Start fill:#e1f5ff
     style Done fill:#d4edda
     style Apply fill:#fff3cd
@@ -549,33 +549,33 @@ After scheme application, if a teacher edits any task points for a student, the 
 flowchart TD
     Start([compute_grade_for participation]) --> GetPoints[Get points_total from participation]
     GetPoints --> GetMaxPoints[Get effective_total_points from assessment]
-    
+
     GetMaxPoints --> InspectBand[Inspect first band in config]
     InspectBand --> CheckFormat{Band format?}
-    
+
     CheckFormat -->|Has min_points| AbsoluteFlow[Use absolute points scheme]
     CheckFormat -->|Has min_pct| PercentageFlow[Use percentage scheme]
     CheckFormat -->|Neither| Fallback[Return grade 5.0 - malformed config]
-    
+
     AbsoluteFlow --> SortAbsBands[Sort bands by min_points descending]
     SortAbsBands --> FindAbsBand[Find band where:<br/>points >= min_points AND<br/>points <= max_points]
     FindAbsBand --> AbsFound{Band found?}
     AbsFound -->|Yes| ReturnAbsGrade[Return band grade]
     AbsFound -->|No| Return50Abs[Return grade 5.0]
-    
+
     PercentageFlow --> CalcPct[Calculate percentage:<br/>points / max_points * 100]
     CalcPct --> SortPctBands[Sort bands by min_pct descending]
     SortPctBands --> FindPctBand[Find band where:<br/>percentage >= min_pct AND<br/>percentage <= max_pct]
     FindPctBand --> PctFound{Band found?}
     PctFound -->|Yes| ReturnPctGrade[Return band grade]
     PctFound -->|No| Return50Pct[Return grade 5.0]
-    
+
     ReturnAbsGrade --> End([Grade returned])
     Return50Abs --> End
     ReturnPctGrade --> End
     Return50Pct --> End
     Fallback --> End
-    
+
     style Start fill:#e1f5ff
     style End fill:#d4edda
     style Fallback fill:#f8d7da
@@ -596,7 +596,7 @@ module GradeScheme
     end
 
   def analyze_distribution
-    participations = @assessment.participations.where(status: :graded)
+    participations = @assessment.participations.where(status: :reviewed)
     points = participations.pluck(:points_total)
     max_points = @assessment.effective_total_points
 
@@ -615,11 +615,11 @@ module GradeScheme
     return if already_applied?
 
     Assessment::Participation.transaction do
-      participations = @assessment.participations.where(status: :graded)
-      
+      participations = @assessment.participations.where(status: :reviewed)
+
       participations.each do |participation|
         next if participation.manual_grade_override?
-        
+
         grade = compute_grade_for(participation)
         participation.update!(grade_value: grade)
       end
@@ -629,8 +629,8 @@ module GradeScheme
   end
 
   def preview
-    participations = @assessment.participations.where(status: :graded)
-    
+    participations = @assessment.participations.where(status: :reviewed)
+
     participations.map do |p|
       {
         user_id: p.user_id,
@@ -651,10 +651,10 @@ module GradeScheme
   def compute_grade_for(participation)
     points = participation.points_total
     max_points = @assessment.effective_total_points
-    
+
     # Determine if using absolute points or percentage-based
     first_band = @scheme.config["bands"].first
-    
+
     if first_band.key?("min_points")
       apply_absolute_points_scheme(points)
     elsif first_band.key?("min_pct")
