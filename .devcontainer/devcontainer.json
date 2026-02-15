@@ -118,7 +118,8 @@
                 "timonwong.shellcheck",
                 "github.copilot",
                 "github.vscode-pull-request-github",
-                "ms-playwright.playwright"
+                "ms-playwright.playwright",
+                "marcoroth.herb-lsp"
             ]
         }
     },
