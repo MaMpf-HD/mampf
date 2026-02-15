@@ -202,7 +202,7 @@ namespace :assessment do
           p.update!(status: :exempt, submitted_at: nil)
         elsif is_physical && rand < 0.10
           p.update!(status: :absent, submitted_at: nil)
-        elsif rand > submission_rate
+        elsif !is_physical && rand > submission_rate
           if future_deadline
             p.destroy!
           else
