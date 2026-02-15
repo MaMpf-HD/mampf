@@ -59,11 +59,7 @@ After `just up`:
 
 Priority:
 
-~~1. Aggregate PIDs~~
-~~2. RAM %~~
-3. Roleup
-4. Alerts
-5. bandwidth
-6. Puma Metrics in Grafana
-7. active sessions = online users
-8. singups, Änderungsrate registerd users, deleted users
+
+1. Alerts
+2. active sessions = online users
+3. singups, Änderungsrate registerd users, deleted users
