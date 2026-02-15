@@ -17,7 +17,6 @@ export class LectureEditPage {
   }
 
   get campaignsTab() {
-    // The tabs are buttons with role="tab"
     return this.page.getByRole("tab", { name: "Registrations" });
   }
 }

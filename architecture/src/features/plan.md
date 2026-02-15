@@ -207,8 +207,9 @@ graph TD
 8. **[Grading] Grading Flow & Submission Fan-out**
    Action: Introduce the backend `Assessment::GradingService`. Build new grading UIs for instructors and TAs where they can view submissions and enter points. This UI will call the new service to save points and grades to the new tables (`assessment_participations`, `assessment_task_points`).
 
-    Controllers: Enable `Assessment::GradingController` and
-    `Assessment::ParticipationsController`. Add `publish_results` and
+    Controllers: Enable `Assessment::GradesController`,
+    `Assessment::TaskPointsController`,
+    and `Assessment::ParticipationsController`. Add `publish_results` and
     `unpublish_results` actions on `Assessment::AssessmentsController`.
 
     ```admonish success "Non-Disruptive Impact"
