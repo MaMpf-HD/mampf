@@ -50,6 +50,23 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     consumptions_count_gauge.observe(Consumption.count)
 
     # =================================================================
+    # NETWORK METRICS (Bytes In/Out from OS)
+    # =================================================================
+
+    net_rx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_receive_bytes",
+                                                         "Total bytes received")
+
+    net_tx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_transmit_bytes",
+                                                         "Total bytes transmitted")
+
+    net_stats = collect_network_stats
+    if net_stats
+      labels = { interface: net_stats[:interface] }
+      net_rx_gauge.observe(net_stats[:rx], labels)
+      net_tx_gauge.observe(net_stats[:tx], labels)
+    end
+
+    # =================================================================
     # WORKER METRICS (CPU / RAM per Worker)
     # =================================================================
 
@@ -80,6 +97,8 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
       submissions_count_gauge,
       lectures_count_gauge,
       consumptions_count_gauge,
+      net_rx_gauge,
+      net_tx_gauge,
       puma_cpu_gauge,
       puma_ram_gauge,
       puma_ram_pct_gauge
@@ -88,7 +107,29 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
 
   private
 
-    # The logic to find and read Master and Worker PIDs
+    def collect_network_stats
+      return nil unless File.exist?("/proc/net/dev")
+
+      File.readlines("/proc/net/dev").each do |line|
+        next unless line.include?(":")
+
+        parts = line.split(":")
+        interface = parts[0].strip
+
+        # Filter to eth0, ignoring loopback (lo) or tunnel interfaces
+        next unless interface == "eth0"
+
+        values = parts[1].split
+        # Index 0 = Receive Bytes, Index 8 = Transmit Bytes
+        return {
+          interface: interface,
+          rx: values[0].to_i,
+          tx: values[8].to_i
+        }
+      end
+      nil
+    end
+
     def collect_detailed_puma_stats
       stats = []
       pid_file = Rails.root.join("tmp/pids/server.pid")
@@ -133,7 +174,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
             worker_count += 1
           end
 
-          stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb, ram_pct: ram_percent}
+          stats << { pid: current_pid, role: role, cpu: cpu, ram: ram_mb, ram_pct: ram_percent }
         end
       end
 
