@@ -34,7 +34,7 @@ linter:
 formatter:
   enabled: true
   indentWidth: 2
-  maxLineLength: 100
+  maxLineLength: 80
 
   exclude:
     - "node_modules/**/*"
