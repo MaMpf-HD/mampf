@@ -104,7 +104,7 @@ jobs:
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
         run: |
           echo "🚨 Running Herb Lint version: $(yarn run herb-lint --version)"
-          yarn run herb-lint --github ${{ steps.js-changed.outputs.changed-files }}
+          yarn run herb-lint ${{ steps.js-changed.outputs.changed-files }}
 
       - name: Run Herb Formatter
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
