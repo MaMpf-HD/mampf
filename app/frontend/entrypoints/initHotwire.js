@@ -38,8 +38,8 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
 window.Stimulus.register("question-counter", QuestionCounterController);
 
-import AdministrationCourseFormController from "~/administration/course_form.controller.js";
-window.Stimulus.register("administration--course-form", AdministrationCourseFormController);
+import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
+window.Stimulus.register("administration--index--create-buttons", AdministrationIndexCreateButtonsController);
 
 import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
 window.Stimulus.register("courses-edit", CoursesEditController);

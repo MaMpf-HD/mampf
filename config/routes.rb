@@ -123,7 +123,7 @@ Rails.application.routes.draw do
       to: "courses#search",
       as: "search_courses"
 
-  resources :courses, except: [:index, :show, :new]
+  resources :courses, except: [:index, :show]
 
   # divisions routes
 

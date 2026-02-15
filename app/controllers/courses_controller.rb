@@ -11,6 +11,14 @@ class CoursesController < ApplicationController
     @current_ability ||= CourseAbility.new(current_user)
   end
 
+  def new
+    @course = Course.new
+    authorize! :new, @course
+
+    render turbo_stream: turbo_stream.update(@course, partial: "courses/new",
+                                                      locals: { course: @course })
+  end
+
   def edit
     I18n.locale = @course.locale || I18n.default_locale
   end
@@ -28,22 +36,20 @@ class CoursesController < ApplicationController
                                                           .join(", "))
       render turbo_stream: [
         stream_flash,
+        turbo_stream.update(Course.new, ""),
         turbo_stream.update("courses",
                             partial: "administration/index/courses_card",
                             locals: { courses: current_user.edited_courses
                                                       .natural_sort_by(&:title) })
       ]
+    else
+      @errors = @course.errors
 
+      render turbo_stream: turbo_stream.update(Course.new,
+                                               partial: "courses/new",
+                                               locals: { course: @course }),
+             status: :unprocessable_content
     end
-    @errors = @course.errors
-    return if @errors.empty? || !request.format.turbo_stream?
-
-    render_course_errors_turbo_stream(
-      title_input_id: "new_course_title",
-      title_error_id: "new-course-title-error",
-      short_title_input_id: "new_course_short_title",
-      short_title_error_id: "new-course-short-title-error"
-    )
   end
 
   def update

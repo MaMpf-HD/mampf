@@ -1,8 +1,4 @@
-<div class="card card-fixed-xxl" 
-     <% if current_user.admin? %>
-       data-controller="administration--course-form"
-       data-administration--course-form-hidden-class="d-none"
-     <% end %>>
+<div class="card card-fixed-xxl">
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
@@ -12,25 +8,21 @@
       </div>
       <div class="col-4 text-end">
         <% if current_user.admin? %>
-          <i class="fas fa-plus-circle text-light admin-index-button clickable"
-             data-administration--course-form-target="button"
-             data-action="click->administration--course-form#show"
-             data-bs-toggle="tooltip"
-             title="<%= t('admin.main.create_course') %>">
-          </i>
+          <%= link_to '',
+                      new_course_path,
+                      class: 'fas fa-plus-circle text-light admin-index-button clickable',
+                      id: 'new-course-button',
+                      data: { turbo_stream: true, bs_toggle: 'tooltip', turbo_prefetch: false},
+                      title: t('admin.main.create_course') %>
         <% end %>
       </div>
     </div>
   </div>
   <div class="card-body scrollable">
     <% if current_user.admin? %>
-      <div data-administration--course-form-target="form"
-           class="bg-green-lighten-4 p-3 mb-3 rounded d-none">
-        <%= render partial: 'courses/new',
-                   locals: { course: Course.new } %>
-      </div>
+        <%= turbo_frame_tag Course.new %>
     <% end %>
-    <div id="courses">
+    <%= turbo_frame_tag "courses" do %>
       <% if current_user.edited_courses.any? %>
         <%= render partial: 'administration/index/courses_card',
                   locals: { courses:
@@ -39,6 +31,6 @@
       <% else %>
         <%= t('admin.main.no_edited_courses') %>
       <% end %>
-    </div>
+    <% end %>
   </div>
 </div>
