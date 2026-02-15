@@ -157,9 +157,10 @@ class LecturesController < ApplicationController
       return
     end
 
-    respond_to do |format|
-      format.js { render template: "lectures/update/update" }
-    end
+    render turbo_stream: [
+      turbo_stream.update("lecture-teacher-error", @errors[:teacher].join(" ")),
+      turbo_stream.update("lecture-term-error", @errors[:course].join(" "))
+    ], status: :unprocessable_content
   end
 
   def publish

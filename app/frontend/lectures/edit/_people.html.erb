@@ -1,5 +1,8 @@
 <% if current_user.can_update_personell?(lecture) %>
-  <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
+  <%= form_with model: lecture,
+                local: true,
+                data: { turbo: true },
+                html: { id: 'lecture-form' } do |f| %>
     <div class="row">
       <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
 

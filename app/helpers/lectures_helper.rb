@@ -161,7 +161,7 @@ module LecturesHelper
                                                               testid: "teacher-admin-select"
                                                             } })
 
-      error_div = content_tag(:div, teacher_error, class: "invalid-feedback",
+      error_div = content_tag(:div, teacher_error, class: "invalid-feedback d-block",
                                                    id: "lecture-teacher-error")
 
       return label + help_desk + select + error_div
