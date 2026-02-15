@@ -326,4 +326,38 @@ RSpec.describe(PointGridComponent, type: :component) do
       expect(component.total_display(participation)).to eq("30")
     end
   end
+
+  context "with an exam (Pointable + Gradable)" do
+    let(:exam) { create(:exam, :written, lecture: lecture) }
+    let(:exam_assessment) { exam.reload.assessment }
+    let(:exam_component) { described_class.new(assessment: exam_assessment) }
+
+    let!(:task) do
+      create(:assessment_task, assessment: exam_assessment,
+                               max_points: 15, position: 1,
+                               description: "Aufgabe 1")
+    end
+    let!(:participation) do
+      create(:assessment_participation, :reviewed,
+             assessment: exam_assessment, tutorial: tutorial,
+             points_total: 12.5)
+    end
+    let!(:tp) do
+      create(:assessment_task_point,
+             task: task,
+             assessment_participation: participation,
+             points: 12.5)
+    end
+
+    it "renders the point grid for an exam" do
+      render_inline(exam_component)
+      expect(rendered_content).to include("Aufgabe 1")
+      expect(rendered_content).to include("12.5")
+      expect(rendered_content).to include("/ 15")
+    end
+
+    it "shows the tutorial column (exams are not talks)" do
+      expect(exam_component.show_tutorial_column?).to be(true)
+    end
+  end
 end
