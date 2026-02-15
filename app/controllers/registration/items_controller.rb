@@ -84,8 +84,12 @@ module Registration
             flash.now[:notice] = message
             streams = [
               turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign, tab: "items" }),
+                                  partial: "registration/campaigns/card_body_index",
+                                  locals: {
+                                    lecture: @campaign.campaignable,
+                                    expanded_campaign_id: @campaign.id,
+                                    tab: "items"
+                                  }),
               stream_flash
             ]
             if @campaign.campaignable.is_a?(Lecture)

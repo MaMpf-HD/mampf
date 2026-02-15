@@ -10,6 +10,46 @@ module Registration
       }[campaign.status.to_sym]
     end
 
+    def campaign_accordion_item_id(campaign)
+      "campaign_accordion_item_#{campaign.id}"
+    end
+
+    def campaign_accordion_collapse_id(campaign)
+      "campaign_accordion_collapse_#{campaign.id}"
+    end
+
+    def campaign_header_frame_id(campaign)
+      "campaign_header_frame_#{campaign.id}"
+    end
+
+    def campaign_items_tab_id(campaign)
+      "campaign_#{campaign.id}_items"
+    end
+
+    def campaign_policies_tab_id(campaign)
+      "campaign_#{campaign.id}_policies"
+    end
+
+    def campaign_registrations_tab_id(campaign)
+      "campaign_#{campaign.id}_registrations"
+    end
+
+    def campaign_policy_form_frame_id(campaign)
+      "policy_form_#{campaign.id}"
+    end
+
+    def campaign_policies_list_frame_id(campaign)
+      "policies_list_#{campaign.id}"
+    end
+
+    def campaign_registrations_tab_count_id(campaign)
+      "registrations_tab_count_#{campaign.id}"
+    end
+
+    def campaign_user_registrations_list_id(campaign)
+      "user_registrations_list_#{campaign.id}"
+    end
+
     def item_stats_label(campaign)
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         t("registration.item.columns.registrations")

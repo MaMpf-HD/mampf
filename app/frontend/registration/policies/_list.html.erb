@@ -1,6 +1,6 @@
 <% campaign ||= @campaign %>
 
-<%= turbo_frame_tag "policies_list" do %>
+<%= turbo_frame_tag campaign_policies_list_frame_id(campaign) do %>
   <% if campaign.registration_policies.any? %>
     <table class="table table-hover">
       <thead>
@@ -28,7 +28,10 @@
               <% if campaign.draft? %>
                 <%= link_to "", edit_registration_campaign_policy_path(campaign, policy),
                             class: "d-none",
-                            data: { turbo_frame: "policy_form", row_link: true } %>
+                            data: {
+                              turbo_frame: campaign_policy_form_frame_id(campaign),
+                              row_link: true
+                            } %>
                 <div class="d-flex justify-content-end gap-1">
                   <% unless policy.first? %>
                     <%= button_to move_up_registration_campaign_policy_path(campaign, policy),

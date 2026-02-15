@@ -17,7 +17,7 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_index", lecture: @lecture)
+          render_campaigns_index_turbo(lecture: @lecture)
         end
       end
     end
@@ -26,7 +26,9 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_show", campaign: @campaign)
+          render_campaigns_index_turbo(lecture: @campaign.campaignable,
+                                       expanded_campaign_id: @campaign.id,
+                                       tab: params[:tab])
         end
       end
     end
@@ -38,8 +40,8 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_form",
-                           campaign: @campaign, lecture: @lecture)
+          render_campaigns_index_turbo(lecture: @lecture,
+                                       new_campaign: @campaign)
         end
       end
     end
@@ -63,7 +65,7 @@ module Registration
 
     def update
       if @campaign.update(campaign_params)
-        render partial: "registration/campaigns/overview",
+        render partial: "registration/campaigns/accordion_header",
                locals: { campaign: @campaign }
       else
         render partial: "registration/campaigns/form",
@@ -161,16 +163,33 @@ module Registration
         end
       end
 
-      def render_card_body(partial, locals)
-        render turbo_stream: turbo_stream.update("campaigns_container",
-                                                 partial: partial,
-                                                 locals: locals)
+      def render_campaigns_index_turbo(lecture:, expanded_campaign_id: nil,
+                                       tab: nil, new_campaign: nil)
+        render turbo_stream: turbo_stream.update(
+          "campaigns_container",
+          partial: "registration/campaigns/card_body_index",
+          locals: {
+            lecture: lecture,
+            expanded_campaign_id: expanded_campaign_id,
+            tab: tab,
+            new_campaign: new_campaign
+          }
+        )
       end
 
-      def render_turbo_update(partial, locals)
-        lecture = locals[:lecture] || @lecture || @campaign&.campaignable
+      def render_turbo_update(lecture:, expanded_campaign_id: nil,
+                              tab: nil, new_campaign: nil)
         streams = [
-          turbo_stream.update("campaigns_container", partial: partial, locals: locals),
+          turbo_stream.update(
+            "campaigns_container",
+            partial: "registration/campaigns/card_body_index",
+            locals: {
+              lecture: lecture,
+              expanded_campaign_id: expanded_campaign_id,
+              tab: tab,
+              new_campaign: new_campaign
+            }
+          ),
           stream_flash
         ]
         streams += refresh_roster_streams(lecture)
@@ -194,14 +213,16 @@ module Registration
       end
 
       def respond_with_success(message, tab: nil)
+        lecture = @campaign.campaignable
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: tab), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render_turbo_update("registration/campaigns/card_body_show",
-                                campaign: @campaign, tab: tab)
+            render_turbo_update(lecture: lecture,
+                                expanded_campaign_id: @campaign.id,
+                                tab: tab)
           end
         end
       end
@@ -215,8 +236,7 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render_turbo_update("registration/campaigns/card_body_index",
-                                lecture: lecture)
+            render_turbo_update(lecture: lecture)
           end
         end
       end
@@ -226,9 +246,8 @@ module Registration
           format.html { render action, status: :unprocessable_content }
           format.turbo_stream do
             flash.now[:alert] = message
-            render_turbo_update("registration/campaigns/card_body_form",
-                                campaign: @campaign,
-                                lecture: @campaign.campaignable)
+            render_turbo_update(lecture: @campaign.campaignable,
+                                new_campaign: @campaign)
           end
         end
       end

@@ -11,11 +11,9 @@
 </div>
 
 <div id="campaigns_container">
-  <% if local_assigns[:new_campaign] %>
-    <%= render "registration/campaigns/card_body_form", campaign: new_campaign, lecture: lecture %>
-  <% elsif local_assigns[:campaign] %>
-    <%= render "registration/campaigns/card_body_show", campaign: campaign %>
-  <% else %>
-    <%= render "registration/campaigns/card_body_index", lecture: lecture %>
-  <% end %>
+  <%= render "registration/campaigns/card_body_index",
+             lecture: lecture,
+             new_campaign: local_assigns[:new_campaign],
+             expanded_campaign_id: local_assigns[:expanded_campaign_id],
+             tab: local_assigns[:tab] %>
 </div>

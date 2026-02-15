@@ -26,7 +26,7 @@ module Registration
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
 
-        streams << turbo_stream.update("registrations-tab-count",
+        streams << turbo_stream.update(view_context.campaign_registrations_tab_count_id(@campaign),
                                        @campaign.user_registrations.distinct.count(:user_id))
 
         if params[:source] == "allocation"
@@ -34,7 +34,7 @@ module Registration
           streams << turbo_stream.replace("allocation-dashboard",
                                           partial: "registration/allocations/dashboard")
         elsif params[:source] == "registrations"
-          streams << turbo_stream.replace("user-registrations-list",
+          streams << turbo_stream.replace(view_context.campaign_user_registrations_list_id(@campaign),
                                           partial: "registration/user_registrations/index",
                                           locals: { campaign: @campaign })
         end

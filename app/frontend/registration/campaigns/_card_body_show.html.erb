@@ -1,80 +1,123 @@
-<div class="mb-3">
-  <%= link_to lecture_registration_campaigns_path(campaign.campaignable),
+<% tab ||= "items" %>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to edit_registration_campaign_path(campaign),
                 class: "btn btn-sm btn-outline-secondary",
-                role: "button",
-                data: { turbo_stream: true } do %>
-    <i class="bi bi-arrow-left"></i>
-    <%= t("back") %>
-  <% end %>
-</div>
-
-<div class="d-flex <%= campaign.description.present? ? 'justify-content-between' : 'justify-content-end' %> align-items-center mb-4">
-  <% if campaign.description.present? %>
-    <h3><%= campaign.description %></h3>
-  <% end %>
-
-  <div class="d-flex gap-2">
-    <% if campaign.open? %>
-      <%= close_campaign_button(campaign) %>
-    <% elsif campaign.closed? %>
-      <%= reopen_campaign_button(campaign) %>
-      <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign) %>
-      <% else %>
-        <%# FCFS: Go to dashboard for review instead of direct finalize %>
-        <%= review_and_finalize_button(campaign) %>
-      <% end %>
-    <% elsif campaign.processing? %>
-      <%= review_and_finalize_button(campaign) %>
-      <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign) %>
-      <% end %>
-    <% elsif campaign.draft? %>
-      <%= open_campaign_button(campaign) %>
+                data: { turbo_frame: campaign_header_frame_id(campaign) } do %>
+      <i class="bi bi-pencil"></i>
+      <%= t("basics.edit") %>
     <% end %>
 
     <% if campaign.can_be_deleted? %>
-      <%= button_to t("buttons.delete"),
-                      registration_campaign_path(campaign),
-                      method: :delete,
-                      data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?"), turbo_stream: true },
-                      class: "btn btn-outline-danger" %>
+      <%= button_to registration_campaign_path(campaign),
+                    method: :delete,
+                    data: {
+                      confirm: t("registration.campaign.confirm_delete",
+                                 default: "Are you sure?"),
+                      turbo_stream: true
+                    },
+                    class: "btn btn-sm btn-outline-danger" do %>
+        <i class="bi bi-trash"></i>
+        <%= t("buttons.delete") %>
+      <% end %>
+    <% end %>
+
+    <% if campaign.draft? %>
+      <%= button_to open_registration_campaign_path(campaign),
+                    method: :patch,
+                    form: {
+                      data: {
+                        controller: "campaign-action",
+                        "campaign-action-campaign-id-value": campaign.id,
+                        "campaign-action-confirm-message-value":
+                          t("registration.campaign.confirmations.open"),
+                        "campaign-action-warning-message-value":
+                          t("registration.campaign.warnings.unlimited_items"),
+                        action: "submit->campaign-action#confirm",
+                        turbo_stream: true
+                      }
+                    },
+                    class: "btn btn-sm btn-success" do %>
+        <i class="bi bi-play-fill"></i>
+        <%= t("registration.campaign.actions.open") %>
+      <% end %>
+    <% elsif campaign.open? %>
+      <%= button_to t("registration.campaign.actions.close"),
+                    close_registration_campaign_path(campaign),
+                    method: :patch,
+                    data: {
+                      confirm: campaign_close_confirmation(campaign),
+                      turbo_stream: true
+                    },
+                    class: "btn btn-sm btn-warning" %>
+    <% elsif campaign.closed? %>
+      <%= button_to t("registration.campaign.actions.reopen"),
+                    reopen_registration_campaign_path(campaign),
+                    method: :patch,
+                    data: {
+                      confirm: t("registration.campaign.confirmations.reopen"),
+                      turbo_stream: true
+                    },
+                    class: "btn btn-sm btn-success" %>
+      <% if campaign.preference_based? %>
+        <% has_allocation = campaign.last_allocation_calculated_at.present? %>
+        <% label = has_allocation ?
+          t("registration.campaign.actions.reallocate") :
+          t("registration.campaign.actions.allocate") %>
+        <% confirm = has_allocation ?
+          t("registration.campaign.confirmations.reallocate") : nil %>
+        <%= button_to label,
+                      registration_campaign_allocation_path(campaign),
+                      method: :post,
+                      class: "btn btn-sm btn-primary",
+                      data: { confirm: confirm, turbo_stream: true } %>
+      <% else %>
+        <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                    registration_campaign_allocation_path(campaign),
+                    class: "btn btn-sm btn-primary",
+                    data: { turbo_stream: true } %>
+      <% end %>
+    <% elsif campaign.processing? %>
+      <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                  registration_campaign_allocation_path(campaign),
+                  class: "btn btn-sm btn-primary",
+                  data: { turbo_stream: true } %>
+      <% if campaign.preference_based? %>
+        <% has_allocation = campaign.last_allocation_calculated_at.present? %>
+        <% label = has_allocation ?
+          t("registration.campaign.actions.reallocate") :
+          t("registration.campaign.actions.allocate") %>
+        <% confirm = has_allocation ?
+          t("registration.campaign.confirmations.reallocate") : nil %>
+        <%= button_to label,
+                      registration_campaign_allocation_path(campaign),
+                      method: :post,
+                      class: "btn btn-sm btn-primary",
+                      data: { confirm: confirm, turbo_stream: true } %>
+      <% end %>
     <% end %>
   </div>
 </div>
 
-<% tab ||= "overview" %>
-
-<ul class="nav nav-tabs mb-3" id="campaignTabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button
-      class="nav-link <%= 'active' if tab == 'overview' %>"
-      id="overview-tab"
-      data-bs-toggle="tab"
-      data-bs-target="#overview"
-      type="button"
-      role="tab"
-      aria-controls="overview"
-      aria-selected="<%= tab == 'overview' %>"
-    >
-      <%= t("basics.overview") %>
-    </button>
-  </li>
-
+<ul
+  class="nav nav-tabs mb-3"
+  id="campaignTabs-<%= campaign.id %>"
+  role="tablist"
+>
   <li class="nav-item" role="presentation">
     <button
       class="nav-link <%= 'active' if tab == 'items' %>"
-      id="items-tab"
+      id="<%= campaign_items_tab_id(campaign) %>-tab"
       data-bs-toggle="tab"
-      data-bs-target="#items"
+      data-bs-target="#<%= campaign_items_tab_id(campaign) %>"
       type="button"
       role="tab"
-      aria-controls="items"
       aria-selected="<%= tab == 'items' %>"
     >
       <%= t("registration.item.index.title") %>
 
-      <span id="items-tab-count" class="badge rounded-pill bg-secondary ms-1">
+      <span class="badge rounded-pill bg-secondary ms-1">
         <%= campaign.registration_items.count %>
       </span>
     </button>
@@ -83,12 +126,12 @@
   <li class="nav-item" role="presentation">
     <button
       class="nav-link <%= 'active' if tab == 'policies' %>"
-      id="policies-tab"
+      id="<%= campaign_policies_tab_id(campaign) %>-tab"
       data-bs-toggle="tab"
-      data-bs-target="#policies"
+      data-bs-target="#<%= campaign_policies_tab_id(campaign) %>"
       type="button"
       role="tab"
-      aria-controls="policies"
+      aria-controls="<%= campaign_policies_tab_id(campaign) %>"
       aria-selected="<%= tab == 'policies' %>"
     >
       <%= t("registration.policy.index.title") %>
@@ -102,19 +145,19 @@
   <li class="nav-item" role="presentation">
     <button
       class="nav-link <%= 'active' if tab == 'registrations' %>"
-      id="registrations-tab"
+      id="<%= campaign_registrations_tab_id(campaign) %>-tab"
       data-bs-toggle="tab"
-      data-bs-target="#registrations"
+      data-bs-target="#<%= campaign_registrations_tab_id(campaign) %>"
       type="button"
       role="tab"
-      aria-controls="registrations"
+      aria-controls="<%= campaign_registrations_tab_id(campaign) %>"
       aria-selected="<%= tab == 'registrations' %>"
     >
       <%= t("registration.user_registration.index.title", default: "Registrations") %>
 
       <span
         class="badge rounded-pill bg-secondary ms-1"
-        id="registrations-tab-count"
+        id="<%= campaign_registrations_tab_count_id(campaign) %>"
       >
         <%= campaign.user_registrations.distinct.count(:user_id) %>
       </span>
@@ -122,39 +165,30 @@
   </li>
 </ul>
 
-<div class="tab-content" id="campaignTabsContent">
-  <div
-    class="tab-pane fade <%= 'show active' if tab == 'overview' %>"
-    id="overview"
-    role="tabpanel"
-    aria-labelledby="overview-tab"
-  >
-    <%= render "registration/campaigns/overview", campaign: campaign %>
-  </div>
-
+<div class="tab-content" id="campaignTabsContent-<%= campaign.id %>">
   <div
     class="tab-pane fade <%= 'show active' if tab == 'items' %>"
-    id="items"
+    id="<%= campaign_items_tab_id(campaign) %>"
     role="tabpanel"
-    aria-labelledby="items-tab"
+    aria-labelledby="<%= campaign_items_tab_id(campaign) %>-tab"
   >
     <%= render "registration/campaigns/card_body_items", campaign: campaign %>
   </div>
 
   <div
     class="tab-pane fade <%= 'show active' if tab == 'policies' %>"
-    id="policies"
+    id="<%= campaign_policies_tab_id(campaign) %>"
     role="tabpanel"
-    aria-labelledby="policies-tab"
+    aria-labelledby="<%= campaign_policies_tab_id(campaign) %>-tab"
   >
-    <%= render "registration/policies/index" %>
+    <%= render "registration/policies/index", campaign: campaign %>
   </div>
 
   <div
     class="tab-pane fade <%= 'show active' if tab == 'registrations' %>"
-    id="registrations"
+    id="<%= campaign_registrations_tab_id(campaign) %>"
     role="tabpanel"
-    aria-labelledby="registrations-tab"
+    aria-labelledby="<%= campaign_registrations_tab_id(campaign) %>-tab"
   >
     <%= render "registration/user_registrations/index", campaign: campaign %>
   </div>
