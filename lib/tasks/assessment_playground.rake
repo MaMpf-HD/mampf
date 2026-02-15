@@ -327,7 +327,8 @@ namespace :assessment do
     puts "\n#{"=" * 85}"
     puts "Assessment Playground Summary"
     puts "=" * 85
-    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades   Points"
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   " \
+         "Exempt   Grades   Points"
     puts "-" * 85
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
