@@ -35,8 +35,8 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
-import NewLectureButtonController from "~/administration/index/new_lecture_button.controller.js";
-window.Stimulus.register("new-lecture-button", NewLectureButtonController);
+import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
+window.Stimulus.register("administration--index--create-buttons", AdministrationIndexCreateButtonsController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
