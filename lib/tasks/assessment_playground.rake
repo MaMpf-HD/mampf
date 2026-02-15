@@ -327,7 +327,7 @@ namespace :assessment do
     puts "\n#{"=" * 85}"
     puts "Assessment Playground Summary"
     puts "=" * 85
-    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades"
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades   Points"
     puts "-" * 85
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
@@ -461,21 +461,22 @@ namespace :assessment do
       return
     end
 
+    all_participation_ids = assessment.assessment_participations.select(:id)
+    Assessment::TaskPoint
+      .where(assessment_participation_id: all_participation_ids)
+      .delete_all
+    # rubocop:disable Rails/SkipsModelValidations
+    assessment.assessment_participations
+              .where.not(points_total: nil)
+              .update_all(points_total: nil)
+    # rubocop:enable Rails/SkipsModelValidations
+
     gradeable = assessment.assessment_participations
                           .where(status: :reviewed)
                           .where.not(submitted_at: nil)
     if gradeable.empty?
       puts "  ⏭ No reviewed participations for: #{label}"
       return
-    end
-
-    existing = Assessment::TaskPoint
-               .where(assessment_participation_id: gradeable.select(:id))
-    if existing.any?
-      existing.delete_all
-      # rubocop:disable Rails/SkipsModelValidations
-      gradeable.update_all(points_total: nil)
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     gradeable.find_each do |participation|
