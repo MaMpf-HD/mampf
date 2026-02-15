@@ -54,7 +54,7 @@
                     class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.term'), false) %>
         <%= f.select :term_id,
-                     options_for_select(Term.select_terms),
+                     options_for_select(Term.select_terms, lecture.term_id),
                      {},
                      { class: "form-select#{term_error.present? ? ' is-invalid' : ''}",
                        disabled: term_independent } %>
