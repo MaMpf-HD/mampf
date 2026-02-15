@@ -19,7 +19,7 @@
             <td><%= participation.tutorial&.title %></td>
           <% end %>
           <td class="text-center">
-            <%= grade_display(participation) || "—" %>
+            <%= grade_display(participation) %>
           </td>
           <td class="text-muted small"><%= grader_display(participation) %></td>
           <td class="text-muted small"><%= graded_at_display(participation) %></td>
