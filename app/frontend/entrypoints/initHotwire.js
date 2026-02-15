@@ -35,6 +35,9 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
+import NewLectureButtonController from "~/administration/index/new_lecture_button.controller.js";
+window.Stimulus.register("new-lecture-button", NewLectureButtonController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

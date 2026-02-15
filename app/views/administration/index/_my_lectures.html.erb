@@ -1,4 +1,4 @@
-<div class="card card-fixed-xxl">
+<div class="card card-fixed-xxl" data-controller="new-lecture-button">
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
@@ -10,8 +10,9 @@
           <%= link_to '', new_lecture_path,
                       class: 'fas fa-plus-circle text-light admin-index-button',
                       id: 'new-lecture-button',
-                      data: { toggle: 'tooltip', turbo_frame: dom_id(Lecture.new), testid: 
-                              'new-lecture-button-admin-index' , turbo_prefetch: false},
+                  data: { toggle: 'tooltip', turbo_frame: dom_id(Lecture.new), testid:
+                    'new-lecture-button-admin-index', turbo_prefetch: false,
+                    action: 'click->new-lecture-button#hide' },
                       title: t('admin.main.create_lecture') %>
         <% end %>
       </div>

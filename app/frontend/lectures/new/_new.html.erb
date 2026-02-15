@@ -17,7 +17,8 @@
 <% elsif Term.count == 0 %>
   <%= t('admin.lecture.no_terms_yet') %>
 <% else %>
-  <%= form_with model: lecture do |f| %>
+  <%= form_with model: lecture,
+                data: { action: 'turbo:submit-end->new-lecture-button#submitEnd' } do |f| %>
     <% term_independent = (from != 'course' && first_course_independent?) ||
                             (from == 'course' && lecture.course.term_independent) %>
     <% course_error = lecture.errors[:course].join(' ') %>
@@ -91,10 +92,12 @@
             <%= t('buttons.cancel') %>
           </button>
         <% else %>
-          <%= link_to t('buttons.cancel'),
-                      administration_path,
-                      class: 'btn btn-secondary',
-                      role: 'button' %>
+          <button type="button"
+                  id="cancel-new-lecture"
+                  class="btn btn-secondary"
+              data-action="click->new-lecture-button#cancel">
+            <%= t('buttons.cancel') %>
+          </button>
         <% end %>
       </div>
     </div>
