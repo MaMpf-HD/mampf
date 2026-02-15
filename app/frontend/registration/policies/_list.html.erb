@@ -1,4 +1,5 @@
 <% campaign ||= @campaign %>
+
 <%= turbo_frame_tag "policies_list" do %>
   <% if campaign.registration_policies.any? %>
     <table class="table table-hover">
@@ -10,16 +11,19 @@
           <th></th>
         </tr>
       </thead>
+
       <tbody>
         <% campaign.registration_policies.order(:position).each do |policy| %>
-          <tr <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if campaign.draft? %>>
+          <tr
+            <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if campaign.draft? %>
+          >
             <td><%= t("registration.policy.kinds.#{policy.kind}") %></td>
             <td><%= t("registration.policy.phases.#{policy.phase}") %></td>
+
             <td>
-              <small class="text-muted">
-                <%= policy.config_summary %>
-              </small>
+              <small class="text-muted"><%= policy.config_summary %></small>
             </td>
+
             <td class="text-end">
               <% if campaign.draft? %>
                 <%= link_to "", edit_registration_campaign_policy_path(campaign, policy),
@@ -34,6 +38,7 @@
                       <i class="bi bi-arrow-up"></i>
                     <% end %>
                   <% end %>
+
                   <% unless policy.last? %>
                     <%= button_to move_down_registration_campaign_policy_path(campaign, policy),
                                   method: :patch,
@@ -42,6 +47,7 @@
                       <i class="bi bi-arrow-down"></i>
                     <% end %>
                   <% end %>
+
                   <%= button_to registration_campaign_policy_path(campaign, policy),
                                 method: :delete,
                                 class: "btn btn-sm btn-outline-danger",

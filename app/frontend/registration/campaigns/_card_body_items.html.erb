@@ -6,9 +6,16 @@
       <div class="alert alert-light border">
         <div class="d-flex align-items-center">
           <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
+
           <div>
-            <p class="mb-1 fw-bold"><%= t('registration.campaign.completed_title') %></p>
-            <p class="mb-2 text-muted small"><%= t('registration.campaign.completed_description') %></p>
+            <p class="mb-1 fw-bold">
+              <%= t('registration.campaign.completed_title') %>
+            </p>
+
+            <p class="mb-2 text-muted small">
+              <%= t('registration.campaign.completed_description') %>
+            </p>
+
             <%= link_to t('registration.campaign.go_to_roster'),
                         edit_lecture_path(campaign.campaignable, tab: "roster"),
                         class: "btn btn-sm btn-primary" %>
@@ -23,19 +30,23 @@
               <th><%= t("registration.item.columns.type") %></th>
               <th><%= t("registration.item.columns.title") %></th>
               <th><%= t("registration.item.columns.capacity") %></th>
+
               <% unless campaign.draft? %>
                 <th>
                   <%= item_stats_label(campaign) %>
+
                   <% unless campaign.first_come_first_served? || campaign.processing? || campaign.completed? %>
                     <%= helpdesk(t("registration.campaign.helpdesk.first_choice"), false) %>
                   <% end %>
                 </th>
               <% end %>
+
               <% if campaign.draft? %>
                 <th class="text-end"><%= t("basics.actions") %></th>
               <% end %>
             </tr>
           </thead>
+
           <tbody>
             <%= render partial: "registration/items/item", collection: campaign.registration_items, as: :item %>
           </tbody>
