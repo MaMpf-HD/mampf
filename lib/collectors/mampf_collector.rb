@@ -53,11 +53,11 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     # NETWORK METRICS (Bytes In/Out from OS)
     # =================================================================
 
-    net_rx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_receive_bytes",
-                                                         "Total bytes received")
+    net_rx_gauge = PrometheusExporter::Metric::Counter.new("mampf_app_network_receive_bytes_total",
+                                                           "Total bytes received")
 
-    net_tx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_transmit_bytes",
-                                                         "Total bytes transmitted")
+    net_tx_gauge = PrometheusExporter::Metric::Counter.new("mampf_app_network_transmit_bytes_total",
+                                                           "Total bytes transmitted")
 
     net_stats = collect_network_stats
     if net_stats
@@ -170,7 +170,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
           if current_pid == master_pid
             role = "master"
           else
-            role = "worker_#{worker_count}"
+            role = "worker#{worker_count}"
             worker_count += 1
           end
 
