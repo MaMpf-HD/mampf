@@ -324,12 +324,11 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
-    puts "\n#{"=" * 93}"
+    puts "\n#{"=" * 85}"
     puts "Assessment Playground Summary"
-    puts "=" * 93
-    puts "Assessment                           Revwd   Pendng   No-sub   Absent   " \
-         "Exempt   Grades   Points"
-    puts "-" * 93
+    puts "=" * 85
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades"
+    puts "-" * 85
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
     if lecture.respond_to?(:talks)
@@ -366,7 +365,7 @@ namespace :assessment do
       )
     end
 
-    puts "=" * 93
+    puts "=" * 85
     puts "✅ Setup complete! Visit the lecture's Grading tab."
   end
 

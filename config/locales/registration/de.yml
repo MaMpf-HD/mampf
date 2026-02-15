@@ -98,7 +98,6 @@ de:
         rejected_count:
           one: "Abgelehnt %{count}"
           other: "Abgelehnt %{count}"
-        items: "Elemente"
       warnings:
         no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
         unlimited_items: "Warnung: Einige Elemente haben unbegrenzte Kapazität (∞). Das bedeutet, dass es keine Obergrenze für die Anzahl der zugewiesenen Studierenden gibt."
