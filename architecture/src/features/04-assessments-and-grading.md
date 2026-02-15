@@ -370,7 +370,7 @@ For **assignments**, `absent` does not apply. Non-submission is captured differe
 
 ### Participation Lifecycle per Assessable Type
 
-The participation lifecycle differs significantly by assessable type. These diagrams document the full flow for implementers of PR-8.5 (participation creation), PR-8.6/8.7 (interactive grading), and beyond.
+The participation lifecycle differs significantly by assessable type. These diagrams document the full flow for implementers of PR-8.5 (participation creation), PR-8.7/8.8 (interactive grading), and beyond.
 
 #### Exam Participation Lifecycle
 
