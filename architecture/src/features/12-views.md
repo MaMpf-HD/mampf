@@ -448,8 +448,9 @@ flowchart LR
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, new, create, show, edit, update, destroy   | Setup                          |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update, export, import                      | Grading + bulk ops             |
-| Tutor         | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update                                      | Grading (enter/update points)  |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update, mark_absent, mark_exempt, export, import  | Grade entry (Gradable)         |
+| Teacher/Editor| [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (Pointable)        |
+| Tutor         | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (tutorial-scoped)  |
 | Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only                       |
 | Student       | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller)| index, show                                       | Own results (when published)    |
 
@@ -482,8 +483,8 @@ flowchart LR
 #### Controller/action mapping
 | Role  | Controller                          | Actions                    | Scope                          |
 |-------|-------------------------------------|----------------------------|--------------------------------|
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | show                       | Display grading table for tutorial |
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | update                     | Save points for one team (creates TaskPoints for all members) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index                      | Display point grid for tutorial (auto-scoped by authorization) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | update_team                | Save points for one team (creates TaskPoints for all members) |
 
 ```admonish note "Team Grading Service"
 The backend uses `Assessment::TeamGradingService` to propagate points from team input to individual `Assessment::TaskPoint` records for each team member. This ensures consistent grading within teams while maintaining per-user granularity for reporting.
@@ -621,7 +622,7 @@ flowchart LR
 | Role          | Controller                          | Actions                                           | Scope                          |
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only list; inline grading |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | update                                            | Save inline grade              |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update                                            | Save inline grade              |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | show (detail view)                                | Add feedback notes             |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
 
