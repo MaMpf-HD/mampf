@@ -29,6 +29,110 @@ We use a factual materialization + teacher certification + phased policy checks:
 - **Recomputation Triggers:** Background jobs and on-demand triggers keep the data fresh and guarantee correctness.
 - **Audit Trail:** Certification provides the authoritative decision and audit (who, when, source, rule snapshot). The Record stays facts-only.
 
+## Information Architecture
+
+```admonish tip "Where Performance Management Lives"
+Student Performance has three distinct use cases that span multiple UI contexts:
+1. **Configuration & Decision-Making** (Teacher manages rules and certifies students)
+2. **Verification & Enforcement** (System checks eligibility during registration/finalization)
+3. **Information Display** (Show status in various contexts)
+```
+
+### Primary Management Interface: Roster Tab → Performance Subtab
+
+The **primary home** for Student Performance management is in the Roster tab at the lecture level:
+
+```
+Lecture → Roster Tab
+├── Overview (groups/tutorials view)
+├── Participants (lecture roster)
+└── Performance ← Primary management interface
+    ├── Certification Dashboard (decision-making)
+    ├── Performance Records (factual data)
+    └── Rule Configuration (inline or modal)
+```
+
+**What teachers do here:**
+- Configure eligibility rules (50% points + 2 achievements)
+- View all students' computed performance records
+- Generate certification proposals (via Evaluator)
+- Make pass/fail decisions (bulk accept + manual overrides)
+- Export performance data
+
+**Rationale:**
+- Performance emerges from tutorial participation and assignments
+- Roster is where teachers work with the lecture-wide student list
+- Certification is a lecture-wide decision, not exam-specific
+- One certification can gate multiple exams in the same lecture
+
+### Secondary Contexts: Policy Setup & Verification
+
+**Campaign Tab: Policy Configuration**
+
+When creating/editing an exam registration campaign:
+
+```
+Campaign → Policies Tab
+└── Student Performance Policy ✓ Enabled
+    └── Phase: Registration | Finalization | Both
+```
+
+- Teachers enable the policy and select enforcement phase
+- Pre-flight validation warns if certifications are incomplete
+- Links to Roster → Performance for resolution
+- Finalization guard shows inline remediation or blocks with link
+
+**Exam Dashboard: Verification View**
+
+Exam detail page includes a Performance verification view:
+
+```
+Exam Dashboard → Logistics Tab → Eligibility Subtab
+```
+
+- **Read-only table** showing certification status of all registrants
+- Alerts if any registrants lack valid certification
+- Links to Roster → Performance for management
+- Useful for post-registration audit
+
+### Information Flow
+
+```
+┌────────────────────────────────────────────┐
+│ LECTURE LEVEL (Primary Management)         │
+│ Roster → Performance                       │
+│ • Configure rules                          │
+│ • Generate proposals                       │
+│ • Certify students                         │
+└────────────────────────────────────────────┘
+                  ↓
+         Data flows to...
+                  ↓
+┌────────────────────────────────────────────┐
+│ CAMPAIGN LEVEL (Policy Enforcement)        │
+│ Campaign → Policies                        │
+│ • Enable performance policy                │
+│ • Pre-flight checks                        │
+│ • Finalization guards                      │
+└────────────────────────────────────────────┘
+                  ↓
+         Students register...
+                  ↓
+┌────────────────────────────────────────────┐
+│ EXAM LEVEL (Verification & Audit)          │
+│ Exam Dashboard → Logistics → Eligibility   │
+│ • View registrant cert status              │
+│ • Alert if issues detected                 │
+│ • Link to Roster for fixes                 │
+└────────────────────────────────────────────┘
+```
+
+**Key principles:**
+1. **Single source of truth**: Roster → Performance is where teachers work
+2. **Contextual read-only views**: Show relevant slices elsewhere
+3. **Link pattern**: "Manage in Roster" links from Campaign and Exam contexts
+4. **Minimize duplication**: Don't recreate management UI in multiple places
+
 ---
 
 ## StudentPerformance::Record (ActiveRecord Model)
