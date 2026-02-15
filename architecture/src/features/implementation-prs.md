@@ -392,7 +392,6 @@ without waiting for the interactive entry UI.
 
 ```admonish example "PR-8.5 — Participation creation (submission + backfill)"
 - Scope: All paths that create `Assessment::Participation` records: lazy creation on student submission, deadline backfill job, and team fanout.
-- Dependencies: Requires PR-8.3 (model with `pending` enum value)
 - Controllers: Update `SubmissionsController` to conditionally create/update participation
 - Logic — Lazy creation (on submission upload, when `assessment_grading_enabled?`):
   - Create `Assessment::Participation` if not exists
@@ -404,8 +403,13 @@ without waiting for the interactive entry UI.
   - For each roster student without a participation: create one with `status: :pending`, `submitted_at: nil`
   - Idempotent (safe to re-run)
   - Configurable via `config/schedule.yml` or triggered manually by teacher
-- Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios), [Assignment Lifecycle](04-assessments-and-grading.md#assignment-participation-lifecycle-digital-submission)
-- Acceptance: Feature flag controls submission behavior; new submissions create participations; team fanout works; backfill job seeds remaining roster students after deadline; `submitted_at` distinguishes submitters from backfilled; old submissions continue working unchanged; no breaking changes to existing functionality.
+- Migration: Add `note` text column to `assessment_participations` (status-agnostic free-text annotation, teacher-facing only).
+- Shared concern: `Assessment::AbsenceHandling` extracted here for reuse by both PR-8.7 and PR-8.8:
+  - `mark_absent(participation)` sets `status: :absent`, leaves points/grade `nil`
+  - `mark_exempt(participation, note:)` sets `status: :exempt` with optional note
+  - Validation: `absent` → `exempt` transition allowed
+- Refs: [Submission workflow](04-assessments-and-grading.md#usage-scenarios), [Assignment Lifecycle](04-assessments-and-grading.md#assignment-participation-lifecycle-digital-submission), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows)
+- Acceptance: Feature flag controls submission behavior; new submissions create participations; team fanout works; backfill job seeds remaining roster students after deadline; `submitted_at` distinguishes submitters from backfilled; `AbsenceHandling` concern works standalone; old submissions continue working unchanged; no breaking changes to existing functionality.
 ```
 
 ```admonish example "PR-8.6 — Submission GUI simplification (roster-based tutorials)"
@@ -421,43 +425,56 @@ without waiting for the interactive entry UI.
 - Acceptance: Students can submit without choosing a tutorial; tutorial is auto-derived from roster; tutors still see submissions grouped by their tutorial; existing submissions retain their tutorial association; feature flag gates new behavior.
 ```
 
+```admonish tip
+PR-8.6 is an independent UX cleanup and can also be implemented at the
+end of Step 8 (or even later). It does not block any of the interactive
+entry PRs (8.7, 8.8) since those rely on the rake playground task for
+development data, not on the live submission flow.
+```
+
 ```admonish example "PR-8.7 — Interactive grade entry (service + write UI)"
 - Scope: Add write capability to the read-only grade table from PR-8.3.
-- Dependencies: Requires PR-8.3 (read-only grade view with absent/exempt display), PR-8.6 (participations exist and tutorial auto-derived)
-- Migration: Add `note` text column to `assessment_participations` (status-agnostic free-text annotation, teacher-facing only).
+- Dependencies: Requires PR-8.3 (read-only grade view with absent/exempt display). Uses `AbsenceHandling` concern from PR-8.5. During development, the rake playground task provides all necessary participation data.
 - Service: `Assessment::GradeEntryService`
   - `set_grade(participation, grade, grader)` sets `participation.grade`
-  - `mark_absent(participation)` sets `status: :absent`, leaves points/grade `nil`
-  - `mark_exempt(participation, note:)` sets `status: :exempt` with optional note
-  - Validation: grade format/range checks; `absent` → `exempt` transition allowed
+  - Reuses `mark_absent` / `mark_exempt` from `Assessment::AbsenceHandling` (PR-8.5)
+  - Validation: grade format/range checks
   - Audit: tracks `graded_by_id`, `graded_at`
   - Works for: Talks, oral exams, manual grade entry, output target for grade schemes
-- Controller: Extend `Assessment::GradesController` with `update`, `mark_absent`, `mark_exempt` actions. Also add `Assessment::ParticipationsController#index` (read-only, deferred from PR-8.3).
+- Controller: Create `Assessment::GradesController` with `update`, `mark_absent`, `mark_exempt` actions (RESTful controller scoped to Gradable assessments). Also add `Assessment::ParticipationsController#index` (read-only, deferred from PR-8.3).
 - Tutor access: Tutors can enter grades for exams when the teacher enables it (per-assessment permission). For exams, teachers are the primary graders but can delegate to tutors. Authorization scoped to the tutor's assigned tutorial group.
 - Refs: [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Grade Entry UI](12-views.md#grade-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor)
-- UI: Turbo Frame inline editing on the existing `GradeTableComponent` — click a grade cell, input field, save; bulk "Mark as absent" action for no-shows; `note` field editable per participation
+- UI: Inline editing on the existing `GradeTableComponent` — click a grade cell, input field, save; bulk "Mark as absent" action for no-shows; `note` field editable per participation
 - Acceptance: Teachers can enter grades directly for any Gradable including talks; tutors can enter grades for exams when permitted by teacher; teachers can mark students as absent (bulk) or exempt; `note` field editable; validation works; audit tracking visible; feature flag gates UI.
+```
+
+```admonish tip
+PR-8.7 (grade entry for Gradable assessments) and PR-8.8 (point entry
+for Pointable assessments) are fully independent and can be developed
+in parallel. Both share only the `AbsenceHandling` concern from PR-8.5.
+Each PR creates its own controller (`GradesController` / `TaskPointsController`)
+with no overlap.
 ```
 
 ```admonish example "PR-8.8 — Interactive point entry (service + write UI)"
 - Scope: Add write capability to the read-only point grid from PR-8.4.
-- Dependencies: Requires PR-8.4 (read-only point grid with absent/exempt display), PR-8.7 (`note` column migration, `mark_absent`/`mark_exempt` service methods)
+- Dependencies: Requires PR-8.4 (read-only point grid with absent/exempt display). Uses `AbsenceHandling` concern from PR-8.5. Independent of PR-8.7 (both can be developed in parallel). During development, the rake playground task provides all necessary participation and task point data.
 - Service: `Assessment::PointEntryService`
-  - Fanout pattern creates TaskPoints per student (or team); participation already exists via PR-8.5
+  - Fanout pattern creates TaskPoints per student (or team)
   - Supports any Pointable (assignments, task-based exams)
   - Calculates `participation.points_total` from task points
   - For Pointable+Gradable (exams): can optionally trigger grade scheme calculation
-  - Reuses `mark_absent` / `mark_exempt` from `GradeEntryService` (or shared concern)
-- Controller: Extend `Assessment::TaskPointsController` with `update` action. Also add `Assessment::TaskPointsController#index` (read-only, deferred from PR-8.4). Add `Assessment::GradingController` with `show` (display tutorial-scoped grading table) and `update` (save points for a team/student).
-- Tutor access: Tutors are the primary point entry users for assignments — they enter points for students in their tutorial group. The `GradingController` provides a tutorial-scoped grading view where the tutor sees only their own students. Team grading via `Assessment::TeamGradingService` propagates points from one team input to individual `Assessment::TaskPoint` records. For exams, teachers enter points by default but can delegate to tutors (per-assessment permission). Authorization ensures tutors only see/edit their own tutorial's students.
-- UI: Turbo Frame inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates; bulk "Mark as absent" action reuses PR-8.7 service. Tutor grading view: tutorial-scoped table with per-task point inputs, progress indicator (graded / total), filter by graded/not graded, submission file links, auto-calculated totals.
-- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Point Entry UI](12-views.md#point-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor), [GradingController](11-controllers.md#assessmentgradingcontroller)
-- Acceptance: Teachers can enter points for tasks; tutors can enter points for their tutorial's students (primary workflow for assignments); team grading propagates to individual records; totals calculated; bulk absent marking works; tutor view scoped to assigned tutorial; UI agnostic to assessable type; feature flag gates UI.
+  - Reuses `mark_absent` / `mark_exempt` from `Assessment::AbsenceHandling` (PR-8.5)
+- Controller: Create `Assessment::TaskPointsController` with `index`, `update`, and `update_team` actions (single controller for all point entry on Pointable assessments). The `index` action supports a `?tutorial_id=` filter — teachers see all students or filter by tutorial, tutors are automatically scoped to their own tutorials by authorization. The `update_team` action saves points for a team via `Assessment::TeamGradingService`, which fans out to individual `Assessment::TaskPoint` records for each team member.
+- Authorization: Teachers can access any tutorial's view; tutors can only access their own tutorials. Same controller, same actions — the authorization layer determines scope.
+- UI: Inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates; bulk "Mark as absent" action reuses `AbsenceHandling` concern (PR-8.5). Tutorial-scoped view (same `index`, filtered): team-based table with per-task point inputs, progress indicator (graded / total), filter by graded/not graded, submission file links, auto-calculated totals.
+- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Point Entry UI](12-views.md#point-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor), [TaskPointsController](11-controllers.md#assessmenttaskpointscontroller)
+- Acceptance: Teachers can enter points for tasks; tutors can enter points for their tutorial's students (primary workflow for assignments); team grading propagates to individual records; totals calculated; bulk absent marking works; tutorial-scoped view filtered by authorization; UI agnostic to assessable type; feature flag gates UI.
 ```
 
 ```admonish example "PR-8.9 — Student results interface"
 - Scope: Student-facing views for assessment results.
-- Dependencies: Requires PR-8.8 (all grading paths in place)
+- Dependencies: Requires PR-8.7 (grade entry for Gradable assessments) and PR-8.8 (point entry for Pointable assessments)
 - Controllers: `Assessment::ParticipationsController` (index, show for students)
 - UI:
   - **Results Overview:** Progress dashboard (points earned, graded count, certification status), assignment list with filters (All/Graded/Pending), collapsible older assignments section
