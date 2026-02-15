@@ -244,9 +244,15 @@ class LecturesController < ApplicationController
     @lecture.reload
     @lecture.touch
 
-    respond_to do |format|
-      format.js { render template: "lectures/import/import_media" }
-    end
+    render turbo_stream: [
+      turbo_stream.update("importedMediaTable",
+                          partial: "lectures/import/imported_media",
+                          locals: { media: @lecture.imported_media,
+                                    lecture: @lecture }),
+      turbo_stream.replace("importMedia",
+                           helpers.import_media_badge(@lecture)),
+      turbo_stream.update("media-search-results", "")
+    ]
   end
 
   def remove_imported_medium
@@ -256,9 +262,14 @@ class LecturesController < ApplicationController
     @lecture.reload
     @lecture.touch
 
-    respond_to do |format|
-      format.js { render template: "lectures/import/remove_imported_medium" }
-    end
+    render turbo_stream: [
+      turbo_stream.update("importedMediaTable",
+                          partial: "lectures/import/imported_media",
+                          locals: { media: @lecture.imported_media,
+                                    lecture: @lecture }),
+      turbo_stream.replace("importMedia",
+                           helpers.import_media_badge(@lecture))
+    ]
   end
 
   def show_subscribers

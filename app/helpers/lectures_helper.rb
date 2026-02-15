@@ -212,4 +212,12 @@ module LecturesHelper
                   })
     end
   end
+
+  def import_media_badge(lecture)
+    content_tag(:span, id: "importMedia",
+                       data: { lecture: lecture.id, selected: "[]" }) do
+      content_tag(:span, "(#{lecture.imported_media.size})",
+                  id: "importedMediaCount")
+    end
+  end
 end
