@@ -433,9 +433,10 @@ without waiting for the interactive entry UI.
   - Audit: tracks `graded_by_id`, `graded_at`
   - Works for: Talks, oral exams, manual grade entry, output target for grade schemes
 - Controller: Extend `Assessment::GradesController` with `update`, `mark_absent`, `mark_exempt` actions. Also add `Assessment::ParticipationsController#index` (read-only, deferred from PR-8.3).
-- Refs: [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Grade Entry UI](12-views.md#grade-entry-interface)
+- Tutor access: Tutors can enter grades for exams when the teacher enables it (per-assessment permission). For exams, teachers are the primary graders but can delegate to tutors. Authorization scoped to the tutor's assigned tutorial group.
+- Refs: [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Grade Entry UI](12-views.md#grade-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor)
 - UI: Turbo Frame inline editing on the existing `GradeTableComponent` — click a grade cell, input field, save; bulk "Mark as absent" action for no-shows; `note` field editable per participation
-- Acceptance: Teachers can enter grades directly for any Gradable including talks; teachers can mark students as absent (bulk) or exempt; `note` field editable; validation works; audit tracking visible; feature flag gates UI.
+- Acceptance: Teachers can enter grades directly for any Gradable including talks; tutors can enter grades for exams when permitted by teacher; teachers can mark students as absent (bulk) or exempt; `note` field editable; validation works; audit tracking visible; feature flag gates UI.
 ```
 
 ```admonish example "PR-8.8 — Interactive point entry (service + write UI)"
@@ -447,10 +448,11 @@ without waiting for the interactive entry UI.
   - Calculates `participation.points_total` from task points
   - For Pointable+Gradable (exams): can optionally trigger grade scheme calculation
   - Reuses `mark_absent` / `mark_exempt` from `GradeEntryService` (or shared concern)
-- Controller: Extend `Assessment::TaskPointsController` with `update` action. Also add `Assessment::TaskPointsController#index` (read-only, deferred from PR-8.4).
-- UI: Turbo Frame inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates; bulk "Mark as absent" action reuses PR-8.7 service
-- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Point Entry UI](12-views.md#point-entry-interface)
-- Acceptance: Teachers can enter points for tasks; service called on save; totals calculated; bulk absent marking works; UI agnostic to assessable type; feature flag gates UI.
+- Controller: Extend `Assessment::TaskPointsController` with `update` action. Also add `Assessment::TaskPointsController#index` (read-only, deferred from PR-8.4). Add `Assessment::GradingController` with `show` (display tutorial-scoped grading table) and `update` (save points for a team/student).
+- Tutor access: Tutors are the primary point entry users for assignments — they enter points for students in their tutorial group. The `GradingController` provides a tutorial-scoped grading view where the tutor sees only their own students. Team grading via `Assessment::TeamGradingService` propagates points from one team input to individual `Assessment::TaskPoint` records. For exams, teachers enter points by default but can delegate to tutors (per-assessment permission). Authorization ensures tutors only see/edit their own tutorial's students.
+- UI: Turbo Frame inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates; bulk "Mark as absent" action reuses PR-8.7 service. Tutor grading view: tutorial-scoped table with per-task point inputs, progress indicator (graded / total), filter by graded/not graded, submission file links, auto-calculated totals.
+- Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Point Entry UI](12-views.md#point-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor), [GradingController](11-controllers.md#assessmentgradingcontroller)
+- Acceptance: Teachers can enter points for tasks; tutors can enter points for their tutorial's students (primary workflow for assignments); team grading propagates to individual records; totals calculated; bulk absent marking works; tutor view scoped to assigned tutorial; UI agnostic to assessable type; feature flag gates UI.
 ```
 
 ```admonish example "PR-8.9 — Student results interface"
