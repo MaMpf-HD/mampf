@@ -17,7 +17,7 @@
       <%= f.label :title, t('basics.title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
-      <%= f.text_field :title, { class: "form-control#{' is-invalid' if course.errors[:title].present?}",
+      <%= f.text_field :title, { class: "form-control",
                                 id: 'new_course_title' } %>
       
     </div>
@@ -25,7 +25,7 @@
       <%= f.label :short_title, t('basics.short_title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
-      <%= f.text_field :short_title, { class: "form-control#{' is-invalid' if course.errors[:short_title].present?}",
+      <%= f.text_field :short_title, { class: "form-control",
                                 id: 'new_course_short_title' } %>
     </div>
     <div class="col-12 mb-3">
