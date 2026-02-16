@@ -157,3 +157,70 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
     end
   end
 end
+
+RSpec.describe(SubmissionsController, "manuscript-based calling contract") do
+  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:user) { create(:confirmed_user) }
+  let(:assignment) do
+    create(:assignment, lecture: lecture, deadline: 1.week.from_now,
+                        deletion_date: 2.months.from_now)
+  end
+  let(:submission_without_file) do
+    sub = create(:submission, tutorial: tutorial, assignment: assignment)
+    sub.users << user
+    sub
+  end
+
+  before do
+    create(:tutorial_membership, user: user, tutorial: tutorial)
+    Flipper.enable(:assessment_grading)
+  end
+
+  after { Flipper.disable(:assessment_grading) }
+
+  it "create: no participation when submission has no manuscript" do
+    sub = submission_without_file
+    expect(sub.manuscript).to be_nil
+
+    ctrl = described_class.new
+    ctrl.instance_variable_set(:@submission, sub)
+
+    ctrl.send(:sync_assessment_participations, users: [user]) if sub.manuscript
+
+    expect(Assessment::Participation.find_by(user: user)).to be_nil
+  end
+
+  it "join: no submitted_at when team has no manuscript" do
+    sub = submission_without_file
+    joiner = create(:confirmed_user)
+    create(:tutorial_membership, user: joiner, tutorial: tutorial)
+    sub.users << joiner
+
+    ctrl = described_class.new
+    ctrl.instance_variable_set(:@submission, sub)
+
+    ctrl.send(:sync_assessment_participations, users: [joiner]) if sub.manuscript
+
+    expect(Assessment::Participation.find_by(user: joiner)).to be_nil
+  end
+
+  it "detach: clears submitted_at for all users" do
+    sub = submission_without_file
+
+    ctrl = described_class.new
+    ctrl.instance_variable_set(:@submission, sub)
+
+    ctrl.send(:sync_assessment_participations, users: [user])
+    expect(Assessment::Participation.last.submitted_at).to be_present
+
+    ctrl.send(:clear_submitted_at, sub.users)
+    expect(Assessment::Participation.last.submitted_at).to be_nil
+  end
+
+  it "update: no sync when manuscript unchanged" do
+    sub = submission_without_file
+
+    expect(Assessment::Participation.find_by(user: user)).to be_nil
+  end
+end

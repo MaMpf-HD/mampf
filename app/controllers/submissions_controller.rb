@@ -61,9 +61,9 @@ class SubmissionsController < ApplicationController
 
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.zone.now)
-    sync_assessment_participations(users: [current_user])
     return unless @submission.manuscript
 
+    sync_assessment_participations(users: [current_user])
     send_upload_email(User.where(id: current_user.id))
   end
 
@@ -90,12 +90,13 @@ class SubmissionsController < ApplicationController
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.zone.now)
         send_upload_removal_email(@submission.users)
+        clear_submitted_at(@submission.users)
       elsif @submission.manuscript_data != old_manuscript_data
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_upload_email(@submission.users)
+        sync_assessment_participations
       end
     end
-    sync_assessment_participations
     @errors = @submission.errors
   end
 
@@ -410,7 +411,7 @@ class SubmissionsController < ApplicationController
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_join_email
         remove_invitee_status
-        sync_assessment_participations(users: [current_user])
+        sync_assessment_participations(users: [current_user]) if @submission.manuscript
       else
         @error = @join.errors[:base].join(", ")
       end

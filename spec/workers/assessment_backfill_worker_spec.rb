@@ -74,6 +74,36 @@ RSpec.describe(AssessmentBackfillWorker) do
 
         expect(Assessment::Participation.count).to eq(2)
       end
+
+      it "backfills new roster user even when stale participation exists" do
+        assessment = assignment.assessment
+        former_user = create(:confirmed_user)
+
+        assessment.assessment_participations.create!(
+          user: former_user,
+          tutorial: tutorial,
+          status: :pending
+        )
+
+        described_class.new.perform
+
+        expect(Assessment::Participation.where(user: [user1, user2]).count)
+          .to eq(2)
+      end
+
+      it "skips assignments with deadline older than 2 days" do
+        old_assignment = create(
+          :assignment, lecture: lecture,
+                       deadline: 3.days.ago,
+                       deletion_date: 6.months.from_now
+        )
+
+        expect do
+          described_class.new.perform
+        end.not_to(change do
+          old_assignment.assessment.assessment_participations.count
+        end)
+      end
     end
 
     context "with an active assignment" do
