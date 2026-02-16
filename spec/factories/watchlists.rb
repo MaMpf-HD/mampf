@@ -7,7 +7,7 @@ FactoryBot.define do
     end
 
     before(:create) do |watchlist, evaluator|
-      next unless evaluator.user.present?
+      next if evaluator.user.blank?
 
       if evaluator.user.is_a?(Hash)
         watchlist.user_id = evaluator.user["id"]

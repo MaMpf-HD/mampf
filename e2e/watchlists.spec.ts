@@ -1,5 +1,4 @@
 import { WatchlistsPage } from "./page-objects/watchlists_page";
-import { LecturePage } from "./page-objects/lecture_page";
 import { expect, test } from "./_support/fixtures";
 
 test.describe("create Watchlists", () => {
