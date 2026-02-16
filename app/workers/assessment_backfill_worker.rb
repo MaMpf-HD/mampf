@@ -18,9 +18,8 @@ class AssessmentBackfillWorker
       return unless assessment
 
       lecture = assignment.lecture
-      memberships = TutorialMembership.where(
-        tutorial_id: lecture.tutorial_ids
-      )
+      memberships = TutorialMembership.joins(:tutorial)
+                                      .where(tutorials: { lecture_id: lecture.id })
 
       return if memberships.none?
 
