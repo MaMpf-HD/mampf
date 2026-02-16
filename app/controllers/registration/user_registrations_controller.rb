@@ -29,10 +29,20 @@ module Registration
         streams << turbo_stream.update(view_context.campaign_registrations_tab_count_id(@campaign),
                                        @campaign.user_registrations.distinct.count(:user_id))
 
-        if params[:source] == "allocation"
+        if ["allocation", "allocation_embedded"].include?(params[:source])
           load_allocation_data
-          streams << turbo_stream.replace("allocation-dashboard",
-                                          partial: "registration/allocations/dashboard")
+          if params[:source] == "allocation_embedded"
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard",
+                                            locals: {
+                                              campaign: @campaign,
+                                              dashboard: @dashboard,
+                                              embedded: true
+                                            })
+          else
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard")
+          end
         elsif params[:source] == "registrations"
           streams << turbo_stream.replace(view_context.campaign_user_registrations_list_id(@campaign),
                                           partial: "registration/user_registrations/index",

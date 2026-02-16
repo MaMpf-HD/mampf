@@ -1,5 +1,10 @@
 <% tab ||= "items" %>
 
+<% show_allocation_dashboard = campaign.closed? || campaign.processing? ||
+  campaign.completed? %>
+
+<% show_registrations_tab = campaign.open? %>
+
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
   <div class="d-flex flex-wrap gap-2">
     <%= link_to edit_registration_campaign_path(campaign),
@@ -100,96 +105,109 @@
   </div>
 </div>
 
-<ul
-  class="nav nav-tabs mb-3"
-  id="campaignTabs-<%= campaign.id %>"
-  role="tablist"
->
-  <li class="nav-item" role="presentation">
-    <button
-      class="nav-link <%= 'active' if tab == 'items' %>"
-      id="<%= campaign_items_tab_id(campaign) %>-tab"
-      data-bs-toggle="tab"
-      data-bs-target="#<%= campaign_items_tab_id(campaign) %>"
-      type="button"
-      role="tab"
-      aria-selected="<%= tab == 'items' %>"
-    >
-      <%= t("registration.item.index.title") %>
-
-      <span class="badge rounded-pill bg-secondary ms-1">
-        <%= campaign.registration_items.count %>
-      </span>
-    </button>
-  </li>
-
-  <li class="nav-item" role="presentation">
-    <button
-      class="nav-link <%= 'active' if tab == 'policies' %>"
-      id="<%= campaign_policies_tab_id(campaign) %>-tab"
-      data-bs-toggle="tab"
-      data-bs-target="#<%= campaign_policies_tab_id(campaign) %>"
-      type="button"
-      role="tab"
-      aria-controls="<%= campaign_policies_tab_id(campaign) %>"
-      aria-selected="<%= tab == 'policies' %>"
-    >
-      <%= t("registration.policy.index.title") %>
-
-      <span class="badge rounded-pill bg-secondary ms-1">
-        <%= campaign.registration_policies.count %>
-      </span>
-    </button>
-  </li>
-
-  <li class="nav-item" role="presentation">
-    <button
-      class="nav-link <%= 'active' if tab == 'registrations' %>"
-      id="<%= campaign_registrations_tab_id(campaign) %>-tab"
-      data-bs-toggle="tab"
-      data-bs-target="#<%= campaign_registrations_tab_id(campaign) %>"
-      type="button"
-      role="tab"
-      aria-controls="<%= campaign_registrations_tab_id(campaign) %>"
-      aria-selected="<%= tab == 'registrations' %>"
-    >
-      <%= t("registration.user_registration.index.title", default: "Registrations") %>
-
-      <span
-        class="badge rounded-pill bg-secondary ms-1"
-        id="<%= campaign_registrations_tab_count_id(campaign) %>"
+<% unless show_allocation_dashboard %>
+  <ul
+    class="nav nav-tabs mb-3"
+    id="campaignTabs-<%= campaign.id %>"
+    role="tablist"
+  >
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link <%= 'active' if tab == 'items' %>"
+        id="<%= campaign_items_tab_id(campaign) %>-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#<%= campaign_items_tab_id(campaign) %>"
+        type="button"
+        role="tab"
+        aria-selected="<%= tab == 'items' %>"
       >
-        <%= campaign.user_registrations.distinct.count(:user_id) %>
-      </span>
-    </button>
-  </li>
-</ul>
+        <%= t("registration.item.index.title") %>
 
-<div class="tab-content" id="campaignTabsContent-<%= campaign.id %>">
-  <div
-    class="tab-pane fade <%= 'show active' if tab == 'items' %>"
-    id="<%= campaign_items_tab_id(campaign) %>"
-    role="tabpanel"
-    aria-labelledby="<%= campaign_items_tab_id(campaign) %>-tab"
-  >
-    <%= render "registration/campaigns/card_body_items", campaign: campaign %>
-  </div>
+        <span class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.registration_items.count %>
+        </span>
+      </button>
+    </li>
 
-  <div
-    class="tab-pane fade <%= 'show active' if tab == 'policies' %>"
-    id="<%= campaign_policies_tab_id(campaign) %>"
-    role="tabpanel"
-    aria-labelledby="<%= campaign_policies_tab_id(campaign) %>-tab"
-  >
-    <%= render "registration/policies/index", campaign: campaign %>
-  </div>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link <%= 'active' if tab == 'policies' %>"
+        id="<%= campaign_policies_tab_id(campaign) %>-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#<%= campaign_policies_tab_id(campaign) %>"
+        type="button"
+        role="tab"
+        aria-controls="<%= campaign_policies_tab_id(campaign) %>"
+        aria-selected="<%= tab == 'policies' %>"
+      >
+        <%= t("registration.policy.index.title") %>
 
-  <div
-    class="tab-pane fade <%= 'show active' if tab == 'registrations' %>"
-    id="<%= campaign_registrations_tab_id(campaign) %>"
-    role="tabpanel"
-    aria-labelledby="<%= campaign_registrations_tab_id(campaign) %>-tab"
-  >
-    <%= render "registration/user_registrations/index", campaign: campaign %>
+        <span class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.registration_policies.count %>
+        </span>
+      </button>
+    </li>
+
+    <% if show_registrations_tab %>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link <%= 'active' if tab == 'registrations' %>"
+          id="<%= campaign_registrations_tab_id(campaign) %>-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#<%= campaign_registrations_tab_id(campaign) %>"
+          type="button"
+          role="tab"
+          aria-controls="<%= campaign_registrations_tab_id(campaign) %>"
+          aria-selected="<%= tab == 'registrations' %>"
+        >
+          <%= t("registration.user_registration.index.title", default: "Registrations") %>
+
+          <span
+            class="badge rounded-pill bg-secondary ms-1"
+            id="<%= campaign_registrations_tab_count_id(campaign) %>"
+          >
+            <%= campaign.user_registrations.distinct.count(:user_id) %>
+          </span>
+        </button>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if show_allocation_dashboard %>
+  <%= render "registration/allocations/dashboard",
+             campaign: campaign,
+             dashboard: Registration::AllocationDashboard.new(campaign),
+             embedded: true %>
+<% else %>
+  <div class="tab-content" id="campaignTabsContent-<%= campaign.id %>">
+    <div
+      class="tab-pane fade <%= 'show active' if tab == 'items' %>"
+      id="<%= campaign_items_tab_id(campaign) %>"
+      role="tabpanel"
+      aria-labelledby="<%= campaign_items_tab_id(campaign) %>-tab"
+    >
+      <%= render "registration/campaigns/card_body_items", campaign: campaign %>
+    </div>
+
+    <div
+      class="tab-pane fade <%= 'show active' if tab == 'policies' %>"
+      id="<%= campaign_policies_tab_id(campaign) %>"
+      role="tabpanel"
+      aria-labelledby="<%= campaign_policies_tab_id(campaign) %>-tab"
+    >
+      <%= render "registration/policies/index", campaign: campaign %>
+    </div>
+
+    <% if show_registrations_tab %>
+      <div
+        class="tab-pane fade <%= 'show active' if tab == 'registrations' %>"
+        id="<%= campaign_registrations_tab_id(campaign) %>"
+        role="tabpanel"
+        aria-labelledby="<%= campaign_registrations_tab_id(campaign) %>-tab"
+      >
+        <%= render "registration/user_registrations/index", campaign: campaign %>
+      </div>
+    <% end %>
   </div>
-</div>
+<% end %>
