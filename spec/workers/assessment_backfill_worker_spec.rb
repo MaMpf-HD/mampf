@@ -127,7 +127,9 @@ RSpec.describe(AssessmentBackfillWorker) do
                        deadline: 2.months.ago,
                        deletion_date: 6.months.from_now
         )
+        # rubocop:disable Rails/SkipsModelValidations
         past_assignment.update_column(:deletion_date, 1.day.ago.to_date)
+        # rubocop:enable Rails/SkipsModelValidations
 
         expect do
           described_class.new.perform
