@@ -403,6 +403,7 @@ without waiting for the interactive entry UI.
   - For each roster student without a participation: create one with `status: :pending`, `submitted_at: nil`
   - Idempotent (safe to re-run)
   - Configurable via `config/schedule.yml` or triggered manually by teacher
+  - Grace period: The backfill fires at `deadline`, not `friendly_deadline`. Students submitting during the grace period get their `submitted_at` patched by the lazy-creation path. This is by design — no special handling needed.
 - Migration: Add `note` text column to `assessment_participations` (status-agnostic free-text annotation, teacher-facing only).
 - Shared concern: `Assessment::AbsenceHandling` extracted here for reuse by both PR-8.7 and PR-8.8:
   - `mark_absent(participation)` sets `status: :absent`, leaves points/grade `nil`
@@ -468,6 +469,7 @@ with no overlap.
 - Controller: Create `Assessment::TaskPointsController` with `index`, `update`, and `update_team` actions (single controller for all point entry on Pointable assessments). The `index` action supports a `?tutorial_id=` filter — teachers see all students or filter by tutorial, tutors are automatically scoped to their own tutorials by authorization. The `update_team` action saves points for a team via `Assessment::TeamGradingService`, which fans out to individual `Assessment::TaskPoint` records for each team member.
 - Authorization: Teachers can access any tutorial's view; tutors can only access their own tutorials. Same controller, same actions — the authorization layer determines scope.
 - UI: Inline editing on the existing `PointGridComponent` — click a cell, number input, save, total updates; bulk "Mark as absent" action reuses `AbsenceHandling` concern (PR-8.5). Tutorial-scoped view (same `index`, filtered): team-based table with per-task point inputs, progress indicator (graded / total), filter by graded/not graded, submission file links, auto-calculated totals.
+  - The grading view must show all roster students (not only those with `submitted_at` present). Students who missed the deadline but submitted externally (e.g. by email) should still be gradable by the tutor — no model-level constraint prevents this.
 - Refs: [PointEntryService](04-assessments-and-grading.md#assessmentpointentryservice-service), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows), [Point Entry UI](12-views.md#point-entry-interface), [Tutor Grading View](12-views.md#assessments-lectures---tutor), [TaskPointsController](11-controllers.md#assessmenttaskpointscontroller)
 - Acceptance: Teachers can enter points for tasks; tutors can enter points for their tutorial's students (primary workflow for assignments); team grading propagates to individual records; totals calculated; bulk absent marking works; tutorial-scoped view filtered by authorization; UI agnostic to assessable type; feature flag gates UI.
 ```
