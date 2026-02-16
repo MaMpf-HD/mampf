@@ -114,4 +114,46 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       end.not_to change(Assessment::Participation, :count)
     end
   end
+
+  describe "#clear_submitted_at" do
+    before { Flipper.enable(:assessment_grading) }
+    after { Flipper.disable(:assessment_grading) }
+
+    it "clears submitted_at on destroy for all submission users" do
+      controller_instance.send(:sync_assessment_participations,
+                               users: [user])
+
+      expect(Assessment::Participation.last.submitted_at).to be_present
+
+      controller_instance.send(:clear_submitted_at, [user])
+
+      expect(Assessment::Participation.last.submitted_at).to be_nil
+    end
+
+    it "clears submitted_at only for the leaving user" do
+      partner = create(:confirmed_user)
+      create(:tutorial_membership, user: partner, tutorial: tutorial)
+      submission.users << partner
+
+      controller_instance.send(:sync_assessment_participations)
+
+      controller_instance.send(:clear_submitted_at, [user])
+
+      user_p = Assessment::Participation.find_by(user: user)
+      partner_p = Assessment::Participation.find_by(user: partner)
+
+      expect(user_p.submitted_at).to be_nil
+      expect(partner_p.submitted_at).to be_present
+    end
+
+    it "does nothing when flag is disabled" do
+      controller_instance.send(:sync_assessment_participations,
+                               users: [user])
+      Flipper.disable(:assessment_grading)
+
+      controller_instance.send(:clear_submitted_at, [user])
+
+      expect(Assessment::Participation.last.submitted_at).to be_present
+    end
+  end
 end
