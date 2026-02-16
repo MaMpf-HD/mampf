@@ -806,7 +806,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(\r\n  sum by (action, controller, status) (increase(ruby_http_requests_total{status=~\"4..|5..\"}[24h]))\r\n)\r\nOR on(action, controller)\r\n(\r\n  label_replace(\r\n    sum by (action, controller) (rate(ruby_http_requests_total[5m])) * 0,\r\n    \"status\", \"none\", \"\", \"\"\r\n  )\r\n)",
+          "expr": "(\r\n  sum by (action, controller, status) (\r\n    ruby_http_requests_total{status=~\"4..|5..\"}\r\n    -\r\n    (\r\n      ruby_http_requests_total{status=~\"4..|5..\"} offset 24h\r\n      OR\r\n      ruby_http_requests_total{status=~\"4..|5..\"} * 0\r\n    )\r\n  )\r\n)\r\nOR\r\nlabel_replace(\r\n  sum by (action, controller) (ruby_http_requests_total) * 0,\r\n  \"status\", \"none\", \"\", \"\"\r\n)",
           "legendFormat": "Action: {{action}}, Controller: {{controller}}, Status: {{status}}",
           "range": true,
           "refId": "A"
@@ -1274,7 +1274,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Action: new, Controller: sessions, Status: 422"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 11,
@@ -2268,5 +2293,5 @@
   "timezone": "browser",
   "title": "MaMpf General Overview",
   "uid": "adzzdvc",
-  "version": 8
+  "version": 9
 }
