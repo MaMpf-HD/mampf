@@ -849,7 +849,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "showValues": false,
             "spanNulls": false,
             "stacking": {
@@ -947,7 +947,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "showValues": false,
             "spanNulls": false,
             "stacking": {
@@ -2268,5 +2268,5 @@
   "timezone": "browser",
   "title": "MaMpf General Overview",
   "uid": "adzzdvc",
-  "version": 6
+  "version": 8
 }
