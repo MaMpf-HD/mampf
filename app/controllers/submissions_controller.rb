@@ -61,6 +61,7 @@ class SubmissionsController < ApplicationController
 
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.zone.now)
+    sync_assessment_participations
     return unless @submission.manuscript
 
     send_upload_email(User.where(id: current_user.id))
@@ -94,6 +95,7 @@ class SubmissionsController < ApplicationController
         send_upload_email(@submission.users)
       end
     end
+    sync_assessment_participations
     @errors = @submission.errors
   end
 
@@ -406,6 +408,7 @@ class SubmissionsController < ApplicationController
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_join_email
         remove_invitee_status
+        sync_assessment_participations(users: [current_user])
       else
         @error = @join.errors[:base].join(", ")
       end
@@ -453,6 +456,27 @@ class SubmissionsController < ApplicationController
       return if @lecture.assignments.any?
 
       redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
+    end
+
+    def sync_assessment_participations(users: nil)
+      return unless Flipper.enabled?(:assessment_grading)
+
+      assignment = @submission&.assignment
+      assessment = assignment&.assessment
+      return unless assessment
+
+      lecture = assignment.lecture
+      target_users = users || @submission.users
+
+      target_users.each do |user|
+        participation = assessment.assessment_participations
+                                  .find_or_initialize_by(user: user)
+        participation.status ||= :pending
+        participation.submitted_at = Time.current
+        participation.tutorial_id ||=
+          Assessment::Participation.tutorial_for(user, lecture)
+        participation.save!
+      end
     end
 
     def set_disposition
