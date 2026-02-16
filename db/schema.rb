@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -115,7 +115,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_000001) do
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "backfilled_at"
     t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end

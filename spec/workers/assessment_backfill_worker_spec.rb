@@ -48,10 +48,8 @@ RSpec.describe(AssessmentBackfillWorker) do
         end
       end
 
-      it "is idempotent — second run skips via backfilled_at" do
+      it "is idempotent — second run does not duplicate" do
         described_class.new.perform
-
-        expect(assignment.assessment.reload.backfilled_at).to be_present
 
         expect do
           described_class.new.perform
@@ -93,15 +91,24 @@ RSpec.describe(AssessmentBackfillWorker) do
           .to eq(2)
       end
 
-      it "skips already-backfilled assessments" do
-        assignment.assessment.update_column(:backfilled_at, 1.hour.ago)
+      it "picks up new roster member added after first backfill" do
+        described_class.new.perform
+        expect(Assessment::Participation.count).to eq(2)
+
+        new_user = create(:confirmed_user)
+        create(:tutorial_membership, user: new_user, tutorial: tutorial)
 
         expect do
           described_class.new.perform
-        end.not_to change(Assessment::Participation, :count)
+        end.to change(Assessment::Participation, :count).by(1)
+
+        participation = Assessment::Participation.find_by(user: new_user)
+        expect(participation.tutorial_id).to eq(tutorial.id)
+        expect(participation.status).to eq("pending")
+        expect(participation.submitted_at).to be_nil
       end
 
-      it "picks up old expired assignments not yet backfilled" do
+      it "picks up old expired assignments with future deletion_date" do
         old_assignment = create(
           :assignment, lecture: lecture,
                        deadline: 2.weeks.ago,
@@ -112,6 +119,21 @@ RSpec.describe(AssessmentBackfillWorker) do
 
         expect(old_assignment.assessment.assessment_participations.count)
           .to eq(2)
+      end
+
+      it "skips assignments whose deletion_date has passed" do
+        past_assignment = create(
+          :assignment, lecture: lecture,
+                       deadline: 2.months.ago,
+                       deletion_date: 6.months.from_now
+        )
+        past_assignment.update_column(:deletion_date, 1.day.ago.to_date)
+
+        expect do
+          described_class.new.perform
+        end.not_to(change do
+          past_assignment.assessment.assessment_participations.count
+        end)
       end
     end
 

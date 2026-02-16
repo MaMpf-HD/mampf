@@ -5,8 +5,7 @@ class AssessmentBackfillWorker
     return unless Flipper.enabled?(:assessment_grading)
 
     Assignment.expired
-              .joins(:assessment)
-              .where(assessment_assessments: { backfilled_at: nil })
+              .where(deletion_date: Date.current..)
               .find_each do |assignment|
       backfill_assignment(assignment)
     end
@@ -32,7 +31,5 @@ class AssessmentBackfillWorker
         user_ids: roster_user_ids,
         tutorial_mapping: tutorial_mapping
       )
-
-      assessment.update_column(:backfilled_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
     end
 end
