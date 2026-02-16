@@ -490,6 +490,8 @@ class SubmissionsController < ApplicationController
         participation.tutorial_id ||=
           Assessment::Participation.tutorial_for(user, lecture)
         participation.save!
+      rescue ActiveRecord::RecordNotUnique
+        retry
       end
     end
 
