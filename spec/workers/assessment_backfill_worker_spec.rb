@@ -48,8 +48,10 @@ RSpec.describe(AssessmentBackfillWorker) do
         end
       end
 
-      it "is idempotent — running twice does not duplicate" do
+      it "is idempotent — second run skips via backfilled_at" do
         described_class.new.perform
+
+        expect(assignment.assessment.reload.backfilled_at).to be_present
 
         expect do
           described_class.new.perform
@@ -91,18 +93,25 @@ RSpec.describe(AssessmentBackfillWorker) do
           .to eq(2)
       end
 
-      it "skips assignments with deadline older than 2 days" do
-        old_assignment = create(
-          :assignment, lecture: lecture,
-                       deadline: 3.days.ago,
-                       deletion_date: 6.months.from_now
-        )
+      it "skips already-backfilled assessments" do
+        assignment.assessment.update_column(:backfilled_at, 1.hour.ago)
 
         expect do
           described_class.new.perform
-        end.not_to(change do
-          old_assignment.assessment.assessment_participations.count
-        end)
+        end.not_to change(Assessment::Participation, :count)
+      end
+
+      it "picks up old expired assignments not yet backfilled" do
+        old_assignment = create(
+          :assignment, lecture: lecture,
+                       deadline: 2.weeks.ago,
+                       deletion_date: 6.months.from_now
+        )
+
+        described_class.new.perform
+
+        expect(old_assignment.assessment.assessment_participations.count)
+          .to eq(2)
       end
     end
 
