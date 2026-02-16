@@ -43,5 +43,5 @@ campaign_status_worker:
 assessment_backfill_worker:
   cron: "*/1 * * * *"
   class: "AssessmentBackfillWorker"
-  queue: default
+  queue: critical
   description: "Backfills participations for expired assignments"
