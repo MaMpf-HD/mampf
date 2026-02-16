@@ -469,7 +469,7 @@ class SubmissionsController < ApplicationController
 
       assessment.assessment_participations
                 .where(user_id: users.map(&:id))
-                .update_all(submitted_at: nil) # rubocop:disable Rails/SkipsModelValidations
+                .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
     end
 
     def sync_assessment_participations(users: nil)
