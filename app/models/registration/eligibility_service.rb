@@ -13,14 +13,7 @@ module Registration
     end
 
     def lecture_based_eligibility
-      phases = case @phase_scope.to_sym
-               when :registration then [:registration, :both]
-               when :finalization then [:finalization, :both]
-               else [@phase_scope]
-      end
-      phases.flat_map do |ph|
-        PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: ph)
-      end
+      PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: @phase_scope.to_sym)
     end
   end
 end

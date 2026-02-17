@@ -296,6 +296,17 @@ de:
         policy_violation_title: "Richtlinienverstöße erkannt"
         policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
         failed: "Zuteilung fehlgeschlagen: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Titel"
+          lecture: "Vortrag"
+          mode: "Format"
+          closes: "Endet am"
+          eligibility: "Teilnahmeberechtigung"
+          action: "Aktion"
+          status: "Status"
+        view_details: "Details"
   activerecord:
     errors:
       models:

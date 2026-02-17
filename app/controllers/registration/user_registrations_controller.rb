@@ -26,7 +26,7 @@ module Registration
     end
 
     def index
-      @courses_seminars_campaigns = Registration::Campaign.all
+      @courses_seminars_campaigns = Registration::Campaign.where.not(status: :draft)
       @eligibilities = @courses_seminars_campaigns.index_with do |c|
         Registration::EligibilityService.new(c, current_user,
                                              phase_scope: :registration).call
@@ -98,10 +98,9 @@ module Registration
     end
 
     def destroy
-      @user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
-                                                             status: :confirmed)
-      @campaign = @user_registration.registration_campaign
-
+      @campaign = @item.user_registrations.find_by!(user_id: current_user.id,
+                                                    status: :confirmed)
+                       .registration_campaign
       if @campaign.lecture_based?
         result = Registration::UserRegistration::LectureFcfsEditService
                  .new(@campaign, current_user, @item).withdraw!
