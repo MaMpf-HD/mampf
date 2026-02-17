@@ -17,6 +17,10 @@ scrape_configs:
     scrape_interval: 5s
     scrape_timeout:  5s
 
+    metric_relabel_configs:
+      - action: labeldrop
+        regex: container
+
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
 
