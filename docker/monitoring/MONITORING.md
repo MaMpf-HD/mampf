@@ -49,10 +49,9 @@ After `just up`:
 - add other metrics:
     - Mimir storage usage?
     - alerts
-    - bandwidth usage
     - signups...
-    - sidekiq
-    - puma metrics in grafana 
+    - active sessions = online users
+    - sidekiq 
     - quiz participation/completion
     - ...
 -

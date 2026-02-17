@@ -30,9 +30,9 @@ threads threads_count, threads_count
 # =======================================================================================
 # Enable clustered mode for testing with multiple workers
 # =======================================================================================
-# workers ENV.fetch("WEB_CONCURRENCY") { 0 }
+# workers ENV.fetch("WEB_CONCURRENCY", 0)
 
-# preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i > 0
+# preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i.positive?
 
 # # Specifies the `port` that Puma will listen on to receive requests
 # ======================================================================================

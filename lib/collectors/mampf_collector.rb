@@ -53,6 +53,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     # NETWORK METRICS (Bytes In/Out from OS)
     # =================================================================
 
+    # Does not end with _total because then metrics error occur
     net_rx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_receive_bytes",
                                                          "Cumulative bytes received")
 
@@ -170,7 +171,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
           if current_pid == master_pid
             role = "master"
           else
-            role = "worker_#{worker_count}"
+            role = "worker#{worker_count}"
             worker_count += 1
           end
 
