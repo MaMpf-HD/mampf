@@ -1,0 +1,59 @@
+version: 0.8.10
+
+# Unfortunately, the global "files:" configuration does not work as expected
+# and we have to duplicate the "exclude:" configuration for both linter
+# and formatter.
+# See https://github.com/marcoroth/herb/issues/1179
+
+linter:
+  enabled: true
+
+  exclude:
+    - "node_modules/**/*"
+    - "architecture/**/*"
+    - "public/**/*"
+    - "playwright-report/**/*"
+    - "pdfcomprezzor/**/*"
+    - "app/views/**/*.html.erb"
+    - "app/frontend/_components/**/*.html.erb"
+    - "app/frontend/search/**/*.html.erb"
+    - "app/frontend/feedbacks/**/*.html.erb"
+    - "app/frontend/flash/**/*.html.erb"
+    - "app/frontend/lectures/**/*.html.erb"
+    - "app/frontend/login/**/*.html.erb"
+    - "app/frontend/media/**/*.html.erb"
+    - "app/frontend/modal/**/*.html.erb"
+    - "app/frontend/roster/**/*.html.erb"
+    - "app/frontend/search/**/*.html.erb"
+    - "app/frontend/spinner/**/*.html.erb"
+    - "app/frontend/vignettes/**/*.html.erb"
+    # not excluded on purpose, since we want to try out herb on these files:
+    # - app/frontend/registration/**/*.html.erb
+
+
+formatter:
+  enabled: true
+  indentWidth: 2
+  maxLineLength: 80
+
+  exclude:
+    - "node_modules/**/*"
+    - "architecture/**/*"
+    - "public/**/*"
+    - "playwright-report/**/*"
+    - "pdfcomprezzor/**/*"
+    - "app/views/**/*.html.erb"
+    - "app/frontend/_components/**/*.html.erb"
+    - "app/frontend/search/**/*.html.erb"
+    - "app/frontend/feedbacks/**/*.html.erb"
+    - "app/frontend/flash/**/*.html.erb"
+    - "app/frontend/lectures/**/*.html.erb"
+    - "app/frontend/login/**/*.html.erb"
+    - "app/frontend/media/**/*.html.erb"
+    - "app/frontend/modal/**/*.html.erb"
+    - "app/frontend/roster/**/*.html.erb"
+    - "app/frontend/search/**/*.html.erb"
+    - "app/frontend/spinner/**/*.html.erb"
+    - "app/frontend/vignettes/**/*.html.erb"
+    # not excluded on purpose, since we want to try out herb on these files:
+    # - app/frontend/registration/**/*.html.erb
