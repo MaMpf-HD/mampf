@@ -2,7 +2,7 @@ module Registration
   class UserRegistrationsController < ApplicationController
     before_action :set_locale
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
-    helper UserRegistrationsHelper, ItemsHelper
+    helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
     before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
                                         :update, :destroy_for_user]
     before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
@@ -39,7 +39,7 @@ module Registration
       case target
       when :lecture_index, :exam_index
         redirect_to user_registrations_path,
-                    notice: I18n.t("registration.messages.campaign_unavailable")
+                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
       when :lecture_details
         init_details
         render template: "registration/main/show_main_campaign",
@@ -54,7 +54,7 @@ module Registration
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       else # rubocop:disable Lint/DuplicateBranch
         redirect_to user_registrations_path,
-                    notice: I18n.t("registration.messages.campaign_unavailable")
+                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
       end
     end
 
@@ -64,7 +64,7 @@ module Registration
                  .new(@campaign, current_user, @item).register!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.messages.registration_success")
+                      notice: I18n.t("registration.user_registration.messages.registration_success")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")
@@ -84,7 +84,7 @@ module Registration
                  .new(@campaign, current_user).update!(pref_items)
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.messages.preferences_saved")
+                      notice: I18n.t("registration.user_registration.messages.preferences_saved")
         else
           respond_with_flash(
             :alert,
@@ -107,7 +107,7 @@ module Registration
                  .new(@campaign, current_user, @item).withdraw!
         if result.success?
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.messages.withdrawn")
+                      notice: I18n.t("registration.user_registration.messages.withdrawn")
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                       alert: result.errors.join(", ")

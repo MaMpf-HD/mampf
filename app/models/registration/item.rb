@@ -51,7 +51,7 @@ module Registration
       capacity - item_capacity_used
     end
 
-    def still_have_capacity?
+    def still_has_capacity?
       return true if capacity.nil?
 
       capacity_remained.positive?

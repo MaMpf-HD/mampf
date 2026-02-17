@@ -6,7 +6,7 @@
       <div class="col-8 mb-2 mt-2">
         <%= render partial: "registration/item_search_form/search_form",
                    locals: { controller: "registration-item-search",
-                             placeholder: t("registration.filter_placeholder") } %>
+                             placeholder: t("registration.user_registration.filter_placeholder") } %>
       </div>
 
       <!-- saved time -->
@@ -22,7 +22,7 @@
     <% if campaign.user_registration_confirmed?(current_user) %>
       <div class="alert alert-info py-2 px-2 m-3">
         <span>
-        <%= t("registration.currently_registered", 
+        <%= t("registration.user_registration.currently_registered", 
             name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
         </span>
       </div>
@@ -68,7 +68,7 @@
               <!-- status column -->
               <td class="text-center">
                 <% if !item.user_registered?(current_user) %>
-                  <% if item.still_have_capacity? %>
+                  <% if item.still_has_capacity? %>
                     <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark"  style="min-width: 80px;">
                                 <%= t("basics.available") %></span>
                   <% else %>
@@ -77,7 +77,7 @@
                   <% end %>
                 <% else %>
                   <span class="badge rounded-pill fw-medium small text-bg-success"  style="min-width: 80px;">
-                                <%= t("registration.registered") %></span>
+                                <%= t("registration.user_registration.registered") %></span>
                 <% end %>
               </td>
 
@@ -85,13 +85,13 @@
               <td class="d-flex justify-content-end py-2">
                 <% if !campaign.user_registration_confirmed?(current_user) %>
                   <% if item.user_registered?(current_user) %>
-                    <%= button_to t("registration.withdraw"),
+                    <%= button_to t("registration.user_registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
                                   method: :delete,
                                   disabled: !campaign.open_for_withdrawals?,
                                   class: "btn btn-outline-danger btn-sm" %>
                   <% else %>
-                    <%= button_to t("registration.register_now"),
+                    <%= button_to t("registration.user_registration.register_now"),
                                   register_item_path(campaign.id, item.id),
                                   method: :post,
                                   disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
@@ -99,13 +99,13 @@
                   <% end %>
                 <% else %>
                   <% if item.user_registered?(current_user) %>
-                    <%= button_to t("registration.withdraw"),
+                    <%= button_to t("registration.user_registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
                                   method: :delete,
                                   disabled: !campaign.open_for_withdrawals?,
                                   class: "btn btn-outline-danger btn-sm" %>
                   <% else %>
-                    <span class="text-muted small"><%= t("registration.withdraw_first") %></span>
+                    <span class="text-muted small"><%= t("registration.user_registration.withdraw_first") %></span>
                   <% end %>
                 <% end %>
               </td>

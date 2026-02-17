@@ -226,6 +226,42 @@ de:
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+      registrations: "Anmeldungen"
+      title: "Ihre Anmeldung"
+      planning: "Planung"
+      course_code: "Kurscode"
+      campaign_main: "Anmeldeverfahren: Allgemeine Anmeldung"
+      eligibility_title: "Ihre Berechtigung"
+      preferences_title: Ihre ausgewählten Einstellungen
+      eligible: "Berechtigt"
+      not_eligible: "Nicht berechtigt"
+      prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
+      seats_remaining: "Verbleibende Plätze"
+      registered: "Registriert"
+      not_registered: "Nicht registriert"
+      register_now: "Jetzt registrieren"
+      need_save: Sie haben ungespeicherte Änderungen. Klicken Sie auf "Speichern", um Ihre Einstellungen zu aktualisieren.
+      currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe austreten."
+      withdraw: "Austreten"
+      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Sie Fragen zu dieser Änderung haben, wenden Sie sich bitte an die Kursverwaltung.
+      withdraw_first: "Zuerst zurückziehen"
+      filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
+      status_for_registration: "Aktueller Status Ihrer eingereichten Präferenzen"
+      submitted_pref: "Ihre eingereichte Auswahl"
+      confirmed_assignment_pref: "Ihre bestätigte %{type}-Zuweisung"
+      messages:
+        campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
+        campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        registration_success: "Registrierung erfolgreich abgeschlossen."
+        registration_failed: "Registrierung konnte nicht abgeschlossen werden."
+        already_registered: "Sie sind bereits für dieses Anmeldeverfahren registriert."
+        no_slots: "Keine Plätze verfügbar."
+        requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
+        preferences_saved: "Ihre Einstellungen wurden gespeichert."
+        withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
+        dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
+        cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden."
+        course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:

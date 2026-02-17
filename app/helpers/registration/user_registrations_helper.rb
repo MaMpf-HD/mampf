@@ -104,10 +104,10 @@ module Registration
 
     def eligibility_badge(pass)
       if pass
-        content_tag(:span, I18n.t("registration.eligible"),
+        content_tag(:span, I18n.t("registration.user_registration.eligible"),
                     class: "badge rounded-pill w-auto text-bg-success")
       else
-        content_tag(:span, I18n.t("registration.not_eligible"),
+        content_tag(:span, I18n.t("registration.user_registration.not_eligible"),
                     class: "badge rounded-pill w-auto text-bg-warning")
       end
     end

@@ -185,6 +185,10 @@ module Registration
                 class: "btn btn-success")
     end
 
+    def closed_early?(campaign)
+      !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
+    end
+
     private
 
       def utilization_color(percentage)

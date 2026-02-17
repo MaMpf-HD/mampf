@@ -16,15 +16,11 @@
     </li>
 
     <!-- Capacity detail -->
-    <% total_capacity      = sum_of_nullable(items.map(&:capacity)) %>
-    <% total_capacity_used = items.sum(&:item_capacity_used) %>
-    <% multi_items         = items.size > 1 %>
-
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
         <div class="fw-semibold"><%= t('basics.capacity') %></div>
         <small class="text-muted">
-          <%= total_capacity %> <%= t('basics.seats') %>
+          <%= sum_of_nullable(items.map(&:capacity)) %> <%= t('basics.seats') %>
         </small>
       </div>
       <span class="d-inline-flex align-items-center
@@ -32,8 +28,8 @@
              border border-secondary-subtle
              text-dark
              small fw-semibold">
-        <%= total_capacity_used %> / <%= nullable_capacity_display(total_capacity) %> <%= t('basics.filled') %>
-        <%= t('basics.across_group') if multi_items %>
+        <%= items.sum(&:item_capacity_used) %> / <%= nullable_capacity_display(sum_of_nullable(items.map(&:capacity))) %> <%= t('basics.filled') %>
+        <%= t('basics.across_group') if items.size > 1 %>
       </span>
     </li>
 

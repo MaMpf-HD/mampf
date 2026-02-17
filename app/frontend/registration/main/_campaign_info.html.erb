@@ -16,20 +16,20 @@
              px-3 py-1 rounded-pill
              small fw-semibold
              me-2 bg-info-subtle text-info">
-          <%= t('registration.planning') %>
+          <%= t('registration.user_registration.planning') %>
         </span>
       <% end %>
     </div>
 
     <div class="text-muted small">
       <%= campaignable_host.term_to_label %> -
-      <%= t('registration.course_code') %>: <%= campaignable_host.course.compact_title %>
+      <%= t('registration.user_registration.course_code') %>: <%= campaignable_host.course.compact_title %>
     </div>
   </div>
 
   <div class="text-end">
     <div class="text-muted small mb-1">
-      <%= t('registration.campaign_main') %>
+      <%= t('registration.user_registration.campaign_main') %>
     </div>
 
     <% if campaign.open_for_registrations? %>

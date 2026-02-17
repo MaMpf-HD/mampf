@@ -12,33 +12,33 @@ module Registration
       def check_campaign_open_for_registrations
         return nil if @campaign.open_for_registrations?
 
-        I18n.t("registration.messages.campaign_not_opened")
+        I18n.t("registration.user_registration.messages.campaign_not_opened")
       end
 
       def check_campaign_open_for_withdraw
         return nil if @campaign.open_for_withdrawals?
 
-        I18n.t("registration.messages.campaign_not_opened")
+        I18n.t("registration.user_registration.messages.campaign_not_opened")
       end
 
       def check_already_registered
         return nil unless @campaign.user_registrations.exists?(user_id: @user.id,
                                                                status: :confirmed)
 
-        I18n.t("registration.messages.already_registered")
+        I18n.t("registration.user_registration.messages.already_registered")
       end
 
       def check_capacity
-        return nil if @item.still_have_capacity?
+        return nil if @item.still_has_capacity?
 
-        I18n.t("registration.messages.no_slots")
+        I18n.t("registration.user_registration.messages.no_slots")
       end
 
       def check_policies
         return nil if [@campaign.policies_satisfied?(@user, phase: :registration),
                        @campaign.policies_satisfied?(@user, phase: :both)].all?
 
-        I18n.t("registration.messages.requirements_not_met")
+        I18n.t("registration.user_registration.messages.requirements_not_met")
       end
 
       def check_not_referenced_as_prerequisite
@@ -58,7 +58,7 @@ module Registration
 
         names = dependent_campaigns_confirmed.pluck(:description)
 
-        I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
+        I18n.t("registration.user_registration.messages.dependent_campaigns_block_withdrawal",
                names: names.join(", "))
       end
     end

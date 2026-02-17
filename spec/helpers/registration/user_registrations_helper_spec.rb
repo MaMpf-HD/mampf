@@ -104,13 +104,13 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
   describe "#eligibility_badge" do
     it "renders eligible badge" do
       html = helper.eligibility_badge(true)
-      expect(html).to include(I18n.t("registration.eligible"))
+      expect(html).to include(I18n.t("registration.user_registration.eligible"))
       expect(html).to include("text-bg-success")
     end
 
     it "renders not eligible badge" do
       html = helper.eligibility_badge(false)
-      expect(html).to include(I18n.t("registration.not_eligible"))
+      expect(html).to include(I18n.t("registration.user_registration.not_eligible"))
       expect(html).to include("text-bg-warning")
     end
   end
