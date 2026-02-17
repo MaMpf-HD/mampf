@@ -205,3 +205,25 @@ en:
       propagates_short: "Enrollment"
       propagates_hint: "Members of this cohort serve as lecture participants"
       lecture_enrollment: "Lecture Enrollment"
+    mailer:
+      roster_added_to_group_email_body: >
+        Hello, %{name}!
+        You have been added to the %{rosterable_type} group %{rosterable_title}.
+        You can access it here: %{rosterable_link}
+        With kind regards,
+        Your MaMpf-Team
+      roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
+      roster_removed_from_group_email_body: >
+        Hello, %{name}!
+        You have been removed from the %{rosterable_type} group %{rosterable_title}.
+        If you believe this was a mistake or have any questions, please contact your instructor or support team.
+        With kind regards,
+        Your MaMpf-Team
+      roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title}'
+      roster_moved_between_groups_email_body: >
+        Hello, %{name}!
+        You have been moved from the %{old_rosterable_type} group %{old_rosterable_title} to the %{new_rosterable_type} group %{new_rosterable_title}.
+        You can access your new group here: %{new_rosterable_link}
+        With kind regards,
+        Your MaMpf-Team
+      roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title}'

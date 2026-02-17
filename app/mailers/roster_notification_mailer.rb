@@ -19,7 +19,7 @@ class RosterNotificationMailer < ApplicationMailer
 
   private
 
-    def prepare_data
+    def prepare_data(params)
       @rosterable      = params[:rosterable]
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
@@ -35,7 +35,7 @@ class RosterNotificationMailer < ApplicationMailer
         from: @sender,
         to: @recipient.email,
         subject: t(
-          "mailer.roster_#{mail_template}_subject",
+          "roster.mailer.roster_#{mail_template}_subject",
           rosterable_title: @rosterable.title,
           campaignable_title: @rosterable.try(:campaignable)&.title
         )
