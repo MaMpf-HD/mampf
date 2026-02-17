@@ -205,7 +205,7 @@ end
       FactoryBot.create(:task_point, participation: part, task: task, points: points)
       total_points += points
     end
-    part.update!(points_total: total_points, status: :graded)
+    part.update!(points_total: total_points, status: :reviewed)
   end
 end
 

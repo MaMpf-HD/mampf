@@ -68,7 +68,7 @@ module Registration
 
         respond_with_error(t("registration.policy.not_found"),
                            redirect_path: registration_campaign_path(@campaign,
-                                                                     anchor: "policies-tab"))
+                                                                     tab: "policies"))
       end
 
       def set_locale
@@ -88,15 +88,19 @@ module Registration
       def respond_with_success(message)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+            redirect_to registration_campaign_path(@campaign, tab: "policies"),
                         notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message if message
             render turbo_stream: [
               turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign, tab: "policies" }),
+                                  partial: "registration/campaigns/card_body_index",
+                                  locals: {
+                                    lecture: @campaign.campaignable,
+                                    expanded_campaign_id: @campaign.id,
+                                    tab: "policies"
+                                  }),
               stream_flash
             ].compact
           end
@@ -107,7 +111,7 @@ module Registration
         respond_to do |format|
           format.html do
             path = redirect_path || registration_campaign_path(@campaign,
-                                                               anchor: "policies-tab")
+                                                               tab: "policies")
             redirect_to path, alert: message
           end
           format.turbo_stream do

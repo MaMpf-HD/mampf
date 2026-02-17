@@ -20,6 +20,8 @@ class Tutorial < ApplicationRecord
   before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
+  validate :lecture_must_not_be_seminar
+
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
 
@@ -39,7 +41,7 @@ class Tutorial < ApplicationRecord
   end
 
   def destructible?
-    Submission.where(tutorial: self).proper.none?
+    super && Submission.where(tutorial: self).proper.none?
   end
 
   def teams_to_csv(assignment)
@@ -61,22 +63,33 @@ class Tutorial < ApplicationRecord
   end
 
   def materialize_allocation!(user_ids:, campaign:)
-    # Enforce uniqueness: A student can only be in one tutorial per lecture.
-    # If we are about to add a student to this tutorial, remove them from any other
-    # tutorial in the same lecture.
-    TutorialMembership.joins(:tutorial)
-                      .where(tutorials: { lecture_id: lecture_id })
-                      .where.not(tutorial_id: id)
-                      .where(user_id: user_ids)
-                      .delete_all
-
+    enforce_lecture_uniqueness!(user_ids)
     super
   end
 
   private
 
+    def enforce_lecture_uniqueness!(user_ids)
+      # Enforce uniqueness: A student can only be in one tutorial per lecture.
+      # If we are about to add a student to this tutorial, remove them from any other
+      # tutorial in the same lecture.
+      TutorialMembership.joins(:tutorial)
+                        .where(tutorials: { lecture_id: lecture_id })
+                        .where.not(tutorial_id: id)
+                        .where(user_id: user_ids)
+                        .delete_all
+    end
+
     def check_destructibility
-      throw(:abort) unless destructible?
-      true
+      return unless Submission.where(tutorial: self).proper.any?
+
+      errors.add(:base, I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
+      throw(:abort)
+    end
+
+    def lecture_must_not_be_seminar
+      return unless lecture&.seminar?
+
+      errors.add(:lecture, :must_not_be_seminar)
     end
 end

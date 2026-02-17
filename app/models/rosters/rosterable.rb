@@ -5,7 +5,7 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort"].freeze
+    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
@@ -26,7 +26,28 @@ module Rosters
         :user_id
       end
 
+      # Override this method if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{self.class.name.underscore}_memberships"
+      end
+
+      enum :self_materialization_mode, {
+        disabled: 0,
+        add_only: 1,
+        remove_only: 2,
+        add_and_remove: 3
+      }, prefix: true
+
+      before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
+      validate :validate_self_materialization_switch
+      before_destroy :enforce_rosterable_destruction_constraints, prepend: true
+    end
+
+    # Checks if the item can be safely destroyed.
+    def destructible?
+      !in_campaign? && roster_empty?
     end
 
     # Checks if the roster is locked for manual modifications.
@@ -62,32 +83,56 @@ module Rosters
     end
 
     # Checks if the roster is currently empty.
+    def roster_entries_count
+      association_name = roster_association_name
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).size
+      else
+        roster_entries.count
+      end
+    end
+
     def roster_empty?
-      !roster_entries.exists?
+      association_name = roster_association_name
+
+      if association_name && association(association_name).loaded?
+        public_send(association_name).empty?
+      else
+        !roster_entries.exists?
+      end
     end
 
     # Checks if the item is associated with any campaign.
     def in_campaign?
       return false unless respond_to?(:registration_items)
 
-      registration_items.exists?
+      return @in_campaign if defined?(@in_campaign)
+
+      @in_campaign = registration_items.exists?
     end
 
     # Checks if the item is associated with a completed campaign.
     def in_completed_campaign?
       return false unless respond_to?(:registration_items)
 
-      Registration::Campaign
-        .joins(:registration_items)
-        .where(registration_items: { registerable_id: id,
-                                     registerable_type: self.class.name })
-        .exists?(status: :completed)
+      return @in_completed_campaign if defined?(@in_completed_campaign)
+
+      @in_completed_campaign = Registration::Campaign
+                               .joins(:registration_items)
+                               .where(registration_items: { registerable_id: id,
+                                                            registerable_type: self.class.name })
+                               .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.
     # Required by the Registration::Registerable concern.
     def allocated_user_ids
-      roster_entries.pluck(roster_user_id_column)
+      if roster_entries.loaded?
+        roster_entries.map { |e| e.public_send(roster_user_id_column) }
+      else
+        roster_entries.pluck(roster_user_id_column)
+      end
     end
 
     # Adds a single user to the roster.
@@ -170,7 +215,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count > capacity
+      roster_entries_count > capacity
     end
 
     # Checks if the roster is full (reached or exceeded capacity).
@@ -178,7 +223,7 @@ module Rosters
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries.count >= capacity
+      roster_entries_count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
@@ -201,6 +246,61 @@ module Rosters
           # Switching from true (Skip Campaigns) to false (Campaign Mode)
           # Only allowed if roster is empty (to avoid data inconsistency)
           errors.add(:base, I18n.t("roster.errors.roster_not_empty")) unless roster_empty?
+        end
+      end
+
+      def validate_self_materialization_switch
+        return unless self_materialization_mode_changed?
+
+        if is_a?(Lecture) && !self_materialization_mode_disabled?
+          errors.add(:self_materialization_mode,
+                     I18n.t("roster.errors.lecture_cannot_self_materialize"))
+          return
+        end
+
+        return if self_materialization_mode_disabled?
+        return unless respond_to?(:skip_campaigns)
+
+        return unless locked?
+
+        errors.add(:base, I18n.t("roster.errors.campaign_associated"))
+      end
+
+      def enforce_rosterable_destruction_constraints
+        if in_campaign?
+          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
+          throw(:abort)
+        end
+
+        return if roster_empty?
+
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+        throw(:abort)
+      end
+
+      def enforce_consistency_between_modes
+        return unless respond_to?(:skip_campaigns)
+
+        # Detect conflicting user intent - both changed in same request
+        if skip_campaigns_changed? && self_materialization_mode_changed? &&
+           !skip_campaigns? && !self_materialization_mode_disabled?
+          errors.add(:base,
+                     I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization"))
+          return
+        end
+
+        # Auto-disable self-materialization when switching to campaign mode
+        # (only if user didn't explicitly change self_materialization_mode)
+        if skip_campaigns_changed? && !skip_campaigns? && !self_materialization_mode_changed?
+          self.self_materialization_mode = :disabled
+          return
+        end
+
+        # Auto-enable skip_campaigns when enabling self-materialization
+        # (only if user didn't explicitly change skip_campaigns)
+        if self_materialization_mode_changed? && !self_materialization_mode_disabled? &&
+           !skip_campaigns_changed? && !in_campaign?
+          self.skip_campaigns = true
         end
       end
   end

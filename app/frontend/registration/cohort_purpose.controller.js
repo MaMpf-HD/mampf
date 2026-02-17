@@ -38,7 +38,10 @@ export default class extends Controller {
 
     if (config.showCheckbox) {
       this.propagateContainerTarget.style.display = "block";
-      this.propagateCheckboxTarget.checked = config.propagate;
+      // Don't override the checkbox value if it's disabled (existing cohort)
+      if (!this.propagateCheckboxTarget.disabled) {
+        this.propagateCheckboxTarget.checked = config.propagate;
+      }
     }
     else {
       this.propagateContainerTarget.style.display = "none";

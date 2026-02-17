@@ -74,6 +74,24 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.to raise_error(Rosters::UserAlreadyInBundleError)
       end
     end
+
+    context "when propagating to lecture" do
+      let(:lecture) { create(:lecture) }
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+      it "adds the user to the lecture roster" do
+        expect do
+          subject.add_user!(user, tutorial)
+        end.to change { lecture.members.count }.by(1)
+      end
+
+      it "checks idempotency" do
+        subject.add_user!(user, tutorial)
+        expect do
+          subject.add_user!(user, tutorial)
+        end.not_to(change { lecture.members.count })
+      end
+    end
   end
 
   describe "#remove_user!" do
@@ -83,6 +101,31 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect do
         subject.remove_user!(user, tutorial)
       end.to change { tutorial.members.count }.by(-1)
+    end
+
+    context "when cascading from lecture" do
+      let(:lecture) { create(:lecture) }
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:propagating_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+      let(:isolated_cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+      before do
+        # User is already in tutorial via outer before block
+        tutorial.send(:propagate_to_lecture!, [user.id])
+        # Manually add to cohorts
+        create(:cohort_membership, cohort: propagating_cohort, user: user)
+        create(:cohort_membership, cohort: isolated_cohort, user: user)
+      end
+
+      it "removes the user from propagating subgroups but keeps them in isolated ones" do
+        expect do
+          subject.remove_user!(user, lecture)
+        end.to change { tutorial.members.count }.by(-1)
+                                                .and(change {
+                                                       propagating_cohort.members.count
+                                                     }.by(-1))
+                                                .and(change { isolated_cohort.members.count }.by(0))
+      end
     end
   end
 

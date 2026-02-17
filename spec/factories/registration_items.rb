@@ -13,6 +13,9 @@ FactoryBot.define do
     end
 
     trait :for_talk do
+      registration_campaign do
+        association(:registration_campaign, campaignable: association(:seminar))
+      end
       registerable { association(:talk, lecture: lecture) }
     end
 

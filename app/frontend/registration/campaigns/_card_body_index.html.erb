@@ -1,46 +1,38 @@
-  <% if lecture.registration_campaigns.any? %>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th><%= t("registration.campaign.index.columns.description") %></th>
-          <th><%= t("registration.campaign.index.columns.mode") %></th>
-          <th><%= t("registration.campaign.index.columns.registrations") %></th>
-          <th><%= t("registration.campaign.index.columns.deadline") %></th>
-          <th><%= t("basics.status") %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
-          <tr data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;">
-            <td>
-              <%= link_to registration_campaign_path(campaign),
-                          class: "text-decoration-none text-reset",
-                          data: { turbo_stream: true, row_link: true } do %>
-                <% if campaign.description.present? %>
-                  <%= campaign.description %>
-                <% else %>
-                  <span class="text-muted">&mdash;</span>
-                <% end %>
-              <% end %>
-            </td>
-            <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
-            <td>
-              <% if campaign.draft? %>
-                <span class="text-muted">&mdash;</span>
-              <% else %>
-                <%= campaign.total_registrations_count %>
-              <% end %>
-            </td>
-            <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
-            <td>
-              <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-                <%= t("registration.campaign.status.#{campaign.status}") %>
-              </span>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
-  <% end %>
+<% if local_assigns[:new_campaign] %>
+  <%= render "registration/campaigns/card_body_form",
+             campaign: new_campaign,
+             lecture: lecture %>
+<% elsif lecture.registration_campaigns.any? %>
+  <div class="accordion" id="campaigns_accordion">
+    <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
+      <% expanded = campaign.id == local_assigns[:expanded_campaign_id] %>
+      <% active_tab = expanded ? (local_assigns[:tab] || "items") : "items" %>
+
+      <div
+        class="accordion-item"
+        id="<%= campaign_accordion_item_id(campaign) %>"
+      >
+        <h2 class="accordion-header" id="heading-<%= campaign.id %>">
+          <%= render "registration/campaigns/accordion_header",
+                     campaign: campaign,
+                     expanded: expanded,
+                     collapse_id: campaign_accordion_collapse_id(campaign) %>
+        </h2>
+
+        <div
+          id="<%= campaign_accordion_collapse_id(campaign) %>"
+          class="accordion-collapse collapse <%= "show" if expanded %>"
+          data-bs-parent="#campaigns_accordion"
+        >
+          <div class="accordion-body">
+            <%= render "registration/campaigns/card_body_show",
+                       campaign: campaign,
+                       tab: active_tab %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
+<% end %>

@@ -50,6 +50,9 @@ window.Stimulus.register("registerable-type-help", RegisterableTypeHelpControlle
 import CohortPurposeController from "~/registration/cohort_purpose.controller.js";
 window.Stimulus.register("cohort-purpose", CohortPurposeController);
 
+import CohortPurposeHierarchicalController from "~/registration/cohort_purpose_hierarchical.controller.js";
+window.Stimulus.register("cohort-purpose-hierarchical", CohortPurposeHierarchicalController);
+
 import CampaignActionController from "~/registration/campaign_action.controller.js";
 window.Stimulus.register("campaign-action", CampaignActionController);
 
@@ -68,8 +71,17 @@ window.Stimulus.register("datetimepicker", DatetimepickerController);
 import RosterEnrollmentController from "~/roster/roster_enrollment_controller.js";
 window.Stimulus.register("roster-enrollment", RosterEnrollmentController);
 
+import CapacityGuardController from "~/roster/capacity_guard_controller.js";
+window.Stimulus.register("capacity-guard", CapacityGuardController);
+
+import RosterFilterController from "~/roster/roster_filter.controller.js";
+window.Stimulus.register("roster-filter", RosterFilterController);
+
 import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import SelectizeController from "~/controllers/selectize_controller.js";
+window.Stimulus.register("selectize", SelectizeController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

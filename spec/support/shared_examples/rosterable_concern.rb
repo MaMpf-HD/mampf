@@ -11,13 +11,28 @@ RSpec.shared_examples("a rosterable model") do
     rosterable.roster_entries.find_by(rosterable.roster_user_id_column => user.id)
   end
 
+  def roster_association_name
+    rosterable.roster_entries.proxy_association.reflection.name
+  end
+
   describe "interface" do
     subject { rosterable }
     it { is_expected.to respond_to(:roster_entries) }
+    it { is_expected.to respond_to(:roster_user_id_column) }
+    it { is_expected.to respond_to(:roster_association_name) }
     it { is_expected.to respond_to(:add_user_to_roster!) }
     it { is_expected.to respond_to(:remove_user_from_roster!) }
     it { is_expected.to respond_to(:materialize_allocation!) }
     it { is_expected.to respond_to(:allocated_user_ids) }
+
+    it "roster_association_name returns a symbol" do
+      expect(rosterable.roster_association_name).to be_a(Symbol)
+    end
+
+    it "roster_association_name matches an actual association" do
+      expect(rosterable.class.reflect_on_association(rosterable.roster_association_name))
+        .to be_present
+    end
   end
 
   describe "#allocated_user_ids" do
@@ -25,6 +40,93 @@ RSpec.shared_examples("a rosterable model") do
 
     it "returns the ids of users in the roster" do
       expect(rosterable.allocated_user_ids).to include(user.id)
+    end
+
+    context "when roster entries are loaded" do
+      before { rosterable.roster_entries.load }
+
+      it "uses the loaded association to fetch ids" do
+        expect(rosterable.association(roster_association_name)).to be_loaded
+        expect(rosterable.allocated_user_ids).to include(user.id)
+      end
+    end
+  end
+
+  describe "#roster_empty?" do
+    context "when roster is empty" do
+      it "returns true" do
+        expect(rosterable).to be_roster_empty
+      end
+    end
+
+    context "when roster has users" do
+      before { rosterable.add_user_to_roster!(user) }
+
+      it "returns false" do
+        expect(rosterable).not_to be_roster_empty
+      end
+
+      it "returns false using loaded association" do
+        rosterable.roster_entries.load
+        expect(rosterable.association(roster_association_name)).to be_loaded
+        expect(rosterable).not_to be_roster_empty
+      end
+    end
+  end
+
+  describe "#full?" do
+    # Only applicable if the model has a capacity
+    if described_class.new.respond_to?(:capacity)
+      context "with capacity" do
+        before do
+          rosterable.capacity = 1
+          rosterable.save! if rosterable.persisted?
+        end
+
+        it "returns false when below capacity" do
+          expect(rosterable).not_to be_full
+        end
+
+        it "returns true when at capacity" do
+          rosterable.add_user_to_roster!(user)
+          expect(rosterable).to be_full
+        end
+
+        it "returns true when at capacity (loaded)" do
+          rosterable.add_user_to_roster!(user)
+          rosterable.roster_entries.load
+          expect(rosterable).to be_full
+        end
+      end
+    end
+  end
+
+  describe "#over_capacity?" do
+    if described_class.new.respond_to?(:capacity)
+      context "with capacity" do
+        before do
+          rosterable.capacity = 1
+          rosterable.save! if rosterable.persisted?
+        end
+
+        it "returns false when at capacity" do
+          rosterable.add_user_to_roster!(user)
+          expect(rosterable).not_to be_over_capacity
+        end
+
+        it "returns true when exceeding capacity" do
+          rosterable.add_user_to_roster!(user)
+          rosterable.add_user_to_roster!(create(:user))
+          expect(rosterable).to be_over_capacity
+        end
+
+        it "returns true when exceeding capacity (loaded)" do
+          rosterable.add_user_to_roster!(user)
+          rosterable.add_user_to_roster!(create(:user))
+          rosterable.roster_entries.load
+          expect(rosterable).to be_over_capacity
+        end
+      end
     end
   end
 
