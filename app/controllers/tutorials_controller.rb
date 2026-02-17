@@ -132,15 +132,16 @@ class TutorialsController < ApplicationController
         streams = []
 
         if @tutorial.errors.empty?
-          streams << update_roster_groups_list_stream(group_type)
+          streams.concat(Rosters::StreamService.new(@lecture, view_context)
+          .item_updated(@tutorial, group_type: group_type, flash: flash))
           streams << refresh_campaigns_index_stream(@tutorial.lecture)
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
                                           partial: "tutorials/modal_form",
                                           locals: { tutorial: @tutorial })
+          streams << stream_flash if flash.present?
         end
 
-        streams << stream_flash if flash.present?
         render turbo_stream: streams, status: @tutorial.errors.empty? ? :ok : :unprocessable_content
       end
     end
@@ -160,9 +161,12 @@ class TutorialsController < ApplicationController
       end
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: [update_roster_groups_list_stream(group_type),
-                              refresh_campaigns_index_stream(@tutorial.lecture),
-                              stream_flash]
+        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
+          group_type: group_type, flash: flash
+        )
+        streams << refresh_campaigns_index_stream(@tutorial.lecture)
+
+        render turbo_stream: streams
       end
     end
   end
@@ -302,30 +306,19 @@ class TutorialsController < ApplicationController
 
     def create_turbo_streams(group_type)
       streams = []
+      service = Rosters::StreamService.new(@lecture, view_context)
 
       if @tutorial.persisted?
-        streams << update_roster_groups_list_stream(group_type)
+        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
                                         partial: "tutorials/modal_form",
                                         locals: { tutorial: @tutorial })
+        streams << stream_flash if flash.present?
       end
 
-      streams << stream_flash if flash.present?
       streams
-    end
-
-    def update_roster_groups_list_stream(group_type)
-      component = RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type)
-      turbo_stream.update("roster_groups_list",
-                          partial: "roster/components/groups_tab",
-                          locals: {
-                            groups: component.groups,
-                            group_type: group_type,
-                            component: component
-                          })
     end
 end

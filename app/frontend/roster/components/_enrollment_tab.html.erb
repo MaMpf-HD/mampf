@@ -17,9 +17,9 @@
       </div>
       <div class="col-md-5">
         <%= f.label :rosterable_id, t('roster.manual_enrollment.group'), class: "form-label" %>
-        <% if groups.any? %>
+        <% if component.sections.any? %>
           <%= f.select :rosterable_id, [], { include_blank: t('roster.manual_enrollment.choose_group') }, { class: "form-select", required: true } do %>
-            <% groups.each do |group| %>
+            <% component.sections.each do |group| %>
               <optgroup label="<%= group[:title] %>">
                 <% group[:items].each do |item| %>
                   <% next if item.locked? %>
@@ -35,7 +35,7 @@
         <% end %>
       </div>
       <div class="col-md-2">
-        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100", disabled: groups.empty? %>
+        <%= f.button t('roster.actions.add'), type: "submit", class: "btn btn-primary w-100", disabled: component.sections.empty? %>
       </div>
     <% end %>
   </div>

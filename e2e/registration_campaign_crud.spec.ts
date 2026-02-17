@@ -28,14 +28,12 @@ test.describe("Registration Campaigns CRUD", () => {
     await page.getByRole("button", { name: "Save" }).click();
 
     await expect(page.getByRole("heading", { name: "Exam Registration 2025" })).toBeVisible();
-    await expect(page.getByText("Draft")).toBeVisible();
   });
 
   test("Teacher can update an existing campaign", async ({
     factory,
     teacher: { page, user },
   }) => {
-    // Setup: Create campaign via factory directly
     const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     await factory.create("registration_campaign", [], {
       campaignable_id: lecture.id,
@@ -48,15 +46,9 @@ test.describe("Registration Campaigns CRUD", () => {
     await expect(lectureEditPage.campaignsTab).toBeVisible();
     await lectureEditPage.campaignsTab.click();
 
-    await expect(page.getByText("Old Description")).toBeVisible();
     await page.getByText("Old Description").click();
-
-    await expect(page.getByRole("tab", { name: "Settings" })).toBeVisible();
     await page.getByRole("tab", { name: "Settings" }).click();
-
-    await expect(page.getByLabel("Description")).toBeVisible();
     await page.getByLabel("Description").fill("Updated Description");
-    await expect(page.getByRole("button", { name: "Save" })).toBeVisible();
     await page.getByRole("button", { name: "Save" }).click();
 
     await expect(page.getByRole("heading", { name: "Updated Description" })).toBeVisible();

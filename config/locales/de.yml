@@ -3442,6 +3442,7 @@ de:
     capacity: 'Kapazität'
     division: 'Teilbereich'
     error: Fehler
+    edit: "Bearbeiten"
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'
@@ -3940,6 +3941,16 @@ de:
       Das MaMpf-Team hat eine Benachrichtigung über diesen Bug erhalten, wir
       werden versuchen, ihn so schnell wie möglich zu beheben.
   activerecord:
+    models:
+      tutorial:
+        one: Tutorium
+        other: Tutorien
+      talk:
+        one: Vortrag
+        other: Vorträge
+      cohort:
+        one: Gruppe
+        other: Gruppen
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
       models:

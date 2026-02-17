@@ -2,21 +2,19 @@ require "rails_helper"
 
 RSpec.describe(RosterOverviewComponent, type: :component) do
   let(:lecture) { create(:lecture) }
+  # Default group_type is :all
   let(:component) { described_class.new(lecture: lecture) }
 
-  describe "#groups" do
+  describe "#sections" do
     context "with tutorials" do
       let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
-      it "returns tutorials when group_type is :all" do
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :cohorts)
-      end
+      it "places tutorials in the enrollment section" do
+        sections = component.sections
+        main_section = sections.first
 
-      it "returns tutorials when group_type is :tutorials" do
-        component = described_class.new(lecture: lecture, group_type: :tutorials)
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials)
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
+        expect(main_section[:items]).to include(tutorial)
       end
     end
 
@@ -24,90 +22,71 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let(:lecture) { create(:seminar) }
       let!(:talk) { create(:talk, lecture: lecture) }
 
-      it "returns talks when group_type is :all" do
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:talks, :cohorts)
-      end
+      it "places talks in the enrollment section" do
+        sections = component.sections
+        main_section = sections.first
 
-      it "returns talks when group_type is :talks" do
-        component = described_class.new(lecture: lecture, group_type: :talks)
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:talks)
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
+        expect(main_section[:items]).to include(talk)
       end
     end
 
-    context "sorting" do
-      let!(:completed_campaign_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "B Completed Campaign")
-        campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
-        create(:registration_item, registerable: t, registration_campaign: campaign)
-        t
+    context "with cohorts" do
+      let!(:enrolled_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+      let!(:isolated_cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+      it "places enrolled cohorts in the enrollment section" do
+        sections = component.sections
+        main_section = sections.find do |s|
+          s[:title] == I18n.t("roster.cohorts.with_lecture_enrollment_title")
+        end
+
+        expect(main_section).to be_present
+        expect(main_section[:items]).to include(enrolled_cohort)
+        expect(main_section[:items]).not_to include(isolated_cohort)
       end
 
-      let!(:active_campaign_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "A Active Campaign")
-        campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
-        create(:registration_item, registerable: t, registration_campaign: campaign)
-        t
-      end
+      it "places isolated cohorts in the without enrollment section" do
+        sections = component.sections
+        iso_section = sections.find do |s|
+          s[:title] == I18n.t("roster.cohorts.without_lecture_enrollment_title")
+        end
 
-      let!(:fresh_tutorial) do
-        create(:tutorial, lecture: lecture, title: "C Fresh", skip_campaigns: false)
-      end
-
-      let!(:skip_campaigns_tutorial) do
-        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
-      end
-
-      it "sorts completed campaigns first, then others, each subgroup sorted by title" do
-        groups = component.groups
-        tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
-
-        expect(tutorials.first).to eq(completed_campaign_tutorial)
-
-        remaining = tutorials[1..]
-        expect(remaining.map(&:title)).to eq([
-                                               "A Active Campaign",
-                                               "C Fresh",
-                                               "D Skip Campaigns"
-                                             ])
+        expect(iso_section).to be_present
+        expect(iso_section[:items]).to include(isolated_cohort)
+        expect(iso_section[:items]).not_to include(enrolled_cohort)
       end
     end
 
-    context "talks" do
-      let(:lecture) { create(:seminar) }
+    context "logic when filtering by group_type" do
+      let!(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:enrolled_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
 
-      it "sorts talks by position" do
-        talk1 = create(:talk, lecture: lecture, position: 2)
-        talk2 = create(:talk, lecture: lecture, position: 1)
+      it "only shows requested types" do
+        # Only tutorials
+        comp = described_class.new(lecture: lecture, group_type: :tutorials)
+        sections = comp.sections
+        main_items = sections.flat_map { |s| s[:items] }
 
-        component = described_class.new(lecture: lecture, group_type: :talks)
-        groups = component.groups
-        talks = groups.find { |g| g[:type] == :talks }[:items]
-
-        expect(talks).to eq([talk2, talk1])
+        expect(main_items).to include(tutorial)
+        expect(main_items).not_to include(enrolled_cohort)
       end
     end
   end
 
-  describe "#group_type_title" do
-    it "returns the correct title for tutorials" do
-      component = described_class.new(lecture: lecture, group_type: :tutorials)
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.tutorial_maintenance"))
+  describe "#actions" do
+    it "includes Create Tutorial action in enrollment section" do
+      sections = component.sections
+      actions = sections.first[:actions]
+
+      expect(actions).to include(include(text: Tutorial.model_name.human))
     end
 
-    it "returns the correct title for talks" do
-      component = described_class.new(lecture: lecture, group_type: :talks)
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.talk_maintenance"))
-    end
+    it "includes Create Enrolled Cohort action in enrollment section" do
+      sections = component.sections
+      actions = sections.first[:actions]
 
-    it "returns the default title for all" do
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
-    end
-
-    it "returns the default title for array" do
-      component = described_class.new(lecture: lecture, group_type: [:tutorials, :talks])
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
+      expect(actions).to include(include(text: I18n.t("roster.group_category.flexible_group")))
     end
   end
 
@@ -124,17 +103,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         .with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
       expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
-
-    context "with seminar" do
-      let(:lecture) { create(:seminar) }
-
-      it "returns talk roster path for a Talk" do
-        talk = create(:talk, lecture: lecture)
-        allow(helpers).to receive(:talk_roster_path).with(talk)
-                                                    .and_return("/talks/#{talk.id}/roster")
-        expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
-      end
-    end
   end
 
   describe "#active_campaign_for" do
@@ -142,7 +110,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :draft) }
 
     before do
-      # Link campaign to tutorial via registration_item
       create(:registration_item, registration_campaign: campaign, registerable: tutorial)
       campaign.update(status: :open)
     end

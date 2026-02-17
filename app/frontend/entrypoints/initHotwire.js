@@ -44,6 +44,9 @@ window.Stimulus.register("registerable-type-help", RegisterableTypeHelpControlle
 import CohortPurposeController from "~/registration/cohort_purpose.controller.js";
 window.Stimulus.register("cohort-purpose", CohortPurposeController);
 
+import CohortPurposeHierarchicalController from "~/registration/cohort_purpose_hierarchical.controller.js";
+window.Stimulus.register("cohort-purpose-hierarchical", CohortPurposeHierarchicalController);
+
 import CampaignActionController from "~/registration/campaign_action.controller.js";
 window.Stimulus.register("campaign-action", CampaignActionController);
 

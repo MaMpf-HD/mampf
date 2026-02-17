@@ -18,16 +18,6 @@ module Registration
   # with different capacities or properties within the same campaign or
   # across different campaigns is possible, if needed, in the future
   class Item < ApplicationRecord
-    # Maps user-facing type names to their corresponding model classes.
-    # Used when creating new registerable entities through the item creation flow.
-    REGISTERABLE_CLASSES = {
-      "Tutorial" => Tutorial,
-      "Talk" => Talk,
-      "Enrollment Group" => Cohort,
-      "Planning Survey" => Cohort,
-      "Other Group" => Cohort
-    }.freeze
-
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_items
@@ -44,12 +34,11 @@ module Registration
 
     validates :registerable_id,
               uniqueness: {
-                scope: [:registration_campaign_id, :registerable_type]
+                scope: :registerable_type
               }
 
     validate :validate_registerable_allows_campaigns, on: :create
     validate :validate_capacity_reduction, on: :update
-    validate :validate_uniqueness_constraints
     before_destroy :ensure_campaign_is_draft
 
     def title
@@ -102,17 +91,6 @@ module Registration
 
         errors.add(:base, :frozen)
         throw(:abort)
-      end
-
-      def validate_uniqueness_constraints
-        return unless registerable
-
-        scope = Registration::Item.where(registerable: registerable)
-        scope = scope.where.not(id: id) if persisted?
-
-        return unless scope.exists?
-
-        errors.add(:base, :already_in_other_campaign)
       end
 
       # Registerables that have the skip_campaigns flag set are excluded from

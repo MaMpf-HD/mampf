@@ -8,6 +8,20 @@ module RosterHelper
     "#{group.title} (#{count}/#{group.capacity || "∞"})"
   end
 
+  def should_display_cohort_purpose?(cohort)
+    cohort.purpose.present? && cohort.purpose != "general"
+  end
+
+  def item_overbooked?(item)
+    return false unless item.capacity
+
+    item.roster_entries.count > item.capacity
+  end
+
+  def tutor_names_with_fallback(tutorial)
+    tutorial.tutor_names.presence || "TBA"
+  end
+
   def roster_group_types(lecture)
     if lecture.seminar?
       [:talks, :cohorts]
@@ -177,31 +191,6 @@ module RosterHelper
     end
 
     { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
-  end
-
-  def cohort_type_options(cohort = nil)
-    available_types = if cohort&.persisted?
-      Cohort::TYPE_TO_PURPOSE.select do |_type, purpose|
-        case purpose
-        when :enrollment
-          cohort.propagate_to_lecture?
-        when :planning
-          !cohort.propagate_to_lecture?
-        when :general
-          true
-        end
-      end.keys
-    else
-      Cohort::TYPE_TO_PURPOSE.keys
-    end
-
-    available_types.map do |type|
-      [t("registration.item.types.#{type.parameterize(separator: "_")}"), type]
-    end
-  end
-
-  def cohort_type_from_purpose(purpose)
-    Cohort::TYPE_TO_PURPOSE.key(purpose&.to_sym) || "Other Group"
   end
 
   def roster_group_badge(group, group_type)

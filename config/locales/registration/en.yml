@@ -5,8 +5,6 @@ en:
         already_finalized: "Campaign is already finalized."
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
-      updated: "Campaign updated successfully."
-      update_failed: "Campaign could not be updated."
       destroyed: "Campaign deleted successfully."
       cannot_delete: "Campaign cannot be deleted."
       confirm_delete: "Are you sure you want to delete this campaign?"
@@ -94,7 +92,6 @@ en:
         rejected_count:
           one: "Rejected %{count}"
           other: "Rejected %{count}"
-        items: "Items"
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
         unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
@@ -169,6 +166,8 @@ en:
         existing: "Add Existing"
         new: "Create New"
         none_available: "No groups available to add."
+        create_in_roster_hint: "Need to create new groups?"
+        go_to_roster: "Go to Roster tab"
       columns:
         type: "Group Type"
         title: "Title"
@@ -191,16 +190,13 @@ en:
         lecture_signup: "General Signup"
       actions:
         remove_from_campaign: "Remove from campaign"
-        delete_registerable: "Delete %{type}"
       created: "Item added successfully."
       destroyed: "Item removed successfully."
-      registerable_destroyed: "%{type} deleted successfully."
       updated: "Item updated successfully."
       invalid_type: "Invalid type."
       cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
       confirm_delete: "Are you sure you want to remove this item?"
       confirm_remove: "Are you sure you want to remove this item from the campaign?"
-      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
       select_type: "Select a group type..."
       attributes:
         capacity_optional: "Capacity (optional)"
@@ -290,12 +286,10 @@ en:
         registration/item:
           attributes:
             registerable_id:
-              taken: "is already part of another campaign."
-              taken_by_real_campaign: "is already part of another active campaign."
+              taken: "This item is already part of a campaign."
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
-              already_in_other_campaign: "This item is already part of another standard registration campaign."
               registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
         registration/user_registration:
           attributes:
