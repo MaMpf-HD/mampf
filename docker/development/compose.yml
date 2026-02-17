@@ -31,7 +31,7 @@ services:
       # - WEB_CONCURRENCY=3
     ports:
       - 3036:3036 # Vite server
-      - 9394:9394 # Prometheus server
+      - 9394:9394 # Prometheus-Exporter endpoint
     labels:
       # see nginx.tmpl, which is serving mampf on port 30
       de.uni-heidelberg.mathi.mampf.container-type: worker
