@@ -39,7 +39,7 @@
       <% end %>
 
       <% show_new_roster = Flipper.enabled?(:roster_maintenance) && !@lecture.legacy_seminar %>
-      <% people_label = show_new_roster ? t('basics.people') : "#{t('basics.people')}/#{t('basics.tutorials')}" %>
+      <% people_label = show_new_roster ? t('basics.personnel') : "#{t('basics.people')}/#{t('basics.tutorials')}" %>
 
       <% component.with_tab(name: "people", label: people_label) do %>
         <div class="container small-width lecture-pane">

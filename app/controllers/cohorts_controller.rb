@@ -40,7 +40,10 @@ class CohortsController < ApplicationController
   end
 
   def create
-    @cohort = Cohort.new(cohort_params)
+    cohort_attributes = cohort_params
+    cohort_attributes = parse_special_purpose_checkbox(cohort_attributes)
+
+    @cohort = Cohort.new(cohort_attributes)
     @cohort.context = @lecture
     authorize! :create, @cohort
     set_cohort_locale
@@ -62,7 +65,10 @@ class CohortsController < ApplicationController
 
   def update
     set_cohort_locale
-    if @cohort.update(cohort_params)
+    updated_attributes = cohort_params
+    updated_attributes = parse_special_purpose_checkbox(updated_attributes)
+
+    if @cohort.update(updated_attributes)
       flash.now[:notice] = t("controllers.cohorts.updated")
     else
       @errors = @cohort.errors
@@ -74,7 +80,9 @@ class CohortsController < ApplicationController
         streams = []
 
         if @cohort.errors.empty?
-          streams << update_roster_groups_list_stream(group_type)
+          streams.concat(Rosters::StreamService.new(@lecture, view_context)
+          .item_updated(@cohort,
+                        group_type: group_type, flash: flash))
           streams << refresh_campaigns_index_stream(@cohort.lecture)
           streams << turbo_stream.update("modal-container", "")
         else
@@ -83,7 +91,6 @@ class CohortsController < ApplicationController
                                           locals: { cohort: @cohort })
         end
 
-        streams << stream_flash if flash.present?
         render turbo_stream: streams, status: @cohort.errors.empty? ? :ok : :unprocessable_content
       end
     end
@@ -100,9 +107,11 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        render turbo_stream: [update_roster_groups_list_stream(group_type),
-                              refresh_campaigns_index_stream(@cohort.lecture),
-                              stream_flash]
+        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
+          group_type: group_type, flash: flash
+        )
+        streams << refresh_campaigns_index_stream(@cohort.lecture)
+        render turbo_stream: streams
       end
     end
   end
@@ -134,36 +143,40 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      params.expect(cohort: [:title, :capacity, :description, :propagate_to_lecture])
+      permitted = [:title, :capacity, :description, :purpose]
+      permitted << :propagate_to_lecture unless @cohort&.persisted?
+      params.expect(cohort: permitted)
+    end
+
+    def parse_special_purpose_checkbox(attributes)
+      propagate_value = if @cohort&.persisted?
+        @cohort.propagate_to_lecture?
+      else
+        attributes[:propagate_to_lecture] == "true"
+      end
+
+      attributes[:purpose] = if params[:has_special_purpose] == "1"
+        propagate_value ? :enrollment : :planning
+      else
+        :general
+      end
+
+      attributes
     end
 
     def create_turbo_streams(group_type)
       streams = []
+      service = Rosters::StreamService.new(@lecture, view_context)
 
       if @cohort.persisted?
-        streams << update_roster_groups_list_stream(group_type)
+        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
         streams << refresh_campaigns_index_stream(@lecture)
-        streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                         partial: "cohorts/modal_form",
                                         locals: { cohort: @cohort })
       end
-
-      streams << stream_flash if flash.present?
       streams
-    end
-
-    def update_roster_groups_list_stream(group_type)
-      component = RosterOverviewComponent.new(lecture: @lecture,
-                                              group_type: group_type)
-      turbo_stream.update("roster_groups_list",
-                          partial: "roster/components/groups_tab",
-                          locals: {
-                            groups: component.groups,
-                            group_type: group_type,
-                            component: component
-                          })
     end
 
     def parse_group_type

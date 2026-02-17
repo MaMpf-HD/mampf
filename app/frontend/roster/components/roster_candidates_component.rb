@@ -1,5 +1,6 @@
-# Renders a list of unassigned candidates for a given group type.
-# Candidates are users who have registered in a campaign but are not assigned to any group.
+# Renders campaign registrations for a given group type.
+# Shows students who registered in campaigns but haven't been allocated.
+# Assigning them will enroll them in the lecture.
 class RosterCandidatesComponent < ViewComponent::Base
   include RosterTransferable
 
@@ -14,31 +15,36 @@ class RosterCandidatesComponent < ViewComponent::Base
   end
 
   def candidates
-    @candidates ||= grouped_candidates.flat_map { |g| g[:users] }.uniq
+    @candidates ||= fetch_all_candidates
   end
 
-  def grouped_candidates
-    @grouped_candidates ||= Array(@group_type).filter_map do |type|
-      klass_name = type_to_class_name(type)
-      next unless klass_name
+  def fetch_all_candidates
+    return [] unless render?
 
-      users = fetch_candidates_for_class(klass_name)
-      next if users.empty?
+    # Get all completed campaigns for this lecture
+    campaigns = Registration::Campaign.completed.where(campaignable: @lecture)
 
-      {
-        type: type,
-        title: klass_name.constantize.model_name.human(count: 2),
-        users: users
-      }
-    end
-  end
+    # Get lecture roster to exclude already-enrolled students
+    lecture_roster_ids = @lecture.allocated_user_ids
 
-  def fresh_candidates(users)
-    users.reject { |u| previously_assigned?(u) }
-  end
+    # Aggregate fresh candidates from all campaigns
+    # Only include users who are NOT on lecture roster (truly fresh)
+    candidate_ids = campaigns.flat_map do |c|
+      c.unassigned_users
+       .where.not(id: lecture_roster_ids)
+       .joins(:user_registrations)
+       .where(user_registrations: {
+                registration_campaign_id: c.id,
+                materialized_at: nil
+              })
+       .pluck(:id)
+    end.uniq
 
-  def previously_assigned_candidates(users)
-    users.select { |u| previously_assigned?(u) }
+    # Preload registrations to display preferences and source campaign
+    User.where(id: candidate_ids)
+        .includes(user_registrations: [:registration_campaign,
+                                       { registration_item: :registerable }])
+        .order(:name, :email)
   end
 
   def available_groups
@@ -53,11 +59,6 @@ class RosterCandidatesComponent < ViewComponent::Base
       end
       groups.sort_by(&:title)
     end
-  end
-
-  def previously_assigned?(user)
-    # Check if any registration for this user in the relevant campaigns has been materialized.
-    relevant_registrations(user).any? { |r| r.materialized_at.present? }
   end
 
   def add_member_path(group, user)
@@ -105,59 +106,11 @@ class RosterCandidatesComponent < ViewComponent::Base
       classes
     end
 
-    def type_to_class_name(type)
-      {
-        tutorials: "Tutorial",
-        talks: "Talk",
-        cohorts: "Cohort"
-      }[type]
-    end
-
     def relevant_registrations(user)
       # Filter in memory because we eager loaded them in fetch_candidates
       user.user_registrations.select do |r|
         r.registration_campaign.campaignable_id == @lecture.id &&
           registerable_class_names.include?(r.registration_item&.registerable_type)
-      end
-    end
-
-    def fetch_candidates_for_class(klass_name)
-      return [] unless render?
-
-      # Find all campaigns for this lecture that handle this item type
-      campaigns = Registration::Campaign.where(campaignable: @lecture, status: :completed,
-                                               planning_only: false)
-                                        .joins(:registration_items)
-                                        .where(registration_items:
-                                        { registerable_type: klass_name })
-                                        .distinct
-
-      # Aggregate unassigned users from all relevant campaigns.
-      # The campaign model handles the logic of checking global allocations
-      # to ensure we don't list students who are already assigned (e.g. via another campaign).
-      candidate_ids = campaigns.flat_map { |c| c.unassigned_users.pluck(:id) }.uniq
-
-      # The campaign model only checks for assignments to groups of the SAME type.
-      # However, in the roster management context, moving a student to a 'Sidecar' (Cohort)
-      # should be considered a resolution of their unassigned status.
-      # Therefore, we filter out users who are valid members of ANY group in this lecture.
-      candidate_ids -= all_assigned_user_ids
-
-      # Preload registrations to display preferences and source campaign
-      User.where(id: candidate_ids)
-          .includes(user_registrations: [:registration_campaign,
-                                         { registration_item: :registerable }])
-          .order(:name, :email)
-    end
-
-    def all_assigned_user_ids
-      @all_assigned_user_ids ||= begin
-        ids = Set.new
-        # Map over eager-loaded associations to avoid DB queries
-        ids.merge(@lecture.tutorials.flat_map { |t| t.tutorial_memberships.map(&:user_id) })
-        ids.merge(@lecture.talks.flat_map { |t| t.speaker_talk_joins.map(&:speaker_id) })
-        ids.merge(@lecture.cohorts.flat_map { |t| t.cohort_memberships.map(&:user_id) })
-        ids.to_a
       end
     end
 

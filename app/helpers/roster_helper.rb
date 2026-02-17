@@ -8,6 +8,20 @@ module RosterHelper
     "#{group.title} (#{count}/#{group.capacity || "∞"})"
   end
 
+  def should_display_cohort_purpose?(cohort)
+    cohort.purpose.present? && cohort.purpose != "general"
+  end
+
+  def item_overbooked?(item)
+    return false unless item.capacity
+
+    item.roster_entries.count > item.capacity
+  end
+
+  def tutor_names_with_fallback(tutorial)
+    tutorial.tutor_names.presence || "TBA"
+  end
+
   def roster_group_types(lecture)
     if lecture.seminar?
       [:talks, :cohorts]
@@ -66,11 +80,10 @@ module RosterHelper
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
         tag.i(class: "bi bi-calendar-event")
       end
-    elsif item.in_real_campaign?
+    elsif item.in_campaign?
       # Has campaign history - show view campaign button for most recent
       recent_campaign = item.registration_items
                             .joins(:registration_campaign)
-                            .where(registration_campaigns: { planning_only: false })
                             .order("registration_campaigns.created_at DESC")
                             .first
                             &.registration_campaign
@@ -126,11 +139,10 @@ module RosterHelper
 
     if disabled
       tag.span(title: tooltip, data: { bs_toggle: "tooltip" }) do
-        link_to(polymorphic_path(item, group_type: group_type),
-                class: "btn btn-sm btn-outline-danger disabled opacity-50",
-                style: "cursor: not-allowed;",
-                tabindex: -1,
-                aria: { disabled: true }) do
+        tag.button(class: "btn btn-sm btn-outline-danger opacity-50",
+                   style: "cursor: not-allowed;",
+                   disabled: true,
+                   type: "button") do
           tag.i(class: "bi bi-trash")
         end
       end
@@ -143,6 +155,42 @@ module RosterHelper
         tag.i(class: "bi bi-trash")
       end
     end
+  end
+
+  def self_materialization_state(item, campaign)
+    active_campaign = campaign && !campaign.completed?
+    disabled = active_campaign || (!item.skip_campaigns? && !item.in_campaign?)
+
+    tooltip = if active_campaign
+      t("roster.tooltips.self_materialization_disabled_campaign")
+    elsif !item.skip_campaigns? && !item.in_campaign?
+      t("roster.tooltips.self_materialization_disabled_fresh")
+    else
+      t("roster.self_materialization.label")
+    end
+
+    { disabled: disabled, tooltip: tooltip }
+  end
+
+  def skip_campaigns_state(item)
+    can_skip = item.can_skip_campaigns?
+    can_unskip = item.can_unskip_campaigns?
+    disabled = !(item.skip_campaigns? ? can_unskip : can_skip)
+    icon_class = item.skip_campaigns? ? "bi-calendar-x" : "bi-calendar-check"
+
+    tooltip = if disabled
+      if item.skip_campaigns?
+        t("roster.disable_skip_campaigns_hint")
+      else
+        t("roster.enable_skip_campaigns_hint")
+      end
+    elsif item.skip_campaigns?
+      t("roster.tooltips.skip_campaigns_enabled")
+    else
+      t("roster.tooltips.skip_campaigns_disabled")
+    end
+
+    { disabled: disabled, tooltip: tooltip, icon_class: icon_class }
   end
 
   def roster_group_badge(group, group_type)

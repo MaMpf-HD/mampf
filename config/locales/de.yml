@@ -7,13 +7,6 @@ de:
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
       truncate: "Abkürzen"
-  activerecord:
-    errors:
-      models:
-        lecture:
-          attributes:
-            teacher:
-              required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
     lesson_material:
       singular: 'Lektion'
@@ -3449,6 +3442,7 @@ de:
     capacity: 'Kapazität'
     division: 'Teilbereich'
     error: Fehler
+    edit: "Bearbeiten"
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'
@@ -3648,6 +3642,7 @@ de:
     speaker: Vortragender
     speakers: Vortragende
     unlimited: unbegrenzt
+    personnel: Personal
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3946,6 +3941,16 @@ de:
       Das MaMpf-Team hat eine Benachrichtigung über diesen Bug erhalten, wir
       werden versuchen, ihn so schnell wie möglich zu beheben.
   activerecord:
+    models:
+      tutorial:
+        one: Tutorium
+        other: Tutorien
+      talk:
+        one: Vortrag
+        other: Vorträge
+      cohort:
+        one: Gruppe
+        other: Gruppen
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
       models:
@@ -3973,6 +3978,11 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        cohort:
+          attributes:
+            purpose:
+              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
+              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
         course:
           attributes:
             title:

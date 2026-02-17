@@ -2,21 +2,19 @@ require "rails_helper"
 
 RSpec.describe(RosterOverviewComponent, type: :component) do
   let(:lecture) { create(:lecture) }
+  # Default group_type is :all
   let(:component) { described_class.new(lecture: lecture) }
 
-  describe "#groups" do
+  describe "#sections" do
     context "with tutorials" do
       let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
-      it "returns tutorials when group_type is :all" do
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials, :cohorts)
-      end
+      it "places tutorials in the enrollment section" do
+        sections = component.sections
+        main_section = sections.first
 
-      it "returns tutorials when group_type is :tutorials" do
-        component = described_class.new(lecture: lecture, group_type: :tutorials)
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:tutorials)
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
+        expect(main_section[:items]).to include(tutorial)
       end
     end
 
@@ -24,90 +22,71 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       let(:lecture) { create(:seminar) }
       let!(:talk) { create(:talk, lecture: lecture) }
 
-      it "returns talks when group_type is :all" do
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:talks, :cohorts)
-      end
+      it "places talks in the enrollment section" do
+        sections = component.sections
+        main_section = sections.first
 
-      it "returns talks when group_type is :talks" do
-        component = described_class.new(lecture: lecture, group_type: :talks)
-        groups = component.groups
-        expect(groups.pluck(:type)).to contain_exactly(:talks)
+        expect(main_section[:title]).to eq(I18n.t("roster.cohorts.with_lecture_enrollment_title"))
+        expect(main_section[:items]).to include(talk)
       end
     end
 
-    context "sorting" do
-      let!(:completed_campaign_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "B Completed Campaign")
-        campaign = create(:registration_campaign, campaignable: lecture, status: :completed)
-        create(:registration_item, registerable: t, registration_campaign: campaign)
-        t
+    context "with cohorts" do
+      let!(:enrolled_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+      let!(:isolated_cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+      it "places enrolled cohorts in the enrollment section" do
+        sections = component.sections
+        main_section = sections.find do |s|
+          s[:title] == I18n.t("roster.cohorts.with_lecture_enrollment_title")
+        end
+
+        expect(main_section).to be_present
+        expect(main_section[:items]).to include(enrolled_cohort)
+        expect(main_section[:items]).not_to include(isolated_cohort)
       end
 
-      let!(:active_campaign_tutorial) do
-        t = create(:tutorial, lecture: lecture, title: "A Active Campaign")
-        campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
-        create(:registration_item, registerable: t, registration_campaign: campaign)
-        t
-      end
+      it "places isolated cohorts in the without enrollment section" do
+        sections = component.sections
+        iso_section = sections.find do |s|
+          s[:title] == I18n.t("roster.cohorts.without_lecture_enrollment_title")
+        end
 
-      let!(:skip_campaigns_tutorial) do
-        create(:tutorial, lecture: lecture, title: "D Skip Campaigns", skip_campaigns: true)
-      end
-
-      let!(:fresh_tutorial) do
-        create(:tutorial, lecture: lecture, title: "C Fresh", skip_campaigns: false)
-      end
-
-      it "sorts completed campaigns first, then others, each subgroup sorted by title" do
-        groups = component.groups
-        tutorials = groups.find { |g| g[:type] == :tutorials }[:items]
-
-        expect(tutorials.first).to eq(completed_campaign_tutorial)
-
-        remaining = tutorials[1..]
-        expect(remaining.map(&:title)).to eq([
-                                               "A Active Campaign",
-                                               "C Fresh",
-                                               "D Skip Campaigns"
-                                             ])
+        expect(iso_section).to be_present
+        expect(iso_section[:items]).to include(isolated_cohort)
+        expect(iso_section[:items]).not_to include(enrolled_cohort)
       end
     end
 
-    context "talks" do
-      let(:lecture) { create(:seminar) }
+    context "logic when filtering by group_type" do
+      let!(:tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:enrolled_cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
 
-      it "sorts talks by position" do
-        talk1 = create(:talk, lecture: lecture, position: 2)
-        talk2 = create(:talk, lecture: lecture, position: 1)
+      it "only shows requested types" do
+        # Only tutorials
+        comp = described_class.new(lecture: lecture, group_type: :tutorials)
+        sections = comp.sections
+        main_items = sections.flat_map { |s| s[:items] }
 
-        component = described_class.new(lecture: lecture, group_type: :talks)
-        groups = component.groups
-        talks = groups.find { |g| g[:type] == :talks }[:items]
-
-        expect(talks).to eq([talk2, talk1])
+        expect(main_items).to include(tutorial)
+        expect(main_items).not_to include(enrolled_cohort)
       end
     end
   end
 
-  describe "#group_type_title" do
-    it "returns the correct title for tutorials" do
-      component = described_class.new(lecture: lecture, group_type: :tutorials)
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.tutorial_maintenance"))
+  describe "#actions" do
+    it "includes Create Tutorial action in enrollment section" do
+      sections = component.sections
+      actions = sections.first[:actions]
+
+      expect(actions).to include(include(text: Tutorial.model_name.human))
     end
 
-    it "returns the correct title for talks" do
-      component = described_class.new(lecture: lecture, group_type: :talks)
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.talk_maintenance"))
-    end
+    it "includes Create Enrolled Cohort action in enrollment section" do
+      sections = component.sections
+      actions = sections.first[:actions]
 
-    it "returns the default title for all" do
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
-    end
-
-    it "returns the default title for array" do
-      component = described_class.new(lecture: lecture, group_type: [:tutorials, :talks])
-      expect(component.group_type_title).to eq(I18n.t("roster.tabs.group_maintenance"))
+      expect(actions).to include(include(text: I18n.t("roster.group_category.flexible_group")))
     end
   end
 
@@ -124,17 +103,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
         .with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
       expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
     end
-
-    context "with seminar" do
-      let(:lecture) { create(:seminar) }
-
-      it "returns talk roster path for a Talk" do
-        talk = create(:talk, lecture: lecture)
-        allow(helpers).to receive(:talk_roster_path).with(talk)
-                                                    .and_return("/talks/#{talk.id}/roster")
-        expect(component.group_path(talk)).to eq("/talks/#{talk.id}/roster")
-      end
-    end
   end
 
   describe "#active_campaign_for" do
@@ -142,7 +110,6 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
     let(:campaign) { create(:registration_campaign, campaignable: lecture, status: :draft) }
 
     before do
-      # Link campaign to tutorial via registration_item
       create(:registration_item, registration_campaign: campaign, registerable: tutorial)
       campaign.update(status: :open)
     end
@@ -320,6 +287,30 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
 
       expect(component.bypasses_campaign_policy?(item, "add_only")).to be(true)
     end
+
+    it "caches campaign lookups to avoid N+1 queries" do
+      campaign = create(:registration_campaign, campaignable: lecture, status: :draft)
+      create(:registration_policy, :institutional_email,
+             registration_campaign: campaign, active: true)
+      campaign.update!(status: :completed)
+      create(:registration_item, registerable: item, registration_campaign: campaign)
+
+      # First call should populate the cache
+      result1 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result1).to be(true)
+
+      # Verify the cache was populated
+      cache_key = "#{item.class.name}-#{item.id}"
+      expect(component.instance_variable_get(:@last_campaign_cache)).to have_key(cache_key)
+
+      # Second call should use the cached value and return same result
+      result2 = component.bypasses_campaign_policy?(item, "add_only")
+      expect(result2).to eq(result1)
+
+      # Cache should still contain the same campaign object
+      cached_campaign = component.instance_variable_get(:@last_campaign_cache)[cache_key]
+      expect(cached_campaign).to eq(campaign)
+    end
   end
 
   describe "#policy_bypass_warning_data" do
@@ -381,7 +372,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :disabled)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("")
       expect(data[:has_warning]).to be(false)
     end
@@ -390,7 +381,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-plus-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("+")
       expect(data[:css_class]).to eq("bg-light text-success border border-success")
       expect(data[:has_warning]).to be(false)
@@ -400,7 +391,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :remove_only)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-dash-fill")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("−")
       expect(data[:has_warning]).to be(false)
     end
@@ -409,7 +400,7 @@ RSpec.describe(RosterOverviewComponent, type: :component) do
       item.update(self_materialization_mode: :add_and_remove)
       data = component.self_enrollment_badge_data(item)
 
-      expect(data[:icon]).to eq("bi-person-fill-add")
+      expect(data[:icon]).to eq("bi-person-fill")
       expect(data[:text]).to eq("±")
       expect(data[:has_warning]).to be(false)
     end

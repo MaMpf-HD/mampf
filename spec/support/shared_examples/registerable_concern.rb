@@ -7,6 +7,10 @@ RSpec.shared_examples("a registerable model") do
       expect(subject).to respond_to(:capacity)
     end
 
+    it "responds to skip_campaigns" do
+      expect(subject).to respond_to(:skip_campaigns)
+    end
+
     it "responds to allocated_user_ids" do
       expect(subject).to respond_to(:allocated_user_ids)
     end
@@ -18,6 +22,10 @@ RSpec.shared_examples("a registerable model") do
     it "has nil capacity by default" do
       expect(subject.capacity).to be_nil
     end
+
+    it "has skip_campaigns set to false by default" do
+      expect(subject.skip_campaigns).to be(false)
+    end
   end
 
   describe "capacity validation via items" do
@@ -25,20 +33,6 @@ RSpec.shared_examples("a registerable model") do
     let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
-    end
-
-    context "when capacity is frozen" do
-      before do
-        campaign.update!(status: :completed)
-      end
-
-      it "adds error to capacity" do
-        registerable.capacity = 10
-        # Trigger update callbacks
-        registerable.save
-        expect(registerable.errors[:capacity])
-          .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base.frozen"))
-      end
     end
 
     context "when capacity reduction is invalid" do

@@ -1,10 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Lecture, type: :model) do
-  describe "Registration::Registerable" do
-    it_behaves_like "a registerable model"
-  end
-
   describe "Rosters::Rosterable" do
     it_behaves_like "a rosterable model"
   end

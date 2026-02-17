@@ -10,11 +10,44 @@ module Registration
       }[campaign.status.to_sym]
     end
 
-    def campaign_item_type_label(campaign)
-      return "—" if campaign_items_empty?(campaign)
+    def campaign_accordion_item_id(campaign)
+      "campaign_accordion_item_#{campaign.id}"
+    end
 
-      type = campaign.roster_group_type.singularize
-      t("registration.item.types.#{type}")
+    def campaign_accordion_collapse_id(campaign)
+      "campaign_accordion_collapse_#{campaign.id}"
+    end
+
+    def campaign_header_frame_id(campaign)
+      "campaign_header_frame_#{campaign.id}"
+    end
+
+    def campaign_items_tab_id(campaign)
+      "campaign_#{campaign.id}_items"
+    end
+
+    def campaign_policies_tab_id(campaign)
+      "campaign_#{campaign.id}_policies"
+    end
+
+    def campaign_registrations_tab_id(campaign)
+      "campaign_#{campaign.id}_registrations"
+    end
+
+    def campaign_policy_form_frame_id(campaign)
+      "policy_form_#{campaign.id}"
+    end
+
+    def campaign_policies_list_frame_id(campaign)
+      "policies_list_#{campaign.id}"
+    end
+
+    def campaign_registrations_tab_count_id(campaign)
+      "registrations_tab_count_#{campaign.id}"
+    end
+
+    def campaign_user_registrations_list_id(campaign)
+      "user_registrations_list_#{campaign.id}"
     end
 
     def item_stats_label(campaign)
@@ -77,26 +110,6 @@ module Registration
       t("registration.campaign.confirmations.#{key}")
     end
 
-    def campaign_open_confirmation(campaign)
-      msg = if campaign.planning_only?
-        t("registration.campaign.confirmations.open_planning")
-      else
-        t("registration.campaign.confirmations.open")
-      end
-
-      if campaign.registration_items.any? { |i| i.capacity.nil? }
-        msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
-      end
-
-      msg
-    end
-
-    def planning_only_disabled_reason(campaign)
-      return if campaign.can_be_planning_only?
-
-      t("registration.campaign.planning_only_disabled")
-    end
-
     def finalize_campaign_button(campaign)
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
@@ -118,7 +131,7 @@ module Registration
                 registration_campaign_allocation_path(campaign),
                 method: :post,
                 class: "btn btn-primary",
-                data: { confirm: confirm, turbo: true })
+                data: { confirm: confirm, turbo_stream: true })
     end
 
     def view_allocation_button(campaign)
@@ -139,7 +152,18 @@ module Registration
       button_to(t("registration.campaign.actions.open"),
                 open_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: campaign_open_confirmation(campaign) },
+                form: {
+                  data: {
+                    controller: "campaign-action",
+                    "campaign-action-campaign-id-value": campaign.id,
+                    "campaign-action-confirm-message-value":
+                      t("registration.campaign.confirmations.open"),
+                    "campaign-action-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    action: "submit->campaign-action#confirm",
+                    turbo_stream: true
+                  }
+                },
                 class: "btn btn-success")
     end
 
@@ -147,7 +171,8 @@ module Registration
       button_to(t("registration.campaign.actions.close"),
                 close_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: campaign_close_confirmation(campaign) },
+                data: { confirm: campaign_close_confirmation(campaign),
+                        turbo_stream: true },
                 class: "btn btn-warning")
     end
 
@@ -155,18 +180,21 @@ module Registration
       button_to(t("registration.campaign.actions.reopen"),
                 reopen_registration_campaign_path(campaign),
                 method: :patch,
-                data: { confirm: t("registration.campaign.confirmations.reopen") },
+                data: { confirm: t("registration.campaign.confirmations.reopen"),
+                        turbo_stream: true },
                 class: "btn btn-success")
-    end
-
-    def planning_only_checkbox_disabled?(campaign)
-      !campaign.draft? || !campaign.can_be_planning_only? || campaign.completed?
     end
 
     private
 
-      def campaign_items_empty?(campaign)
-        campaign.registration_items.empty?
+      def utilization_color(percentage)
+        if percentage >= 100
+          "bg-danger"
+        elsif percentage >= 80
+          "bg-warning"
+        else
+          "bg-success"
+        end
       end
   end
 end

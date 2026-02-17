@@ -33,17 +33,29 @@ export default class extends Controller {
   hideModalOnSuccess(event) {
     if (!event.detail.success) return;
 
-    if (this.modal) {
+    if (this.modal && this.element.isConnected) {
       this.element.querySelector("form")?.reset();
 
-      this.element.addEventListener("hidden.bs.modal", () => {
-        const container = document.getElementById("modal-container");
-        if (container) {
-          container.innerHTML = "";
-        }
-      }, { once: true });
+      // Dispose modal immediately to prevent Bootstrap trying to access
+      // removed DOM elements during hide animation
+      this.modal.dispose();
 
-      this.modal.hide();
+      // Clear modal container
+      const container = document.getElementById("modal-container");
+      if (container) {
+        container.innerHTML = "";
+      }
+
+      // Remove backdrop manually if it exists
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.remove();
+      }
+
+      // Restore body scroll
+      document.body.classList.remove("modal-open");
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("padding-right");
     }
   }
 }

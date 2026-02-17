@@ -13,6 +13,7 @@ module Registration
 
     # Models including this concern must:
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
+    # - Have a `skip_campaigns` boolean column (default: false, allows manual-only management)
     # - Implement #allocated_user_ids (returns array of user IDs)
     # - Implement #materialize_allocation!(user_ids:, campaign:)
     #
@@ -36,6 +37,7 @@ module Registration
       def validate_capacity_change_via_items
         return unless will_save_change_to_capacity?
 
+        failed = false
         registration_items.each do |item|
           error = item.validate_capacity_change_from_registerable!(capacity)
 
@@ -50,8 +52,10 @@ module Registration
             "activerecord.errors.models.registration/item.attributes.base.#{msg}", **(options || {})
           )
           errors.add(:capacity, translated_msg)
-          throw(:abort)
+          failed = true
         end
+
+        throw(:abort) if failed
       end
   end
 end

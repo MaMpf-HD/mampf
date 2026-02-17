@@ -1,20 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
-  it "ensures all including models have a skip_campaigns attribute" do
-    # Eager load the application to ensure all models are loaded and discoverable
-    Rails.application.eager_load!
-
-    models = ApplicationRecord.descendants.select do |model|
-      model.included_modules.include?(described_class)
-    end
-
-    models.each do |model|
-      expect(model.new)
-        .to(respond_to(:skip_campaigns), "#{model} must have a skip_campaigns attribute")
-    end
-  end
-
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
@@ -36,7 +22,7 @@ RSpec.describe(Rosters::Rosterable) do
 
       context "with an open campaign" do
         before do
-          campaign = create(:registration_campaign, status: :draft, planning_only: false)
+          campaign = create(:registration_campaign, status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :open)
         end
@@ -46,23 +32,9 @@ RSpec.describe(Rosters::Rosterable) do
         end
       end
 
-      context "with a completed planning campaign" do
-        let(:rosterable) { create(:lecture, skip_campaigns: false) }
-
+      context "with a completed campaign" do
         before do
-          campaign = create(:registration_campaign, status: :completed, planning_only: true,
-                                                    campaignable: rosterable)
-          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
-        end
-
-        it "returns false" do
-          expect(rosterable.locked?).to(be(false))
-        end
-      end
-
-      context "with a completed non-planning campaign" do
-        before do
-          campaign = create(:registration_campaign, status: :completed, planning_only: false)
+          campaign = create(:registration_campaign, status: :completed)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -80,8 +52,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when campaign is running" do
       before do
-        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :draft,
-                                                  planning_only: false)
+        campaign = create(:registration_campaign, campaignable: rosterable.lecture, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -145,7 +116,7 @@ RSpec.describe(Rosters::Rosterable) do
       context "when campaign is running" do
         before do
           campaign = create(:registration_campaign, campaignable: rosterable.lecture,
-                                                    status: :draft, planning_only: false)
+                                                    status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -172,34 +143,33 @@ RSpec.describe(Rosters::Rosterable) do
       context "when campaign is running" do
         before do
           campaign = create(:registration_campaign, campaignable: rosterable.lecture,
-                                                    status: :draft, planning_only: false)
+                                                    status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :open)
+          rosterable.reload
         end
 
         it "cannot enable add_only" do
           rosterable.self_materialization_mode = :add_only
           expect(rosterable).not_to(be_valid)
           expect(rosterable.errors[:base])
-            .to(include(I18n.t("roster.errors.active_campaign_exists")))
+            .to(include(I18n.t("roster.errors.campaign_associated")))
         end
       end
 
       context "when campaign is completed" do
         before do
           campaign = create(:registration_campaign, campaignable: rosterable.lecture,
-                                                    status: :draft, planning_only: false)
+                                                    status: :draft)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :completed)
+          rosterable.reload
         end
 
-        it "cannot enable add_only due to manual mode lock" do
-          # Enabling self-mat forces skip_campaigns: true
-          # skip_campaigns: true is forbidden if in_real_campaign? (even completed)
+        it "can enable add_only after campaign completion" do
           rosterable.self_materialization_mode = :add_only
-          expect(rosterable).not_to(be_valid)
-          expect(rosterable.errors[:base])
-            .to include(I18n.t("roster.errors.campaign_associated"))
+          expect(rosterable).to(be_valid)
+          expect(rosterable.skip_campaigns).to be(false)
         end
       end
 
@@ -220,10 +190,27 @@ RSpec.describe(Rosters::Rosterable) do
           expect(rosterable.self_materialization_mode).to eq("disabled")
         end
 
+        it "raises error when trying to change both skip_campaigns and " \
+           "self_materialization_mode conflictingly" do
+          rosterable.skip_campaigns = false
+          rosterable.self_materialization_mode = :add_and_remove
+          expect(rosterable).not_to(be_valid)
+          expect(rosterable.errors[:base])
+            .to(include(
+                  I18n.t("roster.errors.cannot_enable_both_campaign_and_self_materialization")
+                ))
+        end
+
+        it "allows disabling self_materialization while switching to campaign mode" do
+          rosterable.skip_campaigns = false
+          rosterable.self_materialization_mode = :disabled
+          expect(rosterable).to(be_valid)
+        end
+
         context "when attempting to add to a campaign" do
           let(:campaign) do
             create(:registration_campaign, campaignable: rosterable.lecture,
-                                           status: :draft, planning_only: false)
+                                           status: :draft)
           end
 
           it "prevents adding to campaign because it is in manual mode" do
@@ -482,9 +469,9 @@ RSpec.describe(Rosters::Rosterable) do
       end
     end
 
-    context "when in a real campaign" do
+    context "when in a campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -508,9 +495,9 @@ RSpec.describe(Rosters::Rosterable) do
   describe "#enforce_rosterable_destruction_constraints" do
     let(:rosterable) { create(:tutorial) }
 
-    context "when in a real campaign" do
+    context "when in a campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft, planning_only: false)
+        campaign = create(:registration_campaign, status: :draft)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end

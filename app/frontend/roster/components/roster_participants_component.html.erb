@@ -5,7 +5,7 @@
         <h5 class="card-title mb-0">
           <%= t("roster.tabs.participants") %>
           <span class="badge bg-secondary ms-2"><%= @counts[:total] || 0 %></span>
-          <%= helpers.helpdesk(t("roster.participants_footer_hint"), false) %>
+          <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
         </h5>
 
         <!-- Filter Toggle Buttons -->

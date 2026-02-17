@@ -39,17 +39,14 @@ module Registration
                     completed: 4 }
 
     validates :registration_deadline, :allocation_mode, :status, presence: true
-    validates :planning_only, inclusion: { in: [true, false] }
     validates :description, length: { maximum: 100 }
 
     validate :allocation_mode_frozen, on: :update
-    validate :planning_only_frozen, on: :update
     validate :cannot_revert_to_draft, on: :update
     validate :ensure_editable, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
-    validate :planning_only_constraints, if: :planning_only
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -118,19 +115,7 @@ module Registration
                         .group_by(&:user)
     end
 
-    def can_be_planning_only?
-      registration_items.empty? ||
-        (registration_items.size == 1 && registration_items.first.registerable == campaignable)
-    end
-
     def finalize!
-      if planning_only?
-        return true if completed?
-
-        update!(status: :completed)
-        return true
-      end
-
       # Protect against concurrent finalization attempts via locking
       with_lock do
         return if completed?
@@ -151,44 +136,16 @@ module Registration
     # This respects the materialization logic: if a user is assigned via another campaign
     # (or manually), they are considered "assigned" and thus not a candidate here.
     def unassigned_users
-      return User.none if draft? || planning_only?
+      return User.none if draft?
 
-      types = if registration_items.loaded?
-        registration_items.map(&:registerable_type).uniq
-      else
-        registration_items.pluck(:registerable_type).uniq
-      end
-
-      # Find users already assigned to ANY item of these types in the lecture.
-      allocated_user_ids = types.flat_map do |type|
-        # Optimization: Use eager-loaded associations on the campaignable logic
-        assoc = type.tableize.to_sym
-        if campaignable.respond_to?(assoc) && campaignable.association(assoc).loaded?
-          campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
-        else
-          klass = type.constantize
-          scope = if type == "Cohort"
-            klass.where(context: campaignable)
-          else
-            klass.where(lecture: campaignable)
-          end
-
-          # Optimization: Use direct SQL join if the standard :members association exists.
-          # This avoids N+1 queries on instances.
-          if klass.reflect_on_association(:members)
-            scope.joins(:members).pluck("users.id")
-          else
-            # Fallback: Load instances and use the Rosterable interface.
-            # This is slower but guarantees correctness if the association name differs.
-            scope.flat_map(&:allocated_user_ids)
-          end
-        end
+      allocated_ids = registerable_types.flat_map do |type|
+        allocated_user_ids_for_type(type)
       end.uniq
 
       # Return registered users who are not in the allocated list
       # We look at all users who have at least one registration entry in this campaign
       # (regardless of status, as they are "candidates" until assigned elsewhere)
-      users.where.not(id: allocated_user_ids)
+      users.where.not(id: allocated_ids)
     end
 
     def roster_group_type
@@ -247,12 +204,6 @@ module Registration
         errors.add(:allocation_mode, :frozen)
       end
 
-      def planning_only_frozen
-        return unless planning_only_changed? && status_was != "draft"
-
-        errors.add(:planning_only, :frozen)
-      end
-
       def cannot_revert_to_draft
         return unless status_changed? && draft?
 
@@ -275,14 +226,49 @@ module Registration
         errors.add(:base, :no_items)
       end
 
-      def planning_only_constraints
-        return if can_be_planning_only?
-
-        errors.add(:planning_only, :incompatible_items)
-      end
-
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
+      end
+
+      def registerable_types
+        if registration_items.loaded?
+          registration_items.map(&:registerable_type).uniq
+        else
+          registration_items.pluck(:registerable_type).uniq
+        end
+      end
+
+      def allocated_user_ids_for_type(type)
+        assoc = type.tableize.to_sym
+
+        # Optimization: Use eager-loaded associations on the campaignable logic
+        if campaignable.respond_to?(assoc) && campaignable.association(assoc).loaded?
+          return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
+        end
+
+        klass = type.constantize
+        scope = fetch_scope_for_type(klass, type)
+        fetch_ids_from_scope(klass, scope)
+      end
+
+      def fetch_scope_for_type(klass, type)
+        if type == "Cohort"
+          klass.where(context: campaignable)
+        else
+          klass.where(lecture: campaignable)
+        end
+      end
+
+      def fetch_ids_from_scope(klass, scope)
+        # Optimization: Use direct SQL join if the standard :members association exists.
+        # This avoids N+1 queries on instances.
+        if klass.reflect_on_association(:members)
+          scope.joins(:members).pluck("users.id")
+        else
+          # Fallback: Load instances and use the Rosterable interface.
+          # This is slower but guarantees correctness if the association name differs.
+          scope.flat_map(&:allocated_user_ids)
+        end
       end
   end
 end

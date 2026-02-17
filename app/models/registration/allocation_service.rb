@@ -6,31 +6,53 @@ module Registration
       @opts = opts
     end
 
+    # Runs the allocation algorithm and saves results.
+    #
+    # Locks all registerables (tutorials/talks/cohorts) during solver execution to prevent
+    # capacity modifications that would invalidate the computed allocation. Without this lock,
+    # concurrent capacity edits via tutorial/talk/cohort controllers could cause the solver
+    # results to be based on stale data.
+    #
+    # Philosophy: "Hands off while the solver is running" - capacity edits are blocked for
+    # the brief window (~1 second) when allocation is being computed to ensure data consistency.
+    #
+    # Note: Row-level locks are automatically released when the transaction commits or rolls back.
     def allocate!
-      # Clean up forced registrations from previous runs (idempotency)
-      # Only delete rank-less registrations if the user has other registrations,
-      # preserving manual single-assignments.
-      subquery = Registration::UserRegistration
-                 .select(:user_id)
-                 .where(registration_campaign_id: @campaign.id)
-                 .group(:user_id)
-                 .having("count(*) > 1")
+      Registration::Campaign.transaction do
+        # Lock campaign to prevent concurrent allocate! calls
+        @campaign.lock!
 
-      @campaign.user_registrations
-               .where(preference_rank: nil)
-               .where(user_id: subquery)
-               .delete_all
-
-      solver =
-        case @strategy
-        when :min_cost_flow
-          Registration::Solvers::MinCostFlow.new(@campaign, **@opts)
-        else
-          raise(ArgumentError, "Unknown strategy '#{@strategy}'")
+        # Lock all registerables to prevent capacity changes during solver run
+        # These locks will be held for ~1 second and automatically released on commit/rollback
+        @campaign.registration_items.includes(:registerable).find_each do |item|
+          item.registerable.lock!
         end
 
-      result = solver.run
-      save_allocation(result)
+        # Clean up forced registrations from previous runs (idempotency)
+        # Only delete rank-less registrations if the user has other registrations,
+        # preserving manual single-assignments.
+        subquery = Registration::UserRegistration
+                   .select(:user_id)
+                   .where(registration_campaign_id: @campaign.id)
+                   .group(:user_id)
+                   .having("count(*) > 1")
+
+        @campaign.user_registrations
+                 .where(preference_rank: nil)
+                 .where(user_id: subquery)
+                 .delete_all
+
+        solver =
+          case @strategy
+          when :min_cost_flow
+            Registration::Solvers::MinCostFlow.new(@campaign, **@opts)
+          else
+            raise(ArgumentError, "Unknown strategy '#{@strategy}'")
+          end
+
+        result = solver.run
+        save_allocation(result)
+      end
     end
 
     private

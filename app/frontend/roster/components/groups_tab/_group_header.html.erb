@@ -1,12 +1,38 @@
-<div class="card-header bg-secondary text-white mt-3 d-flex justify-content-between align-items-center">
-  <h6 class="mb-0 fw-bold">
-    <%= t("registration.item.groups.#{group[:type]}") %>
-  </h6>
-  <% if group[:link] %>
-    <%= link_to group[:link],
-                class: "btn btn-sm btn-light",
-                data: { turbo_prefetch: false } do %>
-      <i class="bi bi-plus-lg"></i> <%= t('buttons.create') %>
+<div class="section-header d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center gap-2">
+    <h5 class="mb-0 fw-bold text-black">
+      <%= group[:title] %>
+    </h5>
+    <% if group[:help] %>
+      <%= helpdesk(group[:help], false) %>
     <% end %>
+  </div>
+  <% if group[:actions] && group[:actions].any? %>
+    <div class="d-flex gap-2">
+      <% if group[:actions].count == 1 %>
+        <% action = group[:actions].first %>
+        <%= link_to action[:path],
+                    class: "btn btn-sm btn-light border",
+                    data: { turbo_method: action[:method], turbo_prefetch: false } do %>
+          <i class="bi bi-plus-lg"></i> <%= action[:text] %>
+        <% end %>
+      <% else %>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <i class="bi bi-plus-lg"></i> <%= t("roster.actions.add") %>
+          </button>
+          <ul class="dropdown-menu">
+            <% group[:actions].each do |action| %>
+              <li>
+                <%= link_to action[:text],
+                            action[:path],
+                            class: "dropdown-item",
+                            data: { turbo_method: action[:method], turbo_prefetch: false } %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>

@@ -367,8 +367,8 @@ module ApplicationHelper
   def format_talk_dates(dates)
     return "" if dates.blank?
 
-    dates.sort.map do |date|
+    safe_join(dates.sort.map do |date|
       tag.span(l(date, format: :long), class: "badge bg-light text-dark border me-1")
-    end.join.html_safe
+    end)
   end
 end

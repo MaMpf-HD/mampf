@@ -1,5 +1,6 @@
 # Renders the "Participants" tab in the Roster UI.
-# Manages the list of students, their assignment status, and actions to assign/move them.
+# Manages the list of students on the lecture roster, their assignment status,
+# and actions to assign/move them.
 class RosterParticipantsComponent < ViewComponent::Base
   # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",

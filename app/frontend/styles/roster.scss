@@ -1,0 +1,85 @@
+:root {
+  // Roster tile colors
+  --roster-tile-border: #d1d5db;
+  --roster-tile-bg: #fafbfc;
+  --roster-tile-hover-shadow: rgba(0, 0, 0, 0.12);
+  
+  // Cohort-specific colors
+  --cohort-gradient-start: #faf7f0;
+  --cohort-gradient-end: #f2ede3;
+  --cohort-border: #ddd6c8;
+  --cohort-progress-bg: #d9d3c5;
+  --cohort-progress-border: #c4bdb0;
+  
+  // Section header colors
+  --section-header-gradient-start: #d4e4f7;
+  --section-header-gradient-mid: #e8f0fa;
+  --section-header-gradient-end: #f5f9fd;
+  --section-header-border: #a8c5e6;
+  --section-card-bg: #eef4f9;
+}
+
+// Roster Tile Styles
+.roster-tile {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--roster-tile-border);
+  background: var(--roster-tile-bg);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem var(--roster-tile-hover-shadow);
+    border-color: var(--bs-primary);
+    z-index: 10;
+
+    .tile-actions {
+      opacity: 1;
+    }
+  }
+
+  &.cohort {
+    background: linear-gradient(135deg, var(--cohort-gradient-start) 0%,
+                var(--cohort-gradient-end) 100%);
+    border-color: var(--cohort-border);
+
+    .progress {
+      background-color: var(--cohort-progress-bg);
+      border: 1px solid var(--cohort-progress-border);
+    }
+  }
+
+  .tile-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+}
+
+// Ensure actions are visible on touch devices or where hover isn't available
+@media (hover: none) {
+  .roster-tile .tile-actions {
+    opacity: 1;
+  }
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.section-header {
+  background: linear-gradient(135deg, var(--section-header-gradient-start) 0%,
+              var(--section-header-gradient-mid) 50%,
+              var(--section-header-gradient-end) 100%);
+  border-bottom: 2px solid var(--section-header-border);
+  padding: 1.5rem;
+  // Border radius is handled by the parent card's overflow: hidden
+}
+
+.card.section-card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background-color: var(--section-card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}

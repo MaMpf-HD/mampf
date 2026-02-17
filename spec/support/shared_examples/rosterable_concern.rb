@@ -18,10 +18,21 @@ RSpec.shared_examples("a rosterable model") do
   describe "interface" do
     subject { rosterable }
     it { is_expected.to respond_to(:roster_entries) }
+    it { is_expected.to respond_to(:roster_user_id_column) }
+    it { is_expected.to respond_to(:roster_association_name) }
     it { is_expected.to respond_to(:add_user_to_roster!) }
     it { is_expected.to respond_to(:remove_user_from_roster!) }
     it { is_expected.to respond_to(:materialize_allocation!) }
     it { is_expected.to respond_to(:allocated_user_ids) }
+
+    it "roster_association_name returns a symbol" do
+      expect(rosterable.roster_association_name).to be_a(Symbol)
+    end
+
+    it "roster_association_name matches an actual association" do
+      expect(rosterable.class.reflect_on_association(rosterable.roster_association_name))
+        .to be_present
+    end
   end
 
   describe "#allocated_user_ids" do

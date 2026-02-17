@@ -1,8 +1,8 @@
 module Registration
-  # Identifies registerable items (Tutorials, Talks, or the Lecture itself)
-  # from the parent lecture that are not yet part of the campaign and enforces
-  # type homogeneity by restricting results to the type of existing items,
-  # ensuring a campaign contains only one category of registerables.
+  # Identifies registerable items (Tutorials, Talks, or Cohorts)
+  # from the parent lecture that are not yet part of the campaign.
+  # Filters based on lecture type: seminars show Talks, regular lectures show Tutorials.
+  # Cohorts are available for all lecture types.
   class AvailableItemsService
     def initialize(campaign)
       @campaign = campaign
@@ -12,62 +12,44 @@ module Registration
     def items
       return {} unless @lecture.is_a?(Lecture)
 
-      prepare_registered_data
-
       groups = {}
-      add_tutorials(groups) if type_allowed?("Tutorial")
-      add_talks(groups) if type_allowed?("Talk")
-      add_cohorts(groups) if type_allowed?("Cohort")
-      add_lecture(groups) if type_allowed?("Lecture")
+      add_tutorials(groups) unless @lecture.seminar?
+      add_talks(groups) if @lecture.seminar?
+      add_cohorts(groups)
       groups
     end
 
     private
 
-      def prepare_registered_data
-        pairs = @campaign.registration_items.pluck(:registerable_type, :registerable_id)
-        @existing_type = pairs.first&.first
-        @registered_ids = pairs.group_by(&:first).transform_values { |list| list.map(&:last) }
-      end
-
-      def type_allowed?(type)
-        return false if @campaign.planning_only? && type != "Lecture"
-
-        @existing_type.nil? || @existing_type == type
-      end
-
       def add_tutorials(groups)
-        used_ids = Registration::Item.where(registerable_type: "Tutorial").pluck(:registerable_id)
-        tutorials = @lecture.tutorials.where(skip_campaigns: false).where.not(id: used_ids)
+        used = campaign_item_ids_for("Tutorial")
+        tutorials = @lecture.tutorials
+                            .where(skip_campaigns: false)
+                            .where.not(id: used)
         groups[:tutorials] = tutorials if tutorials.any?
       end
 
       def add_talks(groups)
-        used_ids = Registration::Item.where(registerable_type: "Talk").pluck(:registerable_id)
-        talks = @lecture.talks.where(skip_campaigns: false).where.not(id: used_ids)
+        used = campaign_item_ids_for("Talk")
+        talks = @lecture.talks
+                        .where(skip_campaigns: false)
+                        .where.not(id: used)
         groups[:talks] = talks if talks.any?
       end
 
       def add_cohorts(groups)
-        used_ids = Registration::Item.where(registerable_type: "Cohort").pluck(:registerable_id)
-        cohorts = @lecture.cohorts.where(skip_campaigns: false).where.not(id: used_ids)
+        used = campaign_item_ids_for("Cohort")
+        cohorts = @lecture.cohorts
+                          .where(skip_campaigns: false)
+                          .where.not(id: used)
         groups[:cohorts] = cohorts if cohorts.any?
       end
 
-      def add_lecture(groups)
-        ids = @registered_ids["Lecture"] || []
-        return if ids.include?(@lecture.id)
-
-        unless @campaign.planning_only?
-          is_used_in_real = Registration::Item.joins(:registration_campaign)
-                                              .where(registerable_type: "Lecture",
-                                                     registerable_id: @lecture.id)
-                                              .exists?(registration_campaigns:
-                                              { planning_only: false })
-          return if is_used_in_real
-        end
-
-        groups[:lecture] = [@lecture]
+      def campaign_item_ids_for(type)
+        Registration::Item
+          .where(registration_campaign: @lecture.registration_campaigns)
+          .where(registerable_type: type)
+          .select(:registerable_id)
       end
   end
 end
