@@ -68,24 +68,6 @@ de:
         title: "Verwaltung"
         description_html: "Verwalten Sie Ihre Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
         link_text: "Verwaltung"
-    management_help:
-      title: "Verwaltung"
-      toggle: "Verwaltung"
-      intro: "Informationen zu Sperrzeiten und flexiblen Gruppeneinstellungen."
-      phase1:
-        title: "Sperrzeiten"
-        with_campaign: "Mit Anmeldeverfahren"
-        without_campaign: "Ohne Anmeldeverfahren"
-        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
-        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
-        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
-      phase2:
-        title: "Einstellungen & Ausnahmen"
-        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
-        options:
-          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
-          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
-          - "Zuteilungen nach Bedarf feinabstimmen"
     roster_help:
       title: "Einschreibemethoden"
       toggle: "Einschreibemethoden"

@@ -68,24 +68,6 @@ en:
         title: "Management"
         description_html: "Manage your rosters manually throughout the semester. See %{link} for details."
         link_text: "Management"
-    management_help:
-      title: "Management"
-      toggle: "Management"
-      intro: "Information about lock periods and flexible group settings."
-      phase1:
-        title: "Lock Periods"
-        with_campaign: "With Registration Campaign"
-        without_campaign: "Without Registration Campaign"
-        campaigns_during: "Add/Remove Students: Locked during campaign"
-        campaigns_after: "Add/Remove Students: Unlocked after completion"
-        direct_always: "Add/Remove Students: Always possible"
-      phase2:
-        title: "Settings & Exceptions"
-        description: "After campaigns complete, both paths offer the same options:"
-        options:
-          - "Manual Adjustments: Add or remove individual students"
-          - "Self-Enrollment: Students choose their own group from available spots"
-          - "Fine-tune allocations as needed"
     roster_help:
       title: "Enrollment Strategies"
       toggle: "Enrollment Strategies"
