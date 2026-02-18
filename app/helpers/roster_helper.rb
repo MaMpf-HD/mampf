@@ -73,8 +73,9 @@ module RosterHelper
   def roster_campaign_button(item, component, campaign)
     if campaign
       # Active campaign - show view campaign button
-      link_to(edit_lecture_path(component.lecture, tab: "campaigns",
-                                                   campaign_id: campaign.id),
+      link_to(lecture_roster_path(component.lecture,
+                                  group_type: component.group_type,
+                                  tab: "lanes"),
               class: "btn btn-sm btn-secondary",
               title: t("roster.view_campaign"),
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
@@ -89,8 +90,9 @@ module RosterHelper
                             &.registration_campaign
 
       if recent_campaign
-        link_to(edit_lecture_path(component.lecture, tab: "campaigns",
-                                                     campaign_id: recent_campaign.id),
+        link_to(lecture_roster_path(component.lecture,
+                                    group_type: component.group_type,
+                                    tab: "lanes"),
                 class: "btn btn-sm btn-secondary",
                 title: t("roster.view_campaign"),
                 data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
@@ -101,7 +103,9 @@ module RosterHelper
       # Never in campaign - show create campaign button (disabled if skip_campaigns is true)
       can_create = !item.skip_campaigns?
       if can_create
-        link_to(edit_lecture_path(component.lecture, tab: "campaigns", new_campaign: true),
+        link_to(lecture_roster_path(component.lecture,
+                                    group_type: component.group_type,
+                                    tab: "lanes"),
                 class: "btn btn-sm btn-secondary",
                 title: t("roster.create_campaign"),
                 data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
