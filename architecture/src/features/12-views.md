@@ -295,6 +295,50 @@ When selecting "Manage" on a group, the view updates (via Turbo Frame) to show t
     - **Remove:** Remove a student from the group.
 - **Navigation:** "Back" button returns to the Groups overview.
 
+### Performance Tab (Student Performance Management)
+
+```admonish tip "Primary Management Interface"
+The Performance subtab is the primary interface for Student Performance management. See [Student Performance → Information Architecture](05-student-performance.md#information-architecture) for complete details.
+```
+
+The Roster tab includes a Performance subtab for lecture-wide student performance management:
+
+```
+Roster Tab
+├── Overview (groups)
+├── Participants (lecture roster)
+└── Performance ← Primary performance management
+```
+
+**Key elements:**
+- **Certification Dashboard**: Decision-making interface for pass/fail certification
+  - Summary cards (total, passed, failed, pending, stale counts)
+  - Current rule display (thresholds + required achievements)
+  - Filter buttons (All/Passed/Failed/Pending/Stale)
+  - Student table with columns: Name, Matriculation, Points (%), Achievements, Proposed Status, Certification Status, Actions
+  - Bulk actions: "Accept All Proposals", "Mark Selected as Passed/Failed"
+  - Manual override modal for special cases
+  - Export functionality
+
+- **Performance Records**: Read-only factual data view
+  - Computed points and achievement counts per student
+  - Last computation timestamp
+  - Recompute button (triggers background job)
+  - No override or status columns (pure data)
+
+- **Rule Configuration**: Inline or modal configuration
+  - Tabs: "Percentage-based" and "Absolute Points"
+  - Threshold inputs (e.g., 50% points)
+  - Required achievements checkboxes
+  - Preview button showing rule change impact
+  - Warning when changing criteria affects proposals
+
+**Mockups:**
+- Certification Dashboard: [student_performance_certifications_index.html](../mockups/student_performance_certifications_index.html)
+- Performance Records: [student_performance_records_index.html](../mockups/student_performance_records_index.html)
+- Rule Configuration: [student_performance_rule_configuration.html](../mockups/student_performance_rule_configuration.html)
+- Rule Change Preview: [student_performance_rule_change_preview.html](../mockups/student_performance_rule_change_preview.html)
+
 ### Integration in Lecture Settings
 The roster maintenance view is integrated directly into the `Lecture#edit` page as a tab, allowing seamless management without leaving the settings context. It uses Turbo Frames to load lazily and handle updates without full page reloads.
 
@@ -357,9 +401,30 @@ The views below apply to regular lectures. For seminar-specific views, see the [
 | New         | Form with type dropdown (Assignment/Exam); dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
 | Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Mockup](../mockups/assessments_show_assignment_open.html) |
 | Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Tutorials/Grading/Statistics); submission progress; tutorials publication management; grading table with filters and sorting | [Mockup](../mockups/assessments_show_assignment_closed.html) |
-| Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
-| Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Mockup](../mockups/assessments_show_exam_closed.html) |
-| Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
+| Show (Exam - Draft) | Exam Dashboard with tabs: Overview, Settings, Tasks, Grading (disabled), Roster, Logistics (Eligibility/Roster Admin/Room Assignments via pills); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
+| Show (Exam - Closed) | Exam Dashboard with tabs: Overview, Settings, Tasks, Grading, Roster, Logistics; grading in progress; roster shows registered students | [Mockup](../mockups/assessments_show_exam_closed.html) |
+| Show (Exam - Graded) | Exam Dashboard with tabs including Statistics; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
+
+```admonish note "Exam Dashboard Tab Structure"
+**Main tabs:** Overview | Settings | Tasks | Grading | Roster | Logistics | Statistics
+
+- **Roster tab**: Registered students table (reuses/adapts RosterParticipantsComponent)
+  - Participant list with search and pagination
+  - Remove/add actions (no group assignment logic)
+  - Export roster functionality
+
+- **Logistics tab**: Sub-tabs with pills for exam administration
+  - **Eligibility**: Performance verification (read-only certification status of registrants)
+  - **Roster Admin**: Manual roster adjustments if needed
+  - **Room Assignments**: Seat allocation (future feature)
+
+**Navigation levels:**
+1. Lecture tabs (Content/Settings/.../Assessments)
+2. Assessment type list (Assignments/Exams table)
+3. Exam Dashboard tabs (6 main tabs, Logistics has 3 subtabs)
+
+This avoids deep nesting while keeping related functionality grouped. Student Performance management stays in Roster → Performance (lecture level), with read-only verification views in Exam Dashboard → Logistics → Eligibility.
+```
 
 #### Flow
 
@@ -383,8 +448,9 @@ flowchart LR
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, new, create, show, edit, update, destroy   | Setup                          |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update, export, import                      | Grading + bulk ops             |
-| Tutor         | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update                                      | Grading (enter/update points)  |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update, mark_absent, mark_exempt, export, import  | Grade entry (Gradable)         |
+| Teacher/Editor| [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (Pointable)        |
+| Tutor         | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (tutorial-scoped)  |
 | Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only                       |
 | Student       | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller)| index, show                                       | Own results (when published)    |
 
@@ -417,8 +483,8 @@ flowchart LR
 #### Controller/action mapping
 | Role  | Controller                          | Actions                    | Scope                          |
 |-------|-------------------------------------|----------------------------|--------------------------------|
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | show                       | Display grading table for tutorial |
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | update                     | Save points for one team (creates TaskPoints for all members) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index                      | Display point grid for tutorial (auto-scoped by authorization) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | update_team                | Save points for one team (creates TaskPoints for all members) |
 
 ```admonish note "Team Grading Service"
 The backend uses `Assessment::TeamGradingService` to propagate points from team input to individual `Assessment::TaskPoint` records for each team member. This ensures consistent grading within teams while maintaining per-user granularity for reporting.
@@ -556,7 +622,7 @@ flowchart LR
 | Role          | Controller                          | Actions                                           | Scope                          |
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only list; inline grading |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | update                                            | Save inline grade              |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update                                            | Save inline grade              |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | show (detail view)                                | Add feedback notes             |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
 
