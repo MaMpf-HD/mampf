@@ -25,7 +25,7 @@
         </div>
 
         <% info = get_outcome_info(policy[:outcome]) %>
-        <span class="<%= info[:badge_class] %>"><%= info[:text] %></span>
+        <span class="<%= info[:badge_class] %>"><%= t(info[:text]) %></span>
       </li>
     <% end %>
   </ul>

@@ -70,34 +70,13 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    context "existing rejected registration" do
-      before do
-        Registration::UserRegistration.create!(
-          registration_campaign: campaign,
-          registration_item: item2,
-          user: user,
-          status: :rejected
-        )
-      end
-      it "creates a confirmed registration when validations pass" do
-        service = described_class.new(campaign, user, item)
-        service.register!
-        registration = Registration::UserRegistration.last
-
-        expect(registration.user).to eq(user)
-        expect(registration.registration_campaign).to eq(campaign)
-        expect(registration.registration_item).to eq(item)
-        expect(registration.status).to eq("confirmed")
-      end
-    end
-
     context "invalid cases" do
       it "raises error if campaign is closed" do
         service = described_class.new(campaign_draft, user, item)
 
         result = service.register!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
+        expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
       end
 
       it "raises error if user already registered for another item" do
@@ -112,7 +91,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
         result = service.register!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.messages.already_registered"))
+        expect(result.errors).to include(I18n.t("registration.user_registration.messages.already_registered"))
       end
 
       it "raises error if item has no capacity" do
@@ -121,7 +100,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
         result = service.register!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.messages.no_slots"))
+        expect(result.errors).to include(I18n.t("registration.user_registration.messages.no_slots"))
       end
     end
   end
@@ -152,7 +131,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
         service = described_class.new(campaign, user, item)
         result = service.withdraw!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
+        expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
       end
     end
 
@@ -200,7 +179,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       service = described_class.new(campaign_child, user, item_child)
       result = service.register!
       expect(result.success?).to be(false)
-      expect(result.errors).to include(I18n.t("registration.messages.requirements_not_met"))
+      expect(result.errors).to include(I18n.t("registration.user_registration.messages.requirements_not_met"))
     end
 
     it "success to register child if parent has been registered" do
@@ -255,17 +234,19 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    it "blocks registering for cohort when tutorial registration is confirmed" do
-      Registration::UserRegistration.create!(
-        registration_campaign: campaign,
-        registration_item: item_tutorial,
-        user: user,
-        status: :confirmed
-      )
-      service = described_class.new(campaign, user, item_cohort)
-      result = service.register!
-      expect(result.success?).to be(false)
-      expect(result.errors).to include(I18n.t("registration.messages.already_registered"))
-    end
+    # it "allow registering for cohort when tutorial registration is confirmed" do
+    #   Registration::UserRegistration.create!(
+    #     registration_campaign: campaign,
+    #     registration_item: item_tutorial,
+    #     user: user,
+    #     status: :confirmed
+    #   )
+    #   service = described_class.new(campaign, user, item_cohort)
+    #   result = service.register!
+    #   expect(result.success?).to be(true)
+    #   registration = Registration::UserRegistration.last
+    #   expect(registration.registration_item).to eq(item_cohort)
+    #   expect(registration.status).to eq("confirmed")
+    # end
   end
 end

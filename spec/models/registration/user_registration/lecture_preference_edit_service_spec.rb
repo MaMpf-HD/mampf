@@ -17,12 +17,7 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
     let(:pref_items) { [pref_from_fe, pref_from_fe2] }
 
     it "creates a pending registration when validations pass" do
-      puts Registration::UserRegistration.count
-      puts(Registration::UserRegistration.all.map do |r|
-        [r.id, r.user_id, r.registration_campaign_id, r.registration_item_id, r.status]
-      end)
       service = described_class.new(campaign, user)
-
       expect do
         service.update!(pref_items)
       end.to change { Registration::UserRegistration.count }.by(2)
@@ -66,7 +61,7 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
       service = described_class.new(campaign, user)
       result = service.update!(pref_items)
       expect(result.success?).to be(false)
-      expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
+      expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
     end
   end
 

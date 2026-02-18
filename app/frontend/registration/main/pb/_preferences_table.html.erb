@@ -13,7 +13,7 @@
           <div class="row mb-2">
             <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
               <div class="col-6 d-flex gap-1">
-                <span class="fw-medium small"><%= col[:header] %>:</span>
+                <span class="fw-medium small"><%= t(col[:header]) %>:</span>
                 <span class="fw-normal"><%= col[:field].call(item) %></span>
               </div>
             <% end %>

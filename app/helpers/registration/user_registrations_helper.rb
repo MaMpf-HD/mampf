@@ -62,15 +62,15 @@ module Registration
 
     TABLE_CONFIG = {
       "Tutorial" => [
-        { header: I18n.t("basics.tutor"),
+        { header: "basics.tutor",
           cell_class: "text-start fw-semibold",
           field: ->(item) { item.registerable.tutor_names } }
       ],
       "Talk" => [
-        { header: I18n.t("basics.position"),
+        { header: "basics.position",
           cell_class: "text-end",
           field: ->(item) { item.registerable.position } },
-        { header: I18n.t("basics.date"),
+        { header: "basics.date",
           field: lambda { |item|
             item.registerable.dates&.map do |d|
               format_date(d)
@@ -78,7 +78,7 @@ module Registration
           } }
       ],
       "Cohort" => [
-        { header: I18n.t("basics.description"),
+        { header: "basics.description",
           cell_class: "text-center",
           field: ->(item) { item.registerable.description } }
       ]
@@ -92,9 +92,9 @@ module Registration
     module_function :format_date
 
     OUTCOME_MAP = {
-      true => { text: I18n.t("basics.passed"),
+      true => { text: "basics.passed",
                 badge_class: "badge rounded-pill w-auto text-bg-success" },
-      false => { text: I18n.t("basics.failed"),
+      false => { text: "basics.failed",
                  badge_class: "badge rounded-pill w-auto text-bg-danger" }
     }.freeze
 
