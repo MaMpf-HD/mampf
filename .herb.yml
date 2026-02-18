@@ -23,12 +23,12 @@ linter:
     - "app/frontend/login/**/*.html.erb"
     - "app/frontend/media/**/*.html.erb"
     - "app/frontend/modal/**/*.html.erb"
-    - "app/frontend/roster/**/*.html.erb"
     - "app/frontend/search/**/*.html.erb"
     - "app/frontend/spinner/**/*.html.erb"
     - "app/frontend/vignettes/**/*.html.erb"
     # not excluded on purpose, since we want to try out herb on these files:
     # - app/frontend/registration/**/*.html.erb
+    - "!app/frontend/roster/components/roster_overview_component.html.erb"
 
 
 formatter:
@@ -51,7 +51,6 @@ formatter:
     - "app/frontend/login/**/*.html.erb"
     - "app/frontend/media/**/*.html.erb"
     - "app/frontend/modal/**/*.html.erb"
-    - "app/frontend/roster/**/*.html.erb"
     - "app/frontend/search/**/*.html.erb"
     - "app/frontend/spinner/**/*.html.erb"
     - "app/frontend/vignettes/**/*.html.erb"

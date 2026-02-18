@@ -1,12 +1,13 @@
 <div class="card mb-3">
-  <div class="card-header bg-light d-flex justify-content-between
-              align-items-center">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
     <h5 class="card-title mb-0">
       <%= @title %>
+
       <% if @count && @count > 0 %>
         <span class="badge bg-secondary ms-2"><%= @count %></span>
       <% end %>
     </h5>
+
     <% if header_actions? %>
       <%= header_actions %>
     <% end %>
@@ -16,10 +17,9 @@
     <div class="table-responsive">
       <table class="table table-hover mb-0 align-middle">
         <thead class="table-light">
-          <tr>
-            <%= columns %>
-          </tr>
+          <tr><%= columns %></tr>
         </thead>
+
         <tbody>
           <% if rows? %>
             <% rows.each do |row| %>
@@ -38,8 +38,6 @@
   </div>
 
   <% if footer? %>
-    <div class="card-footer d-flex justify-content-center">
-      <%= footer %>
-    </div>
+    <div class="card-footer d-flex justify-content-center"><%= footer %></div>
   <% end %>
 </div>
