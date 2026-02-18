@@ -1,4 +1,3 @@
-# in config/initializers/prometheus.rb
 unless Rails.env.test?
   require "prometheus_exporter/middleware"
 
