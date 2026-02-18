@@ -637,7 +637,7 @@ sequenceDiagram
     SubGroup->>SubGroup: 3. Merge with new user_ids
     SubGroup->>SubGroup: 4. Call replace_roster!(merged_ids)
     SubGroup->>SubGroup: 5. Mark new entries with source_campaign_id
-    
+
     alt Tutorial or Talk (always propagates)
         SubGroup->>Lecture: Trigger: Add users to lecture roster
         note right of Lecture: Upstream Propagation (automatic)

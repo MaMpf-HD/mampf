@@ -147,37 +147,6 @@ This layered approach (detail view + aggregate view) is common in well-designed 
 The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
 ```
 
-### Grading Tab vs. Performance Tab
-
-```admonish question "Why do we have both a Grading tab and a Performance tab?"
-The **Grading tab** (in the Assessment Dashboard) and the **Performance tab** (in the Roster Dashboard) serve different purposes despite some apparent overlap.
-```
-
-| Dimension | Grading Tab (Assessment) | Performance Tab (Roster) |
-|-----------|--------------------------|--------------------------|
-| **Location** | Assessment Dashboard (single assessment) | Roster Dashboard (lecture-wide) |
-| **Primary axis** | Tasks (columns) × Students (rows) | Assessments (columns) × Students (rows) |
-| **Editing** | Yes — enter points per task | No — read-only aggregate |
-| **Scope** | One assessment (e.g., "Homework 3") | All assessments in the lecture |
-| **Question answered** | "How did students do on Problem 2?" | "Is Alice eligible for the exam?" |
-| **User journey** | Grading workflow → enter data | Certification workflow → review eligibility |
-
-**The "filter to one assignment" overlap:** The Performance tab can filter to show a single assessment, which superficially resembles the Grading tab. However:
-1. Performance tab remains **read-only** — it consumes grading data, it doesn't produce it.
-2. Grading tab shows **task-level breakdown** — Performance shows only the total per assessment.
-3. Performance tab provides **cross-assessment context** — even when filtered, switching views is instant.
-
-```admonish tip "Design Pattern"
-This layered approach (detail view + aggregate view) is common in well-designed systems:
-- **Banking:** Transaction details vs. account statement
-- **LMS (Moodle/Canvas):** Assignment grading page vs. gradebook overview
-- **GitHub:** PR diff view vs. repository insights
-
-The names already signal the distinction: **grading** (verb, action) vs. **performance** (noun, outcome).
-```
-
----
-
 ## Assessment::Assessment (ActiveRecord Model)
 **_The Gradebook Container_**
 
@@ -290,9 +259,7 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 ### Usage Scenarios
 
-- **For a homework assignment (digital) (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
-
-- **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. No file uploads occur and `submitted_at` remains `nil` for all participations.
+- **For a homework assignment (digital):** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
 
 - **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. No file uploads occur and `submitted_at` remains `nil` for all participations.
 
@@ -403,7 +370,7 @@ For **assignments**, `absent` does not apply. Non-submission is captured differe
 
 ### Participation Lifecycle per Assessable Type
 
-The participation lifecycle differs significantly by assessable type. These diagrams document the full flow for implementers of PR-8.5 (participation creation), PR-8.6/8.7 (interactive grading), and beyond.
+The participation lifecycle differs significantly by assessable type. These diagrams document the full flow for implementers of PR-8.5 (participation creation), PR-8.7/8.8 (interactive grading), and beyond.
 
 #### Exam Participation Lifecycle
 
@@ -647,8 +614,8 @@ module Assessment
   enum status: {
     pending: 0,
     reviewed: 1,
-    exempt: 2,
-    absent: 3
+    absent: 2,
+    exempt: 3
   }
 
   validates :user_id, uniqueness: { scope: :assessment_id }
@@ -2044,6 +2011,6 @@ end
 
 **Migration rationale:**
 - `note`: Nullable free-text column for teacher/tutor annotations on any participation status (exempt reasons, absent context, grading remarks). Internal only — not exposed to students.
-- No new `absent` migration needed: the `absent: 3` enum value is added in the model code; the existing integer `status` column already supports it.
+- No new `absent` migration needed: the `absent: 2` enum value is added in the model code (PR-6.1); the existing integer `status` column already supports it.
 
 
