@@ -95,7 +95,7 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "decbits"
         },
         "overrides": [
           {
@@ -142,7 +142,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(ruby_mampf_app_network_receive_bytes[3m])",
+          "expr": "rate(ruby_mampf_app_network_receive_bytes[3m])*8",
           "legendFormat": "Network In",
           "range": true,
           "refId": "A"
@@ -1253,6 +1253,7 @@
         "type": "prometheus",
         "uid": "mimir"
       },
+      "description": "Number of registered users",
       "fieldConfig": {
         "defaults": {
           "color": {
