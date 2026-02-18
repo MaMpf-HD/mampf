@@ -230,7 +230,7 @@ test.describe("Import Media", () => {
 
     await page.goto(`/lectures/${targetLecture.id}/edit?tab=content`);
     await page.getByRole("button", { name: "Import Media" }).click();
-    await expect(page.getByRole("heading", { name: "Imported Media ( 1)" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Imported Media (1)" })).toBeVisible();
     await expect(page.locator("#importedMediaTable")).toContainText(sourceMedium.description);
 
     await page.getByTitle("Delete").click();
