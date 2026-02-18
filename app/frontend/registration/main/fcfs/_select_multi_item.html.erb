@@ -32,17 +32,26 @@
       <table class="table table-sm align-middle mb-2" id="itemsTable">
         <thead class="bg-grey-lighten-5 text-dark small">
           <tr>
-            <th class="fw-semibold"><%= t("registration.item.columns.type") %></th>
-            <th class="fw-semibold"><%= t("registration.item.columns.title") %></th>
-            <th class="fw-semibold">Attribute</th>
-            <th class="fw-semibold text-center"><%= t("basics.seats") %></th>
-            <th class="fw-semibold text-center"><%= t("basics.status") %></th>
-            <th class="text-end fw-semibold pe-2"><%= t("basics.action") %></th>
+            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.type") %></th>
+            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.title") %></th>
+            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.details") %></th>
+            <th class="fw-semibold text-center"><%= t("registration.user_registration.fcfs_columns.seats") %></th>
+            <th class="fw-semibold text-center"><%= t("registration.user_registration.fcfs_columns.status") %></th>
+            <th class="text-end fw-semibold pe-2"><%= t("registration.user_registration.fcfs_columns.action") %></th>
           </tr>
         </thead>
 
         <tbody>
-          <% items.each do |item| %>
+          <% items.group_by(&:registerable_type).each do |group, group_items| %>
+            <!-- group header row -->
+            <tr class="table-group-row">
+              <td colspan="6" class="fw-semibold text-dark py-2 ps-2 border-top" 
+                              style="background: #eceff1;">
+                <%= group %> 
+              </td>
+            </tr>
+
+            <% group_items.each do |item| %>
             <tr data-registration-item-search-target="row">
               <td class="small text-dark">
                 <%= item_display_type(item) %>
@@ -51,7 +60,7 @@
                 <%= item.registerable.title %>
               </td>
 
-              <!-- attribute data column -->
+              <!-- details data column -->
               <td class="small text-dark">
                 <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
                   <div class="d-flex gap-1">
@@ -83,7 +92,8 @@
 
               <!-- action column -->
               <td class="d-flex justify-content-end py-2">
-                <% if !campaign.user_registration_confirmed?(current_user) %>
+                <!-- current group type has no confirmed registration -->
+                <% if !campaign.user_registration_confirmed_for_group_type?(current_user, item.registerable_type) %>
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.user_registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
@@ -98,6 +108,7 @@
                                   class: "btn btn-sm btn-primary" %>
                   <% end %>
                 <% else %>
+                  <!-- current group type has confirmed registration -->
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.user_registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
@@ -111,6 +122,8 @@
               </td>
             </tr>
           <% end %>
+          <%end%>
+          
         </tbody>
       </table>
     </div>

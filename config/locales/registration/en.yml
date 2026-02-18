@@ -249,6 +249,20 @@ en:
       status_for_registration: "Current statuses of your submitted options"
       submitted_pref: "Your submitted choice(s)"
       confirmed_assignment_pref: "Your confirmed %{type} assignment"
+      fcfs_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      pb_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
       messages:
         campaign_unavailable: "This campaign is not accessible right now."
         campaign_not_opened: "Registration for this campaign is not opened."

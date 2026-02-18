@@ -7,10 +7,6 @@ module Registration
           errors = validate_register
           return Result.new(false, errors) unless errors.empty?
 
-          registrations = Registration::UserRegistration.where(registration_campaign: @campaign,
-                                                               user: @user)
-          registrations.destroy_all
-
           Registration::UserRegistration.create!(
             registration_campaign: @campaign,
             registration_item: @item,
@@ -39,13 +35,13 @@ module Registration
 
         # Validation for creating registration in lecture based registration
         # 0. Check open for registration
-        # 1. Check if user has already registered for this campaign
+        # 1. Check if user has already registered for this campaign this group type
         # 2. Check if item still has capacity
         # 3. Check if user satisfies all policies (phase: registration and both)
         def validate_register
           [
             check_campaign_open_for_registrations,
-            check_already_registered,
+            check_already_registered_current_type,
             check_capacity,
             check_policies
           ].compact

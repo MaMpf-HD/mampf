@@ -102,6 +102,12 @@ module Registration
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
+    def user_registration_confirmed_for_group_type?(user, group_type)
+      user_registrations.joins(:registration_item)
+                        .where(user_id: user.id, status: :confirmed)
+                        .exists?(registration_items: { registerable_type: group_type })
+    end
+
     def can_be_deleted?
       draft?
     end

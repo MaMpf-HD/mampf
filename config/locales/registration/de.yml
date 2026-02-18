@@ -249,6 +249,20 @@ de:
       status_for_registration: "Aktueller Status Ihrer eingereichten Präferenzen"
       submitted_pref: "Ihre eingereichte Auswahl"
       confirmed_assignment_pref: "Ihre bestätigte %{type}-Zuweisung"
+      fcfs_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
+      pb_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
       messages:
         campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
         campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."

@@ -76,10 +76,8 @@ module Registration
 
     def update
       if @campaign.lecture_based?
-        pref_items =
-          UserRegistration::PreferencesHandler
-          .new
-          .pref_item_build_for_save(params[:preferences_json])
+        pref_items = UserRegistration::PreferencesHandler
+                     .new.pref_item_build_for_save(params[:preferences_json])
         result = Registration::UserRegistration::LecturePreferenceEditService
                  .new(@campaign, current_user).update!(pref_items)
         if result.success?
@@ -137,7 +135,7 @@ module Registration
     end
 
     def reset_preferences
-      @items = @campaign.registration_items.includes(:user_registrations)
+      init_items
       init_preferences
       rerender_preferences
     end
@@ -259,26 +257,46 @@ module Registration
       end
 
       def init_details
-        @eligibility = Registration::EligibilityService.new(@campaign, current_user,
-                                                            phase_scope: :registration).call
-        @items = @campaign.registration_items.includes(:user_registrations)
-        @campaignable_host = @campaign.campaignable
+        init_eligibility
+        init_items
+        init_campaignable_host
         init_preferences if @campaign.preference_based?
       end
 
+      def init_eligibility
+        @eligibility = Registration::EligibilityService.new(@campaign, current_user,
+                                                            phase_scope: :registration).call
+      end
+
       def init_result
-        @items_selected = @campaign.registration_items
-                                   .includes(:user_registrations)
-                                   .where(user_registrations: { user_id: current_user.id })
-        @items_succeed = Rosters::StudentMainResultResolver
-                         .new(@campaign, current_user).succeed_items
-        @item_succeed = @items_succeed.first || nil
+        init_selected_items
+        init_succeed_items
         succeed_ids = @items_succeed.pluck(:id)
         @status_items_selected = @items_selected.each_with_object({}) do |i, hash|
           hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
         end
-        @campaignable_host = @campaign.campaignable
+        init_campaignable_host
         init_preferences if @campaign.preference_based?
+      end
+
+      def init_selected_items
+        @items_selected = @campaign.registration_items
+                                   .includes(:user_registrations)
+                                   .where(user_registrations: { user_id: current_user.id })
+      end
+
+      def init_succeed_items
+        @items_succeed = Rosters::StudentMainResultResolver
+                         .new(@campaign, current_user).succeed_items
+        @item_succeed = @items_succeed.first || nil
+      end
+
+      def init_items
+        @items = @campaign.registration_items.includes(:user_registrations)
+      end
+
+      def init_campaignable_host
+        @campaignable_host = @campaign.campaignable
       end
 
       def init_preferences
@@ -289,10 +307,10 @@ module Registration
 
       def handle_preference_action(action)
         @campaign = @item.registration_campaign
-        @items = @campaign.registration_items.includes(:user_registrations)
-        handler = UserRegistration::PreferencesHandler.new
-        @item_preferences = handler.public_send(action, params[:item_id],
-                                                params[:preferences_json])
+        init_items
+        @item_preferences = UserRegistration::PreferencesHandler
+                            .new.public_send(action, params[:item_id],
+                                             params[:preferences_json])
         rerender_preferences
       end
 
