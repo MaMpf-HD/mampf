@@ -1,0 +1,143 @@
+require "rails_helper"
+
+RSpec.describe("Terms", type: :request) do
+  let(:user) { create(:confirmed_user, admin: true) }
+  before do
+    sign_in user
+  end
+
+  describe "GET /terms" do
+    it "responds with HTML" do
+      get terms_path
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/html")
+    end
+  end
+
+  describe "GET /terms/new" do
+    it "responds with turbo stream containing form" do
+      get new_term_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+  end
+
+  describe "GET /terms/:id/edit" do
+    let(:term) { create(:term) }
+
+    it "responds with turbo stream containing form" do
+      get edit_term_path(term), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+
+    it "redirects to terms index when term not found" do
+      get edit_term_path(id: 99_999)
+      expect(response).to redirect_to(terms_path)
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_term"))
+    end
+  end
+
+  describe "POST /terms" do
+    let(:valid_params) { { term: { year: 2025, season: "SS" } } }
+
+    it "creates a term and responds with turbo stream on success" do
+      expect do
+        post(terms_path, params: valid_params,
+                         headers: { "Accept" => "text/vnd.turbo-stream.html" })
+      end.to change(Term, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+
+    it "responds with turbo stream and errors on validation failure" do
+      create(:term, year: 2025, season: "SS")
+
+      expect do
+        post(terms_path, params: valid_params,
+                         headers: { "Accept" => "text/vnd.turbo-stream.html" })
+      end.not_to change(Term, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+  end
+
+  describe "PATCH /terms/:id" do
+    let(:term) { create(:term, year: 2024, season: "WS") }
+
+    it "updates a term and responds with turbo stream on success" do
+      patch term_path(term), params: { term: { year: 2025 } },
+                             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(term.reload.year).to eq(2025)
+    end
+
+    it "responds with turbo stream and errors on validation failure" do
+      create(:term, year: 2025, season: "WS")
+
+      patch term_path(term), params: { term: { year: 2025 } },
+                             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(term.reload.year).to eq(2024)
+    end
+  end
+
+  describe "DELETE /terms/:id" do
+    it "destroys the term and responds with turbo stream" do
+      term = create(:term)
+
+      expect do
+        delete(term_path(term), headers: { "Accept" => "text/vnd.turbo-stream.html" })
+      end.to change(Term, :count).by(-1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+  end
+
+  describe "POST /terms/set_active_term" do
+    it "switches the active term when a different term is selected" do
+      old_active_term = create(:term, :active)
+      new_active_term = create(:term, active: false)
+
+      post set_active_term_path, params: { active_term: new_active_term.id }
+
+      expect(response).to redirect_to(:terms)
+      expect(old_active_term.reload.active).to be(false)
+      expect(new_active_term.reload.active).to be(true)
+    end
+
+    it "activates the selected term when no term is active" do
+      inactive_term = create(:term, active: false)
+
+      post set_active_term_path, params: { active_term: inactive_term.id }
+
+      expect(response).to redirect_to(:terms)
+      expect(inactive_term.reload.active).to be(true)
+    end
+
+    it "does nothing when same term is selected again" do
+      active_term = create(:term, :active)
+
+      post set_active_term_path, params: { active_term: active_term.id }
+
+      expect(response).to redirect_to(:terms)
+      expect(active_term.reload.active).to be(true)
+    end
+
+    it "does nothing when invalid term id is provided" do
+      active_term = create(:term, :active)
+
+      post set_active_term_path, params: { active_term: 99_999 }
+
+      expect(response).to redirect_to(:terms)
+      expect(active_term.reload.active).to be(true)
+    end
+  end
+end
