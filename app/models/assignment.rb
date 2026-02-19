@@ -1,8 +1,11 @@
 class Assignment < ApplicationRecord
+  include Assessment::Pointable
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
@@ -153,4 +156,10 @@ class Assignment < ApplicationRecord
   def localized_deletion_date
     deletion_date.strftime(I18n.t("date.formats.concise"))
   end
+
+  private
+
+    def setup_assessment
+      ensure_pointbook!(requires_submission: true)
+    end
 end
