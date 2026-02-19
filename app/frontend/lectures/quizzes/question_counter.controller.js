@@ -8,6 +8,11 @@ export default class extends Controller {
     const urlTemplate = select?.dataset.questionCounterUrl;
     if (!urlTemplate) return;
 
+    if (select.selectedOptions.length === 0) {
+      document.getElementById("question_counter")?.replaceChildren();
+      return;
+    }
+
     this.abortController?.abort();
     this.abortController = new AbortController();
 
