@@ -249,6 +249,8 @@ $(document).on 'turbo:load', ->
         }
         body: JSON.stringify(media_ids: selected)
       .then (response) ->
+        unless response.ok
+          throw new Error("Import failed with status #{response.status}")
         response.text()
       .then (streamMessage) ->
         Turbo.renderStreamMessage(streamMessage)
