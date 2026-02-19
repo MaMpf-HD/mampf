@@ -8,10 +8,8 @@ test.describe("admin", () => {
     await page.goto(`/courses/${course.id}/edit`);
     await page.locator("#new-tag-button").click();
     await page.locator("#tag_notions_attributes_0_title").fill("Geometrie");
-    await page.waitForTimeout(100);
     await page.locator("#tag_notions_attributes_1_title").fill("Geometry");
     await page.locator(".col-12 > .btn-primary").click();
-    await page.waitForTimeout(100);
     await expect(page.getByText("Geometrie (Geometry)×")).toBeVisible();
   });
 
