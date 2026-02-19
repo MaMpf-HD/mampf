@@ -209,6 +209,15 @@ add_foreign_key :student_performance_certifications,
 
 ### Recommended Background Jobs
 
+```admonish tip "Implementation placement"
+`PerformanceRecordUpdateJob` and `CertificationStaleCheckJob` are
+implemented as part of Step 10 (Student Performance). The remaining
+jobs listed here are implemented alongside the features they support
+(e.g., `RecountAssignedJob` in Step 5, `ParticipationTotalsJob` in
+Step 8). An admin integrity dashboard for monitoring these jobs is a
+future extension.
+```
+
 | Job | Purpose | Frequency |
 |-----|---------|-----------|
 | `RecountAssignedJob` | Recompute `assigned_count` from confirmed submissions | Hourly |
@@ -217,7 +226,6 @@ add_foreign_key :student_performance_certifications,
 | `CertificationStaleCheckJob` | Flag certifications for review when Records change | After record updates |
 | `OrphanTaskPointsJob` | Detect task points with missing participation/task | Weekly |
 | `RosterIntegrityJob` | Check roster user counts vs. capacities | Daily |
-| `AllocatedAssignedMatchJob` | Verify allocated_user_ids matches assigned users post-finalization | Weekly |
 
 ---
 
