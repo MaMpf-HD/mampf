@@ -67,9 +67,13 @@ class LecturesController < ApplicationController
       @lecture.annotations_status = 0
     end
 
-    render turbo_stream: turbo_stream.update(turbo_frame_request_id, template: "lectures/new/_new",
-                                                                     locals: { lecture: @lecture,
-                                                                               from: @from })
+    if turbo_frame_request?
+      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+                                               template: "lectures/new/_new",
+                                               locals: { lecture: @lecture, from: @from })
+    else
+      head :bad_request
+    end
   end
 
   def edit
