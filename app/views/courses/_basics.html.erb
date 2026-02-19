@@ -13,16 +13,12 @@
                 class: "form-label" %>
     <%= helpdesk(t('admin.course.info.title'), false) %>
     <%= f.text_field :title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-title-error">
-    </div>
   </div>
   <div class="mb-3">
     <%= f.label :short_title, t('basics.short_title'),
                 class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.short_title'), false) %>
     <%= f.text_field :short_title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-short-title-error">
-    </div>
   </div>
   <div class="mb-3">
     <%= t('basics.language') %>

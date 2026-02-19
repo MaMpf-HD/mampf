@@ -58,14 +58,9 @@ class CoursesController < ApplicationController
     @course.update(course_params)
     @errors = @course.errors
     if @errors.present?
-      if request.format.turbo_stream?
-        render_course_errors_turbo_stream(
-          title_input_id: "course_title",
-          title_error_id: "course-title-error",
-          short_title_input_id: "course_short_title",
-          short_title_error_id: "course-short-title-error"
-        )
-      end
+      render partial: "courses/form",
+             locals: { course: @course },
+             status: :unprocessable_content
       return
     end
 
@@ -76,6 +71,9 @@ class CoursesController < ApplicationController
       @course.save
     end
     @errors = @course.errors
+
+    render partial: "courses/form",
+           locals: { course: @course }
   end
 
   def destroy
@@ -188,31 +186,5 @@ class CoursesController < ApplicationController
 
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    def render_course_errors_turbo_stream(title_input_id:, title_error_id:, short_title_input_id:,
-                                          short_title_error_id:)
-      render turbo_stream: [
-        turbo_stream.replace(title_input_id,
-                             view_context.text_field_tag(
-                               "course[title]",
-                               @course.title,
-                               id: title_input_id,
-                               class: "form-control#{" is-invalid" if @errors[:title].present?}"
-                             )),
-        turbo_stream.update(title_error_id,
-                            @errors[:title].to_a.join(", ")),
-        turbo_stream.replace(short_title_input_id,
-                             view_context.text_field_tag(
-                               "course[short_title]",
-                               @course.short_title,
-                               id: short_title_input_id,
-                               class: "form-control#{if @errors[:short_title].present?
-                                                       " is-invalid"
-                                                     end}"
-                             )),
-        turbo_stream.update(short_title_error_id,
-                            @errors[:short_title].to_a.join(", "))
-      ], status: :unprocessable_content
     end
 end
