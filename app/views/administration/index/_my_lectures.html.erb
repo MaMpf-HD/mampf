@@ -21,7 +21,7 @@
   <div class="card-body scrollable">
     <%= turbo_frame_tag Lecture.new %>
     
-    <%= turbo_frame_tag "lectures" do%>
+    <%= turbo_frame_tag "lectures" do %>
       <%= render 'administration/index/lectures_list' %>
     <% end %>
   </div>

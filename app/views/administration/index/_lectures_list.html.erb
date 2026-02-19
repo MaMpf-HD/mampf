@@ -2,7 +2,7 @@
   <div class="mb-2">
     <%= t('admin.main.as_teacher') %>
     (<%= current_user.given_lectures.size %>)
-    <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
+    <%= helpdesk(t('admin.main.info.given_lectures'), true) %>
   </div>
   <%= render partial: 'administration/index/lectures_card',
             locals: { lectures:
