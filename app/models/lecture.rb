@@ -613,6 +613,10 @@ class Lecture < ApplicationRecord
     false
   end
 
+  def supported_assessable_types
+    seminar? ? ["Talk"] : ["Assignment"]
+  end
+
   def chapter_name
     return "chapter" unless seminar?
 

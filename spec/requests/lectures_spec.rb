@@ -84,4 +84,97 @@ RSpec.describe("Lectures", type: :request) do
       end
     end
   end
+
+  describe "PATCH /lectures/:id" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, teacher: teacher) }
+
+    before do
+      sign_in teacher
+    end
+
+    context "with turbo_stream request and assessments subpage" do
+      before do
+        Flipper.enable(:assessment_grading)
+      end
+
+      after do
+        Flipper.disable(:assessment_grading)
+      end
+
+      it "updates lecture submission settings" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: {
+                  submission_max_team_size: 5,
+                  submission_grace_period: 30
+                },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        lecture.reload
+        expect(lecture.submission_max_team_size).to eq(5)
+        expect(lecture.submission_grace_period).to eq(30)
+      end
+
+      it "renders turbo_stream replacing submission settings" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 3 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response.body).to include("turbo-stream")
+        expect(response.body).to include("lecture-submission-settings")
+        expect(response.body).to include("submission_settings")
+      end
+
+      it "includes flash notice in turbo_stream" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 2 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response.body).to include(I18n.t("admin.lecture.updated"))
+      end
+
+      it "sets view locale from lecture" do
+        lecture.update(locale: "en")
+
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 4 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(I18n.locale).to eq(:en)
+      end
+    end
+
+    context "with html request" do
+      it "redirects to edit page" do
+        patch lecture_path(lecture),
+              params: { lecture: { submission_max_team_size: 5 } }
+
+        expect(response).to redirect_to(edit_lecture_path(lecture))
+      end
+
+      it "redirects to edit page with tab param when subpage present" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 5 },
+                subpage: "assessments"
+              }
+
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "assessments"))
+      end
+    end
+  end
 end

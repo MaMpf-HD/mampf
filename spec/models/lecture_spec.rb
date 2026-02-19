@@ -271,4 +271,16 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
   end
+
+  describe "#supported_assessable_types" do
+    it "returns assignments for regular lectures" do
+      lecture = create(:lecture, sort: "lecture")
+      expect(lecture.supported_assessable_types).to eq(["Assignment"])
+    end
+
+    it "returns talks for seminars" do
+      lecture = create(:lecture, sort: "seminar")
+      expect(lecture.supported_assessable_types).to eq(["Talk"])
+    end
+  end
 end

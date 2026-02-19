@@ -1,0 +1,57 @@
+<% index ||= task.position %>
+
+<div id="<%= dom_id(task) %>" class="d-flex gap-2" data-sortable-item data-id="<%= task.id %>">
+  <div class="bg-light border rounded px-3 py-2 text-center" style="min-width: 50px;">
+    <span class="fw-bold fs-5 text-muted" data-sortable-index><%= index %>.</span>
+  </div>
+  <%= form_with model: task,
+                url: assessment_assessment_task_path(assessment, task),
+                method: :patch,
+                local: true,
+                html: { class: "card flex-grow-1" } do |f| %>
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-md-3" data-controller="assessments--points-precision">
+          <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
+          <% max_points_value = task.max_points&.to_s("F") %>
+          <% if max_points_value %>
+            <% max_points_value = max_points_value.sub(/(\.\d*?)0+\z/, "\\1").sub(/\.\z/, "") %>
+          <% end %>
+          <%= f.number_field :max_points,
+                             class: 'form-control',
+                             min: 0,
+                             step: "any",
+                             required: true,
+                             value: max_points_value,
+                             data: {
+                               assessments__points_precision_target: "input",
+                               action: "input->assessments--points-precision#check change->assessments--points-precision#check"
+                             } %>
+          <div class="form-text">
+            <%= t("assessment.task.max_points_precision_hint") %>
+          </div>
+          <div class="form-text text-danger d-none"
+               data-assessments--points-precision-target="warning">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <%= t("assessment.task.max_points_precision_warning") %>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <%= f.label :description, t('assessment.task.description'), class: "form-label" %>
+          <%= f.text_area :description, class: 'form-control', rows: 2, placeholder: t('assessment.task.description_placeholder') %>
+        </div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-12 d-flex justify-content-between">
+          <div>
+            <%= f.submit t('buttons.save'), class: "btn btn-primary me-2" %>
+            <%= link_to t('buttons.cancel'),
+                       cancel_assessment_assessment_task_path(assessment, task),
+                       class: "btn btn-secondary",
+                       data: { turbo_stream: true } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

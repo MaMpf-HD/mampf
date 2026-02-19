@@ -1,12 +1,20 @@
 class Assignment < ApplicationRecord
   include Assessment::Pointable
 
+  attr_writer :requires_submission
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   before_destroy :check_destructibility, prepend: true
+
+  def requires_submission
+    return assessment.requires_submission if assessment
+
+    @requires_submission.nil? || @requires_submission
+  end
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
@@ -100,7 +108,15 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    submissions.proper.none?
+    non_destructible_reason.nil?
+  end
+
+  def non_destructible_reason
+    return :has_submissions if submissions.proper.any?
+
+    return :has_grading_data if grading_data?
+
+    nil
   end
 
   def check_destructibility
@@ -158,6 +174,14 @@ class Assignment < ApplicationRecord
   end
 
   private
+
+    def grading_data?
+      return false unless assessment&.assessment_participations
+
+      assessment.assessment_participations.any? do |p|
+        p.reviewed? || p.exempt? || p.task_points.any? || p.points_total.present?
+      end
+    end
 
     def setup_assessment
       ensure_pointbook!(requires_submission: true)
