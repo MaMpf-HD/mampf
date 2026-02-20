@@ -32,8 +32,10 @@ module Assessment
           assessment_id: id,
           user_id: user_id,
           tutorial_id: tutorial_mapping[user_id],
-          status: 0,
-          points_total: 0.0,
+          # We can't use :pending directly because insert_all doesn't apply the
+          # enum mapping
+          status: Participation.statuses[:pending],
+          points_total: nil,
           created_at: Time.current,
           updated_at: Time.current
         }
