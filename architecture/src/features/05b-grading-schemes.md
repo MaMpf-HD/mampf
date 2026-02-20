@@ -73,8 +73,6 @@ The main fields and methods of `Assessment::GradeScheme` are:
 ```ruby
 module Assessment
   class GradeScheme < ApplicationRecord
-    self.table_name = "grade_schemes"
-
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 

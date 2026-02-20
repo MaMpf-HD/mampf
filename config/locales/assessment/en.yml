@@ -149,3 +149,7 @@ en:
           attributes:
             base:
               assessment_mismatch: "Task and participation must belong to the same assessment"
+        assessment/grade_scheme:
+          attributes:
+            base:
+              immutable_when_applied: "Applied grade schemes cannot be modified."

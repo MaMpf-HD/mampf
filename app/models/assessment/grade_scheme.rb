@@ -8,6 +8,7 @@ module Assessment
     validates :config, presence: true
     validates :assessment_id, uniqueness: true, if: :active?
     validate :config_matches_kind
+    validate :immutable_when_applied, on: :update
 
     before_save :compute_hash, if: :config_changed?
 
@@ -16,15 +17,34 @@ module Assessment
     end
 
     def compute_hash
-      self.version_hash = Digest::MD5.hexdigest(config.to_json)
+      self.version_hash = Digest::MD5.hexdigest(
+        deep_sort_keys(config).to_json
+      )
     end
 
     private
+
+      def immutable_when_applied
+        return if applied_at_was.blank?
+
+        errors.add(:base, :immutable_when_applied)
+      end
 
       def config_matches_kind
         case kind.to_sym
         when :banded
           validate_banded_config
+        end
+      end
+
+      def deep_sort_keys(obj)
+        case obj
+        when Hash
+          obj.sort.to_h.transform_values { |v| deep_sort_keys(v) }
+        when Array
+          obj.map { |v| deep_sort_keys(v) }
+        else
+          obj
         end
       end
 
@@ -52,9 +72,14 @@ module Assessment
         end
 
         key = has_points ? "min_points" : "min_pct"
-        return if bands.all? { |b| b.key?(key) }
+        unless bands.all? { |b| b.key?(key) }
+          errors.add(:config, "all bands must use the same format")
+          return
+        end
 
-        errors.add(:config, "all bands must use the same format")
+        return if bands.all? { |b| b["grade"].present? }
+
+        errors.add(:config, "every band must have a grade")
       end
   end
 end

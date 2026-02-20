@@ -47,10 +47,18 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       expect(scheme.version_hash).to be_present
     end
 
-    it "matches MD5 of config JSON" do
-      scheme = FactoryBot.create(:assessment_grade_scheme)
-      expected = Digest::MD5.hexdigest(scheme.config.to_json)
-      expect(scheme.version_hash).to eq(expected)
+    it "produces the same hash regardless of key order" do
+      config = {
+        "bands" => [{ "grade" => "1.0", "min_points" => 54,
+                      "max_points" => 60 }]
+      }
+      reordered = {
+        "bands" => [{ "max_points" => 60, "grade" => "1.0",
+                      "min_points" => 54 }]
+      }
+      s1 = FactoryBot.create(:assessment_grade_scheme, config: config)
+      s2 = FactoryBot.create(:assessment_grade_scheme, config: reordered)
+      expect(s1.version_hash).to eq(s2.version_hash)
     end
 
     it "updates version_hash when config changes" do
@@ -76,6 +84,29 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
   end
 
   describe "validations" do
+    describe "immutability" do
+      it "prevents updating an applied scheme" do
+        scheme = FactoryBot.create(:assessment_grade_scheme, :applied)
+        expect do
+          scheme.update!(active: false)
+        end.to raise_error(ActiveRecord::RecordInvalid)
+        expect(scheme.errors[:base]).to be_present
+      end
+
+      it "allows updating a draft scheme" do
+        scheme = FactoryBot.create(:assessment_grade_scheme, :draft)
+        expect { scheme.update!(active: true) }.not_to raise_error
+      end
+
+      it "allows transitioning a draft to applied" do
+        scheme = FactoryBot.create(:assessment_grade_scheme, :draft)
+        user = FactoryBot.create(:confirmed_user)
+        expect do
+          scheme.update!(applied_at: Time.current, applied_by: user)
+        end.not_to raise_error
+      end
+    end
+
     describe "config presence" do
       it "is invalid without config" do
         scheme = FactoryBot.build(:assessment_grade_scheme, config: nil)
@@ -112,6 +143,18 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
           ]
         }
         scheme = FactoryBot.build(:assessment_grade_scheme, config: mixed_config)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:config]).to be_present
+      end
+
+      it "is invalid when a band is missing a grade" do
+        config = {
+          "bands" => [
+            { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
+            { "min_points" => 0, "max_points" => 53 }
+          ]
+        }
+        scheme = FactoryBot.build(:assessment_grade_scheme, config: config)
         expect(scheme).not_to be_valid
         expect(scheme.errors[:config]).to be_present
       end
