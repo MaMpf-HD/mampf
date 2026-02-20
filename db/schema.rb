@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_20_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -119,6 +119,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end
 
+  create_table "assessment_grade_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.integer "kind", default: 0, null: false
+    t.jsonb "config", default: {}, null: false
+    t.string "version_hash"
+    t.datetime "applied_at"
+    t.bigint "applied_by_id"
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
+    t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
+    t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"
+  end
+
   create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "assessment_id", null: false
     t.bigint "user_id", null: false
@@ -135,6 +150,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
     t.boolean "locked", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "note"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
@@ -181,6 +197,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
     t.datetime "updated_at", null: false
     t.text "accepted_file_type", default: ".pdf"
     t.date "deletion_date", default: "2200-01-01", null: false
+    t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
@@ -1368,6 +1385,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assessment_assessments", "lectures"
+  add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
