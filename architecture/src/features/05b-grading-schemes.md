@@ -23,9 +23,9 @@ After an exam is graded and all points are recorded, MaMpf needs to:
 
 ## Solution Architecture
 We use a configurable scheme model with service-based application:
-- **Canonical Source:** `GradeScheme::Scheme` stores scheme configuration per assessment
+- **Canonical Source:** `Assessment::GradeScheme` stores scheme configuration per assessment
 - **Banded Config:** JSON config defines grade bands with either absolute points or percentages
-- **Service-Based Application:** `GradeScheme::Applier` iterates participations and computes grades
+- **Service-Based Application:** `Assessment::GradeSchemeApplier` iterates participations and computes grades
 - **Version Control:** Hash-based versioning prevents duplicate applications
 - **Override Respect:** Manual grades bypass scheme application
 - **Distribution Analysis:** Service provides statistics for informed decision-making
@@ -33,7 +33,7 @@ We use a configurable scheme model with service-based application:
 
 ---
 
-## GradeScheme::Scheme (ActiveRecord Model)
+## Assessment::GradeScheme (ActiveRecord Model)
 **_Grade Mapping Configuration_**
 
 ```admonish info "What it represents"
@@ -44,7 +44,7 @@ A versioned configuration that defines how to convert assessment points into fin
 "The grading curve for the Linear Algebra final exam: 54+ points gets 1.0, 48-53 points gets 1.3, ... or alternatively 90%+ gets 1.0, 80-89% gets 1.3, ..."
 ```
 
-The main fields and methods of `GradeScheme::Scheme` are:
+The main fields and methods of `Assessment::GradeScheme` are:
 
 | Name/Field       | Type/Kind        | Description                                                    |
 |------------------|------------------|----------------------------------------------------------------|
@@ -71,64 +71,76 @@ The main fields and methods of `GradeScheme::Scheme` are:
 ### Example Implementation
 
 ```ruby
-module GradeScheme
-  class Scheme < ApplicationRecord
+module Assessment
+  class GradeScheme < ApplicationRecord
     self.table_name = "grade_schemes"
 
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 
-    enum kind: { banded: 0 }
+    enum :kind, { banded: 0 }
 
-  validates :assessment_id, uniqueness: { scope: :active, if: :active? }
-  validates :config, presence: true
-  validate :config_matches_kind
+    validates :config, presence: true
+    validates :assessment_id, uniqueness: true, if: :active?
+    validate :config_matches_kind
 
-  before_save :compute_hash, if: :config_changed?
+    before_save :compute_hash, if: :config_changed?
 
-  def applied?
-    applied_at.present?
-  end
+    def applied?
+      applied_at.present?
+    end
 
-  def compute_hash
-    self.version_hash = Digest::MD5.hexdigest(config.to_json)
-  end
+    def compute_hash
+      self.version_hash = Digest::MD5.hexdigest(config.to_json)
+    end
 
-  private
+    private
 
-  def config_matches_kind
-    case kind.to_sym
-    when :banded
-      # Check for either absolute points or percentage-based bands
-      has_bands = config["bands"].is_a?(Array)
-      errors.add(:config, "must have bands array") unless has_bands
-
-      if has_bands
-        first_band = config["bands"].first
-        has_points = first_band&.key?("min_points")
-        has_pct = first_band&.key?("min_pct")
-
-        unless has_points || has_pct
-          errors.add(:config, "bands must have either min_points/max_points or min_pct/max_pct")
+      def config_matches_kind
+        case kind.to_sym
+        when :banded
+          validate_banded_config
         end
       end
-    end
-  end
+
+      def validate_banded_config
+        return unless config.is_a?(Hash)
+
+        bands = config["bands"]
+        unless bands.is_a?(Array) && bands.any?
+          errors.add(:config, "must have a non-empty bands array")
+          return
+        end
+
+        first = bands.first
+        has_points = first.key?("min_points")
+        has_pct = first.key?("min_pct")
+
+        unless has_points || has_pct
+          errors.add(:config, "bands must use min_points or min_pct")
+          return
+        end
+
+        key = has_points ? "min_points" : "min_pct"
+        return if bands.all? { |b| b.key?(key) }
+
+        errors.add(:config, "all bands must use the same format")
+      end
   end
 end
 ```
 
 ### Usage Scenarios
 
-- **Creating a draft scheme:** After an exam is graded, the professor creates: `GradeScheme::Scheme.create!(assessment: exam_assessment, kind: :banded, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
+- **Creating a draft scheme:** After an exam is graded, the professor creates: `Assessment::GradeScheme.create!(assessment: exam_assessment, kind: :banded, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
 
-- **Analyzing distribution:** Before applying, the professor requests distribution stats: `GradeScheme::Applier.new(scheme).analyze_distribution`. This returns `{ min: 15, max: 98, mean: 72, median: 74, percentiles: { 10 => 45, 25 => 60, ... } }`.
+- **Analyzing distribution:** Before applying, the professor requests distribution stats: `Assessment::GradeSchemeApplier.new(scheme).analyze_distribution`. This returns `{ min: 15, max: 98, mean: 72, median: 74, percentiles: { 10 => 45, 25 => 60, ... } }`.
 
 - **Adjusting cutoffs:** Seeing the exam was harder than expected, the professor lowers cutoffs: `scheme.update!(config: { bands: [...] })`. The `version_hash` updates automatically.
 
-- **Applying scheme:** The professor finalizes: `GradeScheme::Applier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
+- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
 
-- **Preventing re-application:** Someone tries to apply again: `GradeScheme::Applier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and returns early (idempotent).
+- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and returns early (idempotent).
 
 ---
 
@@ -234,7 +246,7 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Dave | 22 pts | 36.67% | 5.0 | Failed |
 
 ```admonish note "Detection Logic"
-The `GradeScheme::Applier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
+The `Assessment::GradeSchemeApplier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
 ```
 
 ### Interactive Curve Generation (Frontend Convenience)
@@ -429,7 +441,7 @@ flowchart TD
     BuildConfig --> SendToBackend[Send POST request to backend]
     SendToBackend --> BackendValidate[Backend validates config]
 
-    BackendValidate --> SaveScheme[Save GradeScheme::Scheme record]
+    BackendValidate --> SaveScheme[Save Assessment::GradeScheme record]
     SaveScheme --> Success([Scheme created successfully])
 
     style Start fill:#e1f5ff
@@ -450,7 +462,7 @@ The flexible JSONB config structure makes it easy to add new scheme types withou
 
 ---
 
-## GradeScheme::Applier (Service Object)
+## Assessment::GradeSchemeApplier (Service Object)
 **_Grade Computer_**
 
 ```admonish info "What it represents"
@@ -588,8 +600,8 @@ flowchart TD
 ### Example Implementation
 
 ```ruby
-module GradeScheme
-  class Applier
+module Assessment
+  class GradeSchemeApplier
     def initialize(scheme)
       @scheme = scheme
       @assessment = scheme.assessment
@@ -699,15 +711,15 @@ end
 
 ### Usage Scenarios
 
-- **Preview before applying:** Professor wants to see results: `preview = GradeScheme::Applier.new(scheme).preview`. They review the proposed grades and see that 5 students would fail.
+- **Preview before applying:** Professor wants to see results: `preview = Assessment::GradeSchemeApplier.new(scheme).preview`. They review the proposed grades and see that 5 students would fail.
 
 - **Adjust and re-preview:** Professor lowers the passing threshold: `scheme.update!(config: { ... })`, then previews again. Now only 2 students fail, which seems fair.
 
-- **Final application:** Professor applies: `GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
+- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
 
 - **Manual override:** One student had exceptional circumstances. The tutor marks: `participation.update!(manual_grade_override: true, grade_value: "2.0")`. Future scheme applications will skip this record.
 
-- **Idempotent reapplication:** System accidentally triggers apply again: `GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
+- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
 
 ---
 
@@ -741,7 +753,7 @@ Grading schemes add:
 
 ### Usage Scenarios
 
-- **After exam grading:** All task points are entered and `Assessment::Participation.points_total` values are computed. The professor creates a `GradeScheme::Scheme` to convert these points to final grades.
+- **After exam grading:** All task points are entered and `Assessment::Participation.points_total` values are computed. The professor creates an `Assessment::GradeScheme` to convert these points to final grades.
 
 - **Manual grade override:** A student with exceptional circumstances gets `participation.manual_grade_override = true` and a direct grade entry. When the scheme is applied, this participation is skipped.
 
@@ -767,8 +779,8 @@ erDiagram
 sequenceDiagram
     actor Professor
     participant Assessment as Assessment::Assessment
-    participant Scheme as GradeScheme::Scheme
-    participant Applier as GradeScheme::Applier
+    participant Scheme as Assessment::GradeScheme
+    participant Applier as Assessment::GradeSchemeApplier
     participant Participation as Assessment::Participation
 
     rect rgb(235, 245, 255)
@@ -811,14 +823,14 @@ sequenceDiagram
 ```text
 app/
 └── models/
-    └── grade_scheme/
-        ├── scheme.rb
-        └── applier.rb
+    └── assessment/
+        ├── grade_scheme.rb
+        └── grade_scheme_applier.rb
 ```
 
 ### Key Files
-- `app/models/grade_scheme/scheme.rb` - Versioned scheme configuration
-- `app/models/grade_scheme/applier.rb` - Grade computation and application logic
+- `app/models/assessment/grade_scheme.rb` - Versioned scheme configuration
+- `app/models/assessment/grade_scheme_applier.rb` - Grade computation and application logic
 
 ---
 
@@ -827,5 +839,5 @@ app/
 - `grade_schemes` - Scheme configurations with version control
 
 ```admonish note
-Column details are documented in the GradeScheme::Scheme model section above.
+Column details are documented in the Assessment::GradeScheme model section above.
 ```

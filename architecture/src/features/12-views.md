@@ -555,7 +555,7 @@ For advanced users, Manual Curve mode allows direct control of each grade bounda
 ```
 
 ```admonish note "Controller Reference"
-Grade scheme functionality is implemented in `GradeScheme::SchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
+Grade scheme functionality is implemented in `Assessment::GradeSchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
 ```
 
 ### Assessments (Lectures - Student)
