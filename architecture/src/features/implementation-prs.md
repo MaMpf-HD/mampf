@@ -502,7 +502,7 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish example "PR-9.1 — Grade scheme schema"
-- Scope: Create `grade_schemes` table; `Assessment::GradeScheme` model with factory and spec.
+- Scope: Create `assessment_grade_schemes` table; `Assessment::GradeScheme` model with factory and spec.
 - Design decision: bands are stored as JSONB in `config` (no separate thresholds table). Bands are always read/written as a unit, JSONB keeps versioning via `version_hash` atomic, and the schema stays flexible for future `kind` values.
 - Migration: `20260220000000_create_grade_schemes.rb`
 - Refs: [Assessment::GradeScheme](05b-grading-schemes.md#assessmentgradescheme-activerecord-model)
