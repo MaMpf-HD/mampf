@@ -1,5 +1,7 @@
-<%= render partial: "talks/talker",
-          locals: { talk: talk } %>
+<%= turbo_frame_tag "talk_user" do %>
+  <%= render partial: "talks/talker",
+              locals: { talk: talk } %>
+<% end %>
 <p>
   <strong>
     <%= t('basics.date') %>:

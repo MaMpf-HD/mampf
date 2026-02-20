@@ -69,7 +69,7 @@ test.describe("Talk self rosterization", () => {
         campaignable_id: seminar.id,
         campaignable_type: "Lecture",
       });
-      const item = await factory.create("registration_item", [], { registerable_id: talk.id, registerable_type: "Talk", registration_campaign_id: campaign.id });
+      await factory.create("registration_item", [], { registerable_id: talk.id, registerable_type: "Talk", registration_campaign_id: campaign.id });
       await new LecturePage(student.page, seminar.id).subscribe();
 
       const talkPage = new TalkPage(student.page, talk.id);

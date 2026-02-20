@@ -27,8 +27,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("allows a user to self-add to a talk if not full") do
           post self_add_talk_path(talk,
                                   params: { type: "Talk",
-                                            partial: "talks/talker",
-                                            variable: "talk" })
+                                            frame: "talk_user" })
           expect(talk.allocated_user_ids).to include(student.id)
         end
       end
@@ -40,8 +39,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("shows an error if trying to self-add to a full talk") do
           post self_add_talk_path(talk,
                                   params: { type: "Talk",
-                                            partial: "talks/talker",
-                                            variable: "talk" })
+                                            frame: "talk_user" })
           expect(talk.allocated_user_ids).to_not(include(student.id))
         end
       end
@@ -54,8 +52,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("shows an error if trying to self-add when self_materialization_mode is disabled") do
           post self_add_talk_path(talk,
                                   params: { type: "Talk",
-                                            partial: "talks/talker",
-                                            variable: "talk" })
+                                            frame: "talk_user" })
           expect(talk.allocated_user_ids).to_not(include(student.id))
         end
       end
@@ -73,8 +70,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("shows an error if trying to self-add to a locked tutorial") do
           post self_add_tutorial_path(tutorial,
                                       params: { type: "Tutorial",
-                                                partial: "tutorials/tutorial_user",
-                                                variable: "tutorial" })
+                                                frame: "tutorial_user" })
           expect(tutorial.allocated_user_ids).to_not(include(student.id))
         end
       end
@@ -88,8 +84,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("allows a user to self-add to a tutorial if not full") do
           post self_add_tutorial_path(tutorial,
                                       params: { type: "Tutorial",
-                                                partial: "tutorials/tutorial_user",
-                                                variable: "tutorial" })
+                                                frame: "tutorial_user" })
           expect(tutorial.allocated_user_ids).to include(student.id)
         end
       end
@@ -108,8 +103,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         it("allows a user to self-add to a cohort if not full") do
           post self_add_cohort_path(cohort,
                                     params: { type: "Cohort",
-                                              partial: "cohorts/cohort_user",
-                                              variable: "cohort" })
+                                              frame: "cohort_user" })
           expect(cohort.allocated_user_ids).to include(student.id)
         end
       end
@@ -128,8 +122,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
           post self_add_talk_path(talk,
                                   params: { type: "Talk",
-                                            partial: "talks/talker",
-                                            variable: "talk" })
+                                            frame: "talk_user" })
           sign_in student
         end
 
@@ -137,8 +130,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           talk.reload
           delete self_remove_talk_path(talk,
                                        params: { type: "Talk",
-                                                 partial: "talks/talker",
-                                                 variable: "talk" })
+                                                 frame: "talk_user" })
           talk.reload
           expect(talk.allocated_user_ids).to_not(include(student.id))
         end
@@ -153,17 +145,15 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
           post self_add_talk_path(talk,
                                   params: { type: "Talk",
-                                            partial: "talks/talker",
-                                            variable: "talk" })
+                                            frame: "talk_user" })
           sign_in student
         end
 
         it("shows an error if trying to self-remove when not allowed") do
           talk.reload
           delete self_remove_talk_path(talk,
-                                       type: "Talk",
-                                       partial: "talks/talker",
-                                       variable: "talk")
+                                       params: { type: "Talk",
+                                                 frame: "talk_user" })
           talk.reload
           expect(talk.allocated_user_ids).to(include(student.id))
         end
@@ -181,17 +171,15 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
           post self_add_tutorial_path(tutorial,
                                       params: { type: "Tutorial",
-                                                partial: "tutorials/tutorial_user",
-                                                variable: "tutorial" })
+                                                frame: "tutorial_user" })
           sign_in student
         end
 
-        it("allows a user to self-add to a tutorial when allowed") do
+        it("allows a user to self-remove from a tutorial when allowed") do
           tutorial.reload
           delete self_remove_tutorial_path(tutorial,
-                                           type: "Tutorial",
-                                           partial: "tutorials/tutorial_user",
-                                           variable: "tutorial")
+                                           params: { type: "Tutorial",
+                                                     frame: "tutorial_user" })
           tutorial.reload
           expect(tutorial.allocated_user_ids).to_not(include(student.id))
         end
@@ -212,16 +200,14 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           sign_in student
           post self_add_cohort_path(cohort,
                                     params: { type: "Cohort",
-                                              partial: "cohorts/cohort_user",
-                                              variable: "cohort" })
+                                              frame: "cohort_user" })
           sign_in student
         end
 
-        it("allows a user to self-add to a cohort if not full") do
+        it("allows a user to self-remove from a cohort when allowed") do
           delete self_remove_cohort_path(cohort,
                                          params: { type: "Cohort",
-                                                   partial: "cohorts/cohort_user",
-                                                   variable: "cohort" })
+                                                   frame: "cohort_user" })
           cohort.reload
           expect(cohort.allocated_user_ids).to_not(include(student.id))
         end

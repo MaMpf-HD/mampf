@@ -1,15 +1,10 @@
 module Roster
+  # For students to add/remove themselves from tutorial/talk/cohort rosters
+  # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
-    class RosterLockedError < StandardError; end
-    class RosterFullError < StandardError; end
-    class SelfAddNotAllowedError < StandardError; end
-    class SelfRemoveNotAllowedError < StandardError; end
-    class UserNotFoundError < StandardError; end
-
-    ALLOWED_ROSTERABLE_TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
-
     before_action :set_rosterable, only: [:self_add, :self_remove]
     before_action :use_lecture_locale
+    before_action :authorize_lecture
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
@@ -20,20 +15,20 @@ module Roster
       respond_with_error(t("roster.errors.capacity_exceeded"))
     end
 
-    rescue_from RosterLockedError do
+    rescue_from "Rosters::SelfMaterializationService::RosterLockedError" do
       respond_with_error(t("roster.errors.item_locked"))
     end
 
-    rescue_from RosterFullError do
+    rescue_from "Rosters::SelfMaterializationService::RosterFullError" do
       respond_with_error(t("roster.errors.capacity_exceeded"))
     end
 
-    rescue_from SelfAddNotAllowedError do
+    rescue_from "Rosters::SelfMaterializationService::SelfAddNotAllowedError" do
       respond_with_error(t("roster.errors.self_add_not_allowed",
                            type: @rosterable.class.model_name.human))
     end
 
-    rescue_from SelfRemoveNotAllowedError do
+    rescue_from "Rosters::SelfMaterializationService::SelfRemoveNotAllowedError" do
       respond_with_error(t("roster.errors.self_remove_not_allowed",
                            type: @rosterable.class.model_name.human))
     end
@@ -43,51 +38,21 @@ module Roster
     end
 
     def self_add
-      ensure_rosterable_unlocked!
-      ensure_rosterable_not_full!
-      ensure_rosterable_allow_self_add!
-
-      user = current_user
-      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: false)
-
-      flash.now[:notice] = t("roster.messages.user_added")
-
-      # need to re-render the roster partial to show the updated roster
-      render_user_update(params[:turbo_frame],
-                         params[:partial],
-                         { params[:variable].to_sym => @rosterable })
+      service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
+      service.self_add!
+      respond_with_success(t("roster.messages.user_added"), service.safe_config(params[:frame]))
     end
 
     def self_remove
-      ensure_rosterable_unlocked!
-      ensure_rosterable_allow_self_remove!
-
-      user = current_user
-      Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
-
-      flash.now[:notice] = t("roster.messages.user_removed")
-
-      render_user_update(params[:turbo_frame],
-                         params[:partial],
-                         { params[:variable].to_sym => @rosterable })
+      service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
+      service.self_remove!
+      respond_with_success(t("roster.messages.user_removed"), service.safe_config(params[:frame]))
     end
 
     private
 
-      def ensure_rosterable_unlocked!
-        raise(RosterLockedError) if @rosterable.locked?
-      end
-
-      def ensure_rosterable_not_full!
-        raise(RosterLockedError) if @rosterable.full?
-      end
-
-      def ensure_rosterable_allow_self_add!
-        raise(SelfAddNotAllowedError) unless @rosterable.config_allow_self_add?
-      end
-
-      def ensure_rosterable_allow_self_remove!
-        raise(SelfRemoveNotAllowedError) unless @rosterable.config_allow_self_remove?
+      def authorize_lecture
+        authorize! :self_materialize, @lecture
       end
 
       def respond_with_error(message)
@@ -97,6 +62,13 @@ module Roster
             render turbo_stream: stream_flash
           end
         end
+      end
+
+      def respond_with_success(message, config)
+        flash.now[:notice] = message
+        render_user_update(config[:turbo_frame],
+                           config[:partial],
+                           { config[:variable].to_sym => @rosterable })
       end
 
       def render_user_update(turbo_frame, partial, locals = {})
@@ -112,7 +84,7 @@ module Roster
       end
 
       def set_rosterable
-        unless ALLOWED_ROSTERABLE_TYPES.include?(params[:type])
+        unless Rosters::Rosterable::TYPES.include?(params[:type])
           redirect_to root_path, alert: t("roster.errors.invalid_type")
           return
         end
@@ -120,22 +92,8 @@ module Roster
         klass = params[:type].constantize
         param_key = "#{params[:type].underscore}_id"
         id = params[param_key] || params[:id]
-        rosterable = klass.find_by(id: id)
-
-        if rosterable&.lecture
-          @lecture = Lecture.find_by(id: rosterable.lecture.id)
-
-          case rosterable
-          when Lecture
-            @rosterable = @lecture
-          when Tutorial
-            @rosterable = @lecture.tutorials.find_by(id: rosterable.id) || rosterable
-          when Talk
-            @rosterable = @lecture.talks.find_by(id: rosterable.id) || rosterable
-          when Cohort
-            @rosterable = @lecture.cohorts.find_by(id: rosterable.id) || rosterable
-          end
-        end
+        @rosterable = klass.find_by(id: id)
+        @lecture = @rosterable.lecture if @rosterable.respond_to?(:lecture)
 
         return if @rosterable && @lecture
 
