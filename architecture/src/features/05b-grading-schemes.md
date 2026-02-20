@@ -24,7 +24,7 @@ After an exam is graded and all points are recorded, MaMpf needs to:
 ## Solution Architecture
 We use a configurable scheme model with service-based application:
 - **Canonical Source:** `GradeScheme::Scheme` stores scheme configuration per assessment
-- **Absolute Bands:** JSON config defines grade bands with either absolute points or percentages
+- **Banded Config:** JSON config defines grade bands with either absolute points or percentages
 - **Service-Based Application:** `GradeScheme::Applier` iterates participations and computes grades
 - **Version Control:** Hash-based versioning prevents duplicate applications
 - **Override Respect:** Manual grades bypass scheme application
@@ -49,7 +49,7 @@ The main fields and methods of `GradeScheme::Scheme` are:
 | Name/Field       | Type/Kind        | Description                                                    |
 |------------------|------------------|----------------------------------------------------------------|
 | `assessment_id`  | DB column (FK)   | The assessment this scheme applies to                          |
-| `kind`           | DB column (Enum) | Scheme type: currently only `absolute`                         |
+| `kind`           | DB column (Enum) | Scheme type: currently only `banded`                           |
 | `config`         | DB column (JSONB)| Scheme-specific configuration (bands, coefficients, etc.)      |
 | `version_hash`   | DB column        | MD5 hash of config for idempotency checking                    |
 | `applied_at`     | DB column        | Timestamp when scheme was last applied (nil if draft)          |
@@ -78,7 +78,7 @@ module GradeScheme
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 
-    enum kind: { absolute: 0 }
+    enum kind: { banded: 0 }
 
   validates :assessment_id, uniqueness: { scope: :active, if: :active? }
   validates :config, presence: true
@@ -98,7 +98,7 @@ module GradeScheme
 
   def config_matches_kind
     case kind.to_sym
-    when :absolute
+    when :banded
       # Check for either absolute points or percentage-based bands
       has_bands = config["bands"].is_a?(Array)
       errors.add(:config, "must have bands array") unless has_bands
@@ -120,7 +120,7 @@ end
 
 ### Usage Scenarios
 
-- **Creating a draft scheme:** After an exam is graded, the professor creates: `GradeScheme::Scheme.create!(assessment: exam_assessment, kind: :absolute, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
+- **Creating a draft scheme:** After an exam is graded, the professor creates: `GradeScheme::Scheme.create!(assessment: exam_assessment, kind: :banded, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
 
 - **Analyzing distribution:** Before applying, the professor requests distribution stats: `GradeScheme::Applier.new(scheme).analyze_distribution`. This returns `{ min: 15, max: 98, mean: 72, median: 74, percentiles: { 10 => 45, 25 => 60, ... } }`.
 
@@ -142,7 +142,7 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 |-------------|------------------|---------------|--------|
 | Absolute Points | Standard approach - fixed point thresholds | `min_points`/`max_points` | ✅ In use |
 | Percentage-Based | Cross-exam comparison | `min_pct`/`max_pct` | ✅ In use |
-| Interactive Curve | UI convenience for teachers | Generates absolute config | 🚧 Planned |
+| Interactive Curve | UI convenience for teachers | Generates `banded` config | 🚧 Planned |
 | Percentile/Linear | Advanced statistical schemes | N/A | ⏸️ Future |
 
 ### Absolute Cutoffs
@@ -234,18 +234,18 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Dave | 22 pts | 36.67% | 5.0 | Failed |
 
 ```admonish note "Detection Logic"
-The `GradeScheme::Applier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :absolute` enum value.
+The `GradeScheme::Applier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
 ```
 
 ### Interactive Curve Generation (Frontend Convenience)
 
 ```admonish warning "Implementation Status"
-**Backend:** ✅ Already supported via `absolute` scheme
+**Backend:** ✅ Already supported via `banded` scheme
 **Frontend:** 🚧 Planned - Interactive UI needs to be built
 ```
 
 ```admonish info "Design Philosophy"
-The backend only needs to support the `absolute` scheme with bands. The "curve generation" is purely a **frontend convenience feature** that produces valid `absolute` configs by helping teachers visualize and set boundaries.
+The backend only needs to support the `banded` scheme. The "curve generation" is purely a **frontend convenience feature** that produces valid `banded` configs by helping teachers visualize and set boundaries.
 ```
 
 **Comparison of UI approaches:**
@@ -271,7 +271,7 @@ Teacher sets just two anchors ("54+ gets 1.0", "30+ gets 4.0"), system fills in 
 4. Frontend calculates linear interpolation for intermediate grades
 5. Frontend displays preview: "54-60→1.0, 48-53→1.3, 42-47→1.7, ..."
 6. Teacher can manually adjust any band boundary if desired (see below)
-7. Frontend sends final `absolute` config to backend
+7. Frontend sends final `banded` config to backend
 
 **Example JavaScript helper:**
 ```javascript
@@ -296,7 +296,7 @@ function generateLinearBands(excellentPts, passingPts, maxPts, gradeSteps) {
 const bands = generateLinearBands(54, 30, 60,
   ["1.0", "1.3", "1.7", "2.0", "2.3", "3.0", "3.7", "4.0"]
 );
-// Send to backend: { kind: "absolute", config: { bands } }
+// Send to backend: { kind: "banded", config: { bands } }
 ```
 
 | Benefit | Description |
@@ -319,7 +319,7 @@ Teacher drags individual boundary markers for each grade on the histogram.
    - Drag "1.3/1.7 boundary" to adjust next boundary
    - ... (continues for all grades)
 4. Frontend displays current band configuration
-5. Frontend sends complete `absolute` config to backend
+5. Frontend sends complete `banded` config to backend
 
 | Benefit | Description |
 |---------|-------------|
@@ -343,7 +343,7 @@ Auto-generate initial bands from two points, then allow manual tweaking of indiv
      - **Option A:** Auto-adjusts neighboring bands to fill gaps
      - **Option B:** Shows warning "Gap detected between 1.0 and 1.3"
 4. Teacher previews grade distribution with adjusted boundaries
-5. Frontend sends final `absolute` config to backend
+5. Frontend sends final `banded` config to backend
 
 **Example of manual adjustment after auto-generation:**
 ```javascript
@@ -379,7 +379,7 @@ const adjustedBands = adjustBand(initialBands, "1.0", 50);
 | 🥧 Distribution chart | Pie/bar chart showing final grade distribution |
 
 ```admonish note "Backend Simplicity"
-- Backend receives only `{ kind: "absolute", config: { bands: [...] } }`
+- Backend receives only `{ kind: "banded", config: { bands: [...] } }`
 - Doesn't know or care how bands were generated (manual, auto, or hybrid)
 - No special "two-point" or "curve" scheme type needed
 - Simple validation: bands must not overlap, must cover 0 to max_points
@@ -779,7 +779,7 @@ sequenceDiagram
 
     rect rgb(255, 245, 235)
     note over Professor,Scheme: Phase 2: Scheme Configuration
-    Professor->>Scheme: create(kind: absolute, config: {...})
+    Professor->>Scheme: create(kind: banded, config: {...})
     Professor->>Applier: analyze_distribution
     Applier->>Participation: aggregate points statistics
     Applier-->>Professor: show distribution (mean, percentiles)

@@ -502,12 +502,11 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish example "PR-9.1 — Grade scheme schema"
-- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
-- Migrations:
-  - `20251110000001_create_grade_schemes.rb`
-  - `20251110000002_create_grade_scheme_thresholds.rb`
-- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
-- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
+- Scope: Create `grade_schemes` table; `GradeScheme::Scheme` model with factory and spec.
+- Design decision: bands are stored as JSONB in `config` (no separate thresholds table). Bands are always read/written as a unit, JSONB keeps versioning via `version_hash` atomic, and the schema stays flexible for future `kind` values.
+- Migration: `20260220000000_create_grade_schemes.rb`
+- Refs: [GradeScheme::Scheme](05b-grading-schemes.md#gradeschemeScheme-activerecord-model)
+- Acceptance: Migration runs; `GradeScheme::Scheme` model has correct associations, validations, `applied?`, `compute_hash`, and `config_matches_kind`; factory covers absolute-points, percentage, and applied traits; spec covers all validations and uniqueness of active scheme per assessment.
 ```
 
 ```admonish example "PR-9.2 — Grade scheme applier (service)"
