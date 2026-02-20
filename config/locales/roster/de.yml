@@ -320,26 +320,34 @@ de:
       propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
       lecture_enrollment: "Veranstaltungseinschreibung"
     mailer:
-      roster_added_to_group_email_body: >
-        Hallo %{name},
-        Sie wurden der %{rosterable_type}-Gruppe %{rosterable_title} hinzugefügt.
-        Sie können die Gruppe hier aufrufen: %{rosterable_link}
-        Mit freundlichen Grüßen,
-        Ihr MaMpf-Team
+      end_mail: |
+        <p>Mit freundlichen Grüßen,<br>Ihr MaMpf-Team</p>
+      link_text: |
+        <p>Sie können Ihre neue Gruppe hier aufrufen: %{rosterable_link}</p>
+      roster_added_to_group_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden der %{rosterable_type}-Gruppe
+          <strong>%{rosterable_title}</strong> hinzugefügt.
+        </p>
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
-      roster_removed_from_group_email_body: >
-        Hallo %{name},
-        Sie wurden aus der %{rosterable_type}-Gruppe %{rosterable_title} entfernt.
-        Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
-        wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
-        Mit freundlichen Grüßen,
-        Ihr MaMpf-Team
+      roster_removed_from_group_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden aus der %{rosterable_type}-Gruppe
+          <strong>%{rosterable_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
+          wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
+        </p>
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
-      roster_moved_between_groups_email_body: >
-        Hallo %{name},
-        Sie wurden von der %{old_rosterable_type}-Gruppe %{old_rosterable_title}
-        in die %{new_rosterable_type}-Gruppe %{new_rosterable_title} verschoben.
-        Sie können Ihre neue Gruppe hier aufrufen: %{new_rosterable_link}
-        Mit freundlichen Grüßen,
-        Ihr MaMpf-Team
+      roster_moved_between_groups_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden von der %{old_rosterable_type}-Gruppe
+          <strong>%{old_rosterable_title}</strong>
+          in die %{new_rosterable_type}-Gruppe
+          <strong>%{new_rosterable_title}</strong> verschoben.
+        </p>
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'

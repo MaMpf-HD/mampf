@@ -35,9 +35,8 @@ class RosterNotificationMailer < ApplicationMailer
         from: @sender,
         to: @recipient.email,
         subject: t(
-          "roster.mailer.roster_#{mail_template}_subject",
-          rosterable_title: @rosterable.title,
-          campaignable_title: @rosterable.try(:campaignable)&.title
+          "roster.mailer.roster_#{mail_template}_email_subject",
+          rosterable_title: @rosterable&.title || @new_rosterable&.title
         )
       )
     end
@@ -51,6 +50,9 @@ class RosterNotificationMailer < ApplicationMailer
         lecture_tutorial_overview_url(rosterable.lecture)
       when Talk
         talk_url(rosterable)
+      when Cohort
+        # TODO: replace with cohort details page when it exists
+        nil
       else
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")

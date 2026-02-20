@@ -1,6 +1,8 @@
 <%= t('roster.mailer.roster_removed_from_group_email_body',
       name: @username,
-      rosterable_type: @rosterable.class.name,
-      rosterable_title: @rosterable.title,
+      rosterable_type: @rosterable.model_name.human,
+      rosterable_title: @rosterable.title).html_safe %>
+<%= t('roster.mailer.link_text', 
       rosterable_link: link_to(t('basics.link'),
-                    @rosterable_link)) %>
+                    @rosterable_link)).html_safe if @rosterable_link %>
+<%= t('roster.mailer.end_mail').html_safe %>
