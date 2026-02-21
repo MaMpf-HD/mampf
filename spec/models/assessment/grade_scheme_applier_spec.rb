@@ -89,6 +89,16 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(p.reload.grade_numeric).to eq(5.0)
       end
 
+      it "handles decimal points between integer boundaries" do
+        p_35_5 = create_reviewed_participation(points: 35.5)
+        p_29_5 = create_reviewed_participation(points: 29.5)
+
+        applier.apply!(applied_by: professor)
+
+        expect(p_35_5.reload.grade_numeric).to eq(2.3)
+        expect(p_29_5.reload.grade_numeric).to eq(3.7)
+      end
+
       it "stamps applied_at and applied_by on the scheme" do
         create_reviewed_participation(points: 50)
         applier.apply!(applied_by: professor)

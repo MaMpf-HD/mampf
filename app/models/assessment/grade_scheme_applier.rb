@@ -105,17 +105,13 @@ module Assessment
 
       def apply_absolute_scheme(points, bands)
         sorted = bands.sort_by { |b| -b["min_points"] }
-        band = sorted.find do |b|
-          points.between?(b["min_points"], b["max_points"])
-        end
+        band = sorted.find { |b| points >= b["min_points"] }
         band ? band["grade"].to_f : 5.0
       end
 
       def apply_percentage_scheme(pct, bands)
         sorted = bands.sort_by { |b| -b["min_pct"] }
-        band = sorted.find do |b|
-          pct.between?(b["min_pct"], b["max_pct"])
-        end
+        band = sorted.find { |b| pct >= b["min_pct"] }
         band ? band["grade"].to_f : 5.0
       end
 
