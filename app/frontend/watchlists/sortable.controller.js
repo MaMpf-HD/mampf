@@ -19,8 +19,10 @@ export default class extends Controller {
   updateOrder(id) {
     const params = new URLSearchParams(window.location.search);
     const order = Array.from(
-      this.element.querySelectorAll("#card-title"),
-    ).map(x => x.dataset.id);
+      this.element.querySelectorAll(".media-grid"),
+    ).map(el => el.dataset.id);
+
+    console.log("Order to send:", order);
 
     const queryParams = new URLSearchParams({
       order: JSON.stringify(order),
