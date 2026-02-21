@@ -36,14 +36,20 @@ module Assessment
     def apply!(applied_by:)
       return if already_applied?
 
+      now = Time.current
+
       Participation.transaction do
         reviewed_participations.find_each do |participation|
           grade = compute_grade_for(participation)
-          participation.update!(grade_numeric: grade)
+          participation.update!(
+            grade_numeric: grade,
+            grader: applied_by,
+            graded_at: now
+          )
         end
 
         @scheme.update!(
-          applied_at: Time.current,
+          applied_at: now,
           applied_by: applied_by
         )
       end

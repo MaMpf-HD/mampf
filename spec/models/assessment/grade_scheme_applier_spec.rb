@@ -97,6 +97,16 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(scheme.applied_at).to be_present
         expect(scheme.applied_by).to eq(professor)
       end
+
+      it "stamps grader and graded_at on each participation" do
+        p = create_reviewed_participation(points: 55)
+        applier.apply!(applied_by: professor)
+
+        p.reload
+        expect(p.grader).to eq(professor)
+        expect(p.graded_at).to be_present
+        expect(p.graded_at).to eq(scheme.reload.applied_at)
+      end
     end
 
     context "with percentage-based bands" do
