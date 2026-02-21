@@ -411,7 +411,6 @@ namespace :assessment do
         participation.assign_attributes(
           status: :reviewed,
           grade_numeric: grade,
-          grade_text: grade.to_s,
           graded_at: Time.current - rand(1..72).hours,
           grader: seminar.teacher
         )
@@ -441,7 +440,7 @@ namespace :assessment do
 
     graded.where(grade_numeric: nil).find_each do |p|
       grade = german_grades.sample
-      p.update!(grade_numeric: grade, grade_text: grade.to_s)
+      p.update!(grade_numeric: grade)
     end
 
     puts "  ✓ Assigned grades to #{graded.count} participations for: #{label}"
