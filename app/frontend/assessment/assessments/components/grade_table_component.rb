@@ -12,6 +12,18 @@ class GradeTableComponent < ViewComponent::Base
     !assessment.assessable.is_a?(Talk)
   end
 
+  def show_points_column?
+    assessable = assessment.assessable
+    assessable.is_a?(::Assessment::Pointable) &&
+      assessable.is_a?(::Assessment::Gradable)
+  end
+
+  def points_display(participation)
+    return "\u2014" unless participation.points_total
+
+    participation.points_total.to_s
+  end
+
   def gradeable_participations
     @gradeable_participations ||= participations.where(status: [:pending, :reviewed])
   end
