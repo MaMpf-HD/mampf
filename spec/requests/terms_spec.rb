@@ -15,20 +15,20 @@ RSpec.describe("Terms", type: :request) do
   end
 
   describe "GET /terms/new" do
-    it "responds with turbo stream containing form" do
-      get new_term_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    it "responds with turbo frame containing form" do
+      get new_term_path, headers: { "turbo-frame" => "term-form" }
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq("text/html")
     end
   end
 
   describe "GET /terms/:id/edit" do
     let(:term) { create(:term) }
 
-    it "responds with turbo stream containing form" do
-      get edit_term_path(term), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    it "responds with turbo frame containing form" do
+      get edit_term_path(term), headers: { "turbo-frame" => "term-form" }
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq("text/html")
     end
 
     it "redirects to terms index when term not found" do
@@ -41,7 +41,15 @@ RSpec.describe("Terms", type: :request) do
   describe "POST /terms" do
     let(:valid_params) { { term: { year: 2025, season: "SS" } } }
 
-    it "creates a term and responds with turbo stream on success" do
+    it "creates a term and redirects on success" do
+      expect do
+        post(terms_path, params: valid_params)
+      end.to change(Term, :count).by(1)
+
+      expect(response).to redirect_to(terms_path)
+    end
+
+    it "creates a term and responds with turbo stream on turbo request" do
       expect do
         post(terms_path, params: valid_params,
                          headers: { "Accept" => "text/vnd.turbo-stream.html" })
@@ -51,23 +59,29 @@ RSpec.describe("Terms", type: :request) do
       expect(response.media_type).to eq("text/vnd.turbo-stream.html")
     end
 
-    it "responds with turbo stream and errors on validation failure" do
+    it "responds with form on validation failure" do
       create(:term, year: 2025, season: "SS")
 
       expect do
-        post(terms_path, params: valid_params,
-                         headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        post(terms_path, params: valid_params)
       end.not_to change(Term, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq("text/html")
     end
   end
 
   describe "PATCH /terms/:id" do
     let(:term) { create(:term, year: 2024, season: "WS") }
 
-    it "updates a term and responds with turbo stream on success" do
+    it "updates a term and redirects on success" do
+      patch term_path(term), params: { term: { year: 2025 } }
+
+      expect(response).to redirect_to(terms_path)
+      expect(term.reload.year).to eq(2025)
+    end
+
+    it "updates and responds with turbo stream on turbo request" do
       patch term_path(term), params: { term: { year: 2025 } },
                              headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
@@ -76,20 +90,29 @@ RSpec.describe("Terms", type: :request) do
       expect(term.reload.year).to eq(2025)
     end
 
-    it "responds with turbo stream and errors on validation failure" do
+    it "responds with form on validation failure" do
       create(:term, year: 2025, season: "WS")
 
-      patch term_path(term), params: { term: { year: 2025 } },
-                             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      patch term_path(term), params: { term: { year: 2025 } }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq("text/html")
       expect(term.reload.year).to eq(2024)
     end
   end
 
   describe "DELETE /terms/:id" do
-    it "destroys the term and responds with turbo stream" do
+    it "destroys the term and redirects" do
+      term = create(:term)
+
+      expect do
+        delete(term_path(term))
+      end.to change(Term, :count).by(-1)
+
+      expect(response).to redirect_to(terms_path)
+    end
+
+    it "destroys and responds with turbo stream on turbo request" do
       term = create(:term)
 
       expect do
