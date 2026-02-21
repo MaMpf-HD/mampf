@@ -77,25 +77,7 @@ module Assessment
       end
 
       def already_applied?
-        @scheme.applied? &&
-          @scheme.version_hash == recomputed_hash
-      end
-
-      def recomputed_hash
-        Digest::MD5.hexdigest(
-          deep_sort_keys(@scheme.config).to_json
-        )
-      end
-
-      def deep_sort_keys(obj)
-        case obj
-        when Hash
-          obj.sort.to_h.transform_values { |v| deep_sort_keys(v) }
-        when Array
-          obj.map { |v| deep_sort_keys(v) }
-        else
-          obj
-        end
+        @scheme.applied?
       end
 
       def compute_grade_for(participation)
