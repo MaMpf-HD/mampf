@@ -178,6 +178,106 @@ RSpec.describe(GradeTableComponent, type: :component) do
     end
   end
 
+  describe "#show_points_column?" do
+    context "with an exam (pointable + gradable)" do
+      let(:exam) { create(:exam, lecture: lecture) }
+      let(:assessment) do
+        exam.ensure_gradebook!
+        exam.assessment
+      end
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "returns true" do
+        expect(component.show_points_column?).to be(true)
+      end
+    end
+
+    context "with an assignment (pointable only)" do
+      let(:assignment) { create(:valid_assignment, lecture: lecture) }
+      let(:assessment) { assignment.reload.assessment }
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "returns false" do
+        expect(component.show_points_column?).to be(false)
+      end
+    end
+
+    context "with a talk (gradable only)" do
+      let(:seminar) { create(:seminar) }
+      let(:talk) { create(:talk, lecture: seminar) }
+      let(:assessment) do
+        talk.ensure_gradebook!
+        talk.assessment
+      end
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "returns false" do
+        expect(component.show_points_column?).to be(false)
+      end
+    end
+  end
+
+  describe "#points_display" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:assessment) do
+      exam.ensure_gradebook!
+      exam.assessment
+    end
+    let(:component) { described_class.new(assessment: assessment) }
+
+    it "returns em-dash when points_total is nil" do
+      participation = build(:assessment_participation, assessment: assessment,
+                                                       points_total: nil)
+      expect(component.points_display(participation)).to eq("\u2014")
+    end
+
+    it "returns the points as string when present" do
+      participation = build(:assessment_participation, assessment: assessment,
+                                                       points_total: 42.5)
+      expect(component.points_display(participation)).to eq("42.5")
+    end
+  end
+
+  describe "points column rendering" do
+    context "with an exam" do
+      let(:exam) { create(:exam, lecture: lecture) }
+      let(:assessment) do
+        exam.ensure_gradebook!
+        exam.assessment
+      end
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "renders the points header" do
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, tutorial: tutorial,
+               points_total: 80, grade_numeric: 1.7)
+        render_inline(component)
+        expect(rendered_content).to include(I18n.t("assessment.points"))
+      end
+
+      it "renders the points value in the row" do
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, tutorial: tutorial,
+               points_total: 80, grade_numeric: 1.7)
+        render_inline(component)
+        expect(rendered_content).to include("80.0")
+      end
+    end
+
+    context "with an assignment" do
+      let(:assignment) { create(:valid_assignment, lecture: lecture) }
+      let(:assessment) { assignment.reload.assessment }
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "does not render the points header" do
+        create(:assessment_participation, :submitted,
+               assessment: assessment, tutorial: tutorial)
+        render_inline(component)
+        expect(rendered_content).not_to include(I18n.t("assessment.points"))
+      end
+    end
+  end
+
   describe "#grade_display" do
     let(:assignment) { create(:valid_assignment, lecture: lecture) }
     let(:assessment) { assignment.reload.assessment }
