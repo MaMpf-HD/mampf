@@ -10,6 +10,8 @@ module Registration
         t("registration.item.types.tutorial")
       when "Talk"
         t("registration.item.types.talk")
+      when "Exam"
+        t("registration.item.types.exam")
       when "Cohort"
         cohort = item.registerable
         base_type = case cohort.purpose.to_sym

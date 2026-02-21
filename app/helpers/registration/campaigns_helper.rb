@@ -10,6 +10,15 @@ module Registration
       }[campaign.status.to_sym]
     end
 
+    def campaign_type_badge(campaign)
+      return unless campaign.exam_campaign?
+
+      content_tag(:span, class: "badge bg-info ms-2") do
+        content_tag(:i, "", class: "bi bi-clipboard-check me-1") +
+          t("registration.campaign.type.exam")
+      end
+    end
+
     def item_stats_label(campaign)
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         t("registration.item.columns.registrations")

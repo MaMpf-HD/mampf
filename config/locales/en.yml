@@ -2088,6 +2088,7 @@ en:
     redemption_in_lecture: 'Voucher redeemed in %{lecture}'
     no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
     no_talks_taken: 'No talks have been taken over by the redemption.'
+
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
@@ -3266,6 +3267,9 @@ en:
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    location: 'Location'
+    not_specified: 'Not specified'
+    unlimited: 'Unlimited'
     seats: 'Seats'
     add: 'Add'
     section: 'Section'
@@ -3394,6 +3398,9 @@ en:
     assignments: 'Assignments'
     deadline: 'Due date'
     tutorial: 'Tutorial'
+    exam: 'Exam'
+    exams: 'Exams'
+    edit_settings: 'Edit Settings'
     code: 'Code'
     partners: 'Partners'
     team: 'Team'
@@ -3487,6 +3494,7 @@ en:
     create_division: 'Create Division'
     create_voucher: 'Create Voucher'
     create: 'Create'
+    new: 'New'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -3565,6 +3573,9 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    back_to_assessments: 'Back to Assessments'
+    create_exam: 'Create Exam'
+    edit_exam: 'Edit Exam'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

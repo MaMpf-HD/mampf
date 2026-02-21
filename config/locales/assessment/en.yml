@@ -3,6 +3,9 @@ en:
     assessments: 'Assessments'
     assignment: 'Assignment'
     assignments: 'Assignments'
+    exam: 'Exam'
+    exams: 'Exams'
+    new_exam: 'Create New Exam'
     talk: 'Talk'
     talks: 'Talks'
     tasks: 'Tasks'
@@ -17,6 +20,9 @@ en:
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
+    exam_not_destructible:
+      roster_not_empty: 'Cannot delete: Registered participants exist'
+      in_campaign: 'Cannot delete: Exam is part of a registration campaign'
     form:
       submit: 'Save'
     task:
@@ -59,6 +65,27 @@ en:
     legacy_talks_info: 'These talks were created before the grading feature was added.'
     legacy_description: 'Created before assessment system'
     no_assignments_yet: 'No assignments created yet.'
+    no_exams_yet: 'No exams created yet.'
+    exam_created: 'Exam created successfully'
+    exam_updated: 'Exam updated successfully'
+    exam_destroyed: 'Exam deleted successfully'
+    exam_title_placeholder: 'e.g., Main Exam, Retake Exam, Oral Examination'
+    exam_date_hint: 'Optional for oral exams with individual appointments'
+    exam_location_placeholder: 'e.g., Lecture Hall, Room, or Online'
+    exam_capacity_hint: 'Leave empty for unlimited capacity'
+    exam_capacity_placeholder: 'Number of seats'
+    exam_description_placeholder: 'Optional notes about the exam'
+    skip_campaigns_label: 'Skip registration system (manual management)'
+    skip_campaigns_hint: 'Only enable if this exam has never been part of a registration campaign'
+    campaign_status:
+      title: 'Campaign'
+      none: 'No campaign'
+      direct: 'Direct management'
+      create: 'Create campaign'
+      go_to_campaign: 'Go to campaign'
+    campaign_cta:
+      message: 'This exam has no registration campaign. Students cannot register yet.'
+      create: 'Create campaign now'
     no_talks_yet: 'No talks created yet.'
     no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assessables_yet: 'No assessments created yet.'
@@ -84,6 +111,15 @@ en:
         due_soon: 'Due in %{time} (%{date})'
         just_closed: 'Closed %{time} ago'
         grading_phase: 'Closed %{time} ago — Grading phase'
+    overview: 'Overview'
+    settings: 'Settings'
+    roster: 'Roster'
+    grading_management: 'Grading Management'
+    grading_placeholder: 'Grading management is not yet available'
+    grading_description: 'Here you can manage grades and grading criteria for this exam.'
+    statistics_analysis: 'Statistics & Analysis'
+    statistics_placeholder: 'Statistics are not yet available'
+    statistics_description: 'Here you can view statistics and analysis for this exam.'
 
   activerecord:
     errors:

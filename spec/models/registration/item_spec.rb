@@ -227,6 +227,52 @@ RSpec.describe(Registration::Item, type: :model) do
                                "item.attributes.registerable_id.taken"))
         end
       end
+
+      context "with exam/non-exam compatibility" do
+        let(:exam1) { create(:exam, lecture: lecture) }
+        let(:exam2) { create(:exam, lecture: lecture) }
+
+        it "rejects adding an exam to a campaign that already has a tutorial" do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: tutorial)
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: exam1)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(
+            I18n.t("activerecord.errors.models.registration/item" \
+                   ".attributes.base.cannot_add_exam_to_non_exam_campaign")
+          )
+        end
+
+        it "rejects adding a tutorial to a campaign that already has an exam" do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: exam1)
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: tutorial)
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(
+            I18n.t("activerecord.errors.models.registration/item" \
+                   ".attributes.base.cannot_add_non_exam_to_exam_campaign")
+          )
+        end
+
+        it "allows adding a second exam to an exam-only campaign" do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: exam1)
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: exam2)
+          expect(item).to be_valid
+        end
+
+        it "allows adding multiple non-exam items to a campaign" do
+          tutorial2 = create(:tutorial, lecture: lecture)
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: tutorial)
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: tutorial2)
+          expect(item).to be_valid
+        end
+      end
     end
   end
 end

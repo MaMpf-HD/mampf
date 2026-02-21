@@ -33,6 +33,7 @@ module Registration
 
     def new
       @campaign = @lecture.registration_campaigns.build
+      @campaign.allocation_mode = :first_come_first_served
       authorize! :new, @campaign
 
       respond_to do |format|

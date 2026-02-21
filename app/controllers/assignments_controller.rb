@@ -39,19 +39,18 @@ class AssignmentsController < ApplicationController
       @assignment.reload
       assessment = @assignment.assessment
       tasks = assessment&.tasks&.order(:position) || []
-      participations_count = assessment&.assessment_participations&.count || 0
       respond_to do |format|
         format.js
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/card_body_show",
-                                locals: { assessable: @assignment,
-                                          assessment: assessment,
-                                          lecture: @lecture,
-                                          tasks: tasks,
-                                          participations_count: participations_count,
-                                          tab: "tasks" })
+                                AssessmentDashboardComponent.new(
+                                  assessable: @assignment,
+                                  assessment: assessment,
+                                  lecture: @lecture,
+                                  active_tab: "tasks",
+                                  tasks: tasks
+                                ))
           ]
         end
       end

@@ -147,6 +147,11 @@ Rails.application.routes.draw do
 
   resources :divisions, except: [:show]
 
+  # exam routes
+  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
+    resources :exams, only: [:index, :new, :show, :edit, :create, :update, :destroy]
+  end
+
   # feedback routes
   resources :feedbacks, only: [:new, :create]
 

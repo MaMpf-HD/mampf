@@ -1,0 +1,14 @@
+<div id="exam-settings">
+  <div class="row">
+    <div class="col-12">
+      <%= render "exams/delete_button", exam: exam %>
+
+      <%= form_with model: exam,
+                    url: exam_path(exam, tab: 'settings'),
+                    html: { id: 'exam-form' },
+                    data: { turbo: true, controller: "exams--form" } do |f| %>
+        <%= render "exams/form_fields", f: f, exam: exam %>
+      <% end %>
+    </div>
+  </div>
+</div>

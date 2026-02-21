@@ -2241,6 +2241,7 @@ de:
     redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
     no_tutorials_taken: 'Dabei wurden keine Tutorien übernommen.'
     no_talks_taken: 'Dabei wurden keine Vorträge übernommen.'
+
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
@@ -3475,6 +3476,9 @@ de:
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
+    location: 'Ort'
+    not_specified: 'Nicht angegeben'
+    unlimited: 'Unbegrenzt'
     sections: 'Abschnitte'
     at_the_beginning: 'am Anfang'
     at_beginning_of_chapter: 'am Anfang des Kapitels'
@@ -3602,6 +3606,9 @@ de:
     assignments: 'Hausaufgaben'
     deadline: 'Abgabetermin'
     tutorial: 'Tutorium'
+    exam: 'Prüfung'
+    exams: 'Prüfungen'
+    edit_settings: 'Einstellungen bearbeiten'
     code: 'Code'
     partners: 'PartnerInnen'
     team: 'Team'
@@ -3693,6 +3700,7 @@ de:
     create_division: 'Teilbereich anlegen'
     create_voucher: 'Gutschein anlegen'
     create: 'Anlegen'
+    new: 'Neu'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -3771,6 +3779,9 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    back_to_assessments: 'Zurück zu Prüfungen'
+    create_exam: 'Prüfung erstellen'
+    edit_exam: 'Prüfung bearbeiten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

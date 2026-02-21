@@ -86,6 +86,9 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  # a lecture has many exams (scheduled assessment events)
+  has_many :exams, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy

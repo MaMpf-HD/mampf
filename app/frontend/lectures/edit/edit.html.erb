@@ -93,6 +93,16 @@
             <% end %>
           </div>
         <% end %>
+
+        <% unless @lecture.seminar? %>
+          <% component.with_tab(name: "exams", label: t("assessment.exams")) do %>
+            <div class="container medium-width lecture-pane">
+              <div id="exams_container">
+                <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
       <% else %>
         <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
           <div class="container small-width lecture-pane">
@@ -158,4 +168,3 @@
     <%= render partial: 'lectures/edit/import_toc_modal',
               locals: { lecture: @lecture } %>
   <% end %>
-

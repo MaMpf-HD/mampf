@@ -38,6 +38,7 @@ module Registration
               }
 
     validate :validate_registerable_allows_campaigns, on: :create
+    validate :ensure_compatible_with_existing_items, on: :create
     validate :validate_capacity_reduction, on: :update
     before_destroy :ensure_campaign_is_draft
 
@@ -101,6 +102,21 @@ module Registration
         return unless registerable.skip_campaigns?
 
         errors.add(:base, :registerable_not_managed_by_campaign)
+      end
+
+      def ensure_compatible_with_existing_items
+        existing_types = registration_campaign.registration_items
+                                              .where.not(id: id)
+                                              .pluck(:registerable_type)
+                                              .uniq
+
+        return if existing_types.empty?
+
+        if registerable_type == "Exam" && existing_types.any? { |t| t != "Exam" }
+          errors.add(:base, :cannot_add_exam_to_non_exam_campaign)
+        elsif registerable_type != "Exam" && existing_types.include?("Exam")
+          errors.add(:base, :cannot_add_non_exam_to_exam_campaign)
+        end
       end
   end
 end

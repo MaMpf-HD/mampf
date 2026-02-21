@@ -1,0 +1,21 @@
+<%= render MemberListComponent.new(
+      title: t("roster.tabs.participants"),
+      count: entries.size,
+      empty_message: t("roster.no_participants_yet")
+    ) do |list| %>
+
+  <% list.with_columns do %>
+    <th><%= t("basics.name") %></th>
+    <th><%= t("basics.email") %></th>
+  <% end %>
+
+  <% entries.each do |entry| %>
+    <% user = entry.user %>
+    <% list.with_row do %>
+      <tr>
+        <td><%= user.tutorial_name %></td>
+        <td><%= user.email %></td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>

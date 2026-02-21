@@ -3,6 +3,9 @@ de:
     assessments: 'Testate'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'
+    exam: 'Prüfung'
+    exams: 'Prüfungen'
+    new_exam: 'Neue Prüfung anlegen'
     talk: 'Vortrag'
     talks: 'Vorträge'
     tasks: 'Aufgaben'
@@ -17,6 +20,9 @@ de:
     not_destructible:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
+    exam_not_destructible:
+      roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
+      in_campaign: 'Löschen nicht möglich: Prüfung ist Teil eines Anmeldeverfahrens'
     form:
       submit: 'Speichern'
     task:
@@ -59,6 +65,27 @@ de:
     legacy_talks_info: 'Diese Vorträge wurden erstellt, bevor die Bewertungsfunktion hinzugefügt wurde.'
     legacy_description: 'Erstellt vor dem Bewertungssystem'
     no_assignments_yet: 'Noch keine Hausaufgaben erstellt.'
+    no_exams_yet: 'Noch keine Prüfungen erstellt.'
+    exam_created: 'Prüfung erfolgreich erstellt'
+    exam_updated: 'Prüfung erfolgreich aktualisiert'
+    exam_destroyed: 'Prüfung erfolgreich gelöscht'
+    exam_title_placeholder: 'z.B. Hauptklausur, Nachklausur, Mündliche Prüfung'
+    exam_date_hint: 'Optional für mündliche Prüfungen mit individuellen Terminen'
+    exam_location_placeholder: 'z.B. Hörsaal, Raum, oder Online'
+    exam_capacity_hint: 'Leer lassen für unbegrenzte Kapazität'
+    exam_capacity_placeholder: 'Anzahl der Plätze'
+    exam_description_placeholder: 'Optionale Hinweise zur Prüfung'
+    skip_campaigns_label: 'Anmeldesystem überspringen (manuelle Verwaltung)'
+    skip_campaigns_hint: 'Nur aktivieren, wenn diese Prüfung noch nie Teil eines Anmeldeverfahrens war'
+    campaign_status:
+      title: 'Anmeldung'
+      none: 'Kein Verfahren'
+      direct: 'Manuelle Verwaltung'
+      create: 'Verfahren erstellen'
+      go_to_campaign: 'Zum Anmeldeverfahren'
+    campaign_cta:
+      message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
+      create: 'Jetzt Verfahren erstellen'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
     no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
@@ -84,6 +111,15 @@ de:
         due_soon: 'Fällig in %{time} (%{date})'
         just_closed: 'Geschlossen vor %{time}'
         grading_phase: 'Geschlossen vor %{time} — Bewertungsphase'
+    overview: 'Übersicht'
+    settings: 'Einstellungen'
+    roster: 'Teilnehmerliste'
+    grading_management: 'Bewertungsverwaltung'
+    grading_placeholder: 'Bewertungsverwaltung ist noch nicht verfügbar'
+    grading_description: 'Hier können Sie Noten und Bewertungskriterien für diese Prüfung verwalten.'
+    statistics_analysis: 'Statistiken & Analyse'
+    statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
+    statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
 
   activerecord:
     errors:

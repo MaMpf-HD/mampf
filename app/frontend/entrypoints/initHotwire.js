@@ -89,6 +89,9 @@ window.Stimulus.register("assessments--points-precision", PointsPrecisionControl
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

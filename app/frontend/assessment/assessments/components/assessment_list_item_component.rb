@@ -13,7 +13,6 @@ class AssessmentListItemComponent < ViewComponent::Base
 
   def show_path
     return "#" unless assessment
-    return "#" if assessable.is_a?(Talk)
 
     assessment_assessment_path(
       assessment.id,
@@ -23,7 +22,17 @@ class AssessmentListItemComponent < ViewComponent::Base
   end
 
   def clickable?
-    !legacy && assessable.is_a?(Assignment) && assessment.present?
+    !legacy && assessment.present?
+  end
+
+  def row_tag_attrs
+    attrs = { id: dom_id(assessable), class: ("table-secondary" if legacy) }
+    if clickable?
+      attrs[:data] = { controller: "row-click",
+                       action: "click->row-click#visit" }
+      attrs[:style] = "cursor: pointer;"
+    end
+    attrs
   end
 
   def medium_title

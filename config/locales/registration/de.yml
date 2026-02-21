@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      title: 'Anmeldeverfahren'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
@@ -55,6 +57,8 @@ de:
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
         preference_based: "Präferenzbasiert"
+      type:
+        exam: "Klausur"
       status:
         draft: "Entwurf"
         open: "Offen"
@@ -180,10 +184,12 @@ de:
         tutorials: "Tutorien"
         talks: "Vorträge"
         cohorts: "Weitere Gruppen"
+        exams: "Klausuren"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        exam: "Klausur"
         cohort: "Sondergruppe"
         enrollment_group: "Anmeldungsgruppe"
         planning_survey: "Planungsgruppe"
@@ -293,6 +299,8 @@ de:
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
+              cannot_add_exam_to_non_exam_campaign: "Klausuren können nicht zu Anmeldeverfahren hinzugefügt werden, die bereits Tutorien, Vorträge oder andere Gruppen enthalten."
+              cannot_add_non_exam_to_exam_campaign: "Tutorien, Vorträge und andere Gruppen können nicht zu Klausuranmeldungen hinzugefügt werden."
         registration/user_registration:
           attributes:
             registration_item:

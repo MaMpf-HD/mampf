@@ -1,6 +1,8 @@
 en:
   registration:
     campaign:
+      title: 'Registration Campaign'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Campaign is already finalized."
       created: "Campaign created successfully."
@@ -55,6 +57,8 @@ en:
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
         preference_based: "Preference-Based"
+      type:
+        exam: "Exam"
       status:
         draft: "Draft"
         open: "Open"
@@ -180,10 +184,12 @@ en:
         tutorials: "Tutorials"
         talks: "Talks"
         cohorts: "Other Groups"
+        exams: "Exams"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        exam: "Exam"
         cohort: "Special Group"
         enrollment_group: "Enrollment Group"
         planning_survey: "Planning Group"
@@ -293,6 +299,8 @@ en:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
               registerable_not_managed_by_campaign: "The item is locked for registration campaigns."
+              cannot_add_exam_to_non_exam_campaign: "Exams cannot be added to campaigns that already contain tutorials, talks, or other groups."
+              cannot_add_non_exam_to_exam_campaign: "Tutorials, talks, and other groups cannot be added to exam campaigns."
         registration/user_registration:
           attributes:
             registration_item:

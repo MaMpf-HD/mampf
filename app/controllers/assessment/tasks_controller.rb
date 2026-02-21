@@ -54,27 +54,14 @@ module Assessment
       if @task.save
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.created"))
       else
-        tasks = @assessment.tasks.order(:position)
-        participations_count = @assessment.assessment_participations.count
-        assessable = @assessment.assessable
-        lecture = assessable.lecture
-
         respond_to do |format|
           format.html do
             redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
           end
           format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              "assessments_container",
-              partial: "assessment/assessments/card_body_show",
-              locals: { assessable: assessable,
-                        assessment: @assessment,
-                        lecture: lecture,
-                        tasks: tasks,
-                        participations_count: participations_count,
-                        tab: "tasks",
-                        task: @task }
-            ), status: :unprocessable_content
+            target, component = dashboard_turbo_args(tab: "tasks", task: @task)
+            render turbo_stream: turbo_stream.update(target, component),
+                   status: :unprocessable_content
           end
         end
       end
@@ -156,12 +143,31 @@ module Assessment
         flash[:notice] = notice if notice
         flash[:alert] = alert if alert
 
-        redirect_to assessment_assessment_path(
-          @assessment,
-          assessable_type: assessable.class.name,
-          assessable_id: assessable.id,
-          tab: tab
+        if assessable.is_a?(Exam)
+          redirect_to exam_path(assessable, tab: tab)
+        else
+          redirect_to assessment_assessment_path(
+            @assessment,
+            assessable_type: assessable.class.name,
+            assessable_id: assessable.id,
+            tab: tab
+          )
+        end
+      end
+
+      def dashboard_turbo_args(tab:, task: nil)
+        assessable = @assessment.assessable
+        tasks = @assessment.tasks.order(:position)
+        container = assessable.is_a?(Exam) ? "exams_container" : "assessments_container"
+        component = AssessmentDashboardComponent.new(
+          assessable: assessable,
+          assessment: @assessment,
+          lecture: assessable.lecture,
+          active_tab: tab,
+          tasks: tasks,
+          task: task
         )
+        [container, component]
       end
   end
 end
