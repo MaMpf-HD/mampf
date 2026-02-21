@@ -31,19 +31,20 @@ test.describe("edit Watchlists", () => {
     await watchlistsPage.goto();
     await watchlistsPage.editWatchlist("Updated Watchlist Name", "Updated description.");
     await expect(page.getByRole("button", { name: "Updated Watchlist Name" })).toBeVisible();
-    await page.locator("#descriptionButton").click();
     await expect(page.getByText("Watchlist was changed")).toBeVisible();
+    await page.getByRole("button", { name: "Description" }).click();
+    await expect(page.locator("#collapseDescription div").filter({ hasText: "Updated description." })).toBeVisible();
   });
 
   test("can change visibility of watchlist", async ({ factory, student: { page, user } }) => {
     const watchlist = await factory.create("watchlist", [], { user: user });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
-    await expect(watchlistsPage.page.locator("#watchlistVisiblityCheck")).not.toBeChecked();
+    await expect(watchlistsPage.isPublic()).resolves.toBe(false);
     await watchlistsPage.toggleVisibility();
-    await expect(watchlistsPage.page.locator("#watchlistVisiblityCheck")).toBeChecked();
+    await expect(watchlistsPage.isPublic()).resolves.toBe(true);
     await page.reload();
-    await expect(watchlistsPage.page.locator("#watchlistVisiblityCheck")).toBeChecked();
+    await expect(watchlistsPage.isPublic()).resolves.toBe(true);
   });
 
   test("can delete watchlist", async ({ factory, student: { page, user } }) => {

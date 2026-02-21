@@ -14,12 +14,13 @@ export class WatchlistsPage {
   }
 
   async createWatchlist(name: string, description: string = "", check = true) {
-    await this.page.locator("#openNewWatchlistForm").click();
+    await this.page.locator("#openNewWatchlistForm").hover(); // turbo_prefetching
     await this.page.waitForResponse(response => response.url().includes("/watchlists/new"));
+    await this.page.locator("#openNewWatchlistForm").click();
+
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(name);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(description);
     await this.page.getByRole("button", { name: "Create", exact: true }).click();
-    await this.page.waitForResponse(response => response.url().includes("/watchlists") && response.status() === 200);
     if (check) {
       await this.checkWatchlistCreated();
     }
@@ -30,22 +31,21 @@ export class WatchlistsPage {
   }
 
   async editWatchlist(newName: string, newDescription: string = "") {
-    await this.page.locator("#changeWatchlistBtn").click();
-    await this.page.waitForLoadState("networkidle");
-    await this.page.locator("#watchlistNameField").clear();
-    await this.page.waitForTimeout(100);
-    await this.page.locator("#watchlistNameField").fill(newName);
-    await this.page.locator("#watchlistDescriptionField").fill(newDescription);
-    await this.page.locator("#confirmChangeWatchlistButton").click();
+    await this.page.getByRole("button", { name: "Change" }).hover(); // turbo_prefetching
+    await this.page.waitForResponse(response => response.url().includes("/watchlists"));
+    await this.page.getByRole("button", { name: "Change" }).click();
+    await this.page.getByRole("textbox", { name: "Enter name" }).fill(newName);
+    await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(newDescription);
+    await this.page.getByRole("button", { name: "Save changes" }).click();
     await this.page.waitForLoadState("networkidle");
   }
 
   async toggleVisibility() {
-    await this.page.locator("#watchlistVisiblityCheck").click();
+    await this.page.getByRole("checkbox", { name: "Public" }).click();
   }
 
   async isPublic(): Promise<boolean> {
-    return await this.page.locator("#watchlistVisiblityCheck").isChecked();
+    return await this.page.getByRole("checkbox", { name: "Public" }).isChecked();
   }
 
   async deleteWatchlist(accept = true) {
