@@ -1,5 +1,6 @@
 import { WatchlistsPage } from "./page-objects/watchlists_page";
 import { expect, test } from "./_support/fixtures";
+import { LecturePage } from "./page-objects/lecture_page";
 
 test.describe("create Watchlists", () => {
   test("can create new watchlist with description", async ({ student: { page } }) => {
@@ -96,6 +97,45 @@ test.describe("view Watchlists", () => {
 });
 
 test.describe("manage Watchlist entries", () => {
+  test("can add watchlist entry from lecture page", async ({ factory, student: { page, user }, teacher: { user: teacheruser } }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"],
+      { teacher_id: teacheruser.id, content_mode: "manuscript" });
+    const medium = await factory.create(
+      "lecture_medium",
+      ["with_lecture_by_id", "with_manuscript", "released"],
+      { lecture_id: lecture.id, sort: "Script" },
+    );
+    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
+
+    const lecturePage = new LecturePage(page, lecture.id);
+    await lecturePage.subscribe();
+    await lecturePage.gotoManuscript();
+    await lecturePage.addMediaToWatchlist(medium.id, watchlist.name);
+    await expect(page.getByRole("alert").filter({ hasText: "The medium was added to" })).toBeVisible();
+    await watchlistsPage.goto();
+    await expect(page.getByText(medium.description)).toBeVisible();
+  });
+
+  test("can cancel add watchlist entry from lecture page", async ({ factory, student: { page, user }, teacher: { user: teacheruser } }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"],
+      { teacher_id: teacheruser.id, content_mode: "manuscript" });
+    const medium = await factory.create(
+      "lecture_medium",
+      ["with_lecture_by_id", "with_manuscript", "released"],
+      { lecture_id: lecture.id, sort: "Script" },
+    );
+    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
+
+    const lecturePage = new LecturePage(page, lecture.id);
+    await lecturePage.subscribe();
+    await lecturePage.gotoManuscript();
+    await lecturePage.addMediaToWatchlist(medium.id, watchlist.name, false);
+    await watchlistsPage.goto();
+    await expect(page.getByText(medium.description)).not.toBeVisible();
+  });
+
   test("can delete watchlist entry", async ({ factory, student: { page, user } }) => {
     const watchlist = await factory.create("watchlist", [], { user: user });
     const medium = await factory.create("lecture_medium", ["released"]);
