@@ -20,13 +20,4 @@ $(document).on 'turbo:load', ->
         page: params.get('page') || '1'
     return
 
-  $('#watchlistVisiblityCheck').on 'change', ->
-    id = $('#watchlistButton').data('id')
-    checked = $(this).is(':checked')
-    $.ajax
-      type: 'GET',
-      url: '/watchlists/change_visiblity',
-      data: {id: id, public: checked}
-    return
-
   return

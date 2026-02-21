@@ -102,9 +102,11 @@
                         add_medium_to_watchlist_path(medium),
                         class: 'btn p-2 bi bi-tv-fill',
                         data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('watchlist.add'),
-                        remote: true %>
+                                placement: 'bottom',
+                                bs_toggle: 'modal',
+                                bs_target: '#addWatchlistModal',
+                                turbo_frame: 'watchlist_form_add' },
+                        title: t('watchlist.add') %>
           <% end %>
         </div>
       </div>
