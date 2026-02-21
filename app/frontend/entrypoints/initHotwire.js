@@ -29,6 +29,9 @@ window.Stimulus.register("vignettes-question", VignettesQuestionController);
 import VignettesMultipleChoiceController from "~/vignettes/slides/form/question/types/_multiple_choice.controller.js";
 window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceController);
 
+import WatchlistSortableController from "~/watchlists/sortable.controller.js";
+window.Stimulus.register("watchlist-sortable", WatchlistSortableController);
+
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 

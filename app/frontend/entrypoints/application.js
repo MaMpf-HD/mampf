@@ -55,7 +55,6 @@ import "~/js/tutorials.coffee";
 import "~/js/upload.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
-import "~/js/watchlists.coffee";
 
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834

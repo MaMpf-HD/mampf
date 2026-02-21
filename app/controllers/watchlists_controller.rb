@@ -129,7 +129,8 @@ class WatchlistsController < ApplicationController
   end
 
   def update_order
-    entries = params[:order].map { |id| WatchlistEntry.find_by(id: id) }
+    order_ids = JSON.parse(params[:order])
+    entries = order_ids.map { |id| WatchlistEntry.find_by(id: id) }
     authorize! :update_order, @watchlist, entries
     page = params[:page].to_i
     per = params[:per].to_i
@@ -142,6 +143,12 @@ class WatchlistsController < ApplicationController
     entries.each_with_index do |entry, index|
       entry.update(medium_position: index + shift)
     end
+
+    @watchlists = current_user.watchlists
+    @pagy, @watchlist_entries = paginated_results
+    @media = @watchlist_entries.pluck(:medium_id)
+
+    render template: "watchlists/show"
   end
 
   def change_visibility
