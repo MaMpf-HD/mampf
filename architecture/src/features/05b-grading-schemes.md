@@ -458,6 +458,16 @@ Additional grading schemes (percentile-based ranking, piecewise mapping, etc.) c
 The flexible JSONB config structure makes it easy to add new scheme types without database migrations.
 ```
 
+```admonish todo "Manual Grade Override (Deferred)"
+A `manual_grade_override` boolean flag on `Assessment::Participation` could
+allow teachers to protect hand-picked grades from being overwritten by
+scheme (re-)application. The typical workflow — apply scheme first, then
+manually correct a few grades — does not require this flag initially.
+It becomes relevant only when re-application is needed (e.g. after fixing
+task points or adjusting band config). Deferred until the UI for manual
+grade editing exists and the re-application workflow is clearer.
+```
+
 ---
 
 ## Assessment::GradeSchemeApplier (Service Object)
@@ -483,7 +493,6 @@ The "grade calculator" that transforms points into grades according to the confi
 ### Behavior Highlights
 
 - **Idempotent:** Checks `version_hash` before applying; skip if already applied
-- **Manual override respect:** Skips participations with `manual_grade_override` flag
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
 - **Statistics:** Analyzes distribution for informed decision-making
@@ -628,8 +637,6 @@ module Assessment
       participations = @assessment.participations.where(status: :reviewed)
 
       participations.each do |participation|
-        next if participation.manual_grade_override?
-
         grade = compute_grade_for(participation)
         participation.update!(grade_value: grade)
       end
@@ -715,8 +722,6 @@ end
 
 - **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
 
-- **Manual override:** One student had exceptional circumstances. The tutor marks: `participation.update!(manual_grade_override: true, grade_value: "2.0")`. Future scheme applications will skip this record.
-
 - **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
 
 ---
@@ -752,8 +757,6 @@ Grading schemes add:
 ### Usage Scenarios
 
 - **After exam grading:** All task points are entered and `Assessment::Participation.points_total` values are computed. The professor creates an `Assessment::GradeScheme` to convert these points to final grades.
-
-- **Manual grade override:** A student with exceptional circumstances gets `participation.manual_grade_override = true` and a direct grade entry. When the scheme is applied, this participation is skipped.
 
 - **Re-grading scenario:** A mistake is found in one student's exam. The tutor corrects their task points. The `points_total` updates via callback. The professor could re-apply the scheme (with same config) to update just that grade, but the idempotency check would skip all unchanged participations.
 
@@ -804,11 +807,7 @@ sequenceDiagram
     Professor->>Applier: apply!(applied_by: professor)
     Applier->>Applier: check version_hash (idempotency)
     loop for each participation
-        alt not manual override
-            Applier->>Participation: update(grade_value: computed_grade)
-        else manual override
-            Applier->>Participation: skip
-        end
+        Applier->>Participation: update(grade_value: computed_grade)
     end
     Applier->>Scheme: update(applied_at, applied_by)
     end
