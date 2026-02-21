@@ -153,3 +153,5 @@ de:
           attributes:
             base:
               immutable_when_applied: "Angewandte Notenschemata können nicht geändert werden."
+            assessment:
+              must_be_pointable_and_gradable: "muss sowohl punktebasiert als auch benotbar sein (z.B. Klausur)"

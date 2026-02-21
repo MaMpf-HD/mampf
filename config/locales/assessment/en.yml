@@ -153,3 +153,5 @@ en:
           attributes:
             base:
               immutable_when_applied: "Applied grade schemes cannot be modified."
+            assessment:
+              must_be_pointable_and_gradable: "must be both pointable and gradable (e.g. Exam)"

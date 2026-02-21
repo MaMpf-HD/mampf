@@ -171,7 +171,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     end
 
     describe "uniqueness of active scheme per assessment" do
-      let(:assessment) { FactoryBot.create(:assessment) }
+      let(:assessment) { FactoryBot.create(:assessment, :for_exam) }
 
       it "allows only one active scheme per assessment" do
         FactoryBot.create(:assessment_grade_scheme, assessment: assessment,
@@ -191,11 +191,36 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       end
 
       it "allows active schemes on different assessments" do
-        other = FactoryBot.create(:assessment)
+        other = FactoryBot.create(:assessment, :for_exam)
         FactoryBot.create(:assessment_grade_scheme, assessment: assessment,
                                                     active: true)
         scheme = FactoryBot.build(:assessment_grade_scheme,
                                   assessment: other, active: true)
+        expect(scheme).to be_valid
+      end
+    end
+
+    describe "assessable_must_be_pointable_and_gradable" do
+      it "is invalid when assessable is only Pointable (Assignment)" do
+        assignment_assessment = FactoryBot.create(:assessment)
+        scheme = FactoryBot.build(:assessment_grade_scheme,
+                                  assessment: assignment_assessment)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:assessment]).to be_present
+      end
+
+      it "is invalid when assessable is only Gradable (Talk)" do
+        talk_assessment = FactoryBot.create(:assessment, :gradable)
+        scheme = FactoryBot.build(:assessment_grade_scheme,
+                                  assessment: talk_assessment)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:assessment]).to be_present
+      end
+
+      it "is valid when assessable is both Pointable and Gradable (Exam)" do
+        exam_assessment = FactoryBot.create(:assessment, :for_exam)
+        scheme = FactoryBot.build(:assessment_grade_scheme,
+                                  assessment: exam_assessment)
         expect(scheme).to be_valid
       end
     end

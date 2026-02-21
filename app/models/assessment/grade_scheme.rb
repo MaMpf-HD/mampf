@@ -9,6 +9,7 @@ module Assessment
     validates :assessment_id, uniqueness: true, if: :active?
     validate :config_matches_kind
     validate :immutable_when_applied, on: :update
+    validate :assessable_must_be_pointable_and_gradable
 
     before_save :compute_hash, if: :config_changed?
 
@@ -28,6 +29,16 @@ module Assessment
         return if applied_at_was.blank?
 
         errors.add(:base, :immutable_when_applied)
+      end
+
+      def assessable_must_be_pointable_and_gradable
+        return unless assessment&.assessable
+
+        assessable = assessment.assessable
+        return if assessable.is_a?(::Assessment::Pointable) &&
+                  assessable.is_a?(::Assessment::Gradable)
+
+        errors.add(:assessment, :must_be_pointable_and_gradable)
       end
 
       def config_matches_kind

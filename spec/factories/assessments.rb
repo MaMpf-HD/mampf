@@ -34,5 +34,10 @@ FactoryBot.define do
       association :assessable, factory: :talk
       lecture { assessable.lecture }
     end
+
+    trait :for_exam do
+      association :assessable, factory: :exam
+      lecture { assessable.lecture }
+    end
   end
 end

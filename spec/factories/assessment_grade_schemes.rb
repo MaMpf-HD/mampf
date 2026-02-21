@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :assessment_grade_scheme, class: "Assessment::GradeScheme" do
-    association :assessment
+    association :assessment, factory: [:assessment, :for_exam]
     kind { :banded }
     active { true }
     config do
