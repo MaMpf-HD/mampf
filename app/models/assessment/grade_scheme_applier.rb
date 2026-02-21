@@ -57,10 +57,12 @@ module Assessment
           )
         end
 
-        @scheme.update!(
-          applied_at: now,
-          applied_by: applied_by
-        )
+        unless already_applied?
+          @scheme.update!(
+            applied_at: now,
+            applied_by: applied_by
+          )
+        end
       end
     end
 

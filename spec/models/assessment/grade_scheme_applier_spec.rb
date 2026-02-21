@@ -161,11 +161,14 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         p1 = create_reviewed_participation(points: 55)
         applier.apply!(applied_by: professor)
         expect(p1.reload.grade_numeric).to eq(1.0)
+        original_applied_at = scheme.reload.applied_at
 
         p2 = create_reviewed_participation(points: 38)
         applier.apply!(applied_by: professor)
         expect(p2.reload.grade_numeric).to eq(2.0)
         expect(p1.reload.grade_numeric).to eq(1.0)
+        # applied_at/applied_by record the first application, not re-applies
+        expect(scheme.reload.applied_at).to eq(original_applied_at)
       end
 
       it "is a no-op when already applied and no ungraded participations" do
