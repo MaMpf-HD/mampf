@@ -39,7 +39,7 @@ module Assessment
       Participation.transaction do
         reviewed_participations.find_each do |participation|
           grade = compute_grade_for(participation)
-          participation.update!(grade_numeric: grade)
+          participation.update!(grade_numeric: grade, grade_text: nil)
         end
 
         @scheme.update!(
