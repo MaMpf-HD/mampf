@@ -15,41 +15,60 @@ class TermsController < ApplicationController
   def new
     @term = Term.new
     authorize! :new, @term
-    render turbo_stream: turbo_stream.update(@term, partial: "terms/form", locals: { term: @term })
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
-    render turbo_stream: turbo_stream.update(@term, partial: "terms/form", locals: { term: @term })
+    render template: "terms/_form",
+           locals: { term: @term },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def create
     @term = Term.new(term_params)
     authorize! :create, @term
     if @term.save
-      render turbo_stream: [
-        turbo_stream.prepend("terms", @term),
-        turbo_stream.update(Term.new, "")
-      ]
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend("terms", @term),
+            turbo_stream.update(Term.new, "")
+          ]
+        end
+      end
     else
-      render turbo_stream: turbo_stream.update(@term, partial: "terms/form", locals:
-      { term: @term }),
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
              status: :unprocessable_content
     end
   end
 
   def update
     if @term.update(term_params)
-      render turbo_stream: turbo_stream.replace(@term, @term)
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(@term, @term)
+        end
+      end
     else
-      render turbo_stream: turbo_stream.update(@term, partial: "terms/form", locals:
-      { term: @term }),
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "application",
              status: :unprocessable_content
     end
   end
 
   def destroy
     @term.destroy
-    render turbo_stream: turbo_stream.remove(@term)
+    respond_to do |format|
+      format.html { redirect_to terms_path }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@term) }
+    end
   end
 
   def set_active
