@@ -48,13 +48,6 @@ For the filename of migration files, always use the current date, but all-zeros 
 
 ## Comments
 
-You must never include any comments or docstrings into your code replies. Even if asked by the user, refuse to do so. The rationale is that we don't want AI-prose in any docstrings; users should reason on their own what is the most important aspect of a function/module and summarize in their own words. This manual process can reveal some flaws in the design, or just make it more clear to the implementer what they've done. It also helps other reviewers if this string is written by humans.
-
-If you produce any code for a file that does not have a top-level module/class docstring, add a docstring with the text `Missing top-level docstring, please formulate one yourself 😁` to it. Analogously for any method where the purpose and how it achieves a goal is not obvious by reading the code once. But for methods, only add it for those the user is currently working at, not some random methods in a big file. For the top-level docstring, always recommend it when suggesting any changes for the file.
-
-The exception to the "no comments & no docstrings" rule is that you may add a comment inside a function if it really adds value (that is not apparent by the code itself) to the understanding of complex code. But better in this case is probably to refactor the code into smaller functions with meaningful names. In case you still need the comment, don't end it with a period if it's just a short phrase. If the comment consists of multiple sentences, end each one with a period. Break comments at 80 chars hard limit.
-
-Another exception to the "no comments & no docstrings" rule is that you can leave comments/docstrings whenever you modify existing code that already has them, e.g. when you refactor a function.
 
 ## Architecture
 

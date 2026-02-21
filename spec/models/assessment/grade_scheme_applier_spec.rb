@@ -39,6 +39,12 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
       expect(result[:max_possible]).to eq(60)
       expect(result[:percentiles]).to include(50)
     end
+
+    it "computes a fractional mean correctly" do
+      [20, 35].each { |pts| create_reviewed_participation(points: pts) }
+      result = applier.analyze_distribution
+      expect(result[:mean]).to eq(27.5)
+    end
   end
 
   describe "#preview" do
@@ -140,7 +146,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
     end
 
     context "idempotency" do
-      it "is a no-op when scheme was already applied with same config" do
+      it "preserves manual corrections on re-apply" do
         p = create_reviewed_participation(points: 55)
         applier.apply!(applied_by: professor)
         expect(p.reload.grade_numeric).to eq(1.0)
@@ -149,6 +155,26 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
 
         applier.apply!(applied_by: professor)
         expect(p.reload.grade_numeric).to eq(3.0)
+      end
+
+      it "grades late-reviewed participations on re-apply" do
+        p1 = create_reviewed_participation(points: 55)
+        applier.apply!(applied_by: professor)
+        expect(p1.reload.grade_numeric).to eq(1.0)
+
+        p2 = create_reviewed_participation(points: 38)
+        applier.apply!(applied_by: professor)
+        expect(p2.reload.grade_numeric).to eq(2.0)
+        expect(p1.reload.grade_numeric).to eq(1.0)
+      end
+
+      it "is a no-op when already applied and no ungraded participations" do
+        create_reviewed_participation(points: 55)
+        applier.apply!(applied_by: professor)
+        original_applied_at = scheme.reload.applied_at
+
+        applier.apply!(applied_by: professor)
+        expect(scheme.reload.applied_at).to eq(original_applied_at)
       end
     end
 

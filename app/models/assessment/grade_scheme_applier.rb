@@ -15,7 +15,7 @@ module Assessment
         count: sorted.size,
         min: sorted.first,
         max: sorted.last,
-        mean: (sorted.sum / sorted.size).round(2),
+        mean: (sorted.sum.to_f / sorted.size).round(2),
         median: median(sorted),
         percentiles: calculate_percentiles(sorted),
         max_possible: @assessment.effective_total_points
@@ -33,13 +33,22 @@ module Assessment
       end
     end
 
+    # On first apply, grades all reviewed participations. On re-apply
+    # (same config), only grades participations with no grade yet. This
+    # picks up late-reviewed students while preserving manual corrections.
     def apply!(applied_by:)
-      return if already_applied?
+      target = if already_applied?
+        ungraded_reviewed_participations
+      else
+        reviewed_participations
+      end
+
+      return if already_applied? && target.none?
 
       now = Time.current
 
       Participation.transaction do
-        reviewed_participations.find_each do |participation|
+        target.find_each do |participation|
           grade = compute_grade_for(participation)
           participation.update!(
             grade_numeric: grade,
@@ -59,6 +68,10 @@ module Assessment
 
       def reviewed_participations
         @assessment.assessment_participations.where(status: :reviewed)
+      end
+
+      def ungraded_reviewed_participations
+        reviewed_participations.where(grade_numeric: nil)
       end
 
       def already_applied?
