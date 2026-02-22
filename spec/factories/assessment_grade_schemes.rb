@@ -6,15 +6,15 @@ FactoryBot.define do
     config do
       {
         "bands" => [
-          { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
-          { "min_points" => 48, "max_points" => 53, "grade" => "1.3" },
-          { "min_points" => 42, "max_points" => 47, "grade" => "1.7" },
-          { "min_points" => 36, "max_points" => 41, "grade" => "2.0" },
-          { "min_points" => 33, "max_points" => 35, "grade" => "2.3" },
-          { "min_points" => 30, "max_points" => 32, "grade" => "3.0" },
-          { "min_points" => 27, "max_points" => 29, "grade" => "3.7" },
-          { "min_points" => 24, "max_points" => 26, "grade" => "4.0" },
-          { "min_points" => 0,  "max_points" => 23, "grade" => "5.0" }
+          { "min_points" => 54, "grade" => "1.0" },
+          { "min_points" => 48, "grade" => "1.3" },
+          { "min_points" => 42, "grade" => "1.7" },
+          { "min_points" => 36, "grade" => "2.0" },
+          { "min_points" => 33, "grade" => "2.3" },
+          { "min_points" => 30, "grade" => "3.0" },
+          { "min_points" => 27, "grade" => "3.7" },
+          { "min_points" => 24, "grade" => "4.0" },
+          { "min_points" => 0,  "grade" => "5.0" }
         ]
       }
     end

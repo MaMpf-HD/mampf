@@ -60,7 +60,7 @@ module Assessment
       end
 
       # banded config schema:
-      #   { "bands" => [{ "min_points" => 54, "max_points" => 60, "grade" => "1.0" }, ...] }
+      #   { "bands" => [{ "min_points" => 54, "grade" => "1.0" }, ...] }
       # or with percentages:
       #   { "bands" => [{ "min_pct" => 90, "max_pct" => 100, "grade" => "1.0" }, ...] }
       # All bands must use the same format (points xor percentages).

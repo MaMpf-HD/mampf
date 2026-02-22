@@ -49,11 +49,10 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
 
     it "produces the same hash regardless of key order" do
       config = {
-        "bands" => [{ "grade" => "1.0", "min_points" => 54,
-                      "max_points" => 60 }]
+        "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
       }
       reordered = {
-        "bands" => [{ "max_points" => 60, "grade" => "1.0",
+        "bands" => [{ "grade" => "1.0",
                       "min_points" => 54 }]
       }
       s1 = FactoryBot.create(:assessment_grade_scheme, config: config)
@@ -67,7 +66,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
 
       new_config = scheme.config.merge(
         "bands" => scheme.config["bands"] + [
-          { "min_points" => 61, "max_points" => 70, "grade" => "1.0" }
+          { "min_points" => 61, "grade" => "1.0" }
         ]
       )
       scheme.update!(config: new_config)
@@ -138,7 +137,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       it "is invalid when bands mix min_points and min_pct" do
         mixed_config = {
           "bands" => [
-            { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
+            { "min_points" => 54, "grade" => "1.0" },
             { "min_pct" => 80, "max_pct" => 89.99, "grade" => "1.3" }
           ]
         }
@@ -150,8 +149,8 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       it "is invalid when a band is missing a grade" do
         config = {
           "bands" => [
-            { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
-            { "min_points" => 0, "max_points" => 53 }
+            { "min_points" => 54, "grade" => "1.0" },
+            { "min_points" => 0 }
           ]
         }
         scheme = FactoryBot.build(:assessment_grade_scheme, config: config)
