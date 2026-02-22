@@ -26,6 +26,10 @@ export default class extends Controller {
     "submitButton",
     "errorAlert",
     "dirtyHint",
+    "manualHistogramContainer",
+    "manualBars",
+    "manualBandsBody",
+    "manualPreview",
   ];
 
   static values = {
@@ -128,8 +132,8 @@ export default class extends Controller {
     return { bands };
   }
 
-  renderPreview(bands) {
-    const tbody = this.bandsBodyTarget;
+  renderPreview(bands, targetBody) {
+    const tbody = targetBody || this.bandsBodyTarget;
     const table = tbody.closest("table");
     tbody.innerHTML = "";
     const existingTfoot = table.querySelector("tfoot");
@@ -235,5 +239,278 @@ export default class extends Controller {
 
   hideError() {
     this.errorAlertTarget.classList.add("d-none");
+  }
+
+  disconnect() {
+    if (this._boundMove) {
+      document.removeEventListener("pointermove", this._boundMove);
+      document.removeEventListener("pointerup", this._boundUp);
+    }
+  }
+
+  initManualTab() {
+    if (!this._manualInitialized) {
+      this._manualInitialized = true;
+      this._buildManualHistogram();
+    }
+    this._syncManualFromConfig();
+  }
+
+  syncAutoPreview() {
+    const raw = this.configFieldTarget.value;
+    if (!raw) return;
+
+    try {
+      const config = JSON.parse(raw);
+      if (config.bands?.length > 0) {
+        this.renderPreview(config.bands);
+        this.bandsPreviewTarget.classList.remove("d-none");
+        this.submitButtonTarget.disabled = false;
+        this.clearDirty();
+      }
+    }
+    catch { /* no valid config */ }
+  }
+
+  _buildManualHistogram() {
+    const container = this.manualBarsTarget;
+    const maxPoints = this.maxPointsValue;
+    if (maxPoints <= 0) return;
+
+    const points = this.studentPointsValue
+      .map(p => parseFloat(p));
+    const binCount = 10;
+    const binWidth = Math.ceil(maxPoints / binCount);
+    const bins = Array.from({ length: binCount }, (_, i) => ({
+      low: i * binWidth,
+      high: i === binCount - 1
+        ? maxPoints
+        : (i + 1) * binWidth - 1,
+      count: 0,
+    }));
+
+    points.forEach((p) => {
+      const idx = Math.min(
+        Math.floor(p / binWidth), binCount - 1,
+      );
+      bins[idx].count++;
+    });
+
+    const maxCount = Math.max(...bins.map(b => b.count), 1);
+
+    container.innerHTML = bins.map((bin) => {
+      const pct = Math.round(
+        (bin.count / maxCount) * 100,
+      );
+      const minH = bin.count > 0 ? 4 : 0;
+      return `<div class="flex-fill rounded-top"
+        style="height: ${pct}%; min-height: ${minH}px;
+               background-color: #0d6efd;"
+        title="${bin.low}\u2013${bin.high} pts: ${bin.count}"
+        data-bs-toggle="tooltip"></div>`;
+    }).join("");
+  }
+
+  _syncManualFromConfig() {
+    let bands;
+    const raw = this.configFieldTarget.value;
+    if (raw) {
+      try {
+        const config = JSON.parse(raw);
+        if (config.bands?.length > 0) bands = config.bands;
+      }
+      catch { /* use defaults */ }
+    }
+
+    if (!bands) {
+      const max = this.maxPointsValue;
+      const result = this.computeBands(
+        Math.round(max * 0.9),
+        Math.round(max * 0.5),
+        max,
+      );
+      bands = result.bands;
+    }
+
+    this._placeMarkers(bands);
+    this._updateManualConfig();
+  }
+
+  _placeMarkers(bands) {
+    const container = this.manualHistogramContainerTarget;
+    container
+      .querySelectorAll(".manual-marker")
+      .forEach(m => m.remove());
+
+    const maxPoints = this.maxPointsValue;
+    if (maxPoints <= 0) return;
+
+    PASSING_GRADES.forEach((grade) => {
+      const gs = grade.toFixed(1);
+      const band = bands.find(b => b.grade === gs);
+      if (!band) return;
+
+      const pct = Math.min(
+        Math.max(
+          (band.min_points / maxPoints) * 100, 0,
+        ),
+        100,
+      );
+      const color = this._markerColor(gs);
+
+      const el = document.createElement("div");
+      el.className = "manual-marker";
+      el.dataset.grade = gs;
+      el.dataset.minPoints = band.min_points;
+      Object.assign(el.style, {
+        position: "absolute",
+        left: `${pct}%`,
+        top: "0",
+        bottom: "0",
+        width: "20px",
+        transform: "translateX(-50%)",
+        cursor: "ew-resize",
+        zIndex: "10",
+        touchAction: "none",
+        userSelect: "none",
+      });
+
+      el.innerHTML = `
+        <div style="position: absolute; left: 50%; top: 0;
+                    height: 155px; width: 2px;
+                    background: ${color}; opacity: 0.8;
+                    transform: translateX(-50%);
+                    pointer-events: none;"></div>
+        <span class="badge" style="
+          position: absolute; bottom: 0; left: 50%;
+          transform: translateX(-50%);
+          font-size: 0.6rem; background: ${color};
+          white-space: nowrap;
+          pointer-events: none;">${gs}</span>
+      `;
+
+      el.addEventListener(
+        "pointerdown", this._startDrag.bind(this),
+      );
+      container.appendChild(el);
+    });
+  }
+
+  _markerColor(grade) {
+    if (grade === "4.0") return "#dc3545";
+    if (parseFloat(grade) <= 1.7) return "#198754";
+    return "#0d6efd";
+  }
+
+  _startDrag(e) {
+    e.preventDefault();
+    this._dragMarker = e.currentTarget;
+    this._dragRect
+      = this.manualHistogramContainerTarget
+        .getBoundingClientRect();
+
+    this._boundMove = this._onPointerMove.bind(this);
+    this._boundUp = this._endDrag.bind(this);
+    document.addEventListener(
+      "pointermove", this._boundMove,
+    );
+    document.addEventListener(
+      "pointerup", this._boundUp,
+    );
+  }
+
+  _onPointerMove(e) {
+    this._moveMarkerTo(e.clientX);
+  }
+
+  _moveMarkerTo(clientX) {
+    const rect = this._dragRect;
+    const maxPoints = this.maxPointsValue;
+    const rawPct
+      = ((clientX - rect.left) / rect.width) * 100;
+    let points = Math.round(
+      (Math.min(Math.max(rawPct, 0), 100) / 100)
+        * maxPoints,
+    );
+
+    const grade = parseFloat(
+      this._dragMarker.dataset.grade,
+    );
+    const idx = PASSING_GRADES.indexOf(grade);
+    const markers
+      = this.manualHistogramContainerTarget
+        .querySelectorAll(".manual-marker");
+    const byGrade = {};
+    markers.forEach((m) => {
+      byGrade[m.dataset.grade] = m;
+    });
+
+    if (idx > 0) {
+      const prev
+        = byGrade[PASSING_GRADES[idx - 1].toFixed(1)];
+      if (prev) {
+        points = Math.max(
+          points,
+          parseInt(prev.dataset.minPoints, 10) + 1,
+        );
+      }
+    }
+
+    if (idx < PASSING_GRADES.length - 1) {
+      const next
+        = byGrade[PASSING_GRADES[idx + 1].toFixed(1)];
+      if (next) {
+        points = Math.min(
+          points,
+          parseInt(next.dataset.minPoints, 10) - 1,
+        );
+      }
+    }
+
+    points = Math.max(points, 0);
+    points = Math.min(points, maxPoints);
+
+    const pct = (points / maxPoints) * 100;
+    this._dragMarker.style.left = `${pct}%`;
+    this._dragMarker.dataset.minPoints = points;
+    this._updateManualConfig();
+  }
+
+  _endDrag() {
+    document.removeEventListener(
+      "pointermove", this._boundMove,
+    );
+    document.removeEventListener(
+      "pointerup", this._boundUp,
+    );
+    this._dragMarker = null;
+  }
+
+  _updateManualConfig() {
+    const markers
+      = this.manualHistogramContainerTarget
+        .querySelectorAll(".manual-marker");
+    const bands = [];
+
+    markers.forEach((m) => {
+      bands.push({
+        min_points: parseInt(m.dataset.minPoints, 10),
+        grade: m.dataset.grade,
+      });
+    });
+
+    const band40 = bands.find(b => b.grade === "4.0");
+    if (band40 && band40.min_points > 0) {
+      bands.push({ min_points: 0, grade: "5.0" });
+    }
+
+    this.configFieldTarget.value
+      = JSON.stringify({ bands });
+    this.renderPreview(
+      bands, this.manualBandsBodyTarget,
+    );
+    this.manualPreviewTarget.classList.remove("d-none");
+    this.submitButtonTarget.disabled = false;
+    this.clearDirty();
   }
 }

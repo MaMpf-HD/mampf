@@ -190,7 +190,7 @@ en:
         col_range: 'Point Range'
         col_students: 'Students'
         col_percentage: 'Percentage'
-        manual_description: 'Manually configure each grade band boundary for full control.'
+        manual_description: 'Drag grade boundaries on the histogram to configure each band.'
         manual_placeholder: 'Manual configuration coming soon'
         regenerate_hint: 'Thresholds changed — regenerate bands before saving.'
         cancel: 'Cancel'

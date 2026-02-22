@@ -187,7 +187,7 @@ de:
         col_range: 'Punktebereich'
         col_students: 'Studierende'
         col_percentage: 'Anteil'
-        manual_description: 'Konfigurieren Sie jede Notenstufe manuell für volle Kontrolle.'
+        manual_description: 'Ziehen Sie die Notengrenzen im Histogramm, um die Stufen festzulegen.'
         manual_placeholder: 'Manuelle Konfiguration kommt bald'
         regenerate_hint: 'Schwellenwerte geändert — bitte Notenstufen neu generieren.'
         cancel: 'Abbrechen'

@@ -18,6 +18,7 @@
           class="nav-link active"
           data-bs-toggle="pill"
           data-bs-target="#two-point-tab"
+          data-action="shown.bs.tab->assessments--scheme-form#syncAutoPreview"
         >
           <i class="bi bi-magic me-1"></i>
           <%= t("assessment.grade_scheme.form.two_point_auto") %>
@@ -29,6 +30,7 @@
           class="nav-link"
           data-bs-toggle="pill"
           data-bs-target="#manual-tab"
+          data-action="shown.bs.tab->assessments--scheme-form#initManualTab"
         >
           <i class="bi bi-pencil me-1"></i>
           <%= t("assessment.grade_scheme.form.manual_curve") %>
@@ -161,11 +163,63 @@
             <%= t("assessment.grade_scheme.form.manual_description") %>
           </p>
 
-          <p class="text-center text-muted py-5">
-            <i class="bi bi-sliders fa-3x mb-3"></i>
-            <br>
-            <%= t("assessment.grade_scheme.form.manual_placeholder") %>
-          </p>
+          <div
+            class="position-relative"
+            style="height: 180px;"
+            data-assessments--scheme-form-target="manualHistogramContainer"
+          >
+            <div
+              class="d-flex align-items-end gap-1"
+              style="height: 155px;"
+              data-assessments--scheme-form-target="manualBars"
+            ></div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-1 mb-3">
+            <small class="text-muted">
+              0 <%= t("assessment.distribution.points") %>
+            </small>
+
+            <small class="text-muted">
+              <%= max_points %>
+              <%= t("assessment.distribution.points") %>
+            </small>
+          </div>
+
+          <div
+            data-assessments--scheme-form-target="manualPreview"
+            class="d-none"
+          >
+            <h6 class="mb-2">
+              <%= t("assessment.grade_scheme.form.preview_title") %>
+            </h6>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 10%">
+                      <%= t("assessment.grade_scheme.form.col_grade") %>
+                    </th>
+
+                    <th style="width: 30%">
+                      <%= t("assessment.grade_scheme.form.col_range") %>
+                    </th>
+
+                    <th style="width: 35%">
+                      <%= t("assessment.grade_scheme.form.col_students") %>
+                    </th>
+
+                    <th style="width: 25%" class="text-end">
+                      <%= t("assessment.grade_scheme.form.col_percentage") %>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody data-assessments--scheme-form-target="manualBandsBody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
