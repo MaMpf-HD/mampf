@@ -225,4 +225,120 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       end
     end
   end
+
+  describe ".two_point_auto" do
+    subject(:config) do
+      described_class.two_point_auto(
+        excellence: excellence, passing: passing, max_points: max_points
+      )
+    end
+
+    let(:excellence) { 54 }
+    let(:passing) { 30 }
+    let(:max_points) { 60 }
+
+    it "returns a hash with bands key" do
+      expect(config).to have_key("bands")
+      expect(config["bands"]).to be_an(Array)
+    end
+
+    it "generates 11 bands covering all German grades" do
+      grades = config["bands"].map { |b| b["grade"] }
+      expect(grades).to match_array(
+        ["1.0", "1.3", "1.7", "2.0", "2.3", "2.7", "3.0", "3.3", "3.7", "4.0", "5.0"]
+      )
+    end
+
+    it "assigns 1.0 starting at the excellence threshold" do
+      band_1_0 = config["bands"].find { |b| b["grade"] == "1.0" }
+      expect(band_1_0["min_points"]).to eq(54)
+      expect(band_1_0["max_points"]).to eq(60)
+    end
+
+    it "assigns 4.0 starting at the passing threshold" do
+      band_4_0 = config["bands"].find { |b| b["grade"] == "4.0" }
+      expect(band_4_0["min_points"]).to eq(30)
+    end
+
+    it "assigns 5.0 below the passing threshold" do
+      band_5_0 = config["bands"].find { |b| b["grade"] == "5.0" }
+      expect(band_5_0["min_points"]).to eq(0)
+      expect(band_5_0["max_points"]).to eq(29)
+    end
+
+    it "produces non-overlapping contiguous bands" do
+      sorted = config["bands"]
+               .reject { |b| b["grade"] == "5.0" }
+               .sort_by { |b| b["min_points"] }
+      sorted.each_cons(2) do |lower, upper|
+        expect(upper["min_points"]).to eq(lower["max_points"] + 1)
+      end
+    end
+
+    it "covers 0 to max_points without gaps" do
+      sorted = config["bands"].sort_by { |b| b["min_points"] }
+      expect(sorted.first["min_points"]).to eq(0)
+      expect(sorted.last["max_points"]).to eq(60)
+    end
+
+    it "produces a valid banded config" do
+      exam_assessment = FactoryBot.create(:assessment, :for_exam,
+                                          total_points: 60)
+      scheme = FactoryBot.build(:assessment_grade_scheme,
+                                assessment: exam_assessment,
+                                config: config)
+      expect(scheme).to be_valid
+    end
+
+    context "with edge case: passing = 0" do
+      let(:passing) { 0 }
+      let(:excellence) { 50 }
+      let(:max_points) { 100 }
+
+      it "does not include a 5.0 band" do
+        grades = config["bands"].map { |b| b["grade"] }
+        expect(grades).not_to include("5.0")
+      end
+
+      it "assigns 4.0 starting at 0" do
+        band_4_0 = config["bands"].find { |b| b["grade"] == "4.0" }
+        expect(band_4_0["min_points"]).to eq(0)
+      end
+    end
+
+    context "with tight range" do
+      let(:passing) { 28 }
+      let(:excellence) { 32 }
+      let(:max_points) { 40 }
+
+      it "still generates all passing grades" do
+        grades = config["bands"].map { |b| b["grade"] }
+        expect(grades).to include("1.0", "4.0")
+      end
+    end
+
+    it "raises when excellence <= passing" do
+      expect do
+        described_class.two_point_auto(
+          excellence: 30, passing: 30, max_points: 60
+        )
+      end.to raise_error(ArgumentError, /excellence must be > passing/)
+    end
+
+    it "raises when passing is negative" do
+      expect do
+        described_class.two_point_auto(
+          excellence: 50, passing: -1, max_points: 60
+        )
+      end.to raise_error(ArgumentError, /passing must be >= 0/)
+    end
+
+    it "raises when excellence exceeds max_points" do
+      expect do
+        described_class.two_point_auto(
+          excellence: 70, passing: 30, max_points: 60
+        )
+      end.to raise_error(ArgumentError, /excellence must be <= max_points/)
+    end
+  end
 end

@@ -11,6 +11,25 @@ RSpec.describe(GradeSchemeTabComponent, type: :component) do
 
   let(:component) { described_class.new(assessment: assessment) }
 
+  describe "#show_form?" do
+    context "when no grade_scheme passed" do
+      it "returns false" do
+        expect(component.show_form?).to be(false)
+      end
+    end
+
+    context "when grade_scheme is passed" do
+      let(:gs) { assessment.build_grade_scheme(kind: :banded) }
+      let(:component_with_form) do
+        described_class.new(assessment: assessment, grade_scheme: gs)
+      end
+
+      it "returns true" do
+        expect(component_with_form.show_form?).to be(true)
+      end
+    end
+  end
+
   describe "#phase" do
     context "when no participations exist" do
       it "returns :no_scheme" do
@@ -233,6 +252,28 @@ RSpec.describe(GradeSchemeTabComponent, type: :component) do
         render_inline(component)
         expect(rendered_content).to include(
           I18n.t("assessment.grade_scheme.applied_title")
+        )
+      end
+    end
+
+    context "when grade_scheme is passed (form mode)" do
+      let(:gs) { assessment.build_grade_scheme(kind: :banded) }
+      let(:form_component) do
+        described_class.new(assessment: assessment, grade_scheme: gs)
+      end
+
+      before do
+        create_list(:assessment_participation, 2, :reviewed,
+                    assessment: assessment)
+      end
+
+      it "renders the scheme form instead of phase content" do
+        render_inline(form_component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.form.title")
+        )
+        expect(rendered_content).not_to include(
+          I18n.t("assessment.grade_scheme.create_button")
         )
       end
     end

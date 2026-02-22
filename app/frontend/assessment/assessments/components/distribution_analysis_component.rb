@@ -26,7 +26,7 @@ class DistributionAnalysisComponent < ViewComponent::Base
   end
 
   def max_bin_count
-    bins.map { |b| b[:count] }.max || 1
+    bins.pluck(:count).max || 1
   end
 
   def stat_rows
@@ -74,7 +74,7 @@ class DistributionAnalysisComponent < ViewComponent::Base
       return [] if max_possible.nil? || max_possible.zero?
 
       bin_width = (max_possible.to_f / BIN_COUNT).ceil
-      bins = BIN_COUNT.times.map do |i|
+      bins = Array.new(BIN_COUNT) do |i|
         low = i * bin_width
         high = ((i + 1) * bin_width) - 1
         high = max_possible if i == BIN_COUNT - 1

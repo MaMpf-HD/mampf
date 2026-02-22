@@ -3,6 +3,8 @@ module Assessment
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 
+    PASSING_GRADES = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0].freeze
+
     enum :kind, { banded: 0 }
 
     validates :config, presence: true
@@ -21,6 +23,32 @@ module Assessment
       self.version_hash = Digest::MD5.hexdigest(
         deep_sort_keys(config).to_json
       )
+    end
+
+    def self.two_point_auto(excellence:, passing:, max_points:)
+      raise(ArgumentError, "excellence must be > passing") unless excellence > passing
+      raise(ArgumentError, "passing must be >= 0") if passing.negative?
+      raise(ArgumentError, "excellence must be <= max_points") if excellence > max_points
+
+      step = (excellence - passing).to_f / (PASSING_GRADES.size - 1)
+
+      bands = PASSING_GRADES.each_with_index.map do |grade, i|
+        min_pts = (passing + (i * step)).round
+        max_pts = if i == PASSING_GRADES.size - 1
+          max_points
+        else
+          (passing + ((i + 1) * step)).round - 1
+        end
+        { "min_points" => min_pts, "max_points" => max_pts, "grade" => grade.to_s }
+      end
+
+      if passing.positive?
+        bands.unshift(
+          { "min_points" => 0, "max_points" => passing - 1, "grade" => "5.0" }
+        )
+      end
+
+      { "bands" => bands }
     end
 
     private

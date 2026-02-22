@@ -1,10 +1,15 @@
 class GradeSchemeTabComponent < ViewComponent::Base
-  def initialize(assessment:)
+  def initialize(assessment:, grade_scheme: nil)
     super()
     @assessment = assessment
+    @grade_scheme = grade_scheme
   end
 
-  attr_reader :assessment
+  attr_reader :assessment, :grade_scheme
+
+  def show_form?
+    grade_scheme.present?
+  end
 
   def phase
     return :applied if scheme_applied?

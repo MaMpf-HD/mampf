@@ -96,7 +96,10 @@ module Assessment
       end
 
       def grade_scheme_params
-        params.expect(assessment_grade_scheme: [:kind, { config: {} }])
+        raw = params.expect(assessment_grade_scheme: [:kind, :config_json])
+        result = { config: JSON.parse(raw[:config_json]) }
+        result[:kind] = raw[:kind] if raw[:kind].present?
+        result
       end
 
       def render_dashboard(tab, notice: nil, alert: nil, status: :ok)
@@ -140,7 +143,8 @@ module Assessment
           assessment: @assessment,
           lecture: assessable.lecture,
           active_tab: active_tab,
-          tasks: @assessment.tasks.order(:position)
+          tasks: @assessment.tasks.order(:position),
+          grade_scheme: @grade_scheme
         )
       end
 

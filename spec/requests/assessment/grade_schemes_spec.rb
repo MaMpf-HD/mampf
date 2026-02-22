@@ -64,7 +64,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
                params: {
                  assessment_grade_scheme: {
                    kind: "banded",
-                   config: valid_config
+                   config_json: valid_config.to_json
                  }
                },
                as: :turbo_stream)
@@ -76,7 +76,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
              params: {
                assessment_grade_scheme: {
                  kind: "banded",
-                 config: valid_config
+                 config_json: valid_config.to_json
                }
              },
              as: :turbo_stream
@@ -90,7 +90,10 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
         expect do
           post(assessment_assessment_grade_schemes_path(assessment),
                params: {
-                 assessment_grade_scheme: { kind: "banded", config: {} }
+                 assessment_grade_scheme: {
+                   kind: "banded",
+                   config_json: {}.to_json
+                 }
                },
                as: :turbo_stream)
         end.not_to change(Assessment::GradeScheme, :count)
@@ -99,7 +102,10 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       it "renders unprocessable_content" do
         post assessment_assessment_grade_schemes_path(assessment),
              params: {
-               assessment_grade_scheme: { kind: "banded", config: {} }
+               assessment_grade_scheme: {
+                 kind: "banded",
+                 config_json: {}.to_json
+               }
              },
              as: :turbo_stream
         expect(response).to have_http_status(:unprocessable_content)
@@ -122,12 +128,14 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       it "updates the grade scheme" do
         patch assessment_assessment_grade_scheme_path(assessment, grade_scheme),
               params: {
-                assessment_grade_scheme: { config: new_config }
+                assessment_grade_scheme: {
+                  config_json: new_config.to_json
+                }
               },
               as: :turbo_stream
         expect(response).to have_http_status(:success)
         grade_scheme.reload
-        expect(grade_scheme.config["bands"].first["min_points"]).to eq("55")
+        expect(grade_scheme.config["bands"].first["min_points"]).to eq(55)
       end
     end
   end
