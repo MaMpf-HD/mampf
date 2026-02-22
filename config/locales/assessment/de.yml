@@ -158,6 +158,8 @@ de:
         preview_title: 'Generierte Stufen (Vorschau)'
         col_grade: 'Note'
         col_range: 'Punktebereich'
+        col_students: 'Studierende'
+        col_percentage: 'Anteil'
         manual_description: 'Konfigurieren Sie jede Notenstufe manuell für volle Kontrolle.'
         manual_placeholder: 'Manuelle Konfiguration kommt bald'
         cancel: 'Abbrechen'

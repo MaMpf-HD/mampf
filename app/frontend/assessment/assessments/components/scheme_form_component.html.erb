@@ -2,6 +2,7 @@
   class="card"
   data-controller="assessments--scheme-form"
   data-assessments--scheme-form-max-points-value="<%= max_points %>"
+  data-assessments--scheme-form-student-points-value="<%= student_points_json %>"
 >
   <div class="card-header bg-light">
     <h5 class="mb-0"><%= t("assessment.grade_scheme.form.title") %></h5>
@@ -120,12 +121,20 @@
               <table class="table table-sm table-hover">
                 <thead class="table-light">
                   <tr>
-                    <th style="width: 15%">
+                    <th style="width: 10%">
                       <%= t("assessment.grade_scheme.form.col_grade") %>
                     </th>
 
-                    <th style="width: 50%">
+                    <th style="width: 30%">
                       <%= t("assessment.grade_scheme.form.col_range") %>
+                    </th>
+
+                    <th style="width: 35%">
+                      <%= t("assessment.grade_scheme.form.col_students") %>
+                    </th>
+
+                    <th style="width: 25%" class="text-end">
+                      <%= t("assessment.grade_scheme.form.col_percentage") %>
                     </th>
                   </tr>
                 </thead>

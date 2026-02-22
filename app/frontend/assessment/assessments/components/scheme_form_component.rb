@@ -30,6 +30,15 @@ class SchemeFormComponent < ViewComponent::Base
     assessment.effective_total_points || 0
   end
 
+  def student_points_json
+    assessment.assessment_participations
+              .where(status: :reviewed)
+              .pluck(:points_total)
+              .compact
+              .map(&:to_f)
+              .to_json
+  end
+
   def default_excellence
     existing_excellence || (max_points * 0.9).round
   end

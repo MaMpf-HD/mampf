@@ -27,7 +27,7 @@ export default class extends Controller {
     "errorAlert",
   ];
 
-  static values = { maxPoints: Number };
+  static values = { maxPoints: Number, studentPoints: Array };
 
   generate() {
     this.hideError();
@@ -96,21 +96,92 @@ export default class extends Controller {
 
   renderPreview(bands) {
     const tbody = this.bandsBodyTarget;
+    const table = tbody.closest("table");
     tbody.innerHTML = "";
+    const existingTfoot = table.querySelector("tfoot");
+    if (existingTfoot) existingTfoot.remove();
 
-    bands.forEach((band) => {
+    const points = this.studentPointsValue.map(p => parseFloat(p));
+    const total = points.length;
+
+    const sorted = [...bands].sort(
+      (a, b) => parseFloat(a.grade) - parseFloat(b.grade),
+    );
+
+    const counts = this.countPerBand(points, bands);
+    const maxCount = total > 0
+      ? Math.max(...sorted.map(b => counts[b.grade] || 0))
+      : 0;
+
+    sorted.forEach((band) => {
       const tr = document.createElement("tr");
       if (band.grade === "5.0") tr.classList.add("table-danger");
 
       const badgeClass = GRADE_BADGE_CLASS[band.grade] || "bg-secondary";
+      const count = counts[band.grade] || 0;
+      const pct = total > 0 ? ((count / total) * 100).toFixed(1) : "0.0";
+      const barWidth = maxCount > 0
+        ? Math.round((count / maxCount) * 100)
+        : 0;
+      const barColor = parseFloat(band.grade) <= 4.0
+        ? "#198754"
+        : "#dc3545";
 
       tr.innerHTML = `
         <td><span class="badge ${badgeClass}">${band.grade}</span></td>
-        <td>${band.min_points}–${band.max_points} pts</td>
+        <td>${band.min_points}\u2013${band.max_points} pts</td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div style="flex: 1; height: 14px; background: #e9ecef;
+                        border-radius: 3px; overflow: hidden;">
+              <div style="width: ${barWidth}%; height: 100%;
+                          background: ${barColor};"></div>
+            </div>
+            <span class="text-muted small" style="min-width: 20px;">
+              ${count}
+            </span>
+          </div>
+        </td>
+        <td class="text-end">${pct}%</td>
       `;
 
       tbody.appendChild(tr);
     });
+
+    if (total > 0) {
+      const passCount = sorted
+        .filter(b => parseFloat(b.grade) <= 4.0)
+        .reduce((sum, b) => sum + (counts[b.grade] || 0), 0);
+      const passRate = ((passCount / total) * 100).toFixed(1);
+      const tfoot = document.createElement("tfoot");
+      tfoot.classList.add("table-light");
+      tfoot.innerHTML = `
+        <tr>
+          <th colspan="2">Pass rate:</th>
+          <th colspan="2" class="text-end">
+            ${passRate}% (${passCount}/${total})
+          </th>
+        </tr>
+      `;
+      table.appendChild(tfoot);
+    }
+  }
+
+  countPerBand(points, allBands) {
+    const descending = [...allBands].sort(
+      (a, b) => b.min_points - a.min_points,
+    );
+    const result = {};
+    allBands.forEach((b) => {
+      result[b.grade] = 0;
+    });
+
+    points.forEach((p) => {
+      const band = descending.find(b => p >= b.min_points);
+      if (band) result[band.grade]++;
+    });
+
+    return result;
   }
 
   showError(message) {
