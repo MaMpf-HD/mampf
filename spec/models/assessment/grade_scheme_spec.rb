@@ -52,7 +52,8 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
       }
       reordered = {
-        "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
+        "bands" => [{ "grade" => "1.0",
+                      "min_points" => 54 }]
       }
       s1 = FactoryBot.create(:assessment_grade_scheme, config: config)
       s2 = FactoryBot.create(:assessment_grade_scheme, config: reordered)
