@@ -20,7 +20,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <%= turbo_frame_tag "watchlist_form_#{context}" do %>
+        <%= turbo_frame_tag "watchlist_form_#{context}", data: { action: "turbo:frame-load->modal#open"}  do %>
           <%= render partial: "spinner/loading" %>
         <% end %>
       </div>

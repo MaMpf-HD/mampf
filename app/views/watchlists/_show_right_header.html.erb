@@ -27,9 +27,7 @@
                   title: t('watchlist.change'),
                   aria: { label: t('watchlist.change') },
                   role: 'button',
-                  data: { bs_toggle: 'modal',
-                          bs_target: '#editWatchlistModal',
-                          turbo_frame: 'watchlist_form_edit' } do %>
+                  data: { turbo_frame: 'watchlist_form_edit' } do %>
       <%= t('watchlist.change') %>
     <% end %>
   </li>

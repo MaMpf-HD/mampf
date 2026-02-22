@@ -39,9 +39,7 @@
                   title: t('watchlist.new'),
                   aria: { label: t('watchlist.new') },
                   role: 'button',
-                  data: { bs_toggle: 'modal',
-                          bs_target: '#newWatchlistModal',
-                          turbo_frame: 'watchlist_form_new' } do %>
+                  data: { turbo_frame: 'watchlist_form_new' } do %>
         <i class="fa fa-plus" aria-hidden="true"></i>
       <% end %>
     </div>

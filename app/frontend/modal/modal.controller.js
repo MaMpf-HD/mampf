@@ -17,6 +17,10 @@ export default class extends Controller {
     }
   }
 
+  open() {
+    this.modal.show();
+  }
+
   hideModalOnSuccess(event) {
     if (!event.detail.success) return;
 

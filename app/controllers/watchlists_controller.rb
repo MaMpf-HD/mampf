@@ -35,17 +35,17 @@ class WatchlistsController < ApplicationController
     @watchlist = Watchlist.new
     @medium = Medium.find_by(id: params[:medium_id])
 
-    render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                             template: "watchlists/_form",
-                                             locals: { watchlist: @watchlist, context: :new })
+    render template: "watchlists/_form",
+           locals: { watchlist: @watchlist, context: :new },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
     authorize! :edit, @watchlist
 
-    render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                             template: "watchlists/_form",
-                                             locals: { watchlist: @watchlist, context: :edit })
+    render template: "watchlists/_form",
+           locals: { watchlist: @watchlist, context: :edit },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def create
@@ -123,9 +123,9 @@ class WatchlistsController < ApplicationController
     @watchlists = current_user.watchlists
     @medium = Medium.find_by(id: params[:medium_id])
 
-    render turbo_stream: turbo_stream.update("watchlist_form_add",
-                                             template: "watchlists/_add_form",
-                                             locals: { watchlist: @watchlist, context: :new })
+    render template: "watchlists/_add_form",
+           locals: { watchlist: @watchlist, context: :new },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def update_order
