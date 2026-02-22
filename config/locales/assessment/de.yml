@@ -127,6 +127,12 @@ de:
     settings: 'Einstellungen'
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
+    grade_scheme:
+      label: 'Notenschema'
+      created: 'Notenschema gespeichert.'
+      updated: 'Notenschema aktualisiert.'
+      applied: 'Notenschema erfolgreich angewendet.'
+      not_found: 'Notenschema nicht gefunden.'
     statistics_analysis: 'Statistiken & Analyse'
     no_points_yet: 'Noch keine Punkte eingetragen.'
     point_grid:

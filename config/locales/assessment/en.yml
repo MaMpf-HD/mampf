@@ -130,6 +130,12 @@ en:
     no_points_yet: 'No points have been entered yet.'
     point_grid:
       total: 'Total'
+    grade_scheme:
+      label: 'Grade Scheme'
+      created: 'Grade scheme saved.'
+      updated: 'Grade scheme updated.'
+      applied: 'Grade scheme applied successfully.'
+      not_found: 'Grade scheme not found.'
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
