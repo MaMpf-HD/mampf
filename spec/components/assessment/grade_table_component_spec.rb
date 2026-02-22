@@ -98,11 +98,9 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "lists absent in the summary section" do
         render_inline(component)
         expect(rendered_content).to include(
-          I18n.t("assessment.grade_table.absent")
-        )
-        expect(rendered_content).to include(
           absent_participation.user.tutorial_name
         )
+        expect(rendered_content).to include("5.0")
       end
 
       it "reports any_excluded? as true" do
@@ -127,11 +125,9 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "lists exempt in the summary section" do
         render_inline(component)
         expect(rendered_content).to include(
-          I18n.t("assessment.grade_table.exempt")
-        )
-        expect(rendered_content).to include(
           exempt_participation.user.tutorial_name
         )
+        expect(rendered_content).to include("&mdash;")
       end
 
       it "reports any_excluded? as true" do
@@ -169,9 +165,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "renders both table and summary" do
         render_inline(component)
         expect(rendered_content).to include("1.7")
-        expect(rendered_content).to include(
-          I18n.t("assessment.grade_table.absent")
-        )
+        expect(rendered_content).to include("5.0")
       end
     end
   end
@@ -343,28 +337,24 @@ RSpec.describe(GradeTableComponent, type: :component) do
     end
     let(:component) { described_class.new(assessment: assessment) }
 
-    it "renders excluded card with heading and badge count" do
+    it "renders separate absent and exempt cards" do
       create(:assessment_participation, :absent,
              assessment: assessment, tutorial: tutorial)
       create(:assessment_participation, :exempt,
              assessment: assessment, tutorial: tutorial)
 
       render_inline(component)
-      expect(rendered_content).to include(
-        I18n.t("assessment.grade_table.excluded_heading")
-      )
-      expect(rendered_content).to include("2")
+      expect(rendered_content).to include("bi-person-x")
+      expect(rendered_content).to include("bi-person-dash")
     end
 
-    it "shows each excluded student with their status" do
+    it "shows absent student with grade badge" do
       absent = create(:assessment_participation, :absent,
                       assessment: assessment, tutorial: tutorial)
 
       render_inline(component)
       expect(rendered_content).to include(absent.user.tutorial_name)
-      expect(rendered_content).to include(
-        I18n.t("assessment.grade_table.absent")
-      )
+      expect(rendered_content).to include("5.0")
     end
 
     it "does not render the card when no excluded students" do
@@ -372,9 +362,8 @@ RSpec.describe(GradeTableComponent, type: :component) do
              assessment: assessment, tutorial: tutorial)
 
       render_inline(component)
-      expect(rendered_content).not_to include(
-        I18n.t("assessment.grade_table.excluded_heading")
-      )
+      expect(rendered_content).not_to include("bi-person-x")
+      expect(rendered_content).not_to include("bi-person-dash")
     end
   end
 end
