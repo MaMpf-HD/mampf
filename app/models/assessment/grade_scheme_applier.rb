@@ -45,7 +45,14 @@ module Assessment
         reviewed_participations
       end
 
-      return if already_applied? && target.none?
+      absent_target = if already_applied?
+        ungraded_absent_participations
+      else
+        absent_participations
+      end
+
+      nothing_to_do = target.none? && absent_target.none?
+      return if already_applied? && nothing_to_do
 
       now = Time.current
 
@@ -54,6 +61,14 @@ module Assessment
           grade = compute_grade_for(participation)
           participation.update!(
             grade_numeric: grade,
+            grader: applied_by,
+            graded_at: now
+          )
+        end
+
+        absent_target.find_each do |participation|
+          participation.update!(
+            grade_numeric: 5.0,
             grader: applied_by,
             graded_at: now
           )
@@ -76,6 +91,14 @@ module Assessment
 
       def ungraded_reviewed_participations
         reviewed_participations.where(grade_numeric: nil)
+      end
+
+      def absent_participations
+        @assessment.assessment_participations.where(status: :absent)
+      end
+
+      def ungraded_absent_participations
+        absent_participations.where(grade_numeric: nil)
       end
 
       def already_applied?

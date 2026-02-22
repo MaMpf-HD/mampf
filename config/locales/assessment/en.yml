@@ -146,19 +146,29 @@ en:
       edit_button: 'Edit Scheme'
       preview_button: 'Preview Grades'
       apply_button: 'Apply Scheme'
-      apply_confirm: 'This will assign grades to all reviewed students. Continue?'
+      apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades were computed %{time} ago.'
       summary:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'
         fail_rate: 'Fail rate'
+        absent_note:
+          one: '%{count} absent student receives 5.0'
+          other: '%{count} absent students receive 5.0'
+        exempt_note:
+          one: '%{count} exempt student (no grade)'
+          other: '%{count} exempt students (no grade)'
       preview:
         title: 'Grade Preview'
         back: 'Back'
         reviewed: 'Reviewed'
         passed: 'Passed'
         failed: 'Failed'
+        absent_title:
+          one: '%{count} Absent Student'
+          other: '%{count} Absent Students'
+        absent_reason: 'absent'
         col_name: 'Name'
         col_tutorial: 'Tutorial'
         col_points: 'Points'

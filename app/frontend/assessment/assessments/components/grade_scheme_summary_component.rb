@@ -62,6 +62,20 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     (fail_count.to_f / total_reviewed * 100).round(1)
   end
 
+  def absent_count
+    @absent_count ||= assessment.assessment_participations
+                                .where(status: :absent).count
+  end
+
+  def exempt_count
+    @exempt_count ||= assessment.assessment_participations
+                                .where(status: :exempt).count
+  end
+
+  def any_excluded?
+    absent_count.positive? || exempt_count.positive?
+  end
+
   def bar_width(band)
     return 0 if max_count.zero?
 

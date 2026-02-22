@@ -26,6 +26,14 @@ class GradePreviewComponent < ViewComponent::Base
     total_reviewed - pass_count
   end
 
+  def absent_rows
+    @absent_rows ||= build_absent_rows
+  end
+
+  def any_absent?
+    absent_rows.any?
+  end
+
   def pass_rate
     return 0.0 if total_reviewed.zero?
 
@@ -90,5 +98,21 @@ class GradePreviewComponent < ViewComponent::Base
       sorted = bands.sort_by { |b| -b["min_points"] }
       band = sorted.find { |b| points >= b["min_points"] }
       band ? band["grade"].to_f : 5.0
+    end
+
+    def build_absent_rows
+      assessment
+        .assessment_participations
+        .where(status: :absent)
+        .joins(:user)
+        .includes(:user, :tutorial)
+        .order(:tutorial_id, "users.name")
+        .map do |p|
+          {
+            name: p.user.name,
+            tutorial: p.tutorial&.title,
+            current_grade: p.grade_numeric
+          }
+        end
     end
 end
