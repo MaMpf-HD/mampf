@@ -81,6 +81,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << submissions_tab if pointable? && assessment&.requires_submission
         t << points_tab if pointable?
         t << grades_tab if gradable?
+        t << grade_scheme_tab if pointable? && gradable?
         t << roster_tab if exam?
         t << statistics_tab unless assessable.is_a?(Talk)
       end
@@ -152,6 +153,14 @@ class AssessmentDashboardComponent < ViewComponent::Base
         "grades",
         I18n.t("assessment.grades"),
         GradeTableComponent.new(assessment: assessment)
+      )
+    end
+
+    def grade_scheme_tab
+      TabConfig.new(
+        "grade_scheme",
+        I18n.t("assessment.grade_scheme.label"),
+        GradeSchemeTabComponent.new(assessment: assessment)
       )
     end
 
