@@ -23,6 +23,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
       result = applier.analyze_distribution
       expect(result[:count]).to eq(0)
       expect(result[:min]).to be_nil
+      expect(result[:std_dev]).to be_nil
       expect(result[:max_possible]).to eq(60)
     end
 
@@ -36,6 +37,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
       expect(result[:max]).to eq(60)
       expect(result[:mean]).to eq(43)
       expect(result[:median]).to eq(45)
+      expect(result[:std_dev]).to eq(16.05)
       expect(result[:max_possible]).to eq(60)
       expect(result[:percentiles]).to include(50)
     end

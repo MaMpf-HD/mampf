@@ -13,15 +13,13 @@
     </div>
   <% end %>
 
+  <% if reviewed_count.positive? %>
+    <%= render DistributionAnalysisComponent.new(assessment: assessment) %>
+  <% end %>
+
   <% case phase %>
   <% when :no_scheme %>
-    <div class="text-center py-4">
-      <i class="bi bi-bar-chart-line display-4 text-muted mb-3 d-block"></i>
-
-      <p class="text-muted mb-3">
-        <%= t("assessment.grade_scheme.distribution_hint") %>
-      </p>
-
+    <div class="text-center py-3">
       <%= link_to new_scheme_path,
                   class: "btn btn-primary btn-lg",
                   data: { turbo_stream: true } do %>

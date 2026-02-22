@@ -10,13 +10,15 @@ module Assessment
       return empty_distribution if points.empty?
 
       sorted = points.sort
+      mean = sorted.sum.to_f / sorted.size
 
       {
         count: sorted.size,
         min: sorted.first,
         max: sorted.last,
-        mean: (sorted.sum.to_f / sorted.size).round(2),
+        mean: mean.round(2),
         median: median(sorted),
+        std_dev: std_dev(sorted, mean),
         percentiles: calculate_percentiles(sorted),
         max_possible: @assessment.effective_total_points
       }
@@ -121,6 +123,13 @@ module Assessment
         end
       end
 
+      def std_dev(sorted, mean)
+        return 0.0 if sorted.size < 2
+
+        variance = sorted.sum { |x| (x - mean)**2 } / (sorted.size - 1).to_f
+        Math.sqrt(variance).round(2)
+      end
+
       def calculate_percentiles(sorted)
         {
           10 => percentile_at(sorted, 0.1),
@@ -144,6 +153,7 @@ module Assessment
           max: nil,
           mean: nil,
           median: nil,
+          std_dev: nil,
           percentiles: {},
           max_possible: @assessment.effective_total_points
         }
