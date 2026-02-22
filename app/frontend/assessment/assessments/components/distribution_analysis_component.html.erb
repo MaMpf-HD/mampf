@@ -6,90 +6,75 @@
     </div>
   <% else %>
     <h5 class="mb-3"><%= t("assessment.distribution.title") %></h5>
-    <div class="card mb-4">
-      <div class="card-body">
-        <h6 class="card-title mb-3">
-          <%= t("assessment.distribution.histogram_title") %>
-        </h6>
+    <div class="card mb-3">
+      <div class="card-body pb-2">
+        <div class="position-relative" style="height: 160px; padding: 0 10px;">
+          <div class="d-flex align-items-end gap-1 h-100">
+            <% bins.each do |bin| %>
+              <% pct = max_bin_count.positive? ? (bin[:count].to_f / max_bin_count * 100).round : 0 %>
 
-        <div
-          class="d-flex align-items-end gap-1"
-          style="height: 200px; padding: 0 10px;"
-        >
-          <% bins.each do |bin| %>
-            <% pct = max_bin_count.positive? ? (bin[:count].to_f / max_bin_count * 100).round : 0 %>
+              <div
+                class="flex-fill rounded-top"
+                style="height: <%= pct %>%;
+                          min-height: <%= bin[:count].positive? ? 4 : 0 %>px;
+                          background-color: #0d6efd;"
+                title="<%= bin[:low] %>\u2013<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
+                data-bs-toggle="tooltip"
+              ></div>
+            <% end %>
+          </div>
 
+          <% threshold_markers.each do |marker| %>
             <div
-              class="flex-fill rounded-top"
-              style="height: <%= pct %>%;
-                        min-height: <%= bin[:count].positive? ? 4 : 0 %>px;
-                        background-color: #0d6efd;"
-              title="<%= bin[:low] %>–<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
-              data-bs-toggle="tooltip"
+              class="position-absolute"
+              style="left: <%= marker[:pct] %>%;
+                     top: 0; bottom: 0; width: 2px;
+                     background-color: <%= marker[:color] %>;
+                     opacity: 0.8;
+                     pointer-events: none;"
             ></div>
+
+            <span
+              class="position-absolute fw-bold small"
+              style="left: <%= marker[:pct] %>%;
+                     top: -2px;
+                     transform: translateX(-50%);
+                     color: <%= marker[:color] %>;
+                     font-size: 0.7rem;"
+              title="<%= marker[:points] %> <%= t('assessment.distribution.points') %>"
+            >
+              <%= marker[:label] %>
+            </span>
           <% end %>
         </div>
 
-        <div class="d-flex justify-content-between px-2 mt-1">
+        <div class="d-flex justify-content-between px-2 mt-1 mb-2">
           <small class="text-muted">0</small>
           <small class="text-muted"><%= distribution[:max_possible] %></small>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h6 class="mb-3">
-              <%= t("assessment.distribution.statistics_title") %>
-            </h6>
 
-            <table class="table table-sm mb-0">
-              <tbody>
-                <% stat_rows.each do |label, value, bold| %>
-                  <tr>
-                    <th style="width: 60%"><%= label %></th>
+        <div class="d-flex flex-wrap gap-3 text-muted small border-top pt-2">
+          <span>
+            <strong><%= distribution[:count] %></strong>/<%= total_count %>
+            <%= t("assessment.distribution.students_reviewed").downcase %>
+          </span>
 
-                    <td class="text-end">
-                      <% if bold %>
-                        <strong><%= value %></strong>
-                      <% else %>
-                        <%= value %>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+          <span>
+            &empty; <strong><%= format_points(distribution[:mean]) %></strong>
+          </span>
 
-      <div class="col-md-6">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h6 class="mb-3">
-              <%= t("assessment.distribution.percentiles_title") %>
-            </h6>
+          <span>
+            ~ <strong><%= format_points(distribution[:median]) %></strong>
+          </span>
 
-            <table class="table table-sm mb-0">
-              <tbody>
-                <% percentile_rows.each do |label, value, bold| %>
-                  <tr>
-                    <th style="width: 60%"><%= label %></th>
+          <span>
+            &sigma; <strong><%= distribution[:std_dev]&.to_s || "–" %></strong>
+          </span>
 
-                    <td class="text-end">
-                      <% if bold %>
-                        <strong><%= value %></strong>
-                      <% else %>
-                        <%= value %>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
+          <span>
+            <%= format_points(distribution[:min]) %>&ndash;
+            <%= format_points(distribution[:max]) %>
+          </span>
         </div>
       </div>
     </div>

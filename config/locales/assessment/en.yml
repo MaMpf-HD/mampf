@@ -137,7 +137,8 @@ en:
       applied: 'Grade scheme applied successfully.'
       not_found: 'Grade scheme not found.'
       pending_title: 'Point entry in progress.'
-      pending_message: '%{pending} of %{total} students are still pending. The grade scheme will only apply to reviewed students.'
+      pending_message: '%{reviewed} of %{total} reviewed, %{pending} still pending.'
+      pending_breakdown: '%{absent} absent, %{exempt} exempt'
       distribution_hint: 'Review the point distribution and create a grade scheme to assign grades.'
       create_button: 'Create Grade Scheme'
       draft_title: 'Grade scheme configured.'
@@ -148,6 +149,10 @@ en:
       apply_confirm: 'This will assign grades to all reviewed students. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades were computed %{time} ago.'
+      summary:
+        title: 'Grade Bands'
+        pass_rate: 'Pass rate'
+        fail_rate: 'Fail rate'
       preview:
         title: 'Grade Preview'
         back: 'Back'
@@ -177,6 +182,7 @@ en:
         col_percentage: 'Percentage'
         manual_description: 'Manually configure each grade band boundary for full control.'
         manual_placeholder: 'Manual configuration coming soon'
+        regenerate_hint: 'Thresholds changed — regenerate bands before saving.'
         cancel: 'Cancel'
         save_draft: 'Save as Draft'
     distribution:

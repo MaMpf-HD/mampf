@@ -3,6 +3,9 @@
   data-controller="assessments--scheme-form"
   data-assessments--scheme-form-max-points-value="<%= max_points %>"
   data-assessments--scheme-form-student-points-value="<%= student_points_json %>"
+  data-assessments--scheme-form-pass-label-value="<%= t('assessment.grade_scheme.summary.pass_rate') %>"
+  data-assessments--scheme-form-fail-label-value="<%= t('assessment.grade_scheme.summary.fail_rate') %>"
+  data-assessments--scheme-form-regenerate-hint-value="<%= t('assessment.grade_scheme.form.regenerate_hint') %>"
 >
   <div class="card-header bg-light">
     <h5 class="mb-0"><%= t("assessment.grade_scheme.form.title") %></h5>
@@ -62,6 +65,7 @@
                   min="0"
                   max="<%= max_points %>"
                   data-assessments--scheme-form-target="excellenceInput"
+                  data-action="input->assessments--scheme-form#markDirty"
                 >
 
                 <span class="input-group-text">
@@ -88,6 +92,7 @@
                   min="0"
                   max="<%= max_points %>"
                   data-assessments--scheme-form-target="passingInput"
+                  data-action="input->assessments--scheme-form#markDirty"
                 >
 
                 <span class="input-group-text">
@@ -164,21 +169,35 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
-        <%= link_to t("assessment.grade_scheme.form.cancel"),
-                    cancel_path,
-                    class: "btn btn-secondary",
-                    data: { turbo_stream: true } %>
-
-        <button
-          type="submit"
-          class="btn btn-success"
-          data-assessments--scheme-form-target="submitButton"
-          disabled
+      <div
+        class="
+          d-flex justify-content-between align-items-center mt-4 border-top
+          pt-3
+        "
+      >
+        <small
+          class="text-danger d-none"
+          data-assessments--scheme-form-target="dirtyHint"
         >
-          <i class="bi bi-save me-2"></i>
-          <%= t("assessment.grade_scheme.form.save_draft") %>
-        </button>
+          <i class="bi bi-exclamation-triangle me-1"></i>
+        </small>
+
+        <div class="d-flex gap-2 ms-auto">
+          <%= link_to t("assessment.grade_scheme.form.cancel"),
+                      cancel_path,
+                      class: "btn btn-secondary",
+                      data: { turbo_stream: true } %>
+
+          <button
+            type="submit"
+            class="btn btn-success"
+            data-assessments--scheme-form-target="submitButton"
+            disabled
+          >
+            <i class="bi bi-save me-2"></i>
+            <%= t("assessment.grade_scheme.form.save_draft") %>
+          </button>
+        </div>
       </div>
     <% end %>
   </div>

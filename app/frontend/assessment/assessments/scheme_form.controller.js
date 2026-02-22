@@ -25,9 +25,19 @@ export default class extends Controller {
     "configField",
     "submitButton",
     "errorAlert",
+    "dirtyHint",
   ];
 
-  static values = { maxPoints: Number, studentPoints: Array };
+  static values = {
+    maxPoints: Number,
+    studentPoints: Array,
+    passLabel: { type: String, default: "Pass rate" },
+    failLabel: { type: String, default: "Fail rate" },
+    regenerateHint: {
+      type: String,
+      default: "Thresholds changed — regenerate bands before saving.",
+    },
+  };
 
   connect() {
     const raw = this.configFieldTarget.value;
@@ -82,6 +92,19 @@ export default class extends Controller {
     this.configFieldTarget.value = JSON.stringify(config);
     this.submitButtonTarget.disabled = false;
     this.bandsPreviewTarget.classList.remove("d-none");
+    this.clearDirty();
+  }
+
+  markDirty() {
+    if (!this.configFieldTarget.value) return;
+
+    this.submitButtonTarget.disabled = true;
+    this.dirtyHintTarget.textContent = this.regenerateHintValue;
+    this.dirtyHintTarget.classList.remove("d-none");
+  }
+
+  clearDirty() {
+    this.dirtyHintTarget.classList.add("d-none");
   }
 
   computeBands(excellence, passing, maxPoints) {
@@ -169,14 +192,22 @@ export default class extends Controller {
       const passCount = sorted
         .filter(b => parseFloat(b.grade) <= 4.0)
         .reduce((sum, b) => sum + (counts[b.grade] || 0), 0);
+      const failCount = total - passCount;
       const passRate = ((passCount / total) * 100).toFixed(1);
+      const failRate = ((failCount / total) * 100).toFixed(1);
       const tfoot = document.createElement("tfoot");
       tfoot.classList.add("table-light");
       tfoot.innerHTML = `
         <tr>
-          <th colspan="2">Pass rate:</th>
+          <th colspan="2">${this.passLabelValue}:</th>
           <th colspan="2" class="text-end">
             ${passRate}% (${passCount}/${total})
+          </th>
+        </tr>
+        <tr>
+          <th colspan="2">${this.failLabelValue}:</th>
+          <th colspan="2" class="text-end">
+            ${failRate}% (${failCount}/${total})
           </th>
         </tr>
       `;

@@ -65,6 +65,14 @@ class GradeSchemeTabComponent < ViewComponent::Base
     assessment.assessment_participations.where(status: :pending).count
   end
 
+  def absent_count
+    assessment.assessment_participations.where(status: :absent).count
+  end
+
+  def exempt_count
+    assessment.assessment_participations.where(status: :exempt).count
+  end
+
   def total_count
     assessment.assessment_participations.count
   end

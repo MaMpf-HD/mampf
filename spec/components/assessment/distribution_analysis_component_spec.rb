@@ -108,29 +108,13 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
 
       it "renders the histogram" do
         render_inline(component)
-        expect(rendered_content).to include(
-          I18n.t("assessment.distribution.histogram_title")
-        )
+        expect(rendered_content).to include("data-bs-toggle=\"tooltip\"")
       end
 
-      it "renders statistics card" do
+      it "renders inline statistics" do
         render_inline(component)
-        expect(rendered_content).to include(
-          I18n.t("assessment.distribution.statistics_title")
-        )
-        expect(rendered_content).to include(
-          I18n.t("assessment.distribution.mean")
-        )
-        expect(rendered_content).to include(
-          I18n.t("assessment.distribution.std_dev")
-        )
-      end
-
-      it "renders percentiles card" do
-        render_inline(component)
-        expect(rendered_content).to include(
-          I18n.t("assessment.distribution.percentiles_title")
-        )
+        expect(rendered_content).to include("&sigma;")
+        expect(rendered_content).to include("&empty;")
       end
 
       it "includes histogram bars with tooltips" do

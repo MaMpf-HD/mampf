@@ -134,7 +134,8 @@ de:
       applied: 'Notenschema erfolgreich angewendet.'
       not_found: 'Notenschema nicht gefunden.'
       pending_title: 'Punkteerfassung läuft.'
-      pending_message: '%{pending} von %{total} Studierenden stehen noch aus. Das Notenschema wird nur auf überprüfte Studierende angewendet.'
+      pending_message: '%{reviewed} von %{total} überprüft, %{pending} noch ausstehend.'
+      pending_breakdown: '%{absent} abwesend, %{exempt} befreit'
       distribution_hint: 'Überprüfen Sie die Punkteverteilung und erstellen Sie ein Notenschema zur Notenvergabe.'
       create_button: 'Notenschema erstellen'
       draft_title: 'Notenschema konfiguriert.'
@@ -145,6 +146,10 @@ de:
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten wurden vor %{time} berechnet.'
+      summary:
+        title: 'Notenstufen'
+        pass_rate: 'Bestehensquote'
+        fail_rate: 'Durchfallquote'
       preview:
         title: 'Notenvorschau'
         back: 'Zurück'
@@ -174,6 +179,7 @@ de:
         col_percentage: 'Anteil'
         manual_description: 'Konfigurieren Sie jede Notenstufe manuell für volle Kontrolle.'
         manual_placeholder: 'Manuelle Konfiguration kommt bald'
+        regenerate_hint: 'Schwellenwerte geändert — bitte Notenstufen neu generieren.'
         cancel: 'Abbrechen'
         save_draft: 'Als Entwurf speichern'
     distribution:

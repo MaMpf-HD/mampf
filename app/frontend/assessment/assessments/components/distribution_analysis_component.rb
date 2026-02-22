@@ -3,12 +3,17 @@ class DistributionAnalysisComponent < ViewComponent::Base
 
   BIN_COUNT = 10
 
-  def initialize(assessment:)
+  def initialize(assessment:, grade_scheme: nil)
     super()
     @assessment = assessment
+    @grade_scheme = grade_scheme
   end
 
-  attr_reader :assessment
+  attr_reader :assessment, :grade_scheme
+
+  def threshold_markers
+    @threshold_markers ||= build_threshold_markers
+  end
 
   def distribution
     @distribution ||= begin
@@ -87,6 +92,32 @@ class DistributionAnalysisComponent < ViewComponent::Base
       end
 
       bins
+    end
+
+    def build_threshold_markers
+      return [] unless grade_scheme&.config&.dig("bands")
+
+      max = distribution[:max_possible] || distribution[:max] || 100
+      return [] if max.nil? || max.zero?
+
+      bands = grade_scheme.config["bands"]
+      markers = []
+
+      passing = bands.find { |b| b["grade"] == "4.0" }
+      if passing
+        pct = (passing["min_points"].to_f / max * 100).clamp(0, 100)
+        markers << { label: "4.0", points: passing["min_points"], pct: pct,
+                     color: "#dc3545" }
+      end
+
+      excellence = bands.find { |b| b["grade"] == "1.0" }
+      if excellence
+        pct = (excellence["min_points"].to_f / max * 100).clamp(0, 100)
+        markers << { label: "1.0", points: excellence["min_points"], pct: pct,
+                     color: "#198754" }
+      end
+
+      markers
     end
 
     def format_points(value)
