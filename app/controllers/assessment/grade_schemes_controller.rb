@@ -51,11 +51,7 @@ module Assessment
     def preview
       authorize! :update, @assessment
 
-      applier = GradeSchemeApplier.new(@grade_scheme)
-      @distribution = applier.analyze_distribution
-      @preview_data = applier.preview
-
-      render_dashboard("grade_scheme")
+      render_dashboard("grade_scheme", preview_mode: true)
     end
 
     def apply
@@ -96,22 +92,29 @@ module Assessment
       end
 
       def grade_scheme_params
-        raw = params.expect(assessment_grade_scheme: [:kind, :config_json])
-        result = { config: JSON.parse(raw[:config_json]) }
-        result[:kind] = raw[:kind] if raw[:kind].present?
+        config_json = params.require(:config_json)
+        result = { config: JSON.parse(config_json) }
+        result[:kind] = params[:kind] if params[:kind].present?
         result
       end
 
-      def render_dashboard(tab, notice: nil, alert: nil, status: :ok)
-        flash.now[:notice] = notice if notice
-        flash.now[:alert] = alert if alert
-
+      def render_dashboard(tab, notice: nil, alert: nil, status: :ok,
+                           preview_mode: false)
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              dashboard_container,
-              build_dashboard_component(active_tab: tab)
-            ), status: status
+            flash.now[:notice] = notice if notice
+            flash.now[:alert] = alert if alert
+
+            streams = [
+              turbo_stream.update(
+                dashboard_container,
+                build_dashboard_component(
+                  active_tab: tab, preview_mode: preview_mode
+                )
+              )
+            ]
+            streams << stream_flash if flash.present?
+            render turbo_stream: streams, status: status
           end
           format.html do
             redirect_to_dashboard(tab: tab, notice: notice, alert: alert)
@@ -136,7 +139,7 @@ module Assessment
         end
       end
 
-      def build_dashboard_component(active_tab: nil)
+      def build_dashboard_component(active_tab: nil, preview_mode: false)
         assessable = @assessment.assessable
         AssessmentDashboardComponent.new(
           assessable: assessable,
@@ -144,7 +147,8 @@ module Assessment
           lecture: assessable.lecture,
           active_tab: active_tab,
           tasks: @assessment.tasks.order(:position),
-          grade_scheme: @grade_scheme
+          grade_scheme: @grade_scheme,
+          preview_mode: preview_mode
         )
       end
 

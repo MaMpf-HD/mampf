@@ -37,7 +37,8 @@
                   data: { turbo_stream: true } do |f| %>
       <%= f.hidden_field :kind, value: "banded" %>
 
-      <%= f.hidden_field :config_json, value: "",
+      <%= f.hidden_field :config_json,
+            value: editing? ? grade_scheme.config.to_json : "",
             data: { assessments__scheme_form_target: "configField" } %>
 
       <div class="tab-content">
@@ -111,7 +112,7 @@
 
           <div
             data-assessments--scheme-form-target="bandsPreview"
-            class="d-none"
+            class="<%= editing? ? '' : 'd-none' %>"
           >
             <h6 class="mb-2">
               <%= t("assessment.grade_scheme.form.preview_title") %>

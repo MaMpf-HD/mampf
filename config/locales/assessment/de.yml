@@ -145,6 +145,18 @@ de:
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten wurden vor %{time} berechnet.'
+      preview:
+        title: 'Notenvorschau'
+        back: 'Zurück'
+        reviewed: 'Überprüft'
+        passed: 'Bestanden'
+        failed: 'Nicht bestanden'
+        col_name: 'Name'
+        col_tutorial: 'Tutorium'
+        col_points: 'Punkte'
+        col_current: 'Aktuelle Note'
+        col_proposed: 'Vorgeschlagene Note'
+        changed: 'Note würde sich ändern'
       form:
         title: 'Notenschema konfigurieren'
         two_point_auto: 'Zwei-Punkte-Automatik'

@@ -62,10 +62,8 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
         expect do
           post(assessment_assessment_grade_schemes_path(assessment),
                params: {
-                 assessment_grade_scheme: {
-                   kind: "banded",
-                   config_json: valid_config.to_json
-                 }
+                 kind: "banded",
+                 config_json: valid_config.to_json
                },
                as: :turbo_stream)
         end.to change(Assessment::GradeScheme, :count).by(1)
@@ -74,10 +72,8 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       it "renders turbo_stream" do
         post assessment_assessment_grade_schemes_path(assessment),
              params: {
-               assessment_grade_scheme: {
-                 kind: "banded",
-                 config_json: valid_config.to_json
-               }
+               kind: "banded",
+               config_json: valid_config.to_json
              },
              as: :turbo_stream
         expect(response).to have_http_status(:success)
@@ -90,10 +86,8 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
         expect do
           post(assessment_assessment_grade_schemes_path(assessment),
                params: {
-                 assessment_grade_scheme: {
-                   kind: "banded",
-                   config_json: {}.to_json
-                 }
+                 kind: "banded",
+                 config_json: {}.to_json
                },
                as: :turbo_stream)
         end.not_to change(Assessment::GradeScheme, :count)
@@ -102,10 +96,8 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       it "renders unprocessable_content" do
         post assessment_assessment_grade_schemes_path(assessment),
              params: {
-               assessment_grade_scheme: {
-                 kind: "banded",
-                 config_json: {}.to_json
-               }
+               kind: "banded",
+               config_json: {}.to_json
              },
              as: :turbo_stream
         expect(response).to have_http_status(:unprocessable_content)
@@ -128,9 +120,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       it "updates the grade scheme" do
         patch assessment_assessment_grade_scheme_path(assessment, grade_scheme),
               params: {
-                assessment_grade_scheme: {
-                  config_json: new_config.to_json
-                }
+                config_json: new_config.to_json
               },
               as: :turbo_stream
         expect(response).to have_http_status(:success)

@@ -1,14 +1,19 @@
 class GradeSchemeTabComponent < ViewComponent::Base
-  def initialize(assessment:, grade_scheme: nil)
+  def initialize(assessment:, grade_scheme: nil, preview_mode: false)
     super()
     @assessment = assessment
     @grade_scheme = grade_scheme
+    @preview_mode = preview_mode
   end
 
   attr_reader :assessment, :grade_scheme
 
   def show_form?
-    grade_scheme.present?
+    grade_scheme.present? && !preview_mode?
+  end
+
+  def preview_mode?
+    @preview_mode && assessment.grade_scheme&.persisted?
   end
 
   def phase

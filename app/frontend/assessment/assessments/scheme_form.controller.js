@@ -29,6 +29,23 @@ export default class extends Controller {
 
   static values = { maxPoints: Number, studentPoints: Array };
 
+  connect() {
+    const raw = this.configFieldTarget.value;
+    if (!raw) return;
+
+    try {
+      const config = JSON.parse(raw);
+      if (config.bands && config.bands.length > 0) {
+        this.renderPreview(config.bands);
+        this.submitButtonTarget.disabled = false;
+        this.bandsPreviewTarget.classList.remove("d-none");
+      }
+    }
+    catch {
+      // ignore invalid pre-populated JSON
+    }
+  }
+
   generate() {
     this.hideError();
 

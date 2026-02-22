@@ -148,6 +148,18 @@ en:
       apply_confirm: 'This will assign grades to all reviewed students. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades were computed %{time} ago.'
+      preview:
+        title: 'Grade Preview'
+        back: 'Back'
+        reviewed: 'Reviewed'
+        passed: 'Passed'
+        failed: 'Failed'
+        col_name: 'Name'
+        col_tutorial: 'Tutorial'
+        col_points: 'Points'
+        col_current: 'Current Grade'
+        col_proposed: 'Proposed Grade'
+        changed: 'Grade would change'
       form:
         title: 'Configure Grade Scheme'
         two_point_auto: 'Two-Point Auto'

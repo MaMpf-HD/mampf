@@ -6,7 +6,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
   # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
                  active_tab: nil, tasks: nil, task: nil,
-                 grade_scheme: nil)
+                 grade_scheme: nil, preview_mode: false)
     super()
     @assessable = assessable
     @assessment = assessment
@@ -14,6 +14,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     @tasks = tasks || assessment&.tasks&.order(:position) || []
     @task = task
     @grade_scheme = grade_scheme
+    @preview_mode = preview_mode
     @active_tab = active_tab || default_tab
   end
   # rubocop: enable Metrics/ParameterLists
@@ -165,7 +166,8 @@ class AssessmentDashboardComponent < ViewComponent::Base
         I18n.t("assessment.grade_scheme.label"),
         GradeSchemeTabComponent.new(
           assessment: assessment,
-          grade_scheme: grade_scheme
+          grade_scheme: grade_scheme,
+          preview_mode: @preview_mode
         )
       )
     end

@@ -17,7 +17,11 @@
     <%= render DistributionAnalysisComponent.new(assessment: assessment) %>
   <% end %>
 
-  <% if show_form? %>
+  <% if preview_mode? %>
+    <%= render GradePreviewComponent.new(
+          assessment: assessment,
+          grade_scheme: assessment.grade_scheme) %>
+  <% elsif show_form? %>
     <%= render SchemeFormComponent.new(
           assessment: assessment,
           grade_scheme: grade_scheme) %>
