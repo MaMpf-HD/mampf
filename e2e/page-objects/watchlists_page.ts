@@ -68,4 +68,20 @@ export class WatchlistsPage {
   async getDescription(): Promise<string | null> {
     return await this.page.locator(".card-body").textContent();
   }
+
+  async swapEntrys(fromId: number, toId: number) {
+    await this.page.dragAndDrop(`div[data-id="${fromId}"] .mampf-card-header`, `div[data-id="${toId}"]`);
+  }
+
+  async getEntryOrder(): Promise<number[]> {
+    const entryElements = await this.page.locator(".media-grid").all();
+    const ids = [];
+    for (const entryElement of entryElements) {
+      const id = await entryElement.getAttribute("data-id");
+      if (id) {
+        ids.push(parseInt(id));
+      }
+    }
+    return ids;
+  }
 }

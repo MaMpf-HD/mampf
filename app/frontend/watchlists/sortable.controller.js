@@ -22,8 +22,6 @@ export default class extends Controller {
       this.element.querySelectorAll(".media-grid"),
     ).map(el => el.dataset.id);
 
-    console.log("Order to send:", order);
-
     const queryParams = new URLSearchParams({
       order: JSON.stringify(order),
       id,
