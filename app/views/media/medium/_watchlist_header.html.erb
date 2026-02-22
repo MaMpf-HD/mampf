@@ -1,0 +1,37 @@
+<% if from == "watchlist" %>
+  <% if @watchlist.owned_by?(current_user) %>
+    <%= link_to '',
+                watchlist_entry_path(entry,
+                                    watchlist: @watchlist.id,
+                                    reverse: params[:reverse],
+                                    all: params[:all],
+                                    page: params[:page],
+                                    per: params[:per]),
+                class: 'btn bi bi-x-circle-fill',
+                style: 'text-decoration: none;',
+                data: { toggle: 'tooltip',
+                        placement: 'bottom',
+                        confirm: t('watchlist_entry.remove_confirm') },
+                title: t('watchlist_entry.remove'),
+                method: :delete %>
+  <% end %>
+<% else %>
+  <% watchlists = medium.containing_watchlists(current_user) %>
+  <% if !watchlists.empty? %>
+    <%= link_to '',
+                watchlist_path(watchlists.first),
+                class: 'btn p-2 bi bi-bookmark-fill',
+                data: { toggle: 'tooltip',
+                        placement: 'bottom' },
+                title: t('watchlist_entry.list',
+                        count: watchlists.size,
+                        watchlists: medium.containing_watchlists_names(current_user).join(", ")) %>
+  <% end %>
+  <%= link_to '',
+              add_medium_to_watchlist_path(medium),
+              class: 'btn p-2 bi bi-tv-fill',
+              data: { toggle: 'tooltip',
+                      placement: 'bottom',
+                      turbo_frame: 'watchlist_form_add' },
+              title: t('watchlist.add') %>
+<% end %>
