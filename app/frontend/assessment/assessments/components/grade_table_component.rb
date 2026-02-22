@@ -44,6 +44,14 @@ class GradeTableComponent < ViewComponent::Base
     absent_participations.any? || exempt_participations.any?
   end
 
+  def absent_grade_display(participation)
+    if participation.grade_numeric
+      participation.grade_numeric.to_s
+    else
+      "5.0"
+    end
+  end
+
   def grade_display(participation)
     return "\u2014" unless participation.grade_numeric
 
