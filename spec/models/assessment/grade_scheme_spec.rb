@@ -49,12 +49,10 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
 
     it "produces the same hash regardless of key order" do
       config = {
-        "bands" => [{ "grade" => "1.0", "min_points" => 54,
-                      "max_points" => 60 }]
+        "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
       }
       reordered = {
-        "bands" => [{ "max_points" => 60, "grade" => "1.0",
-                      "min_points" => 54 }]
+        "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
       }
       s1 = FactoryBot.create(:assessment_grade_scheme, config: config)
       s2 = FactoryBot.create(:assessment_grade_scheme, config: reordered)
@@ -67,7 +65,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
 
       new_config = scheme.config.merge(
         "bands" => scheme.config["bands"] + [
-          { "min_points" => 61, "max_points" => 70, "grade" => "1.0" }
+          { "min_points" => 61, "grade" => "1.0" }
         ]
       )
       scheme.update!(config: new_config)
@@ -138,7 +136,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       it "is invalid when bands mix min_points and min_pct" do
         mixed_config = {
           "bands" => [
-            { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
+            { "min_points" => 54, "grade" => "1.0" },
             { "min_pct" => 80, "max_pct" => 89.99, "grade" => "1.3" }
           ]
         }
@@ -150,8 +148,8 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       it "is invalid when a band is missing a grade" do
         config = {
           "bands" => [
-            { "min_points" => 54, "max_points" => 60, "grade" => "1.0" },
-            { "min_points" => 0, "max_points" => 53 }
+            { "min_points" => 54, "grade" => "1.0" },
+            { "min_points" => 0 }
           ]
         }
         scheme = FactoryBot.build(:assessment_grade_scheme, config: config)
@@ -252,7 +250,6 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     it "assigns 1.0 starting at the excellence threshold" do
       band_1_0 = config["bands"].find { |b| b["grade"] == "1.0" }
       expect(band_1_0["min_points"]).to eq(54)
-      expect(band_1_0["max_points"]).to eq(60)
     end
 
     it "assigns 4.0 starting at the passing threshold" do
@@ -263,22 +260,27 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     it "assigns 5.0 below the passing threshold" do
       band_5_0 = config["bands"].find { |b| b["grade"] == "5.0" }
       expect(band_5_0["min_points"]).to eq(0)
-      expect(band_5_0["max_points"]).to eq(29)
     end
 
-    it "produces non-overlapping contiguous bands" do
+    it "produces strictly increasing min_points across passing grades" do
       sorted = config["bands"]
                .reject { |b| b["grade"] == "5.0" }
                .sort_by { |b| b["min_points"] }
       sorted.each_cons(2) do |lower, upper|
-        expect(upper["min_points"]).to eq(lower["max_points"] + 1)
+        expect(upper["min_points"]).to be > lower["min_points"]
       end
     end
 
-    it "covers 0 to max_points without gaps" do
+    it "covers 0 to the excellence threshold" do
       sorted = config["bands"].sort_by { |b| b["min_points"] }
       expect(sorted.first["min_points"]).to eq(0)
-      expect(sorted.last["max_points"]).to eq(60)
+      expect(sorted.last["min_points"]).to eq(54)
+    end
+
+    it "does not store max_points" do
+      config["bands"].each do |band|
+        expect(band).not_to have_key("max_points")
+      end
     end
 
     it "produces a valid banded config" do

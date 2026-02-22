@@ -112,13 +112,8 @@ export default class extends Controller {
 
     const bands = PASSING_GRADES.map((grade, i) => {
       const minPts = Math.round(passing + i * step);
-      const maxPts
-        = i === PASSING_GRADES.length - 1
-          ? maxPoints
-          : Math.round(passing + (i + 1) * step) - 1;
       return {
         min_points: minPts,
-        max_points: maxPts,
         grade: grade.toFixed(1),
       };
     });
@@ -126,7 +121,6 @@ export default class extends Controller {
     if (passing > 0) {
       bands.unshift({
         min_points: 0,
-        max_points: passing - 1,
         grade: "5.0",
       });
     }
@@ -169,7 +163,7 @@ export default class extends Controller {
 
       tr.innerHTML = `
         <td><span class="badge ${badgeClass}">${band.grade}</span></td>
-        <td>${band.min_points}\u2013${band.max_points} pts</td>
+        <td>\u2265\u00a0${band.min_points} pts</td>
         <td>
           <div class="d-flex align-items-center gap-2">
             <div style="flex: 1; height: 14px; background: #e9ecef;

@@ -34,19 +34,10 @@ module Assessment
 
       bands = PASSING_GRADES.each_with_index.map do |grade, i|
         min_pts = (passing + (i * step)).round
-        max_pts = if i == PASSING_GRADES.size - 1
-          max_points
-        else
-          (passing + ((i + 1) * step)).round - 1
-        end
-        { "min_points" => min_pts, "max_points" => max_pts, "grade" => grade.to_s }
+        { "min_points" => min_pts, "grade" => grade.to_s }
       end
 
-      if passing.positive?
-        bands.unshift(
-          { "min_points" => 0, "max_points" => passing - 1, "grade" => "5.0" }
-        )
-      end
+      bands.unshift({ "min_points" => 0, "grade" => "5.0" }) if passing.positive?
 
       { "bands" => bands }
     end
