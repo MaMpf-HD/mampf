@@ -149,6 +149,7 @@ en:
       apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades were computed %{time} ago.'
+      revise_button: 'Revise Scheme'
       summary:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'

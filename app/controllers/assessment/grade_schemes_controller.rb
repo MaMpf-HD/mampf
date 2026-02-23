@@ -11,7 +11,11 @@ module Assessment
     def new
       authorize! :update, @assessment
 
-      @grade_scheme = @assessment.build_grade_scheme(kind: :banded)
+      existing = @assessment.grade_scheme
+      @grade_scheme = @assessment.build_grade_scheme(
+        kind: :banded,
+        config: existing&.config || {}
+      )
       render_dashboard("grade_scheme")
     end
 
@@ -23,9 +27,18 @@ module Assessment
     def create
       authorize! :update, @assessment
 
-      @grade_scheme = @assessment.build_grade_scheme(grade_scheme_params)
+      @grade_scheme = @assessment.build_grade_scheme(
+        grade_scheme_params.merge(active: true)
+      )
 
-      if @grade_scheme.save
+      saved = false
+      GradeScheme.transaction do
+        @assessment.grade_scheme&.update!(active: false)
+        saved = @grade_scheme.save
+        raise(ActiveRecord::Rollback) unless saved
+      end
+
+      if saved
         render_dashboard("grade_scheme",
                          notice: I18n.t("assessment.grade_scheme.created"))
       else

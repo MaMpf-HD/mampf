@@ -135,7 +135,7 @@ de:
       not_found: 'Notenschema nicht gefunden.'
       pending_title: 'Punkteerfassung läuft.'
       pending_message: '%{reviewed} von %{total} überprüft, %{pending} noch ausstehend.'
-      pending_breakdown: '%{absent} abwesend, %{exempt} entschuldigt'
+      pending_breakdown: '%{absent} nicht angetreten, %{exempt} entschuldigt'
       distribution_hint: 'Überprüfen Sie die Punkteverteilung und erstellen Sie ein Notenschema zur Notenvergabe.'
       create_button: 'Notenschema erstellen'
       draft_title: 'Notenschema konfiguriert.'
@@ -146,6 +146,7 @@ de:
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten wurden vor %{time} berechnet.'
+      revise_button: 'Schema überarbeiten'
       summary:
         title: 'Notenstufen'
         pass_rate: 'Bestehensquote'

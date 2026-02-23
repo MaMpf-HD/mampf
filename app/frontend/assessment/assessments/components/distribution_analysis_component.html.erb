@@ -48,9 +48,23 @@
           <% end %>
         </div>
 
-        <div class="d-flex justify-content-between px-2 mt-1 mb-2">
-          <small class="text-muted">0</small>
-          <small class="text-muted"><%= distribution[:max_possible] %></small>
+        <div
+          class="position-relative mt-1 mb-2"
+          style="height: 18px; padding: 0 10px;"
+        >
+          <% max_possible = distribution[:max_possible] || 0 %>
+
+          <% axis_ticks.each do |tick| %>
+            <% pct = max_possible.positive? ? (tick.to_f / max_possible * 100).clamp(0, 100) : 0 %>
+
+            <small
+              class="text-muted position-absolute"
+              style="font-size: 0.7rem;
+                     <%= pct.zero? ? 'left: 0;' : pct >= 100 ? 'right: 0; transform: none;' : "left: #{pct}%; transform: translateX(-50%);" %>"
+            >
+              <%= tick %>
+            </small>
+          <% end %>
         </div>
 
         <div class="d-flex flex-wrap gap-3 text-muted small border-top pt-2">
@@ -59,19 +73,31 @@
             <%= t("assessment.distribution.students_reviewed").downcase %>
           </span>
 
-          <span>
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.mean") %>"
+          >
             &empty; <strong><%= format_points(distribution[:mean]) %></strong>
           </span>
 
-          <span>
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.median") %>"
+          >
             ~ <strong><%= format_points(distribution[:median]) %></strong>
           </span>
 
-          <span>
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.std_dev") %>"
+          >
             &sigma; <strong><%= distribution[:std_dev]&.to_s || "–" %></strong>
           </span>
 
-          <span>
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.minimum") %> / <%= t("assessment.distribution.maximum") %>"
+          >
             <%= format_points(distribution[:min]) %>&ndash;
             <%= format_points(distribution[:max]) %>
           </span>

@@ -78,20 +78,33 @@ class DistributionAnalysisComponent < ViewComponent::Base
       max_possible = distribution[:max_possible] || distribution[:max] || 100
       return [] if max_possible.nil? || max_possible.zero?
 
-      bin_width = (max_possible.to_f / BIN_COUNT).ceil
-      bins = Array.new(BIN_COUNT) do |i|
+      bin_count = [[10, (max_possible / 4.0).round].max, 30].min
+      bin_width = (max_possible.to_f / bin_count).ceil
+      bins = Array.new(bin_count) do |i|
         low = i * bin_width
         high = ((i + 1) * bin_width) - 1
-        high = max_possible if i == BIN_COUNT - 1
+        high = max_possible if i == bin_count - 1
         { low: low, high: high, count: 0 }
       end
 
       reviewed_points.each do |pts|
-        idx = [(pts / bin_width).to_i, BIN_COUNT - 1].min
+        idx = [(pts / bin_width).to_i, bin_count - 1].min
         bins[idx][:count] += 1
       end
 
       bins
+    end
+
+    def axis_ticks
+      max = distribution[:max_possible] || distribution[:max] || 0
+      return [0] if max.zero?
+
+      raw_step = max / 6.0
+      magnitude = 10**Math.log10(raw_step).floor
+      step = (raw_step / magnitude).ceil * magnitude
+      ticks = (0..max).step(step).to_a
+      ticks << max unless ticks.last == max
+      ticks
     end
 
     def build_threshold_markers
