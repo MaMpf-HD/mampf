@@ -156,7 +156,7 @@ de:
       apply_button: 'Schema anwenden'
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
-      applied_message: 'Noten berechnet am %{time} für %{count} Studierende.'
+      applied_message: 'Noten eingetragen am %{time} für %{count} Studierende.'
       ungraded_warning:
         one: '1 Studierender hat noch keine Note.'
         other: '%{count} Studierende haben noch keine Note.'

@@ -159,7 +159,7 @@ en:
       apply_button: 'Apply Scheme'
       apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
       applied_title: 'Grade scheme applied!'
-      applied_message: 'Grades computed on %{time} for %{count} students.'
+      applied_message: 'Grades recorded on %{time} for %{count} students.'
       ungraded_warning:
         one: '1 student has no grade yet.'
         other: '%{count} students have no grade yet.'
