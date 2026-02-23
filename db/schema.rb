@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_20_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -129,6 +129,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_20_000000) do
     t.boolean "active", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
     t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
     t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
     t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"

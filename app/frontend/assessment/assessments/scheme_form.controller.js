@@ -33,6 +33,7 @@ export default class extends Controller {
   static targets = [
     "excellenceInput",
     "passingInput",
+    "pointsStepInput",
     "bandsPreview",
     "bandsBody",
     "configField",
@@ -77,8 +78,9 @@ export default class extends Controller {
   generate() {
     this.hideError();
 
-    const excellence = parseInt(this.excellenceInputTarget.value, 10);
-    const passing = parseInt(this.passingInputTarget.value, 10);
+    const excellence = parseFloat(this.excellenceInputTarget.value);
+    const passing = parseFloat(this.passingInputTarget.value);
+    const step = parseFloat(this.pointsStepInputTarget.value) || 1;
     const maxPoints = this.maxPointsValue;
 
     if (isNaN(excellence) || isNaN(passing)) {
@@ -105,6 +107,15 @@ export default class extends Controller {
       return;
     }
 
+    const minRange = (PASSING_GRADES.length - 1) * step;
+    if (excellence - passing < minRange) {
+      this.showError(
+        `Range too narrow: need at least ${minRange} points `
+        + `(${PASSING_GRADES.length - 1} × step ${step}).`,
+      );
+      return;
+    }
+
     const config = this.computeBands(excellence, passing, maxPoints);
     this.renderPreview(config.bands);
     this.configFieldTarget.value = JSON.stringify(config);
@@ -126,10 +137,13 @@ export default class extends Controller {
   }
 
   computeBands(excellence, passing, maxPoints) {
-    const step = (excellence - passing) / (PASSING_GRADES.length - 1);
+    const pointsStep = parseFloat(this.pointsStepInputTarget.value) || 1;
+    const rawStep = (excellence - passing) / (PASSING_GRADES.length - 1);
 
     const bands = PASSING_GRADES.map((grade, i) => {
-      const minPts = Math.round(passing + i * step);
+      const raw = passing + i * rawStep;
+      const minPts
+        = Math.round(raw / pointsStep) * pointsStep;
       return {
         min_points: minPts,
         grade: grade.toFixed(1),
@@ -487,14 +501,19 @@ export default class extends Controller {
     this._moveMarkerTo(e.clientX);
   }
 
+  _snapToStep(value) {
+    const step = parseFloat(this.pointsStepInputTarget.value) || 1;
+    return Math.round(value / step) * step;
+  }
+
   _moveMarkerTo(clientX) {
     const rect = this._dragRect;
     const maxPoints = this.maxPointsValue;
+    const step = parseFloat(this.pointsStepInputTarget.value) || 1;
     const rawPct
       = ((clientX - rect.left) / rect.width) * 100;
-    let points = Math.round(
-      (Math.min(Math.max(rawPct, 0), 100) / 100)
-      * maxPoints,
+    let points = this._snapToStep(
+      (Math.min(Math.max(rawPct, 0), 100) / 100) * maxPoints,
     );
 
     const grade = parseFloat(
@@ -515,7 +534,7 @@ export default class extends Controller {
       if (prev) {
         points = Math.max(
           points,
-          parseInt(prev.dataset.minPoints, 10) + 1,
+          parseFloat(prev.dataset.minPoints) + step,
         );
       }
     }
@@ -526,13 +545,14 @@ export default class extends Controller {
       if (next) {
         points = Math.min(
           points,
-          parseInt(next.dataset.minPoints, 10) - 1,
+          parseFloat(next.dataset.minPoints) - step,
         );
       }
     }
 
     points = Math.max(points, 0);
     points = Math.min(points, maxPoints);
+    points = this._snapToStep(points);
 
     const pct = (points / maxPoints) * 100;
     this._dragMarker.style.left = `${pct}%`;

@@ -212,6 +212,8 @@ en:
         manual_description: 'Drag grade boundaries on the histogram to configure each band.'
         manual_placeholder: 'Manual configuration coming soon'
         regenerate_hint: 'Thresholds changed — regenerate bands before saving.'
+        points_step_label: 'Points Step'
+        points_step_hint: 'Smallest score increment (e.g. 0.5 for half-point grading). Controls boundary snapping.'
         cancel: 'Cancel'
         save_draft: 'Save as Draft'
     distribution:

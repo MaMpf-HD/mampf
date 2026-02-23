@@ -53,6 +53,10 @@ class SchemeFormComponent < ViewComponent::Base
     grade_scheme.config["bands"] || []
   end
 
+  def default_points_step
+    grade_scheme.points_step || 1
+  end
+
   def editing?
     grade_scheme.persisted?
   end

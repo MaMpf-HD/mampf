@@ -11,11 +11,14 @@ module Assessment
     def new
       authorize! :update, @assessment
 
-      existing_config = @assessment.grade_scheme&.config || {}
+      existing_scheme  = @assessment.grade_scheme
+      existing_config  = existing_scheme&.config || {}
+      existing_step    = existing_scheme&.points_step || 1
       @grade_scheme = GradeScheme.new(
         assessment: @assessment,
         kind: :banded,
-        config: existing_config
+        config: existing_config,
+        points_step: existing_step
       )
       render_dashboard("grade_scheme")
     end
@@ -115,6 +118,7 @@ module Assessment
         config_json = params.require(:config_json)
         result = { config: JSON.parse(config_json) }
         result[:kind] = params[:kind] if params[:kind].present?
+        result[:points_step] = params[:points_step].to_f if params[:points_step].present?
         result
       end
 

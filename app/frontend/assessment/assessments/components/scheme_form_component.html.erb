@@ -46,6 +46,34 @@
             value: editing? ? grade_scheme.config.to_json : "",
             data: { assessments__scheme_form_target: "configField" } %>
 
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <label class="form-label fw-bold mb-0 text-nowrap">
+          <%= t("assessment.grade_scheme.form.points_step_label") %>
+        </label>
+
+        <div class="input-group" style="max-width: 160px;">
+          <input
+            type="number"
+            autocomplete="off"
+            class="form-control form-control-sm"
+            name="points_step"
+            min="0.01"
+            step="any"
+            value="<%= default_points_step %>"
+            data-assessments--scheme-form-target="pointsStepInput"
+            data-action="input->assessments--scheme-form#markDirty"
+          >
+
+          <span class="input-group-text input-group-text-sm">
+            <%= t("assessment.distribution.points") %>
+          </span>
+        </div>
+
+        <small class="text-muted">
+          <%= t("assessment.grade_scheme.form.points_step_hint") %>
+        </small>
+      </div>
+
       <div class="tab-content">
         <div class="tab-pane fade show active" id="two-point-tab">
           <p class="text-muted">

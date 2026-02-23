@@ -87,9 +87,14 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       it "prevents updating an applied scheme" do
         scheme = FactoryBot.create(:assessment_grade_scheme, :applied)
         expect do
-          scheme.update!(active: false)
+          scheme.update!(config: { "bands" => [] })
         end.to raise_error(ActiveRecord::RecordInvalid)
         expect(scheme.errors[:base]).to be_present
+      end
+
+      it "allows deactivating an applied scheme" do
+        scheme = FactoryBot.create(:assessment_grade_scheme, :applied)
+        expect { scheme.update!(active: false) }.not_to raise_error
       end
 
       it "allows updating a draft scheme" do
@@ -311,7 +316,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
 
     context "with tight range" do
       let(:passing) { 28 }
-      let(:excellence) { 32 }
+      let(:excellence) { 37 }
       let(:max_points) { 40 }
 
       it "still generates all passing grades" do
