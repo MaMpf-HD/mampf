@@ -17,9 +17,15 @@ export default class extends Controller {
   }
 
   update(status) {
-    if (status === true)
-      document.querySelector("[data-requires-touch-display]").classList.remove("d-none");
-    else
-      document.querySelector("[data-requires-touch-display]").classList.add("d-none");
+    try {
+      const ele = document.querySelector("[data-requires-touch-display]");
+      if (!ele) return;
+
+      if (status === true)
+        ele.classList.remove("d-none");
+      else
+        ele.classList.add("d-none");
+    }
+    catch { /* Element might not exist, ignore */ }
   }
 }

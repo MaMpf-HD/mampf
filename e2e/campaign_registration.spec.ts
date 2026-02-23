@@ -87,8 +87,8 @@ test.describe("open fcfs tutorial campaign", () => {
       const page = new CampaignRegistrationPage(student.page, campaign.id);
       await page.goto();
       const buttons = student.page.locator('button:has-text("Register now")');
-      await buttons.nth(0).isDisabled();
-      await buttons.nth(1).isEnabled();
+      await expect(buttons.nth(0)).toBeDisabled();
+      await expect(buttons.nth(1)).toBeEnabled();
     });
   });
 
