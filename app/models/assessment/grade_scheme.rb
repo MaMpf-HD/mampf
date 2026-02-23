@@ -47,7 +47,7 @@ module Assessment
       def immutable_when_applied
         return if applied_at_was.blank?
 
-        protected_attrs = changed - ["applied_at", "applied_by_id", "updated_at"]
+        protected_attrs = changed - ["active", "applied_at", "applied_by_id", "updated_at"]
         return if protected_attrs.empty?
 
         errors.add(:base, :immutable_when_applied)

@@ -11,10 +11,11 @@ module Assessment
     def new
       authorize! :update, @assessment
 
-      existing = @assessment.grade_scheme
-      @grade_scheme = @assessment.build_grade_scheme(
+      existing_config = @assessment.grade_scheme&.config || {}
+      @grade_scheme = GradeScheme.new(
+        assessment: @assessment,
         kind: :banded,
-        config: existing&.config || {}
+        config: existing_config
       )
       render_dashboard("grade_scheme")
     end
@@ -27,8 +28,8 @@ module Assessment
     def create
       authorize! :update, @assessment
 
-      @grade_scheme = @assessment.build_grade_scheme(
-        grade_scheme_params.merge(active: true)
+      @grade_scheme = GradeScheme.new(
+        grade_scheme_params.merge(assessment: @assessment, active: true)
       )
 
       saved = false
@@ -39,6 +40,7 @@ module Assessment
       end
 
       if saved
+        @grade_scheme = nil
         render_dashboard("grade_scheme",
                          notice: I18n.t("assessment.grade_scheme.created"))
       else
@@ -52,6 +54,7 @@ module Assessment
       authorize! :update, @assessment
 
       if @grade_scheme.update(grade_scheme_params)
+        @grade_scheme = nil
         render_dashboard("grade_scheme",
                          notice: I18n.t("assessment.grade_scheme.updated"))
       else
