@@ -45,7 +45,7 @@ module Assessment
         { "min_points" => min_pts, "grade" => grade.to_s }
       end
 
-      pts_values = bands.map { |b| b["min_points"] }
+      pts_values = bands.pluck("min_points")
       if pts_values.uniq.size < pts_values.size
         raise(ArgumentError, "range too narrow: grade boundaries collapse with step=#{step}")
       end

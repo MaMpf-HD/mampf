@@ -51,7 +51,7 @@ class DistributionAnalysisComponent < ViewComponent::Base
       max_possible = distribution[:max_possible] || distribution[:max] || 100
       return [] if max_possible.nil? || max_possible.zero?
 
-      bin_count = [[10, (max_possible / 4.0).round].max, 30].min
+      bin_count = (max_possible / 4.0).round.clamp(10, 30)
       bin_width = (max_possible.to_f / bin_count).ceil
       bins = Array.new(bin_count) do |i|
         low = i * bin_width

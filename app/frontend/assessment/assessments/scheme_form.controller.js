@@ -141,7 +141,7 @@ export default class extends Controller {
       return;
     }
 
-    const config = this.computeBands(excellence, passing, maxPoints);
+    const config = this.computeBands(excellence, passing);
     this.renderPreview(config.bands);
     this.configFieldTarget.value = JSON.stringify(config);
     this.bandsPreviewTarget.classList.remove("d-none");
@@ -190,7 +190,7 @@ export default class extends Controller {
     this.submitButtonTarget.disabled = true;
   }
 
-  computeBands(excellence, passing, maxPoints) {
+  computeBands(excellence, passing) {
     const pointsStep = parseFloat(this.pointsStepInputTarget.value) || 1;
     const rawStep = (excellence - passing) / (PASSING_GRADES.length - 1);
 
@@ -457,7 +457,6 @@ export default class extends Controller {
       const result = this.computeBands(
         Math.round(max * 0.9),
         Math.round(max * 0.5),
-        max,
       );
       bands = result.bands;
     }

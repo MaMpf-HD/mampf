@@ -17,7 +17,7 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
 
   describe "#bands" do
     it "returns bands sorted ascending by grade string value" do
-      grades = component.bands.map { |b| b["grade"] }
+      grades = component.bands.pluck("grade")
       expect(grades.first).to eq("1.0")
       expect(grades.last).to eq("5.0")
     end
@@ -46,13 +46,13 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
     end
 
     it "assigns 1.0 to a student with 55 points" do
-      band_1_0 = component.bands.find { |b| b["grade"] == "1.0" }
-      expect(component.count_for(band_1_0)).to eq(1)
+      band_one = component.bands.find { |b| b["grade"] == "1.0" }
+      expect(component.count_for(band_one)).to eq(1)
     end
 
     it "assigns 4.0 to a student with 25 points (between 24 and 27)" do
-      band_4_0 = component.bands.find { |b| b["grade"] == "4.0" }
-      expect(component.count_for(band_4_0)).to eq(1)
+      band_four = component.bands.find { |b| b["grade"] == "4.0" }
+      expect(component.count_for(band_four)).to eq(1)
     end
   end
 

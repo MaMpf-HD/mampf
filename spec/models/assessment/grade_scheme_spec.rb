@@ -247,25 +247,25 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     end
 
     it "generates 11 bands covering all German grades" do
-      grades = config["bands"].map { |b| b["grade"] }
+      grades = config["bands"].pluck("grade")
       expect(grades).to match_array(
         ["1.0", "1.3", "1.7", "2.0", "2.3", "2.7", "3.0", "3.3", "3.7", "4.0", "5.0"]
       )
     end
 
     it "assigns 1.0 starting at the excellence threshold" do
-      band_1_0 = config["bands"].find { |b| b["grade"] == "1.0" }
-      expect(band_1_0["min_points"]).to eq(54)
+      band_one = config["bands"].find { |b| b["grade"] == "1.0" }
+      expect(band_one["min_points"]).to eq(54)
     end
 
     it "assigns 4.0 starting at the passing threshold" do
-      band_4_0 = config["bands"].find { |b| b["grade"] == "4.0" }
-      expect(band_4_0["min_points"]).to eq(30)
+      band_four = config["bands"].find { |b| b["grade"] == "4.0" }
+      expect(band_four["min_points"]).to eq(30)
     end
 
     it "assigns 5.0 below the passing threshold" do
-      band_5_0 = config["bands"].find { |b| b["grade"] == "5.0" }
-      expect(band_5_0["min_points"]).to eq(0)
+      band_five = config["bands"].find { |b| b["grade"] == "5.0" }
+      expect(band_five["min_points"]).to eq(0)
     end
 
     it "produces strictly increasing min_points across passing grades" do
@@ -304,13 +304,13 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       let(:max_points) { 100 }
 
       it "does not include a 5.0 band" do
-        grades = config["bands"].map { |b| b["grade"] }
+        grades = config["bands"].pluck("grade")
         expect(grades).not_to include("5.0")
       end
 
       it "assigns 4.0 starting at 0" do
-        band_4_0 = config["bands"].find { |b| b["grade"] == "4.0" }
-        expect(band_4_0["min_points"]).to eq(0)
+        band_four = config["bands"].find { |b| b["grade"] == "4.0" }
+        expect(band_four["min_points"]).to eq(0)
       end
     end
 
@@ -320,7 +320,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
       let(:max_points) { 40 }
 
       it "still generates all passing grades" do
-        grades = config["bands"].map { |b| b["grade"] }
+        grades = config["bands"].pluck("grade")
         expect(grades).to include("1.0", "4.0")
       end
     end
