@@ -277,6 +277,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           patch(move_member_tutorial_path(source, user_id: member.id),
                 params: { target_id: target.id })
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
+                 rosterable_title: target.title)
+        )
       end
 
       it "keeps lecture roster membership when moving within tutorials" do
@@ -357,6 +363,13 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           post(lecture_roster_add_to_group_path(lecture),
                params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_added_to_group_email_subject",
+                 rosterable_title: tutorial.title)
+        )
       end
     end
 
@@ -440,10 +453,17 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { lecture.members.count }.by(-1)
       end
 
-      it "sends an email when a user is successfully removed from a lecture" do
+      it "sends an email with the correct subject when a user is removed from a lecture" do
         expect do
           delete(remove_member_lecture_path(lecture, user_id: member.id))
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_removed_from_lecture_email_subject",
+                 lecture_title: lecture.title)
+        )
       end
 
       it "returns turbo stream response" do
@@ -499,6 +519,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           patch(move_member_lecture_path(lecture, user_id: member.id),
                 params: { target_id: target_tutorial.id, target_type: "Tutorial" })
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
+                 rosterable_title: target_tutorial.title)
+        )
       end
 
       it "keeps lecture membership when moving between tutorials" do
