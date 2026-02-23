@@ -20,9 +20,9 @@ const GRADE_MARKER_COLOR = {
   "1.0": "#198754",
   "1.3": "#198754",
   "1.7": "#198754",
-  "2.0": "#0a58ca",
-  "2.3": "#0a58ca",
-  "2.7": "#0a58ca",
+  "2.0": "#223e62",
+  "2.3": "#223e62",
+  "2.7": "#223e62",
   "3.0": "#ffc107",
   "3.3": "#ffc107",
   "3.7": "#ffc107",
@@ -393,6 +393,8 @@ export default class extends Controller {
                     height: 155px; width: 2px;
                     background: ${color}; opacity: 0.8;
                     transform: translateX(-50%);
+                    box-shadow: 1px 0 0 rgba(255,255,255,0.85),
+                                -1px 0 0 rgba(255,255,255,0.85);
                     pointer-events: none;"></div>
         <span class="badge" style="
           position: absolute; bottom: 0; left: 50%;
@@ -441,7 +443,7 @@ export default class extends Controller {
       = ((clientX - rect.left) / rect.width) * 100;
     let points = Math.round(
       (Math.min(Math.max(rawPct, 0), 100) / 100)
-        * maxPoints,
+      * maxPoints,
     );
 
     const grade = parseFloat(
