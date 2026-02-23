@@ -61,6 +61,20 @@ class GradeSchemeTabComponent < ViewComponent::Base
     assessment.assessment_participations.where(status: :reviewed).count
   end
 
+  def ungraded_reviewed_count
+    return 0 unless scheme_applied?
+
+    assessment.assessment_participations
+              .where(status: :reviewed, grade_numeric: nil)
+              .count
+  end
+
+  def graded_count
+    assessment.assessment_participations
+              .where.not(grade_numeric: nil)
+              .count
+  end
+
   def pending_count
     assessment.assessment_participations.where(status: :pending).count
   end

@@ -73,13 +73,17 @@ module Assessment
     def apply
       authorize! :update, @assessment
 
+      was_applied = @grade_scheme.applied?
       applier = GradeSchemeApplier.new(@grade_scheme)
-      applier.apply!(applied_by: current_user)
+      newly_graded = applier.apply!(applied_by: current_user)
 
-      redirect_to_dashboard(
-        tab: "grade_scheme",
-        notice: I18n.t("assessment.grade_scheme.applied")
-      )
+      notice = if was_applied
+        I18n.t("assessment.grade_scheme.reapplied", count: newly_graded)
+      else
+        I18n.t("assessment.grade_scheme.applied")
+      end
+
+      redirect_to_dashboard(tab: "grade_scheme", notice: notice)
     end
 
     private

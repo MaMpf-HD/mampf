@@ -47,15 +47,26 @@
         <% end %>
       </div>
     <% when :draft %>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">
-          <i class="bi bi-pencil-square me-2"></i>
-          <%= t("assessment.grade_scheme.draft_title") %>
-        </h5>
+      <div
+        class="
+          alert alert-warning d-flex justify-content-between
+          align-items-center mb-3
+        "
+      >
+        <div>
+          <strong>
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            <%= t("assessment.grade_scheme.draft_title") %>
+          </strong>
 
-        <div class="d-flex gap-2">
+          <div class="mt-1 small">
+            <%= t("assessment.grade_scheme.draft_message") %>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 ms-3 flex-shrink-0">
           <%= link_to edit_scheme_path,
-                    class: "btn btn-sm btn-outline-primary",
+                    class: "btn btn-sm btn-outline-secondary",
                     data: { turbo_stream: true } do %>
             <i class="bi bi-pencil me-1"></i>
             <%= t("assessment.grade_scheme.edit_button") %>
@@ -78,6 +89,14 @@
           <% end %>
         </div>
       </div>
+      <% if graded_count.positive? %>
+        <div class="alert alert-warning py-2 mb-3">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+
+          <%= t("assessment.grade_scheme.draft_overwrite_warning",
+                count: graded_count) %>
+        </div>
+      <% end %>
       <%= render GradeSchemeSummaryComponent.new(
             assessment: assessment,
             grade_scheme: assessment.grade_scheme) %>
@@ -96,7 +115,7 @@
         </details>
       <% end %>
     <% when :applied %>
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
         <div
           class="
             alert alert-success d-flex align-items-center mb-0 py-2 px-3
@@ -109,9 +128,11 @@
             <strong><%= t("assessment.grade_scheme.applied_title") %></strong>
 
             <%= t("assessment.grade_scheme.applied_message",
-                time: helpers.time_ago_in_words(
-                  assessment.grade_scheme.applied_at
-                )) %>
+                time: helpers.l(
+                  assessment.grade_scheme.applied_at.in_time_zone,
+                  format: :long
+                ),
+                count: graded_count) %>
           </div>
         </div>
 
@@ -121,7 +142,30 @@
           <i class="bi bi-pencil me-1"></i>
           <%= t("assessment.grade_scheme.revise_button") %>
         <% end %>
+
+        <%= button_to apply_scheme_path,
+                      method: :patch,
+                      class: "btn btn-sm btn-outline-success ms-2 flex-shrink-0",
+                      data: { turbo_confirm:
+                        t("assessment.grade_scheme.reapply_confirm") } do %>
+          <i class="bi bi-arrow-repeat me-1"></i>
+          <%= t("assessment.grade_scheme.reapply_button") %>
+
+          <% if ungraded_reviewed_count.positive? %>
+            <span class="badge bg-warning text-dark ms-1">
+              <%= ungraded_reviewed_count %>
+            </span>
+          <% end %>
+        <% end %>
       </div>
+      <% if ungraded_reviewed_count.positive? %>
+        <div class="alert alert-warning py-2 mb-3">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+
+          <%= t("assessment.grade_scheme.ungraded_warning",
+                count: ungraded_reviewed_count) %>
+        </div>
+      <% end %>
       <%= render GradeSchemeSummaryComponent.new(
             assessment: assessment,
             grade_scheme: assessment.grade_scheme) %>

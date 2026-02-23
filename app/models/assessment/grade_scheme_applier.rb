@@ -51,8 +51,9 @@ module Assessment
         absent_participations
       end
 
-      nothing_to_do = target.none? && absent_target.none?
-      return if already_applied? && nothing_to_do
+      target_count = target.count
+      absent_count = absent_target.count
+      return 0 if already_applied? && target_count.zero? && absent_count.zero?
 
       now = Time.current
 
@@ -81,6 +82,8 @@ module Assessment
           )
         end
       end
+
+      target_count + absent_count
     end
 
     private

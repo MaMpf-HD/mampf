@@ -132,6 +132,10 @@ de:
       created: 'Notenschema gespeichert.'
       updated: 'Notenschema aktualisiert.'
       applied: 'Notenschema erfolgreich angewendet.'
+      reapplied:
+        zero: 'Erneut angewendet. Alle Studierenden hatten bereits Noten.'
+        one: 'Erneut angewendet. 1 Studierender neu benotet.'
+        other: 'Erneut angewendet. %{count} Studierende neu benotet.'
       not_found: 'Notenschema nicht gefunden.'
       pending_title: 'Punkteerfassung läuft.'
       pending_message: '%{reviewed} von %{total} überprüft, %{pending} noch ausstehend.'
@@ -140,13 +144,27 @@ de:
       create_button: 'Notenschema erstellen'
       draft_title: 'Notenschema konfiguriert.'
       draft_message: 'Überprüfen Sie das Schema, sehen Sie die Notenvorschau und wenden Sie es an, wenn Sie bereit sind.'
+      draft_overwrite_warning:
+        one: >-
+          1 Studierender hat bereits eine Note aus dem vorherigen Schema.
+          Das Anwenden dieses Schemas wird sie überschreiben.
+        other: >-
+          %{count} Studierende haben bereits Noten aus dem vorherigen Schema.
+          Das Anwenden dieses Schemas wird sie überschreiben.
       edit_button: 'Schema bearbeiten'
       preview_button: 'Notenvorschau'
       apply_button: 'Schema anwenden'
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
-      applied_message: 'Noten wurden vor %{time} berechnet.'
+      applied_message: 'Noten berechnet am %{time} für %{count} Studierende.'
+      ungraded_warning:
+        one: '1 Studierender hat noch keine Note.'
+        other: '%{count} Studierende haben noch keine Note.'
       revise_button: 'Schema überarbeiten'
+      reapply_button: 'Neu anwenden'
+      reapply_confirm: >-
+        Das Schema wird auf alle noch nicht benoteten Studierenden angewendet.
+        Bereits vergebene Noten werden nicht verändert. Fortfahren?
       summary:
         title: 'Notenstufen'
         pass_rate: 'Bestehensquote'

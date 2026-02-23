@@ -135,6 +135,10 @@ en:
       created: 'Grade scheme saved.'
       updated: 'Grade scheme updated.'
       applied: 'Grade scheme applied successfully.'
+      reapplied:
+        zero: 'Re-applied. All students already had grades.'
+        one: 'Re-applied. 1 student newly graded.'
+        other: 'Re-applied. %{count} students newly graded.'
       not_found: 'Grade scheme not found.'
       pending_title: 'Point entry in progress.'
       pending_message: '%{reviewed} of %{total} reviewed, %{pending} still pending.'
@@ -143,13 +147,27 @@ en:
       create_button: 'Create Grade Scheme'
       draft_title: 'Grade scheme configured.'
       draft_message: 'Review the scheme, preview grades, then apply when ready.'
+      draft_overwrite_warning:
+        one: >-
+          1 student currently has a grade from the previous scheme.
+          Applying this scheme will overwrite it.
+        other: >-
+          %{count} students currently have grades from the previous scheme.
+          Applying this scheme will overwrite them.
       edit_button: 'Edit Scheme'
       preview_button: 'Preview Grades'
       apply_button: 'Apply Scheme'
       apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
       applied_title: 'Grade scheme applied!'
-      applied_message: 'Grades were computed %{time} ago.'
+      applied_message: 'Grades computed on %{time} for %{count} students.'
+      ungraded_warning:
+        one: '1 student has no grade yet.'
+        other: '%{count} students have no grade yet.'
       revise_button: 'Revise Scheme'
+      reapply_button: 'Re-apply to New'
+      reapply_confirm: >-
+        This will apply the current scheme to any students not yet graded.
+        Already assigned grades will not be changed. Continue?
       summary:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'

@@ -8,7 +8,8 @@ module Assessment
     enum :kind, { banded: 0 }
 
     validates :config, presence: true
-    validates :assessment_id, uniqueness: true, if: :active?
+    validates :assessment_id, uniqueness: { conditions: -> { where(active: true) } },
+                              if: :active?
     validate :config_matches_kind
     validate :immutable_when_applied, on: :update
     validate :assessable_must_be_pointable_and_gradable
