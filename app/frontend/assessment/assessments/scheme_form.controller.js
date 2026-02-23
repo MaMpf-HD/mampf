@@ -16,6 +16,19 @@ const GRADE_BADGE_CLASS = {
   "5.0": "bg-danger",
 };
 
+const GRADE_MARKER_COLOR = {
+  "1.0": "#198754",
+  "1.3": "#198754",
+  "1.7": "#198754",
+  "2.0": "#0a58ca",
+  "2.3": "#0a58ca",
+  "2.7": "#0a58ca",
+  "3.0": "#ffc107",
+  "3.3": "#ffc107",
+  "3.7": "#ffc107",
+  "4.0": "#dc3545",
+};
+
 export default class extends Controller {
   static targets = [
     "excellenceInput",
@@ -397,9 +410,7 @@ export default class extends Controller {
   }
 
   _markerColor(grade) {
-    if (grade === "4.0") return "#dc3545";
-    if (parseFloat(grade) <= 1.7) return "#198754";
-    return "#0d6efd";
+    return GRADE_MARKER_COLOR[grade] || "#6c757d";
   }
 
   _startDrag(e) {
