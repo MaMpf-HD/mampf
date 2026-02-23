@@ -76,7 +76,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
         result = service.register!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.campaign_not_opened")
+        )
       end
 
       it "raises error if user already registered for another item" do
@@ -91,7 +93,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
         result = service.register!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.user_registration.messages.already_registered"))
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.already_registered")
+        )
       end
 
       it "raises error if item has no capacity" do
@@ -131,7 +135,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
         service = described_class.new(campaign, user, item)
         result = service.withdraw!
         expect(result.success?).to be(false)
-        expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.campaign_not_opened")
+        )
       end
     end
 
@@ -179,7 +185,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       service = described_class.new(campaign_child, user, item_child)
       result = service.register!
       expect(result.success?).to be(false)
-      expect(result.errors).to include(I18n.t("registration.user_registration.messages.requirements_not_met"))
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.requirements_not_met")
+      )
     end
 
     it "success to register child if parent has been registered" do

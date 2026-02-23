@@ -10,7 +10,7 @@
           <div class="border rounded p-2 h-100">
 
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="fw-semibold h6 m-2"><%= t('registration.user_registration.preferences_title')%></div>
+              <div class="fw-semibold h6 m-2"><%= t('registration.user_registration.preferences_title') %></div>
 
               <!-- saved time -->
               <% last_updated = campaign.user_registrations_last_updated(current_user) %>
@@ -29,17 +29,17 @@
               <button type="submit"
                       class="btn btn-outline-primary btn-sm w-auto"
                       data-action="touched-check#reset"
-                      <%= "disabled" if !campaign.open_for_registrations?%>
+                      <%= "disabled" if !campaign.open_for_registrations? %>
                       formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
-                      <%= t('buttons.reset')%>
+                      <%= t('buttons.reset') %>
               </button>
               <button type="submit"
                       class="btn btn-primary btn-sm w-auto"
                       data-action="touched-check#reset"
                       data-turbo="false"
-                      <%= "disabled" if !campaign.open_for_registrations?%>
+                      <%= "disabled" if !campaign.open_for_registrations? %>
                       formaction="<%= save_campaign_preferences_path(campaign.id) %>">
-                      <%= t('buttons.save')%>
+                      <%= t('buttons.save') %>
               </button>
             </div>  
 

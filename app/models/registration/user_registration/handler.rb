@@ -22,8 +22,9 @@ module Registration
       end
 
       def check_already_registered_current_type
-        return nil unless @campaign.user_registration_confirmed_for_group_type?(@user,
-                                                                                @item.registerable_type)
+        return nil unless @campaign
+                          .user_registration_confirmed_for_group_type?(@user,
+                                                                       @item.registerable_type)
 
         I18n.t("registration.user_registration.messages.already_registered")
       end

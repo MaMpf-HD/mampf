@@ -61,7 +61,9 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
       service = described_class.new(campaign, user)
       result = service.update!(pref_items)
       expect(result.success?).to be(false)
-      expect(result.errors).to include(I18n.t("registration.user_registration.messages.campaign_not_opened"))
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.campaign_not_opened")
+      )
     end
   end
 
