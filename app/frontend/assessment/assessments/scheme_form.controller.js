@@ -59,14 +59,21 @@ export default class extends Controller {
   };
 
   connect() {
-    const raw = this.configFieldTarget.value;
+    this._baselineConfig = this.configFieldTarget.value;
+    this._baselineStep = this.pointsStepInputTarget.value;
+
+    this._boundSubmit = this._onSubmit.bind(this);
+    this.element
+      .querySelector("form")
+      ?.addEventListener("submit", this._boundSubmit);
+
+    const raw = this._baselineConfig;
     if (!raw) return;
 
     try {
       const config = JSON.parse(raw);
       if (config.bands && config.bands.length > 0) {
         this.renderPreview(config.bands);
-        this.submitButtonTarget.disabled = false;
         this.bandsPreviewTarget.classList.remove("d-none");
       }
     }
@@ -119,9 +126,18 @@ export default class extends Controller {
     const config = this.computeBands(excellence, passing, maxPoints);
     this.renderPreview(config.bands);
     this.configFieldTarget.value = JSON.stringify(config);
-    this.submitButtonTarget.disabled = false;
     this.bandsPreviewTarget.classList.remove("d-none");
     this.clearDirty();
+    this._refreshSubmit();
+  }
+
+  onStepChange() {
+    if (this._isAutoTab()) {
+      this.markDirty();
+    }
+    else {
+      this._refreshSubmit();
+    }
   }
 
   markDirty() {
@@ -134,6 +150,26 @@ export default class extends Controller {
 
   clearDirty() {
     this.dirtyHintTarget.classList.add("d-none");
+  }
+
+  _isAutoTab() {
+    return document
+      .querySelector("[data-bs-target='#two-point-tab']")
+      ?.classList.contains("active") ?? true;
+  }
+
+  _refreshSubmit() {
+    const configChanged
+      = this.configFieldTarget.value !== (this._baselineConfig || "");
+    const stepChanged
+      = this.pointsStepInputTarget.value !== (this._baselineStep || "");
+    this.submitButtonTarget.disabled = !(configChanged || stepChanged);
+  }
+
+  _onSubmit() {
+    this._baselineConfig = this.configFieldTarget.value;
+    this._baselineStep = this.pointsStepInputTarget.value;
+    this.submitButtonTarget.disabled = true;
   }
 
   computeBands(excellence, passing, maxPoints) {
@@ -274,6 +310,11 @@ export default class extends Controller {
       document.removeEventListener("pointermove", this._boundMove);
       document.removeEventListener("pointerup", this._boundUp);
     }
+    if (this._boundSubmit) {
+      this.element
+        .querySelector("form")
+        ?.removeEventListener("submit", this._boundSubmit);
+    }
   }
 
   initManualTab() {
@@ -293,8 +334,8 @@ export default class extends Controller {
       if (config.bands?.length > 0) {
         this.renderPreview(config.bands);
         this.bandsPreviewTarget.classList.remove("d-none");
-        this.submitButtonTarget.disabled = false;
         this.clearDirty();
+        this._refreshSubmit();
 
         const band10 = config.bands.find(b => b.grade === "1.0");
         const band40 = config.bands.find(b => b.grade === "4.0");
@@ -596,7 +637,7 @@ export default class extends Controller {
       bands, this.manualBandsBodyTarget,
     );
     this.manualPreviewTarget.classList.remove("d-none");
-    this.submitButtonTarget.disabled = false;
     this.clearDirty();
+    this._refreshSubmit();
   }
 }
