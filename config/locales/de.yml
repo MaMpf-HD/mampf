@@ -3450,6 +3450,7 @@ de:
     capacity: 'Kapazität'
     division: 'Teilbereich'
     error: Fehler
+    edit: "Bearbeiten"
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'
@@ -3579,6 +3580,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3658,6 +3660,25 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
+    select_type: "Wählen Sie Präferenzen"
+    saved_at: "Gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
+    position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: Pending
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
     unlimited: unbegrenzt
     personnel: Personal
   access:
@@ -3782,6 +3803,8 @@ de:
     back_to_assessments: 'Zurück zu Prüfungen'
     create_exam: 'Prüfung erstellen'
     edit_exam: 'Prüfung bearbeiten'
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

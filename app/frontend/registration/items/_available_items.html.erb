@@ -8,6 +8,7 @@
       <div class="alert alert-light border mb-0">
         <div class="d-flex align-items-start">
           <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
+
           <div>
             <p class="mb-1"><%= t("registration.item.add.none_available") %></p>
             <% if show_roster_link %>
@@ -66,57 +67,75 @@
                                     params: { registration_item: { registerable_id: tutorial.id, registerable_type: "Tutorial" } },
                                     class: "btn btn-sm btn-primary",
                                     data: { turbo: true } %>
-                    </div>
-                  <% end %>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
 
-            <% if available_items[:talks].present? %>
-              <div class="col-12">
-                <h6><%= t("registration.item.groups.talks") %></h6>
-                <div class="list-group">
-                  <% available_items[:talks].each do |talk| %>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                        <%= talk.to_label %>
-                        <% if talk.speakers.any? %>
-                          <span class="text-muted ms-2">(<%= speaker_list(talk) %>)</span>
-                        <% end %>
-                      </div>
-                      <%= button_to t("basics.add"),
+        <% if available_items[:talks].present? %>
+          <div class="col-12">
+            <h6><%= t("registration.item.groups.talks") %></h6>
+
+            <div class="list-group">
+              <% available_items[:talks].each do |talk| %>
+                <div
+                  class="
+                    list-group-item d-flex justify-content-between
+                    align-items-center
+                  "
+                >
+                  <div>
+                    <%= talk.to_label %>
+
+                    <% if talk.speakers.any? %>
+                      <span class="text-muted ms-2">
+                        (<%= speaker_list(talk) %>)
+                      </span>
+                    <% end %>
+                  </div>
+
+                  <%= button_to t("basics.add"),
                                     registration_campaign_items_path(campaign),
                                     params: { registration_item: { registerable_id: talk.id, registerable_type: "Talk" } },
                                     class: "btn btn-sm btn-primary",
                                     data: { turbo: true } %>
-                    </div>
-                  <% end %>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
 
-            <% if available_items[:cohorts].present? %>
-              <div class="col-12">
-                <h6><%= t("registration.item.groups.cohorts") %></h6>
-                <div class="list-group">
-                  <% available_items[:cohorts].each do |cohort| %>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                        <%= cohort.title %>
-                        <span class="badge bg-secondary ms-2">
-                          <%= format_capacity(cohort.capacity) %>
-                        </span>
-                      </div>
-                      <%= button_to t("basics.add"),
+        <% if available_items[:cohorts].present? %>
+          <div class="col-12">
+            <h6><%= t("registration.item.groups.cohorts") %></h6>
+
+            <div class="list-group">
+              <% available_items[:cohorts].each do |cohort| %>
+                <div
+                  class="
+                    list-group-item d-flex justify-content-between
+                    align-items-center
+                  "
+                >
+                  <div>
+                    <%= cohort.title %>
+
+                    <span class="badge bg-secondary ms-2">
+                      <%= format_capacity(cohort.capacity) %>
+                    </span>
+                  </div>
+
+                  <%= button_to t("basics.add"),
                                     registration_campaign_items_path(campaign),
                                     params: { registration_item: { registerable_id: cohort.id, registerable_type: "Cohort" } },
                                     class: "btn btn-sm btn-primary",
                                     data: { turbo: true } %>
-                    </div>
-                  <% end %>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
       <% if show_roster_link %>
         <div class="card border-primary mt-4 mb-0">

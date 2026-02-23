@@ -15,7 +15,12 @@ module Registration
         format.html
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("campaigns_container",
-                                                   partial: "registration/allocations/dashboard")
+                                                   partial: "registration/campaigns/card_body_index",
+                                                   locals: {
+                                                     lecture: @campaign.campaignable,
+                                                     expanded_campaign_id: @campaign.id,
+                                                     tab: "registrations"
+                                                   })
         end
       end
     end
@@ -35,7 +40,12 @@ module Registration
             flash.now[:notice] = t("registration.allocation.started")
             render turbo_stream: [
               turbo_stream.update("campaigns_container",
-                                  partial: "registration/allocations/dashboard"),
+                                  partial: "registration/campaigns/card_body_index",
+                                  locals: {
+                                    lecture: @campaign.campaignable,
+                                    expanded_campaign_id: @campaign.id,
+                                    tab: "registrations"
+                                  }),
               stream_flash
             ]
           end
@@ -88,8 +98,12 @@ module Registration
             flash.now[:notice] = message
             render turbo_stream: [
               turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign }),
+                                  partial: "registration/campaigns/card_body_index",
+                                  locals: {
+                                    lecture: @campaign.campaignable,
+                                    expanded_campaign_id: @campaign.id,
+                                    tab: "registrations"
+                                  }),
               stream_flash
             ]
           end

@@ -1,0 +1,13 @@
+<div class="card-body border-top-0">
+  <% if campaign.registration_items.size == 1%>
+  <%= render partial: 'registration/main/fcfs/select_single_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      item: items[0] } %>
+  <% else %>
+  <%= render partial: 'registration/main/fcfs/select_multi_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      items: items } %>
+  <% end %>
+</div>

@@ -1,7 +1,11 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    before_action :set_campaign
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
+    before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
+                                        :update, :destroy_for_user]
     before_action :set_locale
+    before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -21,20 +25,145 @@ module Registration
       destroy_registrations(registrations)
     end
 
+    def index
+      @courses_seminars_campaigns = Registration::Campaign.where.not(status: :draft)
+      @eligibilities = @courses_seminars_campaigns.index_with do |c|
+        Registration::EligibilityService.new(c, current_user,
+                                             phase_scope: :registration).call
+      end
+      render template: "registration/index", layout: "application_no_sidebar"
+    end
+
+    def registrations_for_campaign
+      target = resolve_render_target(@campaign)
+      case target
+      when :lecture_index, :exam_index
+        redirect_to user_registrations_path,
+                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
+      when :lecture_details
+        init_details
+        render template: "registration/main/show_main_campaign",
+               layout: "application_no_sidebar"
+      when :exam_details
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      when :lecture_result
+        init_result
+        render template: "registration/main/show_result_main_campaign",
+               layout: "application_no_sidebar"
+      when :exam_result # rubocop:disable Lint/DuplicateBranch
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      else # rubocop:disable Lint/DuplicateBranch
+        redirect_to user_registrations_path,
+                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
+      end
+    end
+
+    def create
+      if @campaign.lecture_based?
+        result = Registration::UserRegistration::LectureFcfsEditService
+                 .new(@campaign, current_user, @item).register!
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      notice: I18n.t("registration.user_registration.messages.registration_success")
+        else
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      alert: result.errors.join(", ")
+        end
+      elsif @campaign.exam_based?
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
+
+    def update
+      if @campaign.lecture_based?
+        pref_items = UserRegistration::PreferencesHandler
+                     .new.pref_item_build_for_save(params[:preferences_json])
+        result = Registration::UserRegistration::LecturePreferenceEditService
+                 .new(@campaign, current_user).update!(pref_items)
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      notice: I18n.t("registration.user_registration.messages.preferences_saved")
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+          )
+        end
+      elsif @campaign.exam_based?
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
+
+    def destroy
+      @campaign = @item.user_registrations.find_by!(user_id: current_user.id,
+                                                    status: :confirmed)
+                       .registration_campaign
+      if @campaign.lecture_based?
+        result = Registration::UserRegistration::LectureFcfsEditService
+                 .new(@campaign, current_user, @item).withdraw!
+        if result.success?
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      notice: I18n.t("registration.user_registration.messages.withdrawn")
+        else
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      alert: result.errors.join(", ")
+        end
+      elsif @campaign.exam_based?
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
+
+    def render_not_found(exception)
+      render json: { error: exception.message }, status: :unprocessable_content
+    end
+
+    def up
+      handle_preference_action(:up)
+    end
+
+    def down
+      handle_preference_action(:down)
+    end
+
+    def add
+      handle_preference_action(:add)
+    end
+
+    def remove
+      handle_preference_action(:remove)
+    end
+
+    def reset_preferences
+      init_items
+      init_preferences
+      rerender_preferences
+    end
+
     private
 
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
 
-        streams << turbo_stream.update("registrations-tab-count",
+        streams << turbo_stream.update(view_context.campaign_registrations_tab_count_id(@campaign),
                                        @campaign.user_registrations.distinct.count(:user_id))
 
-        if params[:source] == "allocation"
+        if ["allocation", "allocation_embedded"].include?(params[:source])
           load_allocation_data
-          streams << turbo_stream.replace("allocation-dashboard",
-                                          partial: "registration/allocations/dashboard")
+          if params[:source] == "allocation_embedded"
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard",
+                                            locals: {
+                                              campaign: @campaign,
+                                              dashboard: @dashboard,
+                                              embedded: true
+                                            })
+          else
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard")
+          end
         elsif params[:source] == "registrations"
-          streams << turbo_stream.replace("user-registrations-list",
+          streams << turbo_stream.replace(view_context.campaign_user_registrations_list_id(@campaign),
                                           partial: "registration/user_registrations/index",
                                           locals: { campaign: @campaign })
         end
@@ -47,7 +176,8 @@ module Registration
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        id = params[:registration_campaign_id] || params[:campaign_id]
+        @campaign = Registration::Campaign.find_by(id: id)
         return if @campaign
 
         respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
@@ -107,6 +237,86 @@ module Registration
             render_turbo_stream_response
           end
         end
+      end
+
+      def set_item
+        @item = Registration::Item.find(params[:item_id])
+      end
+
+      def resolve_render_target(campaign)
+        case campaign.status.to_sym
+        when :draft
+          @campaign.lecture_based? ? :lecture_index : :exam_index
+        when :open, :closed, :processing
+          @campaign.lecture_based? ? :lecture_details : :exam_details
+        when :completed
+          @campaign.lecture_based? ? :lecture_result : :exam_result
+        else
+          :lecture_index
+        end
+      end
+
+      def init_details
+        init_eligibility
+        init_items
+        init_campaignable_host
+        init_preferences if @campaign.preference_based?
+      end
+
+      def init_eligibility
+        @eligibility = Registration::EligibilityService.new(@campaign, current_user,
+                                                            phase_scope: :registration).call
+      end
+
+      def init_result
+        init_selected_items
+        init_succeed_items
+        succeed_ids = @items_succeed.pluck(:id)
+        @status_items_selected = @items_selected.each_with_object({}) do |i, hash|
+          hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
+        end
+        init_campaignable_host
+        init_preferences if @campaign.preference_based?
+      end
+
+      def init_selected_items
+        @items_selected = @campaign.registration_items
+                                   .includes(:user_registrations)
+                                   .where(user_registrations: { user_id: current_user.id })
+      end
+
+      def init_succeed_items
+        @items_succeed = Rosters::StudentMainResultResolver
+                         .new(@campaign, current_user).succeed_items
+        @item_succeed = @items_succeed.first || nil
+      end
+
+      def init_items
+        @items = @campaign.registration_items.includes(:user_registrations)
+      end
+
+      def init_campaignable_host
+        @campaignable_host = @campaign.campaignable
+      end
+
+      def init_preferences
+        @item_preferences = UserRegistration::PreferencesHandler.new
+                                                                .preferences_info(@campaign,
+                                                                                  current_user)
+      end
+
+      def handle_preference_action(action)
+        @campaign = @item.registration_campaign
+        init_items
+        @item_preferences = UserRegistration::PreferencesHandler
+                            .new.public_send(action, params[:item_id],
+                                             params[:preferences_json])
+        rerender_preferences
+      end
+
+      def rerender_preferences
+        render partial: "registration/main/pb/preferences_workspace",
+               locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
       end
   end
 end
