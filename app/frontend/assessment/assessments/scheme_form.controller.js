@@ -440,6 +440,13 @@ export default class extends Controller {
                     box-shadow: 1px 0 0 rgba(255,255,255,0.85),
                                 -1px 0 0 rgba(255,255,255,0.85);
                     pointer-events: none;"></div>
+        <span data-pts-label style="
+          position: absolute; top: 2px; left: 50%;
+          transform: translateX(-50%);
+          font-size: 0.6rem; color: ${color}; font-weight: bold;
+          white-space: nowrap; background: rgba(255,255,255,0.85);
+          border-radius: 2px; padding: 0 2px;
+          pointer-events: none;">${band.min_points}</span>
         <span class="badge" style="
           position: absolute; bottom: 0; left: 50%;
           transform: translateX(-50%);
@@ -530,6 +537,8 @@ export default class extends Controller {
     const pct = (points / maxPoints) * 100;
     this._dragMarker.style.left = `${pct}%`;
     this._dragMarker.dataset.minPoints = points;
+    const ptsLabel = this._dragMarker.querySelector("[data-pts-label]");
+    if (ptsLabel) ptsLabel.textContent = points;
     this._updateManualConfig();
   }
 
