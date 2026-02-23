@@ -1,4 +1,6 @@
 class GradeSchemeTabComponent < ViewComponent::Base
+  # Missing top-level docstring, please formulate one yourself 😁
+
   def initialize(assessment:, grade_scheme: nil, preview_mode: false)
     super()
     @assessment = assessment

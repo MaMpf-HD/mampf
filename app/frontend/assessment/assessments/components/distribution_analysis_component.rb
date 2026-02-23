@@ -34,33 +34,6 @@ class DistributionAnalysisComponent < ViewComponent::Base
     bins.pluck(:count).max || 1
   end
 
-  def stat_rows
-    [
-      [t("assessment.distribution.students_reviewed"),
-       "#{distribution[:count]} / #{total_count}",
-       true],
-      [t("assessment.distribution.minimum"),
-       format_points(distribution[:min])],
-      [t("assessment.distribution.maximum"),
-       format_points(distribution[:max])],
-      [t("assessment.distribution.mean"),
-       format_points(distribution[:mean]),
-       true],
-      [t("assessment.distribution.median"),
-       format_points(distribution[:median])],
-      [t("assessment.distribution.std_dev"),
-       distribution[:std_dev]&.to_s || "–"]
-    ]
-  end
-
-  def percentile_rows
-    distribution[:percentiles].map do |pct, value|
-      label = t("assessment.distribution.percentile_nth", n: pct)
-      label += " (#{t("assessment.distribution.median")})" if pct == 50
-      [label, format_points(value), pct == 50]
-    end
-  end
-
   private
 
     def total_count

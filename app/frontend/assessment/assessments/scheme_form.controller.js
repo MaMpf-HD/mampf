@@ -56,6 +56,26 @@ export default class extends Controller {
       type: String,
       default: "Thresholds changed — regenerate bands before saving.",
     },
+    errorInvalidNumbers: {
+      type: String,
+      default: "Please enter valid numbers for both thresholds.",
+    },
+    errorExcellenceGtPassing: {
+      type: String,
+      default: "Excellence threshold must be greater than passing threshold.",
+    },
+    errorPassingNegative: {
+      type: String,
+      default: "Passing threshold must be 0 or greater.",
+    },
+    errorExcellenceMax: {
+      type: String,
+      default: "Excellence threshold cannot exceed %{max} points.",
+    },
+    errorRangeTooNarrow: {
+      type: String,
+      default: "Range too narrow: need at least %{min_range} points (%{grades} \u00d7 step %{step}).",
+    },
   };
 
   connect() {
@@ -91,34 +111,32 @@ export default class extends Controller {
     const maxPoints = this.maxPointsValue;
 
     if (isNaN(excellence) || isNaN(passing)) {
-      this.showError("Please enter valid numbers for both thresholds.");
+      this.showError(this.errorInvalidNumbersValue);
       return;
     }
 
     if (excellence <= passing) {
-      this.showError(
-        "Excellence threshold must be greater than passing threshold.",
-      );
+      this.showError(this.errorExcellenceGtPassingValue);
       return;
     }
 
     if (passing < 0) {
-      this.showError("Passing threshold must be 0 or greater.");
+      this.showError(this.errorPassingNegativeValue);
       return;
     }
 
     if (excellence > maxPoints) {
-      this.showError(
-        `Excellence threshold cannot exceed ${maxPoints} points.`,
-      );
+      this.showError(this.errorExcellenceMaxValue);
       return;
     }
 
     const minRange = (PASSING_GRADES.length - 1) * step;
     if (excellence - passing < minRange) {
       this.showError(
-        `Range too narrow: need at least ${minRange} points `
-        + `(${PASSING_GRADES.length - 1} × step ${step}).`,
+        this.errorRangeTooNarrowValue
+          .replace("__min_range__", minRange)
+          .replace("__grades__", PASSING_GRADES.length - 1)
+          .replace("__step__", step),
       );
       return;
     }

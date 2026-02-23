@@ -6,6 +6,11 @@
   data-assessments--scheme-form-pass-label-value="<%= t('assessment.grade_scheme.summary.pass_rate') %>"
   data-assessments--scheme-form-fail-label-value="<%= t('assessment.grade_scheme.summary.fail_rate') %>"
   data-assessments--scheme-form-regenerate-hint-value="<%= t('assessment.grade_scheme.form.regenerate_hint') %>"
+  data-assessments--scheme-form-error-invalid-numbers-value="<%= t('assessment.grade_scheme.form.error_invalid_numbers') %>"
+  data-assessments--scheme-form-error-excellence-gt-passing-value="<%= t('assessment.grade_scheme.form.error_excellence_gt_passing') %>"
+  data-assessments--scheme-form-error-passing-negative-value="<%= t('assessment.grade_scheme.form.error_passing_negative') %>"
+  data-assessments--scheme-form-error-excellence-max-value="<%= t('assessment.grade_scheme.form.error_excellence_max', max: max_points) %>"
+  data-assessments--scheme-form-error-range-too-narrow-value="<%= t('assessment.grade_scheme.form.error_range_too_narrow', min_range: '__min_range__', grades: '__grades__', step: '__step__') %>"
 >
   <div class="card-header bg-light">
     <h5 class="mb-0"><%= t("assessment.grade_scheme.form.title") %></h5>

@@ -211,6 +211,11 @@ de:
         regenerate_hint: 'Schwellenwerte geändert — bitte Notenstufen neu generieren.'
         points_step_label: 'Punkteschritt'
         points_step_hint: 'Kleinste Punkteinheit (z.B. 0,5 für halbe Punkte). Bestimmt die Rastergranularität.'
+        error_invalid_numbers: 'Bitte gültige Zahlen für beide Schwellenwerte eingeben.'
+        error_excellence_gt_passing: 'Exzellenz-Schwelle muss größer als Bestehens-Schwelle sein.'
+        error_passing_negative: 'Bestehens-Schwelle muss 0 oder größer sein.'
+        error_excellence_max: 'Exzellenz-Schwelle darf %{max} Punkte nicht überschreiten.'
+        error_range_too_narrow: 'Bereich zu eng: Mindestens %{min_range} Punkte erforderlich (%{grades} × Schritt %{step}).'
         cancel: 'Abbrechen'
         save_draft: 'Als Entwurf speichern'
     distribution:

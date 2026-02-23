@@ -214,6 +214,11 @@ en:
         regenerate_hint: 'Thresholds changed — regenerate bands before saving.'
         points_step_label: 'Points Step'
         points_step_hint: 'Smallest score increment (e.g. 0.5 for half-point grading). Controls boundary snapping.'
+        error_invalid_numbers: 'Please enter valid numbers for both thresholds.'
+        error_excellence_gt_passing: 'Excellence threshold must be greater than passing threshold.'
+        error_passing_negative: 'Passing threshold must be 0 or greater.'
+        error_excellence_max: 'Excellence threshold cannot exceed %{max} points.'
+        error_range_too_narrow: 'Range too narrow: need at least %{min_range} points (%{grades} × step %{step}).'
         cancel: 'Cancel'
         save_draft: 'Save as Draft'
     distribution:
