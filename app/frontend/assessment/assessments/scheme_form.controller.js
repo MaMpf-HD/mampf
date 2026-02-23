@@ -43,6 +43,7 @@ export default class extends Controller {
     "manualBars",
     "manualBandsBody",
     "manualPreview",
+    "manualAxis",
   ];
 
   static values = {
@@ -280,6 +281,11 @@ export default class extends Controller {
         this.bandsPreviewTarget.classList.remove("d-none");
         this.submitButtonTarget.disabled = false;
         this.clearDirty();
+
+        const band10 = config.bands.find(b => b.grade === "1.0");
+        const band40 = config.bands.find(b => b.grade === "4.0");
+        if (band10) this.excellenceInputTarget.value = band10.min_points;
+        if (band40) this.passingInputTarget.value = band40.min_points;
       }
     }
     catch { /* no valid config */ }
@@ -292,7 +298,9 @@ export default class extends Controller {
 
     const points = this.studentPointsValue
       .map(p => parseFloat(p));
-    const binCount = 10;
+    const binCount = Math.min(
+      30, Math.max(10, Math.round(maxPoints / 4)),
+    );
     const binWidth = Math.ceil(maxPoints / binCount);
     const bins = Array.from({ length: binCount }, (_, i) => ({
       low: i * binWidth,
@@ -322,6 +330,42 @@ export default class extends Controller {
         title="${bin.low}\u2013${bin.high} pts: ${bin.count}"
         data-bs-toggle="tooltip"></div>`;
     }).join("");
+
+    this._renderAxis(maxPoints);
+  }
+
+  _renderAxis(maxPoints) {
+    const axis = this.manualAxisTarget;
+    axis.innerHTML = "";
+
+    const rawStep = maxPoints / 6;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const step = Math.ceil(rawStep / magnitude) * magnitude;
+    const ticks = [];
+    for (let v = 0; v <= maxPoints; v += step) {
+      ticks.push(v);
+    }
+    if (ticks[ticks.length - 1] < maxPoints) ticks.push(maxPoints);
+
+    ticks.forEach((v) => {
+      const pct = (v / maxPoints) * 100;
+      const span = document.createElement("span");
+      span.className = "text-muted";
+      span.textContent = v;
+      span.style.cssText = `
+        position: absolute;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        ${
+          pct === 0
+            ? "left: 0;"
+            : pct >= 100
+              ? "right: 0;"
+              : `left: ${pct}%; transform: translateX(-50%);`
+        }
+      `;
+      axis.appendChild(span);
+    });
   }
 
   _syncManualFromConfig() {
