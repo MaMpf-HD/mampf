@@ -14,9 +14,8 @@ export class WatchlistsPage {
   }
 
   async createWatchlist(name: string, description: string = "", check = true) {
-    await this.page.locator("#openNewWatchlistForm").hover(); // turbo_prefetching
-    await this.page.waitForResponse(response => response.url().includes("/watchlists/new"));
     await this.page.locator("#openNewWatchlistForm").click();
+    await this.page.waitForResponse(response => response.url().includes("/watchlists/new"));
 
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(name);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(description);
@@ -31,9 +30,8 @@ export class WatchlistsPage {
   }
 
   async editWatchlist(newName: string, newDescription: string = "") {
-    await this.page.getByRole("button", { name: "Change" }).hover(); // turbo_prefetching
-    await this.page.waitForResponse(response => response.url().includes("/watchlists"));
     await this.page.getByRole("button", { name: "Change" }).click();
+    await this.page.waitForResponse(response => response.url().includes("/watchlists"));
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(newName);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(newDescription);
     await this.page.getByRole("button", { name: "Save changes" }).click();

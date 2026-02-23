@@ -62,7 +62,8 @@
       </div>
     <% end %>
   <% end %>
-  <%= render partial: 'watchlists/modal', locals: { context: :new } %>
-  <%= render partial: 'watchlists/modal', locals: { context: :edit } %>
   <div class="mb-auto"></div>
 <% end %>
+
+<%= render partial: 'watchlists/modal', locals: { context: :new } %>
+<%= render partial: 'watchlists/modal', locals: { context: :edit } %>
