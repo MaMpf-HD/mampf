@@ -1,0 +1,4 @@
+<%= t('roster.mailer.roster_removed_from_lecture_email_body',
+      name: @username,
+      lecture_title: @lecture&.title || '').html_safe %>
+<%= t('roster.mailer.end_mail').html_safe %>

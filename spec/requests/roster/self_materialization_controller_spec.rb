@@ -35,8 +35,8 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
 
         it "sends an email when a user successfully self-adds to a talk" do
           expect do
-            post self_add_talk_path(talk),
-                 params: { type: "Talk", frame: "talk_user" }
+            post(self_add_talk_path(talk),
+                 params: { type: "Talk", frame: "talk_user" })
           end.to change { ActionMailer::Base.deliveries.count }.by(1)
         end
       end
@@ -58,9 +58,9 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
 
         it "does not send an email when the self-add attempt fails" do
           expect do
-            post self_add_talk_path(talk),
-                 params: { type: "Talk", frame: "talk_user" }
-          end.not_to change { ActionMailer::Base.deliveries.count }
+            post(self_add_talk_path(talk),
+                 params: { type: "Talk", frame: "talk_user" })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
         end
       end
 
@@ -165,8 +165,8 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
 
         it "sends an email when a user self-removes from a talk" do
           expect do
-            delete self_remove_talk_path(talk),
-                   params: { type: "Talk", frame: "talk_user" }
+            delete(self_remove_talk_path(talk),
+                   params: { type: "Talk", frame: "talk_user" })
           end.to change { ActionMailer::Base.deliveries.count }.by(1)
         end
       end

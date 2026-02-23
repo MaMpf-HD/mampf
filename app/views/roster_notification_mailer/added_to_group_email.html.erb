@@ -1,5 +1,6 @@
 <%= t('roster.mailer.roster_added_to_group_email_body',
       name: @username,
+      lecture_title: @lecture&.title || '',
       rosterable_type: @rosterable.model_name.human,
       rosterable_title: @rosterable.title).html_safe %>
 <%= t('roster.mailer.link_text', 

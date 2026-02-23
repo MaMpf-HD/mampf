@@ -326,6 +326,9 @@ en:
           You have been added to the %{rosterable_type} group
           <strong>%{rosterable_title}</strong>.
         </p>
+        <p>
+          This grant you access to the corresponding lecture %{lecture_title} and its materials.
+        </p>
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
       roster_removed_from_group_email_body: |
         <p>Hello %{name},</p>
@@ -337,6 +340,9 @@ en:
           If you believe this was a mistake or if you have any questions,
           please contact your instructor or the support team.
         </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title}'
       roster_moved_between_groups_email_body: |
         <p>Hello %{name},</p>
@@ -346,4 +352,21 @@ en:
           to the %{new_rosterable_type} group
           <strong>%{new_rosterable_title}</strong>.
         </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
       roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title}'
+      roster_removed_from_lecture_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          This means you no longer have access to the lecture materials and are not enrolled in the lecture.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'

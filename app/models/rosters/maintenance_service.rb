@@ -25,14 +25,16 @@ module Rosters
 
       rosterable.add_user_to_roster!(user)
       propagate_to_lecture!(user, rosterable)
-      send_added_notification_email(user, rosterable) if notify
+      RosterNotificationMailer.added(user, rosterable) if notify
       update_registration_materialization(user, rosterable)
     end
 
     def remove_user!(user, rosterable, notify: true)
       rosterable.remove_user_from_roster!(user)
-      send_removed_notification_email(user, rosterable) if notify
       cascade_removal_from_subgroups!(user, rosterable)
+      return unless notify
+
+      RosterNotificationMailer.removed(user, rosterable) if notify
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false, notify: true)
@@ -40,7 +42,9 @@ module Rosters
         remove_user!(user, from_rosterable, notify: false)
         add_user!(user, to_rosterable, force: force, notify: false)
       end
-      send_moved_between_groups_notification_email(user, from_rosterable, to_rosterable) if notify
+      return unless notify
+
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if notify
     end
 
     private
@@ -103,31 +107,6 @@ module Rosters
 
           cohort.remove_user_from_roster!(user)
         end
-      end
-
-      def send_added_notification_email(user, rosterable)
-        RosterNotificationMailer.with(
-          rosterable: rosterable,
-          recipient: user,
-          sender: DefaultSetting::PROJECT_EMAIL
-        ).added_to_group_email.deliver_now
-      end
-
-      def send_removed_notification_email(user, rosterable)
-        RosterNotificationMailer.with(
-          rosterable: rosterable,
-          recipient: user,
-          sender: DefaultSetting::PROJECT_EMAIL
-        ).removed_from_group_email.deliver_now
-      end
-
-      def send_moved_between_groups_notification_email(user, old_rosterable, new_rosterable)
-        RosterNotificationMailer.with(
-          old_rosterable: old_rosterable,
-          new_rosterable: new_rosterable,
-          recipient: user,
-          sender: DefaultSetting::PROJECT_EMAIL
-        ).moved_between_groups_email.deliver_now
       end
   end
 end

@@ -330,6 +330,9 @@ de:
           Sie wurden der %{rosterable_type}-Gruppe
           <strong>%{rosterable_title}</strong> hinzugefügt.
         </p>
+        <p>
+          Dies gewährt Ihnen Zugriff auf die entsprechende Vorlesung %{lecture_title} und deren Materialien.
+        </p>
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
       roster_removed_from_group_email_body: |
         <p>Hallo %{name},</p>
@@ -341,6 +344,9 @@ de:
           Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
           wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
         </p>
+        <p>
+          Ihre Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
       roster_moved_between_groups_email_body: |
         <p>Hallo %{name},</p>
@@ -350,4 +356,17 @@ de:
           in die %{new_rosterable_type}-Gruppe
           <strong>%{new_rosterable_title}</strong> verschoben.
         </p>
+        <p>
+          Ihre Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'
+      roster_removed_from_lecture_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden aus der Veranstaltung %{lecture_title} entfernt.
+        </p>
+        <p>
+          Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
+          wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
