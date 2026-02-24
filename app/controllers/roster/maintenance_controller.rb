@@ -44,7 +44,7 @@ module Roster
       else
         params[:group_type]&.to_sym || :all
       end
-      @active_tab = params[:tab]&.to_sym || :groups
+      @active_tab = params[:tab]&.to_sym || :lanes
 
       setup_participants
     end
