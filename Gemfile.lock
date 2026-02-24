@@ -206,7 +206,7 @@ GEM
       addressable (~> 2.8)
     drb (2.2.3)
     dry-cli (1.4.1)
-    erb (6.0.1)
+    erb (6.0.2)
     erubi (1.13.1)
     erubis (2.7.0)
     et-orbi (1.4.0)
@@ -350,7 +350,8 @@ GEM
     mime-types-data (3.2026.0203)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
-    minitest (6.0.1)
+    minitest (6.0.2)
+      drb (~> 2.0)
       prism (~> 1.5)
     mize (0.6.1)
     mobility (1.3.2)
@@ -359,7 +360,7 @@ GEM
     msgpack (1.8.0)
     multi_json (1.19.1)
     multipart-post (2.4.1)
-    mustache (1.1.1)
+    mustache (1.1.2)
     mutex_m (0.3.0)
     net-imap (0.6.3)
       date
@@ -397,7 +398,7 @@ GEM
       sanitize
     options (2.3.2)
     orm_adapter (0.5.0)
-    pagy (43.2.10)
+    pagy (43.3.0)
       json
       uri
       yaml
@@ -576,7 +577,7 @@ GEM
       rubocop-ast (>= 1.44.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-lsp (0.26.6)
+    ruby-lsp (0.26.7)
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
@@ -625,7 +626,7 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
-    sorbet-runtime (0.6.12945)
+    sorbet-runtime (0.6.12959)
     spring (4.4.2)
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
@@ -658,7 +659,7 @@ GEM
     timeago_js (3.0.2.2)
     timecop (0.9.10)
     timeout (0.6.0)
-    tins (1.51.1)
+    tins (1.52.0)
       bigdecimal
       mize (~> 0.6)
       readline
@@ -693,11 +694,10 @@ GEM
       zeitwerk (~> 2.2)
     warden (1.2.9)
       rack (>= 2.0.9)
-    web-console (4.2.1)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
+    web-console (4.3.0)
+      actionview (>= 8.0.0)
       bindex (>= 0.4.0)
-      railties (>= 6.0.0)
+      railties (>= 8.0.0)
     webrick (1.9.2)
     websocket-driver (0.8.0)
       base64
@@ -705,7 +705,7 @@ GEM
     websocket-extensions (0.1.5)
     will_paginate (4.0.1)
     yaml (0.4.0)
-    zeitwerk (2.7.4)
+    zeitwerk (2.7.5)
 
 PLATFORMS
   aarch64-linux-gnu
