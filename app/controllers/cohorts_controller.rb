@@ -1,4 +1,6 @@
 class CohortsController < ApplicationController
+  include RegistrationCampaignContext
+
   helper RosterHelper
 
   before_action :set_lecture, only: [:new, :create]
@@ -53,7 +55,9 @@ class CohortsController < ApplicationController
       persisted = @cohort.save
       raise(ActiveRecord::Rollback) unless persisted
 
-      persisted = apply_registration_context
+      persisted = apply_registration_context(registerable: @cohort,
+                                             lecture: @lecture,
+                                             error_target: @cohort)
       raise(ActiveRecord::Rollback) unless persisted
     end
 
@@ -183,58 +187,6 @@ class CohortsController < ApplicationController
                                         locals: { cohort: @cohort })
       end
       streams
-    end
-
-    def apply_registration_context
-      return true unless registration_section_campaign?
-
-      campaign = find_or_create_registration_campaign
-      return false unless campaign
-
-      item = campaign.registration_items.build(registerable: @cohort)
-      unless RegistrationItemAbility.new(current_user).can?(:create, item)
-        @cohort.errors.add(:base, t("registration.campaign.create_failed"))
-        return false
-      end
-      return true if item.save
-
-      @cohort.errors.add(:base, item.errors.full_messages.to_sentence)
-      false
-    end
-
-    def find_or_create_registration_campaign
-      campaign = existing_registration_campaign
-      return campaign if campaign
-
-      campaign = @lecture.registration_campaigns.build(
-        description: t("registration.campaign.default_description"),
-        allocation_mode: :first_come_first_served,
-        registration_deadline: 2.weeks.from_now
-      )
-      unless RegistrationCampaignAbility.new(current_user).can?(:create, campaign)
-        @cohort.errors.add(:base, t("registration.campaign.create_failed"))
-        return nil
-      end
-      return campaign if campaign.save
-
-      @cohort.errors.add(:base, campaign.errors.full_messages.to_sentence)
-      nil
-    end
-
-    def existing_registration_campaign
-      campaign_id = params[:registration_campaign_id]
-      scope = @lecture.registration_campaigns.order(created_at: :desc)
-      campaign = campaign_id.present? ? scope.find_by(id: campaign_id) : scope.first
-      return campaign if campaign
-
-      return nil unless campaign_id.present?
-
-      @cohort.errors.add(:base, t("registration.campaign.not_found"))
-      nil
-    end
-
-    def registration_section_campaign?
-      params[:registration_section].to_s == "campaign"
     end
 
     def parse_group_type
