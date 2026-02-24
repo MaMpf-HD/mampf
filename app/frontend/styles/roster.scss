@@ -105,3 +105,56 @@
     transform: translateY(-2px);
   }
 }
+
+.tutorial-gtile {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+
+    .tutorial-gtile-actions {
+      opacity: 1;
+    }
+  }
+}
+
+.tutorial-gtile-top-bar {
+  height: 5px;
+}
+
+.tutorial-gtile-top-bar--campaign {
+  background: var(--bs-primary);
+}
+
+.tutorial-gtile-top-bar--free {
+  background: var(--bs-secondary);
+}
+
+.tutorial-gtile-type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-gray-500);
+  font-weight: 600;
+}
+
+.tutorial-gtile-name {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+.tutorial-gtile-actions {
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+@media (hover: none) {
+  .tutorial-gtile-actions {
+    opacity: 1;
+  }
+}

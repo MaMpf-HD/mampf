@@ -1,24 +1,51 @@
 <div class="col" id="<%= dom_id(tutorial) %>">
-  <div class="card h-100 rounded-3">
-    <div class="card-body d-flex flex-column gap-2">
-      <h6
-        class="card-title fw-bold mb-0 text-truncate"
-        title="<%= tutorial.title %>"
-      >
-        <%= tutorial.title %>
-      </h6>
+  <div class="card h-100 tutorial-gtile tutorial-gtile--free">
+    <div class="tutorial-gtile-top-bar tutorial-gtile-top-bar--free"></div>
 
-      <div class="small text-muted">
+    <div class="card-body d-flex flex-column">
+      <div class="tutorial-gtile-type">
         <%= t("registration.item.types.tutorial") %>
       </div>
 
-      <div class="small text-muted flex-grow-1">
+      <h5
+        class="tutorial-gtile-name text-truncate"
+        title="<%= tutorial.title %>"
+      >
+        <%= tutorial.title %>
+      </h5>
+
+      <div class="text-muted mt-2 flex-grow-1">
         <i class="bi bi-person me-1"></i>
         <%= tutorial.tutor_names.presence || t("basics.tba") %>
       </div>
 
       <div class="small text-muted">
         <%= tutorial.roster_entries.count %> / <%= tutorial.capacity || "∞" %>
+      </div>
+
+      <div
+        class="
+          tutorial-gtile-actions mt-3 pt-2 border-top d-flex gap-2
+          justify-content-end
+        "
+      >
+        <%= link_to edit_tutorial_path(tutorial, group_type: :tutorials),
+                    class: "btn btn-sm btn-primary",
+                    title: t("roster.tooltips.edit_settings"),
+                    data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+          <i class="bi bi-pencil"></i>
+        <% end %>
+
+        <%= link_to tutorial_path(tutorial, group_type: :tutorials),
+                    class: "btn btn-sm btn-danger",
+                    title: t("roster.tooltips.delete"),
+                    data: {
+                      turbo_method: :delete,
+                      turbo_confirm: t("confirmation.generic"),
+                      bs_toggle: "tooltip"
+                    } do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
       </div>
     </div>
   </div>

@@ -1,44 +1,95 @@
 <div class="col" id="<%= dom_id(item) %>">
-  <div class="card h-100 rounded-3">
-    <div class="card-body d-flex flex-column gap-2">
-      <h6
-        class="card-title fw-bold mb-0 text-truncate"
-        title="<%= item.title %>"
-      >
-        <%= item.title %>
-      </h6>
+  <% if item.registerable_type == "Tutorial" %>
+    <div class="card h-100 tutorial-gtile tutorial-gtile--campaign">
+      <div class="tutorial-gtile-top-bar tutorial-gtile-top-bar--campaign"></div>
 
-      <div class="small text-muted"><%= item_display_type(item) %></div>
+      <div class="card-body d-flex flex-column">
+        <div class="tutorial-gtile-type">
+          <%= t("registration.item.types.tutorial") %>
+        </div>
 
-      <div class="mt-auto">
-        <%= form_with(model: item,
-                      url: registration_campaign_item_path(item.registration_campaign, item),
-                      method: :patch,
-                      data: { turbo: true }) do |f| %>
-          <div class="input-group input-group-sm" style="max-width: 80px;">
-            <%= f.number_field :capacity,
-                               class: "form-control",
-                               min: 0,
-                               placeholder: "∞" %>
+        <h6 class="tutorial-gtile-name text-truncate" title="<%= item.title %>">
+          <%= item.title %>
+        </h6>
 
-            <button class="btn btn-outline-success" type="submit">
-              <i class="bi bi-check-lg"></i>
-            </button>
-          </div>
+        <div class="small text-muted mt-2 flex-grow-1">
+          <i class="bi bi-person me-1"></i>
+          <%= item.registerable.tutor_names.presence || t("basics.tba") %>
+        </div>
 
-          <% if item.errors[:base].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.errors[:base].join(", ") %>
-            </div>
+        <div class="small text-muted">
+          <%= item.registerable.roster_entries.count %> /
+          <%= item.capacity || "∞" %>
+        </div>
+
+        <div
+          class="
+            tutorial-gtile-actions mt-3 pt-2 border-top d-flex gap-2
+            justify-content-end
+          "
+        >
+          <%= link_to edit_tutorial_path(item.registerable, group_type: :tutorials),
+                      class: "btn btn-sm btn-primary",
+                      title: t("roster.tooltips.edit_settings"),
+                      data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+            <i class="bi bi-pencil"></i>
           <% end %>
 
-          <% if item.registerable.errors[:capacity].any? %>
-            <div class="text-danger small mt-1">
-              <%= item.registerable.errors[:capacity].join(", ") %>
-            </div>
+          <%= link_to registration_campaign_item_path(item.registration_campaign, item),
+                      class: "btn btn-sm btn-danger",
+                      title: t("registration.item.actions.remove_from_campaign"),
+                      data: {
+                        turbo_method: :delete,
+                        turbo_confirm: t("registration.item.confirm_remove"),
+                        bs_toggle: "tooltip"
+                      } do %>
+            <i class="bi bi-trash"></i>
           <% end %>
-        <% end %>
+        </div>
       </div>
     </div>
-  </div>
+  <% else %>
+    <div class="card h-100 rounded-3">
+      <div class="card-body d-flex flex-column gap-2">
+        <h6
+          class="card-title fw-bold mb-0 text-truncate"
+          title="<%= item.title %>"
+        >
+          <%= item.title %>
+        </h6>
+
+        <div class="small text-muted"><%= item_display_type(item) %></div>
+
+        <div class="mt-auto">
+          <%= form_with(model: item,
+                        url: registration_campaign_item_path(item.registration_campaign, item),
+                        method: :patch,
+                        data: { turbo: true }) do |f| %>
+            <div class="input-group input-group-sm" style="max-width: 80px;">
+              <%= f.number_field :capacity,
+                                 class: "form-control",
+                                 min: 0,
+                                 placeholder: "∞" %>
+
+              <button class="btn btn-outline-success" type="submit">
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+
+            <% if item.errors[:base].any? %>
+              <div class="text-danger small mt-1">
+                <%= item.errors[:base].join(", ") %>
+              </div>
+            <% end %>
+
+            <% if item.registerable.errors[:capacity].any? %>
+              <div class="text-danger small mt-1">
+                <%= item.registerable.errors[:capacity].join(", ") %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
