@@ -17,8 +17,7 @@
           <% if ref.present? %>
             <%= link_to medium.card_header,
                         ref,
-                        class: 'text-light',
-                        data: { turbo_frame: "_top" } %>
+                        class: 'text-light' %>
           <% else %>
             <span class="text-light">
               <%= medium.card_header %>

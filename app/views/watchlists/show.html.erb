@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "watchlist" do %>
+<div id="watchlist">
   <div class="row pb-2 no-gutters">
     <div class="col-6">
       <ul class="nav justify-content-start">
@@ -61,7 +61,7 @@
     <% end %>
   <% end %>
   <div class="mb-auto"></div>
-<% end %>
+</div>
 
 <%= render partial: 'watchlists/modal', locals: { context: :new } %>
 <%= render partial: 'watchlists/modal', locals: { context: :edit } %>
