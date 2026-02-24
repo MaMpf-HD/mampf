@@ -191,3 +191,16 @@ Thredded.notifiers = []
 # add in (must install separate gem (under development) as well):
 # Thredded.notifiers = [Thredded::EmailNotifier.new,
 #                       Thredded::PushoverNotifier.new(ENV.fetch("PUSHOVER_APP_ID"))]
+
+# Checks eligibility of users to be awarded badges after a topic creation
+Rails.application.config.to_prepare do
+  Thredded::Topic.class_eval do
+    after_create :check_threads_badge
+
+    private
+
+      def check_threads_badge
+        Badge.check_threads_badge_for(user)
+      end
+  end
+end

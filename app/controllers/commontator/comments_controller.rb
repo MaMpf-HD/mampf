@@ -91,6 +91,8 @@ module Commontator
 
         format.html { redirect_to commontable_url }
       end
+
+      Badge.check_comment_badge_for(@commontator_user)
     end
 
     # PUT /comments/1

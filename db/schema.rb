@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -116,6 +116,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.date "deletion_date", default: "2200-01-01", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
+  end
+
+  create_table "badges", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "icon_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -944,6 +952,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 
+  create_table "user_badges", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "badge_id", null: false
+    t.datetime "achieved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["badge_id"], name: "index_user_badges_on_badge_id"
+    t.index ["user_id", "badge_id"], name: "index_user_badges_on_user_id_and_badge_id", unique: true
+    t.index ["user_id"], name: "index_user_badges_on_user_id"
+  end
+
   create_table "user_favorite_lecture_joins", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "lecture_id", null: false
@@ -1233,6 +1252,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
   add_foreign_key "tutorials", "lectures"
+  add_foreign_key "user_badges", "badges"
+  add_foreign_key "user_badges", "users"
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"

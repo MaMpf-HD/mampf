@@ -6,6 +6,8 @@ class Annotation < ApplicationRecord
 
   scope :commented, -> { where.not(public_comment_id: nil) }
 
+  after_create :check_annotation_badge
+
   # the timestamp for the annotation position is serialized as text in the db
   serialize :timestamp, coder: TimeStamp
 
@@ -45,5 +47,11 @@ class Annotation < ApplicationRecord
       14 => "#999999",
       15 => "#EEEEEE"
     }
+  end
+
+  def check_annotation_badge
+    return unless visible_for_teacher
+
+    Badge.check_annotation_badge_for(user)
   end
 end
