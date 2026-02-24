@@ -1,15 +1,15 @@
 module Registration
   class UserRegistration
     class LectureFcfsEditService < UserRegistration::Handler
-      def register!
+      def register!(item)
         ActiveRecord::Base.transaction do
-          @item.lock!
-          errors = validate_register
+          item.lock!
+          errors = validate_register(item)
           return Result.new(false, errors) unless errors.empty?
 
           Registration::UserRegistration.create!(
             registration_campaign: @campaign,
-            registration_item: @item,
+            registration_item: item,
             user: @user,
             status: :confirmed
           )
@@ -19,13 +19,13 @@ module Registration
 
       # hard delete the result, or else cannot trace the "submitted options"
       # the downside effect is that we cannot trace the withdraw time of user
-      def withdraw!
+      def withdraw!(item)
         ActiveRecord::Base.transaction do
-          @item.lock!
+          item.lock!
           errors = validate_withdraw
           return Result.new(false, errors) unless errors.empty?
 
-          registration = @item.user_registrations.find_by!(user: @user, status: :confirmed)
+          registration = item.user_registrations.find_by!(user: @user, status: :confirmed)
           registration.destroy!
         end
         Result.new(true, [])
@@ -38,11 +38,11 @@ module Registration
         # 1. Check if user has already registered for this campaign this group type
         # 2. Check if item still has capacity
         # 3. Check if user satisfies all policies (phase: registration and both)
-        def validate_register
+        def validate_register(item)
           [
             check_campaign_open_for_registrations,
-            check_already_registered_current_type,
-            check_capacity,
+            check_already_registered_current_type(item),
+            check_capacity(item),
             check_policies
           ].compact
         end
