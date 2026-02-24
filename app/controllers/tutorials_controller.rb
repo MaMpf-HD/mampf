@@ -93,10 +93,21 @@ class TutorialsController < ApplicationController
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
+    @tutorial.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
     set_tutorial_locale
-    flash.now[:notice] = t("controllers.tutorials.created") if @tutorial.save
+
+    persisted = false
+    Tutorial.transaction do
+      persisted = @tutorial.save
+      raise(ActiveRecord::Rollback) unless persisted
+
+      persisted = apply_registration_context
+      raise(ActiveRecord::Rollback) unless persisted
+    end
+
+    flash.now[:notice] = t("controllers.tutorials.created") if persisted
     @errors = @tutorial.errors
 
     respond_to do |format|
@@ -320,5 +331,55 @@ class TutorialsController < ApplicationController
       end
 
       streams
+    end
+
+    def apply_registration_context
+      return true unless registration_section_campaign?
+
+      campaign = find_or_create_registration_campaign
+      return false unless campaign
+
+      item = campaign.registration_items.build(registerable: @tutorial)
+      authorize! :create, item
+      return true if item.save
+
+      @tutorial.errors.add(:base, item.errors.full_messages.to_sentence)
+      false
+    end
+
+    def find_or_create_registration_campaign
+      campaign = existing_registration_campaign
+      return campaign if campaign
+
+      campaign = @lecture.registration_campaigns.build(
+        description: t("registration.campaign.default_description"),
+        allocation_mode: :first_come_first_served,
+        registration_deadline: 2.weeks.from_now
+      )
+      authorize! :create, campaign
+      return campaign if campaign.save
+
+      @tutorial.errors.add(:base, campaign.errors.full_messages.to_sentence)
+      nil
+    end
+
+    def existing_registration_campaign
+      campaign_id = params[:registration_campaign_id]
+      scope = @lecture.registration_campaigns.order(created_at: :desc)
+      campaign = campaign_id.present? ? scope.find_by(id: campaign_id) : scope.first
+      return campaign if campaign
+
+      return nil unless campaign_id.present?
+
+      @tutorial.errors.add(:base, t("registration.campaign.not_found"))
+      nil
+    end
+
+    def registration_section_campaign?
+      params[:registration_section].to_s == "campaign"
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

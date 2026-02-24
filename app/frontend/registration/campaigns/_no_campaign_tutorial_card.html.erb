@@ -1,0 +1,25 @@
+<div class="col" id="<%= dom_id(tutorial) %>">
+  <div class="card h-100 rounded-3">
+    <div class="card-body d-flex flex-column gap-2">
+      <h6
+        class="card-title fw-bold mb-0 text-truncate"
+        title="<%= tutorial.title %>"
+      >
+        <%= tutorial.title %>
+      </h6>
+
+      <div class="small text-muted">
+        <%= t("registration.item.types.tutorial") %>
+      </div>
+
+      <div class="small text-muted flex-grow-1">
+        <i class="bi bi-person me-1"></i>
+        <%= tutorial.tutor_names.presence || t("basics.tba") %>
+      </div>
+
+      <div class="small text-muted">
+        <%= tutorial.roster_entries.count %> / <%= tutorial.capacity || "∞" %>
+      </div>
+    </div>
+  </div>
+</div>

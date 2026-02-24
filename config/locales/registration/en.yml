@@ -18,6 +18,7 @@ en:
       completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
       go_to_roster: "Go to Roster"
       lecture_not_found: "Lecture not found."
+      default_description: "Registration"
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
@@ -30,6 +31,9 @@ en:
         card_title: "Registration Campaigns"
         new_campaign: "New Campaign"
         none: "No campaigns found."
+        sections:
+          registration: "Registration Campaign"
+          no_campaign: "No Campaign"
         columns:
           description: "Short description"
           type: "Type"
@@ -163,6 +167,9 @@ en:
         none: "No groups added yet."
       add:
         title: "Add Groups"
+        group: "Add group"
+        tutorial: "Add Tutorial"
+        flexible_group: "Add flexible group"
         existing: "Add Existing"
         new: "Create New"
         none_available: "No groups available to add."

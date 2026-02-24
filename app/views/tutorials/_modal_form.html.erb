@@ -11,6 +11,9 @@
   <div class="modal-body">
     <%= f.hidden_field :lecture_id %>
     <%= hidden_group_type_field(params[:group_type]) %>
+    <%= hidden_field_tag :registration_section, params[:registration_section] %>
+    <%= hidden_field_tag :registration_campaign_id,
+                         params[:registration_campaign_id] %>
 
     <div class="mb-3">
       <%= f.label :title, t('basics.title'), class: "form-label" %>
@@ -41,7 +44,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
     <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('buttons.cancel') %></button>
   </div>
 <% end %>

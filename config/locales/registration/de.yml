@@ -18,6 +18,7 @@ de:
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
       lecture_not_found: "Veranstaltung nicht gefunden."
+      default_description: "Anmeldung"
       helpdesk:
         campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
         description: "Eine kurze Beschreibung des Anmeldeverfahrens (max. 100 Zeichen). Diese wird in Übersichten und Tabellen angezeigt."
@@ -30,6 +31,9 @@ de:
         card_title: "Anmeldeverfahren"
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."
+        sections:
+          registration: "Anmeldeverfahren"
+          no_campaign: "Kein Anmeldeverfahren"
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
@@ -163,6 +167,9 @@ de:
         none: "Noch keine Gruppen hinzugefügt."
       add:
         title: "Gruppen hinzufügen"
+        group: "Gruppe hinzufügen"
+        tutorial: "Tutorium hinzufügen"
+        flexible_group: "Flexible Gruppe hinzufügen"
         existing: "Vorhandene hinzufügen"
         new: "Neue erstellen"
         none_available: "Keine Gruppen verfügbar."

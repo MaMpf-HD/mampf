@@ -1,4 +1,13 @@
 <div id="registration_items_container">
+  <% if campaign.draft? && campaign.campaignable.is_a?(Lecture) %>
+    <div class="mb-4">
+      <%= render "registration/campaigns/add_group_tile",
+                 lecture: campaign.campaignable,
+                 section: :campaign,
+                 campaign: campaign %>
+    </div>
+  <% end %>
+
   <div class="mb-4">
     <% if campaign.completed? %>
       <div class="alert alert-light border">
@@ -32,11 +41,4 @@
       </div>
     <% end %>
   </div>
-
-  <% if campaign.draft? %>
-    <div class="mt-5">
-      <h5><%= t("registration.item.add.title") %></h5>
-      <%= render "registration/items/available_items", campaign: campaign %>
-    </div>
-  <% end %>
 </div>

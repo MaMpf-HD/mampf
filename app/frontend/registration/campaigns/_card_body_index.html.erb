@@ -2,37 +2,59 @@
   <%= render "registration/campaigns/card_body_form",
              campaign: new_campaign,
              lecture: lecture %>
-<% elsif lecture.registration_campaigns.any? %>
-  <div class="accordion" id="campaigns_accordion">
-    <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
-      <% expanded = campaign.id == local_assigns[:expanded_campaign_id] %>
-      <% active_tab = expanded ? (local_assigns[:tab] || "items") : "items" %>
+<% else %>
+  <% campaigns = lecture.registration_campaigns.order(created_at: :desc) %>
+  <% no_campaign_tutorials = lecture.tutorials.includes(:tutors)
+                                  .where(skip_campaigns: true)
+                                  .order(:title) %>
+  <div class="d-flex flex-column gap-4">
+    <section>
+      <h5 class="mb-3">
+        <%= t("registration.campaign.index.sections.registration") %>
+      </h5>
 
-      <div
-        class="accordion-item"
-        id="<%= campaign_accordion_item_id(campaign) %>"
-      >
-        <h2 class="accordion-header" id="heading-<%= campaign.id %>">
-          <%= render "registration/campaigns/accordion_header",
-                     campaign: campaign,
-                     expanded: expanded,
-                     collapse_id: campaign_accordion_collapse_id(campaign) %>
-        </h2>
+      <% if campaigns.any? %>
+        <% campaigns.each do |campaign| %>
+          <% active_tab = campaign.id == local_assigns[:expanded_campaign_id] ?
+            (local_assigns[:tab] || "items") : "items" %>
 
-        <div
-          id="<%= campaign_accordion_collapse_id(campaign) %>"
-          class="accordion-collapse collapse <%= "show" if expanded %>"
-          data-bs-parent="#campaigns_accordion"
-        >
-          <div class="accordion-body">
+          <div class="rounded border border-primary-subtle bg-primary-subtle p-3 mb-3">
+            <%= render "registration/campaigns/accordion_header",
+                       campaign: campaign,
+                       collapsible: false %>
+
             <%= render "registration/campaigns/card_body_show",
                        campaign: campaign,
                        tab: active_tab %>
           </div>
+        <% end %>
+      <% else %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+          <div class="col">
+            <%= render "registration/campaigns/add_group_tile",
+                       lecture: lecture,
+                       section: :campaign %>
+          </div>
+        </div>
+      <% end %>
+    </section>
+
+    <section>
+      <h5 class="mb-3">
+        <%= t("registration.campaign.index.sections.no_campaign") %>
+      </h5>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+        <%= render partial: "registration/campaigns/no_campaign_tutorial_card",
+                   collection: no_campaign_tutorials,
+                   as: :tutorial %>
+
+        <div class="col">
+          <%= render "registration/campaigns/add_group_tile",
+                     lecture: lecture,
+                     section: :no_campaign %>
         </div>
       </div>
-    <% end %>
+    </section>
   </div>
-<% else %>
-  <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
 <% end %>

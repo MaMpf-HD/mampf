@@ -83,3 +83,25 @@
   border-radius: 0.5rem;
   overflow: hidden;
 }
+
+.add-group-tile {
+  min-height: 12rem;
+  border: 2px dashed var(--bs-gray-400);
+  background-color: var(--bs-gray-100);
+  transition: border-color 0.18s ease, border-style 0.18s ease,
+              box-shadow 0.18s ease, transform 0.18s ease,
+              background-color 0.18s ease;
+
+  .add-group-tile-title {
+    color: var(--bs-gray-700);
+    font-weight: 600;
+  }
+
+  &:hover {
+    border-style: solid;
+    border-color: var(--bs-gray-600);
+    background-color: var(--bs-gray-200);
+    box-shadow: 0 0.35rem 0.85rem rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
