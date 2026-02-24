@@ -156,6 +156,20 @@ RSpec.describe(GradePreviewComponent, type: :component) do
                assessment: assessment, points_total: 50)
         expect(pct_comp.preview_rows).to eq([])
       end
+
+      it "renders the unsupported format warning" do
+        render_inline(pct_comp)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.unsupported_pct_format")
+        )
+      end
+
+      it "does not render the grade preview table" do
+        render_inline(pct_comp)
+        expect(rendered_content).not_to include(
+          I18n.t("assessment.grade_scheme.preview.title")
+        )
+      end
     end
   end
 end
