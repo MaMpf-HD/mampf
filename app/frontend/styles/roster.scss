@@ -92,7 +92,7 @@
 }
 
 .add-group-tile {
-  min-height: 12rem;
+  min-height: 9.5rem;
   border: 2px dashed var(--bs-gray-400);
   background-color: var(--bs-gray-100);
   transition: border-color 0.18s ease, border-style 0.18s ease,
@@ -144,6 +144,16 @@
 .registration-campaign-ghost-placeholder {
   border-style: dashed;
   opacity: 0.45;
+}
+
+.registration-group-tile-col {
+  max-width: 15rem;
+}
+
+@include media-breakpoint-down(md) {
+  .registration-group-tile-col {
+    max-width: none;
+  }
 }
 
 .tutorial-gtile {
