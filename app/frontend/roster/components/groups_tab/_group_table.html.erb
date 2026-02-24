@@ -24,14 +24,4 @@
       </div>
     </div>
   <% end %>
-<% else %>
-  <div class="text-center text-muted p-4">
-    <p class="mb-2"><%= t("roster.empty_state_help") %></p>
-
-    <small>
-      <%= t("roster.empty_state_links_html",
-            workflow_link: link_to(t("roster.lifecycle_help.toggle"), "#roster-lifecycle-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline"),
-            group_types_link: link_to(t("roster.roster_help.group_types.toggle"), "#roster-group-types-collapse", data: { bs_toggle: "collapse" }, class: "text-decoration-underline")) %>
-    </small>
-  </div>
 <% end %>
