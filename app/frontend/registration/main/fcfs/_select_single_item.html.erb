@@ -4,22 +4,43 @@
     <span><%= item.registerable.title %></span>
   </div>
 
-  <div class="d-flex justify-content-between mb-2">
-    <div>
+  <div class="row justify-content-between mb-2">
+    <div class="col-9">
       <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-        <span class="fw-medium small"><%= t(col[:header]) %>:</span>
-        <span class="fw-normal small"><%= col[:field].call(item) %></span>
+      <div class="mb-1 d-flex align-items-center">
+        <span class="badge text-primary m-1">
+          <i class="material-icons text-dark"><%= col[:icon] %></i>
+        </span>
+        <span class="fw-medium small text-muted col-4"><%= t(col[:header]) %>:</span>
+        <span class="fw-normal"><%= col[:field].call(item) %></span>
+      </div>
       <% end %>
 
-      <div class="small text-muted mb-1">
-        <%= t('registration.user_registration.seats_remaining') %>:
-        <span><%= nullable_capacity_display(item.capacity_remained) %></span>
+      <div class="mb-1 d-flex align-items-center">
+        <span class="badge text-primary m-1">
+          <i class="material-icons text-dark">event_seat</i>
+        </span>
+        <span class="fw-medium small text-muted col-4">
+          <%= t('registration.user_registration.seats_remaining') %>:
+        </span>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-dark small fw-semibold">
+            <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
+          </span>
+          <%= progress_bar(item.confirmed_registrations_count,
+                                          item.capacity,
+                                          classification: :utilization,
+                                          label: "",
+                                          height: "6px",
+                                          container_class: "progress",
+                                          style: "width: 100px;") %>
+        </div>
       </div>
     </div>
 
     <% last_updated = campaign.user_registrations_last_updated(current_user) %>
     <% if last_updated %>
-      <div class="col-4 small text-success text-end fw-semibold">
+      <div class="col-3 small text-success text-end fw-semibold">
         <%= t('basics.saved_at', time: format_date(last_updated)) %>
       </div>
     <% end %>
@@ -30,11 +51,11 @@
   <div class="d-flex gap-2 justify-content-between flex-wrap">
     <div class="mb-3">
       <% if registered %>
-        <span class="badge rounded-pill text-bg-success">
+        <span class="badge text-normal rounded-pill text-bg-success m-2">
           <%= t('registration.user_registration.registered') %>
         </span>
       <% else %>
-        <span class="badge rounded-pill text-bg-secondary">
+        <span class="badge text-normal rounded-pill text-bg-secondary m-2">
           <%= t('registration.user_registration.not_registered') %>
         </span>
       <% end %>
