@@ -146,12 +146,24 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
       expect(component.pct_scheme?).to be(false)
     end
 
-    it "returns true for a min_pct scheme" do
-      pct_scheme = create(:assessment_grade_scheme, :percentage,
-                          assessment: assessment, active: false)
-      comp = described_class.new(assessment: assessment,
-                                 grade_scheme: pct_scheme)
-      expect(comp.pct_scheme?).to be(true)
+    context "with a min_pct scheme" do
+      let(:pct_scheme) do
+        create(:assessment_grade_scheme, :percentage,
+               assessment: assessment, active: false)
+      end
+      let(:pct_comp) do
+        described_class.new(assessment: assessment, grade_scheme: pct_scheme)
+      end
+
+      it "returns true" do
+        expect(pct_comp.pct_scheme?).to be(true)
+      end
+
+      it "student_counts returns empty hash without crashing" do
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, points_total: 50)
+        expect(pct_comp.student_counts).to eq({})
+      end
     end
   end
 end

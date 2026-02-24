@@ -77,6 +77,8 @@ class GradePreviewComponent < ViewComponent::Base
   private
 
     def build_preview_rows
+      return [] if pct_scheme?
+
       participations = assessment
                        .assessment_participations
                        .where(status: :reviewed)

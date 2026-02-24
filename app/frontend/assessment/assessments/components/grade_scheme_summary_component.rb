@@ -106,6 +106,8 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     end
 
     def compute_counts
+      return {} if pct_scheme?
+
       sorted_desc = bands.sort_by { |b| -b["min_points"] }
       result = bands.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
 
