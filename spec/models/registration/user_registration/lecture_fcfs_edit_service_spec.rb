@@ -257,4 +257,157 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     #   expect(registration.status).to eq("confirmed")
     # end
   end
+
+  describe "campaign with 1 exam in FCFS" do
+    let(:lecture) { create(:lecture) }
+    let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+    let(:campaign) do
+      create(:registration_campaign,
+             :open,
+             campaignable: lecture,
+             allocation_mode: :first_come_first_served)
+    end
+
+    let!(:item_exam) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: exam)
+    end
+
+    it "allows registering for the exam" do
+      service = described_class.new(campaign, user, item_exam)
+      result = service.register!
+
+      expect(result.success?).to be(true)
+      registration = Registration::UserRegistration.last
+      expect(registration.registration_item).to eq(item_exam)
+      expect(registration.status).to eq("confirmed")
+    end
+  end
+
+  describe "campaign with 2 exams in FCFS" do
+    let(:lecture) { create(:lecture) }
+    let(:exam1) { create(:exam, :with_date, lecture: lecture) }
+    let(:exam2) { create(:exam, :with_date, lecture: lecture) }
+
+    let(:campaign) do
+      create(:registration_campaign,
+             :open,
+             campaignable: lecture,
+             allocation_mode: :first_come_first_served)
+    end
+
+    let!(:item_exam1) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: exam1)
+    end
+
+    let!(:item_exam2) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: exam2)
+    end
+
+    it "allows registering for the first exam" do
+      service = described_class.new(campaign, user, item_exam1)
+      result = service.register!
+      expect(result.success?).to be(true)
+    end
+
+    it "prevents registering for a second exam if already registered" do
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item_exam1,
+        user: user,
+        status: :confirmed
+      )
+
+      service = described_class.new(campaign, user, item_exam2)
+      result = service.register!
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.already_registered")
+      )
+    end
+  end
+
+  describe "campaign with predecessor tutorial and successor exam" do
+    let(:lecture) { create(:lecture) }
+    let(:seminar) { create(:seminar) }
+
+    let(:tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             capacity: 20)
+    end
+
+    let(:exam) do
+      create(:exam, :with_date, lecture: lecture)
+    end
+
+    let(:campaign1) do
+      create(:registration_campaign,
+             :open,
+             campaignable: lecture,
+             allocation_mode: :first_come_first_served)
+    end
+
+    let!(:item_tutorial) do
+      create(:registration_item,
+             registration_campaign: campaign1,
+             registerable: tutorial)
+    end
+
+    let(:campaign2) do
+      create(:registration_campaign,
+             :open,
+             :with_prerequisite_policy,
+             campaignable: lecture,
+             parent_campaign: campaign1)
+    end
+
+    let!(:item_exam) do
+      create(:registration_item,
+             registration_campaign: campaign2,
+             registerable: exam)
+    end
+
+    let(:policy) { campaign2.registration_policies.find_by(kind: :prerequisite_campaign) }
+
+    before do
+      Registration::UserRegistration.delete_all
+    end
+
+    it "has correct prerequisite campaign id" do
+      expect(policy.config["prerequisite_campaign_id"]).to eq(campaign1.id)
+    end
+
+    it "fails to register for exam when tutorial predecessor not registered" do
+      service = described_class.new(campaign2, user, item_exam)
+      result = service.register!
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.requirements_not_met")
+      )
+    end
+
+    it "succeeds to register for exam when tutorial predecessor is registered" do
+      # Register in campaign1
+      service1 = described_class.new(campaign1, user, item_tutorial)
+      service1.register!
+
+      # register in campaign2
+      service2 = described_class.new(campaign2, user, item_exam)
+      result = service2.register!
+
+      expect(result.success?).to be(true)
+      registration = Registration::UserRegistration.last
+      expect(registration.registration_item).to eq(item_exam)
+      expect(registration.status).to eq("confirmed")
+    end
+  end
 end
