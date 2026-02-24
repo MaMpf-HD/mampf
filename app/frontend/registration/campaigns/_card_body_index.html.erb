@@ -22,7 +22,7 @@
           <% active_tab = campaign.id == local_assigns[:expanded_campaign_id] ?
             (local_assigns[:tab] || "items") : "items" %>
 
-          <div class="rounded border border-primary-subtle bg-primary-subtle p-3 mb-3">
+          <div class="p-3 mb-3 campaign-section">
             <%= render "registration/campaigns/accordion_header",
                        campaign: campaign,
                        collapsible: false %>
