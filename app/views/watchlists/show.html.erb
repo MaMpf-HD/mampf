@@ -37,23 +37,21 @@
     </div>
   <% end %>
   <% if @watchlist_entries.present? %>
-    <%= turbo_frame_tag "watchlist_items" do %>
-      <div class="row pt-2 ps-4 pe-4" 
-           id="sortableWatchlistMedia"
-           data-controller="watchlist-sortable">
-        <% @watchlist_entries.each do |entry| %>
-          <div class="media-grid pb-2" data-id="<%= entry.id %>">
-            <%= render partial: 'media/medium',
-                      locals: { medium: entry.medium,
-                                entry: entry,
-                                tags: entry.medium.tags,
-                                from: 'watchlist',
-                                ref_link: nil,
-                                lecture: entry.medium.lecture } %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+    <div class="row pt-2 ps-4 pe-4" 
+         id="sortableWatchlistMedia"
+         data-controller="watchlist-sortable">
+      <% @watchlist_entries.each do |entry| %>
+        <div class="media-grid pb-2" data-id="<%= entry.id %>">
+          <%= render partial: 'media/medium',
+                    locals: { medium: entry.medium,
+                              entry: entry,
+                              tags: entry.medium.tags,
+                              from: 'watchlist',
+                              ref_link: nil,
+                              lecture: entry.medium.lecture } %>
+        </div>
+      <% end %>
+    </div>
     <% unless params[:all] %>
       <div class="row my-2">
         <div class="col-12">
