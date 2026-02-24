@@ -57,13 +57,8 @@ module Registration
     def create
       result = Registration::UserRegistration::LectureFcfsEditService
                .new(@campaign, current_user).register!(@item)
-      if result.success?
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                    notice: I18n.t("registration.user_registration.messages.registration_success")
-      else
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                    alert: result.errors.join(", ")
-      end
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.registration_success"))
     end
 
     def update
@@ -71,16 +66,8 @@ module Registration
                    .new.pref_item_build_for_save(params[:preferences_json])
       result = Registration::UserRegistration::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
-      if result.success?
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                    notice: I18n.t("registration.user_registration.messages.preferences_saved")
-      else
-        respond_with_flash(
-          :alert,
-          result.errors.join(", "),
-          fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
-        )
-      end
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.preferences_saved"))
     end
 
     def destroy
@@ -89,13 +76,8 @@ module Registration
                        .registration_campaign
       result = Registration::UserRegistration::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
-      if result.success?
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                    notice: I18n.t("registration.user_registration.messages.withdrawn")
-      else
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                    alert: result.errors.join(", ")
-      end
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.withdrawn"))
     end
 
     def render_not_found(exception)
@@ -125,6 +107,35 @@ module Registration
     end
 
     private
+
+      def respond_to_student_registration(result, success_message)
+        if result.success?
+          init_details
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                "main-student-registration-campaign",
+                partial: "registration/main/main_campaign",
+                locals: { campaign: @campaign,
+                          campaignable_host: @campaignable_host,
+                          eligibility: @eligibility,
+                          items: @items,
+                          item_preferences: @item_preferences }
+              )
+            end
+            format.html do
+              redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                          notice: success_message
+            end
+          end
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+          )
+        end
+      end
 
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
