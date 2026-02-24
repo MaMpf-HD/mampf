@@ -75,14 +75,6 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
-    def lecture_based?
-      campaignable_type == "Lecture"
-    end
-
-    def exam_based?
-      campaignable_type == "Exam"
-    end
-
     def only_planning_cohort?
       registration_items.exists? &&
         registration_items.size == 1 &&

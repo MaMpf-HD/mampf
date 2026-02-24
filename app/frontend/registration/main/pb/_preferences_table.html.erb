@@ -39,7 +39,7 @@
           <button type="submit" 
                   class="material-icons clickable arrow_upward w-auto
                     border-0 bg-transparent p-0 m-0" 
-                  <%="disabled" if pref.rank==1 || !campaign.open_for_registrations?%>
+                  <%= "disabled" if pref.rank==1 || !campaign.open_for_registrations? %>
                   data-action="touched-check#mark"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.move_up') %>"
@@ -50,7 +50,7 @@
           <button type="submit" 
                   class="material-icons clickable arrow_downward w-auto
                     border-0 bg-transparent p-0 m-0" 
-                  <%="disabled" if pref.rank==item_preferences.size || !campaign.open_for_registrations?%>
+                  <%= "disabled" if pref.rank==item_preferences.size || !campaign.open_for_registrations? %>
                   data-action="touched-check#mark"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.move_down') %>"
@@ -60,7 +60,7 @@
 
           <button type="submit" class="material-icons clickable playlist_remove w-auto
                             border-0 bg-transparent p-0 m-0" data-action="touched-check#mark" data-bs-toggle="tooltip"
-            <%="disabled" if !campaign.open_for_registrations?%>
+            <%= "disabled" if !campaign.open_for_registrations? %>
             title="<%= t('buttons.remove_from_list') %>"
               formaction="<%= remove_preference_path(item.id) %>">
                 playlist_remove

@@ -37,21 +37,17 @@ module Registration
     def registrations_for_campaign
       target = resolve_render_target(@campaign)
       case target
-      when :lecture_index, :exam_index
+      when :index
         redirect_to user_registrations_path,
                     notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
-      when :lecture_details
+      when :details
         init_details
         render template: "registration/main/show_main_campaign",
                layout: "application_no_sidebar"
-      when :exam_details
-        raise(NotImplementedError, "Exam campaignable_type not supported yet")
-      when :lecture_result
+      when :result
         init_result
         render template: "registration/main/show_result_main_campaign",
                layout: "application_no_sidebar"
-      when :exam_result # rubocop:disable Lint/DuplicateBranch
-        raise(NotImplementedError, "Exam campaignable_type not supported yet")
       else # rubocop:disable Lint/DuplicateBranch
         redirect_to user_registrations_path,
                     notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
@@ -59,59 +55,29 @@ module Registration
     end
 
     def create
-      if @campaign.lecture_based?
-        result = Registration::UserRegistration::LectureFcfsEditService
-                 .new(@campaign, current_user, @item).register!
-        if result.success?
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.user_registration.messages.registration_success")
-        else
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      alert: result.errors.join(", ")
-        end
-      elsif @campaign.exam_based?
-        raise(NotImplementedError, "Exam campaignable_type not supported yet")
-      end
+      result = Registration::UserRegistration::LectureFcfsEditService
+               .new(@campaign, current_user).register!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.registration_success"))
     end
 
     def update
-      if @campaign.lecture_based?
-        pref_items = UserRegistration::PreferencesHandler
-                     .new.pref_item_build_for_save(params[:preferences_json])
-        result = Registration::UserRegistration::LecturePreferenceEditService
-                 .new(@campaign, current_user).update!(pref_items)
-        if result.success?
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.user_registration.messages.preferences_saved")
-        else
-          respond_with_flash(
-            :alert,
-            result.errors.join(", "),
-            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
-          )
-        end
-      elsif @campaign.exam_based?
-        raise(NotImplementedError, "Exam campaignable_type not supported yet")
-      end
+      pref_items = UserRegistration::PreferencesHandler
+                   .new.pref_item_build_for_save(params[:preferences_json])
+      result = Registration::UserRegistration::LecturePreferenceEditService
+               .new(@campaign, current_user).update!(pref_items)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.preferences_saved"))
     end
 
     def destroy
       @campaign = @item.user_registrations.find_by!(user_id: current_user.id,
                                                     status: :confirmed)
                        .registration_campaign
-      if @campaign.lecture_based?
-        result = Registration::UserRegistration::LectureFcfsEditService
-                 .new(@campaign, current_user, @item).withdraw!
-        if result.success?
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      notice: I18n.t("registration.user_registration.messages.withdrawn")
-        else
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      alert: result.errors.join(", ")
-        end
-      elsif @campaign.exam_based?
-        raise(NotImplementedError, "Exam campaignable_type not supported yet")
-      end
+      result = Registration::UserRegistration::LectureFcfsEditService
+               .new(@campaign, current_user).withdraw!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.withdrawn"))
     end
 
     def render_not_found(exception)
@@ -141,6 +107,35 @@ module Registration
     end
 
     private
+
+      def respond_to_student_registration(result, success_message)
+        if result.success?
+          init_details
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                "main-student-registration-campaign",
+                partial: "registration/main/main_campaign",
+                locals: { campaign: @campaign,
+                          campaignable_host: @campaignable_host,
+                          eligibility: @eligibility,
+                          items: @items,
+                          item_preferences: @item_preferences }
+              )
+            end
+            format.html do
+              redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                          notice: success_message
+            end
+          end
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+          )
+        end
+      end
 
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
@@ -246,13 +241,13 @@ module Registration
       def resolve_render_target(campaign)
         case campaign.status.to_sym
         when :draft
-          @campaign.lecture_based? ? :lecture_index : :exam_index
+          :index
         when :open, :closed, :processing
-          @campaign.lecture_based? ? :lecture_details : :exam_details
+          :details
         when :completed
-          @campaign.lecture_based? ? :lecture_result : :exam_result
+          :result
         else
-          :lecture_index
+          :index
         end
       end
 

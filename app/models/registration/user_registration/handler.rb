@@ -3,9 +3,8 @@ module Registration
     class Handler
       Result = Struct.new(:success?, :errors)
 
-      def initialize(campaign, user, item = nil)
+      def initialize(campaign, user)
         @campaign = campaign
-        @item = item
         @user = user
       end
 
@@ -21,15 +20,16 @@ module Registration
         I18n.t("registration.user_registration.messages.campaign_not_opened")
       end
 
-      def check_already_registered_current_type
-        return nil unless @campaign.user_registration_confirmed_for_group_type?(@user,
-                                                                                @item.registerable_type)
+      def check_already_registered_current_type(item)
+        return nil unless @campaign
+                          .user_registration_confirmed_for_group_type?(@user,
+                                                                       item.registerable_type)
 
         I18n.t("registration.user_registration.messages.already_registered")
       end
 
-      def check_capacity
-        return nil if @item.still_has_capacity?
+      def check_capacity(item)
+        return nil if item.still_has_capacity?
 
         I18n.t("registration.user_registration.messages.no_slots")
       end
