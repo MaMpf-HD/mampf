@@ -12,13 +12,13 @@
 
           <div class="row mb-2">
             <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-              <div class="col-6 d-flex gap-1">
+              <div class="col-6 d-flex align-items-baseline gap-1">
                 <span class="fw-medium small"><%= t(col[:header]) %>:</span>
                 <span class="fw-normal"><%= col[:field].call(item) %></span>
               </div>
             <% end %>
 
-              <div class="col-6 d-flex gap-1">
+              <div class="col-6 d-flex align-items-baseline gap-1">
                 <span class="fw-medium small"><%= t("basics.seats") %>:</span>
                 <span class="fw-normal"><%= nullable_capacity_display(item.capacity) %></span>
               </div>

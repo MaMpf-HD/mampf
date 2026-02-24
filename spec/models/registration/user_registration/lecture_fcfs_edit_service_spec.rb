@@ -242,19 +242,19 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    # it "allow registering for cohort when tutorial registration is confirmed" do
-    #   Registration::UserRegistration.create!(
-    #     registration_campaign: campaign,
-    #     registration_item: item_tutorial,
-    #     user: user,
-    #     status: :confirmed
-    #   )
-    #   service = described_class.new(campaign, user, item_cohort)
-    #   result = service.register!
-    #   expect(result.success?).to be(true)
-    #   registration = Registration::UserRegistration.last
-    #   expect(registration.registration_item).to eq(item_cohort)
-    #   expect(registration.status).to eq("confirmed")
-    # end
+    it "allow registering for cohort when tutorial registration is confirmed" do
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item_tutorial,
+        user: user,
+        status: :confirmed
+      )
+      service = described_class.new(campaign, user, item_cohort)
+      result = service.register!
+      expect(result.success?).to be(true)
+      registration = Registration::UserRegistration.last
+      expect(registration.registration_item).to eq(item_cohort)
+      expect(registration.status).to eq("confirmed")
+    end
   end
 end

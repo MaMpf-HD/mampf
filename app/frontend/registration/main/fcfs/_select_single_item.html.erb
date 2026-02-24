@@ -1,5 +1,5 @@
 <div data-test="single-item-fcfs">
-  <div class="h5 mb-3">
+  <div class="fs-2 mb-3 fw-semibold text-primary">
     <span><%= item_display_type(item) %></span> : 
     <span><%= item.registerable.title %></span>
   </div>
@@ -8,8 +8,8 @@
     <div class="col-9">
       <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
       <div class="mb-1 d-flex align-items-center">
-        <span class="badge text-primary m-1">
-          <i class="material-icons text-dark"><%= col[:icon] %></i>
+        <span class="badge text-primary m-1 p-0">
+          <i class="material-icons text-muted"><%= col[:icon] %></i>
         </span>
         <span class="fw-medium small text-muted col-4"><%= t(col[:header]) %>:</span>
         <span class="fw-normal"><%= col[:field].call(item) %></span>
@@ -17,14 +17,14 @@
       <% end %>
 
       <div class="mb-1 d-flex align-items-center">
-        <span class="badge text-primary m-1">
-          <i class="material-icons text-dark">event_seat</i>
+        <span class="badge text-primary m-1 p-0">
+          <i class="material-icons text-muted">event_seat</i>
         </span>
         <span class="fw-medium small text-muted col-4">
           <%= t('registration.user_registration.seats_remaining') %>:
         </span>
         <div class="d-flex align-items-center gap-2">
-          <span class="text-dark small fw-semibold">
+          <span class="small fw-semibold">
             <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
           </span>
           <%= progress_bar(item.confirmed_registrations_count,
