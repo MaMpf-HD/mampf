@@ -3243,6 +3243,7 @@ en:
     capacity: 'Capacity'
     division: 'Division'
     error: Error
+    edit: "Edit"
     course: 'Course'
     courses: 'Courses'
     term: 'Term'
@@ -3371,6 +3372,7 @@ en:
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
     answer_count: 'Number of answers'
+    item_count: '%{count} items'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3448,6 +3450,25 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    mode: "Allocation Mode"
+    capacity: "Capacity"
+    seats: "Seats"
+    filled: "filled"
+    across_group: "across group"
+    closes: "Closes"
+    passed: "Passed"
+    failed: "Failed"
+    select_type: "Select preferences"
+    saved_at: "Saved %{time}"
+    available: "Available"
+    full: "Full"
+    position: "Position"
+    room: "Room"
+    confirmed: "Confirmed"
+    rejected: Rejected
+    pending: Pending
+    assigned: "Assigned"
+    dismissed: "Dismissed"
     unlimited: unlimited
     personnel: Personnel
   warnings:
@@ -3576,6 +3597,8 @@ en:
     back_to_assessments: 'Back to Assessments'
     create_exam: 'Create Exam'
     edit_exam: 'Edit Exam'
+    add_to_list: 'Add to List'
+    remove_from_list: 'Remove from List'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
