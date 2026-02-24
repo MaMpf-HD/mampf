@@ -1,5 +1,5 @@
 class CohortsController < ApplicationController
-  include RegistrationCampaignContext
+  include ::RegistrationCampaignContext
 
   helper RosterHelper
 

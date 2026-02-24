@@ -5,7 +5,7 @@ module RegistrationCampaignContext
       return true unless registration_section_campaign?
 
       campaign = find_or_create_registration_campaign(lecture: lecture,
-                                                     error_target: error_target)
+                                                      error_target: error_target)
       return false unless campaign
 
       item = campaign.registration_items.build(registerable: registerable)

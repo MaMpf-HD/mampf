@@ -1,6 +1,6 @@
 # TutorialsController
 class TutorialsController < ApplicationController
-  include RegistrationCampaignContext
+  include ::RegistrationCampaignContext
 
   helper RosterHelper
 
