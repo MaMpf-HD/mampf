@@ -103,6 +103,17 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects (unauthorized)" do
+        post assessment_assessment_grade_schemes_path(assessment),
+             params: { kind: "banded", config_json: valid_config.to_json },
+             as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
   end
 
   describe "PATCH /assessment/assessments/:assessment_id/grade_schemes/:id" do
@@ -128,6 +139,17 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
         expect(grade_scheme.config["bands"].first["min_points"]).to eq(55)
       end
     end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects (unauthorized)" do
+        patch assessment_assessment_grade_scheme_path(assessment, grade_scheme),
+              params: { config_json: valid_config.to_json },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
   end
 
   describe "GET /assessment/assessments/:assessment_id/grade_schemes/:id/preview" do
@@ -140,6 +162,16 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
           as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects (unauthorized)" do
+        get preview_assessment_assessment_grade_scheme_path(assessment, grade_scheme),
+            as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
     end
   end
 
@@ -159,6 +191,16 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       patch apply_assessment_assessment_grade_scheme_path(assessment, grade_scheme)
       expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
     end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects (unauthorized)" do
+        patch apply_assessment_assessment_grade_scheme_path(assessment, grade_scheme),
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
   end
 
   describe "when assessment does not exist" do
@@ -176,6 +218,23 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
 
     it "redirects to dashboard" do
       get preview_assessment_assessment_grade_scheme_path(assessment, 99_999),
+          as: :turbo_stream
+      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+    end
+
+    it "redirects when id belongs to a different assessment" do
+      other_exam = create(:exam, lecture: lecture)
+      other_assessment = other_exam.reload.assessment
+      other_scheme = create(:assessment_grade_scheme, assessment: other_assessment)
+      get preview_assessment_assessment_grade_scheme_path(assessment, other_scheme),
+          as: :turbo_stream
+      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+    end
+
+    it "redirects when scheme exists but is inactive" do
+      scheme = create(:assessment_grade_scheme, assessment: assessment)
+      scheme.update!(active: false)
+      get preview_assessment_assessment_grade_scheme_path(assessment, scheme),
           as: :turbo_stream
       expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
     end

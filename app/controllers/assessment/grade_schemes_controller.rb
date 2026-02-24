@@ -99,8 +99,18 @@ module Assessment
       end
 
       def set_grade_scheme
-        @grade_scheme = @assessment.grade_scheme
-        return if @grade_scheme
+        @grade_scheme = GradeScheme.find_by(
+          id: params[:id], assessment: @assessment
+        )
+
+        unless @grade_scheme
+          return redirect_to_dashboard(
+            tab: "grade_scheme",
+            alert: I18n.t("assessment.grade_scheme.not_found")
+          )
+        end
+
+        return if @grade_scheme.active?
 
         redirect_to_dashboard(
           tab: "grade_scheme",
