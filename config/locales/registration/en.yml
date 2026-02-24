@@ -242,6 +242,7 @@ en:
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite Campaign"
+      prerequisite_certification: "Required Certification"
       seats_remaining: "Seats remaining"
       registered: "Registered"
       not_registered: "Not registered"

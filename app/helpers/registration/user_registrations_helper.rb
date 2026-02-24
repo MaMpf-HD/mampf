@@ -33,22 +33,35 @@ module Registration
     # policy here is also hash, not policy object
     def get_policy_config_info(policy)
       case policy[:kind]
-      when "lecture_performance"
-        cert_status = policy[:config]["certification_status"]
-        cert_status.capitalize
+      when "student_performance"
+        lecture_id = policy[:config]["lecture_id"]
+        pass = policy[:outcome][:pass]
+        # TODO: when StudentPerformance implemented, need to show detailer evaluated result instead of just link
+        link_to(
+          t("registration.user_registration.prerequisite_certification"),
+          lecture_path(lecture_id: lecture_id),
+          target: :_blank,
+          rel: :noopener
+        )
       when "institutional_email"
-        domains = Array(policy[:config]["allowed_domains"])
-        domains.join(", ")
+        domains = Array(policy[:config]["allowed_domains"]).join(", ")
+        h(domains)
       when "prerequisite_campaign"
-        policy[:config]["prerequisite_campaign_id"]
+        campaign_id = policy[:config]["prerequisite_campaign_id"]
+        link_to(
+          t("registration.user_registration.prerequisite_campaign"),
+          campaign_registrations_for_campaign_path(campaign_id: campaign_id),
+          target: :_blank,
+          rel: :noopener
+        )
       else
-        "No configuration available"
+        h("No configuration available")
       end
     end
 
     def get_details_render_type_policy_kind(kind)
       case kind
-      when "prerequisite_campaign"
+      when "prerequisite_campaign", "student_performance"
         "link"
       else
         "text"
@@ -88,11 +101,14 @@ module Registration
       ],
       "Exam" => [
         { header: "basics.date",
+          icon: "event",
           field: ->(item) { format_date(item.registerable.date) } },
         { header: "basics.location",
+          icon: "place",
           cell_class: "text-end",
           field: ->(item) { item.registerable.location } },
         { header: "basics.description",
+          icon: "description",
           cell_class: "text-center",
           field: ->(item) { item.registerable.description } }
       ]
