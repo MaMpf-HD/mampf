@@ -66,7 +66,7 @@ module Registration
     def update
       if @campaign.update(campaign_params)
         render partial: "registration/campaigns/accordion_header",
-               locals: { campaign: @campaign }
+               locals: { campaign: @campaign, collapsible: false }
       else
         render partial: "registration/campaigns/form",
                locals: { campaign: @campaign,
