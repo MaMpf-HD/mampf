@@ -54,7 +54,7 @@
       <% if Flipper.enabled?(:roster_maintenance) %>
         <% if !@lecture.legacy_seminar %>
           <% component.with_tab(name: "roster", label: t("roster.title")) do %>
-            <div class="container medium-width lecture-pane">
+            <div class="container small-width lecture-pane">
               <%= render partial: 'lectures/edit/roster',
                          locals: { lecture: @lecture,
                                    group_type: roster_group_types(@lecture) } %>
