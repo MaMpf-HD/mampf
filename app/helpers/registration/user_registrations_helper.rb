@@ -64,13 +64,16 @@ module Registration
       "Tutorial" => [
         { header: "basics.tutor",
           cell_class: "text-start fw-semibold",
+          icon: "person",
           field: ->(item) { item.registerable.tutor_names } }
       ],
       "Talk" => [
         { header: "basics.position",
           cell_class: "text-end",
+          icon: "looks_one",
           field: ->(item) { item.registerable.position } },
         { header: "basics.date",
+          icon: "event",
           field: lambda { |item|
             item.registerable.dates&.map do |d|
               format_date(d)
@@ -79,6 +82,7 @@ module Registration
       ],
       "Cohort" => [
         { header: "basics.description",
+          icon: "description",
           cell_class: "text-center",
           field: ->(item) { item.registerable.description } }
       ]
@@ -143,6 +147,19 @@ module Registration
 
     def nullable_capacity_display(capacity)
       capacity.nil? ? "\u221E" : capacity.to_s
+    end
+
+    # rubocop:disable Metrics/ParameterLists
+    def nullable_progress_bar(value, max, classification: :neutral, label: nil, height: "1.5rem",
+                              show_label: true, container_class: "progress mb-2", style: nil)
+      unless max.nil?
+        return progress_bar(value, max, classification: classification,
+                                        label: label, height: height, show_label: show_label,
+                                        container_class: container_class, style: style)
+      end
+
+      progress_bar(1, 100, classification: classification, label: label, height: height,
+                           show_label: show_label, container_class: container_class, style: style)
     end
 
     def status_campaign_style(status)
