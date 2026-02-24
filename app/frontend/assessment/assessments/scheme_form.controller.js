@@ -638,7 +638,7 @@ export default class extends Controller {
 
     markers.forEach((m) => {
       bands.push({
-        min_points: parseInt(m.dataset.minPoints, 10),
+        min_points: parseFloat(m.dataset.minPoints),
         grade: m.dataset.grade,
       });
     });

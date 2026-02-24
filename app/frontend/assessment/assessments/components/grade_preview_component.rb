@@ -49,6 +49,11 @@ class GradePreviewComponent < ViewComponent::Base
       row[:current_grade] != row[:proposed_grade]
   end
 
+  def pct_scheme?
+    bands = grade_scheme.config&.dig("bands") || []
+    bands.first&.key?("min_pct") || false
+  end
+
   def back_path
     assessable = assessment.assessable
     if assessable.is_a?(Exam)

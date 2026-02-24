@@ -17,6 +17,11 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
 
   attr_reader :assessment, :grade_scheme
 
+  def pct_scheme?
+    raw = grade_scheme.config&.dig("bands") || []
+    raw.first&.key?("min_pct") || false
+  end
+
   def bands
     @bands ||= begin
       raw = grade_scheme.config&.dig("bands") || []

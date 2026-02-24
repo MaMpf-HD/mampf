@@ -129,6 +129,7 @@ de:
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     grade_scheme:
       label: 'Notenschema'
+      unsupported_pct_format: 'Prozentbasierte Notenschemata werden in diesem Editor noch nicht unterstützt.'
       created: 'Notenschema gespeichert.'
       updated: 'Notenschema aktualisiert.'
       applied: 'Notenschema erfolgreich angewendet.'

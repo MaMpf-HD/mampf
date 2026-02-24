@@ -116,7 +116,12 @@ module Assessment
 
       def grade_scheme_params
         config_json = params.require(:config_json)
-        result = { config: JSON.parse(config_json) }
+        config = begin
+          JSON.parse(config_json)
+        rescue JSON::ParserError
+          raise(ActionController::BadRequest, "Malformed config_json")
+        end
+        result = { config: config }
         result[:kind] = params[:kind] if params[:kind].present?
         result[:points_step] = params[:points_step].to_f if params[:points_step].present?
         result

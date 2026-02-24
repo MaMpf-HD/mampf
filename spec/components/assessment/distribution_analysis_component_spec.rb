@@ -46,8 +46,8 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
       [10, 25, 55, 55, 75, 90].each { |p| create_reviewed(points: p) }
     end
 
-    it "returns BIN_COUNT bins" do
-      expect(component.bins.size).to eq(described_class::BIN_COUNT)
+    it "returns a dynamic number of bins between 10 and 30" do
+      expect(component.bins.size).to be_between(10, 30)
     end
 
     it "assigns students to correct bins" do

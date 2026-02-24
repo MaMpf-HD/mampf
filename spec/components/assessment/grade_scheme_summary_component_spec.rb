@@ -140,4 +140,18 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
       expect(component.failed?(band)).to be(false)
     end
   end
+
+  describe "#pct_scheme?" do
+    it "returns false for a min_points scheme" do
+      expect(component.pct_scheme?).to be(false)
+    end
+
+    it "returns true for a min_pct scheme" do
+      pct_scheme = create(:assessment_grade_scheme, :percentage,
+                          assessment: assessment, active: false)
+      comp = described_class.new(assessment: assessment,
+                                 grade_scheme: pct_scheme)
+      expect(comp.pct_scheme?).to be(true)
+    end
+  end
 end

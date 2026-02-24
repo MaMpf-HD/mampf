@@ -132,6 +132,7 @@ en:
       total: 'Total'
     grade_scheme:
       label: 'Grade Scheme'
+      unsupported_pct_format: 'Percentage-based grade schemes are not yet supported in this editor.'
       created: 'Grade scheme saved.'
       updated: 'Grade scheme updated.'
       applied: 'Grade scheme applied successfully.'
