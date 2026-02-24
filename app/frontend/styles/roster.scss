@@ -106,6 +106,39 @@
   }
 }
 
+.registration-campaign-ghost-zone {
+  border: 2px dashed var(--section-header-border);
+  background: linear-gradient(135deg, #f0f4fd 0%, #f5f9fd 100%);
+}
+
+.registration-campaign-ghost-label,
+.registration-campaign-ghost-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.registration-campaign-ghost-title {
+  color: #5b6fa8;
+}
+
+.registration-campaign-ghost-meta {
+  font-size: 0.75rem;
+}
+
+.registration-campaign-ghost-badge {
+  font-size: 0.65rem;
+}
+
+.registration-campaign-ghost-divider {
+  border-top: 1px solid var(--section-header-border);
+}
+
+.registration-campaign-ghost-placeholder {
+  border-style: dashed;
+  opacity: 0.45;
+}
+
 .tutorial-gtile {
   border-radius: 10px;
   background: #fff;

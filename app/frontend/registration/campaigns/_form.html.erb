@@ -7,7 +7,7 @@
 
 <%= turbo_frame_tag(campaign.persisted? ? campaign_header_frame_id(campaign) :
                     "new_campaign_form") do %>
-  <div class="fs-6 fw-normal p-4 bg-light">
+  <div class="fs-6 fw-normal <%= campaign.persisted? ? 'p-4 bg-light' : '' %>">
     <%= form_with(model: [lecture, campaign].compact,
                 url: campaign.persisted? ? registration_campaign_path(campaign) :
                   lecture_registration_campaigns_path(lecture)) do |f| %>

@@ -340,7 +340,10 @@ class TutorialsController < ApplicationController
       return false unless campaign
 
       item = campaign.registration_items.build(registerable: @tutorial)
-      authorize! :create, item
+      unless RegistrationItemAbility.new(current_user).can?(:create, item)
+        @tutorial.errors.add(:base, t("registration.campaign.create_failed"))
+        return false
+      end
       return true if item.save
 
       @tutorial.errors.add(:base, item.errors.full_messages.to_sentence)
@@ -356,7 +359,10 @@ class TutorialsController < ApplicationController
         allocation_mode: :first_come_first_served,
         registration_deadline: 2.weeks.from_now
       )
-      authorize! :create, campaign
+      unless RegistrationCampaignAbility.new(current_user).can?(:create, campaign)
+        @tutorial.errors.add(:base, t("registration.campaign.create_failed"))
+        return nil
+      end
       return campaign if campaign.save
 
       @tutorial.errors.add(:base, campaign.errors.full_messages.to_sentence)

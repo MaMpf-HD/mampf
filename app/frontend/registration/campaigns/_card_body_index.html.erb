@@ -9,11 +9,15 @@
                                   .order(:title) %>
   <div class="d-flex flex-column gap-4">
     <section>
-      <h5 class="mb-3">
-        <%= t("registration.campaign.index.sections.registration") %>
-      </h5>
-
       <% if campaigns.any? %>
+        <div class="d-flex justify-content-end mb-2">
+          <%= link_to new_lecture_registration_campaign_path(lecture),
+                      class: "btn btn-sm btn-outline-primary",
+                      data: { turbo_stream: true } do %>
+            <i class="bi bi-plus-circle"></i>
+            <%= t("registration.campaign.index.new_campaign") %>
+          <% end %>
+        </div>
         <% campaigns.each do |campaign| %>
           <% active_tab = campaign.id == local_assigns[:expanded_campaign_id] ?
             (local_assigns[:tab] || "items") : "items" %>
@@ -29,23 +33,27 @@
           </div>
         <% end %>
       <% else %>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
-          <div class="col">
-            <%= render "registration/campaigns/add_group_tile",
-                       lecture: lecture,
-                       section: :campaign %>
+        <div class="registration-campaign-ghost-zone rounded p-3 mb-3">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="registration-campaign-ghost-label text-muted fw-semibold">
+              <%= t("registration.campaign.index.sections.registration") %>
+            </span>
+          </div>
+
+          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+            <div class="col">
+              <%= render "registration/campaigns/add_group_tile",
+                         lecture: lecture,
+                         section: :campaign %>
+            </div>
           </div>
         </div>
       <% end %>
     </section>
 
     <section>
-      <h5 class="mb-3">
-        <%= t("registration.campaign.index.sections.no_campaign") %>
-      </h5>
-
       <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
-        <%= render partial: "registration/campaigns/no_campaign_tutorial_card",
+        <%= render partial: "registration/campaigns/group_tile",
                    collection: no_campaign_tutorials,
                    as: :tutorial %>
 

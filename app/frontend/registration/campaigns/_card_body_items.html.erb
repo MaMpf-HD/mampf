@@ -1,12 +1,5 @@
 <div id="registration_items_container">
-  <% if campaign.draft? && campaign.campaignable.is_a?(Lecture) %>
-    <div class="mb-4">
-      <%= render "registration/campaigns/add_group_tile",
-                 lecture: campaign.campaignable,
-                 section: :campaign,
-                 campaign: campaign %>
-    </div>
-  <% end %>
+  <% can_add_groups = campaign.draft? && campaign.campaignable.is_a?(Lecture) %>
 
   <div class="mb-4">
     <% if campaign.completed? %>
@@ -29,15 +22,20 @@
           </div>
         </div>
       </div>
-    <% elsif campaign.registration_items.any? %>
+    <% else %>
       <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
-        <%= render partial: "registration/items/item",
+        <%= render partial: "registration/campaigns/group_tile",
                    collection: campaign.registration_items,
                    as: :item %>
-      </div>
-    <% else %>
-      <div class="alert alert-info">
-        <%= t("registration.item.index.none") %>
+
+        <% if can_add_groups %>
+          <div class="col">
+            <%= render "registration/campaigns/add_group_tile",
+                       lecture: campaign.campaignable,
+                       section: :campaign,
+                       campaign: campaign %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>

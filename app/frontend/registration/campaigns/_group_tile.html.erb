@@ -1,0 +1,97 @@
+<% registerable = local_assigns[:tutorial] || local_assigns[:item]&.registerable %>
+
+<% if registerable %>
+  <div class="col" id="<%= dom_id(local_assigns[:item] || registerable) %>">
+    <div class="card h-100 tutorial-gtile <%= local_assigns[:item] ? "tutorial-gtile--campaign" : "tutorial-gtile--free" %>">
+      <div class="tutorial-gtile-top-bar <%= local_assigns[:item] ? "tutorial-gtile-top-bar--campaign" : "tutorial-gtile-top-bar--free" %>"></div>
+
+      <div class="card-body d-flex flex-column">
+        <div class="tutorial-gtile-type">
+          <% if local_assigns[:item] %>
+            <%= item_display_type(item) %>
+          <% else %>
+            <%= t("registration.item.types.tutorial") %>
+          <% end %>
+        </div>
+
+        <h5
+          class="tutorial-gtile-name text-truncate"
+          title="<%= registerable.title %>"
+        >
+          <%= registerable.title %>
+        </h5>
+
+        <div class="text-muted mt-2 flex-grow-1">
+          <i class="bi bi-person me-1"></i>
+
+          <%= registerable.respond_to?(:tutor_names) ?
+            (registerable.tutor_names.presence || t("basics.tba")) :
+            t("basics.tba") %>
+        </div>
+
+        <div class="small text-muted">
+          <%= registerable.roster_entries.count %> /
+          <%= registerable.capacity || "∞" %>
+        </div>
+
+        <div
+          class="
+            tutorial-gtile-actions mt-3 pt-2 border-top d-flex gap-2
+            justify-content-end
+          "
+        >
+          <% if registerable.is_a?(Tutorial) %>
+            <%= link_to edit_tutorial_path(registerable, group_type: :tutorials),
+                      class: "btn btn-sm btn-primary",
+                      title: t("roster.tooltips.edit_settings"),
+                      data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+              <i class="bi bi-pencil"></i>
+            <% end %>
+          <% elsif registerable.is_a?(Cohort) %>
+            <%= link_to edit_cohort_path(registerable, group_type: :cohorts),
+                      class: "btn btn-sm btn-primary",
+                      title: t("roster.tooltips.edit_settings"),
+                      data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+              <i class="bi bi-pencil"></i>
+            <% end %>
+          <% end %>
+
+          <% if local_assigns[:item] %>
+            <%= link_to registration_campaign_item_path(item.registration_campaign, item),
+                      class: "btn btn-sm btn-danger",
+                      title: t("registration.item.actions.remove_from_campaign"),
+                      data: {
+                        turbo_method: :delete,
+                        turbo_confirm: t("registration.item.confirm_remove"),
+                        bs_toggle: "tooltip"
+                      } do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+          <% elsif registerable.is_a?(Tutorial) %>
+            <%= link_to tutorial_path(registerable, group_type: :tutorials),
+                      class: "btn btn-sm btn-danger",
+                      title: t("roster.tooltips.delete"),
+                      data: {
+                        turbo_method: :delete,
+                        turbo_confirm: t("confirmation.generic"),
+                        bs_toggle: "tooltip"
+                      } do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+          <% elsif registerable.is_a?(Cohort) %>
+            <%= link_to cohort_path(registerable, group_type: :cohorts),
+                      class: "btn btn-sm btn-danger",
+                      title: t("roster.tooltips.delete"),
+                      data: {
+                        turbo_method: :delete,
+                        turbo_confirm: t("confirmation.generic"),
+                        bs_toggle: "tooltip"
+                      } do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

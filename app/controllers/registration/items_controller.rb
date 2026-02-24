@@ -33,8 +33,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
             streams = [
-              turbo_stream.replace(@item, partial: "registration/items/item",
-                                          locals: { item: @item }),
+              turbo_stream.replace(@item,
+                                   partial: "registration/campaigns/group_tile",
+                                   locals: { item: @item }),
               stream_flash
             ]
             if @campaign.campaignable.is_a?(Lecture)
