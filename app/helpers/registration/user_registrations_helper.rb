@@ -81,6 +81,16 @@ module Registration
         { header: "basics.description",
           cell_class: "text-center",
           field: ->(item) { item.registerable.description } }
+      ],
+      "Exam" => [
+        { header: "basics.date",
+          field: ->(item) { format_date(item.registerable.date) } },
+        { header: "basics.location",
+          cell_class: "text-end",
+          field: ->(item) { item.registerable.location } },
+        { header: "basics.description",
+          cell_class: "text-center",
+          field: ->(item) { item.registerable.description } }
       ]
     }.freeze
 

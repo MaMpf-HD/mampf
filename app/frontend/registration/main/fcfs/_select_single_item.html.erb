@@ -6,7 +6,7 @@
 
   <div class="d-flex justify-content-between mb-2">
     <div>
-      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %> 
+      <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
         <span class="fw-medium small"><%= t(col[:header]) %>:</span>
         <span class="fw-normal small"><%= col[:field].call(item) %></span>
       <% end %>
