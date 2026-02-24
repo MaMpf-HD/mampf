@@ -160,8 +160,11 @@
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
   overflow: hidden;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+              border-color 0.12s ease;
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
@@ -170,6 +173,12 @@
       opacity: 1;
     }
   }
+}
+
+.tutorial-gtile--selected {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2),
+              0 4px 16px rgba(0, 0, 0, 0.14);
 }
 
 .tutorial-gtile-top-bar {
@@ -206,5 +215,160 @@
 @media (hover: none) {
   .tutorial-gtile-actions {
     opacity: 1;
+  }
+}
+
+.tutorial-roster-layout {
+  --tutorial-roster-panel-width: 24rem;
+  display: flex;
+  align-items: flex-start;
+  max-width: calc(#{$small-width} + var(--tutorial-roster-panel-width) + 1rem);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tutorial-roster-main {
+  flex: 1 1 $small-width;
+  min-width: 0;
+  transition: transform 0.2s ease;
+}
+
+.tutorial-roster-panel-shell {
+  width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(0.8rem);
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+.tutorial-roster-layout--open {
+  .tutorial-roster-main {
+    transform: translateX(-0.35rem);
+  }
+
+  .tutorial-roster-panel-shell {
+    margin-left: 1rem;
+    width: var(--tutorial-roster-panel-width);
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    overflow: visible;
+  }
+}
+
+.tutorial-roster-layout--closed {
+  .tutorial-roster-main {
+    transform: translateX(0);
+  }
+
+  .tutorial-roster-panel-shell {
+    margin-left: 0;
+  }
+}
+
+.tutorial-roster-side-panel {
+  height: 100%;
+  min-height: 22rem;
+  overflow: hidden;
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+[data-tutorial-roster-panel-target="contentState"] {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tutorial-roster-close-btn {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+[data-tutorial-roster-panel-target="list"] {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.tutorial-roster-layout .lecture-pane {
+  margin-bottom: 1em;
+}
+
+.tutorial-roster-empty {
+  background: var(--bs-light);
+  border: 1px dashed var(--bs-border-color);
+  border-radius: 0.5rem;
+  color: var(--bs-secondary-color);
+  font-size: 0.85rem;
+  padding: 0.75rem;
+}
+
+.tutorial-roster-student {
+  border: 1px solid var(--bs-border-color) !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    border-color: rgba(13, 110, 253, 0.45) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.tutorial-roster-student-remove {
+  opacity: 0;
+  transition: opacity 0.12s ease-in-out;
+}
+
+.tutorial-roster-student:hover .tutorial-roster-student-remove {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .tutorial-roster-student-remove {
+    opacity: 1;
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  .tutorial-roster-layout {
+    display: block;
+    max-width: $small-width;
+  }
+
+  .tutorial-roster-main {
+    transform: none !important;
+  }
+
+  .tutorial-roster-panel-shell {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-top: 0.35rem !important;
+    margin-bottom: 6em;
+    transform: translateX(0.7rem);
+    transition: opacity 0.32s ease, transform 0.32s ease;
+  }
+
+  .tutorial-roster-layout--closed .tutorial-roster-panel-shell {
+    display: none;
+  }
+
+  .tutorial-roster-layout--open .tutorial-roster-panel-shell {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    max-height: calc(100vh - 8rem);
   }
 }

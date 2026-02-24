@@ -1,0 +1,104 @@
+<aside
+  class="card tutorial-roster-side-panel"
+  data-tutorial-roster-panel-target="panelCard"
+>
+  <div class="card-body">
+    <div
+      class="
+        mb-3 pb-3 border-bottom d-flex justify-content-between
+        align-items-start gap-2
+      "
+    >
+      <div>
+        <h5 class="mb-1"><%= t("roster.details.participants") %></h5>
+
+        <div
+          class="text-muted small d-none"
+          data-tutorial-roster-panel-target="metaLine"
+        >
+          <span data-tutorial-roster-panel-target="title">—</span>
+          <span class="mx-1">·</span>
+          <span data-tutorial-roster-panel-target="tutorNames">—</span>
+
+          <span
+            class="badge text-bg-secondary ms-2"
+            data-tutorial-roster-panel-target="countBadge"
+          >
+            0 students
+          </span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary tutorial-roster-close-btn"
+        data-action="click->tutorial-roster-panel#close"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div
+      class="tutorial-roster-empty"
+      data-tutorial-roster-panel-target="emptyState"
+    >
+      <i class="bi bi-info-circle me-1"></i>
+
+      <%= t("roster.details.select_group",
+            default: "Select a tutorial to inspect and manage participants") %>
+    </div>
+
+    <div class="d-none" data-tutorial-roster-panel-target="contentState">
+      <div class="mb-3">
+        <%= form_with url: "#",
+                      method: :post,
+                      class: "d-flex flex-column flex-sm-row gap-2",
+                      data: {
+                        tutorial_roster_panel_target: "addForm"
+                      } do |f| %>
+          <%= f.label :email,
+                      t("roster.actions.add_student_label"),
+                      class: "visually-hidden" %>
+
+          <%= f.email_field :email,
+                            class: "form-control form-control-sm",
+                            placeholder: t("roster.actions.add_student_placeholder"),
+                            required: true,
+                            data: {
+                              tutorial_roster_panel_target: "addEmailInput"
+                            } %>
+
+          <%= f.button type: "submit",
+                       class: "btn btn-sm btn-primary text-nowrap" do %>
+            <i class="bi bi-plus-lg me-1"></i>
+            <%= t("roster.actions.add") %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="mb-3">
+        <label class="visually-hidden" for="tutorial-roster-filter">
+          <%= t("roster.actions.search", default: "Filter students") %>
+        </label>
+
+        <input
+          id="tutorial-roster-filter"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Filter by name or email"
+          data-action="input->tutorial-roster-panel#filter"
+          data-tutorial-roster-panel-target="filterInput"
+        >
+      </div>
+
+      <div class="d-grid gap-2" data-tutorial-roster-panel-target="list"></div>
+
+      <div
+        class="small text-muted mt-3 d-none"
+        data-tutorial-roster-panel-target="noResults"
+      >
+        <%= t("roster.details.empty", default: "No matching students") %>
+      </div>
+    </div>
+  </div>
+</aside>
