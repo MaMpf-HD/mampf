@@ -182,10 +182,10 @@ export default class extends Controller {
   }
 
   _isAutoTab() {
-    const active = document.querySelector(
-      "[data-bs-target='#two-point-tab'], [data-bs-target='#anchor-delta-tab']",
-    );
-    return active?.classList.contains("active") ?? true;
+    const target = this.element
+      .querySelector(".nav-link.active")
+      ?.getAttribute("data-bs-target");
+    return target === "#two-point-tab" || target === "#anchor-delta-tab";
   }
 
   _refreshSubmit() {
