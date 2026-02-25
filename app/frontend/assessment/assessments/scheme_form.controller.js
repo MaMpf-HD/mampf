@@ -45,6 +45,17 @@ export default class extends Controller {
     "manualBandsBody",
     "manualPreview",
     "manualAxis",
+    "anchorInput",
+    "anchorTypeInput",
+    "anchorHint",
+    "deltaInput",
+    "derivedInput",
+    "derivedHint",
+    "anchorDeltaBandsPreview",
+    "anchorDeltaBandsBody",
+    "anchorDeltaErrorAlert",
+    "pointsStepRow",
+    "derivedError",
   ];
 
   static values = {
@@ -171,9 +182,10 @@ export default class extends Controller {
   }
 
   _isAutoTab() {
-    return document
-      .querySelector("[data-bs-target='#two-point-tab']")
-      ?.classList.contains("active") ?? true;
+    const active = document.querySelector(
+      "[data-bs-target='#two-point-tab'], [data-bs-target='#anchor-delta-tab']",
+    );
+    return active?.classList.contains("active") ?? true;
   }
 
   _refreshSubmit() {
@@ -336,6 +348,7 @@ export default class extends Controller {
   }
 
   initManualTab() {
+    this.pointsStepRowTarget.classList.remove("d-none");
     if (!this._manualInitialized) {
       this._manualInitialized = true;
       this._buildManualHistogram();
@@ -343,7 +356,143 @@ export default class extends Controller {
     this._syncManualFromConfig();
   }
 
+  onAnchorTypeChange() {
+    const type = this._anchorType();
+    const isPassingAnchor = type === "passing";
+    this.anchorHintTarget.textContent = isPassingAnchor
+      ? this.element.dataset.anchorHintPassing
+      : this.element.dataset.anchorHintExcellence;
+    this.derivedHintTarget.textContent = isPassingAnchor
+      ? this.element.dataset.derivedHintExcellence
+      : this.element.dataset.derivedHintPassing;
+    this._updateDerivedField();
+    this.markDirty();
+  }
+
+  onAnchorDeltaChange() {
+    this._updateDerivedField();
+    this.markDirty();
+  }
+
+  syncAnchorDeltaPreview() {
+    this.pointsStepRowTarget.classList.add("d-none");
+    this._updateDerivedField();
+    const raw = this.configFieldTarget.value;
+    if (!raw) return;
+    try {
+      const config = JSON.parse(raw);
+      if (config.bands?.length > 0) {
+        this.renderPreview(config.bands, this.anchorDeltaBandsBodyTarget);
+        this.anchorDeltaBandsPreviewTarget.classList.remove("d-none");
+        this.clearDirty();
+        this._refreshSubmit();
+      }
+    }
+    catch { /* no valid config */ }
+  }
+
+  generateFromDelta() {
+    this._hideAnchorDeltaError();
+
+    const anchor = parseFloat(this.anchorInputTarget.value);
+    const delta = parseFloat(this.deltaInputTarget.value);
+    const step = parseFloat(this.pointsStepInputTarget.value) || 1;
+    const maxPoints = this.maxPointsValue;
+    const type = this._anchorType();
+
+    if (isNaN(anchor) || isNaN(delta)) {
+      this._showAnchorDeltaError(
+        this.errorInvalidNumbersValue,
+      );
+      return;
+    }
+
+    if (delta <= 0) {
+      this._showAnchorDeltaError(
+        this.errorInvalidNumbersValue,
+      );
+      return;
+    }
+
+    const minRange = (PASSING_GRADES.length - 1) * step;
+    const derived = type === "passing"
+      ? anchor + (PASSING_GRADES.length - 1) * delta
+      : anchor - (PASSING_GRADES.length - 1) * delta;
+    const excellence = type === "passing" ? derived : anchor;
+    const passing = type === "passing" ? anchor : derived;
+
+    if (passing < 0) {
+      this._showAnchorDeltaError(this.errorPassingNegativeValue);
+      return;
+    }
+
+    if (excellence > maxPoints) {
+      this._showAnchorDeltaError(this.errorExcellenceMaxValue);
+      return;
+    }
+
+    if (excellence - passing < minRange) {
+      this._showAnchorDeltaError(
+        this.errorRangeTooNarrowValue
+          .replace("__min_range__", minRange)
+          .replace("__grades__", PASSING_GRADES.length - 1)
+          .replace("__step__", step),
+      );
+      return;
+    }
+
+    const config = this.computeBands(excellence, passing);
+    this.renderPreview(config.bands, this.anchorDeltaBandsBodyTarget);
+    this.configFieldTarget.value = JSON.stringify(config);
+    this.anchorDeltaBandsPreviewTarget.classList.remove("d-none");
+    this.clearDirty();
+    this._refreshSubmit();
+  }
+
+  _anchorType() {
+    return this.anchorTypeInputTargets.find(r => r.checked)?.value || "passing";
+  }
+
+  _updateDerivedField() {
+    const anchor = parseFloat(this.anchorInputTarget.value);
+    const delta = parseFloat(this.deltaInputTarget.value);
+    if (isNaN(anchor) || isNaN(delta) || delta <= 0) {
+      this.derivedInputTarget.value = "";
+      this.derivedInputTarget.classList.remove("is-invalid", "is-valid");
+      return;
+    }
+    const derived = this._anchorType() === "passing"
+      ? anchor + (PASSING_GRADES.length - 1) * delta
+      : anchor - (PASSING_GRADES.length - 1) * delta;
+    this.derivedInputTarget.value = parseFloat(derived.toFixed(4));
+
+    const tooHigh = derived > this.maxPointsValue;
+    const tooLow = derived < 0;
+    const outOfBounds = tooHigh || tooLow;
+    this.derivedInputTarget.classList.toggle("is-invalid", outOfBounds);
+    this.derivedInputTarget.classList.toggle("is-valid", !outOfBounds);
+
+    if (outOfBounds) {
+      const msg = tooHigh
+        ? this.errorExcellenceMaxValue
+        : this.errorPassingNegativeValue;
+      this.derivedErrorTarget.textContent = msg;
+    }
+  }
+
+  _showAnchorDeltaError(message) {
+    this.anchorDeltaErrorAlertTarget.textContent = message;
+    this.anchorDeltaErrorAlertTarget.classList.remove("d-none");
+    this.anchorDeltaBandsPreviewTarget.classList.add("d-none");
+    this.submitButtonTarget.disabled = true;
+  }
+
+  _hideAnchorDeltaError() {
+    this.anchorDeltaErrorAlertTarget.classList.add("d-none");
+  }
+
   syncAutoPreview() {
+    this.pointsStepRowTarget.classList.remove("d-none");
     const raw = this.configFieldTarget.value;
     if (!raw) return;
 
