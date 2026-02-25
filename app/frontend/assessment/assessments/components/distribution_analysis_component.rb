@@ -62,7 +62,6 @@ class DistributionAnalysisComponent < ViewComponent::Base
 
       count = (mp / 4.0).round.clamp(10, 30)
       width = (mp.to_f / count).ceil
-      max_c = nil
 
       bins = Array.new(count) do |i|
         low = i * width
