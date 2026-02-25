@@ -32,6 +32,7 @@ export function buildHistogramBars(container, maxPoints, studentPoints) {
 
 export function renderAxis(axisEl, maxPoints) {
   axisEl.innerHTML = "";
+  if (maxPoints <= 0) return;
 
   const rawStep = maxPoints / 6;
   const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
