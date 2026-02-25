@@ -62,6 +62,86 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
         expect(bin).to have_key(:count)
       end
     end
+
+    it "each bin has height_pct and min_height_px" do
+      component.bins.each do |bin|
+        expect(bin).to have_key(:height_pct)
+        expect(bin).to have_key(:min_height_px)
+      end
+    end
+
+    it "sets height_pct to 100 for the tallest bin" do
+      max_bin = component.bins.max_by { |b| b[:count] }
+      expect(max_bin[:height_pct]).to eq(100)
+    end
+
+    it "sets height_pct to 0 for empty bins" do
+      empty_bin = component.bins.find { |b| b[:count].zero? }
+      next unless empty_bin
+
+      expect(empty_bin[:height_pct]).to eq(0)
+    end
+
+    it "sets min_height_px to 4 for occupied bins" do
+      occupied = component.bins.select { |b| b[:count].positive? }
+      occupied.each { |b| expect(b[:min_height_px]).to eq(4) }
+    end
+
+    it "sets min_height_px to 0 for empty bins" do
+      empty = component.bins.select { |b| b[:count].zero? }
+      empty.each { |b| expect(b[:min_height_px]).to eq(0) }
+    end
+  end
+
+  describe "#max_possible" do
+    it "returns the assessment total points" do
+      create_reviewed(points: 50)
+      expect(component.max_possible).to eq(100)
+    end
+
+    it "returns 0 when no data and no total set" do
+      assessment.update!(total_points: nil)
+      assessment.tasks.destroy_all
+      c = described_class.new(assessment: assessment.reload)
+      expect(c.max_possible).to eq(0)
+    end
+  end
+
+  describe "#axis_tick_items" do
+    before do
+      [20, 50, 80].each { |p| create_reviewed(points: p) }
+    end
+
+    it "returns hashes with value and style keys" do
+      component.axis_tick_items.each do |tick|
+        expect(tick).to have_key(:value)
+        expect(tick).to have_key(:style)
+      end
+    end
+
+    it "positions the first tick at left: 0" do
+      first = component.axis_tick_items.first
+      expect(first[:style]).to include("left: 0")
+    end
+
+    it "positions the last tick at right: 0" do
+      last = component.axis_tick_items.last
+      expect(last[:style]).to include("right: 0")
+    end
+
+    it "positions middle ticks with translateX(-50%)" do
+      middle = component.axis_tick_items[1..-2]
+      middle.each do |tick|
+        expect(tick[:style]).to include("translateX(-50%)")
+      end
+    end
+
+    it "returns a single tick at 0 when max_possible is 0" do
+      assessment.update!(total_points: nil)
+      assessment.tasks.destroy_all
+      c = described_class.new(assessment: assessment.reload)
+      expect(c.axis_tick_items).to eq([{ value: 0, style: "left: 0;" }])
+    end
   end
 
   describe "#empty?" do

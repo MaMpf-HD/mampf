@@ -11,12 +11,10 @@
         <div class="position-relative" style="height: 160px; padding: 0 10px;">
           <div class="d-flex align-items-end gap-1 h-100">
             <% bins.each do |bin| %>
-              <% pct = max_bin_count.positive? ? (bin[:count].to_f / max_bin_count * 100).round : 0 %>
-
               <div
                 class="flex-fill rounded-top"
-                style="height: <%= pct %>%;
-                          min-height: <%= bin[:count].positive? ? 4 : 0 %>px;
+                style="height: <%= bin[:height_pct] %>%;
+                          min-height: <%= bin[:min_height_px] %>px;
                           background-color: #0d6efd;"
                 title="<%= bin[:low] %>\u2013<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
                 data-bs-toggle="tooltip"
@@ -52,17 +50,13 @@
           class="position-relative mt-1 mb-2"
           style="height: 18px; padding: 0 10px;"
         >
-          <% max_possible = distribution[:max_possible] || 0 %>
-
-          <% axis_ticks.each do |tick| %>
-            <% pct = max_possible.positive? ? (tick.to_f / max_possible * 100).clamp(0, 100) : 0 %>
-
+          <% axis_tick_items.each do |tick| %>
             <small
               class="text-muted position-absolute"
               style="font-size: 0.7rem;
-                     <%= pct.zero? ? 'left: 0;' : pct >= 100 ? 'right: 0; transform: none;' : "left: #{pct}%; transform: translateX(-50%);" %>"
+                     <%= tick[:style] %>"
             >
-              <%= tick %>
+              <%= tick[:value] %>
             </small>
           <% end %>
         </div>
