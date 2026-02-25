@@ -64,7 +64,7 @@
       <%= f.hidden_field :kind, value: "banded" %>
 
       <%= f.hidden_field :config_json,
-            value: editing? ? grade_scheme.config.to_json : "",
+            value: existing_bands.any? ? grade_scheme.config.to_json : "",
             data: { assessments__scheme_form_target: "configField" } %>
 
       <div
