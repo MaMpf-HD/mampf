@@ -10,6 +10,10 @@ class GradePreviewComponent < ViewComponent::Base
 
   attr_reader :assessment, :grade_scheme
 
+  def applier
+    @applier ||= Assessment::GradeSchemeApplier.new(grade_scheme)
+  end
+
   def preview_rows
     @preview_rows ||= build_preview_rows
   end
@@ -92,19 +96,9 @@ class GradePreviewComponent < ViewComponent::Base
           tutorial: p.tutorial&.title,
           points: p.points_total,
           current_grade: p.grade_numeric,
-          proposed_grade: compute_grade(p)
+          proposed_grade: applier.compute_grade_for(p)
         }
       end
-    end
-
-    def compute_grade(participation)
-      points = participation.points_total
-      return 5.0 if points.nil?
-
-      bands = grade_scheme.config["bands"]
-      sorted = bands.sort_by { |b| -b["min_points"] }
-      band = sorted.find { |b| points >= b["min_points"] }
-      band ? band["grade"].to_f : 5.0
     end
 
     def build_absent_rows

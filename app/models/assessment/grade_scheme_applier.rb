@@ -86,6 +86,26 @@ module Assessment
       target_count + absent_count
     end
 
+    def compute_grade_for(participation)
+      points = participation.points_total
+      return 5.0 if points.nil?
+
+      bands = @scheme.config["bands"]
+      first_band = bands.first
+
+      if first_band.key?("min_points")
+        apply_absolute_scheme(points, bands)
+      elsif first_band.key?("min_pct")
+        max = @assessment.effective_total_points
+        return 5.0 if max.nil? || max.zero?
+
+        pct = (points.to_f / max * 100).round(2)
+        apply_percentage_scheme(pct, bands)
+      else
+        5.0
+      end
+    end
+
     private
 
       def reviewed_participations
@@ -106,26 +126,6 @@ module Assessment
 
       def already_applied?
         @scheme.applied?
-      end
-
-      def compute_grade_for(participation)
-        points = participation.points_total
-        return 5.0 if points.nil?
-
-        bands = @scheme.config["bands"]
-        first_band = bands.first
-
-        if first_band.key?("min_points")
-          apply_absolute_scheme(points, bands)
-        elsif first_band.key?("min_pct")
-          max = @assessment.effective_total_points
-          return 5.0 if max.nil? || max.zero?
-
-          pct = (points.to_f / max * 100).round(2)
-          apply_percentage_scheme(pct, bands)
-        else
-          5.0
-        end
       end
 
       def apply_absolute_scheme(points, bands)
