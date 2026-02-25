@@ -171,7 +171,7 @@
 
           <div
             data-assessments--scheme-form-target="bandsPreview"
-            class="<%= editing? ? '' : 'd-none' %>"
+            class="<%= existing_bands.any? ? '' : 'd-none' %>"
           >
             <h6 class="mb-2">
               <%= t("assessment.grade_scheme.form.preview_title") %>
