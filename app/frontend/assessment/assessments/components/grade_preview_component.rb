@@ -6,7 +6,6 @@ class GradePreviewComponent < ViewComponent::Base
     super()
     @assessment = assessment
     @grade_scheme = grade_scheme
-    @applier = Assessment::GradeSchemeApplier.new(grade_scheme)
   end
 
   attr_reader :assessment, :grade_scheme
