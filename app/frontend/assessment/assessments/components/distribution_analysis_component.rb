@@ -1,5 +1,5 @@
 class DistributionAnalysisComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Component for analyzing and displaying the distribution of assessment scores.
 
   BIN_COUNT = 10
 

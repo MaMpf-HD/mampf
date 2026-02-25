@@ -1,5 +1,6 @@
 class GradeSchemeTabComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Component for displaying the grade scheme tab in the assessment view,
+  # showing the current status and actions available for the grade scheme.
 
   def initialize(assessment:, grade_scheme: nil, preview_mode: false)
     super()

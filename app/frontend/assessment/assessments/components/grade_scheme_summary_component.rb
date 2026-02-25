@@ -1,5 +1,6 @@
 class GradeSchemeSummaryComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Component for summarizing the grade scheme of an assessment, showing the
+  # distribution of grades
 
   GRADE_BADGE_CLASS = {
     "1.0" => "bg-success", "1.3" => "bg-success", "1.7" => "bg-success",

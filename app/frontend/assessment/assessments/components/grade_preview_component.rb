@@ -1,5 +1,6 @@
 class GradePreviewComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Component for previewing the proposed grade changes based on a grade scheme
+  # before applying them to an assessment.
 
   def initialize(assessment:, grade_scheme:)
     super()

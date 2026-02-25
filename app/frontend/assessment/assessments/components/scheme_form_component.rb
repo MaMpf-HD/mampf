@@ -1,5 +1,6 @@
 class SchemeFormComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Component for rendering the form to create or edit a grade scheme for an
+  # assessment.
 
   GERMAN_GRADES = ["1.0", "1.3", "1.7", "2.0", "2.3", "2.7", "3.0", "3.3", "3.7", "4.0",
                    "5.0"].freeze
