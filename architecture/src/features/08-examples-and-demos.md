@@ -401,7 +401,7 @@ exam_assessment.participations.find_each do |part|
 end
 
 # Create and apply grade scheme
-exam_scheme = GradeScheme::Scheme.create!(
+exam_scheme = Assessment::GradeScheme.create!(
   title: "Final Exam Grading",
   bands: [
     { "min_points" => 90, "grade" => "1.0" },
@@ -412,7 +412,7 @@ exam_scheme = GradeScheme::Scheme.create!(
   ]
 )
 # Assuming an applier service exists
-# GradeScheme::Applier.new(exam_assessment, exam_scheme).apply!
+# Assessment::GradeSchemeApplier.new(exam_assessment, exam_scheme).apply!
 
 puts "\nExam graded (conceptual)."
 

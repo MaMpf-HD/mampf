@@ -17,19 +17,17 @@ service objects to the right endpoints.
 |-------------|----------------------------------------------------|---------------------------|
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
-| Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
+| Assessment  | Assessments, Grading, Participations, GradeSchemes | Teacher/Editor UI, Tutor UI |
 | StudentPerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
 | Exam        | Exams                                              | Teacher/Editor UI         |
-| GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
 Controllers are grouped into the following namespaces:
 - Registration: Campaign setup, student registration, allocation
 - Roster: Post-allocation roster maintenance
-- Assessment: Assessment setup, grading, result viewing
+- Assessment: Assessment setup, grading, result viewing, grade scheme configuration
 - StudentPerformance: Performance records, teacher certification, evaluator proposals
 - Exam: Exam management
-- GradeScheme: Grading scheme configuration
 - Dashboard: Student and teacher/editor views
 
 ```admonish tip "Turbo responses"
@@ -435,7 +433,7 @@ Generate eligibility proposals using the Evaluator service.
 
 ## Grade Scheme Controllers
 
-### `GradeScheme::SchemesController`
+### `Assessment::GradeSchemesController`
 
 ```admonish info "Purpose"
 Configure grading schemes for courses.
@@ -443,7 +441,7 @@ Configure grading schemes for courses.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| GradeScheme::SchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| Assessment::GradeSchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 

@@ -226,11 +226,11 @@ graph TD
     `Lecture` (already campaignable from Step 2) hosts exam registration
     campaigns.
 
-    Services: Implement `GradeScheme::Applier` for converting exam
+    Services: Implement `Assessment::GradeSchemeApplier` for converting exam
     points to final grades.
 
     Controllers: `ExamsController` (CRUD, scheduling),
-    `GradeScheme::SchemesController` (scheme configuration, preview,
+    `Assessment::GradeSchemesController` (scheme configuration, preview,
     apply). Extend `Registration::CampaignsController` to support exam
     registration campaigns (lecture as campaignable, exam as
     registerable item).
