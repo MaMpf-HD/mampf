@@ -150,10 +150,10 @@ en:
       draft_message: 'Review the scheme, preview grades, then apply when ready.'
       draft_overwrite_warning:
         one: >-
-          1 student currently has a grade from the previous scheme.
+          1 student currently has a grade.
           Applying this scheme will overwrite it.
         other: >-
-          %{count} students currently have grades from the previous scheme.
+          %{count} students currently have grades.
           Applying this scheme will overwrite them.
       edit_button: 'Edit Scheme'
       preview_button: 'Preview Grades'

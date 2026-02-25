@@ -147,10 +147,10 @@ de:
       draft_message: 'Überprüfen Sie das Schema, sehen Sie die Notenvorschau und wenden Sie es an, wenn Sie bereit sind.'
       draft_overwrite_warning:
         one: >-
-          1 Studierender hat bereits eine Note aus dem vorherigen Schema.
+          1 Studierender hat bereits eine Note.
           Das Anwenden dieses Schemas wird sie überschreiben.
         other: >-
-          %{count} Studierende haben bereits Noten aus dem vorherigen Schema.
+          %{count} Studierende haben bereits Noten.
           Das Anwenden dieses Schemas wird sie überschreiben.
       edit_button: 'Schema bearbeiten'
       preview_button: 'Notenvorschau'
