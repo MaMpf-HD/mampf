@@ -7,9 +7,9 @@ The core principle of this plan is to build the entire new registration and grad
 We implement major areas as separate workstreams (Registration, Grading,
 Dashboards, Student Performance). Each workstream has a Foundations
 phase. In this plan: Registration foundations are at Step 2; Grading
-foundations are at Step 7; Student Performance foundations are at
-Step 11. Dashboards have partial integration at Step 10 and complete
-integration at Step 13. Foundations are schema-only for each workstream;
+foundations are at Step 6; Student Performance foundations are at
+Step 10. Dashboards have partial integration at Step 13 and complete
+integration at Step 14. Foundations are schema-only for each workstream;
 controllers/services and UI arrive in subsequent steps. The PR Roadmap
 chapter provides a concrete crosswalk for the Registration workstream.
 
@@ -25,28 +25,26 @@ graph TD
     end
 
     subgraph "Phase 2: Grading & Assessments"
-        S5 --> S6["6. Grading Foundations"];
+        S5 --> S6["6. Assessment Foundations"];
         S6 --> S7["7. Assessments (Formalize)"];
         S7 --> S8["8. Assignment Grading"];
-        S8 --> S9["9. Participation Tracking"];
+        S8 --> S9["9. Exams (Registration + Grading)"];
     end
 
-    subgraph "Phase 3: Dashboard Integration (Partial)"
-        S9 --> S10["10. Dashboard Impl. (Partial)"];
+    subgraph "Phase 3: Student Performance & Eligibility"
+        S9 --> S10["10. Student Performance System"];
+        S10 --> S11["11. Exam Eligibility Policies"];
     end
 
-    subgraph "Phase 4: Student Performance & Exam Registration"
-        S10 --> S11["11. Student Performance System"];
-        S11 --> S12["12. Exam Registration"];
-        S12 --> S13["13. Dashboard Extension"];
+    subgraph "Phase 4: Post-MVP Enhancements"
+        S11 --> S12["12. Activity Tracking (post-MVP)"];
+        S11 --> S13["13. Dashboard Impl. (Partial)"];
+        S13 --> S14["14. Dashboard Extension"];
     end
 
-    subgraph "Phase 5: Quality & Hardening"
-        S13 --> S14["14. Quality & Hardening"];
-    end
-
-    style S10 fill:#cde4ff,stroke:#5461c8
     style S13 fill:#cde4ff,stroke:#5461c8
+    style S14 fill:#cde4ff,stroke:#5461c8
+    style S12 fill:#ffe4b5,stroke:#d4a017
 ```
 
 ---
@@ -82,9 +80,10 @@ graph TD
     Provide interface stubs such as `materialize_allocation!` and
     `allocated_user_ids`.
 
-    ```admonish warning "Exam registration deferred"
-    Exam registration and student performance policies are deferred to
-    Steps 11-12. This step focuses on tutorial/talk registration only.
+    ```admonish warning "Exam features deferred"
+    Exam registration is deferred to Step 9, and student performance
+    eligibility policies to Step 11. This step focuses on tutorial/talk
+    registration only.
     ```
 
     ```admonish success "Non-Disruptive Impact"
@@ -116,7 +115,7 @@ graph TD
 
     ```admonish tip "Scope for MVP"
     Initial FCFS rollout targets Tutorials and Talks. Exam registration
-    is deferred to Step 12.
+    is deferred to Step 9.
     ```
 
     ```admonish success "Non-Disruptive Impact"
@@ -165,19 +164,20 @@ graph TD
         semester rosters remain untouched.
         ```
 
-6. **[Grading] Grading Foundations (Schema)**
-    Action: Create all grading-related tables and AR models. This
-    includes core assessment tables (`assessment_assessments`,
-    `assessment_tasks`, `assessment_participations`,
-    `assessment_task_points`), and grade scheme tables. Optional
+6. **[Grading] Assessment Foundations (Schema)**
+    Action: Create core assessment tables and AR models:
+    `assessment_assessments`, `assessment_tasks`,
+    `assessment_participations`, `assessment_task_points`. Optional
     multiple-choice support fields can also be added here to keep schema
     changes concentrated.
 
-     ```admonish warning "Exam and performance tables deferred"
-     Exam-related tables (`exams`) and student performance tables
-     (`student_performance_records`, `student_performance_certifications`,
-     etc.) are deferred to Steps 11-12. This step focuses on assignment
-     grading only.
+     ```admonish warning "Exam, grade scheme, and performance tables deferred"
+     Exam-related tables (`exams`) and grade scheme tables
+     (`grade_schemes`, `grade_scheme_thresholds`) are deferred to Step 9.
+     Student performance tables (`student_performance_records`,
+     `student_performance_certifications`, etc.) are deferred to Step 10.
+     This step focuses on core assessment infrastructure for assignment
+     grading.
      ```
 
      ```admonish success "Non-Disruptive Impact"
@@ -204,8 +204,9 @@ graph TD
 8. **[Grading] Grading Flow & Submission Fan-out**
    Action: Introduce the backend `Assessment::GradingService`. Build new grading UIs for instructors and TAs where they can view submissions and enter points. This UI will call the new service to save points and grades to the new tables (`assessment_participations`, `assessment_task_points`).
 
-    Controllers: Enable `Assessment::GradingController` and
-    `Assessment::ParticipationsController`. Add `publish_results` and
+    Controllers: Enable `Assessment::GradesController`,
+    `Assessment::TaskPointsController`,
+    and `Assessment::ParticipationsController`. Add `publish_results` and
     `unpublish_results` actions on `Assessment::AssessmentsController`.
 
     ```admonish success "Non-Disruptive Impact"
@@ -214,43 +215,63 @@ graph TD
     submission viewing UI remains untouched for the live semester.
     ```
 
-9. **[Grading] Participation Tracking**
-   Action: Implement Achievement model as a new assessable type for tracking non-graded participation (presentations, attendance). Build UI for teachers to mark achievements and for students to view their progress.
+9. **[Exams] Exam Registration & Grading**
+   Action: Create `Exam` model and enable full exam workflow including registration and grading. Build complete vertical slice from campaign creation through grade publication.
 
-    Controllers: Add `Assessment::AchievementsController` for CRUD and
-    `Assessment::ParticipationsController` extensions for achievement
-    marking.
+    Schema: Create `exams` table, `grade_schemes`, and
+    `grade_scheme_thresholds` tables.
+
+    Model concerns: `Exam` includes `Registration::Registerable`,
+    `Roster::Rosterable`, and `Assessment::Assessable`. Note that
+    `Lecture` (already campaignable from Step 2) hosts exam registration
+    campaigns.
+
+    Services: Implement `Assessment::GradeSchemeApplier` for converting exam
+    points to final grades.
+
+    Controllers: `ExamsController` (CRUD, scheduling),
+    `Assessment::GradeSchemesController` (scheme configuration, preview,
+    apply). Extend `Registration::CampaignsController` to support exam
+    registration campaigns (lecture as campaignable, exam as
+    registerable item).
+
+    UI: Exam registration flows (reuses existing campaign
+    infrastructure), exam grading interface with grade scheme
+    configuration (two-point auto-generation and manual adjustment),
+    and results publication.
+
+    ```admonish tip "Policy support"
+    At this stage, exam campaigns can use existing policies
+    (`institutional_email`, `prerequisite_campaign`). The
+    `student_performance` policy kind is added in Step 11.
+    ```
 
     ```admonish success "Non-Disruptive Impact"
-    This is entirely new functionality with no dependencies on existing
-    data. Will be used for next semester courses only.
+    Completes the grading story for Phase 2. Teachers can create exam
+    campaigns and grade exams using the new infrastructure. Grade
+    schemes become immediately useful instead of sitting unused for
+    multiple steps.
     ```
 
-10. **[Dashboards] Dashboard Implementation (Partial)**
-   Action: Implement initial versions of Student Dashboard and Teacher/Editor Dashboard with widgets for tutorial/talk registration, assignment grading, and roster management. Lecture performance and exam registration widgets remain hidden.
-
-    Controllers: `DashboardsController` (student/teacher views) with
-    widget partials for completed workstreams (Steps 2-9).
-
-    ```admonish warning "Incomplete coverage"
-    Dashboards will not show exam eligibility or certification status
-    yet. These widgets are added in Step 13.
-    ```
-
-    ```admonish success "Non-Disruptive Impact"
-    Provides immediate UX improvement for all users. Widgets for new
-    features show data from new tables only.
-    ```
-
-11. **[Student Performance] System Foundations**
+10. **[Student Performance] System Foundations**
     Action: Create student performance tables and models:
     `student_performance_records`, `student_performance_rules`,
-    `student_performance_achievements`, and
-    `student_performance_certifications`. Implement
-    `StudentPerformance::ComputationService` to materialize Records from
-    assessment data. Implement `StudentPerformance::Evaluator` to
-    generate certification proposals. Build teacher certification
-    workflow UI.
+    `student_performance_rule_achievements`, and
+    `student_performance_certifications`. Also create the `achievements`
+    table and `Achievement` model shell (migration + associations only,
+    no CRUD or UI). This provides the schema foundation that
+    `StudentPerformance::Rule` references via `required_achievements`,
+    while deferring the full Activity Tracking feature to Step 12.
+
+    Implement `StudentPerformance::ComputationService` to materialize
+    Records from assessment data. Implement
+    `StudentPerformance::Evaluator` to generate certification proposals.
+    Build teacher certification workflow UI.
+
+    Background jobs: `PerformanceRecordUpdateJob` (recompute Records
+    after grade changes) and `CertificationStaleCheckJob` (flag stale
+    certifications when Records change). These are essential for
+    keeping the performance pipeline correct during active grading.
 
     Controllers: `StudentPerformance::RecordsController` (factual data
     display), `StudentPerformance::CertificationsController` (teacher
@@ -258,8 +279,16 @@ graph TD
     (proposal generation).
 
     ```admonish warning "No policy integration yet"
-    The `student_performance` policy kind is added in Step 12 when exam
-    registration is implemented.
+    The `student_performance` policy kind is added in Step 11 when exam
+    eligibility policies are implemented.
+    ```
+
+    ```admonish tip "Achievement stub"
+    The `Achievement` model is created here as a schema-only stub so
+    that `StudentPerformance::Rule.required_achievements` resolves.
+    The computation service gracefully handles "no achievements
+    configured" (empty `required_achievements` → all met). Full
+    Achievement CRUD and UI are deferred to Step 12 (post-MVP).
     ```
 
     ```admonish success "Non-Disruptive Impact"
@@ -267,22 +296,29 @@ graph TD
     semester data.
     ```
 
-12. **[Exam] Registration & Certification Integration**
-    Action: Create `Exam` model with cross-cutting concerns:
-    - `Registration::Campaignable` (host campaigns)
-    - `Registration::Registerable` (be registered for)
-    - `Roster::Rosterable` (manage registrants)
-    - `Assessment::Assessable` (link to grading)
+11. **[Exam Eligibility] Student Performance Policy Integration**
+    Action: Integrate student performance certifications into exam
+    registration as an eligibility gate. Add the `student_performance`
+    policy kind to enable exam campaigns to require certification before
+    students can register.
 
-    Add `student_performance` policy kind to `Registration::PolicyEngine`.
-    Implement pre-flight certification checks in
-    `Registration::CampaignsController` (before open) and
-    `Registration::AllocationController` (before finalize). Wire exam
-    grading to assessment system and implement `GradeScheme::Applier`.
+    Policy Engine: Add `student_performance` policy kind to
+    `Registration::PolicyEngine`. Policy checks
+    `StudentPerformance::Certification.status` at runtime.
 
-    Controllers: `ExamsController` (CRUD, scheduling),
-    `GradeScheme::SchemesController` (preview/apply), and updates to
-    `Registration::CampaignsController` for certification checks.
+    Pre-flight checks: Implement certification completeness validation
+    in `Registration::CampaignsController` (before campaign open) and
+    `Registration::AllocationController` (before finalize). Campaigns
+    with `student_performance` policies cannot open if any lecture
+    students lack certifications or have pending status.
+
+    Finalization filtering: On finalize, auto-reject students with
+    `status: :failed` and only materialize students with
+    `status: :passed` to exam rosters.
+
+    UI: Add pre-flight validation warnings, remediation interface for
+    incomplete certifications, and student-facing eligibility status
+    displays.
 
     ```admonish tip "Extension: Multiple Choice"
     MC exam support can be added as optional extension after core
@@ -290,25 +326,54 @@ graph TD
     ```
 
     ```admonish success "Non-Disruptive Impact"
-    Final piece of new grading workflow. Only used for next semester
-    exams.
+    Adds optional eligibility layer to existing exam registration from
+    Step 9. Exams without student performance policies continue to work
+    as before.
     ```
 
-13. **[Dashboards] Dashboard Extension (Complete)**
-   Action: Add student performance and exam registration widgets to dashboards. Connect "Exam Eligibility Status", "Certification Pending List", and "Performance Overview" to backend services from Steps 11-12.
+12. **[Grading] Activity Tracking (post-MVP)**
+   Action: Implement full Achievement CRUD and UI on top of the model
+   shell from Step 10. Build teacher marking interface and student
+   progress views.
+
+    Controllers: Add `AchievementsController` for CRUD and
+    `Assessment::ParticipationsController` extensions for achievement
+    marking.
+
+    Model: Wire `Assessment::Assessable` concern (but NOT Pointable or
+    Gradable). Add value type support (boolean/numeric/percentage).
+
+    UI: Checkbox/numeric input for marking; student list view.
+
+    ```admonish tip "Post-MVP"
+    Activity tracking is a nice-to-have enhancement. The MVP-critical
+    path (Steps 9 → 10 → 11) delivers exam eligibility without it.
+    Rules that only use point thresholds work without any achievements.
+    ```
+
+    ```admonish success "Non-Disruptive Impact"
+    This is entirely new functionality with no dependencies on existing
+    data. Will be used for next semester courses only.
+    ```
+
+13. **[Dashboards] Dashboard Implementation (Partial)**
+   Action: Implement initial versions of Student Dashboard and Teacher/Editor Dashboard with widgets for tutorial/talk registration, assignment grading, exam registration, and roster management.
+
+    Controllers: `DashboardsController` (student/teacher views) with
+    widget partials for completed workstreams (Steps 2-11).
+
+    ```admonish success "Non-Disruptive Impact"
+    Provides immediate UX improvement for all users. Widgets for new
+    features show data from new tables only.
+    ```
+
+14. **[Dashboards] Dashboard Extension (Complete)**
+   Action: Add student performance and exam eligibility widgets to dashboards. Connect "Exam Eligibility Status", "Certification Pending List", and "Performance Overview" to backend services from Steps 10-11.
 
     Controllers: Extend `DashboardsController` with widgets for lecture
-    performance and exam registration.
+    performance certification status and exam eligibility.
 
     ```admonish success "Non-Disruptive Impact"
     Completes dashboard functionality for next semester. All widgets
     read from new tables only.
-    ```
-
-14. **[Quality] Hardening & Integrity**
-   Action: Create backend jobs for data integrity and reporting (`PerformanceRecordUpdateJob`, `CertificationStaleCheckJob`, `AllocatedAssignedMatchJob`). Build admin dashboards and reporting views.
-
-    ```admonish success "Non-Disruptive Impact"
-    Maintenance jobs operate exclusively on new tables without touching
-    live production data.
     ```
