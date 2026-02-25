@@ -1,8 +1,6 @@
 class DistributionAnalysisComponent < ViewComponent::Base
   # Component for analyzing and displaying the distribution of assessment scores.
 
-  BIN_COUNT = 10
-
   def initialize(assessment:, grade_scheme: nil)
     super()
     @assessment = assessment
