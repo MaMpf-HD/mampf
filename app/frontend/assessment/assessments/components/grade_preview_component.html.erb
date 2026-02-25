@@ -59,7 +59,9 @@
       <div class="col-md-4">
         <div class="card text-center border-danger">
           <div class="card-body py-2">
-            <div class="fs-4 fw-bold text-danger"><%= fail_count %></div>
+            <div class="fs-4 fw-bold text-danger">
+              <%= fail_count %> (<%= fail_rate %>%)
+            </div>
 
             <small class="text-muted">
               <%= t("assessment.grade_scheme.preview.failed") %>

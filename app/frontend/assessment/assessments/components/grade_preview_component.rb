@@ -44,6 +44,12 @@ class GradePreviewComponent < ViewComponent::Base
     (pass_count.to_f / total_reviewed * 100).round(1)
   end
 
+  def fail_rate
+    return 0.0 if total_reviewed.zero?
+
+    (fail_count.to_f / total_reviewed * 100).round(1)
+  end
+
   def show_tutorial_column?
     !assessment.assessable.is_a?(Talk)
   end
