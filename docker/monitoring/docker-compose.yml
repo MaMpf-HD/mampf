@@ -33,6 +33,10 @@ services:
       - "2345:2345"
     environment:
       - GF_SERVER_HTTP_PORT=2345
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=mailcatcher:1025
+      - GF_SMTP_FROM_ADDRESS=alerting@mampf.local
+      - GF_SMTP_SKIP_VERIFY=true
     restart: unless-stopped
 
 volumes:

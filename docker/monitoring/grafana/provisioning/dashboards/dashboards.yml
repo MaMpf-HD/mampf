@@ -4,7 +4,7 @@ providers:
   - name: file-dashboards
     type: file
     orgId: 1
-    folder: Local
+    folder: Mampf Dashboards
     disableDeletion: false
     editable: true
     options:

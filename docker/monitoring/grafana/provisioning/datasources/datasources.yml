@@ -13,3 +13,5 @@ datasources:
     url: http://mimir:9009/prometheus
     access: proxy
     isDefault: true
+    jsonData:
+      manageAlerts: false
