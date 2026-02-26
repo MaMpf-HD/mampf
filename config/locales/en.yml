@@ -3768,6 +3768,10 @@ en:
           attributes:
             lecture_id:
               must_match_assessable_lecture: "must match the assessable's lecture"
+        student_performance/rule:
+          attributes:
+            base:
+              percentage_and_absolute_exclusive: "Cannot specify both a percentage and an absolute point threshold"
         student_performance/rule_achievement:
           attributes:
             achievement:

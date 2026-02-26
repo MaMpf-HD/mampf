@@ -3981,6 +3981,10 @@ de:
           attributes:
             lecture_id:
               must_match_assessable_lecture: "muss mit der Veranstaltung des Assessable übereinstimmen"
+        student_performance/rule:
+          attributes:
+            base:
+              percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
         student_performance/rule_achievement:
           attributes:
             achievement:

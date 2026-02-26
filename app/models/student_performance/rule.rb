@@ -23,8 +23,7 @@ module StudentPerformance
       def percentage_or_absolute_not_both
         return unless min_percentage.present? && min_points_absolute.present?
 
-        errors.add(:base,
-                   "Cannot specify both percentage and absolute point threshold")
+        errors.add(:base, :percentage_and_absolute_exclusive)
       end
   end
 end
