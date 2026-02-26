@@ -43,9 +43,7 @@ module StudentPerformance
           BigDecimal("0")
         end
 
-        points_max = assessments.sum do |assessment|
-          assessment.effective_total_points
-        end
+        points_max = assessments.sum(&:effective_total_points)
 
         { points_total: points_total, points_max: points_max }
       end
@@ -64,6 +62,9 @@ module StudentPerformance
         now = Time.current
         percentage = compute_percentage(points_total, points_max)
 
+        # All values are computed by this service, not user input.
+        # Uniqueness is enforced by the DB index on [lecture_id, user_id]
+        # rubocop:disable Rails/SkipsModelValidations
         Record.upsert(
           {
             lecture_id: lecture.id,
@@ -77,6 +78,7 @@ module StudentPerformance
           },
           unique_by: [:lecture_id, :user_id]
         )
+        # rubocop:enable Rails/SkipsModelValidations
       end
   end
 end
