@@ -2186,7 +2186,7 @@
           "refId": "A"
         }
       ],
-      "title": "Running Puma Threats",
+      "title": "Running Puma Threads",
       "type": "stat"
     },
     {
