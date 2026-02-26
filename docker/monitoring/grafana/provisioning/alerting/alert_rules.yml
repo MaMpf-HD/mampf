@@ -48,7 +48,7 @@ groups:
         for: 1m # time the condition should be true before alerting
         annotations:
           summary: 'MaMpf Puma Process: CPU usage is at {{ $values.A.Value }}%'
-          description: 'Warning: The CPU usage is currently at {{ $values.A.Value }}%, which exceeds the configured threshold of 80%. (If there is no usage then the prometheus exprter is not sending any data which lead to this alert.)'
+          description: 'Warning: The CPU usage is currently at {{ $values.A.Value }}%, which exceeds the configured threshold of 80%. (If there is no usage then the prometheus exporter is not sending any data which leads to this alert.)'
         notification_settings:
           receiver: Mailcatcher
 
@@ -95,6 +95,6 @@ groups:
         for: 1m
         annotations:
           summary: 'MaMpf Puma Process: High RAM usage ({{ $values.A.Value }}%)'
-          description: 'Warning: The RAM usage of the Puma process is at {{ $values.A.Value }}%, which exceeds the limit of 80%. (If there is no usage then the prometheus exprter is not sending any data which lead to this alert.)'
+          description: 'Warning: The RAM usage of the Puma process is at {{ $values.A.Value }}%, which exceeds the limit of 80%. (If there is no usage then the prometheus exporter is not sending any data which leads to this alert.)'
         notification_settings:
           receiver: Mailcatcher
