@@ -234,12 +234,6 @@ class SubmissionsController < ApplicationController
   def cancel_action
   end
 
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
-  end
-
   def accept
     @submission.update(accepted: true)
     send_acceptance_email(@submission.users)
