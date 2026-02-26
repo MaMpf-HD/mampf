@@ -39,7 +39,7 @@
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
 
-        "SHELL": "/bin/bash",
+        "SHELL": "/bin/bash"
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to network with other containers or the host.
