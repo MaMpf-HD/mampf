@@ -7,14 +7,15 @@ module StudentPerformance
     end
 
     def compute_and_upsert_record_for(user)
-      totals = aggregate_points(user)
+      stats = aggregate_points(user)
       met_ids = achievement_ids_met_by(user)
 
       upsert_record(
         user: user,
-        points_total: totals[:points_total],
-        points_max: totals[:points_max],
-        achievements_met_ids: met_ids
+        points_total: stats[:points_total],
+        points_max: stats[:points_max],
+        achievements_met_ids: met_ids,
+        counts: stats[:counts]
       )
     end
 
@@ -31,21 +32,36 @@ module StudentPerformance
       end
 
       def aggregate_points(user)
-        participation_ids = Assessment::Participation
-                            .where(assessment_id: assessments.select(:id), user_id: user.id)
-                            .pluck(:id)
+        participations = Assessment::Participation
+                         .where(assessment_id: assessments.select(:id), user_id: user.id)
+                         .select(:id, :assessment_id, :status)
 
-        points_total = if participation_ids.any?
+        status_map = participations.group_by(&:status)
+        reviewed = status_map.fetch("reviewed", [])
+        exempt = status_map.fetch("exempt", [])
+
+        reviewed_ids = reviewed.map(&:id)
+        exempt_assessment_ids = exempt.map(&:assessment_id).to_set
+
+        points_total = if reviewed_ids.any?
           Assessment::TaskPoint
-            .where(assessment_participation_id: participation_ids)
+            .where(assessment_participation_id: reviewed_ids)
             .sum(:points)
         else
           BigDecimal("0")
         end
 
-        points_max = assessments.sum(&:effective_total_points)
+        non_exempt = assessments.reject { |a| exempt_assessment_ids.include?(a.id) }
+        points_max = non_exempt.sum(&:effective_total_points)
 
-        { points_total: points_total, points_max: points_max }
+        counts = {
+          total: assessments.size,
+          reviewed: reviewed.size,
+          pending: status_map.fetch("pending", []).size,
+          exempt: exempt.size
+        }
+
+        { points_total: points_total, points_max: points_max, counts: counts }
       end
 
       def achievement_ids_met_by(_user)
@@ -58,7 +74,7 @@ module StudentPerformance
         (points_total / points_max * 100).round(2)
       end
 
-      def upsert_record(user:, points_total:, points_max:, achievements_met_ids:)
+      def upsert_record(user:, points_total:, points_max:, achievements_met_ids:, counts:)
         now = Time.current
         percentage = compute_percentage(points_total, points_max)
 
@@ -73,6 +89,10 @@ module StudentPerformance
             points_max_materialized: points_max,
             percentage_materialized: percentage,
             achievements_met_ids: achievements_met_ids,
+            assessments_total_count: counts[:total],
+            assessments_reviewed_count: counts[:reviewed],
+            assessments_pending_count: counts[:pending],
+            assessments_exempt_count: counts[:exempt],
             computed_at: now,
             updated_at: now
           },

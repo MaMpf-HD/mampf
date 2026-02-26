@@ -7,6 +7,10 @@ FactoryBot.define do
     points_max_materialized { 100 }
     percentage_materialized { 0 }
     achievements_met_ids { [] }
+    assessments_total_count { 0 }
+    assessments_reviewed_count { 0 }
+    assessments_pending_count { 0 }
+    assessments_exempt_count { 0 }
     computed_at { Time.current }
   end
 end
