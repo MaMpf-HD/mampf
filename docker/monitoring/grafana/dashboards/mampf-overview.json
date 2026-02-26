@@ -153,7 +153,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "rate(ruby_mampf_app_network_transmit_bytes[3m])",
+          "expr": "rate(ruby_mampf_app_network_transmit_bytes[3m])*8",
           "hide": false,
           "instant": false,
           "legendFormat": "Network Out",
@@ -2339,5 +2339,5 @@
   "timezone": "browser",
   "title": "MaMpf General Overview",
   "uid": "adzzdvc",
-  "version": 4
+  "version": 5
 }
