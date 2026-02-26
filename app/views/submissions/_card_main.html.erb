@@ -132,6 +132,8 @@
       <%= t('submission.nothing_here') %>
     <% elsif assignment.active? %>
       <%= t('submission.nothing_here') %>
+    <% elsif current_user.tutorial_rosterized(assignment.lecture).nil? %>
+      <%= t('submission.tutorial_not_assigned') %>
     <% else %>
       <%= t('submission.nothing_here_past') %>
     <% end %>

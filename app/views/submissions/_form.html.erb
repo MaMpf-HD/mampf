@@ -5,16 +5,11 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <%= f.select :tutorial_id,
-                     options_for_select(tutorials_selection(lecture),
-                                        submission.tutorial&.id ||
-                                          submission
-                                            .preceding_tutorial(current_user)
-                                           &.id),
-                     {},
-                     {} %>
-        <div class="invalid-feedback"
-             id="submission-tutorial-error">
+        <% if current_user.tutorial_rosterized(lecture) %>
+          <p class="form-control-plaintext">
+            <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
+          </p>
+        <% end %>
         </div>
         <%= f.hidden_field :lecture_id,
                            value: lecture.id %>

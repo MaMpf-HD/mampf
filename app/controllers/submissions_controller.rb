@@ -41,6 +41,7 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    @submission.tutorial_id = current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
@@ -83,7 +84,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.update(submission_update_params)
+    @submission.tutorial_id = current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -263,12 +264,7 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.expect(submission: [:tutorial_id, :assignment_id])
-    end
-
-    # disallow modification of assignment
-    def submission_update_params
-      params.expect(submission: [:tutorial_id])
+      params.expect(submission: [:assignment_id])
     end
 
     # disallow modification of assignment

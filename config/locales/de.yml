@@ -2920,6 +2920,8 @@ de:
     nothing_here_past: >
       Zu dieser Hausaufgabe hast Du nichts abgegeben.
     invitations_to: Einladungen an
+    tutorial_not_assigned: >
+      Sie können dieser Abgabe nicht beitreten, da sie keinem Tutorium zugeordnet ist.
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
     failed_redemption: >

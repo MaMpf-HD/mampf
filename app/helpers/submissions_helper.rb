@@ -97,6 +97,7 @@ module SubmissionsHelper
   end
 
   def show_submission_footer?(submission, assignment)
+    return false if current_user.tutorial_rosterized(assignment.lecture).nil? && submission.nil?
     return true if assignment.active?
     return false if assignment.totally_expired?
     return false if submission&.correction
