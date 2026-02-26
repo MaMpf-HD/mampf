@@ -13,15 +13,16 @@ module StudentPerformance
     validates :certified_at, presence: true, unless: :pending?
 
     scope :stale, lambda {
+      record_table = Record.arel_table
+      cert_table = arel_table
+
       joins(
-        "INNER JOIN student_performance_records ON " \
-        "student_performance_records.lecture_id = " \
-        "student_performance_certifications.lecture_id " \
-        "AND student_performance_records.user_id = " \
-        "student_performance_certifications.user_id"
+        cert_table.join(record_table).on(
+          record_table[:lecture_id].eq(cert_table[:lecture_id])
+            .and(record_table[:user_id].eq(cert_table[:user_id]))
+        ).join_sources
       ).where(
-        "student_performance_records.computed_at > " \
-        "student_performance_certifications.certified_at"
+        record_table[:computed_at].gt(cert_table[:certified_at])
       )
     }
 
