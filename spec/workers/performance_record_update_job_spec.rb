@@ -1,11 +1,11 @@
 require "rails_helper"
 
 RSpec.describe(PerformanceRecordUpdateJob, type: :worker) do
-  let(:lecture) { create(:lecture, :released_for_all) }
-  let(:user) { create(:confirmed_user) }
+  let(:lecture) { FactoryBot.create(:lecture, :released_for_all) }
+  let(:user) { FactoryBot.create(:confirmed_user) }
 
   before do
-    create(:lecture_membership, user: user, lecture: lecture)
+    FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
   end
 
   describe "#perform" do
@@ -22,10 +22,10 @@ RSpec.describe(PerformanceRecordUpdateJob, type: :worker) do
     end
 
     context "without user_id" do
-      let(:user2) { create(:confirmed_user) }
+      let(:user2) { FactoryBot.create(:confirmed_user) }
 
       before do
-        create(:lecture_membership, user: user2, lecture: lecture)
+        FactoryBot.create(:lecture_membership, user: user2, lecture: lecture)
       end
 
       it "computes records for all lecture members" do

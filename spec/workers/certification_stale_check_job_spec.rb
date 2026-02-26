@@ -1,12 +1,12 @@
 require "rails_helper"
 
 RSpec.describe(CertificationStaleCheckJob, type: :worker) do
-  let(:lecture) { create(:lecture, :released_for_all) }
-  let(:user) { create(:confirmed_user) }
-  let(:certifier) { create(:confirmed_user) }
+  let(:lecture) { FactoryBot.create(:lecture, :released_for_all) }
+  let(:user) { FactoryBot.create(:confirmed_user) }
+  let(:certifier) { FactoryBot.create(:confirmed_user) }
 
   before do
-    create(:lecture_membership, user: user, lecture: lecture)
+    FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
   end
 
   describe "#perform" do
@@ -28,11 +28,11 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
           .to receive(:new).with(lecture: lecture).and_return(service)
         allow(service).to receive(:compute_and_upsert_all_records!)
 
-        create(:student_performance_record,
+        FactoryBot.create(:student_performance_record,
                lecture: lecture, user: user,
                computed_at: 1.hour.ago)
 
-        create(:student_performance_certification, :passed,
+        FactoryBot.create(:student_performance_certification, :passed,
                lecture: lecture, user: user,
                certified_by: certifier,
                certified_at: 2.hours.ago)
@@ -56,11 +56,11 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
           .to receive(:new).with(lecture: lecture).and_return(service)
         allow(service).to receive(:compute_and_upsert_all_records!)
 
-        create(:student_performance_record,
+        FactoryBot.create(:student_performance_record,
                lecture: lecture, user: user,
                computed_at: 2.hours.ago)
 
-        create(:student_performance_certification, :passed,
+        FactoryBot.create(:student_performance_certification, :passed,
                lecture: lecture, user: user,
                certified_by: certifier,
                certified_at: 1.hour.ago)

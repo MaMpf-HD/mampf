@@ -1,19 +1,19 @@
 require "rails_helper"
 
 RSpec.describe(StudentPerformance::Evaluator) do
-  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:lecture) { FactoryBot.create(:lecture, :released_for_all) }
 
   describe "#evaluate" do
     context "with a percentage-based rule" do
       let(:rule) do
-        create(:student_performance_rule, :active, :with_percentage,
+        FactoryBot.create(:student_performance_rule, :active, :with_percentage,
                lecture: lecture, min_percentage: 50)
       end
 
       let(:evaluator) { described_class.new(rule) }
 
       it "proposes :passed when percentage meets threshold" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         points_total_materialized: 60,
                         points_max_materialized: 100,
@@ -25,7 +25,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :passed when percentage equals threshold" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: 50)
 
@@ -34,7 +34,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when percentage is below threshold" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: 49.99)
 
@@ -44,7 +44,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when percentage is nil" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: nil)
 
@@ -55,14 +55,14 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
     context "with an absolute points rule" do
       let(:rule) do
-        create(:student_performance_rule, :active, :with_absolute_points,
+        FactoryBot.create(:student_performance_rule, :active, :with_absolute_points,
                lecture: lecture, min_points_absolute: 60)
       end
 
       let(:evaluator) { described_class.new(rule) }
 
       it "proposes :passed when points meet threshold" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         points_total_materialized: 75)
 
@@ -73,7 +73,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when points are below threshold" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         points_total_materialized: 59)
 
@@ -84,13 +84,13 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
     context "with a rule that has no points threshold" do
       let(:rule) do
-        create(:student_performance_rule, :active, lecture: lecture)
+        FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
       end
 
       let(:evaluator) { described_class.new(rule) }
 
       it "proposes :passed regardless of points" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         points_total_materialized: 0,
                         percentage_materialized: 0)
@@ -102,24 +102,24 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     context "with required achievements" do
-      let(:achievement1) { create(:achievement, :boolean, lecture: lecture) }
-      let(:achievement2) { create(:achievement, :numeric, lecture: lecture) }
+      let(:achievement1) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+      let(:achievement2) { FactoryBot.create(:achievement, :numeric, lecture: lecture) }
 
       let(:rule) do
-        create(:student_performance_rule, :active, lecture: lecture)
+        FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
       end
 
       before do
-        create(:student_performance_rule_achievement,
+        FactoryBot.create(:student_performance_rule_achievement,
                rule: rule, achievement: achievement1)
-        create(:student_performance_rule_achievement,
+        FactoryBot.create(:student_performance_rule_achievement,
                rule: rule, achievement: achievement2)
       end
 
       let(:evaluator) { described_class.new(rule) }
 
       it "proposes :passed when all achievements are met" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         achievements_met_ids: [achievement1.id, achievement2.id])
 
@@ -129,7 +129,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when some achievements are missing" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         achievements_met_ids: [achievement1.id])
 
@@ -139,7 +139,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when no achievements are met" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         achievements_met_ids: [])
 
@@ -149,22 +149,22 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     context "with both points and achievements required" do
-      let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
+      let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
 
       let(:rule) do
-        create(:student_performance_rule, :active, :with_percentage,
+        FactoryBot.create(:student_performance_rule, :active, :with_percentage,
                lecture: lecture, min_percentage: 50)
       end
 
       before do
-        create(:student_performance_rule_achievement,
+        FactoryBot.create(:student_performance_rule_achievement,
                rule: rule, achievement: achievement)
       end
 
       let(:evaluator) { described_class.new(rule) }
 
       it "proposes :passed only when both are met" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: 60,
                         achievements_met_ids: [achievement.id])
@@ -174,7 +174,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when points met but achievements not" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: 60,
                         achievements_met_ids: [])
@@ -184,7 +184,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed when achievements met but points not" do
-        record = create(:student_performance_record,
+        record = FactoryBot.create(:student_performance_record,
                         lecture: lecture,
                         percentage_materialized: 40,
                         achievements_met_ids: [achievement.id])
@@ -196,7 +196,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
     context "when record is nil" do
       let(:rule) do
-        create(:student_performance_rule, :active, lecture: lecture)
+        FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
       end
 
       let(:evaluator) { described_class.new(rule) }
@@ -209,9 +209,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     it "includes all expected detail keys" do
-      rule = create(:student_performance_rule, :active, :with_percentage,
+      rule = FactoryBot.create(:student_performance_rule, :active, :with_percentage,
                     lecture: lecture, min_percentage: 50)
-      record = create(:student_performance_record,
+      record = FactoryBot.create(:student_performance_record,
                       lecture: lecture, percentage_materialized: 60)
 
       result = described_class.new(rule).evaluate(record)
@@ -224,19 +224,19 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
   describe "#bulk_evaluate" do
     let(:rule) do
-      create(:student_performance_rule, :active, :with_percentage,
+      FactoryBot.create(:student_performance_rule, :active, :with_percentage,
              lecture: lecture, min_percentage: 50)
     end
 
     let(:evaluator) { described_class.new(rule) }
 
     let!(:passing_record) do
-      create(:student_performance_record,
+      FactoryBot.create(:student_performance_record,
              lecture: lecture, percentage_materialized: 80)
     end
 
     let!(:failing_record) do
-      create(:student_performance_record,
+      FactoryBot.create(:student_performance_record,
              lecture: lecture, percentage_materialized: 30)
     end
 
