@@ -143,4 +143,44 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
         .to be(false)
     end
   end
+
+  describe ".stale" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:certifier) { FactoryBot.create(:confirmed_user) }
+
+    it "includes certifications where record was computed after certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 2.hours.ago)
+
+      expect(described_class.stale).to include(cert)
+    end
+
+    it "excludes certifications where record was computed before certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 2.hours.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 1.hour.ago)
+
+      expect(described_class.stale).not_to include(cert)
+    end
+
+    it "excludes pending certifications without certified_at" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification,
+                               lecture: lecture, user: user)
+
+      expect(described_class.stale).not_to include(cert)
+    end
+  end
 end
