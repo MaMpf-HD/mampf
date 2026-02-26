@@ -1,4 +1,4 @@
-class AddAssessmentCountsToPerformanceRecords < ActiveRecord::Migration[7.2]
+class AddAssessmentCountsToPerformanceRecords < ActiveRecord::Migration[8.0]
   def change
     change_table :student_performance_records, bulk: true do |t|
       t.integer :assessments_total_count, default: 0, null: false
