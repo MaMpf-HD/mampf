@@ -84,6 +84,24 @@ RSpec.describe(Achievement, type: :model) do
       achievement = FactoryBot.build(:achievement, :numeric, threshold: 0)
       expect(achievement).not_to be_valid
     end
+
+    it "rejects percentage threshold above 100" do
+      achievement = FactoryBot.build(:achievement, :percentage,
+                                     threshold: 101)
+      expect(achievement).not_to be_valid
+    end
+
+    it "allows percentage threshold of 100" do
+      achievement = FactoryBot.build(:achievement, :percentage,
+                                     threshold: 100)
+      expect(achievement).to be_valid
+    end
+
+    it "allows percentage threshold of 0" do
+      achievement = FactoryBot.build(:achievement, :percentage,
+                                     threshold: 0)
+      expect(achievement).to be_valid
+    end
   end
 
   describe "enums" do

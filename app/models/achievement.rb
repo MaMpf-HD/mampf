@@ -10,6 +10,10 @@ class Achievement < ApplicationRecord
   validates :title, :value_type, presence: true
   validates :threshold,
             numericality: { greater_than: 0 },
-            if: -> { numeric? || percentage? }
+            if: :numeric?
+  validates :threshold,
+            numericality: { greater_than_or_equal_to: 0,
+                            less_than_or_equal_to: 100 },
+            if: :percentage?
   validates :threshold, absence: true, if: :boolean?
 end

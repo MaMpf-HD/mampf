@@ -3768,6 +3768,10 @@ en:
           attributes:
             lecture_id:
               must_match_assessable_lecture: "must match the assessable's lecture"
+        student_performance/rule_achievement:
+          attributes:
+            achievement:
+              must_belong_to_same_lecture: "must belong to the same lecture as the rule"
         assignment:
           attributes:
             title:

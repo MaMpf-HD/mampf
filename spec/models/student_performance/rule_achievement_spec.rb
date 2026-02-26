@@ -45,6 +45,30 @@ RSpec.describe(StudentPerformance::RuleAchievement, type: :model) do
       )
       expect(rule_achievement).not_to be_valid
     end
+
+    it "rejects achievement from a different lecture" do
+      rule = FactoryBot.create(:student_performance_rule)
+      other_achievement = FactoryBot.create(:achievement)
+      ra = FactoryBot.build(
+        :student_performance_rule_achievement,
+        rule: rule,
+        achievement: other_achievement
+      )
+      expect(ra).not_to be_valid
+      expect(ra.errors[:achievement]).to be_present
+    end
+
+    it "accepts achievement from the same lecture" do
+      rule = FactoryBot.create(:student_performance_rule)
+      achievement = FactoryBot.create(:achievement,
+                                      lecture: rule.lecture)
+      ra = FactoryBot.build(
+        :student_performance_rule_achievement,
+        rule: rule,
+        achievement: achievement
+      )
+      expect(ra).to be_valid
+    end
   end
 
   describe "acts_as_list" do

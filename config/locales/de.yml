@@ -3981,6 +3981,10 @@ de:
           attributes:
             lecture_id:
               must_match_assessable_lecture: "muss mit der Veranstaltung des Assessable übereinstimmen"
+        student_performance/rule_achievement:
+          attributes:
+            achievement:
+              must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
         assignment:
           attributes:
             title:

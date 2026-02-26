@@ -125,4 +125,30 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
       expect(rule).to be_valid
     end
   end
+
+  describe "unique active rule per lecture" do
+    it "allows only one active rule per lecture" do
+      lecture = FactoryBot.create(:lecture)
+      FactoryBot.create(:student_performance_rule, :active,
+                        lecture: lecture)
+      expect do
+        FactoryBot.create(:student_performance_rule, :active,
+                          lecture: lecture)
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "allows multiple inactive rules per lecture" do
+      lecture = FactoryBot.create(:lecture)
+      FactoryBot.create(:student_performance_rule, lecture: lecture)
+      rule2 = FactoryBot.build(:student_performance_rule,
+                               lecture: lecture)
+      expect(rule2).to be_valid
+    end
+
+    it "allows active rules on different lectures" do
+      FactoryBot.create(:student_performance_rule, :active)
+      rule2 = FactoryBot.create(:student_performance_rule, :active)
+      expect(rule2).to be_persisted
+    end
+  end
 end
