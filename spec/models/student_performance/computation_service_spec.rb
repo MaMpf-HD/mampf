@@ -311,6 +311,78 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.assessments_exempt_count).to eq(1)
       end
     end
+
+    context "when assessment has no participation record" do
+      let(:assignment1) { create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment2) { create(:assignment, :with_lecture, lecture: lecture) }
+
+      let(:assessment1) do
+        create(:assessment, :with_points, assessable: assignment1,
+                                          lecture: lecture)
+      end
+
+      let(:assessment2) do
+        create(:assessment, :with_points, assessable: assignment2,
+                                          lecture: lecture)
+      end
+
+      before do
+        create(:assessment_task, assessment: assessment1, max_points: 10)
+        create(:assessment_task, assessment: assessment2, max_points: 20)
+
+        create(:assessment_participation, :reviewed,
+               assessment: assessment1, user: user)
+      end
+
+      it "counts the missing participation as pending" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.assessments_total_count).to eq(2)
+        expect(record.assessments_reviewed_count).to eq(1)
+        expect(record.assessments_pending_count).to eq(1)
+        expect(record.assessments_exempt_count).to eq(0)
+      end
+
+      it "still includes the assessment in points_max" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.points_max_materialized).to eq(30)
+      end
+    end
+
+    context "when participation is absent" do
+      let(:assignment1) { create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment2) { create(:assignment, :with_lecture, lecture: lecture) }
+
+      let(:assessment1) do
+        create(:assessment, :with_points, assessable: assignment1,
+                                          lecture: lecture)
+      end
+
+      let(:assessment2) do
+        create(:assessment, :with_points, assessable: assignment2,
+                                          lecture: lecture)
+      end
+
+      before do
+        create(:assessment_task, assessment: assessment1, max_points: 10)
+        create(:assessment_task, assessment: assessment2, max_points: 20)
+
+        create(:assessment_participation, :reviewed,
+               assessment: assessment1, user: user)
+        create(:assessment_participation, :absent,
+               assessment: assessment2, user: user)
+      end
+
+      it "does not count absent as pending" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.assessments_total_count).to eq(2)
+        expect(record.assessments_reviewed_count).to eq(1)
+        expect(record.assessments_pending_count).to eq(0)
+        expect(record.assessments_exempt_count).to eq(0)
+      end
+    end
   end
 
   describe "#compute_and_upsert_all_records!" do

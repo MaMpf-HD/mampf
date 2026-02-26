@@ -54,10 +54,13 @@ module StudentPerformance
         non_exempt = assessments.reject { |a| exempt_assessment_ids.include?(a.id) }
         points_max = non_exempt.sum(&:effective_total_points)
 
+        participated_ids = participations.to_set(&:assessment_id)
+        no_participation = assessments.count { |a| !participated_ids.include?(a.id) }
+
         counts = {
           total: assessments.size,
           reviewed: reviewed.size,
-          pending: status_map.fetch("pending", []).size,
+          pending: status_map.fetch("pending", []).size + no_participation,
           exempt: exempt.size
         }
 
