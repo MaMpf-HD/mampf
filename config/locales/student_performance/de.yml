@@ -1,0 +1,12 @@
+de:
+  activerecord:
+    errors:
+      models:
+        student_performance/rule:
+          attributes:
+            base:
+              percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
+        student_performance/rule_achievement:
+          attributes:
+            achievement:
+              must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
