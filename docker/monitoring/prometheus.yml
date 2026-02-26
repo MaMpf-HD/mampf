@@ -13,8 +13,8 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'mampf'
 
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
+    # Override the global default and scrape targets from this job every 30 seconds.
+    scrape_interval: 30s
     scrape_timeout:  5s
 
     metric_relabel_configs:

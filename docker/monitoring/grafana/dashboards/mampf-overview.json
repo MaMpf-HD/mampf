@@ -1016,7 +1016,7 @@
         "type": "prometheus",
         "uid": "mimir"
       },
-      "description": "Claculates the number of Logins in the past 24 hours with number of new sessions controller",
+      "description": "Calculates the number of Logins in the past 24 hours with number of new sessions controller",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1833,7 +1833,7 @@
       },
       "id": 26,
       "panels": [],
-      "title": "Puma Metrices",
+      "title": "Puma Metrics",
       "type": "row"
     },
     {
@@ -2186,7 +2186,7 @@
           "refId": "A"
         }
       ],
-      "title": "Running Puma Threats",
+      "title": "Running Puma Threads",
       "type": "stat"
     },
     {

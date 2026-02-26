@@ -53,7 +53,7 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
     # NETWORK METRICS (Bytes In/Out from OS)
     # =================================================================
 
-    # Does not end with _total because then metrics error occur
+    # Does not end with _total to avoid Prometheus metric naming errors
     net_rx_gauge = PrometheusExporter::Metric::Gauge.new("mampf_app_network_receive_bytes",
                                                          "Cumulative bytes received")
 
