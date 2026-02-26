@@ -28,7 +28,9 @@ module StudentPerformance
     private
 
       def assessments
-        @assessments ||= Assessment::Assessment.where(lecture_id: lecture.id)
+        @assessments ||= Assessment::Assessment
+                         .where(lecture_id: lecture.id)
+                         .includes(:tasks)
       end
 
       def aggregate_points(user)
@@ -52,7 +54,7 @@ module StudentPerformance
         end
 
         non_exempt = assessments.reject { |a| exempt_assessment_ids.include?(a.id) }
-        points_max = non_exempt.sum(&:effective_total_points)
+        points_max = non_exempt.sum { |a| effective_max(a) }
 
         participated_ids = participations.to_set(&:assessment_id)
         no_participation = assessments.count { |a| participated_ids.exclude?(a.id) }
@@ -69,6 +71,10 @@ module StudentPerformance
 
       def achievement_ids_met_by(_user)
         []
+      end
+
+      def effective_max(assessment)
+        assessment.total_points || assessment.tasks.sum(&:max_points)
       end
 
       def compute_percentage(points_total, points_max)
