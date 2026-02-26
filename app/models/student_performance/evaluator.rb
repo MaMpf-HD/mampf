@@ -50,7 +50,7 @@ module StudentPerformance
       def achievements_met?(record)
         return true if required_achievement_ids.empty?
 
-        have = Array(record.achievements_met_ids).map(&:to_i).to_set
+        have = Array(record.achievements_met_ids).to_set(&:to_i)
         need = required_achievement_ids.to_set
         have >= need
       end

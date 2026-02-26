@@ -41,7 +41,7 @@ module StudentPerformance
         exempt = status_map.fetch("exempt", [])
 
         reviewed_ids = reviewed.map(&:id)
-        exempt_assessment_ids = exempt.map(&:assessment_id).to_set
+        exempt_assessment_ids = exempt.to_set(&:assessment_id)
 
         points_total = if reviewed_ids.any?
           Assessment::TaskPoint
