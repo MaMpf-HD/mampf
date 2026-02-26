@@ -55,7 +55,7 @@ module StudentPerformance
         points_max = non_exempt.sum(&:effective_total_points)
 
         participated_ids = participations.to_set(&:assessment_id)
-        no_participation = assessments.count { |a| !participated_ids.include?(a.id) }
+        no_participation = assessments.count { |a| participated_ids.exclude?(a.id) }
 
         counts = {
           total: assessments.size,
