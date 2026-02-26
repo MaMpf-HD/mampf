@@ -25,9 +25,9 @@ Uncomment the following line to spawn 3 workers. Can be changed to a different n
 To tell Puma to use the number of workers configured in the compose file above, uncomment the following:
 
 ```ruby
-workers ENV.fetch("WEB_CONCURRENCY") { 0 }
+workers ENV.fetch("WEB_CONCURRENCY", 0).to_i if ENV.fetch("WEB_CONCURRENCY", 0).to_i.positive?
 
-preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i > 0
+preload_app! if ENV.fetch("WEB_CONCURRENCY", 0).to_i.positive?
 
 # Specifies the `port` that Puma will listen on to receive requests
 ```
