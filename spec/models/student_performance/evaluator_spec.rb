@@ -215,8 +215,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                       lecture: lecture, percentage_materialized: 60)
 
       result = described_class.new(rule).evaluate(record)
-      expected_keys = [:meets_points, :meets_achievements, :points_total, :points_max, :percentage,
-                       :required_points, :required_percentage, :achievement_ids_met, :achievement_ids_required]
+      expected_keys = [:meets_points, :meets_achievements, :points_total, :points_max,
+                       :percentage, :required_points, :required_percentage,
+                       :achievement_ids_met, :achievement_ids_required]
       expect(result.details.keys).to match_array(expected_keys)
     end
   end
