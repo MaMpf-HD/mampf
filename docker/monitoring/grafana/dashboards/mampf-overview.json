@@ -1016,7 +1016,7 @@
         "type": "prometheus",
         "uid": "mimir"
       },
-      "description": "Claculates the number of Logins in the past 24 hours with number of new sessions controller",
+      "description": "Calculates the number of Logins in the past 24 hours with number of new sessions controller",
       "fieldConfig": {
         "defaults": {
           "color": {
