@@ -29,13 +29,13 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
         allow(service).to receive(:compute_and_upsert_all_records!)
 
         FactoryBot.create(:student_performance_record,
-               lecture: lecture, user: user,
-               computed_at: 1.hour.ago)
+                          lecture: lecture, user: user,
+                          computed_at: 1.hour.ago)
 
         FactoryBot.create(:student_performance_certification, :passed,
-               lecture: lecture, user: user,
-               certified_by: certifier,
-               certified_at: 2.hours.ago)
+                          lecture: lecture, user: user,
+                          certified_by: certifier,
+                          certified_at: 2.hours.ago)
       end
 
       it "logs stale certifications" do
@@ -57,13 +57,13 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
         allow(service).to receive(:compute_and_upsert_all_records!)
 
         FactoryBot.create(:student_performance_record,
-               lecture: lecture, user: user,
-               computed_at: 2.hours.ago)
+                          lecture: lecture, user: user,
+                          computed_at: 2.hours.ago)
 
         FactoryBot.create(:student_performance_certification, :passed,
-               lecture: lecture, user: user,
-               certified_by: certifier,
-               certified_at: 1.hour.ago)
+                          lecture: lecture, user: user,
+                          certified_by: certifier,
+                          certified_at: 1.hour.ago)
       end
 
       it "does not log anything about staleness" do
