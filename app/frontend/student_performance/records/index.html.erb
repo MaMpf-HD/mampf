@@ -1,0 +1,7 @@
+<h1>Performance Records</h1>
+
+<% @records.each do |record| %>
+  <div class="performance-record" id="<%= dom_id(record) %>">
+    <span class="record-user"><%= record.user.email %></span>
+  </div>
+<% end %>

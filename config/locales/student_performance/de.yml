@@ -10,3 +10,11 @@ de:
           attributes:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
+  student_performance:
+    errors:
+      no_lecture: "Veranstaltung nicht gefunden."
+      no_record: "Leistungsdatensatz nicht gefunden."
+    records:
+      recompute:
+        single: "Neuberechnung für diese/n Studierende/n wurde eingereiht."
+        all: "Neuberechnung für alle Studierenden wurde eingereiht."

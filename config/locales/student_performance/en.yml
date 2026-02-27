@@ -10,3 +10,11 @@ en:
           attributes:
             achievement:
               must_belong_to_same_lecture: "must belong to the same lecture as the rule"
+  student_performance:
+    errors:
+      no_lecture: "Lecture not found."
+      no_record: "Performance record not found."
+    records:
+      recompute:
+        single: "Recomputation for this student has been enqueued."
+        all: "Recomputation for all students has been enqueued."
