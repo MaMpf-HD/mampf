@@ -28,11 +28,12 @@
         <div class="col-12 col-md-4">
           <%= form_tag lecture_student_performance_records_path(@lecture),
                      method: :get, class: "d-inline",
-                     data: { turbo_frame: "performance-records-frame" } do %>
+                     data: { controller: "auto-submit-form",
+                             turbo_frame: "performance-records-frame" } do %>
             <select
               name="tutorial_id"
               class="form-select"
-              onchange="this.form.requestSubmit()"
+              data-action="change->auto-submit-form#submit"
             >
               <option value="">
                 <%= t("student_performance.records.index.all_tutorials") %>
