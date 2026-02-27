@@ -23,7 +23,10 @@ de:
         assessments: "Bewertungen"
         computed_at: "Zuletzt berechnet"
         reviewed: "Bewertet"
-        pending: "Ausstehend"
+        graded: "bewertet"
+        pending_grading: "Noch nicht bewertet"
+        not_submitted: "Nicht abgegeben"
+        absent: "Abwesend"
         exempt: "Befreit"
       index:
         title: "Leistungsdaten"

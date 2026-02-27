@@ -23,7 +23,10 @@ en:
         assessments: "Assessments"
         computed_at: "Last Computed"
         reviewed: "Reviewed"
-        pending: "Pending"
+        graded: "graded"
+        pending_grading: "Pending Grading"
+        not_submitted: "Not Submitted"
+        absent: "Absent"
         exempt: "Exempt"
       index:
         title: "Performance Records"

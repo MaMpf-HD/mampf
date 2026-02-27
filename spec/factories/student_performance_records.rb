@@ -9,7 +9,8 @@ FactoryBot.define do
     achievements_met_ids { [] }
     assessments_total_count { 0 }
     assessments_reviewed_count { 0 }
-    assessments_pending_count { 0 }
+    assessments_pending_grading_count { 0 }
+    assessments_not_submitted_count { 0 }
     assessments_exempt_count { 0 }
     computed_at { Time.current }
   end

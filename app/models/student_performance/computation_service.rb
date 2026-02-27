@@ -29,18 +29,20 @@ module StudentPerformance
 
       def assessments
         @assessments ||= Assessment::Assessment
-                         .where(lecture_id: lecture.id)
+                         .where(lecture_id: lecture.id,
+                                assessable_type: "Assignment")
                          .includes(:tasks)
       end
 
       def aggregate_points(user)
         participations = Assessment::Participation
                          .where(assessment_id: assessments.select(:id), user_id: user.id)
-                         .select(:id, :assessment_id, :status)
+                         .select(:id, :assessment_id, :status, :submitted_at)
 
         status_map = participations.group_by(&:status)
         reviewed = status_map.fetch("reviewed", [])
         exempt = status_map.fetch("exempt", [])
+        pending_all = status_map.fetch("pending", [])
 
         reviewed_ids = reviewed.map(&:id)
         exempt_assessment_ids = exempt.to_set(&:assessment_id)
@@ -59,10 +61,15 @@ module StudentPerformance
         participated_ids = participations.to_set(&:assessment_id)
         no_participation = assessments.count { |a| participated_ids.exclude?(a.id) }
 
+        pending_grading = pending_all.count { |p| p.submitted_at.present? }
+        not_submitted = pending_all.count { |p| p.submitted_at.nil? } +
+                        no_participation
+
         counts = {
           total: assessments.size,
           reviewed: reviewed.size,
-          pending: status_map.fetch("pending", []).size + no_participation,
+          pending_grading: pending_grading,
+          not_submitted: not_submitted,
           exempt: exempt.size
         }
 
@@ -100,7 +107,8 @@ module StudentPerformance
             achievements_met_ids: achievements_met_ids,
             assessments_total_count: counts[:total],
             assessments_reviewed_count: counts[:reviewed],
-            assessments_pending_count: counts[:pending],
+            assessments_pending_grading_count: counts[:pending_grading],
+            assessments_not_submitted_count: counts[:not_submitted],
             assessments_exempt_count: counts[:exempt],
             computed_at: now,
             updated_at: now

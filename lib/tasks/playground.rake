@@ -1,12 +1,14 @@
 namespace :playground do
-  desc "Run full playground setup (exam + assessment)"
+  desc "Run full playground setup (exam + assessment + performance)"
   task setup: :environment do
     Rake::Task["exam:setup"].invoke
     Rake::Task["assessment:setup"].invoke
+    Rake::Task["performance:compute"].invoke
   end
 
-  desc "Reset full playground (assessment + exam)"
+  desc "Reset full playground (assessment + exam + performance)"
   task reset: :environment do
+    Rake::Task["performance:reset"].invoke
     Rake::Task["assessment:reset"].invoke
     Rake::Task["exam:reset"].invoke
   end

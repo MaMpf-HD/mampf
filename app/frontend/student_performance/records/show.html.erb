@@ -96,7 +96,7 @@
       </div>
 
       <div class="col-6 col-md-3">
-        <div class="card border-success h-100">
+        <div class="card border-0 bg-light h-100">
           <div class="card-body text-center">
             <div class="fs-3 fw-bold text-success">
               <%= @record.assessments_reviewed_count %>
@@ -110,32 +110,48 @@
       </div>
 
       <div class="col-6 col-md-3">
-        <div class="card border-warning h-100">
+        <div class="card border-0 bg-light h-100">
           <div class="card-body text-center">
             <div class="fs-3 fw-bold text-warning">
-              <%= @record.assessments_pending_count %>
+              <%= @record.assessments_pending_grading_count %>
             </div>
 
             <div class="text-muted small">
-              <%= t("student_performance.records.columns.pending") %>
+              <%= t("student_performance.records.columns.pending_grading") %>
             </div>
           </div>
         </div>
       </div>
 
       <div class="col-6 col-md-3">
-        <div class="card border-secondary h-100">
+        <div class="card border-0 bg-light h-100">
           <div class="card-body text-center">
-            <div class="fs-3 fw-bold text-secondary">
-              <%= @record.assessments_exempt_count %>
+            <div class="fs-3 fw-bold text-danger">
+              <%= @record.assessments_not_submitted_count %>
             </div>
 
             <div class="text-muted small">
-              <%= t("student_performance.records.columns.exempt") %>
+              <%= t("student_performance.records.columns.not_submitted") %>
             </div>
           </div>
         </div>
       </div>
+
+      <% if @record.assessments_exempt_count > 0 %>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 bg-light h-100">
+            <div class="card-body text-center">
+              <div class="fs-3 fw-bold text-secondary">
+                <%= @record.assessments_exempt_count %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.records.columns.exempt") %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <% if @record.computed_at %>

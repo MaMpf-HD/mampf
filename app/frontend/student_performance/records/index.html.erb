@@ -104,32 +104,30 @@
                   <td class="text-end">
                     <% pct = record.percentage_materialized.to_f %>
 
-                    <span class="badge text-bg-<%= pct >= 50 ? "success" : "danger" %>">
+                    <span class="fw-semibold text-<%= pct >= 50 ? "success" : "danger" %>">
                       <%= number_to_percentage(pct, precision: 0) %>
                     </span>
                   </td>
 
                   <td class="text-center">
-                    <span
-                      class="badge text-bg-success"
-                      title="<%= t("student_performance.records.columns.reviewed") %>"
-                    >
-                      <%= record.assessments_reviewed_count %>
-                    </span>
+                    <div class="d-inline-flex gap-1">
+                      <% @assessments.each do |assessment| %>
+                        <% status = @participation_map[[record.user_id, assessment.id]] || :not_submitted %>
 
-                    <span
-                      class="badge text-bg-warning"
-                      title="<%= t("student_performance.records.columns.pending") %>"
-                    >
-                      <%= record.assessments_pending_count %>
-                    </span>
-
-                    <span
-                      class="badge text-bg-secondary"
-                      title="<%= t("student_performance.records.columns.exempt") %>"
-                    >
-                      <%= record.assessments_exempt_count %>
-                    </span>
+                        <% case status
+                           when :reviewed %>
+                          <span class="text-success" title="<%= assessment.title %>: <%= t("student_performance.records.columns.reviewed") %>">✓</span>
+                        <% when :pending_grading %>
+                          <span class="text-warning" title="<%= assessment.title %>: <%= t("student_performance.records.columns.pending_grading") %>">–</span>
+                        <% when :not_submitted %>
+                          <span class="text-danger" title="<%= assessment.title %>: <%= t("student_performance.records.columns.not_submitted") %>">✗</span>
+                        <% when :exempt %>
+                          <span class="text-secondary" title="<%= assessment.title %>: <%= t("student_performance.records.columns.exempt") %>">○</span>
+                        <% when :absent %>
+                          <span class="text-secondary" title="<%= assessment.title %>: <%= t("student_performance.records.columns.absent") %>">·</span>
+                        <% end %>
+                      <% end %>
+                    </div>
                   </td>
 
                   <td class="text-muted small">

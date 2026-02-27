@@ -307,8 +307,42 @@ RSpec.describe(StudentPerformance::ComputationService) do
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.assessments_total_count).to eq(3)
         expect(record.assessments_reviewed_count).to eq(1)
-        expect(record.assessments_pending_count).to eq(1)
+        expect(record.assessments_pending_grading_count).to eq(1)
+        expect(record.assessments_not_submitted_count).to eq(0)
         expect(record.assessments_exempt_count).to eq(1)
+      end
+    end
+
+    context "when pending participation has no submitted_at" do
+      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+
+      let(:assessment1) do
+        FactoryBot.create(:assessment, :with_points, assessable: assignment1,
+                                                     lecture: lecture)
+      end
+
+      let(:assessment2) do
+        FactoryBot.create(:assessment, :with_points, assessable: assignment2,
+                                                     lecture: lecture)
+      end
+
+      before do
+        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
+        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 10)
+
+        FactoryBot.create(:assessment_participation, :reviewed,
+                          assessment: assessment1, user: user)
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment2, user: user,
+                          status: :pending, submitted_at: nil)
+      end
+
+      it "counts it as not submitted rather than pending grading" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.assessments_pending_grading_count).to eq(0)
+        expect(record.assessments_not_submitted_count).to eq(1)
       end
     end
 
@@ -334,12 +368,13 @@ RSpec.describe(StudentPerformance::ComputationService) do
                           assessment: assessment1, user: user)
       end
 
-      it "counts the missing participation as pending" do
+      it "counts the missing participation as not submitted" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.assessments_total_count).to eq(2)
         expect(record.assessments_reviewed_count).to eq(1)
-        expect(record.assessments_pending_count).to eq(1)
+        expect(record.assessments_pending_grading_count).to eq(0)
+        expect(record.assessments_not_submitted_count).to eq(1)
         expect(record.assessments_exempt_count).to eq(0)
       end
 
@@ -374,12 +409,13 @@ RSpec.describe(StudentPerformance::ComputationService) do
                           assessment: assessment2, user: user)
       end
 
-      it "does not count absent as pending" do
+      it "does not count absent as pending or not submitted" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.assessments_total_count).to eq(2)
         expect(record.assessments_reviewed_count).to eq(1)
-        expect(record.assessments_pending_count).to eq(0)
+        expect(record.assessments_pending_grading_count).to eq(0)
+        expect(record.assessments_not_submitted_count).to eq(0)
         expect(record.assessments_exempt_count).to eq(0)
       end
     end

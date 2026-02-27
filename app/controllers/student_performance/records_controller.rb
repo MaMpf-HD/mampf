@@ -26,6 +26,7 @@ module StudentPerformance
       end
 
       @pagy, @records = pagy(scope)
+      load_assessment_statuses
     end
 
     def show
@@ -84,6 +85,34 @@ module StudentPerformance
       def use_lecture_locale
         locale = @lecture&.locale_with_inheritance || I18n.default_locale
         I18n.locale = locale
+      end
+
+      def load_assessment_statuses
+        @assessments = Assessment::Assessment
+                       .where(lecture_id: @lecture.id,
+                              assessable_type: "Assignment")
+                       .joins("JOIN assignments ON assignments.id = " \
+                              "assessment_assessments.assessable_id")
+                       .order("assignments.deadline ASC")
+
+        user_ids = @records.map(&:user_id)
+        return if user_ids.empty?
+
+        participations = Assessment::Participation
+                         .where(assessment_id: @assessments.select(:id), user_id: user_ids)
+                         .select(:assessment_id, :user_id, :status, :submitted_at)
+
+        @participation_map = {}
+        participations.each do |p|
+          @participation_map[[p.user_id, p.assessment_id]] =
+            if p.status == "pending" && p.submitted_at.nil?
+              :not_submitted
+            elsif p.status == "pending"
+              :pending_grading
+            else
+              p.status.to_sym
+            end
+        end
       end
   end
 end
