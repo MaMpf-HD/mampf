@@ -33,7 +33,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         FactoryBot.create(:student_performance_record,
                           lecture: lecture, user: user)
         get lecture_student_performance_records_path(lecture)
-        expect(response.body).to include(user.email)
+        expect(response.body).to include(user.tutorial_name)
       end
 
       it "does not include records from other lectures" do
@@ -42,7 +42,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         FactoryBot.create(:student_performance_record,
                           lecture: other_lecture, user: other_user)
         get lecture_student_performance_records_path(lecture)
-        expect(response.body).not_to include(other_user.email)
+        expect(response.body).not_to include(other_user.tutorial_name)
       end
 
       context "with tutorial filter" do
@@ -65,8 +65,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(
             lecture, tutorial_id: tutorial.id
           )
-          expect(response.body).to include(member.email)
-          expect(response.body).not_to include(non_member.email)
+          expect(response.body).to include(member.tutorial_name)
+          expect(response.body).not_to include(non_member.tutorial_name)
         end
       end
 

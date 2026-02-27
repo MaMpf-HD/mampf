@@ -124,6 +124,7 @@ module StudentPerformance
         @assessments = Assessment::Assessment
                        .where(lecture_id: @lecture.id,
                               assessable_type: "Assignment")
+                       .includes(:tasks)
                        .joins("JOIN assignments ON assignments.id = " \
                               "assessment_assessments.assessable_id")
                        .order("assignments.deadline ASC")
@@ -132,8 +133,10 @@ module StudentPerformance
         return if user_ids.empty?
 
         participations = Assessment::Participation
-                         .where(assessment_id: @assessments.select(:id), user_id: user_ids)
-                         .select(:assessment_id, :user_id, :status, :submitted_at)
+                         .where(assessment_id: @assessments.select(:id),
+                                user_id: user_ids)
+                         .select(:id, :assessment_id, :user_id,
+                                 :status, :submitted_at)
 
         @participation_map = {}
         participations.each do |p|
@@ -145,6 +148,24 @@ module StudentPerformance
             else
               p.status.to_sym
             end
+        end
+
+        reviewed_ids = participations.select(&:reviewed?).map(&:id)
+        task_point_sums = if reviewed_ids.any?
+          Assessment::TaskPoint
+            .where(assessment_participation_id: reviewed_ids)
+            .group(:assessment_participation_id)
+            .sum(:points)
+        else
+          {}
+        end
+
+        @points_map = {}
+        participations.each do |p|
+          next unless p.reviewed?
+
+          @points_map[[p.user_id, p.assessment_id]] =
+            task_point_sums[p.id] || 0
         end
       end
   end

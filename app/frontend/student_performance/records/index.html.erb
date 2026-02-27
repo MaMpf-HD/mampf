@@ -61,44 +61,54 @@
           <table class="table table-sm table-hover align-middle">
             <thead class="table-light">
               <tr>
-                <th scope="col">
+                <th scope="col" class="sticky-start bg-light">
                   <%= t("student_performance.records.columns.student") %>
-                </th>
-
-                <th scope="col">
-                  <%= t("student_performance.records.columns.email") %>
                 </th>
 
                 <th scope="col" class="text-end">
                   <%= t("student_performance.records.columns.points") %>
+                  <% standard_max = @assessments.sum(&:effective_total_points) %>
+                  <br>
+                  <span class="fw-normal text-muted" style="font-size: 0.75em">
+                    (<%= number_with_precision(standard_max,
+                          precision: 1,
+                          strip_insignificant_zeros: true) %>)
+                  </span>
                 </th>
 
                 <th scope="col" class="text-end">
                   <%= t("student_performance.records.columns.percentage") %>
                 </th>
 
-                <th scope="col" class="text-center">
-                  <%= t("student_performance.records.columns.assessments") %>
-                </th>
+                <% @assessments.each do |assessment| %>
+                  <th scope="col"
+                      class="text-center small"
+                      title="<%= assessment.title %>">
+                    <%= assessment.title.sub(/\A\w+\s*/, "").presence ||
+                        assessment.title.truncate(5) %>
+                    <br>
+                    <span class="fw-normal text-muted" style="font-size: 0.75em">
+                      (<%= number_with_precision(
+                            assessment.effective_total_points,
+                            precision: 1,
+                            strip_insignificant_zeros: true) %>)
+                    </span>
+                  </th>
+                <% end %>
 
-                <th scope="col">
+                <th scope="col" class="small">
                   <%= t("student_performance.records.columns.computed_at") %>
                 </th>
-
-                <th scope="col" class="text-end"><%= t("basics.actions") %></th>
               </tr>
             </thead>
 
             <tbody>
               <% @records.each do |record| %>
                 <tr id="<%= dom_id(record) %>">
-                  <td><%= record.user.tutorial_name %></td>
-                  <td><%= record.user.email %></td>
+                  <td class="sticky-start"><%= record.user.tutorial_name %></td>
 
                   <td class="text-end font-monospace">
-                    <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
-                    /
-                    <%= number_with_precision(record.points_max_materialized, precision: 1, strip_insignificant_zeros: true) %>
+                    <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %><% if record.points_max_materialized != standard_max %>/<%= number_with_precision(record.points_max_materialized, precision: 1, strip_insignificant_zeros: true) %><% end %>
                   </td>
 
                   <td class="text-end">
@@ -109,26 +119,44 @@
                     </span>
                   </td>
 
-                  <td class="text-center">
-                    <div class="d-inline-flex gap-1">
-                      <% @assessments.each do |assessment| %>
-                        <% status = @participation_map[[record.user_id, assessment.id]] || :not_submitted %>
+                  <% @assessments.each do |assessment| %>
+                    <% status = @participation_map&.dig([record.user_id, assessment.id]) || :not_submitted %>
+                    <% points = @points_map&.dig([record.user_id, assessment.id]) %>
+                    <% max = assessment.effective_total_points %>
 
-                        <% case status
-                           when :reviewed %>
-                          <span class="text-success" title="<%= assessment.title %>: <%= t("student_performance.records.columns.reviewed") %>">✓</span>
-                        <% when :pending_grading %>
-                          <span class="text-warning" title="<%= assessment.title %>: <%= t("student_performance.records.columns.pending_grading") %>">–</span>
-                        <% when :not_submitted %>
-                          <span class="text-danger" title="<%= assessment.title %>: <%= t("student_performance.records.columns.not_submitted") %>">✗</span>
-                        <% when :exempt %>
-                          <span class="text-secondary" title="<%= assessment.title %>: <%= t("student_performance.records.columns.exempt") %>">○</span>
-                        <% when :absent %>
-                          <span class="text-secondary" title="<%= assessment.title %>: <%= t("student_performance.records.columns.absent") %>">·</span>
-                        <% end %>
+                    <% tip = case status
+                             when :reviewed
+                               "#{assessment.title}: #{number_with_precision(points || 0, precision: 1, strip_insignificant_zeros: true)}/#{number_with_precision(max, precision: 1, strip_insignificant_zeros: true)} #{t("student_performance.records.columns.points").downcase}"
+                             when :pending_grading
+                               "#{assessment.title}: #{t("student_performance.records.columns.pending_grading")}"
+                             when :not_submitted
+                               "#{assessment.title}: #{t("student_performance.records.columns.not_submitted")}"
+                             when :exempt
+                               "#{assessment.title}: #{t("student_performance.records.columns.exempt")}"
+                             when :absent
+                               "#{assessment.title}: #{t("student_performance.records.columns.absent")}"
+                             end %>
+
+                    <td class="text-center font-monospace small"
+                        title="<%= tip %>">
+                      <% case status
+                         when :reviewed %>
+                        <span>
+                          <%= number_with_precision(points || 0,
+                                precision: 1,
+                                strip_insignificant_zeros: true) %>
+                        </span>
+                      <% when :pending_grading %>
+                        <span class="text-warning">–</span>
+                      <% when :not_submitted %>
+                        <span class="text-muted">✗</span>
+                      <% when :exempt %>
+                        <span class="text-muted">○</span>
+                      <% when :absent %>
+                        <span class="text-muted">·</span>
                       <% end %>
-                    </div>
-                  </td>
+                    </td>
+                  <% end %>
 
                   <td class="text-muted small">
                     <% if record.computed_at %>
@@ -142,12 +170,6 @@
                     <% else %>
                       &mdash;
                     <% end %>
-                  </td>
-
-                  <td class="text-end">
-                    <%= link_to t("student_performance.records.index.details"),
-                              lecture_student_performance_record_path(@lecture, record),
-                              class: "btn btn-sm btn-outline-secondary" %>
                   </td>
                 </tr>
               <% end %>
