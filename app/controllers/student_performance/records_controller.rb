@@ -30,6 +30,7 @@ module StudentPerformance
     end
 
     def show
+      load_show_data
     end
 
     def recompute
@@ -85,6 +86,38 @@ module StudentPerformance
       def use_lecture_locale
         locale = @lecture&.locale_with_inheritance || I18n.default_locale
         I18n.locale = locale
+      end
+
+      def load_show_data
+        @assessments = Assessment::Assessment
+                       .where(lecture_id: @lecture.id, assessable_type: "Assignment")
+                       .includes(:tasks)
+                       .joins("JOIN assignments ON assignments.id = " \
+                              "assessment_assessments.assessable_id")
+                       .order("assignments.deadline ASC")
+
+        participations = Assessment::Participation
+                         .where(assessment_id: @assessments.select(:id),
+                                user_id: @record.user_id)
+                         .select(:id, :assessment_id, :status, :submitted_at)
+
+        @participation_by_assessment = participations.index_by(&:assessment_id)
+
+        participation_ids = participations.select(&:reviewed?).map(&:id)
+        task_point_sums = if participation_ids.any?
+          Assessment::TaskPoint
+            .where(assessment_participation_id: participation_ids)
+            .group(:assessment_participation_id)
+            .sum(:points)
+        else
+          {}
+        end
+
+        @points_by_assessment = {}
+        participations.each do |p|
+          @points_by_assessment[p.assessment_id] =
+            p.reviewed? ? (task_point_sums[p.id] || 0) : nil
+        end
       end
 
       def load_assessment_statuses

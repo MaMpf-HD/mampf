@@ -1,3 +1,4 @@
+<%= turbo_frame_tag "performance-records-frame" do %>
 <div class="mb-3">
   <%= link_to lecture_student_performance_records_path(@lecture),
               class: "text-decoration-none" do %>
@@ -80,78 +81,115 @@
       <%= t("student_performance.records.show.assessment_breakdown") %>
     </h5>
 
-    <div class="row g-3">
-      <div class="col-6 col-md-3">
-        <div class="card border-0 bg-light h-100">
-          <div class="card-body text-center">
-            <div class="fs-3 fw-bold">
-              <%= @record.assessments_total_count %>
-            </div>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">
+              <%= t("student_performance.records.show.assignment") %>
+            </th>
 
-            <div class="text-muted small">
-              <%= t("student_performance.records.show.total_assessments") %>
-            </div>
-          </div>
-        </div>
-      </div>
+            <th scope="col">
+              <%= t("student_performance.records.show.status") %>
+            </th>
 
-      <div class="col-6 col-md-3">
-        <div class="card border-0 bg-light h-100">
-          <div class="card-body text-center">
-            <div class="fs-3 fw-bold text-success">
-              <%= @record.assessments_reviewed_count %>
-            </div>
+            <th scope="col" class="text-end">
+              <%= t("student_performance.records.columns.points") %>
+            </th>
 
-            <div class="text-muted small">
-              <%= t("student_performance.records.columns.reviewed") %>
-            </div>
-          </div>
-        </div>
-      </div>
+            <th scope="col" class="text-end">
+              <%= t("student_performance.records.show.max_points") %>
+            </th>
+          </tr>
+        </thead>
 
-      <div class="col-6 col-md-3">
-        <div class="card border-0 bg-light h-100">
-          <div class="card-body text-center">
-            <div class="fs-3 fw-bold text-warning">
-              <%= @record.assessments_pending_grading_count %>
-            </div>
+        <tbody>
+          <% @assessments.each do |assessment| %>
+            <% participation = @participation_by_assessment[assessment.id] %>
+            <% status = if participation.nil?
+                          :not_submitted
+                        elsif participation.status == "pending" && participation.submitted_at.nil?
+                          :not_submitted
+                        elsif participation.status == "pending"
+                          :pending_grading
+                        else
+                          participation.status.to_sym
+                        end %>
+            <% points = @points_by_assessment[assessment.id] %>
+            <% max = assessment.effective_total_points %>
 
-            <div class="text-muted small">
-              <%= t("student_performance.records.columns.pending_grading") %>
-            </div>
-          </div>
-        </div>
-      </div>
+            <tr>
+              <td><%= assessment.title %></td>
 
-      <div class="col-6 col-md-3">
-        <div class="card border-0 bg-light h-100">
-          <div class="card-body text-center">
-            <div class="fs-3 fw-bold text-danger">
-              <%= @record.assessments_not_submitted_count %>
-            </div>
+              <td>
+                <% case status
+                   when :reviewed %>
+                  <span class="text-success">
+                    <i class="bi bi-check-circle-fill me-1"></i>
+                    <%= t("student_performance.records.columns.reviewed") %>
+                  </span>
+                <% when :pending_grading %>
+                  <span class="text-warning">
+                    <i class="bi bi-hourglass-split me-1"></i>
+                    <%= t("student_performance.records.columns.pending_grading") %>
+                  </span>
+                <% when :not_submitted %>
+                  <span class="text-danger">
+                    <i class="bi bi-x-circle-fill me-1"></i>
+                    <%= t("student_performance.records.columns.not_submitted") %>
+                  </span>
+                <% when :exempt %>
+                  <span class="text-secondary">
+                    <i class="bi bi-dash-circle me-1"></i>
+                    <%= t("student_performance.records.columns.exempt") %>
+                  </span>
+                <% when :absent %>
+                  <span class="text-secondary">
+                    <i class="bi bi-person-slash me-1"></i>
+                    <%= t("student_performance.records.columns.absent") %>
+                  </span>
+                <% end %>
+              </td>
 
-            <div class="text-muted small">
-              <%= t("student_performance.records.columns.not_submitted") %>
-            </div>
-          </div>
-        </div>
-      </div>
+              <td class="text-end font-monospace">
+                <% if points %>
+                  <%= number_with_precision(points, precision: 1,
+                                            strip_insignificant_zeros: true) %>
+                <% else %>
+                  <span class="text-muted">&mdash;</span>
+                <% end %>
+              </td>
 
-      <% if @record.assessments_exempt_count > 0 %>
-        <div class="col-6 col-md-3">
-          <div class="card border-0 bg-light h-100">
-            <div class="card-body text-center">
-              <div class="fs-3 fw-bold text-secondary">
-                <%= @record.assessments_exempt_count %>
-              </div>
+              <td class="text-end font-monospace text-muted">
+                <%= number_with_precision(max, precision: 1,
+                                          strip_insignificant_zeros: true) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
 
-              <div class="text-muted small">
-                <%= t("student_performance.records.columns.exempt") %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
+        <tfoot class="table-light">
+          <tr class="fw-bold">
+            <td>
+              <%= t("student_performance.records.show.total_row") %>
+            </td>
+
+            <td></td>
+
+            <td class="text-end font-monospace">
+              <%= number_with_precision(@record.points_total_materialized,
+                                        precision: 1,
+                                        strip_insignificant_zeros: true) %>
+            </td>
+
+            <td class="text-end font-monospace text-muted">
+              <%= number_with_precision(@record.points_max_materialized,
+                                        precision: 1,
+                                        strip_insignificant_zeros: true) %>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
 
     <% if @record.computed_at %>
@@ -164,3 +202,4 @@
     <% end %>
   </div>
 </div>
+<% end %>

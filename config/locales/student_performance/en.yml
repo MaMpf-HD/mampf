@@ -44,8 +44,11 @@ en:
         out_of: "out of %{max} possible"
         percentage: "Percentage"
         achievements_met: "Achievements Met"
-        assessment_breakdown: "Assessment Breakdown"
-        total_assessments: "Total"
+        assessment_breakdown: "Assignment Breakdown"
+        assignment: "Assignment"
+        status: "Status"
+        max_points: "Max"
+        total_row: "Total"
         last_computed: "Last computed %{time} ago."
       recompute:
         single: "Recomputation for this student has been enqueued."

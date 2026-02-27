@@ -44,8 +44,11 @@ de:
         out_of: "von %{max} möglichen"
         percentage: "Prozent"
         achievements_met: "Erreichte Leistungen"
-        assessment_breakdown: "Bewertungsübersicht"
-        total_assessments: "Gesamt"
+        assessment_breakdown: "Übungsblätter im Detail"
+        assignment: "Übungsblatt"
+        status: "Status"
+        max_points: "Max"
+        total_row: "Gesamt"
         last_computed: "Zuletzt berechnet vor %{time}."
       recompute:
         single: "Neuberechnung für diese/n Studierende/n wurde eingereiht."
