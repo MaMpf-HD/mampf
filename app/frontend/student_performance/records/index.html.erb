@@ -1,7 +1,168 @@
-<h1>Performance Records</h1>
+<div class="card">
+  <div class="card-header bg-white border-bottom">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="mb-1">
+          <%= t("student_performance.records.index.title") %>
+        </h4>
 
-<% @records.each do |record| %>
-  <div class="performance-record" id="<%= dom_id(record) %>">
-    <span class="record-user"><%= record.user.email %></span>
+        <p class="text-muted small mb-0">
+          <%= t("student_performance.records.index.subtitle") %>
+        </p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= button_to recompute_lecture_student_performance_records_path(@lecture),
+                      method: :post,
+                      class: "btn btn-outline-secondary" do %>
+          <i class="bi bi-arrow-clockwise me-1"></i>
+          <%= t("student_performance.records.index.recompute_all") %>
+        <% end %>
+      </div>
+    </div>
   </div>
-<% end %>
+
+  <div class="card-body">
+    <div class="row mb-3 g-2">
+      <div class="col-12 col-md-4">
+        <%= form_tag lecture_student_performance_records_path(@lecture),
+                     method: :get, class: "d-inline" do %>
+          <select
+            name="tutorial_id"
+            class="form-select"
+            onchange="this.form.submit()"
+          >
+            <option value="">
+              <%= t("student_performance.records.index.all_tutorials") %>
+            </option>
+
+            <% @lecture.tutorials.each do |tutorial| %>
+              <option
+                value="<%= tutorial.id %>"
+                <%= "selected" if params[:tutorial_id].to_s == tutorial.id.to_s %>
+              >
+                <%= tutorial.title %>
+              </option>
+            <% end %>
+          </select>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @records.empty? %>
+      <p class="text-center text-muted py-4">
+        <%= t("student_performance.records.index.empty") %>
+      </p>
+    <% else %>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">
+                <%= t("student_performance.records.columns.student") %>
+              </th>
+
+              <th scope="col">
+                <%= t("student_performance.records.columns.email") %>
+              </th>
+
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.columns.points") %>
+              </th>
+
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.columns.percentage") %>
+              </th>
+
+              <th scope="col" class="text-center">
+                <%= t("student_performance.records.columns.assessments") %>
+              </th>
+
+              <th scope="col">
+                <%= t("student_performance.records.columns.computed_at") %>
+              </th>
+
+              <th scope="col" class="text-end"><%= t("basics.actions") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @records.each do |record| %>
+              <tr id="<%= dom_id(record) %>">
+                <td><%= record.user.tutorial_name %></td>
+                <td><%= record.user.email %></td>
+
+                <td class="text-end font-monospace">
+                  <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
+                  /
+                  <%= number_with_precision(record.points_max_materialized, precision: 1, strip_insignificant_zeros: true) %>
+                </td>
+
+                <td class="text-end">
+                  <% pct = record.percentage_materialized.to_f %>
+
+                  <span class="badge text-bg-<%= pct >= 50 ? "success" : "danger" %>">
+                    <%= number_to_percentage(pct, precision: 0) %>
+                  </span>
+                </td>
+
+                <td class="text-center">
+                  <span
+                    class="badge text-bg-success"
+                    title="<%= t("student_performance.records.columns.reviewed") %>"
+                  >
+                    <%= record.assessments_reviewed_count %>
+                  </span>
+
+                  <span
+                    class="badge text-bg-warning"
+                    title="<%= t("student_performance.records.columns.pending") %>"
+                  >
+                    <%= record.assessments_pending_count %>
+                  </span>
+
+                  <span
+                    class="badge text-bg-secondary"
+                    title="<%= t("student_performance.records.columns.exempt") %>"
+                  >
+                    <%= record.assessments_exempt_count %>
+                  </span>
+                </td>
+
+                <td class="text-muted small">
+                  <% if record.computed_at %>
+                    <% if record.computed_at < 7.days.ago %>
+                      <span class="text-warning">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                      </span>
+                    <% end %>
+                    <%= time_ago_in_words(record.computed_at) %>
+                    <%= t("student_performance.records.index.ago") %>
+                  <% else %>
+                    &mdash;
+                  <% end %>
+                </td>
+
+                <td class="text-end">
+                  <%= link_to t("student_performance.records.index.details"),
+                              lecture_student_performance_record_path(@lecture, record),
+                              class: "btn btn-sm btn-outline-secondary" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <% if @pagy.pages > 1 %>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-muted small">
+            <%= t("student_performance.records.index.showing",
+                  from: @pagy.from, to: @pagy.to, count: @pagy.count) %>
+          </div>
+
+          <nav><%== pagy_series_nav(@pagy) %></nav>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
