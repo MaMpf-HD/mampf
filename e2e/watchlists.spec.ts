@@ -124,6 +124,34 @@ test.describe("view Watchlists", () => {
     await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
   });
 
+  test("can not drag and drop watchlist entries, when other user owns the watchlist", async ({ factory, student: { page }, student2: { user: student2User, page: student2Page } }) => {
+    const watchlist = await factory.create("watchlist", [], { user: student2User, public: true });
+    const medium1 = await factory.create("lecture_medium", ["released"]);
+    const medium2 = await factory.create("lecture_medium", ["released"]);
+    const medium3 = await factory.create("lecture_medium", ["released"]);
+    await factory.create("watchlist_entry", [], {
+      watchlist_id: watchlist.id,
+      medium_id: medium1.id,
+      medium_position: 1,
+    });
+    await factory.create("watchlist_entry", [], {
+      watchlist_id: watchlist.id,
+      medium_id: medium2.id,
+      medium_position: 2,
+    });
+    await factory.create("watchlist_entry", [], {
+      watchlist_id: watchlist.id,
+      medium_id: medium3.id,
+      medium_position: 3,
+    });
+    const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
+    await watchlistsPage.goto();
+    await watchlistsPage.swapEntries(medium1.id, medium2.id);
+    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual([1, 2, 3]);
+    await page.reload();
+    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual([1, 2, 3]);
+  });
+
   test("can reverse order of watchlist with button", async ({ factory, student: { page, user } }) => {
     const watchlist = await factory.create("watchlist", [], { user: user });
     const medium1 = await factory.create("lecture_medium", ["released"]);
