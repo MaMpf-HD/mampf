@@ -67,7 +67,7 @@ export class WatchlistsPage {
     return await this.page.locator(".card-body").textContent();
   }
 
-  async swapEntrys(fromId: number, toId: number) {
+  async swapEntries(fromId: number, toId: number) {
     await this.page.dragAndDrop(`div[data-id="${fromId}"] .mampf-card-header`, `div[data-id="${toId}"]`);
   }
 

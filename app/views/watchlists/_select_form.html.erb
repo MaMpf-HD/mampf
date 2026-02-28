@@ -1,5 +1,4 @@
 <%= form_with model: WatchlistEntry.new,
-              remote: true,
               id: "watchlistSelectForm",
               data: { action: "turbo:submit-end->modal#hideModalOnSuccess" },
               html: { class: "needs-validation" } do |f| %>
@@ -29,8 +28,7 @@
           type: 'button' do %>
           <i class="fa fa-plus"></i>
         <% end %>
-        
-        
+
       </div>
 
       <% if has_errors %>

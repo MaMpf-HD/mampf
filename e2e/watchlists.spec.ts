@@ -117,7 +117,7 @@ test.describe("view Watchlists", () => {
     });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
-    await watchlistsPage.swapEntrys(medium1.id, medium2.id);
+    await watchlistsPage.swapEntries(medium1.id, medium2.id);
     const newOrder = [medium2.id, medium1.id, medium3.id];
     await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
     await page.reload();

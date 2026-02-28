@@ -7,7 +7,7 @@ export default class extends Controller {
     const owned = document.getElementById("watchlistButton")?.dataset.owned;
     const sortableElement = this.element;
 
-    if (!owned || !sortableElement) return;
+    if (owned !== "true" || !sortableElement) return;
 
     Sortable.create(sortableElement, {
       handle: ".mampf-card-header",
