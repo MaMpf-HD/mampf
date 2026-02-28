@@ -431,6 +431,32 @@ Generate eligibility proposals using the Evaluator service.
 - **Does not create Certifications** - only generates proposals for teacher review
 ```
 
+### `StudentPerformance::RulesController`
+
+```admonish info "Purpose"
+Display and manage eligibility rules for a lecture (PR 10.3: read-only, PR 10.4: edit/update).
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| StudentPerformance::RulesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action | Purpose | PR |
+|--------|---------|-----|
+| show   | Display current eligibility rules (read-only) | 10.3 |
+| edit   | Rule editing form | 10.4 |
+| update | Save modified rules, trigger re-evaluation preview | 10.4 |
+
+```admonish example "Responsibilities"
+- Render current rule configuration for a lecture
+- Show which assignments count, thresholds, bonus rules
+- (PR 10.4) Provide editing form for rule parameters
+- (PR 10.4) Validate rule changes and save
+- (PR 10.4) Integrate with EvaluatorController preview on rule change
+```
+
 ## Grade Scheme Controllers
 
 ### `Assessment::GradeSchemesController`
