@@ -235,7 +235,7 @@ future extension.
 |-----------|---------------------|
 | `Campaign.finalize!` | Check `status != :finalized` before proceeding |
 | `materialize_allocation!` | Replace entire roster (not additive) |
-| `GradeScheme::Applier.apply!` | Compare `version_hash`; skip if unchanged |
+| `Assessment::GradeSchemeApplier.apply!` | Compare `version_hash`; skip if unchanged |
 | `StudentPerformance::ComputationService.compute!` | Upsert pattern preserves overrides |
 | `Roster::MaintenanceService` operations | Each operation atomic with validation |
 

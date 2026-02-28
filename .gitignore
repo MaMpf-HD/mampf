@@ -1,6 +1,8 @@
 # Ignore generated JS routes
 app/frontend/js/mampf_routes.js
 
+**/*.env
+
 # Ignore bundler config.
 /.bundle
 
