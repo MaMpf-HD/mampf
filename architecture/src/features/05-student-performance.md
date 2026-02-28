@@ -38,29 +38,28 @@ Student Performance has three distinct use cases that span multiple UI contexts:
 3. **Information Display** (Show status in various contexts)
 ```
 
-### Primary Management Interface: Assessments Tab → Performance Subtab
+### Primary Management Interface: Assessments Tab Subtabs
 
-The **primary home** for Student Performance management is in the Assessments tab at the lecture level:
+The **primary home** for Student Performance management is in the Assessments tab at the lecture level, organized as sibling subtabs:
 
 ```
 Lecture → Assessments Tab
-├── Assessments (list of assignments, exams, talks)
-└── Performance ← Primary management interface
-    ├── Certification Dashboard (decision-making)
-    ├── Performance Records (factual data)
-    └── Rule Configuration (inline or modal)
+├── Assessments (list of assignments, exams, talks) ← default
+├── Performance (computed records + evaluator proposals)
+├── Rules (eligibility criteria configuration)
+└── Certifications (pass/fail dashboard) [PR 10.4]
 ```
 
-**What teachers do here:**
-- Configure eligibility rules (50% points + 2 achievements)
-- View all students' computed performance records
-- Generate certification proposals (via Evaluator)
-- Make pass/fail decisions (bulk accept + manual overrides)
-- Export performance data
+**What teachers do in each subtab:**
+- **Assessments:** Create and grade assignments, exams, talks
+- **Performance:** View computed records, generate evaluator proposals
+- **Rules:** Configure eligibility criteria (50% points + 2 achievements); read-only in PR 10.3, editable in PR 10.4
+- **Certifications:** Make pass/fail decisions (bulk accept + manual overrides); added in PR 10.4
 
 **Rationale:**
 - Performance is computed from assessment data (points, grades)
 - The Assessments tab is the unified grading hub for the lecture
+- Rules as a sibling subtab keeps them discoverable and easy to navigate to from Performance or Certifications
 - Certification is a lecture-wide decision, not exam-specific
 - One certification can gate multiple exams in the same lecture
 - Keeping it here separates grading concerns (Assessments) from group management (Groups/Roster)
@@ -79,7 +78,7 @@ Campaign → Policies Tab
 
 - Teachers enable the policy and select enforcement phase
 - Pre-flight validation warns if certifications are incomplete
-- Links to Assessments → Performance for resolution
+- Links to Assessments → Certifications for resolution
 - Finalization guard shows inline remediation or blocks with link
 
 **Exam Dashboard: Verification View**
@@ -92,7 +91,7 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 
 - **Read-only table** showing certification status of all registrants
 - Alerts if any registrants lack valid certification
-- Links to Assessments → Performance for management
+- Links to Assessments → Certifications for management
 - Useful for post-registration audit
 
 ### Information Flow
@@ -100,10 +99,10 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 ```
 ┌────────────────────────────────────────────┐
 │ LECTURE LEVEL (Primary Management)         │
-│ Assessments → Performance                  │
-│ • Configure rules                          │
-│ • Generate proposals                       │
-│ • Certify students                         │
+│ Assessments Tab Subtabs:                   │
+│ • Performance: View records, proposals     │
+│ • Rules: Configure eligibility criteria    │
+│ • Certifications: Certify students         │
 └────────────────────────────────────────────┘
                   ↓
          Data flows to...
@@ -123,12 +122,12 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 │ Exam Dashboard → Logistics → Eligibility   │
 │ • View registrant cert status              │
 │ • Alert if issues detected                 │
-│ • Link to Assessments for fixes            │
+│ • Link to Assessments → Certifications     │
 └────────────────────────────────────────────┘
 ```
 
 **Key principles:**
-1. **Single source of truth**: Assessments → Performance is where teachers work
+1. **Single source of truth**: Assessments tab subtabs (Performance / Rules / Certifications) are where teachers work
 2. **Contextual read-only views**: Show relevant slices elsewhere
 3. **Link pattern**: "Manage in Assessments" links from Campaign and Exam contexts
 4. **Minimize duplication**: Don't recreate management UI in multiple places

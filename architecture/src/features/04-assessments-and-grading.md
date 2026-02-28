@@ -138,6 +138,23 @@ The **Grading tab** (in the per-assessment Dashboard) and the **Performance tab*
 2. Grading tab shows **task-level breakdown** — Performance shows only the total per assessment.
 3. Performance tab provides **cross-assessment context** — even when filtered, switching views is instant.
 
+### Assessments Overview Subtab Structure
+
+The Assessments overview (lecture-level) is organized into sibling subtabs:
+
+```
+Assessments Tab
+├── Assessments (default — list of assignments, exams, talks)
+├── Performance (computed records + evaluator proposals)
+├── Rules (eligibility criteria — read-only in PR 10.3, editable in PR 10.4)
+└── Certifications (pass/fail dashboard — added in PR 10.4)
+```
+
+Each subtab is feature-flag gated by `:student_performance`
+(Performance, Rules, Certifications) or always visible (Assessments).
+The `AssessmentsOverviewComponent` renders the tab navigation and
+lazy-loads subtab content via Turbo Frames.
+
 ```admonish tip "Design Pattern"
 This layered approach (detail view + aggregate view) is common in well-designed systems:
 - **Banking:** Transaction details vs. account statement

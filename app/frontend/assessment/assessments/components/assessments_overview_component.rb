@@ -1,6 +1,6 @@
 # Missing top-level docstring, please formulate one yourself 😁
 class AssessmentsOverviewComponent < ViewComponent::Base
-  TABS = [:assessments, :performance].freeze
+  TABS = [:assessments, :performance, :rules].freeze
 
   def initialize(lecture:, active_tab: nil)
     super()
@@ -18,9 +18,14 @@ class AssessmentsOverviewComponent < ViewComponent::Base
     Flipper.enabled?(:student_performance)
   end
 
+  def rules_enabled?
+    Flipper.enabled?(:student_performance)
+  end
+
   def visible_tabs
     tabs = [:assessments]
     tabs << :performance if performance_enabled?
+    tabs << :rules if rules_enabled?
     tabs
   end
 
