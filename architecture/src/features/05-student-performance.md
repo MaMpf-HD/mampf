@@ -38,14 +38,13 @@ Student Performance has three distinct use cases that span multiple UI contexts:
 3. **Information Display** (Show status in various contexts)
 ```
 
-### Primary Management Interface: Roster Tab → Performance Subtab
+### Primary Management Interface: Assessments Tab → Performance Subtab
 
-The **primary home** for Student Performance management is in the Roster tab at the lecture level:
+The **primary home** for Student Performance management is in the Assessments tab at the lecture level:
 
 ```
-Lecture → Roster Tab
-├── Overview (groups/tutorials view)
-├── Participants (lecture roster)
+Lecture → Assessments Tab
+├── Assessments (list of assignments, exams, talks)
 └── Performance ← Primary management interface
     ├── Certification Dashboard (decision-making)
     ├── Performance Records (factual data)
@@ -60,10 +59,11 @@ Lecture → Roster Tab
 - Export performance data
 
 **Rationale:**
-- Performance emerges from tutorial participation and assignments
-- Roster is where teachers work with the lecture-wide student list
+- Performance is computed from assessment data (points, grades)
+- The Assessments tab is the unified grading hub for the lecture
 - Certification is a lecture-wide decision, not exam-specific
 - One certification can gate multiple exams in the same lecture
+- Keeping it here separates grading concerns (Assessments) from group management (Groups/Roster)
 
 ### Secondary Contexts: Policy Setup & Verification
 
@@ -79,7 +79,7 @@ Campaign → Policies Tab
 
 - Teachers enable the policy and select enforcement phase
 - Pre-flight validation warns if certifications are incomplete
-- Links to Roster → Performance for resolution
+- Links to Assessments → Performance for resolution
 - Finalization guard shows inline remediation or blocks with link
 
 **Exam Dashboard: Verification View**
@@ -92,7 +92,7 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 
 - **Read-only table** showing certification status of all registrants
 - Alerts if any registrants lack valid certification
-- Links to Roster → Performance for management
+- Links to Assessments → Performance for management
 - Useful for post-registration audit
 
 ### Information Flow
@@ -100,7 +100,7 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 ```
 ┌────────────────────────────────────────────┐
 │ LECTURE LEVEL (Primary Management)         │
-│ Roster → Performance                       │
+│ Assessments → Performance                  │
 │ • Configure rules                          │
 │ • Generate proposals                       │
 │ • Certify students                         │
@@ -123,14 +123,14 @@ Exam Dashboard → Logistics Tab → Eligibility Subtab
 │ Exam Dashboard → Logistics → Eligibility   │
 │ • View registrant cert status              │
 │ • Alert if issues detected                 │
-│ • Link to Roster for fixes                 │
+│ • Link to Assessments for fixes            │
 └────────────────────────────────────────────┘
 ```
 
 **Key principles:**
-1. **Single source of truth**: Roster → Performance is where teachers work
+1. **Single source of truth**: Assessments → Performance is where teachers work
 2. **Contextual read-only views**: Show relevant slices elsewhere
-3. **Link pattern**: "Manage in Roster" links from Campaign and Exam contexts
+3. **Link pattern**: "Manage in Assessments" links from Campaign and Exam contexts
 4. **Minimize duplication**: Don't recreate management UI in multiple places
 
 ---

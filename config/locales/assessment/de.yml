@@ -1,5 +1,8 @@
 de:
   assessment:
+    tabs:
+      assessments: "Testate"
+      performance: "Leistungen"
     assessments: 'Testate'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'

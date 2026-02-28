@@ -1,5 +1,8 @@
 en:
   assessment:
+    tabs:
+      assessments: "Assessments"
+      performance: "Performance"
     assessments: 'Assessments'
     assignment: 'Assignment'
     assignments: 'Assignments'

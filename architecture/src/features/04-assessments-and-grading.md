@@ -121,12 +121,12 @@ Teachers create items where they make semantic sense (homework vs presentations)
 ### Grading Tab vs. Performance Tab
 
 ```admonish question "Why do we have both a Grading tab and a Performance tab?"
-The **Grading tab** (in the Assessment Dashboard) and the **Performance tab** (in the Roster Dashboard) serve different purposes despite some apparent overlap.
+The **Grading tab** (in the per-assessment Dashboard) and the **Performance tab** (in the lecture-level Assessments overview) serve different purposes despite some apparent overlap.
 ```
 
-| Dimension | Grading Tab (Assessment) | Performance Tab (Roster) |
+| Dimension | Grading Tab (per-assessment) | Performance Tab (Assessments overview) |
 |-----------|--------------------------|--------------------------|
-| **Location** | Assessment Dashboard (single assessment) | Roster Dashboard (lecture-wide) |
+| **Location** | Assessment Dashboard (single assessment) | Assessments overview (lecture-wide) |
 | **Primary axis** | Tasks (columns) × Students (rows) | Assessments (columns) × Students (rows) |
 | **Editing** | Yes — enter points per task | No — read-only aggregate |
 | **Scope** | One assessment (e.g., "Homework 3") | All assessments in the lecture |
