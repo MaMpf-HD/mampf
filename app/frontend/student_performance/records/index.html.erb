@@ -112,10 +112,8 @@
                   </td>
 
                   <td class="text-end">
-                    <% pct = record.percentage_materialized.to_f %>
-
-                    <span class="fw-semibold text-<%= pct >= 50 ? "success" : "danger" %>">
-                      <%= number_to_percentage(pct, precision: 0) %>
+                    <span class="fw-semibold">
+                      <%= number_to_percentage(record.percentage_materialized.to_f, precision: 0) %>
                     </span>
                   </td>
 

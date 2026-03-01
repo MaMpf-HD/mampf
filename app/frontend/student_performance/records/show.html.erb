@@ -51,11 +51,9 @@
       </div>
 
       <div class="col-12 col-md-4">
-        <% pct = @record.percentage_materialized.to_f %>
-
         <div class="text-center p-3 border rounded bg-light">
-          <div class="display-6 fw-bold text-<%= pct >= 50 ? "success" : "danger" %>">
-            <%= number_to_percentage(pct, precision: 0) %>
+          <div class="display-6 fw-bold">
+            <%= number_to_percentage(@record.percentage_materialized.to_f, precision: 0) %>
           </div>
 
           <div class="text-muted small">

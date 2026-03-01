@@ -1,15 +1,22 @@
 module StudentPerformance
-  # Missing top-level docstring, please formulate one yourself 😁
   class RulesController < ApplicationController
     before_action :set_lecture
     before_action :authorize_lecture
+    before_action :use_lecture_locale
+
+    rescue_from CanCan::AccessDenied do |exception|
+      redirect_to main_app.root_url, alert: exception.message
+    end
 
     def current_ability
       @current_ability ||= LectureAbility.new(current_user)
     end
 
     def show
-      head :ok
+      @rule = StudentPerformance::Rule
+              .where(lecture: @lecture, active: true)
+              .includes(rule_achievements: :achievement)
+              .first
     end
 
     private
@@ -24,6 +31,11 @@ module StudentPerformance
 
       def authorize_lecture
         authorize!(:edit, @lecture)
+      end
+
+      def use_lecture_locale
+        locale = @lecture&.locale_with_inheritance || I18n.default_locale
+        I18n.locale = locale
       end
   end
 end

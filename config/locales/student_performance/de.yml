@@ -53,3 +53,18 @@ de:
       recompute:
         single: "Neuberechnung für diese/n Studierende/n wurde eingereiht."
         all: "Neuberechnung für alle Studierenden wurde eingereiht."
+    rules:
+      show:
+        title: "Zulassungsregeln"
+        subtitle: "Kriterien, die Studierende für die Prüfungszulassung erfüllen müssen."
+        no_rule: "Für diese Veranstaltung wurde noch keine Zulassungsregel konfiguriert."
+        point_threshold: "Punkteschwelle"
+        of_total_points: "der Gesamtpunkte erforderlich"
+        points_absolute: "Punkte erforderlich (absolut)"
+        no_point_threshold: "Keine Punkteschwelle konfiguriert."
+        required_achievements: "Erforderliche Leistungen"
+        edit_hint: "Die Bearbeitung von Regeln wird in einem zukünftigen Update verfügbar sein."
+        value_types:
+          boolean: "Erforderlich"
+          numeric: "min. %{threshold}"
+          percentage: "min. %{threshold}%"
