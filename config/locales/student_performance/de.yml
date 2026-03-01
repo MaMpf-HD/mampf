@@ -37,6 +37,7 @@ de:
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
         ago: "her"
+        recomputing: "Wird neu berechnet…"
         showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"

@@ -16,7 +16,11 @@ module StudentPerformance
     def index
       scope = @lecture.student_performance_records
                       .includes(:user)
-                      .order(:computed_at)
+                      .joins(:user)
+                      .order(Arel.sql(
+                               "COALESCE(NULLIF(users.name_in_tutorials, " \
+                               "''), users.name) ASC"
+                             ))
 
       if params[:tutorial_id].present?
         user_ids = TutorialMembership
@@ -37,28 +41,19 @@ module StudentPerformance
       user_id = params[:user_id].presence
 
       if user_id
-        PerformanceRecordUpdateJob.perform_async(@lecture.id, user_id.to_i)
+        recompute_single(user_id.to_i)
       else
-        PerformanceRecordUpdateJob.perform_async(@lecture.id)
+        recompute_all
       end
+    end
 
-      respond_to do |format|
-        format.turbo_stream do
-          msg = if user_id
-            I18n.t("student_performance.records.recompute.single")
-          else
-            I18n.t("student_performance.records.recompute.all")
-          end
-          flash.now[:notice] = msg
-          render turbo_stream: stream_flash
-        end
-        format.html do
-          redirect_to lecture_student_performance_records_path(@lecture),
-                      notice: I18n.t(
-                        "student_performance.records.recompute.all"
-                      )
-        end
-      end
+    def recompute_status
+      oldest = @lecture.student_performance_records
+                       .minimum(:computed_at)
+      threshold = params[:since].present? ? Time.zone.parse(params[:since]) : nil
+      done = threshold.present? && oldest.present? && oldest > threshold
+
+      render json: { done: done }
     end
 
     private
@@ -86,6 +81,38 @@ module StudentPerformance
       def use_lecture_locale
         locale = @lecture&.locale_with_inheritance || I18n.default_locale
         I18n.locale = locale
+      end
+
+      def recompute_single(user_id)
+        service = StudentPerformance::ComputationService.new(lecture: @lecture)
+        user = User.find(user_id)
+        service.compute_and_upsert_record_for(user)
+
+        record = @lecture.student_performance_records
+                         .find_by(user_id: user_id)
+
+        redirect_to lecture_student_performance_record_path(@lecture, record),
+                    notice: I18n.t(
+                      "student_performance.records.recompute.single"
+                    )
+      end
+
+      def recompute_all
+        PerformanceRecordUpdateJob.perform_async(@lecture.id)
+
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:notice] =
+              I18n.t("student_performance.records.recompute.all")
+            render turbo_stream: stream_flash
+          end
+          format.html do
+            redirect_to lecture_student_performance_records_path(@lecture),
+                        notice: I18n.t(
+                          "student_performance.records.recompute.all"
+                        )
+          end
+        end
       end
 
       def load_show_data

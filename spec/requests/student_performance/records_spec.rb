@@ -173,20 +173,23 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(job["args"]).to eq([lecture.id])
       end
 
-      it "enqueues a job for a single student" do
+      it "computes inline for a single student and redirects" do
         user = FactoryBot.create(:confirmed_user)
 
         expect do
           post(recompute_lecture_student_performance_records_path(
                  lecture, params: { user_id: user.id }
                ))
-        end.to change(PerformanceRecordUpdateJob.jobs, :size).by(1)
+        end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
 
-        job = PerformanceRecordUpdateJob.jobs.last
-        expect(job["args"]).to eq([lecture.id, user.id])
+        record = lecture.student_performance_records
+                        .find_by(user_id: user.id)
+        expect(response).to redirect_to(
+          lecture_student_performance_record_path(lecture, record)
+        )
       end
 
-      it "responds with turbo_stream flash" do
+      it "responds with turbo_stream flash for bulk recompute" do
         post recompute_lecture_student_performance_records_path(lecture),
              headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response.media_type).to eq(
@@ -207,6 +210,60 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
       it "redirects to root (unauthorized)" do
         post recompute_lecture_student_performance_records_path(lecture)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /lectures/:lecture_id/performance/records/recompute_status" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns done: false when no records exist" do
+        get recompute_status_lecture_student_performance_records_path(
+          lecture, params: { since: 1.minute.ago.iso8601 }
+        )
+        expect(response).to have_http_status(:success)
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
+      end
+
+      it "returns done: true when all records are newer than since" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          computed_at: Time.current)
+
+        get recompute_status_lecture_student_performance_records_path(
+          lecture, params: { since: 1.minute.ago.iso8601 }
+        )
+        body = response.parsed_body
+        expect(body["done"]).to be(true)
+      end
+
+      it "returns done: false when some records are older than since" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          computed_at: 5.minutes.ago)
+
+        get recompute_status_lecture_student_performance_records_path(
+          lecture, params: { since: 1.minute.ago.iso8601 }
+        )
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
+      end
+
+      it "returns done: false when since is missing" do
+        get recompute_status_lecture_student_performance_records_path(lecture)
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get recompute_status_lecture_student_performance_records_path(lecture)
         expect(response).to redirect_to(root_path)
       end
     end

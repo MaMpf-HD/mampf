@@ -332,6 +332,7 @@ Rails.application.routes.draw do
         resources :records, only: [:index, :show] do
           collection do
             post :recompute
+            get :recompute_status
           end
         end
 

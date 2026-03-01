@@ -37,6 +37,7 @@ en:
         empty: "No performance records have been computed yet."
         details: "Details"
         ago: "ago"
+        recomputing: "Recomputing..."
         showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"

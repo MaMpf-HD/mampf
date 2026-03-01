@@ -12,7 +12,12 @@
           </p>
         </div>
 
-        <div class="d-flex gap-2">
+        <div
+          class="d-flex gap-2"
+          data-controller="recompute-poll"
+          data-recompute-poll-status-url-value="<%= recompute_status_lecture_student_performance_records_path(@lecture) %>"
+          data-recompute-poll-reload-url-value="<%= lecture_student_performance_records_path(@lecture) %>"
+        >
           <%= button_to bulk_proposals_lecture_student_performance_evaluator_path(@lecture),
                       method: :post,
                       class: "btn btn-outline-primary" do %>
@@ -22,10 +27,25 @@
 
           <%= button_to recompute_lecture_student_performance_records_path(@lecture),
                       method: :post,
-                      class: "btn btn-outline-secondary" do %>
+                      class: "btn btn-outline-secondary",
+                      form: { data: { action: "submit->recompute-poll#start" } } do %>
             <i class="bi bi-arrow-clockwise me-1"></i>
             <%= t("student_performance.records.index.recompute_all") %>
           <% end %>
+
+          <span
+            class="d-none align-self-center"
+            data-recompute-poll-target="indicator"
+          >
+            <span
+              class="spinner-border spinner-border-sm text-secondary me-1"
+              role="status"
+            ></span>
+
+            <span class="text-muted small">
+              <%= t("student_performance.records.index.recomputing") %>
+            </span>
+          </span>
         </div>
       </div>
     </div>
