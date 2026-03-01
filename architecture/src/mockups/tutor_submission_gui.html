@@ -24,6 +24,16 @@
       margin: 0 auto;
       text-align: center;
     }
+
+    .row-dirty,
+    .row-dirty td {
+        background-color: bisque !important;
+    }
+
+    table.table tbody tr.row-dirty,
+    table.table tbody tr.row-dirty td {
+        background-color: bisque !important;
+    }
   </style>
     
   </head>
@@ -69,16 +79,19 @@
             </div>
             <div class="d-flex flex-wrap gap-2 justify-content-end m-3 w-auto">
               <button class="btn btn-primary btn-sm">
-                <i class="bi bi-download me-1"></i>
+                <i class="bi bi-download me-1"
+                ></i>
                 Download All Submissions
               </button>
 
-              <button class="btn btn-success btn-sm">
+              <button class="btn btn-success btn-sm" 
+                      onclick="event.stopPropagation(); saveAllChanges()">
                 <i class="bi bi-save me-1"></i>
                 Save All Changes
               </button>
 
-              <button class="btn btn-outline-secondary btn-sm">
+              <button class="btn btn-outline-secondary btn-sm" 
+                      onclick="event.stopPropagation(); reloadData()">
                 <i class="bi bi-arrow-clockwise me-1"></i>
                 Reload Data
               </button>
@@ -137,6 +150,8 @@
 
 <script>
 
+  editedRows = new Set();
+
   editedData = []
 
   originalData = [
@@ -179,6 +194,7 @@
   ]
   
   renderTable();
+  attachEditListeners();
 
   function renderTable() {
     const tbody = document.getElementById("submissionTableBody");
@@ -231,6 +247,28 @@
       `;
       tbody.appendChild(row);
     });
+  }
+
+  function attachEditListeners() {
+    document.querySelectorAll(".grade-input").forEach(input => {
+
+      input.addEventListener("input", function () {
+        const row = this.closest("tr");
+        const id = row.dataset.id;
+
+        markRowAsEdited(id);
+      });
+
+    });
+  }
+
+  function markRowAsEdited(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    console.log("testing", id);
+    if (!editedRows.has(id)) {
+      editedRows.add(id);
+      row.classList.add("row-dirty");
+    }
   }
 
   function sum_scores(tasks) {
@@ -288,6 +326,11 @@
 
   function removeTouchedFlag(id) {
     editedData = editedData.filter(s => s.id !== id);
+    editedRows.delete(id);
+    row = document.querySelector(`tr[data-id="${id}"]`);
+    if (row) {
+      row.classList.remove("row-dirty");
+    }
   }
 
   function updateOriginalData(id) {
@@ -369,7 +412,7 @@
 
       </div>
     `;
-}
+  }
 
   // Right-side panel logic
   function openPanel(id) {
@@ -426,8 +469,7 @@
         const row = document.querySelector(`tr[data-id="${id}"]`);
         const index = input.dataset.index;
         row.querySelectorAll(".grade-input")[index].value = input.value;
-
-        row.classList.add("row-dirty");
+        markRowAsEdited(id);
       });
     });
   }
@@ -440,13 +482,14 @@
 
   function saveCurrentFromPanel() {
     const id = document.getElementById("panelId").textContent;
-    const dataNew = extractDataFromPanel(id);
-    saveRow(id, dataNew, true);
+    extractDataFromPanel(id);
+    saveRow(id, true);
   }
 
   function closeCurrentFromPanel() {
     const id = getIdFromPanel();
     extractDataFromPanel(id);
+    markRowAsEdited(id);
   }
 
   function resetCurrentFromPanel() {
@@ -459,12 +502,30 @@
   }
 
   function saveCurrentFromTable(id) {
-    const dataNew = extractDataFromRow(id);
-    saveRow(id, dataNew);
+    extractDataFromRow(id);
+    saveRow(id);
   }
 
   function resetCurrentFromTable(id) {
     resetRow(id);
+  }
+
+  function saveAllChanges() {
+    editedRows.forEach(id => {
+      extractDataFromRow(id);
+    });
+    editedData.forEach(s => {
+      saveRow(s.id);
+    });
+    alert("All changes saved!");
+  }
+
+  function reloadData() {
+    if (confirm("Are you sure you want to reload? All unsaved changes will be lost.")) {
+      editedData = [];
+      renderTable();
+      closePanel();
+    }
   }
 
   function extractDataFromRow(id) {
