@@ -41,6 +41,7 @@ de:
       show:
         back: "Zurück zur Übersicht"
         recompute: "Neu berechnen"
+        review_proposal: "Vorschlag prüfen"
         total_points: "Gesamtpunkte"
         out_of: "von %{max} möglichen"
         percentage: "Prozent"
@@ -99,3 +100,14 @@ de:
         current_status: "Aktuell"
         new_status: "Mit neuer Regel"
         no_changes: "Kein/e Studierende/r würde mit dieser Schwelle den Status ändern."
+      single_proposal:
+        title: "Zulassungsvorschlag"
+        back_to_record: "Zurück zum Datensatz"
+        points_check: "Punkte-Prüfung"
+        student_points: "Punkte (Studierende/r)"
+        student_percentage: "Prozent (Studierende/r)"
+        required: "Erforderlich"
+        result: "Ergebnis"
+        achievements_check: "Leistungs-Prüfung"
+        no_achievements_required: "Die aktuelle Regel erfordert keine zusätzlichen Leistungen."
+        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zertifizierungen werden in einem zukünftigen Update erstellt."

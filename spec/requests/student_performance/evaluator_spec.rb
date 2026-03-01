@@ -289,4 +289,149 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
       end
     end
   end
+
+  describe "GET /lectures/:id/performance/evaluator/single_proposal" do
+    let(:path) do
+      single_proposal_lecture_student_performance_evaluator_path(lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "without an active rule" do
+        let!(:record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: student,
+                            percentage_materialized: 60,
+                            points_total_materialized: 60,
+                            points_max_materialized: 100)
+        end
+
+        it "redirects with an alert" do
+          get path, params: { record_id: record.id }
+          expect(response).to redirect_to(
+            lecture_student_performance_records_path(lecture)
+          )
+        end
+      end
+
+      context "with an active rule" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        context "with a missing record_id" do
+          it "redirects with an alert" do
+            get path, params: { record_id: 0 }
+            expect(response).to redirect_to(
+              lecture_student_performance_records_path(lecture)
+            )
+          end
+        end
+
+        context "with a passing student" do
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 75,
+                              points_total_materialized: 75,
+                              points_max_materialized: 100)
+          end
+
+          it "returns http success" do
+            get path, params: { record_id: record.id }
+            expect(response).to have_http_status(:success)
+          end
+
+          it "shows the student name" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(student.tutorial_name)
+          end
+
+          it "shows the passed badge" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.status.passed")
+            )
+          end
+
+          it "shows the points check section" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.single_proposal.points_check")
+            )
+          end
+        end
+
+        context "with a failing student" do
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100)
+          end
+
+          it "shows the failed badge" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.status.failed")
+            )
+          end
+        end
+
+        context "with no achievements required" do
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 60,
+                              points_total_materialized: 60,
+                              points_max_materialized: 100)
+          end
+
+          it "shows the no-achievements message" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.single_proposal.no_achievements_required")
+            )
+          end
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        get path
+        expect(response).to redirect_to(root_url)
+      end
+    end
+
+    context "when not signed in" do
+      it "redirects to sign in" do
+        get path
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    context "when feature flag is disabled" do
+      before do
+        Flipper.disable(:student_performance)
+        sign_in editor
+      end
+
+      it "falls through to catch-all and redirects" do
+        get path
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
 end

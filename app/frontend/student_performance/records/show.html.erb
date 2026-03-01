@@ -15,7 +15,15 @@
         <p class="text-muted small mb-0"><%= @record.user.email %></p>
       </div>
 
-      <div>
+      <div class="d-flex gap-2">
+        <%= link_to single_proposal_lecture_student_performance_evaluator_path(
+                     @lecture, record_id: @record.id),
+                   class: "btn btn-outline-primary btn-sm",
+                   data: { turbo_frame: "performance-records-frame" } do %>
+          <i class="bi bi-clipboard-check me-1"></i>
+          <%= t("student_performance.records.show.review_proposal") %>
+        <% end %>
+
         <%= button_to recompute_lecture_student_performance_records_path(@lecture,
                         user_id: @record.user_id),
                       method: :post,

@@ -67,7 +67,24 @@ module StudentPerformance
     end
 
     def single_proposal
-      head :ok
+      unless @rule
+        redirect_to lecture_student_performance_records_path(@lecture),
+                    alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      @record = @lecture.student_performance_records
+                        .includes(:user)
+                        .find_by(id: params[:record_id])
+
+      unless @record
+        redirect_to lecture_student_performance_records_path(@lecture),
+                    alert: I18n.t("student_performance.errors.no_record")
+        return
+      end
+
+      evaluator = StudentPerformance::Evaluator.new(@rule)
+      @result = evaluator.evaluate(@record)
     end
 
     private

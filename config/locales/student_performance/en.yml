@@ -41,6 +41,7 @@ en:
       show:
         back: "Back to records"
         recompute: "Recompute"
+        review_proposal: "Review Proposal"
         total_points: "Total Points"
         out_of: "out of %{max} possible"
         percentage: "Percentage"
@@ -99,3 +100,14 @@ en:
         current_status: "Current"
         new_status: "With new rule"
         no_changes: "No students would change status with this threshold."
+      single_proposal:
+        title: "Eligibility Proposal"
+        back_to_record: "Back to student record"
+        points_check: "Points Check"
+        student_points: "Student points"
+        student_percentage: "Student percentage"
+        required: "Required"
+        result: "Result"
+        achievements_check: "Achievements Check"
+        no_achievements_required: "No achievements are required by the current rule."
+        info: "This proposal is a read-only preview. Certifications will be created in a future update."

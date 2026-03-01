@@ -1,0 +1,176 @@
+<%= turbo_frame_tag "performance-records-frame" do %>
+  <div class="mb-3">
+    <%= link_to lecture_student_performance_record_path(@lecture, @record),
+                class: "text-decoration-none",
+                data: { turbo_frame: "performance-records-frame" } do %>
+      <i class="bi bi-arrow-left me-1"></i>
+      <%= t("student_performance.evaluator.single_proposal.back_to_record") %>
+    <% end %>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1">
+            <%= t("student_performance.evaluator.single_proposal.title") %>
+          </h4>
+
+          <p class="text-muted small mb-0">
+            <%= @record.user.tutorial_name %> &mdash; <%= @record.user.email %>
+          </p>
+        </div>
+
+        <div>
+          <% if @result.proposed_status == :passed %>
+            <span class="badge bg-success fs-6">
+              <%= t("student_performance.evaluator.status.passed") %>
+            </span>
+          <% else %>
+            <span class="badge bg-danger fs-6">
+              <%= t("student_performance.evaluator.status.failed") %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+          <div class="p-3 border rounded bg-light">
+            <h6 class="fw-bold mb-3">
+              <i class="bi bi-calculator me-1"></i>
+              <%= t("student_performance.evaluator.single_proposal.points_check") %>
+            </h6>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">
+                <%= t("student_performance.evaluator.single_proposal.student_points") %>
+              </span>
+
+              <span class="fw-bold font-monospace">
+                <%= number_with_precision(
+                      @record.points_total_materialized,
+                      precision: 1,
+                      strip_insignificant_zeros: true) %>
+                /
+                <%= number_with_precision(
+                      @record.points_max_materialized,
+                      precision: 1,
+                      strip_insignificant_zeros: true) %>
+              </span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">
+                <%= t("student_performance.evaluator.single_proposal.student_percentage") %>
+              </span>
+
+              <span class="fw-bold font-monospace">
+                <%= number_to_percentage(
+                      @record.percentage_materialized.to_f,
+                      precision: 1) %>
+              </span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">
+                <%= t("student_performance.evaluator.single_proposal.required") %>
+              </span>
+
+              <span class="font-monospace">
+                <% if @rule.min_percentage.present? %>
+                  <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+                <% elsif @rule.min_points_absolute.present? %>
+                  <%= @rule.min_points_absolute %>
+                  <%= t("student_performance.rules.show.points_absolute") %>
+                <% else %>
+                  &mdash;
+                <% end %>
+              </span>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between">
+              <span class="fw-bold">
+                <%= t("student_performance.evaluator.single_proposal.result") %>
+              </span>
+
+              <% if @result.details[:meets_points] %>
+                <span class="text-success fw-bold">
+                  <i class="bi bi-check-circle-fill me-1"></i>
+                  <%= t("student_performance.evaluator.status.passed") %>
+                </span>
+              <% else %>
+                <span class="text-danger fw-bold">
+                  <i class="bi bi-x-circle-fill me-1"></i>
+                  <%= t("student_performance.evaluator.status.failed") %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="p-3 border rounded bg-light">
+            <h6 class="fw-bold mb-3">
+              <i class="bi bi-trophy me-1"></i>
+              <%= t("student_performance.evaluator.single_proposal.achievements_check") %>
+            </h6>
+
+            <% if @rule.required_achievements.any? %>
+              <% @rule.required_achievements.each do |achievement| %>
+                <% met = Array(@record.achievements_met_ids)
+                           .map(&:to_i)
+                           .include?(achievement.id) %>
+
+                <div class="d-flex justify-content-between mb-2">
+                  <span><%= achievement.title %></span>
+
+                  <% if met %>
+                    <span class="text-success">
+                      <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                  <% else %>
+                    <span class="text-danger">
+                      <i class="bi bi-x-circle-fill"></i>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+              <hr>
+              <div class="d-flex justify-content-between">
+                <span class="fw-bold">
+                  <%= t("student_performance.evaluator.single_proposal.result") %>
+                </span>
+
+                <% if @result.details[:meets_achievements] %>
+                  <span class="text-success fw-bold">
+                    <i class="bi bi-check-circle-fill me-1"></i>
+                    <%= t("student_performance.evaluator.status.passed") %>
+                  </span>
+                <% else %>
+                  <span class="text-danger fw-bold">
+                    <i class="bi bi-x-circle-fill me-1"></i>
+                    <%= t("student_performance.evaluator.status.failed") %>
+                  </span>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted mb-0">
+                <%= t("student_performance.evaluator.single_proposal.no_achievements_required") %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle me-1"></i>
+        <%= t("student_performance.evaluator.single_proposal.info") %>
+      </div>
+    </div>
+  </div>
+<% end %>
