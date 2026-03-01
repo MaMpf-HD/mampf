@@ -314,8 +314,13 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when pending participation has no submitted_at" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :with_lecture, lecture: lecture)
+      end
+
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -328,8 +333,10 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
 
       before do
-        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 10)
+        FactoryBot.create(:assessment_task,
+                          assessment: assessment1, max_points: 10)
+        FactoryBot.create(:assessment_task,
+                          assessment: assessment2, max_points: 10)
 
         FactoryBot.create(:assessment_participation, :reviewed,
                           assessment: assessment1, user: user)
@@ -340,7 +347,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
 
       it "counts it as not submitted rather than pending grading" do
         compute
-        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        record = StudentPerformance::Record.find_by(
+          lecture: lecture, user: user
+        )
         expect(record.assessments_pending_grading_count).to eq(0)
         expect(record.assessments_not_submitted_count).to eq(1)
       end
