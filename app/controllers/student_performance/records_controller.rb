@@ -118,6 +118,13 @@ module StudentPerformance
           @points_by_assessment[p.assessment_id] =
             p.reviewed? ? (task_point_sums[p.id] || 0) : nil
         end
+
+        assignment_ids = @assessments.map(&:assessable_id)
+        @submission_by_assignment = Submission
+                                    .joins(:user_submission_joins)
+                                    .where(user_submission_joins: { user_id: @record.user_id },
+                                           assignment_id: assignment_ids)
+                                    .index_by(&:assignment_id)
       end
 
       def load_assessment_statuses

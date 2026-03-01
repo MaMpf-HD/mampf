@@ -50,6 +50,9 @@ de:
         assignment: "Übungsblatt"
         status: "Status"
         max_points: "Max"
+        files: "Dateien"
+        view_manuscript: "Abgabe ansehen"
+        view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
         last_computed: "Zuletzt berechnet vor %{time}."
       recompute:

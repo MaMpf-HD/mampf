@@ -50,6 +50,9 @@ en:
         assignment: "Assignment"
         status: "Status"
         max_points: "Max"
+        files: "Files"
+        view_manuscript: "View submission"
+        view_correction: "View correction"
         total_row: "Total"
         last_computed: "Last computed %{time} ago."
       recompute:

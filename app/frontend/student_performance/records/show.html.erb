@@ -106,6 +106,10 @@
               <th scope="col" class="text-end">
                 <%= t("student_performance.records.show.max_points") %>
               </th>
+
+              <th scope="col" class="text-center">
+                <%= t("student_performance.records.show.files") %>
+              </th>
             </tr>
           </thead>
 
@@ -115,6 +119,8 @@
               <% status = participation&.display_status || :not_submitted %>
               <% points = @points_by_assessment[assessment.id] %>
               <% max = assessment.effective_total_points %>
+
+              <% submission = @submission_by_assignment[assessment.assessable_id] %>
 
               <tr>
                 <td><%= assessment.title %></td>
@@ -137,6 +143,30 @@
                   <%= number_with_precision(max, precision: 1,
                                           strip_insignificant_zeros: true) %>
                 </td>
+
+                <td class="text-center">
+                  <% if submission&.manuscript %>
+                    <%= link_to show_submission_manuscript_path(submission),
+                                target: "_blank",
+                                class: "text-decoration-none",
+                                title: t("student_performance.records.show.view_manuscript") do %>
+                      <i class="bi bi-file-earmark-text"></i>
+                    <% end %>
+                  <% end %>
+
+                  <% if submission&.correction %>
+                    <%= link_to show_correction_path(submission),
+                                target: "_blank",
+                                class: "text-decoration-none ms-2",
+                                title: t("student_performance.records.show.view_correction") do %>
+                      <i class="bi bi-file-earmark-check text-success"></i>
+                    <% end %>
+                  <% end %>
+
+                  <% unless submission&.manuscript || submission&.correction %>
+                    <span class="text-muted">&mdash;</span>
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>
@@ -158,6 +188,8 @@
                                         precision: 1,
                                         strip_insignificant_zeros: true) %>
               </td>
+
+              <td></td>
             </tr>
           </tfoot>
         </table>
