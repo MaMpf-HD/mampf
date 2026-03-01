@@ -41,33 +41,8 @@ end
 def setup_rule_and_achievements(lecture)
   rule = StudentPerformance::Rule.find_or_initialize_by(lecture: lecture)
   rule.update!(min_percentage: 50, active: true)
-  puts "✓ Rule: min 50% of total points"
+  puts "✓ Rule: min 50% of total points (no achievement requirements)"
 
-  presentation = Achievement.find_or_create_by!(
-    lecture: lecture,
-    title: "Blackboard Presentation",
-    value_type: :boolean
-  )
-  puts "  Achievement: #{presentation.title} (#{presentation.value_type})"
-
-  attendance = Achievement.find_or_create_by!(
-    lecture: lecture,
-    title: "Tutorial Attendance"
-  ) do |a|
-    a.value_type = :numeric
-    a.threshold = 10
-  end
-  attendance.update!(value_type: :numeric, threshold: 10)
-  puts "  Achievement: #{attendance.title} (min. #{attendance.threshold})"
-
-  [presentation, attendance].each do |achievement|
-    StudentPerformance::RuleAchievement.find_or_create_by!(
-      rule: rule,
-      achievement: achievement
-    ) do |ra|
-      ra.position = rule.rule_achievements.count + 1
-    end
-  end
-
-  puts "✓ Rule has #{rule.rule_achievements.count} required achievements"
+  rule.rule_achievements.delete_all
+  Achievement.where(lecture: lecture).destroy_all
 end
