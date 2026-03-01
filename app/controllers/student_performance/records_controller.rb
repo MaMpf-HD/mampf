@@ -53,9 +53,7 @@ module StudentPerformance
     def recompute_status
       oldest = @lecture.student_performance_records
                        .minimum(:computed_at)
-      threshold = if params[:since].present?
-        Time.zone.parse(params[:since])
-      end
+      threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
       done = threshold.present? && oldest.present? && oldest > threshold
 
       render json: { done: done }
