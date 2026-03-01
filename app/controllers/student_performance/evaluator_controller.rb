@@ -1,5 +1,5 @@
 module StudentPerformance
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Controller for evaluating student performance records based on defined rules.
   class EvaluatorController < ApplicationController
     before_action :set_lecture
     before_action :authorize_lecture
@@ -87,6 +87,13 @@ module StudentPerformance
       @result = evaluator.evaluate(@record)
     end
 
+    PreviewRule = Struct.new(
+      :min_percentage,
+      :min_points_absolute,
+      :required_achievements,
+      keyword_init: true
+    )
+
     private
 
       def set_lecture
@@ -112,13 +119,6 @@ module StudentPerformance
                 .includes(rule_achievements: :achievement)
                 .first
       end
-
-      PreviewRule = Struct.new(
-        :min_percentage,
-        :min_points_absolute,
-        :required_achievements,
-        keyword_init: true
-      )
 
       def build_preview_rule
         pct = @preview_percentage.presence&.to_f

@@ -1,4 +1,6 @@
 module StudentPerformance
+  # Controller for managing student performance records, including listing,
+  # showing details, and recomputing records.
   class RecordsController < ApplicationController
     before_action :set_lecture
     before_action :authorize_lecture
@@ -31,6 +33,7 @@ module StudentPerformance
 
       @pagy, @records = pagy(scope)
       load_assessment_statuses
+      @standard_max = @assessments.sum(&:effective_total_points)
     end
 
     def show

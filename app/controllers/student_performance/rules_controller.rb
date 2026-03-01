@@ -1,4 +1,6 @@
 module StudentPerformance
+  # Controller for managing student performance rules, including showing the
+  # active rule for a lecture.
   class RulesController < ApplicationController
     before_action :set_lecture
     before_action :authorize_lecture

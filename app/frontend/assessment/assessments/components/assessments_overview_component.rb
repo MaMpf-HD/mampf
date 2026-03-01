@@ -1,4 +1,4 @@
-# Missing top-level docstring, please formulate one yourself 😁
+# Renders an overview of assessments, including tabs for performance and rules.
 class AssessmentsOverviewComponent < ViewComponent::Base
   TABS = [:assessments, :performance, :rules].freeze
 

@@ -1,4 +1,5 @@
-# Missing top-level docstring, please formulate one yourself 😁
+# Renders a badge indicating the participation status of a student in an assessment,
+# with different styles for full and compact variants.
 class ParticipationStatusBadgeComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 

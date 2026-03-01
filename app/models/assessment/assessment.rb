@@ -18,6 +18,12 @@ module Assessment
 
     delegate :title, to: :assessable
 
+    # Shortened title for compact column headers. Strips a leading word
+    # (e.g. "Blatt 3" → "3"), falls back to a truncated full title.
+    def short_title
+      title.sub(/\A\w+\s*/, "").presence || title.truncate(5)
+    end
+
     def results_published?
       results_published_at.present?
     end
