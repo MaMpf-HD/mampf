@@ -214,13 +214,7 @@ module StudentPerformance
         @participation_map = {}
         participations.each do |p|
           @participation_map[[p.user_id, p.assessment_id]] =
-            if p.status == "pending" && p.submitted_at.nil?
-              :not_submitted
-            elsif p.status == "pending"
-              :pending_grading
-            else
-              p.status.to_sym
-            end
+            p.display_status
         end
 
         reviewed_ids = participations.select(&:reviewed?).map(&:id)
