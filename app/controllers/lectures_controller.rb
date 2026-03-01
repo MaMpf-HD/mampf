@@ -69,7 +69,7 @@ class LecturesController < ApplicationController
 
     if turbo_frame_request?
       render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                               template: "lectures/new/_new",
+                                               partial: "lectures/new/new",
                                                locals: { lecture: @lecture, from: @from })
     else
       head :bad_request
@@ -102,16 +102,19 @@ class LecturesController < ApplicationController
 
       streams = []
 
-      streams << if params.dig(:lecture, :from) == "course"
-        turbo_stream.update("course_lectures",
-                            partial: "courses/lectures_list",
-                            locals: { course: @lecture.course })
+      if params.dig(:lecture, :from) == "course"
+        streams << turbo_stream.update("course_lectures",
+                                       partial: "courses/lectures_list",
+                                       locals: { course: @lecture.course })
+        streams << turbo_stream.update(Lecture.new,
+                                       partial: "lectures/new/new",
+                                       locals: { lecture: @lecture, from: "course" })
       else
-        turbo_stream.update("lectures",
-                            partial: "administration/index/lectures_list")
+        streams << turbo_stream.update("lectures",
+                                       partial: "administration/index/lectures_list")
+        streams << turbo_stream.update(Lecture.new, "")
       end
 
-      streams << turbo_stream.update(Lecture.new, "")
       streams << turbo_stream.prepend("flash-messages",
                                       partial: "flash/message")
 

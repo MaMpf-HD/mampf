@@ -17,6 +17,9 @@ window.Stimulus.register("search-form", SearchFormController);
 import ModalController from "~/modal/modal.controller.js";
 window.Stimulus.register("modal", ModalController);
 
+import TurboModalController from "~/modal/turbo_modal.controller.js";
+window.Stimulus.register("turbo-modal", TurboModalController);
+
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
 

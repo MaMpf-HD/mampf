@@ -18,7 +18,9 @@
       <div class="modal-body"
            id="new-lecture-modal-content">
         <div id="new-lecture-area">
-          <%= turbo_frame_tag Lecture.new %>
+          <%= turbo_frame_tag Lecture.new do %>
+            <%= render partial: "spinner/loading" %>
+          <% end %>
         </div>
       </div>
     </div>

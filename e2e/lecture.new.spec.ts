@@ -46,12 +46,11 @@ async function testCreateNewLecture(
 ) {
   const button = "new-lecture-button-admin-index";
 
+  await page.getByTestId(button).click();
+
   if (isCoursePrefilled) {
-    await page.getByTestId(button).hover(); // trigger turbo_prefetch
     await page.waitForResponse(response => response.url().includes("/lectures/new") && response.status() === 200);
   }
-
-  await page.getByTestId(button).click();
 
   if (!isCoursePrefilled) {
     const selectDiv = page.getByTestId("new-lecture-course-select");

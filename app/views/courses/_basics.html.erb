@@ -91,9 +91,12 @@
                                                course: course.id }),
                     class: 'fas fa-plus-circle text-dark',
                     id: 'new-lecture-button',
-                    data: { turbo_frame: 'new_lecture',
-                bs_toggle: 'modal',
-                bs_target: '#newLectureModal',
+                    data: { controller: 'turbo-modal',
+                            turbo_modal_url_value: new_lecture_path(params: { from: 'course', course: course.id }),
+                            turbo_modal_selector_value: '#newLectureModal',
+                            turbo_modal_frame_id_value: 'new_lecture',
+                            action: 'click->turbo-modal#open',
+                            turbo: false,
                             testid: 'new-lecture-button-admin-index' },
                     title: t('buttons.create_lecture') %>
       <% end %>
