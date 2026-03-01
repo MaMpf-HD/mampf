@@ -16,6 +16,7 @@ en:
       no_record: "Performance record not found."
       no_member: "User is not a member of this lecture."
     records:
+      tooltip_points: "points"
       columns:
         student: "Student"
         email: "Email"

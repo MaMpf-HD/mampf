@@ -44,8 +44,8 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
       pts = format_points(@points)
       max_str = format_points(max)
       points_label = I18n.t(
-        "student_performance.records.columns.points"
-      ).downcase
+        "student_performance.records.tooltip_points"
+      )
       "#{assessment_title}: #{pts}/#{max_str} #{points_label}"
     else
       "#{assessment_title}: #{label}"

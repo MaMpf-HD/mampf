@@ -16,6 +16,7 @@ de:
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
     records:
+      tooltip_points: "Punkte"
       columns:
         student: "Studierende/r"
         email: "E-Mail"
