@@ -51,10 +51,12 @@ module StudentPerformance
     end
 
     def recompute_status
-      oldest = @lecture.student_performance_records
-                       .minimum(:computed_at)
+      scope = @lecture.student_performance_records
+      has_null = scope.exists?(computed_at: nil)
+      oldest = scope.minimum(:computed_at)
       threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
-      done = threshold.present? && oldest.present? && oldest > threshold
+      done = !has_null && threshold.present? &&
+             oldest.present? && oldest > threshold
 
       render json: { done: done }
     rescue ArgumentError

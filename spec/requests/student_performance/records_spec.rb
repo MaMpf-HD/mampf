@@ -284,6 +284,21 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         body = response.parsed_body
         expect(body["done"]).to be(false)
       end
+
+      it "returns done: false when a record has null computed_at" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          computed_at: Time.current)
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          computed_at: nil)
+
+        get recompute_status_lecture_student_performance_records_path(
+          lecture, params: { since: 1.minute.ago.iso8601 }
+        )
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
+      end
     end
 
     context "as a student" do
