@@ -106,6 +106,8 @@
                 <th scope="col" class="small">
                   <%= t("student_performance.records.columns.computed_at") %>
                 </th>
+
+                <th scope="col" class="small"></th>
               </tr>
             </thead>
 
@@ -174,6 +176,15 @@
                       <%= t("student_performance.records.index.ago") %>
                     <% else %>
                       &mdash;
+                    <% end %>
+                  </td>
+
+                  <td>
+                    <%= link_to lecture_student_performance_record_path(
+                                  @lecture, record),
+                                class: "btn btn-outline-secondary btn-sm",
+                                data: { turbo_frame: "performance-records-frame" } do %>
+                      <%= t("student_performance.records.index.details") %>
                     <% end %>
                   </td>
                 </tr>
