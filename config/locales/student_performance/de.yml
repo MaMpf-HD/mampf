@@ -60,6 +60,7 @@ de:
       recompute:
         single: "Neuberechnung für diese/n Studierende/n wurde eingereiht."
         all: "Neuberechnung für alle Studierenden wurde eingereiht."
+        throttled: "Eine Neuberechnung wurde kürzlich gestartet. Bitte warten Sie, bevor Sie eine weitere auslösen."
     rules:
       show:
         title: "Zulassungsregeln"

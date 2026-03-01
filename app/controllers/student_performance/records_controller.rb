@@ -11,6 +11,8 @@ module StudentPerformance
       redirect_to main_app.root_url, alert: exception.message
     end
 
+    RECOMPUTE_THROTTLE = 30.seconds
+
     def current_ability
       @current_ability ||= LectureAbility.new(current_user)
     end
@@ -112,6 +114,14 @@ module StudentPerformance
       end
 
       def recompute_all
+        cache_key = "recompute_all/lecture/#{@lecture.id}"
+
+        unless Rails.cache.write(cache_key, true,
+                                 expires_in: RECOMPUTE_THROTTLE,
+                                 unless_exist: true)
+          return respond_with_throttled
+        end
+
         PerformanceRecordUpdateJob.perform_async(@lecture.id)
 
         respond_to do |format|
@@ -125,6 +135,21 @@ module StudentPerformance
                         notice: I18n.t(
                           "student_performance.records.recompute.all"
                         )
+          end
+        end
+      end
+
+      def respond_with_throttled
+        msg = I18n.t("student_performance.records.recompute.throttled")
+
+        respond_to do |format|
+          format.turbo_stream do
+            flash.now[:alert] = msg
+            render turbo_stream: stream_flash
+          end
+          format.html do
+            redirect_to lecture_student_performance_records_path(@lecture),
+                        alert: msg
           end
         end
       end

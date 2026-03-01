@@ -221,6 +221,17 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           lecture_student_performance_records_path(lecture)
         )
       end
+
+      it "throttles repeated bulk recompute requests" do
+        post recompute_lecture_student_performance_records_path(lecture)
+        expect(PerformanceRecordUpdateJob.jobs.size).to eq(1)
+
+        post recompute_lecture_student_performance_records_path(lecture)
+        expect(PerformanceRecordUpdateJob.jobs.size).to eq(1)
+        expect(flash[:alert]).to eq(
+          I18n.t("student_performance.records.recompute.throttled")
+        )
+      end
     end
 
     context "as a student" do

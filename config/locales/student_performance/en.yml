@@ -60,6 +60,7 @@ en:
       recompute:
         single: "Recomputation for this student has been enqueued."
         all: "Recomputation for all students has been enqueued."
+        throttled: "A recomputation was recently started. Please wait before triggering another."
     rules:
       show:
         title: "Eligibility Rules"
