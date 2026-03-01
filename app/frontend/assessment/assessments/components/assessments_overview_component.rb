@@ -33,7 +33,7 @@ class AssessmentsOverviewComponent < ViewComponent::Base
 
     def resolve_tab(tab)
       key = tab&.to_sym
-      return key if key.in?(TABS)
+      return key if key.in?(visible_tabs)
 
       :assessments
     end

@@ -175,6 +175,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
       it "computes inline for a single student and redirects" do
         user = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
 
         expect do
           post(recompute_lecture_student_performance_records_path(
@@ -186,6 +187,23 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                         .find_by(user_id: user.id)
         expect(response).to redirect_to(
           lecture_student_performance_record_path(lecture, record)
+        )
+      end
+
+      it "redirects with alert when user_id is not a lecture member" do
+        outsider = FactoryBot.create(:confirmed_user)
+
+        expect do
+          post(recompute_lecture_student_performance_records_path(
+                 lecture, params: { user_id: outsider.id }
+               ))
+        end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_records_path(lecture)
+        )
+        expect(flash[:alert]).to eq(
+          I18n.t("student_performance.errors.no_member")
         )
       end
 
@@ -254,6 +272,15 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
       it "returns done: false when since is missing" do
         get recompute_status_lecture_student_performance_records_path(lecture)
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
+      end
+
+      it "returns done: false when since is malformed" do
+        get recompute_status_lecture_student_performance_records_path(
+          lecture, params: { since: "not-a-date" }
+        )
+        expect(response).to have_http_status(:success)
         body = response.parsed_body
         expect(body["done"]).to be(false)
       end

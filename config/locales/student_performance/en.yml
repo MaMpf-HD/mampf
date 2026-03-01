@@ -14,6 +14,7 @@ en:
     errors:
       no_lecture: "Lecture not found."
       no_record: "Performance record not found."
+      no_member: "User is not a member of this lecture."
     records:
       columns:
         student: "Student"

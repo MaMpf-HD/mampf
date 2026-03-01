@@ -53,10 +53,14 @@ module StudentPerformance
     def recompute_status
       oldest = @lecture.student_performance_records
                        .minimum(:computed_at)
-      threshold = params[:since].present? ? Time.zone.parse(params[:since]) : nil
+      threshold = if params[:since].present?
+        Time.zone.parse(params[:since])
+      end
       done = threshold.present? && oldest.present? && oldest > threshold
 
       render json: { done: done }
+    rescue ArgumentError
+      render json: { done: false }
     end
 
     private
@@ -87,8 +91,15 @@ module StudentPerformance
       end
 
       def recompute_single(user_id)
+        user = @lecture.members.find_by(id: user_id)
+
+        unless user
+          redirect_to lecture_student_performance_records_path(@lecture),
+                      alert: I18n.t("student_performance.errors.no_member")
+          return
+        end
+
         service = StudentPerformance::ComputationService.new(lecture: @lecture)
-        user = User.find(user_id)
         service.compute_and_upsert_record_for(user)
 
         record = @lecture.student_performance_records
