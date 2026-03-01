@@ -35,6 +35,16 @@ module Assessment
                         .pick(:tutorial_id)
     end
 
+    def display_status
+      if pending? && submitted_at.nil?
+        :not_submitted
+      elsif pending?
+        :pending_grading
+      else
+        status.to_sym
+      end
+    end
+
     private
 
       def assessment_must_be_gradable
