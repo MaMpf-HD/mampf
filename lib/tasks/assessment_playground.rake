@@ -228,9 +228,7 @@ namespace :assessment do
           else
             p.update!(submitted_at: nil)
           end
-        elsif future_deadline
-          next
-        elsif recent_deadline && rand < 0.6
+        elsif future_deadline || (recent_deadline && rand < 0.6)
           next
         else
           base_time = p.submitted_at || Time.current
