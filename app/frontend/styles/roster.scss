@@ -147,7 +147,14 @@
 }
 
 .registration-group-tile-col {
-  max-width: 15rem;
+  max-width: 13rem;
+}
+
+@include media-breakpoint-up(xl) {
+  .registration-group-tile-col > .card {
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+  }
 }
 
 @include media-breakpoint-down(md) {
