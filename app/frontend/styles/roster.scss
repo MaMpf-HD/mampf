@@ -256,11 +256,13 @@
   }
 
   .tutorial-roster-panel-shell {
+    position: sticky;
+    top: 50vh;
     margin-left: 1rem;
     width: var(--tutorial-roster-panel-width);
     opacity: 1;
     visibility: visible;
-    transform: translateX(0);
+    transform: translate3d(0, -50%, 0);
     pointer-events: auto;
     overflow: visible;
   }
@@ -272,12 +274,15 @@
   }
 
   .tutorial-roster-panel-shell {
+    position: static;
+    top: auto;
     margin-left: 0;
   }
 }
 
 .tutorial-roster-side-panel {
-  height: 100%;
+  height: clamp(22rem, 56vh, 38rem);
+  max-height: calc(100vh - 2rem);
   min-height: 22rem;
   overflow: hidden;
 
@@ -360,6 +365,8 @@
   }
 
   .tutorial-roster-panel-shell {
+    position: static !important;
+    top: auto !important;
     width: 100% !important;
     margin-left: 0 !important;
     margin-top: 0.35rem !important;
@@ -376,6 +383,11 @@
     display: block;
     opacity: 1;
     transform: translateX(0);
+    max-height: none;
+  }
+
+  .tutorial-roster-side-panel {
+    height: auto;
     max-height: calc(100vh - 8rem);
   }
 }

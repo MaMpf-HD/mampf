@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = [
     "tile",
     "main",
-    "panelShell",
     "panelCard",
     "emptyState",
     "contentState",
@@ -22,20 +21,14 @@ export default class extends Controller {
   activeTile = null;
   totalCount = 0;
   isOpen = false;
-  currentSection = null;
 
   connect() {
-    this.boundSyncPanelToSection = this.syncPanelToSection.bind(this);
     this.boundCloseOnEscape = this.closeOnEscape.bind(this);
-    window.addEventListener("scroll", this.boundSyncPanelToSection, { passive: true });
-    window.addEventListener("resize", this.boundSyncPanelToSection);
     document.addEventListener("keydown", this.boundCloseOnEscape);
     this.close();
   }
 
   disconnect() {
-    window.removeEventListener("scroll", this.boundSyncPanelToSection);
-    window.removeEventListener("resize", this.boundSyncPanelToSection);
     document.removeEventListener("keydown", this.boundCloseOnEscape);
   }
 
@@ -54,10 +47,8 @@ export default class extends Controller {
     }
 
     this.activateTile(tile);
-    this.currentSection = tile.closest(".campaign-section, section");
     this.openPanel();
     this.renderPanel(tile.dataset);
-    this.syncPanelToSection();
   }
 
   close() {
@@ -70,8 +61,6 @@ export default class extends Controller {
     }
 
     this.activeTile = null;
-    this.currentSection = null;
-    this.resetPanelPosition();
   }
 
   closeOnEscape(event) {
@@ -142,61 +131,5 @@ export default class extends Controller {
     this.addEmailInputTarget.value = "";
 
     this.filter();
-  }
-
-  syncPanelToSection() {
-    if (!this.isOpen || window.matchMedia("(max-width: 1399.98px)").matches) {
-      this.resetPanelPosition();
-      return;
-    }
-
-    const section = this.visibleSection();
-    if (!section) {
-      return;
-    }
-
-    const layoutRect = this.element.getBoundingClientRect();
-    const sectionRect = section.getBoundingClientRect();
-    const offsetTop = Math.max(0, sectionRect.top - layoutRect.top);
-    const panelHeight = Math.max(320, Math.min(sectionRect.height, window.innerHeight - 130));
-
-    this.panelShellTarget.style.marginTop = `${offsetTop}px`;
-    this.panelCardTarget.style.height = `${panelHeight}px`;
-  }
-
-  visibleSection() {
-    const sections = Array.from(
-      this.mainTarget.querySelectorAll(".campaign-section, section"),
-    ).filter(section => section.offsetParent !== null);
-
-    if (sections.length === 0) {
-      return this.currentSection;
-    }
-
-    const viewportAnchor = window.innerHeight * 0.32;
-    let bestSection = sections[0];
-    let bestDistance = Number.POSITIVE_INFINITY;
-
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect();
-      const sectionAnchor = rect.top + Math.min(rect.height * 0.35, 180);
-      const distance = Math.abs(sectionAnchor - viewportAnchor);
-
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestSection = section;
-      }
-    });
-
-    return bestSection;
-  }
-
-  resetPanelPosition() {
-    if (!this.hasPanelShellTarget || !this.hasPanelCardTarget) {
-      return;
-    }
-
-    this.panelShellTarget.style.marginTop = "";
-    this.panelCardTarget.style.height = "";
   }
 }
