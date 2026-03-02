@@ -117,28 +117,31 @@
             class="tutorial-roster-student card border-0"
             data-student-search="<%= "#{student.tutorial_name} #{student.email}".downcase %>"
           >
-            <div class="card-body py-2 px-3">
-              <div class="d-flex justify-content-between align-items-start gap-2">
+            <div class="card-body py-2 px-3 d-flex gap-2 pe-5 position-relative">
+              <div>
                 <div class="fw-semibold"><%= student.tutorial_name %></div>
 
-                <%= button_to remove_member_tutorial_path(registerable, student),
-                              method: :delete,
-                              class: "btn btn-sm btn-outline-danger " \
-                                     "tutorial-roster-student-remove",
-                              form: {
-                                data: {
-                                  turbo_confirm:
-                                    t("roster.warnings.confirm_kick_from_group")
-                                }
-                              } do %>
-                  <i class="bi bi-trash"></i>
-                <% end %>
+                <div class="text-muted small">
+                  <i class="bi bi-envelope me-1"></i>
+                  <%= student.email %>
+                </div>
               </div>
 
-              <div class="text-muted small mt-1">
-                <i class="bi bi-envelope me-1"></i>
-                <%= student.email %>
-              </div>
+              <%= button_to remove_member_tutorial_path(registerable, student),
+                            method: :delete,
+                            class: "btn btn-sm btn-outline-danger " \
+                                   "tutorial-roster-student-remove",
+                            form: {
+                              class: "mb-0 d-flex h-100
+                                      position-absolute top-50 end-0 translate-middle-y
+                                      ",
+                              data: {
+                                turbo_confirm:
+                                  t("roster.warnings.confirm_kick_from_group")
+                              }
+                            } do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
             </div>
           </div>
         <% end %>

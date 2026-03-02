@@ -295,7 +295,6 @@
 
 [data-tutorial-roster-panel-target="contentState"] {
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
 }
@@ -311,7 +310,6 @@
 }
 
 [data-tutorial-roster-panel-target="list"] {
-  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
 }
@@ -339,7 +337,16 @@
   }
 }
 
+.tutorial-roster-student .card-body {
+  position: relative;
+  padding-right: 3.25rem;
+}
+
 .tutorial-roster-student-remove {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
   opacity: 0;
   transition: opacity 0.12s ease-in-out;
 }
