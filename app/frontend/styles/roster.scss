@@ -227,6 +227,7 @@
 
 .tutorial-roster-layout {
   --tutorial-roster-panel-width: 24rem;
+  --tutorial-roster-panel-height: clamp(22rem, 56vh, 38rem);
   display: flex;
   align-items: flex-start;
   max-width: calc(#{$small-width} + var(--tutorial-roster-panel-width) + 1rem);
@@ -257,12 +258,11 @@
 
   .tutorial-roster-panel-shell {
     position: sticky;
-    top: 50vh;
-    margin-left: 1rem;
+    top: max(0px, calc(50vh - (var(--tutorial-roster-panel-height) / 2)));
+    margin-right: 1em;
     width: var(--tutorial-roster-panel-width);
     opacity: 1;
     visibility: visible;
-    transform: translate3d(0, -50%, 0);
     pointer-events: auto;
     overflow: visible;
   }
@@ -281,7 +281,7 @@
 }
 
 .tutorial-roster-side-panel {
-  height: clamp(22rem, 56vh, 38rem);
+  height: var(--tutorial-roster-panel-height);
   max-height: calc(100vh - 2rem);
   min-height: 22rem;
   overflow: hidden;
