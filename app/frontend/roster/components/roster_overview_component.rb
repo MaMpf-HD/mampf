@@ -13,12 +13,12 @@ class RosterOverviewComponent < ViewComponent::Base
   }.freeze
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(lecture:, group_type: :all, active_tab: :groups, rosterable: nil,
+  def initialize(lecture:, group_type: :all, roster_tab: :lanes, rosterable: nil,
                  participants: nil, pagy: nil, filter_mode: "all", counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
-    @active_tab = active_tab
+    @roster_tab = roster_tab
     @rosterable = rosterable
     @participants = participants
     @pagy = pagy
@@ -29,7 +29,7 @@ class RosterOverviewComponent < ViewComponent::Base
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :active_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
+  attr_reader :lecture, :roster_tab, :rosterable, :group_type, :participants, :pagy, :filter_mode,
               :counts
 
   def sections

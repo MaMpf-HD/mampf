@@ -15,7 +15,7 @@
               <%= t("registration.item.add.create_in_roster_hint") %>
 
               <%= link_to t("registration.item.add.go_to_roster"),
-                          edit_lecture_path(campaign.campaignable, tab: "roster"),
+                          edit_lecture_path(campaign.campaignable, tab: "participants"),
                           class: "fw-semibold" %>
             </p>
           </div>
@@ -129,7 +129,7 @@
               </span>
             </div>
 
-            <%= link_to edit_lecture_path(campaign.campaignable, tab: "roster"),
+            <%= link_to edit_lecture_path(campaign.campaignable, tab: "participants"),
                         class: "btn btn-sm btn-primary" do %>
               <i class="bi bi-arrow-right me-1"></i>
               <%= t("registration.item.add.go_to_roster") %>

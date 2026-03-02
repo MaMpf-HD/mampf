@@ -44,7 +44,6 @@ module Roster
       else
         params[:group_type]&.to_sym || :all
       end
-      @active_tab = params[:tab]&.to_sym || :lanes
 
       setup_participants
     end
@@ -61,11 +60,10 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      render_roster_update(tab: :enrollment)
+      render_roster_update(roster_tab: :enrollment)
     end
 
     def show
-      @active_tab = params[:tab] || "roster"
       setup_participants
     end
 
@@ -88,7 +86,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      render_roster_update(tab: params[:active_tab])
+      render_roster_update
     end
 
     def remove_member
@@ -98,7 +96,7 @@ module Roster
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
       flash.now[:notice] = t("roster.messages.user_removed")
-      render_roster_update(tab: params[:active_tab])
+      render_roster_update
     end
 
     def move_member
@@ -122,7 +120,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
-      render_roster_update(tab: params[:active_tab])
+      render_roster_update
     end
 
     def update_self_materialization
@@ -178,13 +176,13 @@ module Roster
         authorize! :edit, @lecture
       end
 
-      def render_roster_update(tab: nil, rosterable: @rosterable)
+      def render_roster_update(roster_tab: nil, rosterable: @rosterable)
         @lecture = eager_load_lecture(@lecture.id)
         rosterable = reload_rosterable_from_lecture(rosterable)
         setup_participants
 
-        active_tab = tab&.to_sym || params[:active_tab]&.to_sym || :groups
-        target_rosterable = determine_target_rosterable(active_tab, rosterable)
+        roster_tab = infer_roster_tab(roster_tab, rosterable)
+        target_rosterable = determine_target_rosterable(roster_tab, rosterable)
         group_type = normalize_group_type
         frame_id = resolve_frame_id(group_type)
         component_counts = build_component_counts
@@ -196,7 +194,7 @@ module Roster
                 frame_id,
                 RosterOverviewComponent.new(lecture: @lecture,
                                             group_type: group_type,
-                                            active_tab: active_tab,
+                                            roster_tab: roster_tab,
                                             rosterable: target_rosterable,
                                             participants: @participants,
                                             pagy: @pagy,
@@ -225,12 +223,18 @@ module Roster
         collection&.find { |r| r.id == rosterable.id } || rosterable
       end
 
-      def determine_target_rosterable(active_tab, rosterable)
-        return nil if active_tab == :enrollment
-        return nil if active_tab == :participants
+      def determine_target_rosterable(roster_tab, rosterable)
+        return nil if roster_tab == :enrollment
+        return nil if roster_tab == :participants
         return nil if rosterable.is_a?(Lecture)
 
         rosterable
+      end
+
+      def infer_roster_tab(roster_tab, rosterable)
+        return roster_tab&.to_sym if roster_tab
+
+        rosterable.is_a?(Lecture) ? :participants : :groups
       end
 
       def normalize_group_type

@@ -107,8 +107,7 @@
                                     <li>
                                       <%= button_to action[:url],
                                           method: action[:method],
-                                          params: action[:params].merge(active_tab: "participants",
-                                                                      group_type: group_type,
+                                          params: action[:params].merge(group_type: group_type,
                                                                       page: @pagy&.page),
                                           data: { turbo_confirm: (t("roster.warnings.confirm_overbooking") if group.full?) },
                                           class: "dropdown-item d-flex justify-content-between align-items-center" do %>
@@ -138,8 +137,7 @@
 
                         <%= button_to helpers.remove_member_lecture_path(lecture, user),
                                       method: :delete,
-                                      params: { active_tab: "participants",
-                                                group_type: group_type,
+                                      params: { group_type: group_type,
                                                 page: @pagy.page },
                                       class: "btn btn-sm btn-outline-danger",
                                       title: t('roster.tooltips.kick_from_lecture'),

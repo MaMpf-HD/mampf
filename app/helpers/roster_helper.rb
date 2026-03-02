@@ -75,7 +75,7 @@ module RosterHelper
       # Active campaign - show view campaign button
       link_to(lecture_roster_path(component.lecture,
                                   group_type: component.group_type,
-                                  tab: "lanes"),
+                                  tab: "participants"),
               class: "btn btn-sm btn-secondary",
               title: t("roster.view_campaign"),
               data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
@@ -92,7 +92,7 @@ module RosterHelper
       if recent_campaign
         link_to(lecture_roster_path(component.lecture,
                                     group_type: component.group_type,
-                                    tab: "lanes"),
+                                    tab: "participants"),
                 class: "btn btn-sm btn-secondary",
                 title: t("roster.view_campaign"),
                 data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
@@ -105,7 +105,7 @@ module RosterHelper
       if can_create
         link_to(lecture_roster_path(component.lecture,
                                     group_type: component.group_type,
-                                    tab: "lanes"),
+                                    tab: "participants"),
                 class: "btn btn-sm btn-secondary",
                 title: t("roster.create_campaign"),
                 data: { turbo_frame: "_top", bs_toggle: "tooltip" }) do
