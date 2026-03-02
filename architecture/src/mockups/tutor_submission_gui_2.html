@@ -512,7 +512,9 @@
   }
 
   function buildPanelContent(id) {
-    extractDataFromRow(id)
+    if (editedRows.has(parseInt(id))) {
+      extractDataFromRow(id)
+    }
     const submissionOriginal = originalData.find(s => s.id == parseInt(id));
     const submissionEdited = editedData.find(s => s.id == parseInt(id));
     const currentTasks = []
@@ -535,7 +537,7 @@
         <div class="card-body">
           <!-- Header -->
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Grading – Submission #<span id="panelId">${id}</span></h6>
+            <h6 class="mb-0">Submission <span id="panelId" hidden>${id}</span></h6>
             <button class="btn btn-sm btn-outline-secondary" onclick="closeCurrentFromPanel()">
               Close
             </button>
@@ -626,13 +628,18 @@
   function attachPanelListeners(panelRow, mainRow, id) {
     panelRow.addEventListener("input", (e) => {
 
-      if (!e.target.classList.contains("panel-score-input")) return;
+      if ( 
+        !e.target.classList.contains("panel-score-input") && 
+        !e.target.classList.contains("panel-comment-input") 
+      ) return;
 
-      const index = e.target.dataset.index;
-      const tableInputs = mainRow.querySelectorAll(".grade-input");
+      if (e.target.classList.contains("panel-score-input")) {
+        const index = e.target.dataset.index;
+        const tableInputs = mainRow.querySelectorAll(".grade-input");
 
-      if (tableInputs[index]) {
-        tableInputs[index].value = e.target.value;
+        if (tableInputs[index]) {
+          tableInputs[index].value = e.target.value;
+        }
       }
 
       markRowAsEdited(id);
@@ -651,15 +658,22 @@
   }
 
   function saveCurrentFromPanel() {
-    const id = document.getElementById("panelId").textContent;
-    extractDataFromPanel(id);
-    saveRow(id, true);
+    let id = document.getElementById("panelId").textContent;
+    if (!id) return
+    id = parseInt(id)
+    if (editedRows.has(id)) {
+      extractDataFromPanel(id);
+      saveRow(id, true);
+    } else {
+      alert('No changes')
+    }
   }
 
   function closeCurrentFromPanel() {
     const id = getIdFromPanel();
-    extractDataFromPanel(id);
-    // markRowAsEdited(id);
+    if (id && editedRows.has(parseInt(id))) {
+      extractDataFromPanel(id);
+    }
     closePanel();
   }
 
@@ -703,12 +717,24 @@
     const row = document.querySelector(`tr[data-id="${id}"]`);
     const data = [...row.querySelectorAll(".grade-input")].map(i => i.value);
     const tasks = [];
+    const edited = editedData.find(s => s.id === parseInt(id))
     data.forEach((score, index) => {
-      tasks.push({
-        index: index,
-        score: parseFloat(score),
-        commentTouched: false
-      });
+      console.log(edited)
+      if (!edited) {
+        tasks.push({
+          index: index,
+          score: parseFloat(score),
+          commentTouched: false
+        });
+      } else {
+        tasks.push({
+          index: index,
+          score: parseFloat(score),
+          commentTouched: true,
+          comment: edited.tasks[index].comment
+        });
+      }
+      
     });
     // prevent duplicates
     editedData = editedData.filter(s => s.id !== parseInt(id));
