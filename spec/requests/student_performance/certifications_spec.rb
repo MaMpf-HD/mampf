@@ -127,6 +127,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             record_a = StudentPerformance::Record.find_by(
               lecture: lecture, user: user_a
             )
+            # rubocop:disable Rails/SkipsModelValidations
             record_a.update_columns(computed_at: 1.hour.ago)
             cert_passed.update_columns(certified_at: 2.hours.ago)
 
@@ -134,6 +135,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               lecture: lecture, user: user_b
             )
             record_b.update_columns(computed_at: 3.hours.ago)
+            # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(
               lecture, status: "stale"
@@ -153,8 +155,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "shows the rule-change banner when rule was updated" do
             cert_passed.update!(rule: rule)
+            # rubocop:disable Rails/SkipsModelValidations
             cert_passed.update_columns(certified_at: 2.hours.ago)
             rule.update_columns(updated_at: 1.hour.ago)
+            # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(
@@ -166,7 +170,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             FactoryBot.create(:student_performance_record,
                               lecture: lecture, user: user_a,
                               computed_at: 1.hour.ago)
+            # rubocop:disable Rails/SkipsModelValidations
             cert_passed.update_columns(certified_at: 2.hours.ago)
+            # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(
