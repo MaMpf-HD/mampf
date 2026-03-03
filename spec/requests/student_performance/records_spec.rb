@@ -178,9 +178,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
 
         expect do
-          post(recompute_lecture_student_performance_records_path(
-                 lecture, params: { user_id: user.id }
-               ))
+          post(recompute_lecture_student_performance_records_path(lecture),
+               params: { user_id: user.id })
         end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
 
         record = lecture.student_performance_records
@@ -194,9 +193,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         outsider = FactoryBot.create(:confirmed_user)
 
         expect do
-          post(recompute_lecture_student_performance_records_path(
-                 lecture, params: { user_id: outsider.id }
-               ))
+          post(recompute_lecture_student_performance_records_path(lecture),
+               params: { user_id: outsider.id })
         end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
 
         expect(response).to redirect_to(
@@ -249,9 +247,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       before { sign_in editor }
 
       it "returns done: false when no records exist" do
-        get recompute_status_lecture_student_performance_records_path(
-          lecture, params: { since: 1.minute.ago.iso8601 }
-        )
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
         expect(response).to have_http_status(:success)
         body = response.parsed_body
         expect(body["done"]).to be(false)
@@ -262,9 +259,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                           lecture: lecture,
                           computed_at: Time.current)
 
-        get recompute_status_lecture_student_performance_records_path(
-          lecture, params: { since: 1.minute.ago.iso8601 }
-        )
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
         body = response.parsed_body
         expect(body["done"]).to be(true)
       end
@@ -274,9 +270,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                           lecture: lecture,
                           computed_at: 5.minutes.ago)
 
-        get recompute_status_lecture_student_performance_records_path(
-          lecture, params: { since: 1.minute.ago.iso8601 }
-        )
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
         body = response.parsed_body
         expect(body["done"]).to be(false)
       end
@@ -288,9 +283,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       it "returns done: false when since is malformed" do
-        get recompute_status_lecture_student_performance_records_path(
-          lecture, params: { since: "not-a-date" }
-        )
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: "not-a-date" }
         expect(response).to have_http_status(:success)
         body = response.parsed_body
         expect(body["done"]).to be(false)
@@ -304,9 +298,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                           lecture: lecture,
                           computed_at: nil)
 
-        get recompute_status_lecture_student_performance_records_path(
-          lecture, params: { since: 1.minute.ago.iso8601 }
-        )
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
         body = response.parsed_body
         expect(body["done"]).to be(false)
       end
