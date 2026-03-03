@@ -79,8 +79,66 @@
 }
 
 .campaign-section {
-  border: 0.2em solid mampf-blue(0.7);
-  border-radius: 0.6em;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--bs-body-bg), var(--bs-body-bg)) padding-box,
+    linear-gradient(145deg, mampf-blue(0.7), mampf-blue(0.35)) border-box;
+  box-shadow: 0 0.3rem 0.9rem rgba(34, 62, 98, 0.08);
+}
+
+.registration-campaign-card {
+  background-color: var(--bs-body-bg);
+
+  .registration-campaign-card-header {
+    padding: 1rem 1.15rem;
+    background: linear-gradient(160deg, mampf-blue(0.14), mampf-blue(0.05));
+
+    &:hover .registration-campaign-header-actions,
+    &:focus-within .registration-campaign-header-actions {
+      opacity: 1;
+    }
+  }
+
+  .registration-campaign-header-actions {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  .card-body {
+    padding: 1rem 1.15rem;
+  }
+
+  .card-footer {
+    padding: 0.9rem 1.15rem;
+    background-color: var(--bs-body-bg);
+  }
+
+  .registration-campaign-start-btn {
+    border: 1px solid $mampf-blue;
+    border-radius: 0.55rem;
+    background: linear-gradient(160deg, mampf-blue(0.95), mampf-blue(0.85));
+    color: #fff;
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+      border-color: $mampf-blue-focus;
+      background: linear-gradient(160deg, $mampf-blue-focus, $mampf-blue);
+      color: #fff;
+    }
+  }
+}
+
+@media (hover: none) {
+  .registration-campaign-card .registration-campaign-card-header
+  .registration-campaign-header-actions {
+    opacity: 1;
+  }
 }
 
 .card.section-card {

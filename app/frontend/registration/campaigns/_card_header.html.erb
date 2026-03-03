@@ -1,0 +1,83 @@
+<%= turbo_frame_tag campaign_header_frame_id(campaign) do %>
+  <div class="card-header registration-campaign-card-header position-relative">
+    <div class="registration-campaign-header-actions d-flex gap-1">
+      <%= link_to edit_registration_campaign_path(campaign),
+                  class: "btn btn-sm btn-outline-secondary",
+                  data: { turbo_frame: campaign_header_frame_id(campaign) },
+                  title: t("basics.edit"),
+                  aria: { label: t("basics.edit") } do %>
+        <i class="bi bi-pencil"></i>
+      <% end %>
+
+      <% if campaign.can_be_deleted? %>
+        <%= button_to registration_campaign_path(campaign),
+                      method: :delete,
+                      form: { class: "d-inline" },
+                      data: {
+                        confirm: t("registration.campaign.confirm_delete",
+                                   default: "Are you sure?"),
+                        turbo_stream: true
+                      },
+                      class: "btn btn-sm btn-outline-danger",
+                      title: t("buttons.delete"),
+                      aria: { label: t("buttons.delete") } do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="mb-3 pe-5">
+      <h6 class="mb-0 fw-semibold">
+        <%= campaign.description.presence || "-" %>
+      </h6>
+    </div>
+
+    <div class="row g-2 align-items-start text-start">
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.mode") %>
+        </small>
+
+        <div>
+          <%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.deadline") %>
+        </small>
+
+        <div>
+          <%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.registrations") %>
+        </small>
+
+        <div>
+          <% if campaign.draft? %>
+            <span class="text-muted">&mdash;</span>
+          <% else %>
+            <%= campaign.total_registrations_count %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("basics.status") %>
+        </small>
+
+        <div>
+          <span class="badge bg-<%= campaign_badge_color(campaign) %>">
+            <%= t("registration.campaign.status.#{campaign.status}") %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

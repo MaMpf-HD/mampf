@@ -4,51 +4,13 @@
   campaign.completed? %>
 
 <% show_registrations_tab = campaign.open? %>
+<% show_top_actions = campaign.open? || campaign.closed? || campaign.processing? %>
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-  <div class="d-flex flex-wrap gap-2">
-    <%= link_to edit_registration_campaign_path(campaign),
-                class: "btn btn-sm btn-outline-secondary",
-                data: { turbo_frame: campaign_header_frame_id(campaign) } do %>
-      <i class="bi bi-pencil"></i>
-      <%= t("basics.edit") %>
-    <% end %>
-
-    <% if campaign.can_be_deleted? %>
-      <%= button_to registration_campaign_path(campaign),
-                    method: :delete,
-                    data: {
-                      confirm: t("registration.campaign.confirm_delete",
-                                 default: "Are you sure?"),
-                      turbo_stream: true
-                    },
-                    class: "btn btn-sm btn-outline-danger" do %>
-        <i class="bi bi-trash"></i>
-        <%= t("buttons.delete") %>
-      <% end %>
-    <% end %>
-
-    <% if campaign.draft? %>
-      <%= button_to open_registration_campaign_path(campaign),
-                    method: :patch,
-                    form: {
-                      data: {
-                        controller: "campaign-action",
-                        "campaign-action-campaign-id-value": campaign.id,
-                        "campaign-action-confirm-message-value":
-                          t("registration.campaign.confirmations.open"),
-                        "campaign-action-warning-message-value":
-                          t("registration.campaign.warnings.unlimited_items"),
-                        action: "submit->campaign-action#confirm",
-                        turbo_stream: true
-                      }
-                    },
-                    class: "btn btn-sm btn-success" do %>
-        <i class="bi bi-play-fill"></i>
-        <%= t("registration.campaign.actions.open") %>
-      <% end %>
-    <% elsif campaign.open? %>
-      <%= button_to t("registration.campaign.actions.close"),
+<% if show_top_actions %>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div class="d-flex flex-wrap gap-2">
+      <% if campaign.open? %>
+        <%= button_to t("registration.campaign.actions.close"),
                     close_registration_campaign_path(campaign),
                     method: :patch,
                     data: {
@@ -56,8 +18,8 @@
                       turbo_stream: true
                     },
                     class: "btn btn-sm btn-warning" %>
-    <% elsif campaign.closed? %>
-      <%= button_to t("registration.campaign.actions.reopen"),
+      <% elsif campaign.closed? %>
+        <%= button_to t("registration.campaign.actions.reopen"),
                     reopen_registration_campaign_path(campaign),
                     method: :patch,
                     data: {
@@ -65,45 +27,46 @@
                       turbo_stream: true
                     },
                     class: "btn btn-sm btn-success" %>
-      <% if campaign.preference_based? %>
-        <% has_allocation = campaign.last_allocation_calculated_at.present? %>
-        <% label = has_allocation ?
+        <% if campaign.preference_based? %>
+          <% has_allocation = campaign.last_allocation_calculated_at.present? %>
+          <% label = has_allocation ?
           t("registration.campaign.actions.reallocate") :
           t("registration.campaign.actions.allocate") %>
-        <% confirm = has_allocation ?
+          <% confirm = has_allocation ?
           t("registration.campaign.confirmations.reallocate") : nil %>
-        <%= button_to label,
+          <%= button_to label,
                       registration_campaign_allocation_path(campaign),
                       method: :post,
                       class: "btn btn-sm btn-primary",
                       data: { confirm: confirm, turbo_stream: true } %>
-      <% else %>
-        <%= link_to t("registration.campaign.actions.review_and_finalize"),
+        <% else %>
+          <%= link_to t("registration.campaign.actions.review_and_finalize"),
                     registration_campaign_allocation_path(campaign),
                     class: "btn btn-sm btn-primary",
                     data: { turbo_stream: true } %>
-      <% end %>
-    <% elsif campaign.processing? %>
-      <%= link_to t("registration.campaign.actions.review_and_finalize"),
+        <% end %>
+      <% elsif campaign.processing? %>
+        <%= link_to t("registration.campaign.actions.review_and_finalize"),
                   registration_campaign_allocation_path(campaign),
                   class: "btn btn-sm btn-primary",
                   data: { turbo_stream: true } %>
-      <% if campaign.preference_based? %>
-        <% has_allocation = campaign.last_allocation_calculated_at.present? %>
-        <% label = has_allocation ?
+        <% if campaign.preference_based? %>
+          <% has_allocation = campaign.last_allocation_calculated_at.present? %>
+          <% label = has_allocation ?
           t("registration.campaign.actions.reallocate") :
           t("registration.campaign.actions.allocate") %>
-        <% confirm = has_allocation ?
+          <% confirm = has_allocation ?
           t("registration.campaign.confirmations.reallocate") : nil %>
-        <%= button_to label,
+          <%= button_to label,
                       registration_campaign_allocation_path(campaign),
                       method: :post,
                       class: "btn btn-sm btn-primary",
                       data: { confirm: confirm, turbo_stream: true } %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
-</div>
+<% end %>
 
 <% unless show_allocation_dashboard %>
   <ul
