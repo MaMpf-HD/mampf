@@ -1,5 +1,4 @@
 module StudentPerformance
-  # Missing top-level docstring, please formulate one yourself 😁
   class CertificationsController < ApplicationController
     before_action :set_lecture
     before_action :authorize_lecture
@@ -215,7 +214,7 @@ module StudentPerformance
 
         evaluator = StudentPerformance::Evaluator.new(@rule)
         @proposals = evaluator.bulk_evaluate(records)
-        @proposal_by_user = @proposals.to_h { |rec, res| [rec.user_id, res] }
+        @proposal_by_user = @proposals.transform_keys(&:user_id)
       end
 
       def compute_summary_counts
@@ -229,16 +228,14 @@ module StudentPerformance
       end
 
       def compute_proposal_counts
-        certified_user_ids = @certifications.map(&:user_id).to_set
-        uncertified_proposals = @proposal_by_user.reject do |uid, _|
-          certified_user_ids.include?(uid)
-        end
+        certified_user_ids = @certifications.to_set(&:user_id)
+        uncertified_proposals = @proposal_by_user.except(*certified_user_ids)
         @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
         @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
       end
 
       def filter_records(records)
-        return records unless params[:status].present?
+        return records if params[:status].blank?
 
         if params[:status] == "uncertified"
           certified_user_ids = @certifications.map(&:user_id)
@@ -254,11 +251,11 @@ module StudentPerformance
       end
 
       def certification_params
-        params.require(:certification).permit(:user_id, :status)
+        params.expect(certification: [:user_id, :status])
       end
 
       def update_certification_params
-        params.require(:certification).permit(:status, :note)
+        params.expect(certification: [:status, :note])
       end
   end
 end
