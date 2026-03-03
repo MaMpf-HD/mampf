@@ -20,38 +20,33 @@ end %>
   class="card tutorial-roster-side-panel"
   data-tutorial-roster-panel-target="panelCard"
 >
-  <div class="card-body">
-    <div
-      class="
-        mb-3 pb-3 border-bottom d-flex justify-content-between
-        align-items-start gap-2
-      "
-    >
-      <div>
-        <h5 class="mb-1"><%= t("roster.details.participants") %></h5>
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
+    <div>
+      <h5 class="mb-1"><%= t("roster.details.participants") %></h5>
 
-        <% if registerable %>
-          <div class="text-muted small">
-            <span><%= registerable.title %></span>
-            <span class="mx-1">·</span>
-            <span><%= tutors_text %></span>
+      <% if registerable %>
+        <div class="text-muted small">
+          <span><%= registerable.title %></span>
+          <span class="mx-1">·</span>
+          <span><%= tutors_text %></span>
 
-            <span class="badge text-bg-secondary ms-2">
-              <%= "#{students.size} students" %>
-            </span>
-          </div>
-        <% end %>
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-secondary tutorial-roster-close-btn"
-        data-action="click->tutorial-roster-panel#close"
-      >
-        <i class="bi bi-x-lg"></i>
-      </button>
+          <span class="badge text-bg-secondary ms-2">
+            <%= "#{students.size} students" %>
+          </span>
+        </div>
+      <% end %>
     </div>
 
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary tutorial-roster-close-btn"
+      data-action="click->tutorial-roster-panel#close"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="card-body border-0">
     <% if registerable %>
       <div class="mb-3">
         <%= form_with url: add_member_path,
@@ -96,10 +91,15 @@ end %>
                             student.email %>
 
           <div
-            class="tutorial-roster-student card border-0"
+            class="tutorial-roster-student card rounded-3"
             data-student-search="<%= "#{student_name} #{student.email}".downcase %>"
           >
-            <div class="card-body py-2 px-3 d-flex gap-2 pe-5 position-relative">
+            <div
+              class="
+                card-body border-0 py-2 px-3 d-flex gap-2 pe-5
+                position-relative
+              "
+            >
               <div>
                 <div class="fw-semibold"><%= student_name %></div>
 
