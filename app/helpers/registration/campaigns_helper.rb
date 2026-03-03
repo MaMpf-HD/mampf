@@ -110,6 +110,14 @@ module Registration
       t("registration.campaign.confirmations.#{key}")
     end
 
+    def no_campaign_registerables(lecture)
+      tutorials = lecture.tutorials.includes(:tutors)
+                         .where(skip_campaigns: true)
+      cohorts = lecture.cohorts
+
+      (tutorials.to_a + cohorts.to_a).sort_by { |registerable| registerable.title.to_s.downcase }
+    end
+
     def finalize_campaign_button(campaign)
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),

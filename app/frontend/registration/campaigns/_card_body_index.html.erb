@@ -4,9 +4,7 @@
              lecture: lecture %>
 <% else %>
   <% campaigns = lecture.registration_campaigns.order(created_at: :desc) %>
-  <% no_campaign_tutorials = lecture.tutorials.includes(:tutors)
-                                  .where(skip_campaigns: true)
-                                  .order(:title) %>
+  <% no_campaign_groups = no_campaign_registerables(lecture) %>
   <div class="d-flex flex-column gap-4">
     <section>
       <% if campaigns.any? %>
@@ -59,7 +57,7 @@
         "
       >
         <%= render partial: "registration/campaigns/group_tile",
-                   collection: no_campaign_tutorials,
+                   collection: no_campaign_groups,
                    as: :tutorial %>
 
         <div class="col registration-group-tile-col">

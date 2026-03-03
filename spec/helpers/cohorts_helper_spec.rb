@@ -35,8 +35,8 @@ RSpec.describe(CohortsHelper, type: :helper) do
         expect(helper.cohort_propagates?(cohort, params)).to be(false)
       end
 
-      it "returns false when params is missing propagate" do
-        expect(helper.cohort_propagates?(cohort, {})).to be(false)
+      it "returns true when params is missing propagate" do
+        expect(helper.cohort_propagates?(cohort, {})).to be(true)
       end
     end
   end

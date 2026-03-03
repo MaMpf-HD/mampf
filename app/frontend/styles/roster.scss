@@ -182,6 +182,10 @@
   }
 }
 
+.tutorial-gtile--without-enrollment {
+  border-left: 2px dashed var(--bs-border-color);
+}
+
 .tutorial-gtile--selected {
   border-color: var(--bs-primary);
   box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2),

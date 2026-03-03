@@ -132,6 +132,39 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
+  describe "#no_campaign_registerables" do
+    let(:lecture) { create(:lecture) }
+
+    it "includes cohorts regardless of skip_campaigns" do
+      cohort_included = create(:cohort, context: lecture, title: "A cohort")
+      cohort_excluded_before = create(:cohort,
+                                      context: lecture,
+                                      title: "B cohort",
+                                      skip_campaigns: false)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(cohort_included)
+      expect(result).to include(cohort_excluded_before)
+    end
+
+    it "keeps tutorials filtered by skip_campaigns" do
+      tutorial_visible = create(:tutorial,
+                                lecture: lecture,
+                                title: "A tutorial",
+                                skip_campaigns: true)
+      create(:tutorial,
+             lecture: lecture,
+             title: "B tutorial",
+             skip_campaigns: false)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(tutorial_visible)
+      expect(result.count { |entry| entry.is_a?(Tutorial) }).to eq(1)
+    end
+  end
+
   describe "#rank_label" do
     it "returns forced label for :forced" do
       expect(helper.rank_label(:forced)).to eq(I18n.t("registration.allocation.stats.forced"))

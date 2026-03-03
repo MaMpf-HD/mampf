@@ -46,6 +46,7 @@ class CohortsController < ApplicationController
     cohort_attributes = parse_special_purpose_checkbox(cohort_attributes)
 
     @cohort = Cohort.new(cohort_attributes)
+    @cohort.skip_campaigns = true if registration_section_no_campaign?
     @cohort.context = @lecture
     authorize! :create, @cohort
     set_cohort_locale
@@ -159,6 +160,8 @@ class CohortsController < ApplicationController
     end
 
     def parse_special_purpose_checkbox(attributes)
+      return attributes unless params.key?(:has_special_purpose)
+
       propagate_value = if @cohort&.persisted?
         @cohort.propagate_to_lecture?
       else
@@ -195,5 +198,9 @@ class CohortsController < ApplicationController
       else
         params[:group_type].presence&.to_sym || :cohorts
       end
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end
