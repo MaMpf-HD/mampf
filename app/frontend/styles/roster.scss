@@ -79,7 +79,7 @@
 }
 
 .campaign-section {
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: 0.75rem;
   overflow: hidden;
   background:
@@ -373,10 +373,6 @@
 [data-tutorial-roster-panel-target="list"] {
   min-height: 0;
   overflow-y: auto;
-}
-
-.tutorial-roster-layout .lecture-pane {
-  margin-bottom: 1em;
 }
 
 .tutorial-roster-empty {
