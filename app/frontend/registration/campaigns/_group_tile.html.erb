@@ -1,10 +1,18 @@
 <% registerable = local_assigns[:tutorial] || local_assigns[:item]&.registerable %>
 <% is_tutorial = registerable.is_a?(Tutorial) %>
+<% is_cohort = registerable.is_a?(Cohort) %>
+<% is_panel_registerable = is_tutorial || is_cohort %>
 
 <% tutors_text = registerable.respond_to?(:tutor_names) ?
    (registerable.tutor_names.presence || t("basics.tba")) : t("basics.tba") %>
 
-<% students = is_tutorial ? registerable.members.order(:name) : [] %>
+<% roster_key = "#{registerable.class.name}-#{registerable.id}" %>
+
+<% roster_panel_path = if is_tutorial
+  tutorial_roster_path(registerable, source: :panel, format: :turbo_stream)
+elsif is_cohort
+  cohort_roster_path(registerable, source: :panel, format: :turbo_stream)
+end %>
 
 <% if registerable %>
   <div
@@ -15,11 +23,8 @@
       class="card h-100 tutorial-gtile <%= local_assigns[:item] ? "tutorial-gtile--campaign" : "tutorial-gtile--free" %>"
       data-tutorial-roster-panel-target="tile"
       data-action="click->tutorial-roster-panel#openFromTile"
-      data-roster-title="<%= registerable.title %>"
-      data-roster-tutors="<%= tutors_text %>"
-      data-roster-students-count="<%= students.size %>"
-      data-roster-add-member-path="<%= add_member_tutorial_path(registerable) if is_tutorial %>"
-      data-roster-template-id="<%= "tutorial-roster-template-#{registerable.id}" if is_tutorial %>"
+      data-roster-key="<%= roster_key %>"
+      data-roster-panel-path="<%= roster_panel_path if is_panel_registerable %>"
     >
       <div class="tutorial-gtile-top-bar <%= local_assigns[:item] ? "tutorial-gtile-top-bar--campaign" : "tutorial-gtile-top-bar--free" %>"></div>
 
@@ -63,7 +68,7 @@
                       data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
               <i class="bi bi-pencil"></i>
             <% end %>
-          <% elsif registerable.is_a?(Cohort) %>
+          <% elsif is_cohort %>
             <%= link_to edit_cohort_path(registerable, group_type: :cohorts),
                       class: "btn btn-sm btn-primary",
                       title: t("roster.tooltips.edit_settings"),
@@ -83,7 +88,7 @@
                       } do %>
               <i class="bi bi-trash"></i>
             <% end %>
-          <% elsif registerable.is_a?(Tutorial) %>
+          <% elsif is_tutorial %>
             <%= link_to tutorial_path(registerable, group_type: :tutorials),
                       class: "btn btn-sm btn-danger",
                       title: t("roster.tooltips.delete"),
@@ -94,7 +99,7 @@
                       } do %>
               <i class="bi bi-trash"></i>
             <% end %>
-          <% elsif registerable.is_a?(Cohort) %>
+          <% elsif is_cohort %>
             <%= link_to cohort_path(registerable, group_type: :cohorts),
                       class: "btn btn-sm btn-danger",
                       title: t("roster.tooltips.delete"),
@@ -109,43 +114,5 @@
         </div>
       </div>
     </div>
-
-    <% if is_tutorial %>
-      <template id="tutorial-roster-template-<%= registerable.id %>">
-        <% students.each do |student| %>
-          <div
-            class="tutorial-roster-student card border-0"
-            data-student-search="<%= "#{student.tutorial_name} #{student.email}".downcase %>"
-          >
-            <div class="card-body py-2 px-3 d-flex gap-2 pe-5 position-relative">
-              <div>
-                <div class="fw-semibold"><%= student.tutorial_name %></div>
-
-                <div class="text-muted small">
-                  <i class="bi bi-envelope me-1"></i>
-                  <%= student.email %>
-                </div>
-              </div>
-
-              <%= button_to remove_member_tutorial_path(registerable, student),
-                            method: :delete,
-                            class: "btn btn-sm btn-outline-danger " \
-                                   "tutorial-roster-student-remove",
-                            form: {
-                              class: "mb-0 d-flex h-100
-                                      position-absolute top-50 end-0 translate-middle-y
-                                      ",
-                              data: {
-                                turbo_confirm:
-                                  t("roster.warnings.confirm_kick_from_group")
-                              }
-                            } do %>
-                <i class="bi bi-trash"></i>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      </template>
-    <% end %>
   </div>
 <% end %>

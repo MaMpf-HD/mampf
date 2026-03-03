@@ -1,25 +1,17 @@
 import { Controller } from "@hotwired/stimulus";
+import { Turbo } from "@hotwired/turbo-rails";
 
 export default class extends Controller {
   static targets = [
     "tile",
-    "main",
     "panelCard",
-    "emptyState",
-    "contentState",
-    "metaLine",
-    "title",
-    "tutorNames",
-    "countBadge",
-    "addForm",
-    "addEmailInput",
     "filterInput",
     "list",
     "noResults",
   ];
 
   activeTile = null;
-  totalCount = 0;
+  activeRosterKey = null;
   isOpen = false;
 
   connect() {
@@ -32,6 +24,18 @@ export default class extends Controller {
     document.removeEventListener("keydown", this.boundCloseOnEscape);
   }
 
+  tileTargetConnected(tile) {
+    if (!this.isOpen || !this.activeRosterKey) {
+      return;
+    }
+
+    if (tile.dataset.rosterKey !== this.activeRosterKey) {
+      return;
+    }
+
+    this.activateTile(tile);
+  }
+
   openFromTile(event) {
     const clickInsideAction = event.target.closest(
       ".tutorial-gtile-actions, .tutorial-roster-student-remove, a, button, form",
@@ -42,13 +46,14 @@ export default class extends Controller {
     }
 
     const tile = event.currentTarget;
-    if (!tile || !tile.dataset.rosterTemplateId) {
+    const panelPath = tile?.dataset?.rosterPanelPath;
+    if (!tile || !panelPath) {
       return;
     }
 
     this.activateTile(tile);
     this.openPanel();
-    this.renderPanel(tile.dataset);
+    this.requestPanel(panelPath);
   }
 
   close() {
@@ -61,6 +66,7 @@ export default class extends Controller {
     }
 
     this.activeTile = null;
+    this.activeRosterKey = null;
   }
 
   closeOnEscape(event) {
@@ -86,6 +92,10 @@ export default class extends Controller {
   }
 
   filter() {
+    if (!this.hasListTarget || !this.hasNoResultsTarget) {
+      return;
+    }
+
     const query = this.filterInputTarget.value.trim().toLowerCase();
     const rows = this.listTarget.querySelectorAll("[data-student-search]");
     let visibleCount = 0;
@@ -106,29 +116,24 @@ export default class extends Controller {
     }
 
     this.activeTile = tile;
+    this.activeRosterKey = tile.dataset.rosterKey || null;
     this.activeTile.classList.add("tutorial-gtile--selected");
   }
 
-  renderPanel(data) {
-    const template = document.getElementById(data.rosterTemplateId);
-    this.totalCount = Number.parseInt(data.rosterStudentsCount || "0", 10) || 0;
+  async requestPanel(panelPath) {
+    const response = await fetch(panelPath, {
+      headers: {
+        "accept": "text/vnd.turbo-stream.html",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      credentials: "same-origin",
+    });
 
-    this.titleTarget.textContent = data.rosterTitle || "—";
-    this.tutorNamesTarget.textContent = data.rosterTutors || "—";
-    this.countBadgeTarget.textContent = `${this.totalCount} students`;
+    if (!response.ok) {
+      return;
+    }
 
-    this.metaLineTarget.classList.remove("d-none");
-    this.emptyStateTarget.classList.add("d-none");
-    this.contentStateTarget.classList.remove("d-none");
-
-    this.listTarget.innerHTML = template ? template.innerHTML : "";
-    this.noResultsTarget.classList.add("d-none");
-    this.filterInputTarget.value = "";
-
-    const addPath = data.rosterAddMemberPath || "#";
-    this.addFormTarget.action = addPath;
-    this.addEmailInputTarget.value = "";
-
-    this.filter();
+    const streamHtml = await response.text();
+    Turbo.renderStreamMessage(streamHtml);
   }
 }

@@ -71,7 +71,7 @@ window.Stimulus.register("capacity-guard", CapacityGuardController);
 import RosterFilterController from "~/roster/roster_filter.controller.js";
 window.Stimulus.register("roster-filter", RosterFilterController);
 
-import TutorialRosterPanelController from "~/controllers/tutorial_roster_panel.controller.js";
+import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
 window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
 
 import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";

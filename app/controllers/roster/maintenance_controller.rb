@@ -64,7 +64,11 @@ module Roster
     end
 
     def show
-      setup_participants
+      if panel_source?
+        render_panel_update(update_tiles: false)
+      else
+        setup_participants
+      end
     end
 
     def update
@@ -86,7 +90,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      render_roster_update
+      panel_source? ? render_panel_update : render_roster_update
     end
 
     def remove_member
@@ -96,7 +100,7 @@ module Roster
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
       flash.now[:notice] = t("roster.messages.user_removed")
-      render_roster_update
+      panel_source? ? render_panel_update : render_roster_update
     end
 
     def move_member
@@ -174,6 +178,49 @@ module Roster
 
       def authorize_lecture
         authorize! :edit, @lecture
+      end
+
+      def panel_source?
+        params[:source] == "panel"
+      end
+
+      def render_panel_update(update_tiles: true)
+        @rosterable.reload
+        items = Registration::Item.where(registerable: @rosterable)
+
+        streams = []
+
+        if update_tiles
+          streams.concat(items.map do |item|
+            turbo_stream.replace(
+              view_context.dom_id(item),
+              partial: "registration/campaigns/group_tile",
+              locals: { item: item }
+            )
+          end)
+
+          if items.empty?
+            streams << turbo_stream.replace(
+              view_context.dom_id(@rosterable),
+              partial: "registration/campaigns/group_tile",
+              locals: { tutorial: @rosterable }
+            )
+          end
+        end
+
+        if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort)
+          streams << turbo_stream.replace(
+            "tutorial-roster-side-panel",
+            partial: "registration/campaigns/tutorial_roster_side_panel",
+            locals: {
+              registerable: @rosterable,
+              students: @rosterable.members.order(:name)
+            }
+          )
+        end
+
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams.compact
       end
 
       def render_roster_update(roster_tab: nil, rosterable: @rosterable)
