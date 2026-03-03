@@ -97,6 +97,26 @@ module StudentPerformance
                   )
     end
 
+    def update
+      cert = @lecture.student_performance_certifications
+                     .find(params[:id])
+      cert.assign_attributes(
+        status: update_certification_params[:status],
+        note: update_certification_params[:note],
+        source: :manual,
+        certified_by: current_user,
+        certified_at: Time.current
+      )
+
+      if cert.save
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    notice: I18n.t("student_performance.certifications.flash.updated")
+      else
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: cert.errors.full_messages.first
+      end
+    end
+
     helper_method :filter_records
 
     private
@@ -167,6 +187,10 @@ module StudentPerformance
 
       def certification_params
         params.require(:certification).permit(:user_id, :status)
+      end
+
+      def update_certification_params
+        params.require(:certification).permit(:status, :note)
       end
   end
 end

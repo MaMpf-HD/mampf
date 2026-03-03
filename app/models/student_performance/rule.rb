@@ -18,6 +18,10 @@ module StudentPerformance
               allow_nil: true
     validate :percentage_or_absolute_not_both
 
+    def rule_achievement_ids_set
+      Set.new(rule_achievements.pluck(:achievement_id))
+    end
+
     private
 
       def percentage_or_absolute_not_both

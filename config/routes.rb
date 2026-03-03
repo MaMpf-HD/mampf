@@ -336,7 +336,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :rules, only: [:show]
+        resource :rules, only: [:show, :edit, :update]
 
         resource :evaluator, only: [], controller: "evaluator" do
           post :bulk_proposals, on: :collection

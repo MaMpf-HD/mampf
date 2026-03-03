@@ -468,4 +468,108 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
     end
   end
+
+  describe "PATCH /lectures/:lecture_id/performance/certifications/:id" do
+    let(:target_user) { FactoryBot.create(:confirmed_user) }
+
+    let!(:cert) do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: target_user)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "updates the certification as manual override" do
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "failed", note: "Grade appeal accepted"
+              } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        cert.reload
+        expect(cert.status).to eq("failed")
+        expect(cert.source).to eq("manual")
+        expect(cert.note).to eq("Grade appeal accepted")
+        expect(cert.certified_by).to eq(editor)
+        expect(cert.certified_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "shows a success flash message" do
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "passed", note: "Re-evaluation"
+              } }
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.updated")
+        )
+      end
+
+      it "rejects override without a note" do
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "failed", note: ""
+              } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        cert.reload
+        expect(cert.status).to eq("passed")
+        expect(cert.source).not_to eq("manual")
+      end
+
+      it "preserves the existing rule association" do
+        rule = FactoryBot.create(:student_performance_rule, :active,
+                                 :with_percentage,
+                                 lecture: lecture,
+                                 min_percentage: 50)
+        cert.update!(rule: rule)
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "failed", note: "Override reason"
+              } }
+        cert.reload
+        expect(cert.rule).to eq(rule)
+      end
+
+      it "cannot override a certification from another lecture" do
+        other_lecture = FactoryBot.create(:lecture)
+        other_cert = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: other_lecture, user: target_user
+        )
+        patch lecture_student_performance_certification_path(
+          lecture, other_cert
+        ),
+              params: { certification: {
+                status: "failed", note: "Sneaky"
+              } }
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "failed", note: "Trying to hack"
+              } }
+        expect(response).to redirect_to(root_url)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        patch lecture_student_performance_certification_path(lecture, cert),
+              params: { certification: {
+                status: "failed", note: "Anon"
+              } }
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
 end

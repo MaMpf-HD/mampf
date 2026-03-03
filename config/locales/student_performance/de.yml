@@ -72,11 +72,27 @@ de:
         points_absolute: "Punkte erforderlich (absolut)"
         no_point_threshold: "Keine Punkteschwelle konfiguriert."
         required_achievements: "Erforderliche Leistungen"
+        edit_button: "Regeln bearbeiten"
         edit_hint: "Die Bearbeitung von Regeln wird in einem zukünftigen Update verfügbar sein."
         value_types:
           boolean: "Erforderlich"
           numeric: "min. %{threshold}"
           percentage: "min. %{threshold}%"
+      edit:
+        title: "Zulassungsregeln bearbeiten"
+        subtitle: "Kriterien konfigurieren, die Studierende erfüllen müssen."
+        cancel: "Abbrechen"
+        save: "Regeln speichern"
+        threshold_section: "Punkteschwelle"
+        percentage_mode: "Prozent der Gesamtpunkte"
+        percentage_hint: "Studierende müssen diesen Prozentsatz der Gesamtpunkte erreichen."
+        absolute_mode: "Absolute Punkte"
+        absolute_hint: "Studierende müssen diese Punktzahl erreichen."
+        points_unit: "Pkt"
+        achievements_section: "Erforderliche Leistungen"
+        achievements_hint: "Wählen Sie, welche Leistungen Studierende erbringen müssen."
+      flash:
+        updated: "Zulassungsregeln aktualisiert."
     evaluator:
       no_rule: "Keine aktive Zulassungsregel konfiguriert. Bitte richten Sie zuerst eine Regel ein."
       back_to_records: "Zurück zur Übersicht"
@@ -160,6 +176,7 @@ de:
         save: "Überschreibung speichern"
       flash:
         created: "Zertifizierung gespeichert."
+        updated: "Zertifizierung aktualisiert."
         bulk_accepted:
           one: "%{count} Zertifizierung akzeptiert."
           other: "%{count} Zertifizierungen akzeptiert."

@@ -11,6 +11,7 @@ module StudentPerformance
     validates :lecture_id, uniqueness: { scope: :user_id }
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
+    validates :note, presence: true, if: :manual?
 
     scope :stale, lambda {
       record_table = Record.arel_table

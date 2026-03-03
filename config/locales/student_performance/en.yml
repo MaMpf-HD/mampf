@@ -72,11 +72,27 @@ en:
         points_absolute: "points required (absolute)"
         no_point_threshold: "No point threshold configured."
         required_achievements: "Required Achievements"
+        edit_button: "Edit Rules"
         edit_hint: "Rule editing will be available in a future update."
         value_types:
           boolean: "Required"
           numeric: "min. %{threshold}"
           percentage: "min. %{threshold}%"
+      edit:
+        title: "Edit Eligibility Rules"
+        subtitle: "Configure the criteria students must meet."
+        cancel: "Cancel"
+        save: "Save Rules"
+        threshold_section: "Point Threshold"
+        percentage_mode: "Percentage of total points"
+        percentage_hint: "Students must reach this percentage of total points."
+        absolute_mode: "Absolute points"
+        absolute_hint: "Students must reach this number of points."
+        points_unit: "pts"
+        achievements_section: "Required Achievements"
+        achievements_hint: "Select which achievements students must complete."
+      flash:
+        updated: "Eligibility rules updated."
     evaluator:
       no_rule: "No active eligibility rule configured. Please set up a rule first."
       back_to_records: "Back to records"
@@ -160,6 +176,7 @@ en:
         save: "Save Override"
       flash:
         created: "Certification saved."
+        updated: "Certification updated."
         bulk_accepted:
           one: "%{count} certification accepted."
           other: "%{count} certifications accepted."
