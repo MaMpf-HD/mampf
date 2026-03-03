@@ -36,15 +36,25 @@ module StudentPerformance
         return
       end
 
-      user = User.find_by(id: certification_params[:user_id])
-      unless user
+      record = @lecture.student_performance_records
+                       .find_by(user_id: certification_params[:user_id])
+      unless record
         redirect_to lecture_student_performance_certifications_path(@lecture),
                     alert: I18n.t("student_performance.errors.no_member")
         return
       end
 
       cert = @lecture.student_performance_certifications
-                     .find_or_initialize_by(user: user)
+                     .find_or_initialize_by(user: record.user)
+
+      if cert.persisted? && cert.manual?
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t(
+                      "student_performance.certifications.flash.manual_exists"
+                    )
+        return
+      end
+
       cert.assign_attributes(
         status: certification_params[:status],
         source: :computed,

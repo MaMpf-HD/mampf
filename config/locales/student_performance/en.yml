@@ -186,6 +186,7 @@ en:
       flash:
         created: "Certification saved."
         updated: "Certification updated."
+        manual_exists: "A manual override exists for this student. Use the override modal to change it."
         bulk_accepted:
           one: "%{count} certification accepted."
           other: "%{count} certifications accepted."

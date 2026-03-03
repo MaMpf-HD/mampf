@@ -423,6 +423,48 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           I18n.t("student_performance.errors.no_member")
         )
       end
+
+      it "rejects a user who has no record in this lecture" do
+        other_user = FactoryBot.create(:confirmed_user)
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: other_user.id, status: "passed"
+             } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.errors.no_member")
+        )
+        expect(StudentPerformance::Certification.find_by(
+                 user: other_user, lecture: lecture
+               )).to be_nil
+      end
+
+      it "rejects overwriting a manual certification" do
+        FactoryBot.create(:student_performance_certification, :manual,
+                          lecture: lecture,
+                          user: target_user,
+                          certified_by: editor)
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: target_user.id, status: "passed"
+             } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t(
+            "student_performance.certifications.flash.manual_exists"
+          )
+        )
+        cert = StudentPerformance::Certification.find_by(
+          user: target_user, lecture: lecture
+        )
+        expect(cert.source).to eq("manual")
+      end
     end
 
     context "as a student" do

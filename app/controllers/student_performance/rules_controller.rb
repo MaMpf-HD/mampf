@@ -109,10 +109,12 @@ module StudentPerformance
       end
 
       def sync_rule_achievements
+        lecture_achievement_ids = Achievement.where(lecture: @lecture)
+                                             .pluck(:id).to_set
         wanted_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))
             .reject(&:blank?).map(&:to_i)
-        )
+        ) & lecture_achievement_ids
         existing = @rule.rule_achievements.index_by(&:achievement_id)
 
         (existing.keys.to_set - wanted_ids).each do |removed_id|

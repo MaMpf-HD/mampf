@@ -330,6 +330,21 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
           rule.reload
           expect(rule.required_achievements).to be_empty
         end
+
+        it "ignores achievement IDs that do not belong to this lecture" do
+          other_lecture = FactoryBot.create(:lecture, :with_organizational_stuff)
+          foreign_ach = FactoryBot.create(:achievement, :boolean,
+                                          lecture: other_lecture,
+                                          title: "Foreign")
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [ach_a.id.to_s, foreign_ach.id.to_s]
+                } }
+          rule = StudentPerformance::Rule.find_by(lecture: lecture)
+          expect(rule.required_achievements).to contain_exactly(ach_a)
+        end
       end
 
       it "renders edit with errors for invalid percentage" do

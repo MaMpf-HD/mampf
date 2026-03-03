@@ -186,6 +186,7 @@ de:
       flash:
         created: "Zertifizierung gespeichert."
         updated: "Zertifizierung aktualisiert."
+        manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie das Überschreiben-Modal, um sie zu ändern."
         bulk_accepted:
           one: "%{count} Zertifizierung akzeptiert."
           other: "%{count} Zertifizierungen akzeptiert."
