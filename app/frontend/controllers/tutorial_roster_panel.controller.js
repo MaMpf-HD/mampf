@@ -97,7 +97,6 @@ export default class extends Controller {
       if (visible) visibleCount += 1;
     });
 
-    this.countBadgeTarget.textContent = `${visibleCount} / ${this.totalCount} students`;
     this.noResultsTarget.classList.toggle("d-none", visibleCount > 0);
   }
 
