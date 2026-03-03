@@ -5,7 +5,7 @@
 <% else %>
   <% campaigns = lecture.registration_campaigns.order(created_at: :desc) %>
   <% no_campaign_groups = no_campaign_registerables(lecture) %>
-  <div class="d-flex flex-column gap-4">
+  <div class="d-flex flex-column gap-2">
     <section>
       <% if campaigns.any? %>
         <div class="d-flex justify-content-end mb-2">
