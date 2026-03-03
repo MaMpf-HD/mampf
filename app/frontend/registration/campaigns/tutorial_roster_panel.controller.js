@@ -77,6 +77,17 @@ export default class extends Controller {
     this.close();
   }
 
+  closeOnLeavingLanes(event) {
+    const fromTarget = event.relatedTarget?.dataset?.bsTarget;
+    const toTarget = event.target?.dataset?.bsTarget;
+
+    if (fromTarget !== "#lanes-pane" || toTarget === "#lanes-pane") {
+      return;
+    }
+
+    this.close();
+  }
+
   hasActiveTile() {
     return this.activeTile && this.activeTile.classList;
   }
