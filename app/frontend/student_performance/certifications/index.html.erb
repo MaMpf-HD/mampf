@@ -31,12 +31,19 @@
             <% end %>
           <% end %>
 
-          <% if @rule && @proposals.present? %>
+          <% if @rule && @uncertified_count > 0 %>
             <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
                         class: "btn btn-success btn-sm" do %>
               <i class="bi bi-check-all me-1"></i>
               <%= t("student_performance.certifications.index.bulk_accept") %>
+
+              <span class="ms-1">
+                (<%= @proposed_passed %>
+                <%= t("student_performance.certifications.index.proposed_passed") %>,
+                <%= @proposed_failed %>
+                <%= t("student_performance.certifications.index.proposed_failed") %>)
+              </span>
             <% end %>
           <% end %>
         </div>
@@ -103,40 +110,6 @@
           </div>
         </div>
       </div>
-
-      <% if @rule && @proposals.present? %>
-        <div class="row mb-4 g-3">
-          <div class="col">
-            <div
-              class="text-center p-3 border rounded"
-              style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px)"
-            >
-              <div class="display-6 fw-bold text-success">
-                <%= @proposed_passed %>
-              </div>
-
-              <div class="text-muted small">
-                <%= t("student_performance.certifications.index.proposed_passed") %>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div
-              class="text-center p-3 border rounded"
-              style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px)"
-            >
-              <div class="display-6 fw-bold text-danger">
-                <%= @proposed_failed %>
-              </div>
-
-              <div class="text-muted small">
-                <%= t("student_performance.certifications.index.proposed_failed") %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
 
       <% if @rule %>
         <div class="alert alert-info d-flex align-items-center mb-4">

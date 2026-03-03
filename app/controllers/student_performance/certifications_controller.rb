@@ -219,8 +219,12 @@ module StudentPerformance
       end
 
       def compute_proposal_counts
-        @proposed_passed = @proposal_by_user.count { |_, r| r.proposed_status == :passed }
-        @proposed_failed = @proposal_by_user.count { |_, r| r.proposed_status == :failed }
+        certified_user_ids = @certifications.map(&:user_id).to_set
+        uncertified_proposals = @proposal_by_user.reject do |uid, _|
+          certified_user_ids.include?(uid)
+        end
+        @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
+        @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
       end
 
       def filter_records(records)

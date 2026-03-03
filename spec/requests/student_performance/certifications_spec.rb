@@ -233,17 +233,49 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        it "shows the proposed eligible count" do
+        it "shows proposal counts in the bulk accept button" do
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include(
+          body = response.body
+          expect(body).to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+          expect(body).to include("1")
+          expect(body).to include(
             I18n.t("student_performance.certifications.index.proposed_passed")
           )
+          expect(body).to include(
+            I18n.t("student_performance.certifications.index.proposed_failed")
+          )
+        end
+      end
+
+      context "when all students are already certified" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
         end
 
-        it "shows the proposed not eligible count" do
+        let(:certified_user) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: certified_user,
+                            percentage_materialized: 60,
+                            points_total_materialized: 60,
+                            points_max_materialized: 100)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture,
+                            user: certified_user,
+                            certified_by: editor)
+        end
+
+        it "does not show the bulk accept button" do
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include(
-            I18n.t("student_performance.certifications.index.proposed_failed")
+          expect(response.body).not_to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
           )
         end
       end
@@ -260,16 +292,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).not_to include(
             I18n.t("student_performance.certifications.index.bulk_accept")
-          )
-        end
-
-        it "does not show proposal cards" do
-          get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).not_to include(
-            I18n.t("student_performance.certifications.index.proposed_passed")
-          )
-          expect(response.body).not_to include(
-            I18n.t("student_performance.certifications.index.proposed_failed")
           )
         end
       end
