@@ -1,47 +1,40 @@
 <div id="registration_items_container">
   <% can_add_groups = campaign.draft? && campaign.campaignable.is_a?(Lecture) %>
 
-  <div class="mb-4">
-    <% if campaign.completed? %>
-      <div class="alert alert-light border">
-        <div class="d-flex align-items-center">
-          <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
+  <% if campaign.completed? %>
+    <div class="alert alert-light border">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-info-circle fs-4 me-3 text-muted"></i>
 
-          <div>
-            <p class="mb-1 fw-bold">
-              <%= t('registration.campaign.completed_title') %>
-            </p>
+        <div>
+          <p class="mb-1 fw-bold">
+            <%= t('registration.campaign.completed_title') %>
+          </p>
 
-            <p class="mb-2 text-muted small">
-              <%= t('registration.campaign.completed_description') %>
-            </p>
+          <p class="mb-2 text-muted small">
+            <%= t('registration.campaign.completed_description') %>
+          </p>
 
-            <%= link_to t('registration.campaign.go_to_roster'),
+          <%= link_to t('registration.campaign.go_to_roster'),
                         edit_lecture_path(campaign.campaignable, tab: "participants"),
                         class: "btn btn-sm btn-primary" %>
-          </div>
         </div>
       </div>
-    <% else %>
-      <div
-        class="
-          row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
-          registration-group-grid
-        "
-      >
-        <%= render partial: "registration/campaigns/group_tile",
+    </div>
+  <% else %>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 registration-group-grid">
+      <%= render partial: "registration/campaigns/group_tile",
                    collection: campaign.registration_items,
                    as: :item %>
 
-        <% if can_add_groups %>
-          <div class="col registration-group-tile-col">
-            <%= render "registration/campaigns/add_group_tile",
+      <% if can_add_groups %>
+        <div class="col registration-group-tile-col">
+          <%= render "registration/campaigns/add_group_tile",
                        lecture: campaign.campaignable,
                        section: :campaign,
                        campaign: campaign %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
