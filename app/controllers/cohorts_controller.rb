@@ -91,9 +91,7 @@ class CohortsController < ApplicationController
         streams = []
 
         if @cohort.errors.empty?
-          streams.concat(Rosters::StreamService.new(@lecture, view_context)
-          .item_updated(@cohort,
-                        group_type: group_type, flash: flash))
+          streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@cohort.lecture)
           streams << turbo_stream.update("modal-container", "")
         else
@@ -118,9 +116,8 @@ class CohortsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
-          group_type: group_type, flash: flash
-        )
+        streams = []
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@cohort.lecture)
         render turbo_stream: streams
       end
@@ -179,10 +176,9 @@ class CohortsController < ApplicationController
 
     def create_turbo_streams(group_type)
       streams = []
-      service = Rosters::StreamService.new(@lecture, view_context)
 
       if @cohort.persisted?
-        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@lecture)
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),

@@ -106,9 +106,8 @@ class TalksController < ApplicationController
         format.html { redirect_to edit_talk_path(@talk) }
         format.turbo_stream do
           group_type = parse_group_type
-          streams = Rosters::StreamService.new(@talk.lecture, view_context).roster_changed(
-            group_type: group_type, flash: flash
-          )
+          streams = []
+          streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@talk.lecture)
           streams << turbo_stream.update("modal-container", "")
           render turbo_stream: streams
@@ -146,9 +145,8 @@ class TalksController < ApplicationController
       end
       format.turbo_stream do
         group_type = parse_group_type
-        streams = Rosters::StreamService.new(@talk.lecture, view_context).roster_changed(
-          group_type: group_type, flash: flash
-        )
+        streams = []
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(lecture)
         render turbo_stream: streams
       end
@@ -211,11 +209,10 @@ class TalksController < ApplicationController
 
     def create_turbo_streams(group_type, saved)
       streams = []
-      service = Rosters::StreamService.new(@talk.lecture, view_context)
 
       if saved
         flash.now[:notice] = t("controllers.talks.created")
-        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
       else

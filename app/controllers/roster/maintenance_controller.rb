@@ -7,8 +7,7 @@ module Roster
 
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable,
-                  only: [:show, :update, :add_member, :remove_member, :move_member,
-                         :update_self_materialization]
+                  only: [:show, :add_member, :remove_member, :move_member]
     before_action :authorize_lecture
     before_action :use_lecture_locale
 
@@ -67,17 +66,7 @@ module Roster
       if panel_source?
         render_panel_update(update_tiles: false)
       else
-        setup_participants
-      end
-    end
-
-    def update
-      if @rosterable.update(rosterable_params)
-        flash.now[:notice] = t("roster.messages.updated")
-        render_roster_update(rosterable: nil)
-      else
-        redirect_to lecture_roster_path(@lecture),
-                    alert: @rosterable.errors.full_messages.join(", ")
+        redirect_to lecture_roster_path(@lecture)
       end
     end
 
@@ -125,43 +114,6 @@ module Roster
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
       render_roster_update
-    end
-
-    def update_self_materialization
-      mode = params[:self_materialization_mode]
-
-      component = RosterOverviewComponent.new(lecture: @lecture)
-      campaign = component.active_campaign_for(@rosterable)
-
-      group_type = if params[:group_type].is_a?(Array)
-        params[:group_type].map(&:to_sym)
-      else
-        params[:group_type]&.to_sym || @rosterable.roster_group_type
-      end
-
-      ActiveRecord::Base.transaction do
-        if @rosterable.update(self_materialization_mode: mode)
-          flash.now[:notice] = t("roster.messages.updated")
-        else
-          flash.now[:alert] = @rosterable.errors.full_messages.to_sentence
-          @rosterable.reload
-        end
-      end
-
-      render turbo_stream: [
-        turbo_stream.replace(
-          view_context.dom_id(@rosterable, :actions),
-          partial: "roster/components/groups_tab/item_actions",
-          locals: { item: @rosterable, component: component, campaign: campaign,
-                    group_type: group_type }
-        ),
-        turbo_stream.replace(
-          view_context.dom_id(@rosterable, :status),
-          partial: "roster/components/groups_tab/status_cell",
-          locals: { item: @rosterable, campaign: campaign, component: component }
-        ),
-        stream_flash
-      ]
     end
 
     private
@@ -286,7 +238,7 @@ module Roster
           return tab
         end
 
-        rosterable.is_a?(Lecture) ? :enrollment : :groups
+        rosterable.is_a?(Lecture) ? :enrollment : :lanes
       end
 
       def normalize_group_type
@@ -386,10 +338,6 @@ module Roster
         else
           klass.find_by(id: id, lecture: @lecture)
         end
-      end
-
-      def rosterable_params
-        params.expect(rosterable: [:skip_campaigns])
       end
 
       def set_lecture

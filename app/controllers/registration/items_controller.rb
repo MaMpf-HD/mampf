@@ -38,10 +38,6 @@ module Registration
                                    locals: { item: @item }),
               stream_flash
             ]
-            if @campaign.campaignable.is_a?(Lecture)
-              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
-                                                        view_context).roster_changed(flash: nil))
-            end
             render turbo_stream: streams
           end
         end
@@ -93,10 +89,6 @@ module Registration
                                   }),
               stream_flash
             ]
-            if @campaign.campaignable.is_a?(Lecture)
-              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
-                                                        view_context).roster_changed(flash: nil))
-            end
             render turbo_stream: streams
           end
         end
@@ -149,19 +141,6 @@ module Registration
         else
           registration_campaign_path(@campaign, tab: "items")
         end
-      end
-
-      def refresh_roster_groups_list_stream(lecture, group_type = :all)
-        return nil unless lecture
-
-        component = RosterOverviewComponent.new(lecture: lecture,
-                                                group_type: group_type)
-        turbo_stream.update("roster_groups_list",
-                            partial: "roster/components/groups_tab",
-                            locals: {
-                              group_type: group_type,
-                              component: component
-                            })
       end
   end
 end
