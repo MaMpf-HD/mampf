@@ -15,13 +15,7 @@ export default class extends Controller {
   isOpen = false;
 
   connect() {
-    this.boundCloseOnEscape = this.closeOnEscape.bind(this);
-    document.addEventListener("keydown", this.boundCloseOnEscape);
     this.close();
-  }
-
-  disconnect() {
-    document.removeEventListener("keydown", this.boundCloseOnEscape);
   }
 
   tileTargetConnected(tile) {
@@ -51,6 +45,11 @@ export default class extends Controller {
       return;
     }
 
+    if (this.isOpen && tile.dataset.rosterKey === this.activeRosterKey) {
+      this.close();
+      return;
+    }
+
     this.activateTile(tile);
     this.openPanel();
     this.requestPanel(panelPath);
@@ -67,14 +66,6 @@ export default class extends Controller {
 
     this.activeTile = null;
     this.activeRosterKey = null;
-  }
-
-  closeOnEscape(event) {
-    if (event.key !== "Escape" || !this.isOpen) {
-      return;
-    }
-
-    this.close();
   }
 
   closeOnLeavingLanes(event) {
