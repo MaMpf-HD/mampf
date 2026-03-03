@@ -343,6 +343,12 @@ Rails.application.routes.draw do
           post :preview_rule_change, on: :collection
           get :single_proposal, on: :member
         end
+
+        resources :certifications, only: [:index, :create, :update] do
+          collection do
+            post :bulk_accept
+          end
+        end
       end
     end
   end

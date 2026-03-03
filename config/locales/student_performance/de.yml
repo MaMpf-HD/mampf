@@ -118,3 +118,43 @@ de:
         achievements_check: "Leistungs-Prüfung"
         no_achievements_required: "Die aktuelle Regel erfordert keine zusätzlichen Leistungen."
         info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zertifizierungen werden in einem zukünftigen Update erstellt."
+    certifications:
+      back_to_dashboard: "Zurück zum Dashboard"
+      index:
+        title: "Zertifizierungs-Dashboard"
+        subtitle: "Zulassungsvorschläge prüfen und Studierende zertifizieren."
+        total: "Studierende gesamt"
+        passed: "Bestanden"
+        failed: "Nicht bestanden"
+        pending: "Ausstehend"
+        stale: "Veraltet"
+        bulk_accept: "Alle Vorschläge akzeptieren"
+        accept: "Akzeptieren"
+        override: "Überschreiben"
+        empty: "Keine Studierenden-Datensätze gefunden."
+        rule_info: "Aktive Regel"
+        stale_warning:
+          one: "%{count} Zertifizierung ist veraltet und muss überprüft werden."
+          other: "%{count} Zertifizierungen sind veraltet und müssen überprüft werden."
+      status:
+        passed: "Bestanden"
+        failed: "Nicht bestanden"
+        pending: "Ausstehend"
+        manual: "Manuell überschrieben"
+      columns:
+        proposed: "Vorschlag"
+        certification: "Zertifizierung"
+        note: "Anmerkung"
+      filters:
+        all: "Alle"
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
+        pending: "Ausstehend"
+        uncertified: "Nicht zertifiziert"
+      override:
+        title: "Manuell überschreiben"
+        status: "Status"
+        note: "Anmerkung"
+        note_hint: "Erforderlich bei manuellen Überschreibungen."
+        cancel: "Abbrechen"
+        save: "Überschreibung speichern"
