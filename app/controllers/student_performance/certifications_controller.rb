@@ -19,6 +19,9 @@ module StudentPerformance
       load_proposals if @rule
       @proposal_by_user ||= {}
       compute_summary_counts
+      compute_proposal_counts if @rule
+      @stale_user_ids = @lecture.student_performance_certifications
+                                .stale.pluck(:user_id).to_set
     end
 
     def create
@@ -171,6 +174,11 @@ module StudentPerformance
                                .stale.count
       end
 
+      def compute_proposal_counts
+        @proposed_passed = @proposal_by_user.count { |_, r| r.proposed_status == :passed }
+        @proposed_failed = @proposal_by_user.count { |_, r| r.proposed_status == :failed }
+      end
+
       def filter_records(records)
         return records unless params[:status].present?
 
@@ -178,6 +186,8 @@ module StudentPerformance
           certified_user_ids = @certifications.map(&:user_id)
           return records.where.not(user_id: certified_user_ids)
         end
+
+        return records.where(user_id: @stale_user_ids.to_a) if params[:status] == "stale"
 
         certified_user_ids = @certifications
                              .select { |c| c.status.to_sym == params[:status].to_sym }

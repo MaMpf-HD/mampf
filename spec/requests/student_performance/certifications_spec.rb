@@ -131,6 +131,25 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).not_to include(user_b.tutorial_name)
             expect(response.body).not_to include(user_c.tutorial_name)
           end
+
+          it "filters by stale status" do
+            record_a = StudentPerformance::Record.find_by(
+              lecture: lecture, user: user_a
+            )
+            record_a.update_columns(computed_at: 1.hour.ago)
+            cert_passed.update_columns(certified_at: 2.hours.ago)
+
+            record_b = StudentPerformance::Record.find_by(
+              lecture: lecture, user: user_b
+            )
+            record_b.update_columns(computed_at: 3.hours.ago)
+
+            get lecture_student_performance_certifications_path(
+              lecture, status: "stale"
+            )
+            expect(response.body).to include(user_a.tutorial_name)
+            expect(response.body).not_to include(user_b.tutorial_name)
+          end
         end
       end
 
@@ -507,7 +526,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
-      it "rejects override without a note" do
+      it "allows override without a note" do
         patch lecture_student_performance_certification_path(lecture, cert),
               params: { certification: {
                 status: "failed", note: ""
@@ -516,8 +535,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           lecture_student_performance_certifications_path(lecture)
         )
         cert.reload
-        expect(cert.status).to eq("passed")
-        expect(cert.source).not_to eq("manual")
+        expect(cert.status).to eq("failed")
+        expect(cert.source).to eq("manual")
       end
 
       it "preserves the existing rule association" do

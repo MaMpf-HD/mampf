@@ -104,6 +104,40 @@
         </div>
       </div>
 
+      <% if @rule && @proposals.present? %>
+        <div class="row mb-4 g-3">
+          <div class="col">
+            <div
+              class="text-center p-3 border rounded"
+              style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px)"
+            >
+              <div class="display-6 fw-bold text-success">
+                <%= @proposed_passed %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.certifications.index.proposed_passed") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div
+              class="text-center p-3 border rounded"
+              style="background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #fff 10px, #fff 20px)"
+            >
+              <div class="display-6 fw-bold text-danger">
+                <%= @proposed_failed %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.certifications.index.proposed_failed") %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <% if @rule %>
         <div class="alert alert-info d-flex align-items-center mb-4">
           <i class="bi bi-info-circle me-2"></i>
@@ -139,7 +173,7 @@
       <% end %>
 
       <div class="btn-group mb-3" role="group">
-        <% %i[all passed failed pending uncertified].each do |filter| %>
+        <% %i[all passed failed pending stale uncertified].each do |filter| %>
           <% active = (params[:status].presence || "all") == filter.to_s %>
 
           <a
@@ -255,6 +289,12 @@
                           title="<%= t('student_performance.certifications.status.manual') %>"
                         ></i>
                       <% end %>
+                      <% if @stale_user_ids.include?(record.user_id) %>
+                        <i
+                          class="bi bi-exclamation-triangle text-warning ms-1"
+                          title="<%= t('student_performance.certifications.status.stale') %>"
+                        ></i>
+                      <% end %>
                     <% else %>
                       <span class="text-muted">&mdash;</span>
                     <% end %>
@@ -354,7 +394,6 @@
                   name="certification[note]"
                   class="form-control"
                   rows="3"
-                  required
                 ><%= cert.note %></textarea>
 
                 <div class="form-text">

@@ -145,6 +145,8 @@ en:
         pending: "Pending"
         stale: "Stale"
         bulk_accept: "Accept All Proposals"
+        proposed_passed: "Proposed Eligible"
+        proposed_failed: "Proposed Not Eligible"
         accept: "Accept"
         override: "Override"
         empty: "No student records found."
@@ -157,6 +159,7 @@ en:
         failed: "Not Eligible"
         pending: "Pending"
         manual: "Manual override"
+        stale: "Stale — re-evaluation needed"
       columns:
         proposed: "Proposed"
         certification: "Certification"
@@ -166,12 +169,13 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         pending: "Pending"
+        stale: "Stale"
         uncertified: "Uncertified"
       override:
         title: "Manual Override"
         status: "Status"
         note: "Note"
-        note_hint: "Required for manual overrides."
+        note_hint: "Recommended for manual overrides."
         cancel: "Cancel"
         save: "Save Override"
       flash:

@@ -182,5 +182,52 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
 
       expect(described_class.stale).not_to include(cert)
     end
+
+    context "rule-change staleness" do
+      let!(:rule) do
+        FactoryBot.create(:student_performance_rule, :active,
+                          :with_percentage, lecture: lecture)
+      end
+
+      it "includes certs where rule was updated after certification" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 2.hours.ago,
+                                 rule: rule)
+        rule.update!(min_percentage: 70)
+
+        expect(described_class.stale).to include(cert)
+      end
+
+      it "excludes certs where rule was not updated after certification" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 1.minute.from_now,
+                                 rule: rule)
+
+        expect(described_class.stale).not_to include(cert)
+      end
+
+      it "excludes certs without a rule from rule-change staleness" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 2.hours.ago,
+                                 rule: nil)
+
+        expect(described_class.stale).not_to include(cert)
+      end
+    end
   end
 end
