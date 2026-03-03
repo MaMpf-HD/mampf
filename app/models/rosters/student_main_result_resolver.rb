@@ -6,10 +6,14 @@ module Rosters
     end
 
     def succeed_items
-      registerable_type = @campaign.registration_items.first&.registerable_type
-      resolver = "Rosters::StudentMainResultResolver::#{registerable_type}"
-                 .constantize.new(@campaign, @user)
-      resolver.succeed_items
+      registerable_types = @campaign.registration_items.map(&:registerable_type).uniq
+      succeed_items = []
+      registerable_types.each do |registerable_type|
+        resolver = "Rosters::StudentMainResultResolver::#{registerable_type}"
+                   .constantize.new(@campaign, @user)
+        succeed_items.concat(resolver.succeed_items)
+      end
+      succeed_items
     end
 
     class BaseResolver
