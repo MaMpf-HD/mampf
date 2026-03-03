@@ -113,7 +113,7 @@ module StudentPerformance
                                              .pluck(:id).to_set
         wanted_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))
-            .reject(&:blank?).map(&:to_i)
+            .compact_blank.map(&:to_i)
         ) & lecture_achievement_ids
         existing = @rule.rule_achievements.index_by(&:achievement_id)
 

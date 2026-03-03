@@ -202,12 +202,7 @@
         <% end %>
       </div>
 
-      <% records = @lecture.student_performance_records
-                           .includes(:user)
-                           .order(:created_at)
-         filtered_records = filter_records(records) %>
-
-      <% if filtered_records.empty? %>
+      <% if @filtered_records.empty? %>
         <p class="text-center text-muted py-4">
           <%= t("student_performance.certifications.index.empty") %>
         </p>
@@ -245,7 +240,7 @@
             </thead>
 
             <tbody>
-              <% filtered_records.each do |record| %>
+              <% @filtered_records.each do |record| %>
                 <% cert = @cert_by_user[record.user_id] %>
                 <% proposal = @proposal_by_user&.dig(record.user_id) %>
 
@@ -355,7 +350,7 @@
     </div>
   </div>
 
-  <% filtered_records.each do |record| %>
+  <% @filtered_records.each do |record| %>
     <% cert = @cert_by_user[record.user_id] %>
     <% next unless cert %>
 

@@ -26,6 +26,7 @@ module StudentPerformance
                                        .stale_from_rule.count
       @stale_from_data_count = @lecture.student_performance_certifications
                                        .stale_from_data.count
+      load_filtered_records
     end
 
     def create
@@ -172,8 +173,6 @@ module StudentPerformance
       end
     end
 
-    helper_method :filter_records
-
     private
 
       def set_lecture
@@ -232,6 +231,13 @@ module StudentPerformance
         uncertified_proposals = @proposal_by_user.except(*certified_user_ids)
         @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
         @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
+      end
+
+      def load_filtered_records
+        records = @lecture.student_performance_records
+                          .includes(:user)
+                          .order(:created_at)
+        @filtered_records = filter_records(records)
       end
 
       def filter_records(records)
