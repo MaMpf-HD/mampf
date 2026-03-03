@@ -62,13 +62,13 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           body = response.body
           expect(body).to include(
-            I18n.t("student_performance.certifications.status.passed")
+            I18n.t("student_performance.certifications.index.passed")
           )
           expect(body).to include(
-            I18n.t("student_performance.certifications.status.failed")
+            I18n.t("student_performance.certifications.index.failed")
           )
           expect(body).to include(
-            I18n.t("student_performance.certifications.status.pending")
+            I18n.t("student_performance.certifications.index.uncertified")
           )
         end
 
@@ -110,15 +110,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).not_to include(user_c.tutorial_name)
           end
 
-          it "filters by pending status" do
-            get lecture_student_performance_certifications_path(
-              lecture, status: "pending"
-            )
-            expect(response.body).not_to include(user_a.tutorial_name)
-            expect(response.body).not_to include(user_b.tutorial_name)
-            expect(response.body).to include(user_c.tutorial_name)
-          end
-
           it "filters by uncertified status" do
             uncertified_user = FactoryBot.create(:confirmed_user)
             FactoryBot.create(:student_performance_record,
@@ -149,6 +140,38 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             )
             expect(response.body).to include(user_a.tutorial_name)
             expect(response.body).not_to include(user_b.tutorial_name)
+          end
+        end
+
+        context "with stale banners" do
+          let!(:rule) do
+            FactoryBot.create(:student_performance_rule, :active,
+                              :with_percentage,
+                              lecture: lecture,
+                              min_percentage: 50)
+          end
+
+          it "shows the rule-change banner when rule was updated" do
+            cert_passed.update!(rule: rule)
+            cert_passed.update_columns(certified_at: 2.hours.ago)
+            rule.update_columns(updated_at: 1.hour.ago)
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.reevaluate_rules")
+            )
+          end
+
+          it "shows the data-change banner when record was recomputed" do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user_a,
+                              computed_at: 1.hour.ago)
+            cert_passed.update_columns(certified_at: 2.hours.ago)
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.reevaluate_data")
+            )
           end
         end
       end
@@ -209,6 +232,20 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             I18n.t("student_performance.evaluator.preview_rule_change.try_threshold")
           )
         end
+
+        it "shows the proposed eligible count" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.proposed_passed")
+          )
+        end
+
+        it "shows the proposed not eligible count" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.proposed_failed")
+          )
+        end
       end
 
       context "without a rule" do
@@ -223,6 +260,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).not_to include(
             I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+        end
+
+        it "does not show proposal cards" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.certifications.index.proposed_passed")
+          )
+          expect(response.body).not_to include(
+            I18n.t("student_performance.certifications.index.proposed_failed")
           )
         end
       end
@@ -587,6 +634,129 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               params: { certification: {
                 status: "failed", note: "Anon"
               } }
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_reevaluate" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage,
+                        lecture: lecture,
+                        min_percentage: 50)
+    end
+
+    let(:user_a) { FactoryBot.create(:confirmed_user) }
+    let(:user_b) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user_a,
+                        percentage_materialized: 60,
+                        points_total_materialized: 60,
+                        points_max_materialized: 100,
+                        computed_at: 3.hours.ago)
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user_b,
+                        percentage_materialized: 40,
+                        points_total_materialized: 40,
+                        points_max_materialized: 100,
+                        computed_at: 3.hours.ago)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "re-evaluates stale certifications" do
+        cert_a = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: user_a, rule: rule,
+          certified_at: 4.hours.ago
+        )
+        cert_b = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: user_b, rule: rule,
+          certified_at: 4.hours.ago
+        )
+        rule.update!(min_percentage: 50)
+
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        cert_a.reload
+        cert_b.reload
+        expect(cert_a.status).to eq("passed")
+        expect(cert_b.status).to eq("failed")
+        expect(cert_a.certified_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "skips manual overrides" do
+        cert = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_b, rule: rule,
+          certified_at: 4.hours.ago
+        )
+        rule.update!(min_percentage: 50)
+
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+
+        cert.reload
+        expect(cert.status).to eq("passed")
+        expect(cert.source).to eq("manual")
+      end
+
+      it "shows a flash message with count" do
+        FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: user_a, rule: rule,
+          certified_at: 4.hours.ago
+        )
+        rule.update!(min_percentage: 50)
+
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.reevaluated",
+                 count: 1)
+        )
+      end
+
+      it "redirects with alert when no rule exists" do
+        rule.destroy!
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(root_url)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
         expect(response).to redirect_to(new_user_session_path)
       end
     end

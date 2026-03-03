@@ -82,11 +82,11 @@
         <div class="col">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold text-warning">
-              <%= @pending_count %>
+              <%= @uncertified_count %>
             </div>
 
             <div class="text-muted small">
-              <%= t("student_performance.certifications.index.pending") %>
+              <%= t("student_performance.certifications.index.uncertified") %>
             </div>
           </div>
         </div>
@@ -163,17 +163,58 @@
         </div>
       <% end %>
 
-      <% if @stale_count > 0 %>
-        <div class="alert alert-warning d-flex align-items-center mb-4">
-          <i class="bi bi-exclamation-triangle me-2"></i>
+      <% if @stale_from_rule_count > 0 %>
+        <div
+          class="
+            alert alert-warning d-flex align-items-center
+            justify-content-between mb-4
+          "
+        >
+          <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
 
-          <%= t("student_performance.certifications.index.stale_warning",
-                count: @stale_count) %>
+            <%= t("student_performance.certifications.index.stale_rule_warning",
+                  count: @stale_from_rule_count) %>
+          </div>
+
+          <% if @rule %>
+            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                          method: :post,
+                          class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+              <i class="bi bi-arrow-repeat me-1"></i>
+              <%= t("student_performance.certifications.index.reevaluate_rules") %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @stale_from_data_count > 0 %>
+        <div
+          class="
+            alert alert-warning d-flex align-items-center
+            justify-content-between mb-4
+          "
+        >
+          <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <%= t("student_performance.certifications.index.stale_data_warning",
+                  count: @stale_from_data_count) %>
+          </div>
+
+          <% if @rule %>
+            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                          method: :post,
+                          class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+              <i class="bi bi-arrow-repeat me-1"></i>
+              <%= t("student_performance.certifications.index.reevaluate_data") %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
 
       <div class="btn-group mb-3" role="group">
-        <% %i[all passed failed pending stale uncertified].each do |filter| %>
+        <% %i[all passed failed uncertified stale].each do |filter| %>
           <% active = (params[:status].presence || "all") == filter.to_s %>
 
           <a

@@ -4,7 +4,8 @@ module StudentPerformance
     before_action :set_lecture
     before_action :authorize_lecture
     before_action :use_lecture_locale
-    before_action :set_rule, only: [:index, :create, :bulk_accept]
+    before_action :set_rule, only: [:index, :create, :bulk_accept,
+                                    :bulk_reevaluate]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -22,6 +23,10 @@ module StudentPerformance
       compute_proposal_counts if @rule
       @stale_user_ids = @lecture.student_performance_certifications
                                 .stale.pluck(:user_id).to_set
+      @stale_from_rule_count = @lecture.student_performance_certifications
+                                       .stale_from_rule.count
+      @stale_from_data_count = @lecture.student_performance_certifications
+                                       .stale_from_data.count
     end
 
     def create
@@ -100,6 +105,44 @@ module StudentPerformance
                   )
     end
 
+    def bulk_reevaluate
+      unless @rule
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      stale_certs = @lecture.student_performance_certifications
+                            .stale.where.not(source: :manual)
+                            .includes(:user)
+      evaluator = StudentPerformance::Evaluator.new(@rule)
+      updated = 0
+
+      ActiveRecord::Base.transaction do
+        stale_certs.find_each do |cert|
+          record = @lecture.student_performance_records
+                           .find_by(user: cert.user)
+          next unless record
+
+          result = evaluator.evaluate(record)
+          cert.update!(
+            status: result.proposed_status,
+            source: :computed,
+            certified_by: current_user,
+            certified_at: Time.current,
+            rule: @rule
+          )
+          updated += 1
+        end
+      end
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t(
+                    "student_performance.certifications.flash.reevaluated",
+                    count: updated
+                  )
+    end
+
     def update
       cert = @lecture.student_performance_certifications
                      .find(params[:id])
@@ -169,7 +212,8 @@ module StudentPerformance
         @total_students = @lecture.student_performance_records.count
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
-        @pending_count = @certifications.count(&:pending?)
+        certified_count = @certifications.size
+        @uncertified_count = @total_students - certified_count
         @stale_count = @lecture.student_performance_certifications
                                .stale.count
       end

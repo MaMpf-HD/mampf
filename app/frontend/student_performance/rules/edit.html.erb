@@ -31,6 +31,11 @@
         </div>
       <% end %>
 
+      <div class="alert alert-info d-flex align-items-center mb-4">
+        <i class="bi bi-info-circle me-2"></i>
+        <%= t("student_performance.rules.edit.save_hint") %>
+      </div>
+
       <%= form_with(
             url: lecture_student_performance_rules_path(@lecture),
             method: :patch,

@@ -91,6 +91,7 @@ en:
         points_unit: "pts"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
+        save_hint: "Saving will regenerate proposals. Review their impact in the Certifications tab."
       flash:
         updated: "Eligibility rules updated."
     evaluator:
@@ -142,7 +143,7 @@ en:
         total: "Total Students"
         passed: "Eligible"
         failed: "Not Eligible"
-        pending: "Pending"
+        uncertified: "Uncertified"
         stale: "Stale"
         bulk_accept: "Accept All Proposals"
         proposed_passed: "Proposed Eligible"
@@ -151,15 +152,20 @@ en:
         override: "Override"
         empty: "No student records found."
         rule_info: "Active rule"
-        stale_warning:
-          one: "%{count} certification is stale and needs review."
-          other: "%{count} certifications are stale and need review."
+        stale_rule_warning:
+          one: "Eligibility rules changed — %{count} certification is outdated."
+          other: "Eligibility rules changed — %{count} certifications are outdated."
+        stale_data_warning:
+          one: "Student data was recomputed — %{count} certification is outdated."
+          other: "Student data was recomputed — %{count} certifications are outdated."
+        reevaluate_rules: "Reconcile with current rules"
+        reevaluate_data: "Reconcile with current data"
       status:
         passed: "Eligible"
         failed: "Not Eligible"
         pending: "Pending"
         manual: "Manual override"
-        stale: "Stale — re-evaluation needed"
+        stale: "Outdated — reconciliation needed"
       columns:
         proposed: "Proposed"
         certification: "Certification"
@@ -168,7 +174,6 @@ en:
         all: "All"
         passed: "Eligible"
         failed: "Not Eligible"
-        pending: "Pending"
         stale: "Stale"
         uncertified: "Uncertified"
       override:
@@ -184,3 +189,6 @@ en:
         bulk_accepted:
           one: "%{count} certification accepted."
           other: "%{count} certifications accepted."
+        reevaluated:
+          one: "%{count} certification re-evaluated."
+          other: "%{count} certifications re-evaluated."

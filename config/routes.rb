@@ -347,6 +347,7 @@ Rails.application.routes.draw do
         resources :certifications, only: [:index, :create, :update] do
           collection do
             post :bulk_accept
+            post :bulk_reevaluate
           end
         end
       end
