@@ -252,4 +252,220 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
     end
   end
+
+  describe "POST /lectures/:lecture_id/performance/certifications" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage,
+                        lecture: lecture,
+                        min_percentage: 50)
+    end
+
+    let(:target_user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture,
+                        user: target_user,
+                        percentage_materialized: 60,
+                        points_total_materialized: 60,
+                        points_max_materialized: 100)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "creates a certification and redirects" do
+        expect do
+          post(lecture_student_performance_certifications_path(lecture),
+               params: { certification: {
+                 user_id: target_user.id, status: "passed"
+               } })
+        end.to change(StudentPerformance::Certification, :count).by(1)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        cert = StudentPerformance::Certification.last
+        expect(cert.status).to eq("passed")
+        expect(cert.source).to eq("computed")
+        expect(cert.certified_by).to eq(editor)
+        expect(cert.rule).to eq(rule)
+      end
+
+      it "updates an existing pending certification" do
+        existing = FactoryBot.create(
+          :student_performance_certification, :pending,
+          lecture: lecture, user: target_user
+        )
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: target_user.id, status: "passed"
+             } }
+        existing.reload
+        expect(existing.status).to eq("passed")
+        expect(existing.certified_by).to eq(editor)
+      end
+
+      it "redirects with alert when no rule exists" do
+        rule.update!(active: false)
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: target_user.id, status: "passed"
+             } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.evaluator.no_rule")
+        )
+      end
+
+      it "redirects with alert for invalid user" do
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: -1, status: "passed"
+             } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.errors.no_member")
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post lecture_student_performance_certifications_path(lecture),
+             params: { certification: {
+               user_id: target_user.id, status: "passed"
+             } }
+        expect(response).to redirect_to(root_url)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_accept" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage,
+                        lecture: lecture,
+                        min_percentage: 50)
+    end
+
+    let(:passing_user) { FactoryBot.create(:confirmed_user) }
+    let(:failing_user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture,
+                        user: passing_user,
+                        percentage_materialized: 60,
+                        points_total_materialized: 60,
+                        points_max_materialized: 100)
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture,
+                        user: failing_user,
+                        percentage_materialized: 40,
+                        points_total_materialized: 40,
+                        points_max_materialized: 100)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "creates certifications for all students" do
+        expect do
+          post(bulk_accept_lecture_student_performance_certifications_path(
+                 lecture
+               ))
+        end.to change(StudentPerformance::Certification, :count).by(2)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+
+      it "sets correct statuses based on proposals" do
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        passed = StudentPerformance::Certification.find_by(
+          user: passing_user, lecture: lecture
+        )
+        failed = StudentPerformance::Certification.find_by(
+          user: failing_user, lecture: lecture
+        )
+        expect(passed.status).to eq("passed")
+        expect(passed.source).to eq("computed")
+        expect(passed.certified_by).to eq(editor)
+        expect(failed.status).to eq("failed")
+      end
+
+      it "skips manual overrides" do
+        manual_cert = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: passing_user,
+          note: "Special case"
+        )
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        manual_cert.reload
+        expect(manual_cert.source).to eq("manual")
+        expect(manual_cert.note).to eq("Special case")
+      end
+
+      it "updates existing computed certifications" do
+        existing = FactoryBot.create(
+          :student_performance_certification, :pending,
+          lecture: lecture, user: passing_user
+        )
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        existing.reload
+        expect(existing.status).to eq("passed")
+        expect(existing.certified_by).to eq(editor)
+      end
+
+      it "shows the count in the flash message" do
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        follow_redirect!
+        expect(response.body).to include("2")
+      end
+
+      it "redirects with alert when no rule exists" do
+        rule.update!(active: false)
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.evaluator.no_rule")
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(root_url)
+      end
+    end
+  end
 end

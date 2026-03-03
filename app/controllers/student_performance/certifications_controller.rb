@@ -4,7 +4,7 @@ module StudentPerformance
     before_action :set_lecture
     before_action :authorize_lecture
     before_action :use_lecture_locale
-    before_action :set_rule, only: :index
+    before_action :set_rule, only: [:index, :create, :bulk_accept]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -19,6 +19,82 @@ module StudentPerformance
       load_proposals if @rule
       @proposal_by_user ||= {}
       compute_summary_counts
+    end
+
+    def create
+      unless @rule
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      user = User.find_by(id: certification_params[:user_id])
+      unless user
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.errors.no_member")
+        return
+      end
+
+      cert = @lecture.student_performance_certifications
+                     .find_or_initialize_by(user: user)
+      cert.assign_attributes(
+        status: certification_params[:status],
+        source: :computed,
+        certified_by: current_user,
+        certified_at: Time.current,
+        rule: @rule
+      )
+
+      if cert.save
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    notice: I18n.t("student_performance.certifications.flash.created")
+      else
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: cert.errors.full_messages.first
+      end
+    end
+
+    def bulk_accept
+      unless @rule
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      records = @lecture.student_performance_records
+                        .includes(:user)
+      evaluator = StudentPerformance::Evaluator.new(@rule)
+      proposals = evaluator.bulk_evaluate(records)
+
+      existing_certs = @lecture.student_performance_certifications
+                               .index_by(&:user_id)
+      created = 0
+
+      ActiveRecord::Base.transaction do
+        proposals.each do |record, result|
+          cert = existing_certs[record.user_id] ||
+                 @lecture.student_performance_certifications
+                         .build(user_id: record.user_id)
+
+          next if cert.persisted? && cert.manual?
+
+          cert.assign_attributes(
+            status: result.proposed_status,
+            source: :computed,
+            certified_by: current_user,
+            certified_at: Time.current,
+            rule: @rule
+          )
+          cert.save!
+          created += 1
+        end
+      end
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t(
+                    "student_performance.certifications.flash.bulk_accepted",
+                    count: created
+                  )
     end
 
     helper_method :filter_records
@@ -87,6 +163,10 @@ module StudentPerformance
                              .select { |c| c.status.to_sym == params[:status].to_sym }
                              .map(&:user_id)
         records.where(user_id: certified_user_ids)
+      end
+
+      def certification_params
+        params.require(:certification).permit(:user_id, :status)
       end
   end
 end

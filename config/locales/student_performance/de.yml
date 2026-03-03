@@ -124,8 +124,8 @@ de:
         title: "Zertifizierungs-Dashboard"
         subtitle: "Zulassungsvorschläge prüfen und Studierende zertifizieren."
         total: "Studierende gesamt"
-        passed: "Bestanden"
-        failed: "Nicht bestanden"
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
         pending: "Ausstehend"
         stale: "Veraltet"
         bulk_accept: "Alle Vorschläge akzeptieren"
@@ -137,8 +137,8 @@ de:
           one: "%{count} Zertifizierung ist veraltet und muss überprüft werden."
           other: "%{count} Zertifizierungen sind veraltet und müssen überprüft werden."
       status:
-        passed: "Bestanden"
-        failed: "Nicht bestanden"
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
         pending: "Ausstehend"
         manual: "Manuell überschrieben"
       columns:
@@ -158,3 +158,8 @@ de:
         note_hint: "Erforderlich bei manuellen Überschreibungen."
         cancel: "Abbrechen"
         save: "Überschreibung speichern"
+      flash:
+        created: "Zertifizierung gespeichert."
+        bulk_accepted:
+          one: "%{count} Zertifizierung akzeptiert."
+          other: "%{count} Zertifizierungen akzeptiert."

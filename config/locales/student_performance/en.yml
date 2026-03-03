@@ -124,8 +124,8 @@ en:
         title: "Certification Dashboard"
         subtitle: "Review eligibility proposals and certify students."
         total: "Total Students"
-        passed: "Passed"
-        failed: "Failed"
+        passed: "Eligible"
+        failed: "Not Eligible"
         pending: "Pending"
         stale: "Stale"
         bulk_accept: "Accept All Proposals"
@@ -137,8 +137,8 @@ en:
           one: "%{count} certification is stale and needs review."
           other: "%{count} certifications are stale and need review."
       status:
-        passed: "Passed"
-        failed: "Failed"
+        passed: "Eligible"
+        failed: "Not Eligible"
         pending: "Pending"
         manual: "Manual override"
       columns:
@@ -158,3 +158,8 @@ en:
         note_hint: "Required for manual overrides."
         cancel: "Cancel"
         save: "Save Override"
+      flash:
+        created: "Certification saved."
+        bulk_accepted:
+          one: "%{count} certification accepted."
+          other: "%{count} certifications accepted."
