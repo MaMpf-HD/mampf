@@ -29,19 +29,6 @@
 
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link <%= 'active' if @roster_tab == :participants %>"
-          id="participants-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#participants-pane"
-          type="button"
-          role="tab"
-        >
-          <%= t('roster.tabs.participants') %>
-        </button>
-      </li>
-
-      <li class="nav-item" role="presentation">
-        <button
           class="nav-link <%= 'active' if @roster_tab == :enrollment %>"
           id="candidates-tab"
           data-bs-toggle="tab"
@@ -80,24 +67,19 @@
         <% end %>
       </div>
 
-      <!-- Participants Tab -->
-      <div
-        class="tab-pane fade <%= 'show active' if @roster_tab == :participants %>"
-        id="participants-pane"
-        role="tabpanel"
-      >
-        <%= render RosterParticipantsComponent.new(lecture: @lecture, group_type: @group_type,
-                                                 participants: @participants, pagy: @pagy,
-                                                 filter_mode: @filter_mode, counts: @counts) %>
-      </div>
-
       <!-- Candidates Tab -->
       <div
         class="tab-pane fade <%= 'show active' if @roster_tab == :enrollment %>"
         id="candidates-pane"
         role="tabpanel"
       >
-        <%= render "roster/components/enrollment_tab", component: self, lecture: @lecture, group_type: @group_type %>
+        <%= render "roster/components/enrollment_tab", component: self,
+                                                        lecture: @lecture,
+                                                        group_type: @group_type,
+                                                        participants: @participants,
+                                                        pagy: @pagy,
+                                                        filter_mode: @filter_mode,
+                                                        counts: @counts %>
       </div>
     </div>
   </div>

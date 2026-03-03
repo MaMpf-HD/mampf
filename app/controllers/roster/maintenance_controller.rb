@@ -279,9 +279,14 @@ module Roster
       end
 
       def infer_roster_tab(roster_tab, rosterable)
-        return roster_tab&.to_sym if roster_tab
+        if roster_tab
+          tab = roster_tab.to_sym
+          return :enrollment if tab == :participants
 
-        rosterable.is_a?(Lecture) ? :participants : :groups
+          return tab
+        end
+
+        rosterable.is_a?(Lecture) ? :enrollment : :groups
       end
 
       def normalize_group_type

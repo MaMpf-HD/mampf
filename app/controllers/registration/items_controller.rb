@@ -145,7 +145,7 @@ module Registration
         if @campaign.campaignable.is_a?(Lecture)
           lecture_roster_path(@campaign.campaignable,
                               group_type: view_context.roster_group_types(@campaign.campaignable),
-                              tab: "participants")
+                              tab: "enrollment")
         else
           registration_campaign_path(@campaign, tab: "items")
         end

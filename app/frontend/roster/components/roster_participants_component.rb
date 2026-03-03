@@ -162,7 +162,7 @@ class RosterParticipantsComponent < ViewComponent::Base
     helpers.pagy_series_nav(@pagy,
                             path: helpers.lecture_roster_path(@lecture),
                             querify: lambda { |p|
-                              p["tab"] = "participants"
+                              p["tab"] = "enrollment"
                               p["filter"] = @filter_mode
                               p["group_type"] =
                                 if @group_type.is_a?(Array)

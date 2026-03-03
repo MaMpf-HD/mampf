@@ -48,6 +48,10 @@
   </div>
 </div>
 
-<div id="roster_candidates_list">
+<div id="roster_candidates_list" class="mb-4">
   <%= render RosterCandidatesComponent.new(lecture: lecture, group_type: group_type) %>
 </div>
+
+<%= render RosterParticipantsComponent.new(lecture: lecture, group_type: group_type,
+                                           participants: participants, pagy: pagy,
+                                           filter_mode: filter_mode, counts: counts) %>
