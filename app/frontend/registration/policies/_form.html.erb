@@ -92,12 +92,10 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+  <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
 
-    <%= link_to t("buttons.cancel"),
+  <%= link_to t("buttons.cancel"),
                 registration_campaign_path(@campaign, tab: "policies"),
                 class: "btn btn-secondary",
                 data: { turbo_stream: true } %>
-  </div>
 <% end %>

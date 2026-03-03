@@ -145,12 +145,6 @@
         <span class="badge rounded-pill bg-secondary ms-1">
           <%= campaign.registration_policies.count %>
         </span>
-
-        <% if campaign.draft? %>
-          <%= helpdesk(t("registration.policy.helpdesk.policies"), false) %>
-        <% else %>
-          <%= helpdesk(t("registration.policy.helpdesk.policies_frozen"), false) %>
-        <% end %>
       </button>
     </li>
 
