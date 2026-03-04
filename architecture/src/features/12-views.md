@@ -555,7 +555,7 @@ For advanced users, Manual Curve mode allows direct control of each grade bounda
 ```
 
 ```admonish note "Controller Reference"
-Grade scheme functionality is implemented in `GradeScheme::SchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
+Grade scheme functionality is implemented in `Assessment::GradeSchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
 ```
 
 ### Assessments (Lectures - Student)
@@ -643,11 +643,12 @@ Students can only register for exams if they have a **passed** certification.
 
 ### Student Performance (Teacher/Editor)
 
-```admonish tip "Three Distinct Views"
-Teachers interact with three separate interfaces:
-1. **Performance Records** (factual data): View computed points and achievements for all students
-2. **Certification Dashboard** (decision-making): Review proposals, bulk accept, manual override
-3. **Rule Configuration** (criteria setup): Define thresholds for automatic proposals
+```admonish tip "Four Distinct Views"
+Teachers interact with four separate interfaces (added incrementally):
+1. **Performance Records** (factual data): View computed points and achievements for all students (PR 10.3)
+2. **Rules** (criteria): Read-only display of eligibility criteria (PR 10.3); editable inline form (PR 10.4)
+3. **Certification Dashboard** (decision-making): Review proposals, bulk accept, manual override (PR 10.4)
+4. **Rule Change Preview Modal** (impact analysis): Triggered when saving rule changes (PR 10.4)
 ```
 
 #### Screens
@@ -656,7 +657,7 @@ Teachers interact with three separate interfaces:
 |------|--------------|--------|
 | Performance Records Index | Read-only factual data view. Table showing all lecture students (150) with columns: student name, matriculation, tutorial group, total points (computed), percentage, achievements completed (checkmarks), last computed timestamp. Filter by tutorial group. Search by name/matriculation. Recompute button (triggers background job). No override or status columns (this is pure data). Export list button. Pagination. | [Mockup](../mockups/student_performance_records_index.html) |
 | Certification Dashboard | Decision-making interface. Summary cards (total students, passed count, failed count, pending count, stale count). Rule info alert (current thresholds: 50% points + 2 achievements). Filter buttons (All/Passed/Failed/Pending/Stale). Search by name. Table with columns: student name, matriculation, current points/achievements (from Records), proposed status (from Evaluator), certification status (from Certification table), override note (if manual), actions (Accept Proposal/Override). Bulk actions: "Accept All Proposals" button, "Mark Selected as Passed/Failed". Remediation alert if pending certifications block campaign. Export list button. Pagination. Includes manual override modal. | [Mockup](../mockups/student_performance_certifications_index.html) |
-| Rule Configuration (inline on Lecture Settings) | Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/student_performance_rule_configuration.html) |
+| Rule Configuration (Assessments → Rules subtab) | **Read-only (PR 10.3):** Card displaying active rule: point threshold (percentage or absolute), required achievements list with type badges, "No rule configured" placeholder if empty. **Editable (PR 10.4):** Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/student_performance_rule_configuration.html) |
 | Rule Change Preview Modal | Triggered when saving rule changes. Side-by-side rule comparison (current vs new). Summary cards: total students, would pass (+12), would fail (-12), status changes (12). Alert: "12 students would change status". Diff table showing affected students: columns (student name, matriculation, current points/achievements, current proposal, new proposal, change indicator with arrow icon). Actions: "Apply Changes" (updates proposals only, teacher must review), "Cancel". Warning: manual overrides preserved, proposals regenerated, teacher review required. | [Mockup](../mockups/student_performance_rule_change_preview.html) |
 | Certification Remediation Modal (finalization) | Triggered when teacher tries to finalize campaign **that has a finalization-phase student_performance policy** with pending certifications among confirmed registrants. Allows inline resolution of pending certifications during finalization workflow. Warning alert: "6 students have pending certifications. Resolve to continue finalization." Table showing only confirmed registrants with pending status, columns: checkbox, student name, matriculation, points, percentage, achievements, proposed status (from Evaluator), quick-resolve dropdown (pre-filled based on proposal: passed/failed), note field (optional). Bulk resolve buttons: "Mark All as Passed", "Mark All as Failed". Info alert explaining consequences (passed → added to roster, failed → auto-rejected from exam). Confirmation checkbox required to enable submit. Actions: "Cancel Finalization" (blocks finalization, returns to campaign), "Apply & Retry Finalization" (saves certifications, re-runs finalization check with auto-rejection of failed students). | [Mockup](../mockups/student_performance_certification_remediation.html) |
 
@@ -704,7 +705,7 @@ flowchart LR
 | Teacher/Editor | [StudentPerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | index, show, recompute | Read-only factual data; trigger background recomputation |
 | Teacher/Editor | [StudentPerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index, create, update, bulk_accept | Certification dashboard; bulk accept proposals; manual override with notes; remediation workflow for pending |
 | Teacher/Editor | [StudentPerformance::EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller) | bulk_proposals, preview_rule_change, single_proposal | Generate proposals (does NOT create Certifications); preview rule change impact |
-| Teacher/Editor | [StudentPerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | edit, update | Configure thresholds; preview shows diff before save |
+| Teacher/Editor | [StudentPerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | show (PR 10.3), edit, update (PR 10.4) | Read-only rule display (10.3); configure thresholds with preview (10.4) |
 
 ```admonish warning "Evaluator Does Not Create Certifications"
 The Evaluator only generates proposals. Teachers must explicitly accept or override via the Certification Dashboard. This ensures teacher accountability for certification decisions.

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groups &amp; Campaigns – Post-Dissolution State (concept)</title>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --c1: #4f72c4;
+    --c1l: #eef2fb;
+    --c1m: #c5d0f0;
+    --c2: #27a06b;
+    --c2l: #edf9f3;
+    --c2m: #a4dfc4;
+  }
+
+  body { background: #f4f5f8; font-size: .9rem; }
+
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: .75rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .page-header h5 { margin: 0; font-weight: 600; }
+  .page-header .subtitle { color: #6c757d; font-size: .8rem; }
+
+  .canvas-root {
+    display: flex;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+  }
+
+  .zones-area {
+    flex: 1 1 0;
+    overflow-y: auto;
+    padding: 1.25rem 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ── campaign zone (active) ──────────────────────────────────── */
+  .zone {
+    border-radius: 14px;
+    border: 2px solid transparent;
+    transition: border-color .2s, box-shadow .2s, background .3s;
+    position: relative;
+  }
+  .zone.drag-over {
+    box-shadow: 0 0 0 3px rgba(79,114,196,.4);
+    border-color: var(--c1);
+  }
+
+  .zone-active { background: var(--c1l); border-color: var(--c1m); }
+  .zone-active .zone-header  { background: rgba(79,114,196,.12); }
+  .zone-active .zone-dot     { background: var(--c1); }
+  .zone-active .gtile-top-bar { background: var(--c1); }
+
+  .zone-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .75rem 1rem .5rem;
+    border-radius: 12px 12px 0 0;
+  }
+  .zone-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .zone-title { font-weight: 700; font-size: .92rem; flex: 1; }
+  .zone-meta  { font-size: .75rem; color: #6c757d; }
+
+  .zone-body {
+    padding: .75rem 1rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .85rem;
+    min-height: 92px;
+    align-items: flex-start;
+  }
+
+  /* ── dissolved campaign footnote ────────────────────────────── */
+  /*
+   * The campaign is closed — its zone card collapses entirely.
+   * What remains is a compact historical pill anchored to the
+   * ambient section, acting as a footnote rather than a figure.
+   * The data (Campaign record, registration_items) is preserved;
+   * this is purely a display collapse.
+   */
+  .dissolved-footnote {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .3rem .65rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    font-size: .74rem;
+    color: #6c757d;
+    width: fit-content;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .dissolved-footnote .pill-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #adb5bd; flex-shrink: 0;
+  }
+  .dissolved-footnote .pill-name {
+    font-weight: 600; color: #495057;
+  }
+  .dissolved-footnote .pill-sep {
+    color: #ced4da;
+  }
+  .dissolved-footnote .pill-reopen {
+    color: var(--c1); font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    text-decoration: none;
+  }
+  .dissolved-footnote .pill-reopen:hover { text-decoration: underline; }
+
+  /* container that holds the dissolved pill above the ambient area */
+  .dissolved-bar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-bottom: -.25rem;
+  }
+
+  /* ── ambient area ────────────────────────────────────────────── */
+  .ambient-section {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+  .ambient-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #adb5bd;
+    font-weight: 600;
+    padding: .1rem .25rem 0;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .ambient-label i { font-size: .85rem; }
+  .ambient-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .85rem;
+    padding: .35rem .25rem .75rem;
+    min-height: 80px;
+    align-items: flex-start;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: border-color .2s, background .2s;
+  }
+  .ambient-area.drag-over {
+    background: rgba(173,181,189,.08);
+    border-color: #c8cbd5;
+    box-shadow: 0 0 0 3px rgba(173,181,189,.2);
+  }
+
+  /* ── tiles ──────────────────────────────────────────────────── */
+  .gtile {
+    width: 130px; border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.10);
+    cursor: grab;
+    transition: transform .1s, box-shadow .1s;
+    user-select: none; position: relative; overflow: hidden;
+  }
+  .gtile:active  { cursor: grabbing; transform: scale(1.04); }
+  .gtile:hover   { box-shadow: 0 4px 16px rgba(0,0,0,.16); }
+  .gtile.selected {
+    outline: 2.5px solid #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13,110,253,.18);
+  }
+  .gtile.dragging { opacity: .4; transform: rotate(2deg) scale(1.05); }
+
+  /* ambient tiles use neutral top-bar colour */
+  #ambientTiles .gtile .gtile-top-bar { background: #ced4da; }
+
+  .gtile-top-bar { height: 5px; border-radius: 10px 10px 0 0; }
+  .gtile-body    { padding: .5rem .6rem .55rem; }
+  .gtile-type {
+    font-size: .67rem; text-transform: uppercase;
+    letter-spacing: .04em; color: #8a8fa8; font-weight: 600;
+  }
+  .gtile-name { font-weight: 700; font-size: .84rem; line-height: 1.2; }
+  .gtile-slots { font-size: .75rem; color: #495057; margin-top: .3rem; }
+  .fill-bar-bg {
+    height: 4px; border-radius: 2px;
+    background: #e9ecef; margin-top: .35rem;
+  }
+  .fill-bar { height: 4px; border-radius: 2px; }
+  .fill-ok { background: #27a06b; }
+  .gtile-footer {
+    font-size: .7rem; color: #6c757d;
+    padding: 0 .6rem .45rem;
+    display: flex; justify-content: space-between;
+  }
+
+  /* propagation strip */
+  .propagation-strip {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; border-radius: 10px 0 0 10px;
+  }
+  .propagation-strip.off-roster {
+    background: repeating-linear-gradient(
+      to bottom,
+      #adb5bd 0, #adb5bd 4px,
+      transparent 4px, transparent 8px
+    );
+  }
+  .roster-chip {
+    display: inline-flex; align-items: center; gap: .15rem;
+    font-size: .62rem; font-weight: 700;
+    padding: .1rem .28rem; border-radius: 999px; white-space: nowrap;
+  }
+  .roster-chip.off {
+    background: #f0f1f4; color: #6c757d;
+    outline: 1px dashed #adb5bd;
+  }
+
+  /* ghost add tile */
+  .gtile-add {
+    width: 130px; height: 90px;
+    border: 2px dashed; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: .25rem;
+    font-size: .75rem; cursor: pointer;
+    transition: background .15s, color .15s;
+    border-color: #ced4da; color: #adb5bd;
+  }
+  .zone-active .gtile-add { border-color: var(--c1m); }
+  .gtile-add:hover { background: rgba(0,0,0,.03); color: #495057; }
+  .gtile-add i { font-size: 1.4rem; }
+
+  /* ── new campaign prompt ─────────────────────────────────────── */
+  /*
+   * After dissolution the teacher may want to start a second
+   * registration wave for newly added groups. A quiet prompt offers
+   * this without occupying visual space if not needed.
+   */
+  .new-campaign-prompt {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .75rem;
+    background: #fff;
+    border: 1px dashed #c5d0f0;
+    border-radius: 10px;
+    font-size: .78rem;
+    color: #7b8fc8;
+    cursor: pointer;
+    width: fit-content;
+    transition: background .15s;
+  }
+  .new-campaign-prompt:hover { background: var(--c1l); }
+  .new-campaign-prompt i { font-size: .95rem; }
+
+  /* ── detail panel ───────────────────────────────────────────── */
+  .detail-panel {
+    width: 300px; flex-shrink: 0;
+    background: #fff; border-left: 1px solid #dee2e6;
+    display: flex; flex-direction: column;
+    overflow: hidden; transition: width .2s ease;
+  }
+  .detail-panel.collapsed { width: 0; border: none; }
+  .detail-panel-header {
+    padding: .9rem 1rem .7rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex; align-items: flex-start; gap: .5rem;
+  }
+  .detail-panel-header h6 { margin: 0; font-weight: 700; }
+  .detail-panel-body { overflow-y: auto; flex: 1; padding: 1rem; }
+  .dp-label {
+    font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .05em; color: #8a8fa8; font-weight: 700;
+    margin-bottom: .4rem; margin-top: .9rem;
+  }
+  .dp-label:first-child { margin-top: 0; }
+
+  /* annotation */
+  .mockup-annotation {
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 10px; padding: .65rem 1rem;
+    font-size: .78rem; color: #664d00;
+    display: flex; align-items: flex-start; gap: .6rem;
+  }
+  .mockup-annotation i { color: #997000; flex-shrink: 0; margin-top: .1rem; }
+
+  /* legend */
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%; display: inline-block; margin-right: .3rem;
+  }
+
+  /* toast */
+  #liveToast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    z-index: 9999; min-width: 280px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="subtitle">Lecture</div>
+    <h5>Analysis I &mdash; SS 2025/26</h5>
+  </div>
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <span class="text-muted" style="font-size:.78rem">
+      <span class="legend-dot" style="background:var(--c1)"></span>
+      Active campaign
+      &ensp;
+      <span class="legend-dot" style="background:#adb5bd"></span>
+      Dissolved campaign (historical)
+      &ensp;
+      <span style="display:inline-block;width:3px;height:12px;
+                   background:repeating-linear-gradient(to bottom,
+                     #adb5bd 0,#adb5bd 3px,transparent 3px,transparent 6px);
+                   border-radius:2px;
+                   vertical-align:middle;margin-right:.25rem"></span>
+      Off roster
+    </span>
+  </div>
+</div>
+
+<div class="canvas-root">
+  <div class="zones-area" id="zonesArea">
+
+    <!-- annotation -->
+    <div class="mockup-annotation">
+      <i class="bi bi-info-circle-fill"></i>
+      <div>
+        <strong>Post-dissolution state.</strong>
+        &ldquo;Tutorial Registration SS 2025/26&rdquo; has closed.
+        Its zone card has dissolved; all tiles are now ambient.
+        A new &ldquo;Winter Wave&rdquo; campaign is active for the new
+        cohort. The dissolved campaign is preserved as a historical
+        footnote pill with a &ldquo;&#8617; Reopen&rdquo; link.
+      </div>
+    </div>
+
+
+    <!-- ── ACTIVE CAMPAIGN (second wave / new groups) ─────────── -->
+    <div class="zone zone-active" id="zone-c2">
+      <div class="zone-header">
+        <span class="zone-dot"></span>
+        <span class="zone-title">Winter Wave SS 2025/26</span>
+        <span class="badge text-bg-primary ms-1">Open</span>
+        <span class="zone-meta ms-2">
+          · closes <strong>Oct 15</strong>
+          &nbsp;&middot;&nbsp; 17 of 40 seats filled
+        </span>
+        <button class="btn btn-sm btn-outline-secondary ms-auto"
+          style="font-size:.72rem;padding:.15rem .5rem"
+          onclick="showSettings()">
+          <i class="bi bi-gear"></i>
+        </button>
+      </div>
+
+      <div class="zone-body" id="zbody-c2">
+
+        <!-- Mon 08–10 (new group added after dissolution) -->
+        <div class="gtile" id="tile-early"
+             onclick="selectTile('tile-early','Mon 08\u201310','Tutorial','c2')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Mon 08&ndash;10</div>
+            <div class="gtile-slots">8 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:33%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>T. Weber</span>
+            <span class="text-muted">33 %</span>
+          </div>
+        </div>
+
+        <!-- Sat 10–12 -->
+        <div class="gtile" id="tile-sat"
+             onclick="selectTile('tile-sat','Sat 10\u201312','Tutorial','c2')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Sat 10&ndash;12</div>
+            <div class="gtile-slots">9 / 16</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:56%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>Dr. Huber</span>
+            <span class="text-muted">56 %</span>
+          </div>
+        </div>
+
+        <!-- ghost add tile -->
+        <div class="gtile-add" onclick="newGroup()">
+          <i class="bi bi-plus-circle"></i>
+          <span>New group</span>
+        </div>
+
+      </div><!-- zone-body / c2 -->
+    </div><!-- zone-c2 -->
+
+
+    <!-- ── AMBIENT AREA ───────────────────────────────────────── -->
+    <!--
+      All tiles from the dissolved campaign now rest here.
+      The dissolved campaign is referenced only by the footnote pill
+      inside dissolved-bar. No card, no border — ambient IS the page.
+    -->
+    <div class="ambient-section" id="ambientSection">
+
+      <!-- dissolved campaign reference -->
+      <div class="dissolved-bar">
+        <span class="dissolved-footnote" title="Campaign record is preserved,
+              registration_items intact, closed Mar 15 2025">
+          <span class="pill-dot"></span>
+          <span class="pill-name">Tutorial Registration SS 2025/26</span>
+          <span class="pill-sep">&middot;</span>
+          <span>closed Mar 15</span>
+          <span class="pill-sep">&middot;</span>
+          <span>24 / 72 enrolled</span>
+          <span class="pill-sep">&middot;</span>
+          <a class="pill-reopen" onclick="showReopen()" href="#">
+            &#8617; Reopen
+          </a>
+        </span>
+
+        <!-- second dissolved campaign (older) -->
+        <span class="dissolved-footnote" title="Older campaign, WS 2024/25">
+          <span class="pill-dot"></span>
+          <span class="pill-name">Tutorial Registration WS 2024/25</span>
+          <span class="pill-sep">&middot;</span>
+          <span>closed Oct 14</span>
+          <span class="pill-sep">&middot;</span>
+          <span>68 / 72 enrolled</span>
+          <span class="pill-sep">&middot;</span>
+          <a class="pill-reopen" onclick="showReopen()" href="#">
+            &#8617; Reopen
+          </a>
+        </span>
+      </div>
+
+      <div class="ambient-label mt-2">
+        <i class="bi bi-layers"></i>
+        No active campaign &mdash; self-enrollment
+      </div>
+
+      <div class="ambient-area" id="ambientTiles"
+           ondragover="onAmbientDragOver(event)"
+           ondrop="onAmbientDrop(event)"
+           ondragleave="onAmbientDragLeave(event)">
+
+        <!-- tiles that were in the dissolved campaign -->
+
+        <!-- Mon 10–12 -->
+        <div class="gtile" id="tile-mon" draggable="true"
+             ondragstart="onDragStart(event,'tile-mon')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-mon','Mon 10\u201312','Tutorial',
+                       'free')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Mon 10&ndash;12</div>
+            <div class="gtile-slots">24 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>Dr. Huber</span>
+            <span class="text-muted">full</span>
+          </div>
+        </div>
+
+        <!-- Wed 14–16 -->
+        <div class="gtile" id="tile-wed" draggable="true"
+             ondragstart="onDragStart(event,'tile-wed')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-wed','Wed 14\u201316','Tutorial',
+                       'free')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Wed 14&ndash;16</div>
+            <div class="gtile-slots">24 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>M. Müller</span>
+            <span class="text-muted">full</span>
+          </div>
+        </div>
+
+        <!-- Thu 12–14 -->
+        <div class="gtile" id="tile-thu" draggable="true"
+             ondragstart="onDragStart(event,'tile-thu')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-thu','Thu 12\u201314','Tutorial',
+                       'free')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Thu 12&ndash;14</div>
+            <div class="gtile-slots">21 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:87%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>S. Klein</span>
+            <span class="text-muted">87 %</span>
+          </div>
+        </div>
+
+        <!-- Fri 16–18 -->
+        <div class="gtile" id="tile-fri" draggable="true"
+             ondragstart="onDragStart(event,'tile-fri')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-fri','Fri 16\u201318','Tutorial',
+                       'free')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Fri 16&ndash;18</div>
+            <div class="gtile-slots">24 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>L. Bauer</span>
+            <span class="text-muted">full</span>
+          </div>
+        </div>
+
+        <!-- Repeaters cohort -->
+        <div class="gtile" id="tile-repeaters" draggable="true"
+             ondragstart="onDragStart(event,'tile-repeaters')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-repeaters','Repeaters','Cohort',
+                       'free')">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Cohort</div>
+            <div class="gtile-name">Repeaters</div>
+            <div class="gtile-slots">7 enrolled</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>Auto-assign</span>
+            <span class="text-muted">7</span>
+          </div>
+        </div>
+
+        <!-- Planning cohort — off roster -->
+        <div class="gtile" id="tile-planning" draggable="true"
+             ondragstart="onDragStart(event,'tile-planning')"
+             ondragend="onDragEnd()"
+             onclick="selectTile('tile-planning','Planning Cohort',
+                       'Cohort','free')">
+          <div class="propagation-strip off-roster"
+               title="propagate_to_lecture: false"></div>
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body" style="padding-left:.8rem">
+            <div class="gtile-type">Cohort</div>
+            <div class="gtile-name">Planning Cohort</div>
+            <div class="gtile-slots">0 enrolled</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer" style="padding-left:.8rem">
+            <span class="roster-chip off">
+              <i class="bi bi-person-slash"></i>off roster
+            </span>
+            <span class="text-muted">—</span>
+          </div>
+        </div>
+
+      </div><!-- ambient-area / tiles -->
+
+      <!-- quiet prompt to start a new campaign -->
+      <div class="new-campaign-prompt mt-1" onclick="newCampaign()">
+        <i class="bi bi-plus-circle"></i>
+        Start a new registration campaign for these groups&hellip;
+      </div>
+
+    </div><!-- ambient-section -->
+
+  </div><!-- zones-area -->
+
+
+  <!-- detail panel -->
+  <div class="detail-panel collapsed" id="detailPanel">
+    <div class="detail-panel-header">
+      <div class="flex-grow-1">
+        <div style="font-size:.7rem;color:#8a8fa8;text-transform:uppercase;
+                    letter-spacing:.05em;font-weight:700" id="dpType"></div>
+        <h6 id="dpTitle">—</h6>
+        <span class="badge" id="dpZoneBadge"
+              style="font-size:.7rem"></span>
+      </div>
+      <button class="btn btn-sm btn-close ms-2"
+              onclick="closeDetail()"></button>
+    </div>
+    <div class="detail-panel-body">
+      <div class="dp-label">Status</div>
+      <div id="dpStatus" style="font-size:.82rem"></div>
+      <div class="dp-label">Capacity</div>
+      <div id="dpCapacity" style="font-size:.82rem">—</div>
+      <hr class="my-3">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-outline-primary" id="addToCampaignBtn"
+                onclick="addToCampaign()">
+          <i class="bi bi-box-arrow-in-right me-1"></i>
+          Add to Winter Wave campaign
+        </button>
+        <button class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-pencil me-1"></i>Edit group settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- canvas-root -->
+
+
+<!-- toast -->
+<div class="toast align-items-center text-bg-primary border-0"
+     id="liveToast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body" id="toastMsg">Done.</div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"></button>
+  </div>
+</div>
+
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+let draggingId = null;
+let selectedTileId = null;
+let selectedZone = null;
+
+function onDragStart(e, id) {
+  draggingId = id;
+  document.getElementById(id).classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+}
+function onDragEnd() {
+  if (draggingId)
+    document.getElementById(draggingId).classList.remove("dragging");
+  draggingId = null;
+  document.getElementById("ambientTiles").classList.remove("drag-over");
+}
+
+function onAmbientDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  document.getElementById("ambientTiles").classList.add("drag-over");
+}
+function onAmbientDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget))
+    document.getElementById("ambientTiles").classList.remove("drag-over");
+}
+function onAmbientDrop(e) {
+  e.preventDefault();
+  document.getElementById("ambientTiles").classList.remove("drag-over");
+  if (!draggingId) return;
+  const tile = document.getElementById(draggingId);
+  if (!tile) return;
+  document.getElementById("ambientTiles").appendChild(tile);
+  closeDetail();
+}
+
+function selectTile(id, name, type, zone) {
+  document.querySelectorAll(".gtile").forEach(
+    t => t.classList.remove("selected"));
+  document.getElementById(id).classList.add("selected");
+  selectedTileId = id;
+  selectedZone = zone;
+
+  document.getElementById("dpTitle").textContent = name;
+  document.getElementById("dpType").textContent = type;
+
+  const badge    = document.getElementById("dpZoneBadge");
+  const status   = document.getElementById("dpStatus");
+  const addBtn   = document.getElementById("addToCampaignBtn");
+  const capacity = document.getElementById("dpCapacity");
+
+  if (zone === "c2") {
+    badge.textContent   = "Winter Wave SS 2025/26";
+    badge.style.cssText = "background:var(--c1);color:#fff;font-size:.7rem";
+    status.textContent  = "In campaign — registration open.";
+    addBtn.style.display = "none";
+    capacity.textContent = "—";
+  } else {
+    badge.textContent   = "No campaign — self-enrollment";
+    badge.style.cssText =
+      "background:#e9ecef;color:#6c757d;" +
+      "border:1px solid #ced4da;font-size:.7rem";
+    status.textContent  =
+      "Self-enrollment active (campaign dissolved Mar 15).";
+    addBtn.style.display = "";
+    capacity.textContent = "24 seats (from previous campaign)";
+  }
+
+  document.getElementById("detailPanel").classList.remove("collapsed");
+}
+
+function closeDetail() {
+  document.getElementById("detailPanel").classList.add("collapsed");
+  document.querySelectorAll(".gtile").forEach(
+    t => t.classList.remove("selected"));
+  selectedTileId = null;
+  selectedZone   = null;
+}
+
+function addToCampaign() {
+  if (!selectedTileId) return;
+  const tile   = document.getElementById(selectedTileId);
+  const body   = document.getElementById("zbody-c2");
+  const anchor = body.querySelector(".gtile-add");
+  const topBar = tile.querySelector(".gtile-top-bar");
+  topBar.style.background = "var(--c1)";
+  anchor ? body.insertBefore(tile, anchor) : body.appendChild(tile);
+  showToast("Moved to Winter Wave campaign.");
+  closeDetail();
+}
+
+function showReopen() {
+  alert("Reopen campaign — not wired in this mockup.\n\n" +
+        "Would restore the campaign zone card and allow the teacher\n" +
+        "to reopen registration (e.g. to correct an assignment error).");
+}
+
+function newCampaign() {
+  alert("New campaign — not wired in this mockup.\n\n" +
+        "Would create a new ghost campaign zone and move the ambient\n" +
+        "tiles into it as the default.");
+}
+
+function newGroup() {
+  alert("New group form — not wired in this mockup.");
+}
+
+function showSettings() {
+  alert("Campaign settings drawer — not wired in this mockup.");
+}
+
+function showToast(msg) {
+  document.getElementById("toastMsg").textContent = msg;
+  new bootstrap.Toast(
+    document.getElementById("liveToast"), { delay: 3500 }).show();
+}
+</script>
+</body>
+</html>

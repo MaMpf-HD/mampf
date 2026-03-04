@@ -193,7 +193,7 @@ Record and process exam grades using the assessment system.
 | 2 | Seed participations | System creates `Assessment::Participation` for each registered student |
 | 3 | Define tasks | Staff creates `Assessment::Task` records (e.g., Problem 1, Problem 2) |
 | 4 | Enter grades | Tutors record `Assessment::TaskPoint` for each student/task |
-| 5 | Apply grade scheme | Staff applies `GradeScheme::Scheme` to convert points to letter grades |
+| 5 | Apply grade scheme | Staff applies `Assessment::GradeScheme` to convert points to letter grades |
 
 ```admonish note "Multiple Choice Exam Extension"
 For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter for the two-stage grading process.
