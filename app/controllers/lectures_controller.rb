@@ -107,8 +107,7 @@ class LecturesController < ApplicationController
                                        partial: "courses/lectures_list",
                                        locals: { course: @lecture.course })
         streams << turbo_stream.update(Lecture.new,
-                                       partial: "lectures/new/new",
-                                       locals: { lecture: @lecture, from: "course" })
+                                       partial: "spinner/loading")
       else
         streams << turbo_stream.update("lectures",
                                        partial: "administration/index/lectures_list")
