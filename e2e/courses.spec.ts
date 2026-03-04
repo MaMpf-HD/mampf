@@ -43,3 +43,21 @@ test("can set course image", async ({ factory, admin: { page } }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("image.png")).toBeVisible();
 });
+
+test("can detach course image", async ({ factory, admin: { page } }) => {
+  const course = await factory.create("course", ["with_image"]);
+  const term = await factory.create("term");
+  await factory.create("lecture", [], { term_id: term.id, course_id: course.id });
+
+  await page.goto(`/courses/${course.id}/edit`);
+  await page.locator("#image_heading").getByText("Toggle").click();
+  await expect(page.getByText("image.png")).toBeVisible();
+
+  await page.locator("#detach-image").click();
+  await expect(page.locator("#course_detach_image")).toHaveValue("true");
+  await expect(page.locator("#image-meta")).toBeHidden();
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await page.locator("#image_heading").getByText("Toggle").click();
+  await expect(page.locator("#image-preview")).toHaveAttribute("src", "/no_course_information.png");
+});
