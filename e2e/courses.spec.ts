@@ -40,14 +40,8 @@ test.describe("admin", () => {
 
     await page.goto(`/courses/${course.id}/edit`);
     await page.locator("#image_heading").getByText("Toggle").click();
-
-    const fileChooserPromise = page.waitForEvent("filechooser");
-    await page.getByText("File", { exact: true }).click();
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles("e2e/files/image.png");
-
+    await page.locator("#upload-image").setInputFiles("e2e/files/image.png");
     await page.getByRole("button", { name: "Upload" }).click();
-    await page.waitForTimeout(100);
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("image.png")).toBeVisible();
   });
