@@ -15,15 +15,11 @@ class TermsController < ApplicationController
   def new
     @term = Term.new
     authorize! :new, @term
-    render template: "terms/_form",
-           locals: { term: @term },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render_term_form
   end
 
   def edit
-    render template: "terms/_form",
-           locals: { term: @term },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render_term_form
   end
 
   def create
@@ -40,10 +36,7 @@ class TermsController < ApplicationController
         end
       end
     else
-      render template: "terms/_form",
-             locals: { term: @term },
-             layout: turbo_frame_request? ? "turbo_frame" : "application",
-             status: :unprocessable_content
+      render_term_form(status: :unprocessable_content)
     end
   end
 
@@ -56,10 +49,7 @@ class TermsController < ApplicationController
         end
       end
     else
-      render template: "terms/_form",
-             locals: { term: @term },
-             layout: turbo_frame_request? ? "turbo_frame" : "application",
-             status: :unprocessable_content
+      render_term_form(status: :unprocessable_content)
     end
   end
 
@@ -85,6 +75,13 @@ class TermsController < ApplicationController
   end
 
   private
+
+    def render_term_form(status: nil)
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "administration",
+             **(status ? { status: status } : {})
+    end
 
     def set_term
       @id = params[:id]
