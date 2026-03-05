@@ -4,9 +4,13 @@ module Registration
     # Checks if the user has passed a certification for a specific lecture.
     class StudentPerformanceHandler < Handler
       def evaluate(user)
-        unless lecture
+        if lecture_id.blank?
           return fail_result(:configuration_error,
                              "Lecture not configured")
+        end
+        unless lecture
+          return fail_result(:lecture_not_found,
+                             "Lecture not found")
         end
 
         cert = StudentPerformance::Certification.find_by(

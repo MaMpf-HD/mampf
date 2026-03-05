@@ -48,11 +48,18 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(result[:details][:certification_status]).to eq(:missing)
     end
 
-    it "fails with configuration error if lecture is missing" do
+    it "fails with configuration error if lecture_id is blank" do
       policy.config = {}
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:configuration_error)
+    end
+
+    it "fails with lecture_not_found if lecture was deleted" do
+      policy.config["lecture_id"] = 99_999
+      result = handler.evaluate(user)
+      expect(result[:pass]).to be(false)
+      expect(result[:code]).to eq(:lecture_not_found)
     end
   end
 
