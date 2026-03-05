@@ -7,6 +7,7 @@ export default class extends Controller {
     url: String,
     selector: String,
     frameId: String,
+    errorMessage: String,
   };
 
   async open(event) {
@@ -28,6 +29,17 @@ export default class extends Controller {
     if (response.ok) {
       const html = await response.text();
       Turbo.renderStreamMessage(html);
+    }
+    else {
+      console.error("Failed to load modal content:", response.statusText);
+      const body = modalEl.querySelector(".modal-body");
+      if (body) {
+        const alert = document.createElement("div");
+        alert.className = "alert alert-danger";
+        alert.setAttribute("role", "alert");
+        alert.textContent = this.errorMessageValue;
+        body.replaceChildren(alert);
+      }
     }
   }
 }
