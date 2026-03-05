@@ -100,25 +100,25 @@ test.describe("view Watchlists", () => {
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
-    await factory.create("watchlist_entry", [], {
+    const entry1 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium1.id,
       medium_position: 1,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry2 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium2.id,
       medium_position: 2,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry3 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium3.id,
       medium_position: 3,
     });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
-    await watchlistsPage.swapEntries(medium1.id, medium2.id);
-    const newOrder = [medium2.id, medium1.id, medium3.id];
+    await watchlistsPage.swapEntries(entry1.id, entry2.id);
+    const newOrder = [entry2.id, entry1.id, entry3.id];
     await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
     await page.reload();
     await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
@@ -129,27 +129,28 @@ test.describe("view Watchlists", () => {
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
-    await factory.create("watchlist_entry", [], {
+    const entry1 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium1.id,
       medium_position: 1,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry2 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium2.id,
       medium_position: 2,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry3 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium3.id,
       medium_position: 3,
     });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
-    await watchlistsPage.swapEntries(medium1.id, medium2.id);
-    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual([1, 2, 3]);
+    await watchlistsPage.swapEntries(entry1.id, entry2.id);
+    const initialOrder = [entry1.id, entry2.id, entry3.id];
+    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(initialOrder);
     await page.reload();
-    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual([1, 2, 3]);
+    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(initialOrder);
   });
 
   test("can reverse order of watchlist with button", async ({ factory, student: { page, user } }) => {
@@ -157,17 +158,17 @@ test.describe("view Watchlists", () => {
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
-    await factory.create("watchlist_entry", [], {
+    const entry1 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium1.id,
       medium_position: 1,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry2 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium2.id,
       medium_position: 2,
     });
-    await factory.create("watchlist_entry", [], {
+    const entry3 = await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
       medium_id: medium3.id,
       medium_position: 3,
@@ -175,7 +176,7 @@ test.describe("view Watchlists", () => {
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
     await page.getByRole("link", { name: "reverse order" }).click();
-    const newOrder = [medium3.id, medium2.id, medium1.id];
+    const newOrder = [entry3.id, entry2.id, entry1.id];
     await page.waitForResponse(response => response.url().includes("/watchlists") && response.status() === 200);
     await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
   });
