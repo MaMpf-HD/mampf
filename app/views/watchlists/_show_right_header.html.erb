@@ -1,6 +1,6 @@
 <% if @watchlist.present? && @watchlist.owned_by?(current_user) %>
   <li class="nav-item pr-1">
-    <%= form_with url: change_visibility_path, method: :get, remote: true do %>
+    <%= form_with url: change_visibility_path, method: :patch, data: { turbo: true, controller: 'auto-submit-form' } do %>
       <%= hidden_field_tag :id, @watchlist.id %>
 
       <div class="form-check">
@@ -9,7 +9,7 @@
               @watchlist.public == true,
               class: 'form-check-input',
               id: 'watchlistVisibilityCheck',
-              onchange: 'this.form.requestSubmit()' %>
+              data: { action: 'change->auto-submit-form#change' } %>
         <label class="form-check-label" for="watchlistVisibilityCheck">
           <%= t('watchlist.public') %>
         </label>

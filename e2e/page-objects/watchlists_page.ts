@@ -31,7 +31,7 @@ export class WatchlistsPage {
 
   async editWatchlist(newName: string, newDescription: string = "") {
     await this.page.getByRole("button", { name: "Change" }).click();
-    await this.page.waitForResponse(response => response.url().includes("/watchlists"));
+    await this.page.waitForLoadState("networkidle");
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(newName);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(newDescription);
     await this.page.getByRole("button", { name: "Save changes" }).click();

@@ -32,6 +32,9 @@ window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceCon
 import WatchlistSortableController from "~/watchlists/sortable.controller.js";
 window.Stimulus.register("watchlist-sortable", WatchlistSortableController);
 
+import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
+window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
