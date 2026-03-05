@@ -1,6 +1,7 @@
 # Renders an overview of assessments, including tabs for performance and rules.
 class AssessmentsOverviewComponent < ViewComponent::Base
-  TABS = [:assessments, :performance, :rules, :certifications].freeze
+  TABS = [:assessments, :performance, :achievements,
+          :rules, :certifications].freeze
 
   def initialize(lecture:, active_tab: nil)
     super()
@@ -14,7 +15,19 @@ class AssessmentsOverviewComponent < ViewComponent::Base
     active_tab == key
   end
 
+  def assessments_tab_label
+    if lecture.seminar?
+      I18n.t("assessment.tabs.talks")
+    else
+      I18n.t("assessment.tabs.assignments")
+    end
+  end
+
   def performance_enabled?
+    Flipper.enabled?(:student_performance)
+  end
+
+  def achievements_enabled?
     Flipper.enabled?(:student_performance)
   end
 
@@ -29,6 +42,7 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   def visible_tabs
     tabs = [:assessments]
     tabs << :performance if performance_enabled?
+    tabs << :achievements if achievements_enabled?
     tabs << :rules if rules_enabled?
     tabs << :certifications if certifications_enabled?
     tabs

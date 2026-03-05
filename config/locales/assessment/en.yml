@@ -2,10 +2,15 @@ en:
   assessment:
     tabs:
       assessments: "Assessments"
+      assignments: "Assignments"
+      talks: "Talks"
       performance: "Performance"
+      achievements: "Achievements"
       rules: "Rules"
       certifications: "Certifications"
     assessments: 'Assessments'
+    achievements:
+      placeholder: 'Achievements will be displayed here in a later step.'
     assignment: 'Assignment'
     assignments: 'Assignments'
     exam: 'Exam'

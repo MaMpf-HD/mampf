@@ -9,7 +9,7 @@
         type="button"
         role="tab"
       >
-        <%= t("assessment.tabs.assessments") %>
+        <%= assessments_tab_label %>
       </button>
     </li>
 
@@ -24,6 +24,21 @@
           role="tab"
         >
           <%= t("assessment.tabs.performance") %>
+        </button>
+      </li>
+    <% end %>
+
+    <% if achievements_enabled? %>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link <%= 'active' if tab_active?(:achievements) %>"
+          id="assessments-achievements-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#assessments-achievements-pane"
+          type="button"
+          role="tab"
+        >
+          <%= t("assessment.tabs.achievements") %>
         </button>
       </li>
     <% end %>
@@ -83,6 +98,18 @@
             </div>
           </div>
         <% end %>
+      </div>
+    <% end %>
+
+    <% if achievements_enabled? %>
+      <div
+        class="tab-pane fade <%= 'show active' if tab_active?(:achievements) %>"
+        id="assessments-achievements-pane"
+        role="tabpanel"
+      >
+        <div class="text-center text-muted py-4">
+          <%= t("assessment.achievements.placeholder") %>
+        </div>
       </div>
     <% end %>
 

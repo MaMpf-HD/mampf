@@ -2,10 +2,15 @@ de:
   assessment:
     tabs:
       assessments: "Testate"
+      assignments: "Hausaufgaben"
+      talks: "Vorträge"
       performance: "Leistungen"
+      achievements: "Nachweise"
       rules: "Regeln"
       certifications: "Zertifizierungen"
     assessments: 'Testate'
+    achievements:
+      placeholder: 'Nachweise werden in einem späteren Schritt hier angezeigt.'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'
     exam: 'Prüfung'
