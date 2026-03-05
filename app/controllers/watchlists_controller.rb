@@ -129,7 +129,7 @@ class WatchlistsController < ApplicationController
   end
 
   def update_order
-    order_ids = JSON.parse(params[:order])
+    order_ids = params[:order]
     entries = order_ids.map { |id| WatchlistEntry.find_by(id: id) }
     authorize! :update_order, @watchlist, entries
     page = params[:page].to_i

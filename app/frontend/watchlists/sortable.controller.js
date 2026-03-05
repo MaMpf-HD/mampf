@@ -22,19 +22,22 @@ export default class extends Controller {
       this.element.querySelectorAll(".media-grid"),
     ).map(el => el.dataset.id);
 
-    const queryParams = new URLSearchParams({
-      order: JSON.stringify(order),
-      id,
-      reverse: params.get("reverse") || "false",
-      per: params.get("per") || "10",
-      page: params.get("page") || "1",
-    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
 
-    fetch(`/watchlists/rearrange?${queryParams.toString()}`, {
-      method: "GET",
+    fetch("/watchlists/rearrange", {
+      method: "PATCH",
       headers: {
-        Accept: "text/html",
+        "Accept": "text/html",
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
       },
+      body: JSON.stringify({
+        order,
+        id,
+        reverse: params.get("reverse") || "false",
+        per: params.get("per") || "10",
+        page: params.get("page") || "1",
+      }),
     });
   }
 }

@@ -859,9 +859,9 @@ Rails.application.routes.draw do
       to: "watchlists#add",
       as: "add_watchlist"
 
-  get "watchlists/rearrange",
-      to: "watchlists#update_order",
-      as: "rearrange_watchlist"
+  patch "watchlists/rearrange",
+        to: "watchlists#update_order",
+        as: "rearrange_watchlist"
 
   get "watchlists/change_visiblity",
       to: "watchlists#change_visibility",
