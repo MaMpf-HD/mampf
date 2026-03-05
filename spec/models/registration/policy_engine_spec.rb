@@ -112,6 +112,42 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
         expect(result.trace.last[:outcome][:details][:certification_status])
           .to eq(:missing)
       end
+
+      it "evaluates during finalization phase" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          :for_finalization,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture,
+                          user: user,
+                          certified_by: FactoryBot.create(:confirmed_user))
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :finalization)
+
+        expect(result.pass).to be(true)
+      end
+
+      it "skips registration-phase policy during finalization" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :finalization)
+
+        expect(result.pass).to be(true)
+        expect(result.trace).to be_empty
+      end
     end
   end
 end
