@@ -11,6 +11,13 @@ FactoryBot.define do
 
     trait :student_performance do
       kind { :student_performance }
+      after(:build) do |policy|
+        unless policy.config && policy.config["lecture_id"]
+          lecture = create(:lecture, :with_organizational_stuff)
+          policy.config ||= {}
+          policy.config["lecture_id"] = lecture.id
+        end
+      end
     end
 
     trait :prerequisite_campaign do

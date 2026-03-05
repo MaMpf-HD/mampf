@@ -73,5 +73,45 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
       expect(result.trace.size).to eq(1)
       expect(result.trace.first[:outcome][:pass]).to be(false)
     end
+
+    context "with a student_performance policy" do
+      let(:lecture) { FactoryBot.create(:lecture, :with_organizational_stuff) }
+
+      it "passes when user has a passed certification" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture,
+                          user: user,
+                          certified_by: FactoryBot.create(:confirmed_user))
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :registration)
+
+        expect(result.pass).to be(true)
+      end
+
+      it "fails when user has no certification" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :registration)
+
+        expect(result.pass).to be(false)
+        expect(result.trace.last[:outcome][:details][:certification_status])
+          .to eq(:missing)
+      end
+    end
   end
 end
