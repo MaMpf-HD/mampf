@@ -11,13 +11,14 @@ class WatchlistEntriesController < ApplicationController
     @medium = Medium.find_by(id: params[:watchlist_entry][:medium_id])
     @watchlist_entry.medium = @medium
 
+    authorize! :create, @watchlist_entry
+
     unless @watchlist_entry.valid?
       return render turbo_stream: turbo_stream.update("watchlist_form_add",
                                                       partial: "watchlists/add_form"),
                     status: :unprocessable_content
     end
 
-    authorize! :create, @watchlist_entry
     @watchlist_entry.save
 
     flash.now[:notice] = I18n.t("watchlist_entry.add_success")
