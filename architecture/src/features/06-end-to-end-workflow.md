@@ -417,14 +417,14 @@ Record exam scores and assign final grades
 **Grade Scheme Application:**
 
 ```admonish note "Converting Points to Grades"
-Staff analyzes score distribution (histogram, percentiles), then creates and applies a `GradeScheme::Scheme`.
+Staff analyzes score distribution (histogram, percentiles), then creates and applies an `Assessment::GradeScheme`.
 ```
 
 | Step | Process |
 |------|---------|
 | Analyze | View distribution statistics and histogram |
-| Configure | Create `GradeScheme::Scheme` with absolute point bands or percentage cutoffs |
-| Apply | Call `GradeScheme::Applier.apply!(scheme)` |
+| Configure | Create `Assessment::GradeScheme` with absolute point bands or percentage cutoffs |
+| Apply | Call `Assessment::GradeSchemeApplier.apply!(scheme)` |
 | Result | Service computes `grade_value` for each participation based on points |
 | Override | Manual adjustments possible for exceptional cases |
 
