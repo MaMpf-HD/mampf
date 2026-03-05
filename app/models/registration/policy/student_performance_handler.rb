@@ -1,6 +1,7 @@
 module Registration
   class Policy
-    # Missing top-level docstring, please formulate one yourself 😁
+    # Handles the "Student Performance" policy
+    # Checks if the user has passed a certification for a specific lecture.
     class StudentPerformanceHandler < Handler
       def evaluate(user)
         unless lecture
