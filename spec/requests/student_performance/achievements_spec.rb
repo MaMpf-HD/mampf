@@ -119,7 +119,10 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
       it "rejects invalid params" do
         post lecture_student_performance_achievements_path(lecture),
              params: { achievement: { title: "", value_type: "boolean" } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
+        expect(flash[:alert]).to be_present
       end
     end
 
@@ -151,7 +154,10 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
       it "rejects invalid params" do
         patch lecture_student_performance_achievement_path(lecture, achievement),
               params: { achievement: { title: "" } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
+        expect(flash[:alert]).to be_present
       end
     end
 

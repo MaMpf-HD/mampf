@@ -85,8 +85,9 @@ module StudentPerformance
             ), status: :unprocessable_content
           end
           format.html do
-            @achievements = @lecture.achievements.order(:title)
-            render :index, status: :unprocessable_content
+            redirect_to lecture_student_performance_achievements_path(
+              @lecture
+            ), alert: @achievement.errors.full_messages.to_sentence
           end
         end
       end
@@ -130,8 +131,9 @@ module StudentPerformance
             ), status: :unprocessable_content
           end
           format.html do
-            @achievements = @lecture.achievements.order(:title)
-            render :index, status: :unprocessable_content
+            redirect_to lecture_student_performance_achievements_path(
+              @lecture
+            ), alert: @achievement.errors.full_messages.to_sentence
           end
         end
       end
