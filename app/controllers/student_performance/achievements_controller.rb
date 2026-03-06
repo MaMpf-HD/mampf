@@ -27,6 +27,11 @@ module StudentPerformance
             )
           )
         end
+        format.html do
+          redirect_to lecture_student_performance_achievements_path(
+            @lecture
+          )
+        end
       end
     end
 
@@ -39,6 +44,11 @@ module StudentPerformance
             "assessments_container",
             partial: "student_performance/achievements/form",
             locals: { achievement: @achievement, lecture: @lecture }
+          )
+        end
+        format.html do
+          redirect_to lecture_student_performance_achievements_path(
+            @lecture
           )
         end
       end

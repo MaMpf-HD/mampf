@@ -46,6 +46,13 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
       end
+
+      it "redirects to index for HTML requests" do
+        get new_lecture_student_performance_achievement_path(lecture)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
+      end
     end
 
     context "as a student" do
@@ -72,6 +79,13 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
             as: :turbo_stream
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      end
+
+      it "redirects to index for HTML requests" do
+        get lecture_student_performance_achievement_path(lecture, achievement)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
       end
     end
 
