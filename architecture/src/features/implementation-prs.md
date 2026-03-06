@@ -712,11 +712,11 @@ PRs.
 
 ```admonish example "PR-12.1 — Achievement CRUD"
 - Scope: Wire the Achievement model into the Assessment infrastructure and provide full CRUD.
-- Model: Add `include Assessment::Assessable` to Achievement (but NOT Pointable or Gradable). Add `after_create` callback to create assessment infrastructure (`requires_points: false`, `requires_submission: false`) and seed participations from the lecture roster.
-- Controllers: `AchievementsController` (new, create, edit, update, destroy) nested under lecture.
+- Model: Add `include Assessment::Assessable` to Achievement (but NOT Pointable or Gradable). Add `after_create` callback to create assessment infrastructure (`requires_points: false`, `requires_submission: false`) and seed participations from the lecture roster. Note: the assessment callback is gated by `:assessment_grading`, while the CRUD UI is gated by `:student_performance`. Achievements can exist as lightweight entities without assessment infrastructure if only the UI flag is enabled.
+- Controllers: `AchievementsController` (index, new, show, create, update, destroy) nested under lecture. The `show` action renders an `AchievementDashboardComponent` (following the assignment dashboard pattern) whose settings tab serves as the edit form.
 - Routes: Nested resource under lectures, feature-flag gated.
-- Ability: Define CanCan rules for Achievement management (teacher/editor of the lecture).
-- Views: Achievement list (index), form (title, value_type selector, conditional threshold input, description), delete confirmation.
+- Ability: Reuses `LectureAbility` — any user who can `:edit` the lecture can manage achievements.
+- Views: Achievement list (index with clickable rows), new-achievement form (rendered into container via Turbo Stream), dashboard with settings tab (title, value_type selector, conditional threshold input, description), delete with confirmation.
 - i18n: Keys for both locales (titles, labels, flash messages, value type names).
 - Rationale: Achievements track attendance/involvement but don't contribute to grades. Rules that only use point thresholds work without any achievements. This PR establishes the data foundation that marking (12.2) and the student view (12.4) build on.
 - Refs: [Achievement model](04-assessments-and-grading.md#achievement-model), [Activity tracking](04-assessments-and-grading.md#activity-tracking)

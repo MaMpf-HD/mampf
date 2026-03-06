@@ -26,7 +26,7 @@
     <%= form_with model: achievement,
                   url: lecture_student_performance_achievements_path(lecture),
                   id: "achievement-form" do |f| %>
-      <div class="row g-3">
+      <div class="row g-3" data-controller="achievement-form">
         <div class="col-md-4">
           <%= f.label :title,
                       t("assessment.achievements.fields.title"),
@@ -54,10 +54,15 @@
                           vt]
                        },
                        {},
-                       class: "form-select" %>
+                       { class: "form-select",
+                         data: { action: "achievement-form#toggle" } } %>
         </div>
 
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          data-achievement-form-target="threshold"
+          style="<%= 'display: none' if achievement.boolean? %>"
+        >
           <%= f.label :threshold,
                       t("assessment.achievements.fields.threshold"),
                       class: "form-label" %>
@@ -71,6 +76,16 @@
               <%= achievement.errors[:threshold].first %>
             </div>
           <% end %>
+        </div>
+
+        <div class="col-12">
+          <%= f.label :description,
+                      t("assessment.achievements.fields.description"),
+                      class: "form-label" %>
+
+          <%= f.text_area :description,
+                          class: "form-control",
+                          rows: 3 %>
         </div>
 
         <div class="col-12 mt-4 d-flex justify-content-between">

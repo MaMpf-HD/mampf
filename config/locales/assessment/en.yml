@@ -17,6 +17,7 @@ en:
         destroyed: 'Achievement deleted successfully.'
       errors:
         not_found: 'Achievement not found.'
+        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
       title: 'Achievements'
       new: 'New Achievement'
       edit: 'Edit Achievement'
@@ -28,6 +29,7 @@ en:
         title: 'Title'
         value_type: 'Type'
         threshold: 'Threshold'
+        description: 'Description'
       no_achievements_yet: 'No achievements defined yet.'
       confirm_delete: 'Really delete this achievement?'
     assignment: 'Assignment'

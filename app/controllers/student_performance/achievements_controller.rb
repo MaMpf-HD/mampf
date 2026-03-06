@@ -146,13 +146,32 @@ module StudentPerformance
               stream_flash
             ]
           else
-            head :unprocessable_content
+            flash.now[:alert] = I18n.t(
+              "assessment.achievements.errors.referenced_by_rules"
+            )
+            render turbo_stream: [
+              turbo_stream.update(
+                "assessments_container",
+                ::AchievementDashboardComponent.new(
+                  achievement: @achievement, lecture: @lecture
+                )
+              ),
+              stream_flash
+            ]
           end
         end
         format.html do
-          redirect_to lecture_student_performance_achievements_path(
-            @lecture
-          ), notice: I18n.t("assessment.achievements.flash.destroyed")
+          if @achievement.destroyed?
+            redirect_to lecture_student_performance_achievements_path(
+              @lecture
+            ), notice: I18n.t("assessment.achievements.flash.destroyed")
+          else
+            redirect_to lecture_student_performance_achievements_path(
+              @lecture
+            ), alert: I18n.t(
+              "assessment.achievements.errors.referenced_by_rules"
+            )
+          end
         end
       end
     end
@@ -186,7 +205,9 @@ module StudentPerformance
       end
 
       def achievement_params
-        params.require(:achievement).permit(:title, :value_type, :threshold)
+        params.require(:achievement).permit(
+          :title, :value_type, :threshold, :description
+        )
       end
   end
 end

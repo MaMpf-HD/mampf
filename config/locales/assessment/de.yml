@@ -17,6 +17,7 @@ de:
         destroyed: 'Nachweis erfolgreich gelöscht.'
       errors:
         not_found: 'Nachweis nicht gefunden.'
+        referenced_by_rules: 'Löschen nicht möglich: Nachweis wird von einer Regel referenziert.'
       title: 'Nachweise'
       new: 'Neuer Nachweis'
       edit: 'Nachweis bearbeiten'
@@ -28,6 +29,7 @@ de:
         title: 'Titel'
         value_type: 'Typ'
         threshold: 'Schwellenwert'
+        description: 'Beschreibung'
       no_achievements_yet: 'Noch keine Nachweise angelegt.'
       confirm_delete: 'Nachweis wirklich löschen?'
     assignment: 'Hausaufgabe'
