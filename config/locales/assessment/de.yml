@@ -11,6 +11,25 @@ de:
     assessments: 'Testate'
     achievements:
       placeholder: 'Nachweise werden in einem späteren Schritt hier angezeigt.'
+      flash:
+        created: 'Nachweis erfolgreich erstellt.'
+        updated: 'Nachweis erfolgreich aktualisiert.'
+        destroyed: 'Nachweis erfolgreich gelöscht.'
+      errors:
+        not_found: 'Nachweis nicht gefunden.'
+      title: 'Nachweise'
+      new: 'Neuer Nachweis'
+      edit: 'Nachweis bearbeiten'
+      value_types:
+        boolean: 'Ja/Nein'
+        numeric: 'Numerisch'
+        percentage: 'Prozentual'
+      fields:
+        title: 'Titel'
+        value_type: 'Typ'
+        threshold: 'Schwellenwert'
+      no_achievements_yet: 'Noch keine Nachweise angelegt.'
+      confirm_delete: 'Nachweis wirklich löschen?'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'
     exam: 'Prüfung'

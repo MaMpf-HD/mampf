@@ -107,9 +107,15 @@
         id="assessments-achievements-pane"
         role="tabpanel"
       >
-        <div class="text-center text-muted py-4">
-          <%= t("assessment.achievements.placeholder") %>
-        </div>
+        <%= helpers.turbo_frame_tag "performance-achievements-frame",
+                                    src: lecture_student_performance_achievements_path(lecture),
+                                    loading: "lazy" do %>
+          <div class="text-center my-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden"><%= t("basics.loading") %></span>
+            </div>
+          </div>
+        <% end %>
       </div>
     <% end %>
 

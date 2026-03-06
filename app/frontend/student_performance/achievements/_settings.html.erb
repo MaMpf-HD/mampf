@@ -1,0 +1,72 @@
+<% if achievement.persisted? %>
+  <div class="text-end mb-3">
+    <%= button_to t("basics.delete"),
+                  lecture_student_performance_achievement_path(lecture,
+                                                              achievement),
+                  method: :delete,
+                  class: "btn btn-outline-danger btn-sm",
+                  data: {
+                    turbo_confirm:
+                      t("assessment.achievements.confirm_delete")
+                  } %>
+  </div>
+<% end %>
+
+<%= form_with model: achievement,
+              url: lecture_student_performance_achievement_path(lecture,
+                                                               achievement),
+              method: :patch do |f| %>
+  <input type="hidden" name="tab" value="settings">
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :title,
+                  t("assessment.achievements.fields.title"),
+                  class: "form-label" %>
+
+      <%= f.text_field :title,
+                       class: "form-control",
+                       required: true %>
+
+      <% if achievement.errors[:title].any? %>
+        <div class="text-danger small mt-1">
+          <%= achievement.errors[:title].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :value_type,
+                  t("assessment.achievements.fields.value_type"),
+                  class: "form-label" %>
+
+      <%= f.select :value_type,
+                   Achievement.value_types.keys.map { |vt|
+                     [t("assessment.achievements.value_types.#{vt}"), vt]
+                   },
+                   {},
+                   class: "form-select" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :threshold,
+                  t("assessment.achievements.fields.threshold"),
+                  class: "form-label" %>
+
+      <%= f.number_field :threshold,
+                         class: "form-control",
+                         step: "any" %>
+
+      <% if achievement.errors[:threshold].any? %>
+        <div class="text-danger small mt-1">
+          <%= achievement.errors[:threshold].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-12 mt-4">
+      <%= f.submit t("buttons.save"),
+                   class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

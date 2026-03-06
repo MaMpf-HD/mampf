@@ -1,0 +1,92 @@
+<div class="mb-3">
+  <%= link_to assessment_assessments_path(lecture_id: lecture.id,
+                                          tab: "achievements"),
+              class: "btn btn-sm btn-outline-secondary",
+              role: "button",
+              data: { turbo_stream: true } do %>
+    <i class="bi bi-arrow-left"></i>
+    <%= t("back") %>
+  <% end %>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3><%= t("assessment.achievements.new") %></h3>
+</div>
+
+<ul class="nav nav-tabs mb-3" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" type="button" role="tab">
+      <%= t("basics.settings") %>
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane fade show active" role="tabpanel">
+    <%= form_with model: achievement,
+                  url: lecture_student_performance_achievements_path(lecture),
+                  id: "achievement-form" do |f| %>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= f.label :title,
+                      t("assessment.achievements.fields.title"),
+                      class: "form-label" %>
+
+          <%= f.text_field :title,
+                           class: "form-control",
+                           required: true %>
+
+          <% if achievement.errors[:title].any? %>
+            <div class="text-danger small mt-1">
+              <%= achievement.errors[:title].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-md-4">
+          <%= f.label :value_type,
+                      t("assessment.achievements.fields.value_type"),
+                      class: "form-label" %>
+
+          <%= f.select :value_type,
+                       Achievement.value_types.keys.map { |vt|
+                         [t("assessment.achievements.value_types.#{vt}"),
+                          vt]
+                       },
+                       {},
+                       class: "form-select" %>
+        </div>
+
+        <div class="col-md-4">
+          <%= f.label :threshold,
+                      t("assessment.achievements.fields.threshold"),
+                      class: "form-label" %>
+
+          <%= f.number_field :threshold,
+                             class: "form-control",
+                             step: "any" %>
+
+          <% if achievement.errors[:threshold].any? %>
+            <div class="text-danger small mt-1">
+              <%= achievement.errors[:threshold].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-12 mt-4 d-flex justify-content-between">
+          <div>
+            <%= f.submit t("assessment.form.submit"),
+                         class: "btn btn-primary me-2" %>
+
+            <%= link_to t("buttons.cancel"),
+                        assessment_assessments_path(
+                          lecture_id: lecture.id, tab: "achievements"
+                        ),
+                        class: "btn btn-outline-secondary",
+                        data: { turbo_stream: true } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -11,6 +11,25 @@ en:
     assessments: 'Assessments'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
+      flash:
+        created: 'Achievement created successfully.'
+        updated: 'Achievement updated successfully.'
+        destroyed: 'Achievement deleted successfully.'
+      errors:
+        not_found: 'Achievement not found.'
+      title: 'Achievements'
+      new: 'New Achievement'
+      edit: 'Edit Achievement'
+      value_types:
+        boolean: 'Yes/No'
+        numeric: 'Numeric'
+        percentage: 'Percentage'
+      fields:
+        title: 'Title'
+        value_type: 'Type'
+        threshold: 'Threshold'
+      no_achievements_yet: 'No achievements defined yet.'
+      confirm_delete: 'Really delete this achievement?'
     assignment: 'Assignment'
     assignments: 'Assignments'
     exam: 'Exam'
