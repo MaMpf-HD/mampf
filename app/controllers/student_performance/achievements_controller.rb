@@ -205,8 +205,8 @@ module StudentPerformance
       end
 
       def achievement_params
-        params.require(:achievement).permit(
-          :title, :value_type, :threshold, :description
+        params.expect(
+          achievement: [:title, :value_type, :threshold, :description]
         )
       end
   end
