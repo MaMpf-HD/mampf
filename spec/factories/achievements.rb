@@ -24,11 +24,10 @@ FactoryBot.define do
 
     trait :with_assessment do
       after(:create) do |achievement|
-        create(:assessment,
-               assessable: achievement,
-               lecture: achievement.lecture,
-               requires_points: false,
-               requires_submission: false)
+        achievement.ensure_assessment!(
+          requires_points: false,
+          requires_submission: false
+        )
       end
     end
   end
