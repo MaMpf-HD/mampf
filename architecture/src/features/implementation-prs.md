@@ -726,21 +726,22 @@ PRs.
 ```admonish example "PR-12.2 — Read-only achievement marking view"
 - Scope: Read-only "Marking" tab on the achievement dashboard showing per-student achievement status. Follows the same read-only-first pattern as PR-8.3 (grade table) and PR-8.4 (point grid).
 - Dependencies: Requires PR-12.1 (achievement CRUD + participations exist).
-- ViewComponent: `AchievementMarkingTableComponent` — student list with current `grade_value` display. Value-type-appropriate rendering: checkmark/X for boolean, count with threshold comparison for numeric (e.g. "12 / 15"), percentage with threshold for percentage (e.g. "75% / 80%"). "Not yet marked" indicator for nil values.
-- Dashboard: Add "Marking" tab to `AchievementDashboardComponent` (alongside existing "Settings" tab).
-- Rake: Extend `assessment_playground.rake` with `seed_achievement_grades` task that writes `grade_value` on achievement participations for realistic test data.
+- Storage: Uses the existing `grade_text` column on `Assessment::Participation` — no migration needed. Values are written programmatically (not user-typed): `"pass"`/`"fail"` for boolean, stringified numbers for numeric/percentage. The Achievement model's `value_type` determines encoding and parsing.
+- ViewComponent: `AchievementMarkingTableComponent` — student list with current `grade_text` display. Value-type-appropriate rendering: checkmark/X for boolean, count with threshold comparison for numeric (e.g. "12 / 15"), percentage with threshold for percentage (e.g. "75% / 80%"). "Not yet marked" indicator for nil `grade_text`.
+- Dashboard: Add "Marking" tab to `AchievementDashboardComponent` (alongside existing "Settings" tab). Tab only visible when `:assessment_grading` is enabled (participations must exist).
+- Rake: Extend `assessment_playground.rake` with `seed_achievement_grades` task that writes `grade_text` on achievement participations for realistic test data.
 - Rationale: Provides the visual foundation for achievement marking display. The same component is reused when interactive editing is added (PR-12.5). Seeded data via rake is sufficient for testing the read path and unblocking PRs 12.3–12.4. Interactive editing is deferred to PR-12.5 for UI consistency with the grade/point entry surfaces (PRs 8.7/8.8).
-- Refs: [Achievement model](05-student-performance.md#achievement-model), [Grade Entry UI](12-views.md#grade-entry-interface)
-- Acceptance: Marking tab renders on achievement dashboard; displays seeded grade values correctly; value-type-appropriate display (boolean/numeric/percentage); "not yet marked" shown for nil values; threshold comparison visible for numeric/percentage; feature flag gates UI.
+- Refs: [Achievement model](05-student-performance.md#achievement-model), [Grade Fields](04-assessments-and-grading.md#participation-model)
+- Acceptance: Marking tab renders on achievement dashboard; displays seeded `grade_text` values correctly; value-type-appropriate display (boolean/numeric/percentage); "not yet marked" shown for nil values; threshold comparison visible for numeric/percentage; marking tab hidden when `:assessment_grading` disabled; feature flag gates UI.
 ```
 
 ```admonish example "PR-12.3 — Achievement service integration"
 - Scope: Wire achievements into the StudentPerformance computation pipeline.
 - Dependencies: Requires PR-12.1 (achievement model). Uses seeded data from PR-12.2 rake task for development.
-- Model: Add `Achievement#student_met_threshold?(user)` method that reads `Assessment::Participation#grade_value` and compares against threshold/type.
+- Model: Add `Achievement#student_met_threshold?(user)` method that reads `Assessment::Participation#grade_text` and compares against threshold/type (boolean: `== "pass"`, numeric: `.to_i >= threshold`, percentage: `.to_f >= threshold`).
 - Service: Update `StudentPerformance::Service` to include achievement evaluation when computing records. Populate `achievements_met_ids` on `StudentPerformance::Record`.
 - Evaluator: Update `StudentPerformance::Evaluator` to incorporate achievements into certification proposals (rules with achievement requirements).
-- Triggers: Recompute affected `StudentPerformance::Record` when a participation's `grade_value` changes.
+- Triggers: Recompute affected `StudentPerformance::Record` when a participation's `grade_text` changes.
 - Refs: [Service computation](05-student-performance.md#studentperformanceservice), [Evaluator](05-student-performance.md#studentperformanceevaluator)
 - Acceptance: Service correctly evaluates achievement thresholds; records include `achievements_met_ids`; evaluator proposals reflect achievement status; recomputation fires on marking changes.
 ```
@@ -758,10 +759,10 @@ PRs.
 ```admonish example "PR-12.5 — Interactive achievement marking"
 - Scope: Add write capability to the read-only marking table from PR-12.2. Follows the same pattern as PR-8.7 (interactive grade entry) and PR-8.8 (interactive point entry).
 - Dependencies: Requires PR-12.2 (read-only marking view). Ideally implemented by the same programmer as PRs 8.7/8.8 for UI consistency across all grading surfaces.
-- Service: Achievement-specific marking logic, or reuse `Assessment::GradeEntryService` from PR-8.7 if available.
+- Service: Achievement-specific marking logic, or reuse `Assessment::GradeEntryService` from PR-8.7 if available. Writes `grade_text` programmatically: boolean → `"pass"`/`"fail"`, numeric → stringified count, percentage → stringified percentage.
 - Controller: Add marking actions to `AchievementsController` or create a dedicated controller for achievement grade writes.
-- UI: Inline editing on `AchievementMarkingTableComponent` — value-type-appropriate inputs: boolean → checkbox toggle (Pass/Fail), numeric → number input, percentage → number input with % suffix. Bulk "Mark all as Pass" action for boolean achievements.
-- Persistence: Updates `Assessment::Participation#grade_value` for each student.
+- UI: Inline editing on `AchievementMarkingTableComponent` — value-type-appropriate inputs: boolean → checkbox toggle, numeric → number input, percentage → number input with % suffix. Bulk "Mark all as Pass" action for boolean achievements.
+- Persistence: Updates `Assessment::Participation#grade_text` for each student.
 - Refs: [Tutor grading](05-student-performance.md#achievement-model), [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service)
 - Acceptance: Teachers can mark achievements per student; correct input type shown per value_type; bulk marking works for boolean; changes persist to participation records; inline editing consistent with grade/point entry UI; feature flag gates UI.
 ```
