@@ -22,6 +22,7 @@
 # assessment:seed_participations - Seeds participations (simulates submissions)
 # assessment:randomize_statuses  - Randomizes: some reviewed, some exempt, some deleted
 # assessment:seed_grades         - Assigns random German grades to reviewed participations
+# assessment:seed_achievement_grades - Seeds achievements and grade_text values
 # assessment:seed_seminar_grades - Grades speakers in the two-stage seminar campaign
 # assessment:setup               - Runs all of the above (except seed_seminar_grades)
 # assessment:reset               - Destroys test assignments
@@ -292,6 +293,55 @@ namespace :assessment do
     end
   end
 
+  desc "Seed achievements and grade_text values for achievement participations"
+  task seed_achievement_grades: :environment do
+    Flipper.enable(:assessment_grading)
+    Flipper.enable(:student_performance)
+
+    lecture = Lecture.joins(:tutorials).distinct.first
+    abort "No lecture with tutorials found." unless lecture
+
+    achievement_defs = [
+      { title: "Blackboard Talk", value_type: :boolean, threshold: nil },
+      { title: "Homework Points", value_type: :numeric, threshold: 15 },
+      { title: "Attendance Rate", value_type: :percentage, threshold: 80.0 }
+    ]
+
+    memberships = TutorialMembership
+                  .where(tutorial_id: lecture.tutorial_ids)
+                  .pluck(:user_id, :tutorial_id)
+                  .to_h
+
+    abort "No tutorial memberships found for lecture." if memberships.empty?
+
+    achievement_defs.each do |defn|
+      achievement = lecture.achievements.find_or_create_by!(title: defn[:title]) do |a|
+        a.value_type = defn[:value_type]
+        a.threshold = defn[:threshold]
+      end
+      assessment = achievement.ensure_assessment!(
+        requires_points: false, requires_submission: false
+      )
+
+      existing = assessment.assessment_participations.count
+      if existing.positive?
+        puts "  ✓ Participations exist for: #{defn[:title]} (#{existing})"
+      else
+        memberships.each do |uid, tid|
+          assessment.assessment_participations.create!(
+            user_id: uid, tutorial_id: tid, status: :reviewed
+          )
+        end
+        puts "  ✓ Created #{memberships.size} participations " \
+             "for: #{defn[:title]}"
+      end
+
+      seed_achievement_grade_text(assessment, achievement, defn[:title])
+    end
+
+    puts "✅ Achievement grades seeded."
+  end
+
   desc "Run full assessment playground setup"
   task setup: :environment do
     old_level = ActiveRecord::Base.logger&.level
@@ -305,6 +355,7 @@ namespace :assessment do
     Rake::Task["assessment:randomize_statuses"].invoke
     Rake::Task["assessment:seed_task_points"].invoke
     Rake::Task["assessment:seed_grades"].invoke
+    Rake::Task["assessment:seed_achievement_grades"].invoke
 
     print_summary
 
@@ -571,6 +622,35 @@ namespace :assessment do
     when :struggling then rand(0.60..0.80)
     when :dropout then rand(0.80..0.95)
     when :occasional then rand(0.55..0.75)
+    end
+  end
+
+  def seed_achievement_grade_text(assessment, achievement, label)
+    ungradeable = assessment.assessment_participations
+                            .where(grade_text: [nil, ""])
+    if ungradeable.empty?
+      puts "  ✓ Grades already set for: #{label}"
+      return
+    end
+
+    ungradeable.find_each do |p|
+      quality = student_quality(p.user_id)
+      p.update!(grade_text: random_grade_text(achievement, quality))
+    end
+
+    puts "  ✓ Seeded grade_text for #{ungradeable.size} " \
+         "participations: #{label}"
+  end
+
+  def random_grade_text(achievement, quality)
+    case achievement.value_type
+    when "boolean"
+      quality > 0.5 ? "pass" : "fail"
+    when "numeric"
+      max = (achievement.threshold * 1.5).ceil
+      (quality * max).round.to_s
+    when "percentage"
+      (quality * 100).round(1).to_s
     end
   end
 end
