@@ -161,6 +161,7 @@ module StudentPerformance
             flash.now[:alert] = I18n.t(
               "assessment.achievements.errors.referenced_by_rules"
             )
+            @achievement.errors.clear
             render turbo_stream: [
               turbo_stream.update(
                 "assessments_container",
@@ -169,7 +170,7 @@ module StudentPerformance
                 )
               ),
               stream_flash
-            ]
+            ], status: :unprocessable_content
           end
         end
         format.html do
