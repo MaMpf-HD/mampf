@@ -736,14 +736,15 @@ PRs.
 ```
 
 ```admonish example "PR-12.3 — Achievement service integration"
-- Scope: Wire achievements into the StudentPerformance computation pipeline.
+- Scope: Wire achievements into the StudentPerformance computation pipeline and display achievement status in the performance records index.
 - Dependencies: Requires PR-12.1 (achievement model). Uses seeded data from PR-12.2 rake task for development.
 - Model: Add `Achievement#student_met_threshold?(user)` method that reads `Assessment::Participation#grade_text` and compares against threshold/type (boolean: `== "pass"`, numeric: `.to_i >= threshold`, percentage: `.to_f >= threshold`).
 - Service: Update `StudentPerformance::Service` to include achievement evaluation when computing records. Populate `achievements_met_ids` on `StudentPerformance::Record`.
 - Evaluator: Update `StudentPerformance::Evaluator` to incorporate achievements into certification proposals (rules with achievement requirements).
 - Triggers: Recompute affected `StudentPerformance::Record` when a participation's `grade_text` changes.
+- UI: Add achievement status columns to the performance records index table (teacher-facing), showing met/not-met per achievement per student. Achievements are displayed alongside the existing per-assignment columns.
 - Refs: [Service computation](05-student-performance.md#studentperformanceservice), [Evaluator](05-student-performance.md#studentperformanceevaluator)
-- Acceptance: Service correctly evaluates achievement thresholds; records include `achievements_met_ids`; evaluator proposals reflect achievement status; recomputation fires on marking changes.
+- Acceptance: Service correctly evaluates achievement thresholds; records include `achievements_met_ids`; evaluator proposals reflect achievement status; recomputation fires on marking changes; performance records index shows achievement columns with met/not-met indicators.
 ```
 
 ```admonish example "PR-12.4 — Student achievement progress view"
