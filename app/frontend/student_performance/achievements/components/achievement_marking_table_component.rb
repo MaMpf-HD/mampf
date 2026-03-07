@@ -54,7 +54,9 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def marked_count
-    @marked_count ||= participations.where.not(grade_text: nil).count
+    @marked_count ||= participations
+                      .where.not(grade_text: [nil, ""])
+                      .count
   end
 
   def met_count

@@ -82,6 +82,13 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
         expect(component.marked_count).to eq(2)
       end
 
+      it "does not count blank grade_text as marked" do
+        create(:assessment_participation,
+               assessment: assessment,
+               grade_text: "")
+        expect(component.marked_count).to eq(2)
+      end
+
       it "counts met participations" do
         expect(component.met_count).to eq(1)
       end
