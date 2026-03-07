@@ -723,18 +723,20 @@ PRs.
 - Acceptance: Achievement CRUD works; creating an achievement auto-creates its Assessment and seeds Participations; value_type validated; threshold conditional on type; deletion blocked when referenced by rules; feature flag gates UI.
 ```
 
-```admonish example "PR-12.2 — Achievement marking UI"
-- Scope: Teacher/tutor interface for marking student achievement completion.
-- UI: Per-achievement student list showing participations. Input depends on value_type: boolean → checkbox (Pass/Fail), numeric → number input, percentage → number input with % suffix.
-- Controller: Extend achievement's assessment show view with a marking/grading tab, or add marking actions to `AchievementsController`.
-- Bulk actions: "Mark all as Pass" for boolean achievements.
-- Persistence: Updates `Assessment::Participation#grade_value` for each student.
-- Refs: [Tutor grading](05-student-performance.md#achievement-model)
-- Acceptance: Teachers can mark achievements per student; correct input type shown per value_type; bulk marking works for boolean; changes persist to participation records; feature flag gates UI.
+```admonish example "PR-12.2 — Read-only achievement marking view"
+- Scope: Read-only "Marking" tab on the achievement dashboard showing per-student achievement status. Follows the same read-only-first pattern as PR-8.3 (grade table) and PR-8.4 (point grid).
+- Dependencies: Requires PR-12.1 (achievement CRUD + participations exist).
+- ViewComponent: `AchievementMarkingTableComponent` — student list with current `grade_value` display. Value-type-appropriate rendering: checkmark/X for boolean, count with threshold comparison for numeric (e.g. "12 / 15"), percentage with threshold for percentage (e.g. "75% / 80%"). "Not yet marked" indicator for nil values.
+- Dashboard: Add "Marking" tab to `AchievementDashboardComponent` (alongside existing "Settings" tab).
+- Rake: Extend `assessment_playground.rake` with `seed_achievement_grades` task that writes `grade_value` on achievement participations for realistic test data.
+- Rationale: Provides the visual foundation for achievement marking display. The same component is reused when interactive editing is added (PR-12.5). Seeded data via rake is sufficient for testing the read path and unblocking PRs 12.3–12.4. Interactive editing is deferred to PR-12.5 for UI consistency with the grade/point entry surfaces (PRs 8.7/8.8).
+- Refs: [Achievement model](05-student-performance.md#achievement-model), [Grade Entry UI](12-views.md#grade-entry-interface)
+- Acceptance: Marking tab renders on achievement dashboard; displays seeded grade values correctly; value-type-appropriate display (boolean/numeric/percentage); "not yet marked" shown for nil values; threshold comparison visible for numeric/percentage; feature flag gates UI.
 ```
 
 ```admonish example "PR-12.3 — Achievement service integration"
 - Scope: Wire achievements into the StudentPerformance computation pipeline.
+- Dependencies: Requires PR-12.1 (achievement model). Uses seeded data from PR-12.2 rake task for development.
 - Model: Add `Achievement#student_met_threshold?(user)` method that reads `Assessment::Participation#grade_value` and compares against threshold/type.
 - Service: Update `StudentPerformance::Service` to include achievement evaluation when computing records. Populate `achievements_met_ids` on `StudentPerformance::Record`.
 - Evaluator: Update `StudentPerformance::Evaluator` to incorporate achievements into certification proposals (rules with achievement requirements).
@@ -745,11 +747,23 @@ PRs.
 
 ```admonish example "PR-12.4 — Student achievement progress view"
 - Scope: Read-only student-facing view of their achievements in a lecture. Narrow scope: just achievements, not the broader performance dashboard (Steps 13-14).
+- Dependencies: Requires PR-12.1 (model + participations exist). Can be developed in parallel with PRs 12.2/12.3/12.5.
 - UI: List of achievements for the lecture with status per student: met/not met, current value vs threshold for numeric/percentage types.
 - Controller: Student-accessible action (read-only) showing the current user's achievement participations.
-- Note: This PR is intended for a different programmer and can be developed in parallel with 12.2/12.3, as it only depends on 12.1 (model + participations exist). Empty/pending states are shown for not-yet-marked achievements.
+- Note: This PR is intended for a different programmer. Empty/pending states are shown for not-yet-marked achievements.
 - Refs: [Student dashboard](student_dashboard.md)
 - Acceptance: Students see their achievement status per lecture; correct display per value_type; graceful handling of unmarked achievements; feature flag gates UI.
+```
+
+```admonish example "PR-12.5 — Interactive achievement marking"
+- Scope: Add write capability to the read-only marking table from PR-12.2. Follows the same pattern as PR-8.7 (interactive grade entry) and PR-8.8 (interactive point entry).
+- Dependencies: Requires PR-12.2 (read-only marking view). Ideally implemented by the same programmer as PRs 8.7/8.8 for UI consistency across all grading surfaces.
+- Service: Achievement-specific marking logic, or reuse `Assessment::GradeEntryService` from PR-8.7 if available.
+- Controller: Add marking actions to `AchievementsController` or create a dedicated controller for achievement grade writes.
+- UI: Inline editing on `AchievementMarkingTableComponent` — value-type-appropriate inputs: boolean → checkbox toggle (Pass/Fail), numeric → number input, percentage → number input with % suffix. Bulk "Mark all as Pass" action for boolean achievements.
+- Persistence: Updates `Assessment::Participation#grade_value` for each student.
+- Refs: [Tutor grading](05-student-performance.md#achievement-model), [GradeEntryService](04-assessments-and-grading.md#assessmentgradeentryservice-service)
+- Acceptance: Teachers can mark achievements per student; correct input type shown per value_type; bulk marking works for boolean; changes persist to participation records; inline editing consistent with grade/point entry UI; feature flag gates UI.
 ```
 
 ```admonish note
