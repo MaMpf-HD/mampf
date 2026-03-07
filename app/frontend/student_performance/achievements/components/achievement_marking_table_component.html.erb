@@ -1,0 +1,58 @@
+<% if any_participations? %>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <small class="text-muted">
+      <%= marked_count %> / <%= participations.size %>
+      <%= t("assessment.achievements.marking.marked") %> &middot;
+      <%= met_count %> <%= t("assessment.achievements.marking.met_label") %>
+    </small>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th><%= t("basics.name") %></th>
+
+        <th class="text-center">
+          <%= t("assessment.achievements.marking.value") %>
+        </th>
+
+        <th class="text-center">
+          <%= t("assessment.achievements.marking.status") %>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% participations.each do |participation| %>
+        <% badge = status_badge(participation) %>
+
+        <tr>
+          <td><%= participation.user.tutorial_name %></td>
+
+          <td class="text-center"><%= value_display(participation) %></td>
+
+          <td class="text-center">
+            <% case badge %>
+            <% when :met %>
+              <span class="badge bg-success">
+                <%= t("assessment.achievements.marking.met") %>
+              </span>
+            <% when :not_met %>
+              <span class="badge bg-danger">
+                <%= t("assessment.achievements.marking.not_met") %>
+              </span>
+            <% when :unmarked %>
+              <span class="badge bg-secondary">
+                <%= t("assessment.achievements.marking.unmarked") %>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-people me-1"></i>
+    <%= t("assessment.achievements.marking.no_participations") %>
+  </div>
+<% end %>
