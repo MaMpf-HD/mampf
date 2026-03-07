@@ -1,4 +1,3 @@
-# Missing top-level docstring, please formulate one yourself 😁
 class AchievementMarkingTableComponent < ViewComponent::Base
   def initialize(achievement:)
     super()
@@ -15,7 +14,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def value_display(participation)
-    return "\u2014" unless participation.grade_text.present?
+    return "\u2014" if participation.grade_text.blank?
 
     case achievement.value_type
     when "boolean"
@@ -28,7 +27,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def met?(participation)
-    return nil unless participation.grade_text.present?
+    return false if participation.grade_text.blank?
 
     case achievement.value_type
     when "boolean"
@@ -41,10 +40,9 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def status_badge(participation)
-    result = met?(participation)
-    return :unmarked if result.nil?
+    return :unmarked if participation.grade_text.blank?
 
-    result ? :met : :not_met
+    met?(participation) ? :met : :not_met
   end
 
   def participations
@@ -60,7 +58,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def met_count
-    @met_count ||= participations.select { |p| met?(p) == true }.size
+    @met_count ||= participations.count { |p| met?(p) == true }
   end
 
   private

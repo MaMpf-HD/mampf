@@ -32,7 +32,14 @@ class AchievementDashboardComponent < ViewComponent::Base
   private
 
     def build_tabs
-      [settings_tab]
+      [].tap do |t|
+        t << settings_tab
+        t << marking_tab if grading_enabled?
+      end
+    end
+
+    def grading_enabled?
+      Flipper.enabled?(:assessment_grading) && achievement.assessment.present?
     end
 
     def settings_tab
@@ -42,6 +49,16 @@ class AchievementDashboardComponent < ViewComponent::Base
         component: PartialTabComponent.new(
           partial: "student_performance/achievements/settings",
           locals: { achievement: achievement, lecture: lecture }
+        )
+      )
+    end
+
+    def marking_tab
+      TabConfig.new(
+        key: "marking",
+        label: I18n.t("assessment.grading"),
+        component: AchievementMarkingTableComponent.new(
+          achievement: achievement
         )
       )
     end

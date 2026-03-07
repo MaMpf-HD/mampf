@@ -31,9 +31,43 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
   end
 
   describe "#tabs" do
-    it "returns only settings" do
-      keys = component.tabs.map(&:key)
-      expect(keys).to eq(["settings"])
+    context "without assessment_grading flag" do
+      it "returns only settings" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(["settings"])
+      end
+    end
+
+    context "with assessment_grading flag" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      context "when achievement has no assessment" do
+        it "returns only settings" do
+          keys = component.tabs.map(&:key)
+          expect(keys).to eq(["settings"])
+        end
+      end
+
+      context "when achievement has an assessment" do
+        before do
+          achievement.ensure_assessment!(
+            requires_points: false, requires_submission: false
+          )
+        end
+
+        it "returns settings and marking" do
+          keys = component.tabs.map(&:key)
+          expect(keys).to eq(["settings", "marking"])
+        end
+
+        it "renders the marking tab trigger" do
+          render_inline(component)
+          expect(rendered_content).to include(
+            "data-bs-target=\"##{component.dom_prefix}-marking\""
+          )
+        end
+      end
     end
   end
 

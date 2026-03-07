@@ -69,7 +69,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       it "returns correct met? results" do
         expect(component.met?(passed)).to be(true)
         expect(component.met?(failed)).to be(false)
-        expect(component.met?(unmarked)).to be_nil
+        expect(component.met?(unmarked)).to be(false)
       end
 
       it "returns correct status badges" do
