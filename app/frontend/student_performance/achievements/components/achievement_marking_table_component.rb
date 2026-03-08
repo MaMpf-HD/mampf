@@ -78,6 +78,6 @@ class AchievementMarkingTableComponent < ViewComponent::Base
     end
 
     def format_percentage(value)
-      "#{value.to_f.truncate(1)}%"
+      "#{format("%.1f", value.to_f)}%"
     end
 end
