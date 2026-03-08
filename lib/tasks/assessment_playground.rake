@@ -628,7 +628,8 @@ namespace :assessment do
   def seed_achievement_grade_text(assessment, achievement, label)
     ungradeable = assessment.assessment_participations
                             .where(grade_text: [nil, ""])
-    if ungradeable.empty?
+    count = ungradeable.count
+    if count.zero?
       puts "  ✓ Grades already set for: #{label}"
       return
     end
@@ -638,7 +639,7 @@ namespace :assessment do
       p.update!(grade_text: random_grade_text(achievement, quality))
     end
 
-    puts "  ✓ Seeded grade_text for #{ungradeable.size} " \
+    puts "  ✓ Seeded grade_text for #{count} " \
          "participations: #{label}"
   end
 
