@@ -41,6 +41,8 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
 window.Stimulus.register("administration--index--create-buttons", AdministrationIndexCreateButtonsController);
 
+import LecturesNewFormController from "~/lectures/new/_form.controller.js";
+window.Stimulus.register("lectures--new--form", LecturesNewFormController);
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

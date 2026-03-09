@@ -18,7 +18,8 @@
     <%= t('admin.lecture.no_terms_yet') %>
   <% else %>
     <%= form_with model: lecture,
-                  data: { action: 'turbo:submit-end->administration--index--create-buttons#submitEnd' } do |f| %>
+                  data: { controller: 'lectures--new--form',
+                          action: 'turbo:submit-end->lectures--new--form#submitEnd' } do |f| %>
       <% term_independent = (from != 'course' && first_course_independent?) ||
                               (from == 'course' && lecture.course.term_independent) %>
       <% course_error = lecture.errors[:course].join(' ') %>
