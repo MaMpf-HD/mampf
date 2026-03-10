@@ -65,6 +65,8 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
+# for now, pin vite_ruby, see https://github.com/ElMassimo/vite_ruby/issues/592
+gem "vite_ruby", "3.9.2"
 
 group :development do
   gem "listen", "~> 3.9"
