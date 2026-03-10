@@ -2,7 +2,7 @@ class AssessmentBackfillWorker
   include Sidekiq::Worker
 
   def perform
-    return unless Flipper.enabled?(:assessment_grading)
+    return unless ::Flipper.enabled?(:assessment_grading)
 
     Assignment.expired
               .where(deletion_date: Date.current..)
