@@ -28,7 +28,9 @@
       <td>
         <%= f.number_field "task_points[#{assessment_task.id}]",
                            value: extract_task_points(submission, assessment_task),
-                           step: 0.5 %>
+                           step: 0.5,
+                           data: { submission_row_target: "input", 
+                                    action: "change->submission-row#markDirty input->submission-row#markDirty" } %>
       </td>
     <% end %>
   <% end %>

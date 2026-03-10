@@ -65,3 +65,13 @@
     outline:none;
     box-shadow:none;
 }
+
+/* Highlight dirty submission rows */
+.row-dirty,
+.row-dirty td {
+  background-color: #ffee58 !important;
+}
+table.table tbody tr.row-dirty,
+table.table tbody tr.row-dirty td {
+    background-color: #ffee58 !important;
+}
