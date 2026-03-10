@@ -82,6 +82,7 @@ end
 group :test do
   gem "database_cleaner-active_record", "~> 2.2" # clean up database between tests
   gem "faker", "~> 3.4"
+  gem "rails-dom-testing", "~> 2.3"
   gem "simplecov", "~> 0.22", require: false
   gem "timecop", "~> 0.9.10"
 end
