@@ -1,5 +1,10 @@
-<li class="list-group-item submission-row <%= submission_late_color(submission) %>"
+
+<tr class="submission-row <%= submission_late_color(submission) %>"
     data-id="<%= submission.id %>">
+    <%= form_with url: grade_submission_path(submission),
+                  method: :patch,
+                  data: { turbo: false } do |f| %>
   <%= render partial: 'tutorials/submission_row',
-             locals: { submission: submission } %>
-</li>
+             locals: { submission: submission, assignment: assignment, f: f } %>
+<% end %>
+</tr>

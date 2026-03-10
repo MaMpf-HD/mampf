@@ -16,6 +16,20 @@ class Submission < ApplicationRecord
 
   before_create :set_token
 
+  delegate :assessment, to: :assignment
+
+  def representative_task_points
+    if assignment.assessable?
+      assessment = assignment.assessment
+      participation = assessment.assessment_participations
+                                .where(user: users)
+                                .first
+      participation.task_points
+    else
+      nil
+    end
+  end
+
   def partners_of_user(user)
     return unless user.in?(users)
 

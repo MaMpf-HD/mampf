@@ -97,12 +97,25 @@ module SubmissionsHelper
   end
 
   def show_submission_footer?(submission, assignment)
-    return false if current_user.tutorial_rosterized(assignment.lecture).nil? && submission.nil?
+    if required_roster_for_submission? && current_user.tutorial_rosterized(assignment.lecture).nil?
+      return false
+    end
     return true if assignment.active?
     return false if assignment.totally_expired?
     return false if submission&.correction
 
     true
+  end
+
+  def required_roster_for_submission?
+    Flipper.enabled?(:assessment_grading)
+  end
+
+  def extract_task_points(submission, assessment_task)
+    assessment_task_points = submission.representative_task_points
+    assessment_task_points.find do |tp|
+      tp.task_id == assessment_task.id
+    end&.points || nil
   end
 
   def submission_late_color(submission)

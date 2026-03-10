@@ -768,6 +768,10 @@ Rails.application.routes.draw do
         to: "submissions#reject",
         as: "reject_submission"
 
+  patch "submissions/:id/grade_submission",
+        to: "submissions#grade_submission",
+        as: "grade_submission"
+
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
       as: "edit_correction"

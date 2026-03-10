@@ -70,6 +70,10 @@ class Assignment < ApplicationRecord
     !semiactive?
   end
 
+  def assessable?
+    assessment != nil
+  end
+
   def in_grace_period?
     semiactive? && !active?
   end

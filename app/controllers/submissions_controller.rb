@@ -244,6 +244,18 @@ class SubmissionsController < ApplicationController
     send_rejection_email(@submission.users)
   end
 
+  def grade_submission
+    t = params
+    submission = Submission.find_by(id: params[:id])
+    scorer = current_user
+    Assessment::SubmissionGraderService.score_tasks!(
+      submission,
+      params[:task_points],
+      scorer
+    )
+    head :ok
+  end
+
   private
 
     def set_submission
