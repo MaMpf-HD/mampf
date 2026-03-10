@@ -5,21 +5,36 @@ export default class RecomputePollController extends Controller {
     statusUrl: String,
     reloadUrl: String,
     interval: { type: Number, default: 3000 },
+    maxAttempts: { type: Number, default: 40 },
   };
 
   connect() {
     this._polling = false;
+    this._attempts = 0;
   }
 
   disconnect() {
     this.stopPolling();
   }
 
-  start() {
-    if (this._polling) return;
+  handleSubmitEnd(event) {
+    const response = event.detail?.fetchResponse?.response;
+    const queued = response?.headers.get("X-Recompute-Queued");
+    const since = response?.headers.get("X-Recompute-Since");
 
-    this._since = new Date().toISOString();
+    this.stopPolling();
+
+    if (queued !== "1" && queued !== "true") {
+      return;
+    }
+
+    this.startPolling(since);
+  }
+
+  startPolling(since) {
+    this._since = since || new Date().toISOString();
     this._polling = true;
+    this._attempts = 0;
     this.element.querySelector("[data-recompute-poll-target='indicator']")
       ?.classList.remove("d-none");
     this.poll();
@@ -43,8 +58,13 @@ export default class RecomputePollController extends Controller {
         return;
       }
     }
-    catch {
-      // noop
+    catch (_) {}
+
+    this._attempts += 1;
+    if (this._attempts >= this.maxAttemptsValue) {
+      this.stopPolling();
+      this.reloadFrame();
+      return;
     }
 
     this._timer = setTimeout(() => this.poll(), this.intervalValue);

@@ -170,7 +170,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         end.to change(PerformanceRecordUpdateJob.jobs, :size).by(1)
 
         job = PerformanceRecordUpdateJob.jobs.last
-        expect(job["args"]).to eq([lecture.id])
+        expect(job["args"]).to eq([lecture.id, nil])
       end
 
       it "computes inline for a single student and redirects" do
@@ -211,6 +211,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.media_type).to eq(
           "text/vnd.turbo-stream.html"
         )
+        expect(response.headers["X-Recompute-Queued"]).to eq("1")
+        expect(response.headers["X-Recompute-Since"]).to be_present
       end
 
       it "redirects for html format" do
@@ -226,6 +228,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
         post recompute_lecture_student_performance_records_path(lecture)
         expect(PerformanceRecordUpdateJob.jobs.size).to eq(1)
+        expect(response.headers["X-Recompute-Queued"]).to eq("0")
         expect(flash[:alert]).to eq(
           I18n.t("student_performance.records.recompute.throttled")
         )
@@ -246,7 +249,18 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "returns done: false when no records exist" do
+      it "returns done: true when lecture has no members" do
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
+        expect(response).to have_http_status(:success)
+        body = response.parsed_body
+        expect(body["done"]).to be(true)
+      end
+
+      it "returns done: false when lecture has members but no records" do
+        member = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
         get recompute_status_lecture_student_performance_records_path(lecture),
             params: { since: 1.minute.ago.iso8601 }
         expect(response).to have_http_status(:success)
@@ -266,8 +280,11 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       it "returns done: false when some records are older than since" do
+        user = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
         FactoryBot.create(:student_performance_record,
                           lecture: lecture,
+                          user: user,
                           computed_at: 5.minutes.ago)
 
         get recompute_status_lecture_student_performance_records_path(lecture),
@@ -291,11 +308,21 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       it "returns done: false when a record has null computed_at" do
+        user_one = FactoryBot.create(:confirmed_user)
+        user_two = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership,
+                          lecture: lecture,
+                          user: user_one)
+        FactoryBot.create(:lecture_membership,
+                          lecture: lecture,
+                          user: user_two)
         FactoryBot.create(:student_performance_record,
                           lecture: lecture,
+                          user: user_one,
                           computed_at: Time.current)
         FactoryBot.create(:student_performance_record,
                           lecture: lecture,
+                          user: user_two,
                           computed_at: nil)
 
         get recompute_status_lecture_student_performance_records_path(lecture),

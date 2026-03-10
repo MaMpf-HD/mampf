@@ -54,11 +54,14 @@ module StudentPerformance
 
     def recompute_status
       scope = @lecture.student_performance_records
-      has_null = scope.exists?(computed_at: nil)
+      null_count = scope.where(computed_at: nil).count
+      has_null = null_count.positive?
       oldest = scope.minimum(:computed_at)
       threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
-      done = !has_null && threshold.present? &&
-             oldest.present? && oldest > threshold
+      member_count = @lecture.members.count
+      has_members = member_count.positive?
+      done = threshold.present? &&
+             (!has_members || (!has_null && oldest.present? && oldest > threshold))
 
       render json: { done: done }
     rescue ArgumentError
@@ -122,7 +125,13 @@ module StudentPerformance
           return respond_with_throttled
         end
 
-        PerformanceRecordUpdateJob.perform_async(@lecture.id)
+        enqueue_time = Time.current
+        set_recompute_poll_headers(queued: true, since: enqueue_time)
+
+        PerformanceRecordUpdateJob.perform_async(
+          @lecture.id,
+          nil
+        )
 
         respond_to do |format|
           format.turbo_stream do
@@ -141,6 +150,7 @@ module StudentPerformance
 
       def respond_with_throttled
         msg = I18n.t("student_performance.records.recompute.throttled")
+        set_recompute_poll_headers(queued: false)
 
         respond_to do |format|
           format.turbo_stream do
@@ -152,6 +162,13 @@ module StudentPerformance
                         alert: msg
           end
         end
+      end
+
+      def set_recompute_poll_headers(queued:, since: nil)
+        response.set_header("X-Recompute-Queued", queued ? "1" : "0")
+        return unless since
+
+        response.set_header("X-Recompute-Since", since.iso8601(6))
       end
 
       def load_show_data

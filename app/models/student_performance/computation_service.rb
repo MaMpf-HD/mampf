@@ -33,7 +33,9 @@ module StudentPerformance
         build_row(uid, stats, met_ids)
       end
 
-      rows.each_slice(UPSERT_BATCH_SIZE) { |batch| upsert_records(batch) }
+      rows.each_slice(UPSERT_BATCH_SIZE) do |batch|
+        upsert_records(batch)
+      end
     end
 
     private
@@ -160,6 +162,7 @@ module StudentPerformance
       def upsert_records(rows)
         Record.upsert_all(rows, unique_by: [:lecture_id, :user_id])
       end
+
     # rubocop:enable Rails/SkipsModelValidations
   end
 end

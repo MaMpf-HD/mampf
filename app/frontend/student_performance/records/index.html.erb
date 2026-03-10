@@ -21,7 +21,7 @@
           <%= button_to recompute_lecture_student_performance_records_path(@lecture),
                       method: :post,
                       class: "btn btn-outline-secondary",
-                      form: { data: { action: "submit->recompute-poll#start" } } do %>
+                      form: { data: { action: "turbo:submit-end->recompute-poll#handleSubmitEnd" } } do %>
             <i class="bi bi-arrow-clockwise me-1"></i>
             <%= t("student_performance.records.index.recompute_all") %>
           <% end %>
