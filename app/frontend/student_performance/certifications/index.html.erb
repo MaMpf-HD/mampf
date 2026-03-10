@@ -127,6 +127,16 @@
               <strong><%= @rule.min_points_absolute %></strong>
               <%= t("student_performance.rules.show.points_absolute") %>
             <% end %>
+            <% if @rule.required_achievements.any? %>
+              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+                +
+              <% end %>
+              <%= t("student_performance.certifications.index.required_achievements_label") %>
+              :
+              <strong>
+                <%= @rule.required_achievements.map(&:title).join(", ") %>
+              </strong>
+            <% end %>
           </span>
         </div>
       <% else %>

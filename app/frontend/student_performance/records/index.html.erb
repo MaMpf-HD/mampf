@@ -122,6 +122,16 @@
                   </th>
                 <% end %>
 
+                <% @achievements.each do |achievement| %>
+                  <th
+                    scope="col"
+                    class="text-center small"
+                    title="<%= achievement.title %>"
+                  >
+                    <%= truncate(achievement.title, length: 12) %>
+                  </th>
+                <% end %>
+
                 <th scope="col" class="small">
                   <%= t("student_performance.records.columns.computed_at") %>
                 </th>
@@ -163,6 +173,21 @@
                       title="<%= badge.tooltip(assessment.title) { max } %>"
                     >
                       <%= render badge %>
+                    </td>
+                  <% end %>
+
+                  <% @achievements.each do |achievement| %>
+                    <% met = record.achievements_met_ids&.include?(achievement.id) %>
+
+                    <td
+                      class="text-center"
+                      title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : t('student_performance.records.columns.achievement_not_met') %>"
+                    >
+                      <% if met %>
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                      <% else %>
+                        <i class="bi bi-x-circle text-muted"></i>
+                      <% end %>
                     </td>
                   <% end %>
 

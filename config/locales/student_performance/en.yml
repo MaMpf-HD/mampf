@@ -30,6 +30,8 @@ en:
         not_submitted: "Not Submitted"
         absent: "Absent"
         exempt: "Exempt"
+        achievement_met: "Met"
+        achievement_not_met: "Not met"
       index:
         title: "Performance Records"
         subtitle: "Factual performance data computed from assessments."
@@ -152,6 +154,7 @@ en:
         override: "Override"
         empty: "No student records found."
         rule_info: "Active rule"
+        required_achievements_label: "Achievements"
         stale_rule_warning:
           one: "Eligibility rules changed — %{count} certification is outdated."
           other: "Eligibility rules changed — %{count} certifications are outdated."

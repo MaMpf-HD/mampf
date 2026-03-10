@@ -30,6 +30,8 @@ de:
         not_submitted: "Nicht abgegeben"
         absent: "Abwesend"
         exempt: "Befreit"
+        achievement_met: "Erfüllt"
+        achievement_not_met: "Nicht erfüllt"
       index:
         title: "Leistungsdaten"
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
@@ -152,6 +154,7 @@ de:
         override: "Überschreiben"
         empty: "Keine Studierenden-Datensätze gefunden."
         rule_info: "Aktive Regel"
+        required_achievements_label: "Leistungen"
         stale_rule_warning:
           one: "Zulassungsregeln wurden geändert — %{count} Zertifizierung ist nicht mehr aktuell."
           other: "Zulassungsregeln wurden geändert — %{count} Zertifizierungen sind nicht mehr aktuell."

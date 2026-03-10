@@ -112,6 +112,116 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe "#student_met_threshold?" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      Flipper.enable(:assessment_grading)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+    end
+
+    after { Flipper.disable(:assessment_grading) }
+
+    context "when boolean" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+
+      it "returns true when grade_text is 'pass'" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "pass")
+        expect(achievement.student_met_threshold?(user)).to be(true)
+      end
+
+      it "returns false when grade_text is 'fail'" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "fail")
+        expect(achievement.student_met_threshold?(user)).to be(false)
+      end
+    end
+
+    context "when numeric" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :numeric, lecture: lecture)
+      end
+
+      it "returns true when grade_text meets threshold" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "12")
+        expect(achievement.student_met_threshold?(user)).to be(true)
+      end
+
+      it "returns false when grade_text is below threshold" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "5")
+        expect(achievement.student_met_threshold?(user)).to be(false)
+      end
+    end
+
+    context "when percentage" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :percentage, lecture: lecture)
+      end
+
+      it "returns true when grade_text meets threshold" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "80.0")
+        expect(achievement.student_met_threshold?(user)).to be(true)
+      end
+
+      it "returns false when grade_text is below threshold" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "50.0")
+        expect(achievement.student_met_threshold?(user)).to be(false)
+      end
+    end
+
+    context "when grade_text is blank" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+
+      it "returns false" do
+        expect(achievement.student_met_threshold?(user)).to be(false)
+      end
+    end
+
+    context "when no participation exists" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+      let(:other_user) { FactoryBot.create(:confirmed_user) }
+
+      it "returns false" do
+        expect(achievement.student_met_threshold?(other_user)).to be(false)
+      end
+    end
+
+    context "when no assessment exists" do
+      let(:achievement) do
+        Flipper.disable(:assessment_grading)
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+
+      it "returns false" do
+        expect(achievement.student_met_threshold?(user)).to be(false)
+      end
+    end
+  end
+
   describe "assessable wiring" do
     before { Flipper.enable(:assessment_grading) }
 

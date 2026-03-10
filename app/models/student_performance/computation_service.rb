@@ -115,12 +115,57 @@ module StudentPerformance
         aggregate_from_prefetched(participations, points_lookup)
       end
 
-      def achievement_ids_met_by(_user)
-        []
+      def lecture_achievements
+        @lecture_achievements ||= Achievement
+                                  .where(lecture_id: lecture.id)
+                                  .includes(:assessment)
       end
 
-      def achievement_ids_met_by_id(_user_id)
-        []
+      def achievement_ids_met_by(user)
+        lecture_achievements.select do |a|
+          a.student_met_threshold?(user)
+        end.map(&:id)
+      end
+
+      def achievement_ids_met_by_id(user_id)
+        return [] if lecture_achievements.empty?
+
+        assessment_ids = lecture_achievements.filter_map do |a|
+          a.assessment&.id
+        end
+        return [] if assessment_ids.empty?
+
+        grade_texts = achievement_participations_cache
+                      .fetch(user_id, {})
+
+        lecture_achievements.select do |a|
+          next false unless a.assessment
+
+          gt = grade_texts[a.assessment.id]
+          next false if gt.blank?
+
+          case a.value_type
+          when "boolean"    then gt == "pass"
+          when "numeric"    then gt.to_i >= a.threshold
+          when "percentage" then gt.to_f >= a.threshold
+          end
+        end.map(&:id)
+      end
+
+      def achievement_participations_cache
+        @achievement_participations_cache ||= begin
+          a_ids = lecture_achievements.filter_map { |a| a.assessment&.id }
+          return {} if a_ids.empty?
+
+          Assessment::Participation
+            .where(assessment_id: a_ids)
+            .where.not(grade_text: [nil, ""])
+            .pluck(:user_id, :assessment_id, :grade_text)
+            .group_by(&:first)
+            .transform_values do |rows|
+              rows.to_h { |_, aid, gt| [aid, gt] }
+            end
+        end
       end
 
       def effective_max(assessment)

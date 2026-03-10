@@ -470,4 +470,164 @@ RSpec.describe(StudentPerformance::ComputationService) do
       expect(record2.points_total_materialized).to eq(10)
     end
   end
+
+  describe "achievement evaluation" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    describe "#compute_and_upsert_record_for" do
+      context "with a boolean achievement" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        it "includes met achievement id when grade_text is pass" do
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "pass")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to include(achievement.id)
+        end
+
+        it "excludes achievement when grade_text is fail" do
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "fail")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).not_to include(achievement.id)
+        end
+      end
+
+      context "with a numeric achievement" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :numeric, lecture: lecture)
+        end
+
+        it "includes met achievement when value meets threshold" do
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "15")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to include(achievement.id)
+        end
+
+        it "excludes achievement when value is below threshold" do
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "5")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).not_to include(achievement.id)
+        end
+      end
+
+      context "with unmarked achievement" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        it "returns empty achievements_met_ids" do
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to eq([])
+        end
+      end
+
+      context "with multiple achievements" do
+        let!(:bool_achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+        let!(:numeric_achievement) do
+          FactoryBot.create(:achievement, :numeric, lecture: lecture)
+        end
+
+        it "returns only met achievement ids" do
+          bool_p = bool_achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+          bool_p.update!(grade_text: "pass")
+
+          num_p = numeric_achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          num_p.update!(grade_text: "5")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids)
+            .to include(bool_achievement.id)
+          expect(record.achievements_met_ids)
+            .not_to include(numeric_achievement.id)
+        end
+      end
+    end
+
+    describe "#compute_and_upsert_all_records!" do
+      let(:user2) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        FactoryBot.create(:lecture_membership,
+                          user: user2, lecture: lecture)
+      end
+
+      context "with achievements" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        it "evaluates achievements per user in bulk" do
+          p1 = achievement.assessment
+                          .assessment_participations
+                          .find_by(user: user)
+          p1.update!(grade_text: "pass")
+
+          p2 = achievement.assessment
+                          .assessment_participations
+                          .find_by(user: user2)
+          p2.update!(grade_text: "fail")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_all_records!
+
+          r1 = StudentPerformance::Record
+               .find_by(lecture: lecture, user: user)
+          r2 = StudentPerformance::Record
+               .find_by(lecture: lecture, user: user2)
+
+          expect(r1.achievements_met_ids).to include(achievement.id)
+          expect(r2.achievements_met_ids).not_to include(achievement.id)
+        end
+      end
+    end
+  end
 end

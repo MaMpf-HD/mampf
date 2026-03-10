@@ -22,6 +22,23 @@ class Achievement < ApplicationRecord
   after_create :setup_assessment,
                if: -> { Flipper.enabled?(:assessment_grading) }
 
+  def student_met_threshold?(user)
+    return false unless assessment
+
+    participation = assessment.assessment_participations
+                              .find_by(user: user)
+    return false if participation.nil? || participation.grade_text.blank?
+
+    case value_type
+    when "boolean"
+      participation.grade_text == "pass"
+    when "numeric"
+      participation.grade_text.to_i >= threshold
+    when "percentage"
+      participation.grade_text.to_f >= threshold
+    end
+  end
+
   private
 
     def setup_assessment

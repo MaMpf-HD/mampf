@@ -225,6 +225,27 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        context "when rule has required achievements" do
+          let!(:achievement) do
+            FactoryBot.create(:achievement, lecture: lecture,
+                                            title: "Homework A")
+          end
+
+          before do
+            FactoryBot.create(:student_performance_rule_achievement,
+                              rule: rule, achievement: achievement)
+          end
+
+          it "shows the required achievements in the rule info" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include("Homework A")
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index" \
+                     ".required_achievements_label")
+            )
+          end
+        end
+
         it "shows the bulk accept button" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(

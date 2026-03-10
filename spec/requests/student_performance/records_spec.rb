@@ -45,6 +45,42 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(other_user.tutorial_name)
       end
 
+      context "with achievements" do
+        before { Flipper.enable(:assessment_grading) }
+
+        after { Flipper.disable(:assessment_grading) }
+
+        it "renders achievement columns when achievements exist" do
+          user = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership,
+                            lecture: lecture, user: user)
+          achievement = FactoryBot.create(:achievement, :boolean,
+                                          lecture: lecture)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: user,
+                            achievements_met_ids: [achievement.id])
+
+          get lecture_student_performance_records_path(lecture)
+          expect(response.body).to include(achievement.title)
+          expect(response.body).to include("bi-check-circle-fill")
+        end
+
+        it "renders not-met icon for unmet achievements" do
+          user = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership,
+                            lecture: lecture, user: user)
+          achievement = FactoryBot.create(:achievement, :boolean,
+                                          lecture: lecture)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: user,
+                            achievements_met_ids: [])
+
+          get lecture_student_performance_records_path(lecture)
+          expect(response.body).to include(achievement.title)
+          expect(response.body).to include("bi-x-circle")
+        end
+      end
+
       context "with tutorial filter" do
         let(:tutorial) do
           FactoryBot.create(:tutorial, lecture: lecture)

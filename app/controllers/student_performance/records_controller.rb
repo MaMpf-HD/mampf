@@ -36,6 +36,7 @@ module StudentPerformance
       @pagy, @records = pagy(scope)
       load_assessment_statuses
       @standard_max = @assessments.sum(&:effective_total_points)
+      @achievements = @lecture.achievements.order(:title)
     end
 
     def show
