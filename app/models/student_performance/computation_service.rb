@@ -1,5 +1,6 @@
 module StudentPerformance
-  # Missing top-level docstring, please formulate one yourself 😁
+  # Computes the performance metrics for students in a lecture and
+  # upserts the results into the database.
   class ComputationService
     attr_reader :lecture
 
