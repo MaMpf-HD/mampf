@@ -245,7 +245,6 @@ class SubmissionsController < ApplicationController
   end
 
   def grade_submission
-    t = params
     submission = Submission.find_by(id: params[:id])
     scorer = current_user
     Assessment::SubmissionGraderService.score_tasks!(
@@ -253,6 +252,19 @@ class SubmissionsController < ApplicationController
       params[:task_points],
       scorer
     )
+    head :ok
+  end
+
+  def grade_multi_submissions
+    scorer = current_user
+    params[:submissions].each do |entry|
+      submission = Submission.find(entry[:id])
+      Assessment::SubmissionGraderService.score_tasks!(
+        submission,
+        entry[:task_points],
+        scorer
+      )
+    end
     head :ok
   end
 

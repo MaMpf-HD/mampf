@@ -70,6 +70,8 @@
         data-id="<%= submission.id %>">
       <%= render partial: 'submissions/other_actions',
                   locals: { submission: submission } %>
-      <%= f.submit "Save" %>
+      <%= f.submit "Save row",
+             disabled: true,
+             data: { submission_row_target: "save" } %>
     </td>
   <% end %>

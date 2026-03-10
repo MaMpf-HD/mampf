@@ -116,4 +116,18 @@
   <div class="row my-3 p-3"
        id="bulk-upload-report">
   </div>
+  <!-- Bulk Save -->
+  <button class="btn btn-primary"
+        disabled
+        data-submission-table-target="bulkSave"
+        data-action="click->submission-table#submitAll">
+    Save All Changes
+  </button>
+
+  <%= form_with url: grade_multi_submissions_path,
+              method: :patch,
+              data: { submission_table_target: "form" } do %>
+    <input type="hidden" name="submissions" data-submission-table-target="payload">
+  <% end %>
+
 <% end %>

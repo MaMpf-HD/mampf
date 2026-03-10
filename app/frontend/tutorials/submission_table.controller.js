@@ -1,27 +1,33 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["bulkSave"];
+  static targets = ["bulkSave", "form", "payload"];
 
   connect() {
-    this.dirtyRows = new Set();
+    this.newValues = [];
   }
 
   rowDirty(event) {
-    this.dirtyRows.add(event.detail.id);
+    this.newValues = this.newValues.filter(value => value.id !== event.detail.id);
+    this.newValues.push(event.detail);
     this.updateBulkState();
   }
 
   rowClean(event) {
-    this.dirtyRows.delete(event.detail.id);
+    this.newValues = this.newValues.filter(value => value.id !== event.detail.id);
     this.updateBulkState();
   }
 
   updateBulkState() {
-    const anyDirty = this.dirtyRows.size > 0;
+    const anyDirty = this.newValues.length > 0;
 
     if (this.hasBulkSaveTarget) {
       this.bulkSaveTarget.disabled = !anyDirty;
     }
+  }
+
+  submitAll() {
+    this.payloadTarget.value = JSON.stringify(this.newValues);
+    this.formTarget.requestSubmit();
   }
 }
