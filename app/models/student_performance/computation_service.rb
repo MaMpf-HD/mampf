@@ -1,6 +1,10 @@
 module StudentPerformance
+  # Computes the performance metrics for students in a lecture and
+  # upserts the results into the database.
   class ComputationService
     attr_reader :lecture
+
+    UPSERT_BATCH_SIZE = 100
 
     def initialize(lecture:)
       @lecture = lecture
@@ -10,19 +14,26 @@ module StudentPerformance
       stats = aggregate_points(user)
       met_ids = achievement_ids_met_by(user)
 
-      upsert_record(
-        user: user,
-        points_total: stats[:points_total],
-        points_max: stats[:points_max],
-        achievements_met_ids: met_ids,
-        counts: stats[:counts]
-      )
+      upsert_records([build_row(user.id, stats, met_ids)])
     end
 
     def compute_and_upsert_all_records!
-      lecture.members.find_each do |user|
-        compute_and_upsert_record_for(user)
+      user_ids = lecture.members.pluck(:id)
+      return if user_ids.empty?
+
+      participations_by_user = prefetch_participations(user_ids)
+      points_by_participation = prefetch_task_points(
+        participations_by_user.values.flatten
+      )
+
+      rows = user_ids.map do |uid|
+        parts = participations_by_user.fetch(uid, [])
+        stats = aggregate_from_prefetched(parts, points_by_participation)
+        met_ids = achievement_ids_met_by_id(uid)
+        build_row(uid, stats, met_ids)
       end
+
+      rows.each_slice(UPSERT_BATCH_SIZE) { |batch| upsert_records(batch) }
     end
 
     private
@@ -34,32 +45,46 @@ module StudentPerformance
                          .includes(:tasks)
       end
 
-      def aggregate_points(user)
-        participations = Assessment::Participation
-                         .where(assessment_id: assessments.select(:id), user_id: user.id)
-                         .select(:id, :assessment_id, :status, :submitted_at)
+      def prefetch_participations(user_ids)
+        Assessment::Participation
+          .where(assessment_id: assessments.select(:id),
+                 user_id: user_ids)
+          .select(:id, :assessment_id, :status, :submitted_at, :user_id)
+          .group_by(&:user_id)
+      end
 
+      def prefetch_task_points(participations)
+        reviewed_ids = participations
+                       .select { |p| p.status == "reviewed" }
+                       .map(&:id)
+        return {} if reviewed_ids.empty?
+
+        Assessment::TaskPoint
+          .where(assessment_participation_id: reviewed_ids)
+          .group(:assessment_participation_id)
+          .sum(:points)
+      end
+
+      def aggregate_from_prefetched(participations, points_lookup)
         status_map = participations.group_by(&:status)
         reviewed = status_map.fetch("reviewed", [])
         exempt = status_map.fetch("exempt", [])
         pending_all = status_map.fetch("pending", [])
 
-        reviewed_ids = reviewed.map(&:id)
-        exempt_assessment_ids = exempt.to_set(&:assessment_id)
-
-        points_total = if reviewed_ids.any?
-          Assessment::TaskPoint
-            .where(assessment_participation_id: reviewed_ids)
-            .sum(:points)
-        else
-          BigDecimal("0")
+        points_total = reviewed.sum do |p|
+          points_lookup.fetch(p.id, BigDecimal("0"))
         end
 
-        non_exempt = assessments.reject { |a| exempt_assessment_ids.include?(a.id) }
+        exempt_assessment_ids = exempt.to_set(&:assessment_id)
+        non_exempt = assessments.reject do |a|
+          exempt_assessment_ids.include?(a.id)
+        end
         points_max = non_exempt.sum { |a| effective_max(a) }
 
         participated_ids = participations.to_set(&:assessment_id)
-        no_participation = assessments.count { |a| participated_ids.exclude?(a.id) }
+        no_participation = assessments.count do |a|
+          participated_ids.exclude?(a.id)
+        end
 
         pending_grading = pending_all.count { |p| p.submitted_at.present? }
         not_submitted = pending_all.count { |p| p.submitted_at.nil? } +
@@ -76,7 +101,23 @@ module StudentPerformance
         { points_total: points_total, points_max: points_max, counts: counts }
       end
 
+      def aggregate_points(user)
+        participations = Assessment::Participation
+                         .where(assessment_id: assessments.select(:id),
+                                user_id: user.id)
+                         .select(:id, :assessment_id, :status, :submitted_at,
+                                 :user_id)
+                         .to_a
+
+        points_lookup = prefetch_task_points(participations)
+        aggregate_from_prefetched(participations, points_lookup)
+      end
+
       def achievement_ids_met_by(_user)
+        []
+      end
+
+      def achievement_ids_met_by_id(_user_id)
         []
       end
 
@@ -90,32 +131,35 @@ module StudentPerformance
         (points_total / points_max * 100).round(2)
       end
 
-      def upsert_record(user:, points_total:, points_max:, achievements_met_ids:, counts:)
+      def build_row(user_id, stats, achievements_met_ids)
         now = Time.current
-        percentage = compute_percentage(points_total, points_max)
-
-        # All values are computed by this service, not user input.
-        # Uniqueness is enforced by the DB index on [lecture_id, user_id]
-        # rubocop:disable Rails/SkipsModelValidations
-        Record.upsert(
-          {
-            lecture_id: lecture.id,
-            user_id: user.id,
-            points_total_materialized: points_total,
-            points_max_materialized: points_max,
-            percentage_materialized: percentage,
-            achievements_met_ids: achievements_met_ids,
-            assessments_total_count: counts[:total],
-            assessments_reviewed_count: counts[:reviewed],
-            assessments_pending_grading_count: counts[:pending_grading],
-            assessments_not_submitted_count: counts[:not_submitted],
-            assessments_exempt_count: counts[:exempt],
-            computed_at: now,
-            updated_at: now
-          },
-          unique_by: [:lecture_id, :user_id]
+        percentage = compute_percentage(
+          stats[:points_total], stats[:points_max]
         )
-        # rubocop:enable Rails/SkipsModelValidations
+
+        {
+          lecture_id: lecture.id,
+          user_id: user_id,
+          points_total_materialized: stats[:points_total],
+          points_max_materialized: stats[:points_max],
+          percentage_materialized: percentage,
+          achievements_met_ids: achievements_met_ids,
+          assessments_total_count: stats[:counts][:total],
+          assessments_reviewed_count: stats[:counts][:reviewed],
+          assessments_pending_grading_count:
+            stats[:counts][:pending_grading],
+          assessments_not_submitted_count:
+            stats[:counts][:not_submitted],
+          assessments_exempt_count: stats[:counts][:exempt],
+          computed_at: now,
+          updated_at: now
+        }
       end
+
+      # rubocop:disable Rails/SkipsModelValidations
+      def upsert_records(rows)
+        Record.upsert_all(rows, unique_by: [:lecture_id, :user_id])
+      end
+    # rubocop:enable Rails/SkipsModelValidations
   end
 end
