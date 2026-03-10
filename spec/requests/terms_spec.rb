@@ -18,7 +18,7 @@ RSpec.describe("Terms", type: :request) do
     it "responds with turbo frame containing form" do
       get new_term_path, headers: { "turbo-frame" => "term-form" }
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/html")
+      assert_turbo_frame("term-form")
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe("Terms", type: :request) do
     it "responds with turbo frame containing form" do
       get edit_term_path(term), headers: { "turbo-frame" => "term-form" }
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/html")
+      assert_turbo_frame("term-form")
     end
 
     it "redirects to terms index when term not found" do
@@ -51,12 +51,11 @@ RSpec.describe("Terms", type: :request) do
 
     it "creates a term and responds with turbo stream on turbo request" do
       expect do
-        post(terms_path, params: valid_params,
-                         headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        post(terms_path, params: valid_params, as: :turbo_stream)
       end.to change(Term, :count).by(1)
 
-      expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      assert_turbo_stream(action: "prepend", target: "terms")
+      assert_turbo_stream(action: "update", target: Term.new)
     end
 
     it "responds with form on validation failure" do
@@ -82,11 +81,9 @@ RSpec.describe("Terms", type: :request) do
     end
 
     it "updates and responds with turbo stream on turbo request" do
-      patch term_path(term), params: { term: { year: 2025 } },
-                             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      patch term_path(term), params: { term: { year: 2025 } }, as: :turbo_stream
 
-      expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      assert_turbo_stream(action: "replace", target: term)
       expect(term.reload.year).to eq(2025)
     end
 
@@ -116,11 +113,10 @@ RSpec.describe("Terms", type: :request) do
       term = create(:term)
 
       expect do
-        delete(term_path(term), headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        delete(term_path(term), as: :turbo_stream)
       end.to change(Term, :count).by(-1)
 
-      expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      assert_turbo_stream(action: "remove", target: term)
     end
   end
 
