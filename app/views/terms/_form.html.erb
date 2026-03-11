@@ -3,12 +3,12 @@
     <div class="col-2">
       <%= f.select :year,
                     ((Time.current.year - 5)..(Time.current.year + 2)).to_a,
-                    {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
+                    {}, { class: "form-select" } %>
     </div>
     <div class="col-2">
       <%= f.select :season,
                     ['WS', 'SS'],
-                    {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
+                    {}, { class: "form-select" } %>
     </div>
     <div class="col-4">
       <ul class="list-unstyled">

@@ -45,7 +45,6 @@ test("create invalid Term", async ({ admin: { page } }) => {
   await termsPage.createTerm(currentYear, "SS");
   await termsPage.createTerm(currentYear, "SS");
 
-  await expect(page.locator("#term_year")).toContainClass("is-invalid");
   await expect(page.locator("#term_season")).toContainClass("is-invalid");
   await expect(page.getByText("term already exists")).toBeVisible();
 });
