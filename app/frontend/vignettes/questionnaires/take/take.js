@@ -16,7 +16,7 @@ function initializeVignetteTake() {
   }
   form.data("vignetteInitialized", true);
 
-  form.submit((event) => {
+  form.on("submit", (event) => {
     return validateForm(event);
   });
 
@@ -56,7 +56,7 @@ function testFormValidityOnPreview() {
   const previewNext = $("#vignettes-next-slide-preview");
   if (previewNext.length === 0) return;
 
-  previewNext.click((event) => {
+  previewNext.on("click", (event) => {
     return validateForm(event);
   });
 }
@@ -204,7 +204,7 @@ function registerStatisticsHandler(stats) {
   }
   openInfoSlideButtons.each(function () {
     const id = $(this).attr("data-info-slide-id");
-    $(this).click(() => {
+    $(this).on("click", () => {
       stats.freezeSlideTime();
       stats.checkInfoSlideFirstAccess(id);
       stats.increaseInfoSlideAccessCount(id);
@@ -227,7 +227,7 @@ function registerStatisticsHandler(stats) {
   });
 
   // Form Submission
-  $(VIGNETTE_FORM_ID).submit((e) => {
+  $(VIGNETTE_FORM_ID).on("submit", (e) => {
     if ($(VIGNETTE_FORM_ID).data("preview")) {
       e.preventDefault();
       return;
