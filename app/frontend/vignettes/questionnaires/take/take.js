@@ -6,7 +6,7 @@ function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
 }
 
-$(document).ready(function () {
+$(document).on("turbo:load", function () {
   if (!shouldRegisterVignette()) {
     return;
   }
