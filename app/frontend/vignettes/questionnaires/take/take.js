@@ -6,12 +6,17 @@ function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
 }
 
-$(document).ready(function () {
+function initializeVignetteTake() {
+  const form = $(VIGNETTE_FORM_ID);
   if (!shouldRegisterVignette()) {
     return;
   }
+  if (form.data("vignetteInitialized")) {
+    return;
+  }
+  form.data("vignetteInitialized", true);
 
-  $(VIGNETTE_FORM_ID).submit((event) => {
+  form.on("submit", (event) => {
     return validateForm(event);
   });
 
@@ -21,7 +26,10 @@ $(document).ready(function () {
 
   const stats = new VignetteSlideStatistics();
   registerStatisticsHandler(stats);
-});
+}
+
+$(document).off("turbo:load.vignetteTake");
+$(document).on("turbo:load.vignetteTake", initializeVignetteTake);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validators
@@ -48,7 +56,7 @@ function testFormValidityOnPreview() {
   const previewNext = $("#vignettes-next-slide-preview");
   if (previewNext.length === 0) return;
 
-  previewNext.click((event) => {
+  previewNext.on("click", (event) => {
     return validateForm(event);
   });
 }
@@ -196,7 +204,7 @@ function registerStatisticsHandler(stats) {
   }
   openInfoSlideButtons.each(function () {
     const id = $(this).attr("data-info-slide-id");
-    $(this).click(() => {
+    $(this).on("click", () => {
       stats.freezeSlideTime();
       stats.checkInfoSlideFirstAccess(id);
       stats.increaseInfoSlideAccessCount(id);
@@ -219,7 +227,7 @@ function registerStatisticsHandler(stats) {
   });
 
   // Form Submission
-  $(VIGNETTE_FORM_ID).submit((e) => {
+  $(VIGNETTE_FORM_ID).on("submit", (e) => {
     if ($(VIGNETTE_FORM_ID).data("preview")) {
       e.preventDefault();
       return;
@@ -245,3 +253,5 @@ function registerStatisticsHandler(stats) {
     infoSlideFirstAccessTimes.val(JSON.stringify(stats.infoSlideFirstAccessTimes));
   });
 }
+
+initializeVignetteTake();
