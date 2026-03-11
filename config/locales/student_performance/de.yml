@@ -82,7 +82,7 @@ de:
           percentage: "min. %{threshold}%"
       edit:
         title: "Zulassungsregeln bearbeiten"
-        subtitle: "Kriterien konfigurieren, die Studierende erfüllen müssen."
+        subtitle: "Kriterien konfigurieren, die Studierende erfüllen müssen, um die Prüfungszulassung zu erhalten."
         cancel: "Abbrechen"
         save: "Regeln speichern"
         threshold_section: "Punkteschwelle"
@@ -112,7 +112,7 @@ de:
         meets_achievements: "Leistungen"
         proposal: "Vorschlag"
         empty: "Keine Leistungsdaten zur Auswertung vorhanden."
-        info: "Diese Vorschläge sind schreibgeschützte Vorschauen. Zertifizierungen werden in einem zukünftigen Update erstellt."
+        info: "Diese Vorschläge sind schreibgeschützte Vorschauen. Zulassungen werden in einem zukünftigen Update erstellt."
       preview_rule_change:
         title: "Regeländerung vorschauen"
         subtitle: "Sehen Sie, wie eine andere Schwelle die Zulassungsentscheidungen beeinflussen würde."
@@ -136,18 +136,18 @@ de:
         result: "Ergebnis"
         achievements_check: "Leistungs-Prüfung"
         no_achievements_required: "Die aktuelle Regel erfordert keine zusätzlichen Leistungen."
-        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zertifizierungen werden in einem zukünftigen Update erstellt."
+        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zulassungen werden in einem zukünftigen Update erstellt."
     certifications:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
-        title: "Zertifizierungs-Dashboard"
-        subtitle: "Zulassungsvorschläge prüfen und Studierende zertifizieren."
+        title: "Prüfungszulassungen"
+        subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
         total: "Studierende gesamt"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         uncertified: "Offen"
         stale: "Veraltet"
-        stale_hint: "Zertifiziert bevor Regeln oder Daten geändert wurden"
+        stale_hint: "Zugelassen bevor Regeln oder Daten geändert wurden"
         bulk_accept: "Alle Vorschläge akzeptieren"
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
@@ -157,14 +157,14 @@ de:
         rule_info: "Aktive Regel"
         required_achievements_label: "Leistungen"
         stale_rule_warning:
-          one: "Zulassungsregeln wurden geändert — %{count} Zertifizierung ist nicht mehr aktuell."
-          other: "Zulassungsregeln wurden geändert — %{count} Zertifizierungen sind nicht mehr aktuell."
+          one: "Zulassungsregeln wurden geändert — %{count} Zulassung ist nicht mehr aktuell."
+          other: "Zulassungsregeln wurden geändert — %{count} Zulassungen sind nicht mehr aktuell."
         stale_rule_manual_warning:
           one: "%{count} manuelle Überschreibung sollte nach Regeländerung überprüft werden."
           other: "%{count} manuelle Überschreibungen sollten nach Regeländerung überprüft werden."
         stale_data_warning:
-          one: "Leistungsdaten wurden aktualisiert — %{count} Zertifizierung ist nicht mehr aktuell."
-          other: "Leistungsdaten wurden aktualisiert — %{count} Zertifizierungen sind nicht mehr aktuell."
+          one: "Leistungsdaten wurden aktualisiert — %{count} Zulassung ist nicht mehr aktuell."
+          other: "Leistungsdaten wurden aktualisiert — %{count} Zulassungen sind nicht mehr aktuell."
         stale_data_manual_warning:
           one: "%{count} manuelle Überschreibung sollte nach Datenänderung überprüft werden."
           other: "%{count} manuelle Überschreibungen sollten nach Datenänderung überprüft werden."
@@ -178,7 +178,7 @@ de:
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
       columns:
         proposed: "Vorschlag"
-        certification: "Zertifizierung"
+        certification: "Zulassung"
         note: "Anmerkung"
       filters:
         all: "Alle"
@@ -194,12 +194,12 @@ de:
         cancel: "Abbrechen"
         save: "Überschreibung speichern"
       flash:
-        created: "Zertifizierung gespeichert."
-        updated: "Zertifizierung aktualisiert."
+        created: "Zulassung gespeichert."
+        updated: "Zulassung aktualisiert."
         manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie das Überschreiben-Modal, um sie zu ändern."
         bulk_accepted:
-          one: "%{count} Zertifizierung akzeptiert."
-          other: "%{count} Zertifizierungen akzeptiert."
+          one: "%{count} Zulassung akzeptiert."
+          other: "%{count} Zulassungen akzeptiert."
         reevaluated:
-          one: "%{count} Zertifizierung neu bewertet."
-          other: "%{count} Zertifizierungen neu bewertet."
+          one: "%{count} Zulassung neu bewertet."
+          other: "%{count} Zulassungen neu bewertet."

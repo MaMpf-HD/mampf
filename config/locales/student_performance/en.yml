@@ -93,7 +93,7 @@ en:
         points_unit: "pts"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
-        save_hint: "Saving will regenerate proposals. Review their impact in the Certifications tab."
+        save_hint: "Saving will regenerate proposals. Review their impact in the Eligibility tab."
       flash:
         updated: "Eligibility rules updated."
     evaluator:
@@ -140,14 +140,14 @@ en:
     certifications:
       back_to_dashboard: "Back to dashboard"
       index:
-        title: "Certification Dashboard"
-        subtitle: "Review eligibility proposals and certify students."
+        title: "Exam Eligibility"
+        subtitle: "Review eligibility proposals and approve students for the exam."
         total: "Total Students"
         passed: "Eligible"
         failed: "Not Eligible"
-        uncertified: "Uncertified"
+        uncertified: "Undecided"
         stale: "Stale"
-        stale_hint: "Certified before rules or data changed"
+        stale_hint: "Decided before rules or data changed"
         bulk_accept: "Accept All Proposals"
         proposed_passed: "eligible"
         proposed_failed: "not eligible"
@@ -157,14 +157,14 @@ en:
         rule_info: "Active rule"
         required_achievements_label: "Achievements"
         stale_rule_warning:
-          one: "Eligibility rules changed — %{count} certification is outdated."
-          other: "Eligibility rules changed — %{count} certifications are outdated."
+          one: "Eligibility rules changed — %{count} decision is outdated."
+          other: "Eligibility rules changed — %{count} decisions are outdated."
         stale_rule_manual_warning:
           one: "%{count} manual override may need review after rule changes."
           other: "%{count} manual overrides may need review after rule changes."
         stale_data_warning:
-          one: "Student data was recomputed — %{count} certification is outdated."
-          other: "Student data was recomputed — %{count} certifications are outdated."
+          one: "Student data was recomputed — %{count} decision is outdated."
+          other: "Student data was recomputed — %{count} decisions are outdated."
         stale_data_manual_warning:
           one: "%{count} manual override may need review after data changes."
           other: "%{count} manual overrides may need review after data changes."
@@ -178,14 +178,14 @@ en:
         stale: "Outdated — reconciliation needed"
       columns:
         proposed: "Proposed"
-        certification: "Certification"
+        certification: "Decision"
         note: "Note"
       filters:
         all: "All"
         passed: "Eligible"
         failed: "Not Eligible"
         stale: "Stale"
-        uncertified: "Uncertified"
+        uncertified: "Undecided"
       override:
         title: "Manual Override"
         status: "Status"
@@ -194,12 +194,12 @@ en:
         cancel: "Cancel"
         save: "Save Override"
       flash:
-        created: "Certification saved."
-        updated: "Certification updated."
+        created: "Decision saved."
+        updated: "Decision updated."
         manual_exists: "A manual override exists for this student. Use the override modal to change it."
         bulk_accepted:
-          one: "%{count} certification accepted."
-          other: "%{count} certifications accepted."
+          one: "%{count} decision accepted."
+          other: "%{count} decisions accepted."
         reevaluated:
-          one: "%{count} certification re-evaluated."
-          other: "%{count} certifications re-evaluated."
+          one: "%{count} decision re-evaluated."
+          other: "%{count} decisions re-evaluated."

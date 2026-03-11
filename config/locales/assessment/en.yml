@@ -7,7 +7,7 @@ en:
       performance: "Performance"
       achievements: "Achievements"
       rules: "Rules"
-      certifications: "Certifications"
+      certifications: "Eligibility"
     assessments: 'Assessments'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
