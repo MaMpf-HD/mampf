@@ -105,7 +105,13 @@ export class VignettesPage {
   }
 
   async submitWithStats() {
-    await this.page.locator("#vignettes-answer-form button[type='submit']").click();
+    const nextSlideButton = this.page.getByTitle("Next slide");
+    if (await nextSlideButton.isVisible()) {
+      await nextSlideButton.click();
+    }
+    else {
+      await this.page.getByTitle("Submit answer").click();
+    }
   }
 
   async exportQuestionnaireCsv(questionnaireId: number): Promise<string[][]> {
