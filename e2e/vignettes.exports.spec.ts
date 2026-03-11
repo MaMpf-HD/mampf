@@ -1,8 +1,5 @@
 import { expect, test } from "./_support/fixtures";
-import {
-  QUESTIONNAIRE_CSV_HEADERS,
-  VignettesPage,
-} from "./page-objects/vignettes_page";
+import { VignettesPage } from "./page-objects/vignettes_page";
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -54,12 +51,13 @@ test.describe("single-slide exports", () => {
       infoSlidesFirstAccessTime: "{}",
     });
 
-    const rows = await teacherVignettes.exportQuestionnaireCsv(questionnaire.id);
-    expect(rows[0]).toEqual(QUESTIONNAIRE_CSV_HEADERS);
-    expect(rows).toHaveLength(2);
-    expect(rows[1][10]).toBe("text-answer");
-    expect(rows[1][11]).toBe("");
-    expect(rows[1][12]).toBe("");
+    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
+    expect(exportData.rows).toHaveLength(1);
+
+    const row = exportData.rows[0];
+    expect(row.answer).toBe("text-answer");
+    expect(row.selectedOptions).toBe("");
+    expect(row.likertScaleOption).toBe("");
   });
 
   test("exports number answers", async ({ factory }) => {
@@ -89,11 +87,13 @@ test.describe("single-slide exports", () => {
       infoSlidesFirstAccessTime: "{}",
     });
 
-    const rows = await teacherVignettes.exportQuestionnaireCsv(questionnaire.id);
-    expect(rows).toHaveLength(2);
-    expect(rows[1][10]).toBe("42");
-    expect(rows[1][11]).toBe("");
-    expect(rows[1][12]).toBe("");
+    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
+    expect(exportData.rows).toHaveLength(1);
+
+    const row = exportData.rows[0];
+    expect(row.answer).toBe("42");
+    expect(row.selectedOptions).toBe("");
+    expect(row.likertScaleOption).toBe("");
   });
 
   test("exports multiple-choice answers", async ({ factory }) => {
@@ -135,11 +135,13 @@ test.describe("single-slide exports", () => {
       infoSlidesFirstAccessTime: "{}",
     });
 
-    const rows = await teacherVignettes.exportQuestionnaireCsv(questionnaire.id);
-    expect(rows).toHaveLength(2);
-    expect(rows[1][10]).toBe("");
-    expect(rows[1][11]).toBe("Option A");
-    expect(rows[1][12]).toBe("");
+    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
+    expect(exportData.rows).toHaveLength(1);
+
+    const row = exportData.rows[0];
+    expect(row.answer).toBe("");
+    expect(row.selectedOptions).toBe("Option A");
+    expect(row.likertScaleOption).toBe("");
   });
 
   test("exports likert-scale answers", async ({ factory }) => {
@@ -170,11 +172,13 @@ test.describe("single-slide exports", () => {
       infoSlidesFirstAccessTime: "{}",
     });
 
-    const rows = await teacherVignettes.exportQuestionnaireCsv(questionnaire.id);
-    expect(rows).toHaveLength(2);
-    expect(rows[1][10]).toBe("");
-    expect(rows[1][11]).toBe("");
-    expect(rows[1][12]).toBe("strongly_agree");
+    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
+    expect(exportData.rows).toHaveLength(1);
+
+    const row = exportData.rows[0];
+    expect(row.answer).toBe("");
+    expect(row.selectedOptions).toBe("");
+    expect(row.likertScaleOption).toBe("strongly_agree");
   });
 });
 
@@ -288,11 +292,12 @@ test.describe("multi-slide exports", () => {
       infoSlidesFirstAccessTime: "{}",
     });
 
-    const rows = await teacherVignettes.exportQuestionnaireCsv(questionnaire.id);
-    expect(rows).toHaveLength(4);
-    expect(rows[0]).toEqual(QUESTIONNAIRE_CSV_HEADERS);
+    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
+    expect(exportData.rows).toHaveLength(3);
 
-    const bySlidePosition = new Map(rows.slice(1).map(row => [row[3], row]));
+    const bySlidePosition = new Map(
+      exportData.rows.map(row => [row.slidePosition, row]),
+    );
 
     const row1 = bySlidePosition.get("1");
     const row2 = bySlidePosition.get("2");
@@ -306,25 +311,25 @@ test.describe("multi-slide exports", () => {
       throw new Error("Missing expected rows in CSV export");
     }
 
-    expect(row1[2]).toBe(codename);
-    expect(row1[4]).toBe("Slide 1");
-    expect(row1[5]).toBe("13");
-    expect(row1[6]).toBe("11");
-    expect(row1[10]).toBe("Text response");
+    expect(row1.codename).toBe(codename);
+    expect(row1.slideTitle).toBe("Slide 1");
+    expect(row1.totalTimeOnSlide).toBe("13");
+    expect(row1.timeOnSlide).toBe("11");
+    expect(row1.answer).toBe("Text response");
 
-    expect(row2[2]).toBe(codename);
-    expect(row2[4]).toBe("Slide 2");
-    expect(row2[5]).toBe("27");
-    expect(row2[6]).toBe("21");
-    expect(row2[7]).toBe(`{"${infoSlide.id}":6}`);
-    expect(row2[8]).toBe(`{"${infoSlide.id}":2}`);
-    expect(row2[9]).toBe(`{"${infoSlide.id}":4}`);
-    expect(row2[11]).toBe("Option A");
+    expect(row2.codename).toBe(codename);
+    expect(row2.slideTitle).toBe("Slide 2");
+    expect(row2.totalTimeOnSlide).toBe("27");
+    expect(row2.timeOnSlide).toBe("21");
+    expect(row2.timeOnInfoSlide).toBe(`{"${infoSlide.id}":6}`);
+    expect(row2.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
+    expect(row2.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":4}`);
+    expect(row2.selectedOptions).toBe("Option A");
 
-    expect(row3[2]).toBe(codename);
-    expect(row3[4]).toBe("Slide 3");
-    expect(row3[5]).toBe("34");
-    expect(row3[6]).toBe("31");
-    expect(row3[12]).toBe("strongly_agree");
+    expect(row3.codename).toBe(codename);
+    expect(row3.slideTitle).toBe("Slide 3");
+    expect(row3.totalTimeOnSlide).toBe("34");
+    expect(row3.timeOnSlide).toBe("31");
+    expect(row3.likertScaleOption).toBe("strongly_agree");
   });
 });

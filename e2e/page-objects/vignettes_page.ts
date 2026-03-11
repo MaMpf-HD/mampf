@@ -26,6 +26,27 @@ export const QUESTIONNAIRE_CSV_HEADERS = [
   "Likert Scale Option",
 ];
 
+export type QuestionnaireCsvRow = {
+  answerId: string;
+  createdAt: string;
+  codename: string;
+  slidePosition: string;
+  slideTitle: string;
+  totalTimeOnSlide: string;
+  timeOnSlide: string;
+  timeOnInfoSlide: string;
+  infoSlideAccessCount: string;
+  infoSlideFirstAccessTime: string;
+  answer: string;
+  selectedOptions: string;
+  likertScaleOption: string;
+};
+
+export type QuestionnaireCsvExport = {
+  headers: string[];
+  rows: QuestionnaireCsvRow[];
+};
+
 export class VignettesPage {
   readonly page: Page;
 
@@ -105,5 +126,49 @@ export class VignettesPage {
         }
         return [...r, ...Array<string>(missingColumns).fill("")];
       });
+  }
+
+  async exportQuestionnaire(
+    questionnaireId: number,
+  ): Promise<QuestionnaireCsvExport> {
+    const csvRows = await this.exportQuestionnaireCsv(questionnaireId);
+    const [headers = QUESTIONNAIRE_CSV_HEADERS, ...rows] = csvRows;
+
+    if (!this.matchesExpectedHeaders(headers)) {
+      throw new Error("Unexpected questionnaire CSV headers");
+    }
+
+    return {
+      headers,
+      rows: rows.map(row => this.toQuestionnaireCsvRow(row)),
+    };
+  }
+
+  private toQuestionnaireCsvRow(row: string[]): QuestionnaireCsvRow {
+    return {
+      answerId: row[0],
+      createdAt: row[1],
+      codename: row[2],
+      slidePosition: row[3],
+      slideTitle: row[4],
+      totalTimeOnSlide: row[5],
+      timeOnSlide: row[6],
+      timeOnInfoSlide: row[7],
+      infoSlideAccessCount: row[8],
+      infoSlideFirstAccessTime: row[9],
+      answer: row[10],
+      selectedOptions: row[11],
+      likertScaleOption: row[12],
+    };
+  }
+
+  private matchesExpectedHeaders(headers: string[]): boolean {
+    if (headers.length !== QUESTIONNAIRE_CSV_HEADERS.length) {
+      return false;
+    }
+
+    return QUESTIONNAIRE_CSV_HEADERS.every(
+      (expectedHeader, index) => headers[index] === expectedHeader,
+    );
   }
 }
