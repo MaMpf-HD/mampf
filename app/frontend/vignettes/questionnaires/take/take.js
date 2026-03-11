@@ -2,16 +2,14 @@ const VIGNETTE_FORM_ID = "#vignettes-answer-form";
 const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
 const TEXT_ANSWER_ID = "vignettes_answer_text";
 
-function shouldRegisterVignette() {
-  return $(VIGNETTE_FORM_ID).length > 0;
-}
-
 $(document).on("turbo:load", function () {
-  if (!shouldRegisterVignette()) {
+  const form = $(VIGNETTE_FORM_ID);
+  if (form.length === 0 || form.data("vignetteTakeInitialized")) {
     return;
   }
+  form.data("vignetteTakeInitialized", true);
 
-  $(VIGNETTE_FORM_ID).submit((event) => {
+  form.submit((event) => {
     return validateForm(event);
   });
 
