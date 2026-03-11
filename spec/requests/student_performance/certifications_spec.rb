@@ -179,6 +179,50 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               I18n.t("student_performance.certifications.index.reevaluate_data")
             )
           end
+
+          it "shows the manual-review banner for stale manual overrides" do
+            manual_cert = FactoryBot.create(
+              :student_performance_certification, :passed, :manual,
+              lecture: lecture,
+              user: FactoryBot.create(:confirmed_user),
+              rule: rule,
+              note: "Special"
+            )
+            # rubocop:disable Rails/SkipsModelValidations
+            manual_cert.update_columns(certified_at: 2.hours.ago)
+            rule.update_columns(updated_at: 1.hour.ago)
+            # rubocop:enable Rails/SkipsModelValidations
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t(
+                "student_performance.certifications.index" \
+                ".stale_rule_manual_warning",
+                count: 1
+              )
+            )
+          end
+
+          it "does not show reconcile button for manual-only staleness" do
+            manual_cert = FactoryBot.create(
+              :student_performance_certification, :passed, :manual,
+              lecture: lecture,
+              user: FactoryBot.create(:confirmed_user),
+              rule: rule,
+              note: "Override"
+            )
+            # rubocop:disable Rails/SkipsModelValidations
+            manual_cert.update_columns(certified_at: 2.hours.ago)
+            rule.update_columns(updated_at: 1.hour.ago)
+            # rubocop:enable Rails/SkipsModelValidations
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).not_to include(
+              I18n.t(
+                "student_performance.certifications.index.reevaluate_rules"
+              )
+            )
+          end
         end
       end
 

@@ -159,9 +159,15 @@ en:
         stale_rule_warning:
           one: "Eligibility rules changed — %{count} certification is outdated."
           other: "Eligibility rules changed — %{count} certifications are outdated."
+        stale_rule_manual_warning:
+          one: "%{count} manual override may need review after rule changes."
+          other: "%{count} manual overrides may need review after rule changes."
         stale_data_warning:
           one: "Student data was recomputed — %{count} certification is outdated."
           other: "Student data was recomputed — %{count} certifications are outdated."
+        stale_data_manual_warning:
+          one: "%{count} manual override may need review after data changes."
+          other: "%{count} manual overrides may need review after data changes."
         reevaluate_rules: "Reconcile with current rules"
         reevaluate_data: "Reconcile with current data"
       status:

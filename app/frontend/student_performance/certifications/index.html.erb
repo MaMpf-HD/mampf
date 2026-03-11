@@ -48,6 +48,37 @@
           <% end %>
         </div>
       </div>
+
+      <% if @rule %>
+        <div class="mt-2 text-muted small">
+          <%= t("student_performance.certifications.index.rule_info") %>
+          :
+          <% if @rule.min_percentage.present? %>
+            <strong>
+              <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+            </strong>
+            <%= t("student_performance.rules.show.of_total_points") %>
+          <% elsif @rule.min_points_absolute.present? %>
+            <strong><%= @rule.min_points_absolute %></strong>
+            <%= t("student_performance.rules.show.points_absolute") %>
+          <% end %>
+          <% if @rule.required_achievements.any? %>
+            <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+              +
+            <% end %>
+            <%= t("student_performance.certifications.index.required_achievements_label") %>
+            :
+            <strong>
+              <%= @rule.required_achievements.map(&:title).join(", ") %>
+            </strong>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="d-flex align-items-center mt-2 text-warning small">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <%= t("student_performance.evaluator.no_rule") %>
+        </div>
+      <% end %>
     </div>
 
     <div class="card-body">
@@ -116,42 +147,7 @@
         </div>
       </div>
 
-      <% if @rule %>
-        <div class="alert alert-info d-flex align-items-center mb-4">
-          <i class="bi bi-info-circle me-2"></i>
-
-          <span>
-            <%= t("student_performance.certifications.index.rule_info") %>
-            :
-            <% if @rule.min_percentage.present? %>
-              <strong>
-                <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
-              </strong>
-              <%= t("student_performance.rules.show.of_total_points") %>
-            <% elsif @rule.min_points_absolute.present? %>
-              <strong><%= @rule.min_points_absolute %></strong>
-              <%= t("student_performance.rules.show.points_absolute") %>
-            <% end %>
-            <% if @rule.required_achievements.any? %>
-              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
-                +
-              <% end %>
-              <%= t("student_performance.certifications.index.required_achievements_label") %>
-              :
-              <strong>
-                <%= @rule.required_achievements.map(&:title).join(", ") %>
-              </strong>
-            <% end %>
-          </span>
-        </div>
-      <% else %>
-        <div class="alert alert-warning d-flex align-items-center mb-4">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          <%= t("student_performance.evaluator.no_rule") %>
-        </div>
-      <% end %>
-
-      <% if @stale_from_rule_count > 0 %>
+      <% if @stale_from_rule_auto_count > 0 %>
         <div
           class="
             alert alert-warning d-flex align-items-center
@@ -162,7 +158,7 @@
             <i class="bi bi-exclamation-triangle me-2"></i>
 
             <%= t("student_performance.certifications.index.stale_rule_warning",
-                  count: @stale_from_rule_count) %>
+                  count: @stale_from_rule_auto_count) %>
           </div>
 
           <% if @rule %>
@@ -176,7 +172,16 @@
         </div>
       <% end %>
 
-      <% if @stale_from_data_count > 0 %>
+      <% if @stale_from_rule_manual_count > 0 %>
+        <div class="alert alert-secondary d-flex align-items-center mb-4">
+          <i class="bi bi-pencil-square me-2"></i>
+
+          <%= t("student_performance.certifications.index.stale_rule_manual_warning",
+                count: @stale_from_rule_manual_count) %>
+        </div>
+      <% end %>
+
+      <% if @stale_from_data_auto_count > 0 %>
         <div
           class="
             alert alert-warning d-flex align-items-center
@@ -187,7 +192,7 @@
             <i class="bi bi-exclamation-triangle me-2"></i>
 
             <%= t("student_performance.certifications.index.stale_data_warning",
-                  count: @stale_from_data_count) %>
+                  count: @stale_from_data_auto_count) %>
           </div>
 
           <% if @rule %>
@@ -198,6 +203,15 @@
               <%= t("student_performance.certifications.index.reevaluate_data") %>
             <% end %>
           <% end %>
+        </div>
+      <% end %>
+
+      <% if @stale_from_data_manual_count > 0 %>
+        <div class="alert alert-secondary d-flex align-items-center mb-4">
+          <i class="bi bi-pencil-square me-2"></i>
+
+          <%= t("student_performance.certifications.index.stale_data_manual_warning",
+                count: @stale_from_data_manual_count) %>
         </div>
       <% end %>
 

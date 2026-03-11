@@ -22,10 +22,18 @@ module StudentPerformance
       compute_proposal_counts if @rule
       @stale_user_ids = @lecture.student_performance_certifications
                                 .stale.pluck(:user_id).to_set
-      @stale_from_rule_count = @lecture.student_performance_certifications
-                                       .stale_from_rule.count
-      @stale_from_data_count = @lecture.student_performance_certifications
-                                       .stale_from_data.count
+      stale_from_rule = @lecture.student_performance_certifications
+                                .stale_from_rule
+      @stale_from_rule_auto_count = stale_from_rule
+                                    .where.not(source: :manual).count
+      @stale_from_rule_manual_count = stale_from_rule
+                                      .where(source: :manual).count
+      stale_from_data = @lecture.student_performance_certifications
+                                .stale_from_data
+      @stale_from_data_auto_count = stale_from_data
+                                    .where.not(source: :manual).count
+      @stale_from_data_manual_count = stale_from_data
+                                      .where(source: :manual).count
       @achievements = @lecture.achievements.order(:title)
       load_filtered_records
     end

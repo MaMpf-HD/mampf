@@ -159,9 +159,15 @@ de:
         stale_rule_warning:
           one: "Zulassungsregeln wurden geändert — %{count} Zertifizierung ist nicht mehr aktuell."
           other: "Zulassungsregeln wurden geändert — %{count} Zertifizierungen sind nicht mehr aktuell."
+        stale_rule_manual_warning:
+          one: "%{count} manuelle Überschreibung sollte nach Regeländerung überprüft werden."
+          other: "%{count} manuelle Überschreibungen sollten nach Regeländerung überprüft werden."
         stale_data_warning:
           one: "Leistungsdaten wurden aktualisiert — %{count} Zertifizierung ist nicht mehr aktuell."
           other: "Leistungsdaten wurden aktualisiert — %{count} Zertifizierungen sind nicht mehr aktuell."
+        stale_data_manual_warning:
+          one: "%{count} manuelle Überschreibung sollte nach Datenänderung überprüft werden."
+          other: "%{count} manuelle Überschreibungen sollten nach Datenänderung überprüft werden."
         reevaluate_rules: "Mit aktuellen Regeln abgleichen"
         reevaluate_data: "Mit aktuellen Daten abgleichen"
       status:
