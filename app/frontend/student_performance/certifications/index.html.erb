@@ -13,24 +13,6 @@
         </div>
 
         <div class="d-flex gap-2">
-          <% if @rule %>
-            <%= form_tag(
-                  preview_rule_change_lecture_student_performance_evaluator_path(
-                    @lecture
-                  ),
-                  method: :post,
-                  class: "d-inline",
-                  data: { turbo_frame: "performance-certifications-frame" }
-                ) do %>
-              <%= hidden_field_tag :source_frame, "performance-certifications-frame" %>
-
-              <button type="submit" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-sliders me-1"></i>
-                <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
-              </button>
-            <% end %>
-          <% end %>
-
           <% if @rule && @uncertified_count > 0 %>
             <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
@@ -50,33 +32,98 @@
       </div>
 
       <% if @rule %>
-        <div class="mt-2 text-muted small">
-          <%= t("student_performance.certifications.index.rule_info") %>
-          :
-          <% if @rule.min_percentage.present? %>
-            <strong>
-              <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
-            </strong>
-            <%= t("student_performance.rules.show.of_total_points") %>
-          <% elsif @rule.min_points_absolute.present? %>
-            <strong><%= @rule.min_points_absolute %></strong>
-            <%= t("student_performance.rules.show.points_absolute") %>
-          <% end %>
-          <% if @rule.required_achievements.any? %>
-            <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
-              +
-            <% end %>
-            <%= t("student_performance.certifications.index.required_achievements_label") %>
-            :
-            <strong>
-              <%= @rule.required_achievements.map(&:title).join(", ") %>
-            </strong>
-          <% end %>
+        <div class="card bg-light mt-3 mb-0">
+          <div class="card-body py-2 px-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="fw-semibold small">
+                  <%= t("student_performance.certifications.index.rule_info") %>
+                </span>
+
+                <% if @rule.min_percentage.present? %>
+                  <span class="badge bg-primary ms-2">
+                    <%= number_to_percentage(
+                          @rule.min_percentage, precision: 0
+                        ) %>
+                  </span>
+                  <span class="small">
+                    <%= t("student_performance.rules.show.of_total_points") %>
+                  </span>
+                <% elsif @rule.min_points_absolute.present? %>
+                  <span class="badge bg-primary ms-2">
+                    <%= @rule.min_points_absolute %>
+                  </span>
+                  <span class="small">
+                    <%= t("student_performance.rules.show.points_absolute") %>
+                  </span>
+                <% end %>
+
+                <% if @rule.required_achievements.any? %>
+                  <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+                    <span class="text-muted mx-1">+</span>
+                  <% end %>
+                  <span class="small">
+                    <%= t("student_performance.certifications.index.required_achievements_label") %>:
+                  </span>
+                  <% @rule.required_achievements.each do |ach| %>
+                    <span class="badge bg-secondary ms-1">
+                      <%= ach.title %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <div class="d-flex gap-2 ms-3">
+                <a
+                  href="<%= edit_lecture_student_performance_rules_path(
+                              @lecture
+                            ) %>"
+                  class="btn btn-outline-primary btn-sm text-nowrap"
+                  data-turbo-frame="performance-certifications-frame"
+                >
+                  <i class="bi bi-pencil me-1"></i>
+                  <%= t("student_performance.rules.show.edit_button") %>
+                </a>
+
+                <%= form_tag(
+                      preview_rule_change_lecture_student_performance_evaluator_path(
+                        @lecture
+                      ),
+                      method: :post,
+                      class: "d-inline",
+                      data: { turbo_frame: "performance-certifications-frame" }
+                    ) do %>
+                  <%= hidden_field_tag :source_frame,
+                                       "performance-certifications-frame" %>
+
+                  <button
+                    type="submit"
+                    class="btn btn-outline-primary btn-sm text-nowrap"
+                  >
+                    <i class="bi bi-sliders me-1"></i>
+                    <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
         </div>
       <% else %>
-        <div class="d-flex align-items-center mt-2 text-warning small">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          <%= t("student_performance.evaluator.no_rule") %>
+        <div class="text-center py-3 mt-3 border rounded bg-light">
+          <i class="bi bi-exclamation-triangle text-warning fs-4 d-block mb-2"></i>
+
+          <p class="text-muted mb-2">
+            <%= t("student_performance.evaluator.no_rule") %>
+          </p>
+
+          <a
+            href="<%= edit_lecture_student_performance_rules_path(@lecture) %>"
+            class="btn btn-outline-primary btn-sm"
+            data-turbo-frame="performance-certifications-frame"
+          >
+            <i class="bi bi-plus-lg me-1"></i>
+            <%= t("student_performance.certifications.index.setup_rule") %>
+          </a>
         </div>
       <% end %>
     </div>

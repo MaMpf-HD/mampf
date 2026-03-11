@@ -39,34 +39,8 @@ module StudentPerformance
         sync_rule_achievements
       end
 
-      @rule = StudentPerformance::Rule
-              .where(lecture: @lecture, active: true)
-              .includes(rule_achievements: :achievement)
-              .first
-
-      flash.now[:notice] = I18n.t("student_performance.rules.flash.updated")
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace(
-              "performance-rules-frame",
-              partial: "student_performance/rules/show_frame"
-            ),
-            turbo_stream.replace(
-              "performance-certifications-frame",
-              helpers.turbo_frame_tag(
-                "performance-certifications-frame",
-                src: lecture_student_performance_certifications_path(@lecture),
-                loading: "lazy"
-              ) { "" }
-            )
-          ]
-        end
-        format.html do
-          redirect_to lecture_student_performance_rules_path(@lecture),
-                      notice: I18n.t("student_performance.rules.flash.updated")
-        end
-      end
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
       @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = Set.new(

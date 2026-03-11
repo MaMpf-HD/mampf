@@ -217,7 +217,7 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         end.to change(StudentPerformance::Rule, :count).by(1)
 
         expect(response).to redirect_to(
-          lecture_student_performance_rules_path(lecture)
+          lecture_student_performance_certifications_path(lecture)
         )
         rule = StudentPerformance::Rule.find_by(lecture: lecture)
         expect(rule.min_percentage).to eq(50)

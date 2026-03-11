@@ -93,7 +93,7 @@ de:
         points_unit: "Pkt"
         achievements_section: "Erforderliche Leistungen"
         achievements_hint: "Wählen Sie, welche Leistungen Studierende erbringen müssen."
-        save_hint: "Beim Speichern werden Vorschläge neu generiert. Prüfen Sie die Auswirkungen im Zulassungs-Tab."
+        save_hint: "Vorschläge werden anhand der aktualisierten Regel neu generiert."
       flash:
         updated: "Zulassungsregeln aktualisiert."
     evaluator:
@@ -126,6 +126,7 @@ de:
         current_status: "Aktuell"
         new_status: "Mit neuer Regel"
         no_changes: "Kein/e Studierende/r würde mit dieser Schwelle den Status ändern."
+        apply_threshold: "Diese Schwelle übernehmen"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"
@@ -155,6 +156,7 @@ de:
         override: "Überschreiben"
         empty: "Keine Studierenden-Datensätze gefunden."
         rule_info: "Aktive Regel"
+        setup_rule: "Regel einrichten"
         required_achievements_label: "Leistungen"
         stale_rule_warning:
           one: "Zulassungsregeln wurden geändert — %{count} Zulassung ist nicht mehr aktuell."

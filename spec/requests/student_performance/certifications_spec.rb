@@ -269,6 +269,13 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        it "shows the edit rules button" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.edit_button")
+          )
+        end
+
         context "when rule has required achievements" do
           let!(:achievement) do
             FactoryBot.create(:achievement, lecture: lecture,
@@ -434,6 +441,13 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
             I18n.t("student_performance.evaluator.no_rule")
+          )
+        end
+
+        it "shows the setup rule button" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.setup_rule")
           )
         end
 

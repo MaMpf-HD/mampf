@@ -229,6 +229,33 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
             expect(response.body).to include(borderline_user.tutorial_name)
           end
 
+          it "shows the apply button when threshold differs" do
+            post path, params: { preview: { min_percentage: 40 } }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.preview_rule_change.apply_threshold")
+            )
+          end
+
+          it "does not show the apply button when threshold is unchanged" do
+            post path, params: { preview: { min_percentage: 50 } }
+            expect(response.body).not_to include(
+              I18n.t("student_performance.evaluator.preview_rule_change.apply_threshold")
+            )
+          end
+
+          it "includes hidden achievement IDs in the apply form" do
+            achievement = FactoryBot.create(:achievement, :boolean,
+                                            lecture: lecture,
+                                            title: "Midterm")
+            FactoryBot.create(:student_performance_rule_achievement,
+                              rule: rule, achievement: achievement)
+            post path, params: { preview: { min_percentage: 40 } }
+            expect(response.body).to include(
+              "rule[achievement_ids][]"
+            )
+            expect(response.body).to include(achievement.id.to_s)
+          end
+
           it "does not include students unaffected by the change" do
             post path, params: { preview: { min_percentage: 40 } }
             expect(response.body).not_to include(passing_user.tutorial_name)

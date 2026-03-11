@@ -96,6 +96,41 @@
               </button>
             </div>
           <% end %>
+
+          <% previewed_pct = @preview_percentage.presence %>
+          <% previewed_pts = @preview_points.presence %>
+          <% has_preview = previewed_pct || previewed_pts %>
+
+          <% threshold_changed = has_preview &&
+               ((previewed_pct && previewed_pct.to_f != @rule.min_percentage.to_f) ||
+                (previewed_pts && previewed_pts.to_f != @rule.min_points_absolute.to_f)) %>
+
+          <% if threshold_changed %>
+            <%= form_tag(
+                  lecture_student_performance_rules_path(@lecture),
+                  method: :patch,
+                  class: "mt-3",
+                  data: { turbo_frame: frame_id }
+                ) do %>
+              <% if previewed_pct %>
+                <%= hidden_field_tag "rule[threshold_mode]", "percentage" %>
+                <%= hidden_field_tag "rule[min_percentage]", previewed_pct %>
+              <% else %>
+                <%= hidden_field_tag "rule[threshold_mode]", "absolute" %>
+                <%= hidden_field_tag "rule[min_points_absolute]",
+                                     previewed_pts %>
+              <% end %>
+
+              <% @rule.required_achievements.each do |ach| %>
+                <%= hidden_field_tag "rule[achievement_ids][]", ach.id %>
+              <% end %>
+
+              <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-check-lg me-1"></i>
+                <%= t("student_performance.evaluator.preview_rule_change.apply_threshold") %>
+              </button>
+            <% end %>
+          <% end %>
         </div>
       </div>
 

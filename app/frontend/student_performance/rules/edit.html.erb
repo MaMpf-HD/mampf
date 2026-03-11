@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "performance-rules-frame" do %>
+<%= turbo_frame_tag "performance-certifications-frame" do %>
   <div class="card">
     <div class="card-header bg-white border-bottom">
       <div class="d-flex justify-content-between align-items-center">
@@ -11,9 +11,9 @@
         </div>
 
         <a
-          href="<%= lecture_student_performance_rules_path(@lecture) %>"
+          href="<%= lecture_student_performance_certifications_path(@lecture) %>"
           class="btn btn-outline-secondary btn-sm"
-          data-turbo-frame="performance-rules-frame"
+          data-turbo-frame="performance-certifications-frame"
         >
           <%= t("student_performance.rules.edit.cancel") %>
         </a>
@@ -39,7 +39,7 @@
       <%= form_with(
             url: lecture_student_performance_rules_path(@lecture),
             method: :patch,
-            data: { turbo_frame: "performance-rules-frame" }
+            data: { turbo_frame: "performance-certifications-frame" }
           ) do |f| %>
         <fieldset class="mb-4">
           <legend class="h5 fw-semibold">
@@ -197,9 +197,9 @@
           </button>
 
           <a
-            href="<%= lecture_student_performance_rules_path(@lecture) %>"
+            href="<%= lecture_student_performance_certifications_path(@lecture) %>"
             class="btn btn-outline-secondary"
-            data-turbo-frame="performance-rules-frame"
+            data-turbo-frame="performance-certifications-frame"
           >
             <%= t("student_performance.rules.edit.cancel") %>
           </a>

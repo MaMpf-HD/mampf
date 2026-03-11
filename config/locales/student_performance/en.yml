@@ -93,7 +93,7 @@ en:
         points_unit: "pts"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
-        save_hint: "Saving will regenerate proposals. Review their impact in the Eligibility tab."
+        save_hint: "Proposals will be regenerated based on the updated rule."
       flash:
         updated: "Eligibility rules updated."
     evaluator:
@@ -126,6 +126,7 @@ en:
         current_status: "Current"
         new_status: "With new rule"
         no_changes: "No students would change status with this threshold."
+        apply_threshold: "Apply this threshold"
       single_proposal:
         title: "Eligibility Proposal"
         back_to_record: "Back to student record"
@@ -155,6 +156,7 @@ en:
         override: "Override"
         empty: "No student records found."
         rule_info: "Active rule"
+        setup_rule: "Set up rule"
         required_achievements_label: "Achievements"
         stale_rule_warning:
           one: "Eligibility rules changed — %{count} decision is outdated."
