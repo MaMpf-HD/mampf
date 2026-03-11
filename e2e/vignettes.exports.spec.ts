@@ -3,7 +3,7 @@ import { VignettesPage } from "./page-objects/vignettes_page";
 
 test.describe.configure({ timeout: 90_000 });
 
-test.describe("single-slide exports", () => {
+test.describe("Vignettes Exports", () => {
   let lectureId: number;
   let studentVignettes: VignettesPage;
   let teacherVignettes: VignettesPage;
@@ -24,94 +24,51 @@ test.describe("single-slide exports", () => {
     });
   });
 
-  test("exports text answers", async ({ factory }) => {
+  test("exports answers and per-slide timings", async ({ factory }) => {
     const questionnaire = await factory.create("vignettes_questionnaire", [], {
       lecture_id: lectureId,
-      title: "Text exporter",
+      title: "Comprehensive exporter",
       published: true,
+      editable: true,
     });
-    const slide = await factory.create("vignettes_slide", [], {
+
+    const slide1 = await factory.create("vignettes_slide", [], {
       vignettes_questionnaire_id: questionnaire.id,
       title: "Text slide",
       position: 1,
     });
     await factory.create("vignettes_text_question", [], {
-      vignettes_slide_id: slide.id,
+      vignettes_slide_id: slide1.id,
       question_text: "Text question",
     });
 
-    await studentVignettes.setPersonalCode(lectureId, "TextCode");
-    await studentVignettes.openQuestionnaire(questionnaire.id);
-    await studentVignettes.answerText("text-answer");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 1,
-      totalTimeOnSlide: 1,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
-
-    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
-    expect(exportData.rows).toHaveLength(1);
-
-    const row = exportData.rows[0];
-    expect(row.answer).toBe("text-answer");
-    expect(row.selectedOptions).toBe("");
-    expect(row.likertScaleOption).toBe("");
-  });
-
-  test("exports number answers", async ({ factory }) => {
-    const questionnaire = await factory.create("vignettes_questionnaire", [], {
-      lecture_id: lectureId,
-      title: "Number exporter",
-      published: true,
-    });
-    const slide = await factory.create("vignettes_slide", [], {
+    const slide2 = await factory.create("vignettes_slide", [], {
       vignettes_questionnaire_id: questionnaire.id,
       title: "Number slide",
-      position: 1,
+      position: 2,
     });
     await factory.create("vignettes_number_question", [], {
-      vignettes_slide_id: slide.id,
+      vignettes_slide_id: slide2.id,
       question_text: "Number question",
     });
 
-    await studentVignettes.setPersonalCode(lectureId, "NumberCode");
-    await studentVignettes.openQuestionnaire(questionnaire.id);
-    await studentVignettes.answerNumber("42");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 1,
-      totalTimeOnSlide: 2,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
+    const infoSlide = await factory.create("vignettes_info_slide", [], {
+      vignettes_questionnaire_id: questionnaire.id,
+      title: "Info 1",
+      icon_type: "eye",
     });
 
-    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
-    expect(exportData.rows).toHaveLength(1);
-
-    const row = exportData.rows[0];
-    expect(row.answer).toBe("42");
-    expect(row.selectedOptions).toBe("");
-    expect(row.likertScaleOption).toBe("");
-  });
-
-  test("exports multiple-choice answers", async ({ factory }) => {
-    const questionnaire = await factory.create("vignettes_questionnaire", [], {
-      lecture_id: lectureId,
-      title: "MC exporter",
-      published: true,
-    });
-    const slide = await factory.create("vignettes_slide", [], {
+    const slide3 = await factory.create("vignettes_slide", [], {
       vignettes_questionnaire_id: questionnaire.id,
       title: "MC slide",
-      position: 1,
+      position: 3,
+      info_slide_ids: [infoSlide.id],
     });
     const question = await factory.create(
       "vignettes_multiple_choice_question",
       [],
       {
-        vignettes_slide_id: slide.id,
+        vignettes_slide_id: slide3.id,
         question_text: "MC question",
       },
     );
@@ -124,151 +81,34 @@ test.describe("single-slide exports", () => {
       text: "Option B",
     });
 
-    await studentVignettes.setPersonalCode(lectureId, "MCCode");
-    await studentVignettes.openQuestionnaire(questionnaire.id);
-    await studentVignettes.answerMultipleChoice("Option A");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 2,
-      totalTimeOnSlide: 3,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
-
-    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
-    expect(exportData.rows).toHaveLength(1);
-
-    const row = exportData.rows[0];
-    expect(row.answer).toBe("");
-    expect(row.selectedOptions).toBe("Option A");
-    expect(row.likertScaleOption).toBe("");
-  });
-
-  test("exports likert-scale answers", async ({ factory }) => {
-    const questionnaire = await factory.create("vignettes_questionnaire", [], {
-      lecture_id: lectureId,
-      title: "Likert exporter",
-      published: true,
-    });
-    const slide = await factory.create("vignettes_slide", [], {
+    const slide4 = await factory.create("vignettes_slide", [], {
       vignettes_questionnaire_id: questionnaire.id,
       title: "Likert slide",
-      position: 1,
+      position: 4,
     });
     await factory.create("vignettes_likert_scale_question", [], {
-      vignettes_slide_id: slide.id,
+      vignettes_slide_id: slide4.id,
       question_text: "Likert question",
       language: "en",
     });
 
-    await studentVignettes.setPersonalCode(lectureId, "LikertCode");
-    await studentVignettes.openQuestionnaire(questionnaire.id);
-    await studentVignettes.answerLikert("Complete alignment");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 3,
-      totalTimeOnSlide: 4,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
-
-    const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
-    expect(exportData.rows).toHaveLength(1);
-
-    const row = exportData.rows[0];
-    expect(row.answer).toBe("");
-    expect(row.selectedOptions).toBe("");
-    expect(row.likertScaleOption).toBe("strongly_agree");
-  });
-});
-
-test.describe("multi-slide exports", () => {
-  let lectureId: number;
-  let studentVignettes: VignettesPage;
-  let teacherVignettes: VignettesPage;
-
-  test.beforeEach(async ({ factory, student, teacher }) => {
-    studentVignettes = new VignettesPage(student.page);
-    teacherVignettes = new VignettesPage(teacher.page);
-
-    const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: teacher.user.id,
-      sort: "vignettes",
-    });
-    lectureId = lecture.id;
-
-    await factory.create("lecture_user_join", [], {
-      lecture_id: lecture.id,
-      user_id: student.user.id,
-    });
-  });
-
-  test("exports per-slide times and responses", async ({ factory }) => {
-    const questionnaire = await factory.create("vignettes_questionnaire", [], {
-      lecture_id: lectureId,
-      title: "Statistics exporter",
-      published: true,
-      editable: true,
-    });
-
-    const slide1 = await factory.create("vignettes_slide", [], {
-      vignettes_questionnaire_id: questionnaire.id,
-      title: "Slide 1",
-      position: 1,
-    });
-    await factory.create("vignettes_text_question", [], {
-      vignettes_slide_id: slide1.id,
-      question_text: "Text question",
-    });
-
-    const infoSlide = await factory.create("vignettes_info_slide", [], {
-      vignettes_questionnaire_id: questionnaire.id,
-      title: "Info 1",
-      icon_type: "eye",
-    });
-
-    const slide2 = await factory.create("vignettes_slide", [], {
-      vignettes_questionnaire_id: questionnaire.id,
-      title: "Slide 2",
-      position: 2,
-      info_slide_ids: [infoSlide.id],
-    });
-    const mcQuestion = await factory.create(
-      "vignettes_multiple_choice_question",
-      [],
-      {
-        vignettes_slide_id: slide2.id,
-        question_text: "Multiple choice question",
-      },
-    );
-    await factory.create("vignettes_option", [], {
-      vignettes_question_id: mcQuestion.id,
-      text: "Option A",
-    });
-    await factory.create("vignettes_option", [], {
-      vignettes_question_id: mcQuestion.id,
-      text: "Option B",
-    });
-
-    const slide3 = await factory.create("vignettes_slide", [], {
-      vignettes_questionnaire_id: questionnaire.id,
-      title: "Slide 3",
-      position: 3,
-    });
-    await factory.create("vignettes_likert_scale_question", [], {
-      vignettes_slide_id: slide3.id,
-      question_text: "Likert question",
-      language: "en",
-    });
-
-    const codename = "TokenAlpha42";
+    const codename = "UnifiedCode";
     await studentVignettes.setPersonalCode(lectureId, codename);
     await studentVignettes.openQuestionnaire(questionnaire.id);
 
-    await studentVignettes.answerText("Text response");
+    await studentVignettes.answerText("text-answer");
     await studentVignettes.submitWithStats({
       timeOnSlide: 11,
-      totalTimeOnSlide: 13,
+      totalTimeOnSlide: 11,
+      timeOnInfoSlides: "{}",
+      infoSlidesAccessCount: "{}",
+      infoSlidesFirstAccessTime: "{}",
+    });
+
+    await studentVignettes.answerNumber("42");
+    await studentVignettes.submitWithStats({
+      timeOnSlide: 21,
+      totalTimeOnSlide: 22,
       timeOnInfoSlides: "{}",
       infoSlidesAccessCount: "{}",
       infoSlidesFirstAccessTime: "{}",
@@ -276,24 +116,24 @@ test.describe("multi-slide exports", () => {
 
     await studentVignettes.answerMultipleChoice("Option A");
     await studentVignettes.submitWithStats({
-      timeOnSlide: 21,
-      totalTimeOnSlide: 27,
-      timeOnInfoSlides: `{"${infoSlide.id}":6}`,
+      timeOnSlide: 31,
+      totalTimeOnSlide: 35,
+      timeOnInfoSlides: `{"${infoSlide.id}":4}`,
       infoSlidesAccessCount: `{"${infoSlide.id}":2}`,
-      infoSlidesFirstAccessTime: `{"${infoSlide.id}":4}`,
+      infoSlidesFirstAccessTime: `{"${infoSlide.id}":1}`,
     });
 
     await studentVignettes.answerLikert("Complete alignment");
     await studentVignettes.submitWithStats({
-      timeOnSlide: 31,
-      totalTimeOnSlide: 34,
+      timeOnSlide: 41,
+      totalTimeOnSlide: 46,
       timeOnInfoSlides: "{}",
       infoSlidesAccessCount: "{}",
       infoSlidesFirstAccessTime: "{}",
     });
 
     const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
-    expect(exportData.rows).toHaveLength(3);
+    expect(exportData.rows).toHaveLength(4);
 
     const bySlidePosition = new Map(
       exportData.rows.map(row => [row.slidePosition, row]),
@@ -302,34 +142,45 @@ test.describe("multi-slide exports", () => {
     const row1 = bySlidePosition.get("1");
     const row2 = bySlidePosition.get("2");
     const row3 = bySlidePosition.get("3");
+    const row4 = bySlidePosition.get("4");
 
-    expect(row1).toBeTruthy();
-    expect(row2).toBeTruthy();
-    expect(row3).toBeTruthy();
-
-    if (!row1 || !row2 || !row3) {
+    if (!row1 || !row2 || !row3 || !row4) {
       throw new Error("Missing expected rows in CSV export");
     }
 
     expect(row1.codename).toBe(codename);
-    expect(row1.slideTitle).toBe("Slide 1");
-    expect(row1.totalTimeOnSlide).toBe("13");
+    expect(row1.slideTitle).toBe("Text slide");
+    expect(row1.totalTimeOnSlide).toBe("11");
     expect(row1.timeOnSlide).toBe("11");
-    expect(row1.answer).toBe("Text response");
+    expect(row1.answer).toBe("text-answer");
+    expect(row1.selectedOptions).toBe("");
+    expect(row1.likertScaleOption).toBe("");
 
     expect(row2.codename).toBe(codename);
-    expect(row2.slideTitle).toBe("Slide 2");
-    expect(row2.totalTimeOnSlide).toBe("27");
+    expect(row2.slideTitle).toBe("Number slide");
+    expect(row2.totalTimeOnSlide).toBe("22");
     expect(row2.timeOnSlide).toBe("21");
-    expect(row2.timeOnInfoSlide).toBe(`{"${infoSlide.id}":6}`);
-    expect(row2.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
-    expect(row2.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":4}`);
-    expect(row2.selectedOptions).toBe("Option A");
+    expect(row2.answer).toBe("42");
+    expect(row2.selectedOptions).toBe("");
+    expect(row2.likertScaleOption).toBe("");
 
     expect(row3.codename).toBe(codename);
-    expect(row3.slideTitle).toBe("Slide 3");
-    expect(row3.totalTimeOnSlide).toBe("34");
+    expect(row3.slideTitle).toBe("MC slide");
+    expect(row3.totalTimeOnSlide).toBe("35");
     expect(row3.timeOnSlide).toBe("31");
-    expect(row3.likertScaleOption).toBe("strongly_agree");
+    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":4}`);
+    expect(row3.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
+    expect(row3.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":1}`);
+    expect(row3.answer).toBe("");
+    expect(row3.selectedOptions).toBe("Option A");
+    expect(row3.likertScaleOption).toBe("");
+
+    expect(row4.codename).toBe(codename);
+    expect(row4.slideTitle).toBe("Likert slide");
+    expect(row4.totalTimeOnSlide).toBe("46");
+    expect(row4.timeOnSlide).toBe("41");
+    expect(row4.answer).toBe("");
+    expect(row4.selectedOptions).toBe("");
+    expect(row4.likertScaleOption).toBe("strongly_agree");
   });
 });
