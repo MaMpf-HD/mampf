@@ -155,16 +155,18 @@ module StudentPerformance
       def achievement_participations_cache
         @achievement_participations_cache ||= begin
           a_ids = lecture_achievements.filter_map { |a| a.assessment&.id }
-          return {} if a_ids.empty?
-
-          Assessment::Participation
-            .where(assessment_id: a_ids)
-            .where.not(grade_text: [nil, ""])
-            .pluck(:user_id, :assessment_id, :grade_text)
-            .group_by(&:first)
-            .transform_values do |rows|
-              rows.to_h { |_, aid, gt| [aid, gt] }
-            end
+          if a_ids.empty?
+            {}
+          else
+            Assessment::Participation
+              .where(assessment_id: a_ids)
+              .where.not(grade_text: [nil, ""])
+              .pluck(:user_id, :assessment_id, :grade_text)
+              .group_by(&:first)
+              .transform_values do |rows|
+                rows.to_h { |_, aid, gt| [aid, gt] }
+              end
+          end
         end
       end
 

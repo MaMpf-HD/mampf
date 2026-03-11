@@ -58,7 +58,9 @@ export default class RecomputePollController extends Controller {
         return;
       }
     }
-    catch (_) {}
+    catch {
+      // poll again on network failure
+    }
 
     this._attempts += 1;
     if (this._attempts >= this.maxAttemptsValue) {

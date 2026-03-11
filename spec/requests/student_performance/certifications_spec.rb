@@ -282,9 +282,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             I18n.t("student_performance.records.columns.percentage")
           )
           expect(body).not_to include(
-            ">" +
-            I18n.t("student_performance.records.columns.points") +
-            "<"
+            ">#{I18n.t("student_performance.records.columns.points")}<"
           )
         end
       end
@@ -313,9 +311,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             I18n.t("student_performance.records.columns.points")
           )
           expect(body).not_to include(
-            ">" +
-            I18n.t("student_performance.records.columns.percentage") +
-            "<"
+            ">#{I18n.t("student_performance.records.columns.percentage")}<"
           )
         end
       end
