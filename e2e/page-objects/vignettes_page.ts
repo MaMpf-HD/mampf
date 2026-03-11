@@ -64,6 +64,18 @@ export class VignettesPage {
     await this.page.goto(`/questionnaires/${questionnaireId}/take`);
   }
 
+  async enableMockClock(startTimeMs = 0) {
+    await this.page.clock.install({ time: new Date(startTimeMs) });
+  }
+
+  async setMockTime(timeMs: number) {
+    await this.page.clock.setFixedTime(new Date(timeMs));
+  }
+
+  async advanceMockTime(deltaSeconds: number) {
+    await this.page.clock.runFor(deltaSeconds * 1000);
+  }
+
   async answerText(value: string) {
     await this.page.getByRole("textbox").fill(value);
   }
@@ -80,28 +92,19 @@ export class VignettesPage {
     await this.page.getByText(optionText).click();
   }
 
-  async submitWithStats(stats: SlideStats) {
-    await this.page.evaluate((currentStats) => {
-      const setValue = (id: string, value: string) => {
-        const element = document.getElementById(id) as HTMLInputElement | null;
-        if (!element) {
-          throw new Error(`Missing input field '${id}'`);
-        }
-        element.value = value;
-      };
+  async openInfoSlide() {
+    await this.page.locator(".open-info-slide-btn").first().click();
+    await this.page.locator(".vignette-info-slide-modal.show").first().waitFor();
+  }
 
-      const jquery = (window as any).$;
-      if (jquery) {
-        jquery("#vignettes-answer-form").off("submit");
-      }
+  async closeInfoSlide() {
+    await this.page.keyboard.press("Escape");
+    await this.page.locator(".vignette-info-slide-modal.show").first().waitFor({
+      state: "hidden",
+    });
+  }
 
-      setValue("time-on-slide-field", String(currentStats.timeOnSlide));
-      setValue("total-time-on-slide-field", String(currentStats.totalTimeOnSlide));
-      setValue("time-on-info-slides-field", currentStats.timeOnInfoSlides);
-      setValue("info-slides-access-count-field", currentStats.infoSlidesAccessCount);
-      setValue("info-slides-first-access-times-field", currentStats.infoSlidesFirstAccessTime);
-    }, stats);
-
+  async submitWithStats() {
     await this.page.locator("#vignettes-answer-form button[type='submit']").click();
   }
 

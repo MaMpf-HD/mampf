@@ -93,44 +93,33 @@ test.describe("Vignettes Exports", () => {
     });
 
     const codename = "UnifiedCode";
+    await studentVignettes.enableMockClock(0);
     await studentVignettes.setPersonalCode(lectureId, codename);
     await studentVignettes.openQuestionnaire(questionnaire.id);
 
     await studentVignettes.answerText("text-answer");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 11,
-      totalTimeOnSlide: 11,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
+    await studentVignettes.advanceMockTime(11);
+    await studentVignettes.submitWithStats();
 
     await studentVignettes.answerNumber("42");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 21,
-      totalTimeOnSlide: 22,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
+    await studentVignettes.advanceMockTime(21);
+    await studentVignettes.submitWithStats();
 
     await studentVignettes.answerMultipleChoice("Option A");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 31,
-      totalTimeOnSlide: 35,
-      timeOnInfoSlides: `{"${infoSlide.id}":4}`,
-      infoSlidesAccessCount: `{"${infoSlide.id}":2}`,
-      infoSlidesFirstAccessTime: `{"${infoSlide.id}":1}`,
-    });
+    await studentVignettes.advanceMockTime(1);
+    await studentVignettes.openInfoSlide();
+    await studentVignettes.advanceMockTime(2);
+    await studentVignettes.closeInfoSlide();
+    await studentVignettes.advanceMockTime(1);
+    await studentVignettes.openInfoSlide();
+    await studentVignettes.advanceMockTime(2);
+    await studentVignettes.closeInfoSlide();
+    await studentVignettes.advanceMockTime(29);
+    await studentVignettes.submitWithStats();
 
     await studentVignettes.answerLikert("Complete alignment");
-    await studentVignettes.submitWithStats({
-      timeOnSlide: 41,
-      totalTimeOnSlide: 46,
-      timeOnInfoSlides: "{}",
-      infoSlidesAccessCount: "{}",
-      infoSlidesFirstAccessTime: "{}",
-    });
+    await studentVignettes.advanceMockTime(41);
+    await studentVignettes.submitWithStats();
 
     const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
     expect(exportData.rows).toHaveLength(4);
@@ -158,7 +147,7 @@ test.describe("Vignettes Exports", () => {
 
     expect(row2.codename).toBe(codename);
     expect(row2.slideTitle).toBe("Number slide");
-    expect(row2.totalTimeOnSlide).toBe("22");
+    expect(row2.totalTimeOnSlide).toBe("21");
     expect(row2.timeOnSlide).toBe("21");
     expect(row2.answer).toBe("42");
     expect(row2.selectedOptions).toBe("");
@@ -167,8 +156,8 @@ test.describe("Vignettes Exports", () => {
     expect(row3.codename).toBe(codename);
     expect(row3.slideTitle).toBe("MC slide");
     expect(row3.totalTimeOnSlide).toBe("35");
-    expect(row3.timeOnSlide).toBe("31");
-    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":4}`);
+    expect(row3.timeOnSlide).toBe("30");
+    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":5}`);
     expect(row3.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
     expect(row3.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":1}`);
     expect(row3.answer).toBe("");
@@ -177,7 +166,7 @@ test.describe("Vignettes Exports", () => {
 
     expect(row4.codename).toBe(codename);
     expect(row4.slideTitle).toBe("Likert slide");
-    expect(row4.totalTimeOnSlide).toBe("46");
+    expect(row4.totalTimeOnSlide).toBe("41");
     expect(row4.timeOnSlide).toBe("41");
     expect(row4.answer).toBe("");
     expect(row4.selectedOptions).toBe("");
