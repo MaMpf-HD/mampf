@@ -7,6 +7,10 @@ FactoryBot.define do
     "Slide #{n}"
   end
 
+  sequence :vignette_slide_position do |n|
+    n
+  end
+
   sequence :vignette_option_text do |n|
     "Option #{n}"
   end
@@ -25,7 +29,7 @@ FactoryBot.define do
   factory :vignettes_slide, class: "Vignettes::Slide" do
     association :questionnaire, factory: :vignettes_questionnaire
     title { generate(:vignette_slide_title) }
-    position { 1 }
+    position { generate(:vignette_slide_position) }
     content { "Slide content" }
   end
 
