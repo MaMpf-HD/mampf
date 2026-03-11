@@ -20,7 +20,8 @@ export class TermsPage {
     await newTermsPromise;
     await this.page.selectOption("#term_year", termYear.toString());
     await this.page.selectOption("#term_season", season);
-    await this.page.locator("#new_term").getByRole("button", { name: action === "save" ? "Save" : "Cancel" }).click();
+    await this.page.locator("#new_term")
+      .getByRole("button", { name: action === "save" ? "Save" : "Cancel" }).click();
   }
 
   async deleteTerm(termYear: number, season: "SS" | "WS") {

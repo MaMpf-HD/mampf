@@ -32,10 +32,9 @@ test("edit Term", async ({ admin: { page } }) => {
   const row = termsPage.getTermRow(currentYear, "SS");
   await row.getByRole("link", { name: "Edit" }).click();
 
-  const editForm = page.locator("turbo-frame[id^='term_'] form").first();
-  await editForm.locator("select#term_year").selectOption((currentYear + 1).toString());
-  await editForm.locator("select#term_season").selectOption("WS");
-  await editForm.locator("input[type='submit'][value='Save']").click();
+  await page.locator("#term_year").selectOption((currentYear + 1).toString());
+  await page.locator("#term_season").selectOption("WS");
+  await page.getByRole("button", { name: "Save" }).last().click();
 
   await expect(termsPage.getTermRow(currentYear + 1, "WS")).toBeVisible();
 });
@@ -46,10 +45,9 @@ test("create invalid Term", async ({ admin: { page } }) => {
   await termsPage.createTerm(currentYear, "SS");
   await termsPage.createTerm(currentYear, "SS");
 
-  const newTermForm = page.locator("turbo-frame#new_term form");
-  await expect(newTermForm.locator("select.is-invalid").first()).toBeVisible();
-  await expect(newTermForm.locator("select.is-invalid").nth(1)).toBeVisible();
-  await expect(newTermForm.locator("span.invalid-feedback")).toHaveText("This term already exists.");
+  await expect(page.locator("#term_year")).toContainClass("is-invalid");
+  await expect(page.locator("#term_season")).toContainClass("is-invalid");
+  await expect(page.getByText("term already exists")).toBeVisible();
 });
 
 test("cancel creating Term", async ({ admin: { page } }) => {
@@ -72,10 +70,9 @@ test("cancel editing Term", async ({ admin: { page } }) => {
   const row = termsPage.getTermRow(currentYear, "SS");
   await row.getByRole("link", { name: "Edit" }).click();
 
-  const editForm = page.locator("turbo-frame[id^='term_'] form").first();
-  await editForm.locator("select#term_year").selectOption((currentYear + 1).toString());
-  await editForm.locator("select#term_season").selectOption("WS");
-  await editForm.locator("a:has-text('Cancel')").click();
+  await page.locator("#term_year").selectOption((currentYear + 1).toString());
+  await page.locator("#term_season").selectOption("WS");
+  await page.getByRole("button", { name: "Cancel" }).click();
 
   await expect(termsPage.getTermRow(currentYear, "SS")).toBeVisible();
   await expect(termsPage.getTermRow(currentYear + 1, "WS")).not.toBeVisible();
