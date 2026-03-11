@@ -147,6 +147,7 @@ en:
         failed: "Not Eligible"
         uncertified: "Uncertified"
         stale: "Stale"
+        stale_hint: "Certified before rules or data changed"
         bulk_accept: "Accept All Proposals"
         proposed_passed: "eligible"
         proposed_failed: "not eligible"

@@ -147,6 +147,7 @@ de:
         failed: "Nicht zugelassen"
         uncertified: "Offen"
         stale: "Veraltet"
+        stale_hint: "Zertifiziert bevor Regeln oder Daten geändert wurden"
         bulk_accept: "Alle Vorschläge akzeptieren"
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"

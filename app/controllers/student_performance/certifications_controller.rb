@@ -26,6 +26,7 @@ module StudentPerformance
                                        .stale_from_rule.count
       @stale_from_data_count = @lecture.student_performance_certifications
                                        .stale_from_data.count
+      @achievements = @lecture.achievements.order(:title)
       load_filtered_records
     end
 

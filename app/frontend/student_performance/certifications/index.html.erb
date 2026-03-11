@@ -106,6 +106,11 @@
 
             <div class="text-muted small">
               <%= t("student_performance.certifications.index.stale") %>
+
+              <%= helpdesk(
+                    t("student_performance.certifications.index.stale_hint"),
+                    false
+                  ) %>
             </div>
           </div>
         </div>
@@ -225,13 +230,25 @@
                   <%= t("student_performance.records.columns.student") %>
                 </th>
 
-                <th scope="col" class="text-end">
-                  <%= t("student_performance.records.columns.points") %>
-                </th>
+                <% if @rule&.min_points_absolute.present? %>
+                  <th scope="col" class="text-end">
+                    <%= t("student_performance.records.columns.points") %>
+                  </th>
+                <% else %>
+                  <th scope="col" class="text-end">
+                    <%= t("student_performance.records.columns.percentage") %>
+                  </th>
+                <% end %>
 
-                <th scope="col" class="text-end">
-                  <%= t("student_performance.records.columns.percentage") %>
-                </th>
+                <% @achievements.each do |achievement| %>
+                  <th
+                    scope="col"
+                    class="text-center small"
+                    title="<%= achievement.title %>"
+                  >
+                    <%= truncate(achievement.title, length: 12) %>
+                  </th>
+                <% end %>
 
                 <th scope="col" class="text-center">
                   <%= t("student_performance.certifications.columns.proposed") %>
@@ -257,18 +274,36 @@
                 <tr>
                   <td><%= record.user.tutorial_name %></td>
 
-                  <td class="text-end font-monospace">
-                    <%= number_with_precision(
-                          record.points_total_materialized,
-                          precision: 1,
-                          strip_insignificant_zeros: true) %>
-                  </td>
+                  <% if @rule&.min_points_absolute.present? %>
+                    <td class="text-end font-monospace">
+                      <%= number_with_precision(
+                            record.points_total_materialized,
+                            precision: 1,
+                            strip_insignificant_zeros: true) %>
+                    </td>
+                  <% else %>
+                    <td class="text-end font-monospace">
+                      <%= number_to_percentage(
+                            record.percentage_materialized.to_f,
+                            precision: 1) %>
+                    </td>
+                  <% end %>
 
-                  <td class="text-end font-monospace">
-                    <%= number_to_percentage(
-                          record.percentage_materialized.to_f,
-                          precision: 1) %>
-                  </td>
+                  <% @achievements.each do |achievement| %>
+                    <td class="text-center">
+                      <% if record.achievements_met_ids&.include?(achievement.id) %>
+                        <i
+                          class="bi bi-check-circle-fill text-success"
+                          title="<%= t('student_performance.records.columns.achievement_met') %>"
+                        ></i>
+                      <% else %>
+                        <i
+                          class="bi bi-x-circle text-muted"
+                          title="<%= t('student_performance.records.columns.achievement_not_met') %>"
+                        ></i>
+                      <% end %>
+                    </td>
+                  <% end %>
 
                   <td class="text-center">
                     <% if proposal %>

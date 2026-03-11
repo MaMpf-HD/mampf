@@ -274,6 +274,88 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             I18n.t("student_performance.certifications.index.proposed_failed")
           )
         end
+
+        it "shows the percentage column (not points) for a percentage rule" do
+          get lecture_student_performance_certifications_path(lecture)
+          body = response.body
+          expect(body).to include(
+            I18n.t("student_performance.records.columns.percentage")
+          )
+          expect(body).not_to include(
+            ">" +
+            I18n.t("student_performance.records.columns.points") +
+            "<"
+          )
+        end
+      end
+
+      context "with absolute-points rule and records" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_absolute_points,
+                            lecture: lecture,
+                            min_points_absolute: 60)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: FactoryBot.create(:confirmed_user),
+                            percentage_materialized: 70,
+                            points_total_materialized: 70,
+                            points_max_materialized: 100)
+        end
+
+        it "shows the points column (not percentage)" do
+          get lecture_student_performance_certifications_path(lecture)
+          body = response.body
+          expect(body).to include(
+            I18n.t("student_performance.records.columns.points")
+          )
+          expect(body).not_to include(
+            ">" +
+            I18n.t("student_performance.records.columns.percentage") +
+            "<"
+          )
+        end
+      end
+
+      context "with rule and achievements" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:achievement) do
+          FactoryBot.create(:achievement, lecture: lecture,
+                                          title: "Homework A")
+        end
+
+        let(:student) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: achievement)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: student,
+                            percentage_materialized: 80,
+                            points_total_materialized: 80,
+                            points_max_materialized: 100,
+                            achievements_met_ids: [achievement.id])
+        end
+
+        it "renders the achievement column header" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include("Homework A")
+        end
+
+        it "renders met icon for met achievement" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include("bi-check-circle-fill")
+        end
       end
 
       context "when all students are already certified" do
