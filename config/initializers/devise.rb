@@ -9,7 +9,7 @@ Devise.setup do |config|
   config.secret_key = Rails.application.secret_key_base
 
   # Hotwire conventions
-  config.responder.error_status = :unprocessable_entity
+  config.responder.error_status = :unprocessable_content
   config.responder.redirect_status = :see_other
 
   # ==> Mailer Configuration
