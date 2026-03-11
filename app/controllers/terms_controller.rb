@@ -30,7 +30,7 @@ class TermsController < ApplicationController
         format.html { redirect_to terms_path }
         format.turbo_stream do
           render turbo_stream: [
-            turbo_stream.prepend("terms", @term),
+            turbo_stream.prepend(:terms, @term),
             turbo_stream.update(Term.new, "")
           ]
         end
