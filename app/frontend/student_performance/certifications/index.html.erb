@@ -68,6 +68,16 @@
                   <% @rule.required_achievements.each do |ach| %>
                     <span class="badge bg-secondary ms-1">
                       <%= ach.title %>
+
+                      <% case ach.value_type %>
+                      <% when "boolean" %>
+                      <% when "numeric" %>
+                        <span class="fw-normal">&ge; <%= ach.threshold %></span>
+                      <% when "percentage" %>
+                        <span class="fw-normal">
+                          &ge; <%= ach.threshold %>%
+                        </span>
+                      <% end %>
                     </span>
                   <% end %>
                 <% end %>
