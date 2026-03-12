@@ -62,6 +62,7 @@ export class VignettesPage {
 
   async openQuestionnaire(questionnaireId: number) {
     await this.page.goto(`/questionnaires/${questionnaireId}/take`);
+    await this.page.locator("#vignettes-answer-form").waitFor();
   }
 
   async enableMockClock(startTimeMs = 0) {
@@ -99,6 +100,7 @@ export class VignettesPage {
 
   async closeInfoSlide() {
     await this.page.keyboard.press("Escape");
+    await this.page.clock.runFor(1);
     await this.page.locator(".vignette-info-slide-modal.show").first().waitFor({
       state: "hidden",
     });

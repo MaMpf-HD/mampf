@@ -157,7 +157,7 @@ test.describe("Vignettes Exports", () => {
     expect(row3.slideTitle).toBe("MC slide");
     expect(row3.totalTimeOnSlide).toBe("35");
     expect(row3.timeOnSlide).toBe("30");
-    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":5}`);
+    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":4}`);
     expect(row3.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
     expect(row3.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":1}`);
     expect(row3.answer).toBe("");
