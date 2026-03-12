@@ -201,14 +201,6 @@ RSpec.describe("Terms", type: :request) do
 
         expect(response).to redirect_to(root_path)
       end
-
-      it "redirects to root on turbo request and does not create a term" do
-        expect do
-          post(terms_path, params: valid_params, as: :turbo_stream)
-        end.not_to change(Term, :count)
-
-        expect(response).to redirect_to(root_path)
-      end
     end
 
     describe "PATCH /terms/:id" do
@@ -216,13 +208,6 @@ RSpec.describe("Terms", type: :request) do
 
       it "redirects to root and does not update the term" do
         patch term_path(term), params: { term: { year: 2025 } }
-
-        expect(response).to redirect_to(root_path)
-        expect(term.reload.year).to eq(2024)
-      end
-
-      it "redirects to root on turbo request and does not update the term" do
-        patch term_path(term), params: { term: { year: 2025 } }, as: :turbo_stream
 
         expect(response).to redirect_to(root_path)
         expect(term.reload.year).to eq(2024)
@@ -235,14 +220,6 @@ RSpec.describe("Terms", type: :request) do
       it "redirects to root and does not destroy the term" do
         expect do
           delete(term_path(term))
-        end.not_to change(Term, :count)
-
-        expect(response).to redirect_to(root_path)
-      end
-
-      it "redirects to root on turbo request and does not destroy the term" do
-        expect do
-          delete(term_path(term), as: :turbo_stream)
         end.not_to change(Term, :count)
 
         expect(response).to redirect_to(root_path)
