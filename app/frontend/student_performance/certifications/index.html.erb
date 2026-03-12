@@ -35,72 +35,73 @@
   </div>
 
   <% if @rule %>
-    <div class="bg-light rounded border px-3 py-2 mb-4">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="mb-0">
-          <span class="text-muted small border-end pe-2 me-2">
-            <%= t("student_performance.certifications.index.rule_info") %>
-          </span>
-
-          <% if @rule.min_percentage.present? %>
-            <strong>
-              <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
-            </strong>
-            <span class="small">
-              <%= t("student_performance.rules.show.of_total_points") %>
+    <div class="card bg-light mt-3 mb-4 shadow-sm border-0">
+      <div class="card-body py-2 px-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="mb-0">
+            <span class="text-muted small border-end pe-2 me-2">
+              <%= t("student_performance.certifications.index.rule_info") %>
             </span>
-          <% elsif @rule.min_points_absolute.present? %>
-            <strong><%= @rule.min_points_absolute %></strong>
-            <span class="small">
-              <%= t("student_performance.rules.show.points_absolute") %>
-            </span>
-          <% end %>
 
-          <% if @rule.required_achievements.any? %>
-            <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
-              <span class="text-muted small mx-1">
-                <i class="bi bi-plus"></i>
+            <% if @rule.min_percentage.present? %>
+              <strong>
+                <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+              </strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.of_total_points") %>
+              </span>
+            <% elsif @rule.min_points_absolute.present? %>
+              <strong><%= @rule.min_points_absolute %></strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.points_absolute") %>
               </span>
             <% end %>
-            <span class="small text-muted me-1">
-              <%= t("student_performance.certifications.index.required_achievements_label") %>:
-            </span>
-            <% @rule.required_achievements.each do |ach| %>
-              <strong>
-                <%= ach.title %>
 
-                <% case ach.value_type %>
-                <% when "numeric" %>
-                  (&ge;
-                  <%= ach.threshold %>
-                  )
-                <% when "percentage" %>
-                  (&ge;
-                  <%= ach.threshold %>
-                  %)
+            <% if @rule.required_achievements.any? %>
+              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+                <span class="text-muted small mx-1">
+                  <i class="bi bi-plus"></i>
+                </span>
+              <% end %>
+              <span class="small text-muted me-1">
+                <%= t("student_performance.certifications.index.required_achievements_label") %>:
+              </span>
+              <% @rule.required_achievements.each do |ach| %>
+                <strong>
+                  <%= ach.title %>
+
+                  <% case ach.value_type %>
+                  <% when "numeric" %>
+                    (&ge;
+                    <%= ach.threshold %>
+                    )
+                  <% when "percentage" %>
+                    (&ge;
+                    <%= ach.threshold %>
+                    %)
+                  <% end %>
+                </strong>
+
+                <% unless ach == @rule.required_achievements.last %>
+                  <span class="text-muted">,</span>
                 <% end %>
-              </strong>
-
-              <% unless ach == @rule.required_achievements.last %>
-                <span class="text-muted">,</span>
               <% end %>
             <% end %>
-          <% end %>
-        </div>
+          </div>
 
-        <div class="d-flex gap-2 ms-3">
-          <a
-            href="<%= edit_lecture_student_performance_rules_path(
+          <div class="d-flex gap-2 ms-3">
+            <a
+              href="<%= edit_lecture_student_performance_rules_path(
                         @lecture
                       ) %>"
-            class="btn btn-outline-primary btn-sm text-nowrap"
-            data-turbo-frame="performance-certifications-frame"
-          >
-            <i class="bi bi-pencil me-1"></i>
-            <%= t("student_performance.rules.show.edit_button") %>
-          </a>
+              class="btn btn-outline-primary btn-sm text-nowrap"
+              data-turbo-frame="performance-certifications-frame"
+            >
+              <i class="bi bi-pencil me-1"></i>
+              <%= t("student_performance.rules.show.edit_button") %>
+            </a>
 
-          <%= form_tag(
+            <%= form_tag(
                 preview_rule_change_lecture_student_performance_evaluator_path(
                   @lecture
                 ),
@@ -108,17 +109,18 @@
                 class: "d-inline",
                 data: { turbo_frame: "performance-certifications-frame" }
               ) do %>
-            <%= hidden_field_tag :source_frame,
+              <%= hidden_field_tag :source_frame,
                                  "performance-certifications-frame" %>
 
-            <button
-              type="submit"
-              class="btn btn-outline-primary btn-sm text-nowrap"
-            >
-              <i class="bi bi-sliders me-1"></i>
-              <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
-            </button>
-          <% end %>
+              <button
+                type="submit"
+                class="btn btn-outline-primary btn-sm text-nowrap"
+              >
+                <i class="bi bi-sliders me-1"></i>
+                <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
+              </button>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
@@ -251,9 +253,12 @@
   <% end %>
 
   <% if @stale_from_rule_manual_count > 0 %>
-    <div class="alert alert-secondary d-flex align-items-center mb-4">
-      <i class="bi bi-pencil-square me-2"></i>
-
+    <div
+      class="
+        d-flex align-items-center text-warning-emphasis bg-warning-subtle
+        px-3 py-2 rounded mb-4
+      "
+    >
       <%= t("student_performance.certifications.index.stale_rule_manual_warning",
                 count: @stale_from_rule_manual_count) %>
     </div>
@@ -285,9 +290,12 @@
   <% end %>
 
   <% if @stale_from_data_manual_count > 0 %>
-    <div class="alert alert-secondary d-flex align-items-center mb-4">
-      <i class="bi bi-pencil-square me-2"></i>
-
+    <div
+      class="
+        d-flex align-items-center text-warning-emphasis bg-warning-subtle
+        px-3 py-2 rounded mb-4
+      "
+    >
       <%= t("student_performance.certifications.index.stale_data_manual_warning",
                 count: @stale_from_data_manual_count) %>
     </div>
