@@ -1,470 +1,492 @@
 <%= turbo_frame_tag "performance-certifications-frame" do %>
-  <div class="card">
-    <div class="card-header bg-white border-bottom">
+  <div
+    class="
+      d-flex justify-content-between align-items-end border-bottom pb-3 mb-4
+      mt-2
+    "
+  >
+    <div>
+      <h4 class="mb-1">
+        <%= t("student_performance.certifications.index.title") %>
+      </h4>
+
+      <p class="text-muted small mb-0">
+        <%= t("student_performance.certifications.index.subtitle") %>
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <% if @rule && @uncertified_count > 0 %>
+        <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
+                    method: :post,
+                    class: "btn btn-success btn-sm" do %>
+          <i class="bi bi-check-all me-1"></i>
+          <%= t("student_performance.certifications.index.bulk_accept") %>
+
+          <span class="ms-1">
+            (<%= @proposed_passed %>
+            <%= t("student_performance.certifications.index.proposed_passed") %>,
+            <%= @proposed_failed %>
+            <%= t("student_performance.certifications.index.proposed_failed") %>)
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @rule %>
+    <div class="bg-light rounded border px-3 py-2 mb-4">
       <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h4 class="mb-1">
-            <%= t("student_performance.certifications.index.title") %>
-          </h4>
+        <div class="mb-0">
+          <span class="text-muted small border-end pe-2 me-2">
+            <%= t("student_performance.certifications.index.rule_info") %>
+          </span>
 
-          <p class="text-muted small mb-0">
-            <%= t("student_performance.certifications.index.subtitle") %>
-          </p>
-        </div>
+          <% if @rule.min_percentage.present? %>
+            <strong>
+              <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+            </strong>
+            <span class="small">
+              <%= t("student_performance.rules.show.of_total_points") %>
+            </span>
+          <% elsif @rule.min_points_absolute.present? %>
+            <strong><%= @rule.min_points_absolute %></strong>
+            <span class="small">
+              <%= t("student_performance.rules.show.points_absolute") %>
+            </span>
+          <% end %>
 
-        <div class="d-flex gap-2">
-          <% if @rule && @uncertified_count > 0 %>
-            <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
-                        method: :post,
-                        class: "btn btn-success btn-sm" do %>
-              <i class="bi bi-check-all me-1"></i>
-              <%= t("student_performance.certifications.index.bulk_accept") %>
-
-              <span class="ms-1">
-                (<%= @proposed_passed %>
-                <%= t("student_performance.certifications.index.proposed_passed") %>,
-                <%= @proposed_failed %>
-                <%= t("student_performance.certifications.index.proposed_failed") %>)
+          <% if @rule.required_achievements.any? %>
+            <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+              <span class="text-muted small mx-1">
+                <i class="bi bi-plus"></i>
               </span>
+            <% end %>
+            <span class="small text-muted me-1">
+              <%= t("student_performance.certifications.index.required_achievements_label") %>:
+            </span>
+            <% @rule.required_achievements.each do |ach| %>
+              <strong>
+                <%= ach.title %>
+
+                <% case ach.value_type %>
+                <% when "numeric" %>
+                  (&ge;
+                  <%= ach.threshold %>
+                  )
+                <% when "percentage" %>
+                  (&ge;
+                  <%= ach.threshold %>
+                  %)
+                <% end %>
+              </strong>
+
+              <% unless ach == @rule.required_achievements.last %>
+                <span class="text-muted">,</span>
+              <% end %>
             <% end %>
           <% end %>
         </div>
-      </div>
 
-      <% if @rule %>
-        <div class="card bg-light mt-3 mb-0">
-          <div class="card-body py-2 px-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <span class="fw-semibold small">
-                  <%= t("student_performance.certifications.index.rule_info") %>
-                </span>
-
-                <% if @rule.min_percentage.present? %>
-                  <span class="badge bg-primary ms-2">
-                    <%= number_to_percentage(
-                          @rule.min_percentage, precision: 0
-                        ) %>
-                  </span>
-                  <span class="small">
-                    <%= t("student_performance.rules.show.of_total_points") %>
-                  </span>
-                <% elsif @rule.min_points_absolute.present? %>
-                  <span class="badge bg-primary ms-2">
-                    <%= @rule.min_points_absolute %>
-                  </span>
-                  <span class="small">
-                    <%= t("student_performance.rules.show.points_absolute") %>
-                  </span>
-                <% end %>
-
-                <% if @rule.required_achievements.any? %>
-                  <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
-                    <span class="text-muted mx-1">+</span>
-                  <% end %>
-                  <span class="small">
-                    <%= t("student_performance.certifications.index.required_achievements_label") %>:
-                  </span>
-                  <% @rule.required_achievements.each do |ach| %>
-                    <span class="badge bg-secondary ms-1">
-                      <%= ach.title %>
-
-                      <% case ach.value_type %>
-                      <% when "boolean" %>
-                      <% when "numeric" %>
-                        <span class="fw-normal">&ge; <%= ach.threshold %></span>
-                      <% when "percentage" %>
-                        <span class="fw-normal">
-                          &ge; <%= ach.threshold %>%
-                        </span>
-                      <% end %>
-                    </span>
-                  <% end %>
-                <% end %>
-              </div>
-
-              <div class="d-flex gap-2 ms-3">
-                <a
-                  href="<%= edit_lecture_student_performance_rules_path(
-                              @lecture
-                            ) %>"
-                  class="btn btn-outline-primary btn-sm text-nowrap"
-                  data-turbo-frame="performance-certifications-frame"
-                >
-                  <i class="bi bi-pencil me-1"></i>
-                  <%= t("student_performance.rules.show.edit_button") %>
-                </a>
-
-                <%= form_tag(
-                      preview_rule_change_lecture_student_performance_evaluator_path(
-                        @lecture
-                      ),
-                      method: :post,
-                      class: "d-inline",
-                      data: { turbo_frame: "performance-certifications-frame" }
-                    ) do %>
-                  <%= hidden_field_tag :source_frame,
-                                       "performance-certifications-frame" %>
-
-                  <button
-                    type="submit"
-                    class="btn btn-outline-primary btn-sm text-nowrap"
-                  >
-                    <i class="bi bi-sliders me-1"></i>
-                    <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
-                  </button>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% else %>
-        <div class="text-center py-3 mt-3 border rounded bg-light">
-          <i class="bi bi-exclamation-triangle text-warning fs-4 d-block mb-2"></i>
-
-          <p class="text-muted mb-2">
-            <%= t("student_performance.evaluator.no_rule") %>
-          </p>
-
+        <div class="d-flex gap-2 ms-3">
           <a
-            href="<%= edit_lecture_student_performance_rules_path(@lecture) %>"
-            class="btn btn-outline-primary btn-sm"
+            href="<%= edit_lecture_student_performance_rules_path(
+                        @lecture
+                      ) %>"
+            class="btn btn-outline-primary btn-sm text-nowrap"
             data-turbo-frame="performance-certifications-frame"
           >
-            <i class="bi bi-plus-lg me-1"></i>
-            <%= t("student_performance.certifications.index.setup_rule") %>
+            <i class="bi bi-pencil me-1"></i>
+            <%= t("student_performance.rules.show.edit_button") %>
           </a>
+
+          <%= form_tag(
+                preview_rule_change_lecture_student_performance_evaluator_path(
+                  @lecture
+                ),
+                method: :post,
+                class: "d-inline",
+                data: { turbo_frame: "performance-certifications-frame" }
+              ) do %>
+            <%= hidden_field_tag :source_frame,
+                                 "performance-certifications-frame" %>
+
+            <button
+              type="submit"
+              class="btn btn-outline-primary btn-sm text-nowrap"
+            >
+              <i class="bi bi-sliders me-1"></i>
+              <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
+            </button>
+          <% end %>
         </div>
-      <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center py-3 mt-3 mb-4 border rounded bg-light">
+      <i class="bi bi-exclamation-triangle text-warning fs-4 d-block mb-2"></i>
+
+      <p class="text-muted mb-2">
+        <%= t("student_performance.evaluator.no_rule") %>
+      </p>
+
+      <a
+        href="<%= edit_lecture_student_performance_rules_path(@lecture) %>"
+        class="btn btn-outline-primary btn-sm"
+        data-turbo-frame="performance-certifications-frame"
+      >
+        <i class="bi bi-plus-lg me-1"></i>
+        <%= t("student_performance.certifications.index.setup_rule") %>
+      </a>
+    </div>
+  <% end %>
+
+  <% if @total_students > 0 %>
+    <div class="progress mb-3" style="height: 6px;">
+      <div
+        class="progress-bar bg-success"
+        role="progressbar"
+        style="width: <%= (@passed_count.to_f / @total_students * 100) %>%;"
+        aria-label="Passed"
+      ></div>
+
+      <div
+        class="progress-bar bg-danger"
+        role="progressbar"
+        style="width: <%= (@failed_count.to_f / @total_students * 100) %>%;"
+        aria-label="Failed"
+      ></div>
+
+      <div
+        class="progress-bar bg-warning"
+        role="progressbar"
+        style="width: <%= (@uncertified_count.to_f / @total_students * 100) %>%;"
+        aria-label="Uncertified"
+      ></div>
+    </div>
+  <% end %>
+
+  <div class="d-flex flex-wrap gap-5 mb-4">
+    <div class="d-flex flex-column">
+      <span class="fs-5 fw-bold text-dark lh-1 mb-1">
+        <%= @total_students %>
+      </span>
+
+      <span class="text-muted small">
+        <%= t("student_performance.certifications.index.total") %>
+      </span>
     </div>
 
-    <div class="card-body">
-      <div class="row mb-4 g-3">
-        <div class="col">
-          <div class="text-center p-3 border rounded bg-light">
-            <div class="display-6 fw-bold"><%= @total_students %></div>
+    <div class="d-flex flex-column">
+      <span class="fs-5 fw-bold text-success lh-1 mb-1">
+        <%= @passed_count %>
+      </span>
 
-            <div class="text-muted small">
-              <%= t("student_performance.certifications.index.total") %>
-            </div>
-          </div>
-        </div>
+      <span class="text-muted small">
+        <%= t("student_performance.certifications.index.passed") %>
+      </span>
+    </div>
 
-        <div class="col">
-          <div class="text-center p-3 border rounded bg-light">
-            <div class="display-6 fw-bold text-success">
-              <%= @passed_count %>
-            </div>
+    <div class="d-flex flex-column">
+      <span class="fs-5 fw-bold text-danger lh-1 mb-1">
+        <%= @failed_count %>
+      </span>
 
-            <div class="text-muted small">
-              <%= t("student_performance.certifications.index.passed") %>
-            </div>
-          </div>
-        </div>
+      <span class="text-muted small">
+        <%= t("student_performance.certifications.index.failed") %>
+      </span>
+    </div>
 
-        <div class="col">
-          <div class="text-center p-3 border rounded bg-light">
-            <div class="display-6 fw-bold text-danger">
-              <%= @failed_count %>
-            </div>
+    <div class="d-flex flex-column">
+      <span class="fs-5 fw-bold text-warning-emphasis lh-1 mb-1">
+        <%= @uncertified_count %>
+      </span>
 
-            <div class="text-muted small">
-              <%= t("student_performance.certifications.index.failed") %>
-            </div>
-          </div>
-        </div>
+      <span class="text-muted small">
+        <%= t("student_performance.certifications.index.uncertified") %>
+      </span>
+    </div>
 
-        <div class="col">
-          <div class="text-center p-3 border rounded bg-light">
-            <div class="display-6 fw-bold text-warning">
-              <%= @uncertified_count %>
-            </div>
+    <% if @stale_count > 0 %>
+      <div class="d-flex flex-column">
+        <span class="fs-5 fw-bold text-secondary lh-1 mb-1">
+          <%= @stale_count %>
+        </span>
 
-            <div class="text-muted small">
-              <%= t("student_performance.certifications.index.uncertified") %>
-            </div>
-          </div>
-        </div>
+        <span class="text-muted small d-flex align-items-center gap-1">
+          <%= t("student_performance.certifications.index.stale") %>
 
-        <div class="col">
-          <div class="text-center p-3 border rounded bg-light">
-            <div class="display-6 fw-bold text-secondary">
-              <%= @stale_count %>
-            </div>
-
-            <div class="text-muted small">
-              <%= t("student_performance.certifications.index.stale") %>
-
-              <%= helpdesk(
+          <%= helpdesk(
                     t("student_performance.certifications.index.stale_hint"),
                     false
                   ) %>
-            </div>
-          </div>
-        </div>
+        </span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @stale_from_rule_auto_count > 0 %>
+    <div
+      class="
+        alert alert-warning d-flex align-items-center
+        justify-content-between mb-4
+      "
+    >
+      <div>
+        <i class="bi bi-exclamation-triangle me-2"></i>
+
+        <%= t("student_performance.certifications.index.stale_rule_warning",
+                  count: @stale_from_rule_auto_count) %>
       </div>
 
-      <% if @stale_from_rule_auto_count > 0 %>
-        <div
-          class="
-            alert alert-warning d-flex align-items-center
-            justify-content-between mb-4
-          "
-        >
-          <div>
-            <i class="bi bi-exclamation-triangle me-2"></i>
-
-            <%= t("student_performance.certifications.index.stale_rule_warning",
-                  count: @stale_from_rule_auto_count) %>
-          </div>
-
-          <% if @rule %>
-            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+      <% if @rule %>
+        <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
                           method: :post,
                           class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-              <i class="bi bi-arrow-repeat me-1"></i>
-              <%= t("student_performance.certifications.index.reevaluate_rules") %>
-            <% end %>
-          <% end %>
-        </div>
+          <i class="bi bi-arrow-repeat me-1"></i>
+          <%= t("student_performance.certifications.index.reevaluate_rules") %>
+        <% end %>
       <% end %>
+    </div>
+  <% end %>
 
-      <% if @stale_from_rule_manual_count > 0 %>
-        <div class="alert alert-secondary d-flex align-items-center mb-4">
-          <i class="bi bi-pencil-square me-2"></i>
+  <% if @stale_from_rule_manual_count > 0 %>
+    <div class="alert alert-secondary d-flex align-items-center mb-4">
+      <i class="bi bi-pencil-square me-2"></i>
 
-          <%= t("student_performance.certifications.index.stale_rule_manual_warning",
+      <%= t("student_performance.certifications.index.stale_rule_manual_warning",
                 count: @stale_from_rule_manual_count) %>
-        </div>
-      <% end %>
+    </div>
+  <% end %>
 
-      <% if @stale_from_data_auto_count > 0 %>
-        <div
-          class="
-            alert alert-warning d-flex align-items-center
-            justify-content-between mb-4
-          "
-        >
-          <div>
-            <i class="bi bi-exclamation-triangle me-2"></i>
+  <% if @stale_from_data_auto_count > 0 %>
+    <div
+      class="
+        alert alert-warning d-flex align-items-center
+        justify-content-between mb-4
+      "
+    >
+      <div>
+        <i class="bi bi-exclamation-triangle me-2"></i>
 
-            <%= t("student_performance.certifications.index.stale_data_warning",
+        <%= t("student_performance.certifications.index.stale_data_warning",
                   count: @stale_from_data_auto_count) %>
-          </div>
+      </div>
 
-          <% if @rule %>
-            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+      <% if @rule %>
+        <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
                           method: :post,
                           class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-              <i class="bi bi-arrow-repeat me-1"></i>
-              <%= t("student_performance.certifications.index.reevaluate_data") %>
-            <% end %>
-          <% end %>
-        </div>
+          <i class="bi bi-arrow-repeat me-1"></i>
+          <%= t("student_performance.certifications.index.reevaluate_data") %>
+        <% end %>
       <% end %>
+    </div>
+  <% end %>
 
-      <% if @stale_from_data_manual_count > 0 %>
-        <div class="alert alert-secondary d-flex align-items-center mb-4">
-          <i class="bi bi-pencil-square me-2"></i>
+  <% if @stale_from_data_manual_count > 0 %>
+    <div class="alert alert-secondary d-flex align-items-center mb-4">
+      <i class="bi bi-pencil-square me-2"></i>
 
-          <%= t("student_performance.certifications.index.stale_data_manual_warning",
+      <%= t("student_performance.certifications.index.stale_data_manual_warning",
                 count: @stale_from_data_manual_count) %>
-        </div>
-      <% end %>
+    </div>
+  <% end %>
 
-      <div class="btn-group mb-3" role="group">
-        <% %i[all passed failed uncertified stale].each do |filter| %>
-          <% active = (params[:status].presence || "all") == filter.to_s %>
+  <nav class="nav nav-pills small mb-3">
+    <% %i[all passed failed uncertified stale].each do |filter| %>
+      <% active = (params[:status].presence || "all") == filter.to_s %>
 
-          <a
-            href="<%= lecture_student_performance_certifications_path(
+      <a
+        href="<%= lecture_student_performance_certifications_path(
                         @lecture,
                         status: filter == :all ? nil : filter) %>"
-            class="btn btn-outline-secondary btn-sm <%= 'active' if active %>"
-            data-turbo-frame="performance-certifications-frame"
-          >
-            <%= t("student_performance.certifications.filters.#{filter}") %>
-          </a>
-        <% end %>
-      </div>
+        class="nav-link rounded-pill py-1 px-3 <%= 'active' if active %> <%= 'text-muted' unless active %>"
+        data-turbo-frame="performance-certifications-frame"
+      >
+        <%= t("student_performance.certifications.filters.#{filter}") %>
+      </a>
+    <% end %>
+  </nav>
 
-      <% if @filtered_records.empty? %>
-        <p class="text-center text-muted py-4">
-          <%= t("student_performance.certifications.index.empty") %>
-        </p>
-      <% else %>
-        <div class="table-responsive">
-          <table class="table table-sm table-hover align-middle">
-            <thead class="table-light">
-              <tr>
-                <th scope="col">
-                  <%= t("student_performance.records.columns.student") %>
-                </th>
+  <% if @filtered_records.empty? %>
+    <p class="text-center text-muted py-4">
+      <%= t("student_performance.certifications.index.empty") %>
+    </p>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">
+              <%= t("student_performance.records.columns.student") %>
+            </th>
 
-                <% if @rule&.min_points_absolute.present? %>
-                  <th scope="col" class="text-end">
-                    <%= t("student_performance.records.columns.points") %>
-                  </th>
-                <% else %>
-                  <th scope="col" class="text-end">
-                    <%= t("student_performance.records.columns.percentage") %>
-                  </th>
-                <% end %>
+            <% if @rule&.min_points_absolute.present? %>
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.columns.points") %>
+              </th>
+            <% else %>
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.columns.percentage") %>
+              </th>
+            <% end %>
 
-                <% @achievements.each do |achievement| %>
-                  <th
-                    scope="col"
-                    class="text-center small"
-                    title="<%= achievement.title %>"
-                  >
-                    <%= truncate(achievement.title, length: 12) %>
-                  </th>
-                <% end %>
+            <% @achievements.each do |achievement| %>
+              <th
+                scope="col"
+                class="text-center small"
+                title="<%= achievement.title %>"
+              >
+                <%= truncate(achievement.title, length: 12) %>
+              </th>
+            <% end %>
 
-                <th scope="col" class="text-center">
-                  <%= t("student_performance.certifications.columns.proposed") %>
-                </th>
+            <th scope="col" class="text-start">
+              <%= t("student_performance.certifications.columns.certification") %>
+            </th>
 
-                <th scope="col" class="text-center">
-                  <%= t("student_performance.certifications.columns.certification") %>
-                </th>
+            <th scope="col">
+              <%= t("student_performance.certifications.columns.note") %>
+            </th>
 
-                <th scope="col">
-                  <%= t("student_performance.certifications.columns.note") %>
-                </th>
+            <th scope="col" class="text-end"></th>
+          </tr>
+        </thead>
 
-                <th scope="col"></th>
-              </tr>
-            </thead>
+        <tbody>
+          <% @filtered_records.each do |record| %>
+            <% cert = @cert_by_user[record.user_id] %>
+            <% proposal = @proposal_by_user&.dig(record.user_id) %>
 
-            <tbody>
-              <% @filtered_records.each do |record| %>
-                <% cert = @cert_by_user[record.user_id] %>
-                <% proposal = @proposal_by_user&.dig(record.user_id) %>
+            <tr>
+              <td><%= record.user.tutorial_name %></td>
 
-                <tr>
-                  <td><%= record.user.tutorial_name %></td>
-
-                  <% if @rule&.min_points_absolute.present? %>
-                    <td class="text-end font-monospace">
-                      <%= number_with_precision(
+              <% if @rule&.min_points_absolute.present? %>
+                <td class="text-end font-monospace">
+                  <%= number_with_precision(
                             record.points_total_materialized,
                             precision: 1,
                             strip_insignificant_zeros: true) %>
-                    </td>
-                  <% else %>
-                    <td class="text-end font-monospace">
-                      <%= number_to_percentage(
+                </td>
+              <% else %>
+                <td class="text-end font-monospace">
+                  <%= number_to_percentage(
                             record.percentage_materialized.to_f,
                             precision: 1) %>
-                    </td>
-                  <% end %>
+                </td>
+              <% end %>
 
-                  <% @achievements.each do |achievement| %>
-                    <td class="text-center">
-                      <% if record.achievements_met_ids&.include?(achievement.id) %>
-                        <i
-                          class="bi bi-check-circle-fill text-success"
-                          title="<%= t('student_performance.records.columns.achievement_met') %>"
-                        ></i>
-                      <% else %>
-                        <i
-                          class="bi bi-x-circle text-muted"
-                          title="<%= t('student_performance.records.columns.achievement_not_met') %>"
-                        ></i>
-                      <% end %>
-                    </td>
+              <% @achievements.each do |achievement| %>
+                <td class="text-center">
+                  <% if record.achievements_met_ids&.include?(achievement.id) %>
+                    <i
+                      class="bi bi-check-lg text-secondary"
+                      title="<%= t('student_performance.records.columns.achievement_met') %>"
+                    ></i>
+                  <% else %>
+                    <span
+                      class="text-muted"
+                      title="<%= t('student_performance.records.columns.achievement_not_met') %>"
+                    >
+                      &ndash;
+                    </span>
                   <% end %>
+                </td>
+              <% end %>
 
-                  <td class="text-center">
-                    <% if proposal %>
+              <td class="text-start">
+                <% if cert %>
+                  <% case cert.status.to_sym %>
+                  <% when :passed %>
+                    <span class="text-dark">
+                      <i class="bi bi-check-circle-fill text-success me-1"></i>
+                      <%= t("student_performance.certifications.status.passed") %>
+                    </span>
+                  <% when :failed %>
+                    <span class="text-dark">
+                      <i class="bi bi-x-circle-fill text-danger me-1"></i>
+                      <%= t("student_performance.certifications.status.failed") %>
+                    </span>
+                  <% when :pending %>
+                    <span class="text-dark">
+                      <i class="bi bi-clock-fill text-warning me-1"></i>
+                      <%= t("student_performance.certifications.status.pending") %>
+                    </span>
+                  <% end %>
+                  <% if cert.manual? %>
+                    <i
+                      class="bi bi-pencil-square text-muted ms-1 small"
+                      title="<%= t('student_performance.certifications.status.manual') %>"
+                    ></i>
+                  <% end %>
+                  <% if @stale_user_ids.include?(record.user_id) %>
+                    <i
+                      class="bi bi-exclamation-triangle-fill text-warning ms-1 small"
+                      title="<%= t('student_performance.certifications.status.stale') %>"
+                    ></i>
+                  <% end %>
+                <% elsif proposal %>
+                  <div class="text-muted fst-italic">
+                    <span class="small me-1">
+                      <%= t("student_performance.certifications.columns.proposed") %>:
+                    </span>
+
+                    <span>
                       <% if proposal.proposed_status == :passed %>
-                        <span class="badge bg-success-subtle text-success">
-                          <%= t("student_performance.evaluator.status.passed") %>
-                        </span>
+                        <i class="bi bi-check-circle text-muted"></i>
+                        <%= t("student_performance.evaluator.status.passed") %>
                       <% else %>
-                        <span class="badge bg-danger-subtle text-danger">
-                          <%= t("student_performance.evaluator.status.failed") %>
-                        </span>
+                        <i class="bi bi-x-circle text-muted"></i>
+                        <%= t("student_performance.evaluator.status.failed") %>
                       <% end %>
-                    <% else %>
-                      <span class="text-muted">&mdash;</span>
-                    <% end %>
-                  </td>
+                    </span>
+                  </div>
+                <% else %>
+                  <span class="text-muted">&mdash;</span>
+                <% end %>
+              </td>
 
-                  <td class="text-center">
-                    <% if cert %>
-                      <% case cert.status.to_sym %>
-                      <% when :passed %>
-                        <span class="badge bg-success">
-                          <%= t("student_performance.certifications.status.passed") %>
-                        </span>
-                      <% when :failed %>
-                        <span class="badge bg-danger">
-                          <%= t("student_performance.certifications.status.failed") %>
-                        </span>
-                      <% when :pending %>
-                        <span class="badge bg-warning text-dark">
-                          <%= t("student_performance.certifications.status.pending") %>
-                        </span>
-                      <% end %>
-                      <% if cert.manual? %>
-                        <i
-                          class="bi bi-pencil-square text-muted ms-1"
-                          title="<%= t('student_performance.certifications.status.manual') %>"
-                        ></i>
-                      <% end %>
-                      <% if @stale_user_ids.include?(record.user_id) %>
-                        <i
-                          class="bi bi-exclamation-triangle text-warning ms-1"
-                          title="<%= t('student_performance.certifications.status.stale') %>"
-                        ></i>
-                      <% end %>
-                    <% else %>
-                      <span class="text-muted">&mdash;</span>
-                    <% end %>
-                  </td>
+              <td
+                class="text-muted small text-truncate"
+                style="max-width: 150px"
+                title="<%= cert&.note %>"
+              >
+                <%= cert&.note %>
+              </td>
 
-                  <td
-                    class="text-muted small text-truncate"
-                    style="max-width: 150px"
-                    title="<%= cert&.note %>"
+              <td class="text-end">
+                <% if cert %>
+                  <button
+                    type="button"
+                    class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#override-modal-<%= cert.id %>"
+                    title="<%= t('student_performance.certifications.index.override') %>"
                   >
-                    <%= cert&.note %>
-                  </td>
-
-                  <td>
-                    <% if cert %>
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary btn-sm"
-                        data-bs-toggle="modal"
-                        data-bs-target="#override-modal-<%= cert.id %>"
-                      >
-                        <%= t("student_performance.certifications.index.override") %>
-                      </button>
-                    <% elsif proposal %>
-                      <%= button_to lecture_student_performance_certifications_path(@lecture),
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                <% elsif proposal %>
+                  <%= button_to lecture_student_performance_certifications_path(@lecture),
                                   method: :post,
-                                  class: "btn btn-outline-primary btn-sm",
+                                  class: "btn btn-outline-primary btn-sm py-0 px-2",
+                                  title: t("student_performance.certifications.index.accept"),
                                   params: {
                                     certification: {
                                       user_id: record.user_id,
                                       status: proposal.proposed_status
                                     }
                                   } do %>
-                        <%= t("student_performance.certifications.index.accept") %>
-                      <% end %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
+                    <i class="bi bi-check-lg"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
-  </div>
+  <% end %>
 
   <% @filtered_records.each do |record| %>
     <% cert = @cert_by_user[record.user_id] %>
