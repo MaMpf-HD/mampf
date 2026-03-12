@@ -16,8 +16,6 @@
               url: lecture_student_performance_achievement_path(lecture,
                                                                achievement),
               method: :patch do |f| %>
-  <input type="hidden" name="tab" value="settings">
-
   <div class="row g-3" data-controller="achievement-form">
     <div class="col-md-4">
       <%= f.label :title,

@@ -64,8 +64,7 @@ module StudentPerformance
               "assessments_container",
               ::AchievementDashboardComponent.new(
                 achievement: @achievement,
-                lecture: @lecture,
-                active_tab: "settings"
+                lecture: @lecture
               )
             )
           end
@@ -105,8 +104,7 @@ module StudentPerformance
                 "assessments_container",
                 ::AchievementDashboardComponent.new(
                   achievement: @achievement,
-                  lecture: @lecture,
-                  active_tab: params[:tab] || "settings"
+                  lecture: @lecture
                 )
               ),
               stream_flash
@@ -125,8 +123,7 @@ module StudentPerformance
               "assessments_container",
               ::AchievementDashboardComponent.new(
                 achievement: @achievement,
-                lecture: @lecture,
-                active_tab: params[:tab] || "settings"
+                lecture: @lecture
               )
             ), status: :unprocessable_content
           end

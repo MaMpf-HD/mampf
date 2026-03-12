@@ -37,11 +37,11 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
         expect(component.active_tab).to eq(:performance)
       end
 
-      it "accepts :rules as active tab" do
+      it "accepts :certifications as active tab" do
         component = described_class.new(
-          lecture: lecture, active_tab: :rules
+          lecture: lecture, active_tab: :certifications
         )
-        expect(component.active_tab).to eq(:rules)
+        expect(component.active_tab).to eq(:certifications)
       end
 
       it "accepts :achievements as active tab" do
@@ -99,12 +99,12 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
     context "when student_performance is enabled" do
       before { Flipper.enable(:student_performance) }
 
-      it "includes achievements between performance and rules" do
+      it "includes all tabs in the correct order" do
         component = described_class.new(lecture: lecture)
         tabs = component.visible_tabs
         expect(tabs).to eq(
-          [:assessments, :performance, :achievements,
-           :rules, :certifications]
+          [:assessments, :achievements, :performance,
+           :certifications]
         )
       end
     end

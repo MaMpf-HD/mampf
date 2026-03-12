@@ -13,21 +13,6 @@
       </button>
     </li>
 
-    <% if performance_enabled? %>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link <%= 'active' if tab_active?(:performance) %>"
-          id="assessments-performance-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#assessments-performance-pane"
-          type="button"
-          role="tab"
-        >
-          <%= t("assessment.tabs.performance") %>
-        </button>
-      </li>
-    <% end %>
-
     <% if achievements_enabled? %>
       <li class="nav-item" role="presentation">
         <button
@@ -39,6 +24,21 @@
           role="tab"
         >
           <%= t("assessment.tabs.achievements") %>
+        </button>
+      </li>
+    <% end %>
+
+    <% if performance_enabled? %>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link <%= 'active' if tab_active?(:performance) %>"
+          id="assessments-performance-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#assessments-performance-pane"
+          type="button"
+          role="tab"
+        >
+          <%= t("assessment.tabs.performance") %>
         </button>
       </li>
     <% end %>
@@ -68,14 +68,14 @@
       <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
     </div>
 
-    <% if performance_enabled? %>
+    <% if achievements_enabled? %>
       <div
-        class="tab-pane fade <%= 'show active' if tab_active?(:performance) %>"
-        id="assessments-performance-pane"
+        class="tab-pane fade <%= 'show active' if tab_active?(:achievements) %>"
+        id="assessments-achievements-pane"
         role="tabpanel"
       >
-        <%= helpers.turbo_frame_tag "performance-records-frame",
-                                    src: lecture_student_performance_records_path(lecture),
+        <%= helpers.turbo_frame_tag "performance-achievements-frame",
+                                    src: lecture_student_performance_achievements_path(lecture),
                                     loading: "lazy" do %>
           <div class="text-center my-4">
             <div class="spinner-border" role="status">
@@ -86,14 +86,14 @@
       </div>
     <% end %>
 
-    <% if achievements_enabled? %>
+    <% if performance_enabled? %>
       <div
-        class="tab-pane fade <%= 'show active' if tab_active?(:achievements) %>"
-        id="assessments-achievements-pane"
+        class="tab-pane fade <%= 'show active' if tab_active?(:performance) %>"
+        id="assessments-performance-pane"
         role="tabpanel"
       >
-        <%= helpers.turbo_frame_tag "performance-achievements-frame",
-                                    src: lecture_student_performance_achievements_path(lecture),
+        <%= helpers.turbo_frame_tag "performance-records-frame",
+                                    src: lecture_student_performance_records_path(lecture),
                                     loading: "lazy" do %>
           <div class="text-center my-4">
             <div class="spinner-border" role="status">

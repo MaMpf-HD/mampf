@@ -23,18 +23,15 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
       expect(rendered_content).to include("tab=achievements")
     end
 
-    it "renders the settings tab" do
-      expect(rendered_content).to include(
-        "data-bs-target=\"##{component.dom_prefix}-settings\""
-      )
+    it "renders the settings form" do
+      expect(rendered_content).to include("achievement[title]")
     end
   end
 
-  describe "#tabs" do
+  describe "#grading_enabled?" do
     context "without assessment_grading flag" do
-      it "returns only settings" do
-        keys = component.tabs.map(&:key)
-        expect(keys).to eq(["settings"])
+      it "returns false" do
+        expect(component.grading_enabled?).to be(false)
       end
     end
 
@@ -43,9 +40,8 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
       after { Flipper.disable(:assessment_grading) }
 
       context "when achievement has no assessment" do
-        it "returns only settings" do
-          keys = component.tabs.map(&:key)
-          expect(keys).to eq(["settings"])
+        it "returns false" do
+          expect(component.grading_enabled?).to be(false)
         end
       end
 
@@ -56,16 +52,13 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
           )
         end
 
-        it "returns settings and marking" do
-          keys = component.tabs.map(&:key)
-          expect(keys).to eq(["settings", "marking"])
+        it "returns true" do
+          expect(component.grading_enabled?).to be(true)
         end
 
-        it "renders the marking tab trigger" do
+        it "renders the marking section" do
           render_inline(component)
-          expect(rendered_content).to include(
-            "data-bs-target=\"##{component.dom_prefix}-marking\""
-          )
+          expect(rendered_content).to include(I18n.t("assessment.grading"))
         end
       end
     end
@@ -83,21 +76,6 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
     it "points to the assessments overview with achievements tab" do
       render_inline(component)
       expect(component.back_path).to include("tab=achievements")
-    end
-  end
-
-  describe "#tab_active?" do
-    it "defaults to settings" do
-      expect(component.tab_active?("settings")).to be(true)
-    end
-
-    it "respects active_tab param" do
-      c = described_class.new(
-        achievement: achievement, lecture: lecture,
-        active_tab: "other"
-      )
-      expect(c.tab_active?("settings")).to be(false)
-      expect(c.tab_active?("other")).to be(true)
     end
   end
 end
