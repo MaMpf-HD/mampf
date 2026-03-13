@@ -26,7 +26,6 @@ gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
 gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
-gem "faraday", "~> 1.8", "~> 1.10"
 gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
 gem "image_processing", "~> 1.13"
@@ -34,16 +33,14 @@ gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
 gem "mini_magick", "~> 4.13"
-# JavaScript runtime for Rails (used for CoffeeScript that uses ExecJS)
-gem "kamal", "~> 2.9"
-gem "mini_racer", "~> 0.19.1"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
-gem "pagy", "~> 9.4"
+gem "pagy", "~> 43.2"
 gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
 gem "pg_search", "~> 2.3"
 gem "progress_bar", "~> 1.3"
+gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
 gem "rack", "~> 3.1"
 gem "rails", "~> 8.0.2"
@@ -68,13 +65,15 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
+# for now, pin vite_ruby, see https://github.com/ElMassimo/vite_ruby/issues/592
+gem "vite_ruby", "3.9.2"
 
 group :development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
-  gem "rubocop", "~> 1.65", require: false
+  gem "rubocop", "1.81.7", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
