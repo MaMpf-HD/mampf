@@ -35,73 +35,72 @@
   </div>
 
   <% if @rule %>
-    <div class="card bg-light mt-3 mb-4 shadow-sm border-0">
-      <div class="card-body py-2 px-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="mb-0">
-            <span class="text-muted small border-end pe-2 me-2">
-              <%= t("student_performance.certifications.index.rule_info") %>
+    <div class="bg-light rounded border mt-3 mb-4 py-2 px-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="mb-0">
+          <span class="text-muted small border-end pe-2 me-2">
+            <%= t("student_performance.certifications.index.rule_info") %>
+          </span>
+
+          <% if @rule.min_percentage.present? %>
+            <strong>
+              <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+            </strong>
+            <span class="small text-muted">
+              <%= t("student_performance.rules.show.of_total_points") %>
             </span>
+          <% elsif @rule.min_points_absolute.present? %>
+            <strong><%= @rule.min_points_absolute %></strong>
+            <span class="small text-muted">
+              <%= t("student_performance.rules.show.points_absolute") %>
+            </span>
+          <% end %>
 
-            <% if @rule.min_percentage.present? %>
+          <% if @rule.required_achievements.any? %>
+            <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+              <span class="text-muted small mx-1">
+                <i class="bi bi-plus"></i>
+              </span>
+            <% end %>
+            <span class="small text-muted me-1">
+              <%= t("student_performance.certifications.index.required_achievements_label") %>:
+            </span>
+            <% @rule.required_achievements.each do |ach| %>
               <strong>
-                <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
-              </strong>
-              <span class="small text-muted">
-                <%= t("student_performance.rules.show.of_total_points") %>
-              </span>
-            <% elsif @rule.min_points_absolute.present? %>
-              <strong><%= @rule.min_points_absolute %></strong>
-              <span class="small text-muted">
-                <%= t("student_performance.rules.show.points_absolute") %>
-              </span>
-            <% end %>
+                <%= ach.title %>
 
-            <% if @rule.required_achievements.any? %>
-              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
-                <span class="text-muted small mx-1">
-                  <i class="bi bi-plus"></i>
-                </span>
-              <% end %>
-              <span class="small text-muted me-1">
-                <%= t("student_performance.certifications.index.required_achievements_label") %>:
-              </span>
-              <% @rule.required_achievements.each do |ach| %>
-                <strong>
-                  <%= ach.title %>
-
-                  <% case ach.value_type %>
-                  <% when "numeric" %>
-                    (&ge;
-                    <%= ach.threshold %>
-                    )
-                  <% when "percentage" %>
-                    (&ge;
-                    <%= ach.threshold %>
-                    %)
-                  <% end %>
-                </strong>
-
-                <% unless ach == @rule.required_achievements.last %>
-                  <span class="text-muted">,</span>
+                <% case ach.value_type %>
+                <% when "numeric" %>
+                  (&ge;
+                  <%= ach.threshold %>
+                  )
+                <% when "percentage" %>
+                  (&ge;
+                  <%= ach.threshold %>
+                  %)
                 <% end %>
+              </strong>
+
+              <% unless ach == @rule.required_achievements.last %>
+                <span class="text-muted">,</span>
               <% end %>
             <% end %>
-          </div>
+          <% end %>
+        </div>
 
-          <div class="d-flex gap-2 ms-3">
-            <a
-              href="<%= edit_lecture_student_performance_rules_path(
+        <div class="d-flex gap-2 ms-3">
+          <a
+            href="<%= edit_lecture_student_performance_rules_path(
                         @lecture
                       ) %>"
-              class="btn btn-outline-primary btn-sm text-nowrap"
-              data-turbo-frame="performance-certifications-frame"
-            >
-              <i class="bi bi-pencil me-1"></i>
-              <%= t("student_performance.rules.show.edit_button") %>
-            </a>
+            class="btn btn-outline-primary btn-sm text-nowrap"
+            data-turbo-frame="performance-certifications-frame"
+          >
+            <i class="bi bi-pencil me-1"></i>
+            <%= t("student_performance.rules.show.edit_button") %>
+          </a>
 
-            <%= form_tag(
+          <%= form_tag(
                 preview_rule_change_lecture_student_performance_evaluator_path(
                   @lecture
                 ),
@@ -109,18 +108,17 @@
                 class: "d-inline",
                 data: { turbo_frame: "performance-certifications-frame" }
               ) do %>
-              <%= hidden_field_tag :source_frame,
+            <%= hidden_field_tag :source_frame,
                                  "performance-certifications-frame" %>
 
-              <button
-                type="submit"
-                class="btn btn-outline-primary btn-sm text-nowrap"
-              >
-                <i class="bi bi-sliders me-1"></i>
-                <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
-              </button>
-            <% end %>
-          </div>
+            <button
+              type="submit"
+              class="btn btn-outline-primary btn-sm text-nowrap"
+            >
+              <i class="bi bi-sliders me-1"></i>
+              <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
+            </button>
+          <% end %>
         </div>
       </div>
     </div>
@@ -217,11 +215,7 @@
 
         <span class="text-muted small d-flex align-items-center gap-1">
           <%= t("student_performance.certifications.index.stale") %>
-
-          <%= helpdesk(
-                    t("student_performance.certifications.index.stale_hint"),
-                    false
-                  ) %>
+          <%= helpdesk(t("student_performance.certifications.index.stale_hint"), false) %>
         </span>
       </div>
     <% end %>
@@ -350,7 +344,10 @@
               </th>
             <% end %>
 
-            <th scope="col" class="text-start">
+            <th
+              scope="col"
+              class="text-start <%= 'ps-4' if @achievements.empty? %>"
+            >
               <%= t("student_performance.certifications.columns.certification") %>
             </th>
 
@@ -403,49 +400,71 @@
                 </td>
               <% end %>
 
-              <td class="text-start">
+              <td class="text-start <%= 'ps-4' if @achievements.empty? %>">
                 <% if cert %>
-                  <% case cert.status.to_sym %>
-                  <% when :passed %>
-                    <span class="text-dark">
-                      <i class="bi bi-check-circle-fill text-success me-1"></i>
-                      <%= t("student_performance.certifications.status.passed") %>
-                    </span>
-                  <% when :failed %>
-                    <span class="text-dark">
-                      <i class="bi bi-x-circle-fill text-danger me-1"></i>
-                      <%= t("student_performance.certifications.status.failed") %>
-                    </span>
-                  <% when :pending %>
-                    <span class="text-dark">
-                      <i class="bi bi-clock-fill text-warning me-1"></i>
-                      <%= t("student_performance.certifications.status.pending") %>
-                    </span>
-                  <% end %>
-                  <% if cert.manual? %>
-                    <i
-                      class="bi bi-pencil-square text-muted ms-1 small"
-                      title="<%= t('student_performance.certifications.status.manual') %>"
-                    ></i>
-                  <% end %>
-                  <% if @stale_user_ids.include?(record.user_id) %>
-                    <i
-                      class="bi bi-exclamation-triangle-fill text-warning ms-1 small"
-                      title="<%= t('student_performance.certifications.status.stale') %>"
-                    ></i>
+                  <div class="d-flex align-items-center">
+                    <% case cert.status.to_sym %>
+                    <% when :passed %>
+                      <span class="text-dark">
+                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                        <%= t("student_performance.certifications.status.passed") %>
+                      </span>
+                    <% when :failed %>
+                      <span class="text-dark">
+                        <i class="bi bi-x-circle-fill text-danger me-1"></i>
+                        <%= t("student_performance.certifications.status.failed") %>
+                      </span>
+                    <% when :pending %>
+                      <span class="text-dark">
+                        <i class="bi bi-clock-fill text-warning me-1"></i>
+                        <%= t("student_performance.certifications.status.pending") %>
+                      </span>
+                    <% end %>
+
+                    <% if cert.manual? %>
+                      <i
+                        class="bi bi-pencil-square text-muted ms-2 small"
+                        title="<%= t('student_performance.certifications.status.manual') %>"
+                      ></i>
+                    <% end %>
+
+                    <% if @stale_user_ids.include?(record.user_id) %>
+                      <i
+                        class="bi bi-exclamation-triangle-fill text-warning ms-2 small"
+                        title="<%= t('student_performance.certifications.status.stale') %>"
+                      ></i>
+                    <% end %>
+                  </div>
+                  <% if proposal && proposal.proposed_status != cert.status.to_sym %>
+                    <div class="small mt-1 text-muted">
+                      <%= t("student_performance.certifications.columns.proposed") %>
+                      :
+                      <% if proposal.proposed_status == :passed %>
+                        <i class="bi bi-check-circle text-success ms-1"></i>
+                        <%= t("student_performance.evaluator.status.passed") %>
+                      <% else %>
+                        <i class="bi bi-x-circle text-danger ms-1"></i>
+                        <%= t("student_performance.evaluator.status.failed") %>
+                      <% end %>
+                    </div>
                   <% end %>
                 <% elsif proposal %>
-                  <div class="text-muted fst-italic">
-                    <span class="small me-1">
+                  <div
+                    class="
+                      d-inline-flex align-items-center bg-light rounded-pill
+                      px-2 py-1 border
+                    "
+                  >
+                    <span class="small text-muted me-2">
                       <%= t("student_performance.certifications.columns.proposed") %>:
                     </span>
 
-                    <span>
+                    <span class="small fw-medium">
                       <% if proposal.proposed_status == :passed %>
-                        <i class="bi bi-check-circle text-muted"></i>
+                        <i class="bi bi-check-circle text-success me-1"></i>
                         <%= t("student_performance.evaluator.status.passed") %>
                       <% else %>
-                        <i class="bi bi-x-circle text-muted"></i>
+                        <i class="bi bi-x-circle text-danger me-1"></i>
                         <%= t("student_performance.evaluator.status.failed") %>
                       <% end %>
                     </span>
@@ -475,18 +494,24 @@
                     <i class="bi bi-pencil"></i>
                   </button>
                 <% elsif proposal %>
-                  <%= button_to lecture_student_performance_certifications_path(@lecture),
-                                  method: :post,
-                                  class: "btn btn-outline-primary btn-sm py-0 px-2",
-                                  title: t("student_performance.certifications.index.accept"),
-                                  params: {
-                                    certification: {
-                                      user_id: record.user_id,
-                                      status: proposal.proposed_status
-                                    }
-                                  } do %>
-                    <i class="bi bi-check-lg"></i>
-                  <% end %>
+                  <div class="d-flex justify-content-end">
+                    <%= button_to lecture_student_performance_certifications_path(@lecture),
+                                    method: :post,
+                                    class: "btn btn-outline-primary btn-sm py-0 px-2 d-flex align-items-center",
+                                    title: t("student_performance.certifications.index.accept"),
+                                    params: {
+                                      certification: {
+                                        user_id: record.user_id,
+                                        status: proposal.proposed_status
+                                      }
+                                    } do %>
+                      <i class="bi bi-check-lg"></i>
+
+                      <span class="d-none d-md-inline ms-1 small">
+                        <%= t("student_performance.certifications.index.accept") %>
+                      </span>
+                    <% end %>
+                  </div>
                 <% end %>
               </td>
             </tr>

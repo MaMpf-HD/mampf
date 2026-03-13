@@ -401,7 +401,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
         it "renders met icon for met achievement" do
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include("bi-check-circle-fill")
+          expect(response.body).to include("bi-check-lg")
         end
       end
 

@@ -34,7 +34,11 @@ module StudentPerformance
                                     .where.not(source: :manual).count
       @stale_from_data_manual_count = stale_from_data
                                       .where(source: :manual).count
-      @achievements = @lecture.achievements.order(:title)
+      @achievements = if @rule
+        @rule.required_achievements.order(:title)
+      else
+        Achievement.none
+      end
       load_filtered_records
     end
 
