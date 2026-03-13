@@ -65,8 +65,8 @@ export class VignettesPage {
     await this.page.locator("#vignettes-answer-form").waitFor();
   }
 
-  async enableMockClock(startTimeMs = 0) {
-    await this.page.clock.install({ time: new Date(startTimeMs) });
+  async enableMockClock() {
+    await this.page.clock.install({ time: new Date(0) });
   }
 
   async setMockTime(timeMs: number) {
@@ -100,13 +100,12 @@ export class VignettesPage {
 
   async closeInfoSlide() {
     await this.page.keyboard.press("Escape");
-    await this.page.clock.runFor(1);
     await this.page.locator(".vignette-info-slide-modal.show").first().waitFor({
       state: "hidden",
     });
   }
 
-  async submitWithStats() {
+  async submit() {
     const nextSlideButton = this.page.getByTitle("Next slide");
     if (await nextSlideButton.isVisible()) {
       await nextSlideButton.click();
