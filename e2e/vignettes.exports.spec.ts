@@ -126,7 +126,7 @@ test.describe("Vignettes Exports", () => {
 
     await studentVignettes.answerLikert("Complete alignment");
     await studentVignettes.advanceMockTime(41);
-    await studentVignettes.submit();
+    await studentVignettes.submit(true);
 
     const exportData = await teacherVignettes.exportQuestionnaire(questionnaire.id);
     expect(exportData.rows).toHaveLength(4);

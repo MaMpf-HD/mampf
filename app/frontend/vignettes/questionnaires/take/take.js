@@ -192,8 +192,6 @@ class VignetteSlideStatistics {
 };
 
 function registerStatisticsHandler(stats) {
-  console.log("Registering statistics handler");
-
   // Info Slide - Opening
   const openInfoSlideButtons = $(".open-info-slide-btn");
   if (!openInfoSlideButtons) {

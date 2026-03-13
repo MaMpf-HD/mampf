@@ -115,7 +115,14 @@ export class VignettesPage {
     });
   }
 
-  async submit() {
+  async submit(isLastSlide = false) {
+    let takeNextSlidePromise;
+    if (!isLastSlide) {
+      takeNextSlidePromise = this.page.waitForResponse(response =>
+        response.url().endsWith("/take"),
+      );
+    }
+
     const nextSlideButton = this.page.getByTitle("Next slide");
     if (await nextSlideButton.isVisible()) {
       await nextSlideButton.click();
@@ -123,6 +130,8 @@ export class VignettesPage {
     else {
       await this.page.getByTitle("Submit answer").click();
     }
+
+    await takeNextSlidePromise;
   }
 
   async exportQuestionnaireCsv(questionnaireId: number): Promise<string[][]> {
