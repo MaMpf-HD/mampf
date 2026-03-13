@@ -34,10 +34,10 @@
     </thead>
 
     <tbody>
-      <%= render partial: 'tutorials/rows',
-                 collection: stack,
-                 as: :submission,
-                 locals: { assignment: assignment } %>
+      <% stack.each do |submission| %>
+        <%= render partial: "tutorials/rows_single",
+                   locals: { submission: submission, assignment: assignment } %>
+      <% end %>
     </tbody>
   </table>
 <% else %>

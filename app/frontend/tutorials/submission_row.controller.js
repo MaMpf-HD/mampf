@@ -1,10 +1,26 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "save"];
+  static targets = ["input", "form", "payload", "save"];
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
+    console.log("connect");
+  }
+
+  saveRow() {
+    // Collect all input values for this row
+    const newValues = {};
+    this.inputTargets.forEach((input) => {
+      const taskId = input.dataset.taskId;
+      newValues[taskId] = input.value;
+    });
+
+    // Set hidden input value as JSON
+    this.payloadTarget.value = JSON.stringify(newValues);
+
+    // Submit the hidden form
+    this.formTarget.requestSubmit();
   }
 
   markDirty() {

@@ -26,11 +26,15 @@
     <!-- support point by task -->
     <% for assessment_task in assignment.assessment.tasks %>
       <td>
-        <%= f.number_field "task_points[#{assessment_task.id}]",
-                           value: extract_task_points(submission, assessment_task),
-                           step: 0.5,
-                           data: { submission_row_target: "input", 
-                                    action: "change->submission-row#markDirty input->submission-row#markDirty" } %>
+        <input type="number"
+              autocomplete="off"
+              name="task_points[<%= assessment_task.id %>]"
+              value="<%= extract_task_points(submission, assessment_task) %>"
+              step="0.5"
+              data-submission-row-target="input"
+              data-task-id="<%= assessment_task.id %>"
+              data-action="change->submission-row#markDirty input->submission-row#markDirty"
+              class="form-control">
       </td>
     <% end %>
   <% end %>
@@ -66,12 +70,20 @@
 
   <!-- Column 4: Other actions (only for tutors) -->
   <% if current_user.in?(submission.tutorial.tutors) %>
-    <td class="submission-actions"
-        data-id="<%= submission.id %>">
+    <td class="submission-actions" data-id="<%= submission.id %>">
       <%= render partial: 'submissions/other_actions',
                   locals: { submission: submission } %>
-      <%= f.submit "Save row",
-             disabled: true,
-             data: { submission_row_target: "save" } %>
+      <!-- Hidden form for this row to submit-->
+      <%= form_with url: grade_submission_path(submission),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+        <input type="hidden" name="task_points" data-submission-row-target="payload">
+      <% end %>
+      <button type="button"
+              class="btn btn-primary"
+              data-action="click->submission-row#saveRow">
+        Save row
+      </button>
     </td>
   <% end %>

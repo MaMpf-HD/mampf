@@ -247,12 +247,23 @@ class SubmissionsController < ApplicationController
   def grade_submission
     submission = Submission.find_by(id: params[:id])
     scorer = current_user
+    task_points = JSON.parse(params[:task_points] || "{}")
     Assessment::SubmissionGraderService.score_tasks!(
       submission,
-      params[:task_points],
+      task_points,
       scorer
     )
-    head :ok
+    @submission = submission.reload
+    @assignment = @submission.assignment
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "submission-row-#{@submission.id}", # matches the tr id
+          partial: "tutorials/rows_single",
+          locals: { submission: @submission, assignment: @submission.assignment }
+        )
+      end
+    end
   end
 
   def grade_multi_submissions
