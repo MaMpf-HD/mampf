@@ -5,9 +5,6 @@
         <th class="sticky-col first-col">
           <%= t('basics.team') %>
         </th>
-        <th class="sticky-col second-col">
-          <%= t('basics.status') %>
-        </th>
         <% if assignment.assessable? %>
           <!-- support point by task -->
           <% for assessment_task in assignment.assessment.tasks %>
@@ -20,16 +17,21 @@
             </th>
           <% end %>
         <% end %>
-        <th>
-          <%= t('basics.submission') %>
-          (<%= assignment.accepted_file_type %>)
+        <th class="text-center task-col">
+          <%= t('buttons.save') %>
         </th>
-        <th>
+        <th class="text-center task-col">
+          <%= t('basics.submission') %>
+          <small class="text-muted">
+            (<%= assignment.accepted_file_type %>)
+          </small>
+        </th>
+        <th class="text-center task-col">
           <%= t('basics.correction') %>
-          (<%= assignment.accepted_file_type %>)
+          <small class="text-muted">(<%= assignment.accepted_file_type %>)</small>
         </th>
         <% if current_user.in?(@tutorial.tutors) %>
-          <th>
+          <th class="text-center task-col">
             <%= t('basics.actions') %>
           </th>
         <% end %>

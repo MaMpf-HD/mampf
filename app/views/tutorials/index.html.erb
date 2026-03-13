@@ -9,10 +9,18 @@
     </div>
   </div>
   <div id="tutorial-table">
-    <%= render partial: 'tutorials/table_2',
+    <% grading_mode = Flipper.enabled?(:assessment_grading) && @assignment.assessable? %>
+    <% if grading_mode%>
+      <%= render partial: 'tutorials/table_2',
                locals: { assignment: @assignment,
                          tutorial: @tutorial,
                          stack: @stack } %>
+    <% else %>
+      <%= render partial: 'tutorials/table',
+               locals: { assignment: @assignment,
+                         tutorial: @tutorial,
+                         stack: @stack } %>
+    <% end %>
   </div>
 </div>
 <% else %>

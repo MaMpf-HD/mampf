@@ -39,20 +39,57 @@
     <% end %>
   <% end %>
 
-  <!-- Column 2: Download / Show buttons -->
-  <td>
-    <%= link_to t('buttons.download'),
-                show_submission_manuscript_path(submission,
-                                                params: { download: 'true' }),
-                class: 'btn btn-sm btn-outline-secondary mb-2',
-                data: { turbo: false } %>
+  <!-- Column 1: Save -->
+  <% if current_user.in?(submission.tutorial.tutors) && assignment.assessable? %>
+    <td class="text-center task-col" data-id="<%= submission.id %>">
+      <!-- Hidden form for this row to submit-->
+      <%= form_with url: grade_submission_path(submission),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+        <input type="hidden" name="task_points" data-submission-row-target="payload">
+      <% end %>
+      <!-- Save row -->
+      <button type="button"
+              class="text-success material-icons me-2"
+              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+              data-bs-toggle="tooltip",
+              title="<%= t('buttons.save')%>",
+              data-action="click->submission-row#saveRow">
+        save
+      </button>
 
-    <% unless submission.assignment.accepted_file_type
-                        .in?(Assignment.non_inline_file_types) %>
-      <%= link_to t('buttons.show'),
-                  show_submission_manuscript_path(submission),
-                  class: 'btn btn-sm btn-outline-secondary mb-2',
-                  data: { turbo: false } %>
+      <!-- Refresh row -->
+      <button type="button"
+              class="text-primary material-icons"
+              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+              data-action="click->submission-row#refreshRow"
+              data-bs-toggle="tooltip"
+              title="<%= t('buttons.refresh') %>">
+        refresh
+      </button>
+        </td>
+  <% end %>
+
+  <!-- Column 2: Download / Show buttons -->
+  <td class="text-center task-col">
+    <!-- Download-->
+    <%= link_to show_submission_manuscript_path(submission, params: { download: 'true' }),
+                class: "text-secondary material-icons me-2",
+                style: "text-decoration:none; font-size: 1.5em;",
+                data: { bs_toggle: "tooltip", turbo: false },
+                title: t('buttons.download') do %>
+      download
+    <% end %>
+    <!-- Show -->
+    <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+      <%= link_to show_submission_manuscript_path(submission),
+                  class: "text-secondary material-icons",
+                  style: "text-decoration:none; font-size: 1.5em;",
+                  data: { bs_toggle: "tooltip", turbo: false },
+                  title: t('buttons.show') do %>
+        visibility
+      <% end %>
     <% end %>
   </td>
 
@@ -73,17 +110,5 @@
     <td class="submission-actions" data-id="<%= submission.id %>">
       <%= render partial: 'submissions/other_actions',
                   locals: { submission: submission } %>
-      <!-- Hidden form for this row to submit-->
-      <%= form_with url: grade_submission_path(submission),
-                    method: :patch,
-                    data: { turbo: true, submission_row_target: "form" },
-                    html: { style: "display:none;" } do %>
-        <input type="hidden" name="task_points" data-submission-row-target="payload">
-      <% end %>
-      <button type="button"
-              class="btn btn-primary"
-              data-action="click->submission-row#saveRow">
-        Save row
-      </button>
     </td>
   <% end %>
