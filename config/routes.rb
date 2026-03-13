@@ -351,6 +351,7 @@ Rails.application.routes.draw do
           collection do
             post :bulk_accept
             post :bulk_reevaluate
+            post :bulk_confirm_manual
           end
         end
       end

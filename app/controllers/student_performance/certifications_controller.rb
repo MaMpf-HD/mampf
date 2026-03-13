@@ -171,6 +171,20 @@ module StudentPerformance
                   )
     end
 
+    def bulk_confirm_manual
+      # rubocop:disable Rails/SkipsModelValidations
+      confirmed = @lecture.student_performance_certifications
+                          .stale.where(source: :manual)
+                          .update_all(certified_at: Time.current)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t(
+                    "student_performance.certifications.flash.confirmed",
+                    count: confirmed
+                  )
+    end
+
     def update
       cert = @lecture.student_performance_certifications
                      .find(params[:id])

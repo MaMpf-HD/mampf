@@ -1001,4 +1001,122 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
     end
   end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_confirm_manual" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage,
+                        lecture: lecture,
+                        min_percentage: 50)
+    end
+
+    let(:user_a) { FactoryBot.create(:confirmed_user) }
+    let(:user_b) { FactoryBot.create(:confirmed_user) }
+    let(:user_c) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      [user_a, user_b, user_c].each do |u|
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: u,
+                          percentage_materialized: 60,
+                          points_total_materialized: 60,
+                          points_max_materialized: 100)
+      end
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "confirms stale manual certifications" do
+        stale_manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_a,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        stale_manual.reload
+        expect(stale_manual.certified_at).to be > 1.minute.ago
+        expect(stale_manual.status).to eq("passed")
+        expect(stale_manual.source).to eq("manual")
+      end
+
+      it "does not touch non-stale manual certifications" do
+        fresh_manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_b,
+          certified_by: editor,
+          certified_at: Time.current
+        )
+        original_time = fresh_manual.certified_at
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        fresh_manual.reload
+        expect(fresh_manual.certified_at).to be_within(1.second)
+          .of(original_time)
+      end
+
+      it "does not touch computed certifications" do
+        stale_computed = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: user_c,
+          source: :computed,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+        original_time = stale_computed.certified_at
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        stale_computed.reload
+        expect(stale_computed.certified_at).to be_within(1.second)
+          .of(original_time)
+      end
+
+      it "redirects with flash count" do
+        FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_a,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(root_url)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
 end

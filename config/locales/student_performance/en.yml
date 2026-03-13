@@ -167,21 +167,22 @@ en:
           one: "Eligibility rules changed — %{count} decision is outdated."
           other: "Eligibility rules changed — %{count} decisions are outdated."
         stale_rule_manual_warning:
-          one: "%{count} manual override may need review after rule changes."
-          other: "%{count} manual overrides may need review after rule changes."
+          one: "%{count} individual decision may need review after rule changes."
+          other: "%{count} individual decisions may need review after rule changes."
         stale_data_warning:
           one: "Student data was recomputed — %{count} decision is outdated."
           other: "Student data was recomputed — %{count} decisions are outdated."
         stale_data_manual_warning:
-          one: "%{count} manual override may need review after data changes."
-          other: "%{count} manual overrides may need review after data changes."
+          one: "%{count} individual decision may need review after data changes."
+          other: "%{count} individual decisions may need review after data changes."
         reevaluate_rules: "Reconcile with current rules"
         reevaluate_data: "Reconcile with current data"
+        confirm_manual: "Confirm individual decisions"
       status:
         passed: "Eligible"
         failed: "Not Eligible"
         pending: "Pending"
-        manual: "Manual override"
+        manual: "Individual decision"
         stale: "Outdated — reconciliation needed"
       columns:
         proposed: "Proposed"
@@ -208,6 +209,9 @@ en:
         bulk_accepted:
           one: "%{count} decision accepted."
           other: "%{count} decisions accepted."
+        confirmed:
+          one: "%{count} individual decision confirmed."
+          other: "%{count} individual decisions confirmed."
         reevaluated:
           one: "%{count} decision re-evaluated."
           other: "%{count} decisions re-evaluated."

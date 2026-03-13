@@ -167,21 +167,22 @@ de:
           one: "Zulassungsregeln wurden geändert — %{count} Zulassung ist nicht mehr aktuell."
           other: "Zulassungsregeln wurden geändert — %{count} Zulassungen sind nicht mehr aktuell."
         stale_rule_manual_warning:
-          one: "%{count} manuelle Überschreibung sollte nach Regeländerung überprüft werden."
-          other: "%{count} manuelle Überschreibungen sollten nach Regeländerung überprüft werden."
+          one: "%{count} manuelle Einzelentscheidung sollte nach Regeländerung überprüft werden."
+          other: "%{count} manuelle Einzelentscheidungen sollten nach Regeländerung überprüft werden."
         stale_data_warning:
           one: "Leistungsdaten wurden aktualisiert — %{count} Zulassung ist nicht mehr aktuell."
           other: "Leistungsdaten wurden aktualisiert — %{count} Zulassungen sind nicht mehr aktuell."
         stale_data_manual_warning:
-          one: "%{count} manuelle Überschreibung sollte nach Datenänderung überprüft werden."
-          other: "%{count} manuelle Überschreibungen sollten nach Datenänderung überprüft werden."
+          one: "%{count} manuelle Einzelentscheidung sollte nach Datenänderung überprüft werden."
+          other: "%{count} manuelle Einzelentscheidungen sollten nach Datenänderung überprüft werden."
         reevaluate_rules: "Mit aktuellen Regeln abgleichen"
         reevaluate_data: "Mit aktuellen Daten abgleichen"
+        confirm_manual: "Einzelentscheidungen bestätigen"
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         pending: "Ausstehend"
-        manual: "Manuell überschrieben"
+        manual: "Einzelentscheidung"
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
       columns:
         proposed: "Vorschlag"
@@ -208,6 +209,9 @@ de:
         bulk_accepted:
           one: "%{count} Zulassung akzeptiert."
           other: "%{count} Zulassungen akzeptiert."
+        confirmed:
+          one: "%{count} Einzelentscheidung bestätigt."
+          other: "%{count} Einzelentscheidungen bestätigt."
         reevaluated:
           one: "%{count} Zulassung neu bewertet."
           other: "%{count} Zulassungen neu bewertet."
