@@ -2,7 +2,7 @@ const VIGNETTE_FORM_ID = "#vignettes-answer-form";
 const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
 const TEXT_ANSWER_ID = "vignettes_answer_text";
 
-$(document).on("turbo:load", function () {
+function initializeVignetteTake() {
   const form = $(VIGNETTE_FORM_ID);
   if (form.length === 0 || form.data("vignetteTakeInitialized")) {
     return;
@@ -19,7 +19,12 @@ $(document).on("turbo:load", function () {
 
   const stats = new VignetteSlideStatistics();
   registerStatisticsHandler(stats);
-});
+}
+
+// turbo-rails bug: https://github.com/hotwired/turbo-rails/issues/781
+$(document).off("turbo:load.vignetteTake");
+$(document).on("turbo:load.vignetteTake", initializeVignetteTake);
+$(document).ready(initializeVignetteTake);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validators
@@ -187,6 +192,8 @@ class VignetteSlideStatistics {
 };
 
 function registerStatisticsHandler(stats) {
+  console.log("Registering statistics handler");
+
   // Info Slide - Opening
   const openInfoSlideButtons = $(".open-info-slide-btn");
   if (!openInfoSlideButtons) {
