@@ -70,6 +70,7 @@ gem "vite_ruby", "3.9.2"
 
 group :development do
   gem "dotenv", "~> 3.2"
+  gem "kamal", "~> 2.10"
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
