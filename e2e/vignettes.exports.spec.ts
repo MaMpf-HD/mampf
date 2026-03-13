@@ -25,9 +25,10 @@ test.describe("Vignettes Exports", () => {
   });
 
   test("exports answers and per-slide timings", async ({ factory }) => {
+    const questionnaireTitle = "Comprehensive exporter";
     const questionnaire = await factory.create("vignettes_questionnaire", [], {
       lecture_id: lectureId,
-      title: "Comprehensive exporter",
+      title: questionnaireTitle,
       published: true,
       editable: true,
     });
@@ -95,7 +96,7 @@ test.describe("Vignettes Exports", () => {
     const codename = "VignettesTaker";
     await studentVignettes.enableMockClock();
     await studentVignettes.setPersonalCode(lectureId, codename);
-    await studentVignettes.openQuestionnaire(questionnaire.id);
+    await studentVignettes.openQuestionnaire(questionnaireTitle);
 
     await studentVignettes.answerText("text-answer");
     await studentVignettes.advanceMockTime(11);

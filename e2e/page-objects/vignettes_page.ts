@@ -57,12 +57,22 @@ export class VignettesPage {
   async setPersonalCode(lectureId: number, personalCode: string) {
     await this.page.goto(`/lectures/${lectureId}/questionnaires`);
     await this.page.getByRole("textbox").first().fill(personalCode);
-    await this.page.getByRole("button", { name: /save/i }).click();
+    await this.page.getByRole("button", { name: "Save" }).click();
   }
 
-  async openQuestionnaire(questionnaireId: number) {
-    await this.page.goto(`/questionnaires/${questionnaireId}/take`);
-    await this.page.locator("#vignettes-answer-form").waitFor();
+  async openQuestionnaire(name: string) {
+    const pageUrl = this.page.url();
+    if (!pageUrl.endsWith("questionnaires")) {
+      throw new Error(
+        `Unexpected page URL before opening questionnaire: ${pageUrl}`,
+      );
+    }
+
+    const takePagePromise = this.page.waitForResponse(response =>
+      response.url().includes("take"),
+    );
+    await this.page.getByRole("link", { name }).click();
+    await takePagePromise;
   }
 
   async enableMockClock() {
