@@ -1,7 +1,7 @@
-# in config/initializers/prometheus.rb
-unless Rails.env.local?
-  require "prometheus_exporter/middleware"
+# # in config/initializers/prometheus.rb
+# unless Rails.env.local?
+#   require "prometheus_exporter/middleware"
 
-  # This reports stats per request like HTTP status and timings
-  Rails.application.middleware.unshift(PrometheusExporter::Middleware)
-end
+#   # This reports stats per request like HTTP status and timings
+#   Rails.application.middleware.unshift(PrometheusExporter::Middleware)
+# end

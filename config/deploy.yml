@@ -1,0 +1,164 @@
+# 🔗 See also
+# https://kamal-deploy.org/docs/
+# https://jetthoughts.com/blog/kamal-2.0-complete-rails-deployment-guide-deploy-without-heroku-in-2025/
+# https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/config/deploy.yml.tt
+
+# 🎈 Create a `kamal` user on the server:
+# https://nts.strzibny.name/using-non-root-users-kamal/
+# Replace `username` by `kamal` in the following.
+#
+# useradd --create-home username
+# usermod -s /bin/bash username
+#
+# su - username -c 'mkdir -p ~/.ssh'
+# su - username -c 'touch ~/.ssh/authorized_keys'
+# Add your SSH public key to the new user's authorized_keys file. Then:
+# chmod 700 /home/username/.ssh
+# chmod 600 /home/username/.ssh/authorized_keys
+#
+# echo 'username ALL=(ALL:ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/username
+# chmod 0440 /etc/sudoers.d/username
+# visudo -c -f /etc/sudoers.d/username
+
+# The following command can only be run after docker is installed.
+# Kamal installs docker automatically when you run `kamal setup`.
+# Afterwards, you will get permission denied errors on the docker.sock.
+# To fix those, add the user to the docker group:
+# usermod -aG docker username
+
+# 🎈 Folders
+# see config/initializers/shrine.rb
+# Create some storage folders on the server & make the `rails` user (1000) the owner:
+# sudo mkdir -p /mnt/caches/medien_uploads /mnt/media /mnt/submissions/cache /mnt/submissions/store
+# sudo chown -R 1000:1000 /mnt/caches/medien_uploads /mnt/media /mnt/submissions/cache /mnt/submissions/store
+
+# 🎈 Only allow users to login via ssh keys, not passwords
+# https://itsfoss.gitlab.io/post/disable-ssh-password-authentication-for-specific-user-or-group/
+# sudo nano /etc/ssh/sshd_config
+# Set `PasswordAuthentication no`
+# Then restart the ssh service:
+# sudo systemctl restart sshd
+
+# 🎈 Create a GitHub Access Token (classic)
+# see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
+# Use that one in the .env file as `KAMAL_REGISTRY_PASSWORD`.
+
+# 🎈 (Import DB)
+# docker exec -i pg_container_name /bin/bash -c "PGPASSWORD=pg_password psql --username mampf mampf" < dump.sql
+
+# 🎈 Deploy
+# bundle exec dotenv kamal setup
+# bundle exec dotenv kamal accessory boot all
+# bundle exec dotenv kamal deploy
+
+service: mampf
+image: mampf-hd/mampf
+
+servers:
+  web:
+    - 91.98.178.89
+
+proxy:
+  ssl: true
+  host: vignettes.mampf.media
+  app_port: 3000
+
+registry:
+  server: ghcr.io
+  username: mampf-hd
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  local: false
+  remote: ssh://kamal@91.98.178.89
+  dockerfile:
+    docker/production/Dockerfile-vignettes
+  cache:
+    type: registry
+    options: mode=max,image-manifest=true,oci-mediatypes=true
+
+env:
+  clear:
+    PRODUCTION_NAME: mampf-vignettes
+    BLOG: https://mampf.blog
+    # Media served by nginx accessory on subdomain (with referer protection)
+    MEDIA_SERVER: https://vignettes-media.mampf.media
+    DOWNLOAD_LOCATION: https://vignettes-media.mampf.media
+    MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+    MEMCACHED_SERVER: mampf-cache
+    MAX_DELETIONS_PER_RUN: 50
+    FROM_ADDRESS: no-reply@vignettes.mampf.media
+    MAIL_SERVER: live.smtp.mailtrap.io
+    MAIL_HOST: live.smtp.mailtrap.io
+    MAIL_AUTHENTICATION: login
+    MAIL_PORT: 587
+    PROJECT_EMAIL: no-reply@vignettes.mampf.media
+    MAILID_DOMAIN: vignettes.mampf.media
+    ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
+    FEEDBACK_EMAIL: mampf-feedback-email
+    REWRITE_ENABLED: 0  # disable URL rewriting since we have the nginx media server
+    MEDIA_PATH: /private/media  # if changed, update nginx config too
+    SUBMISSION_PATH: /private/submissions  # if changed, update nginx config too
+    PRODUCTION_DATABASE_ADAPTER: postgresql
+    PRODUCTION_DATABASE_DATABASE: mampf
+    PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
+    RAILS_ENV: production
+    URL_HOST: vignettes.mampf.media
+    MAMPF_PORT: 3000
+    REDIS_URL: redis://mampf-redis:6379/0
+    RAILS_LOG_TO_STDOUT: true
+    RAILS_SERVE_STATIC_FILES: true
+  secret:
+    - RAILS_MASTER_KEY
+    - SECRET_KEY_BASE
+    - PROJECT_NOTIFICATION_EMAIL
+    - MAMPF_EMAIL_USERNAME
+    - MAMPF_EMAIL_PASSWORD
+    - CAPTCHA_HMAC_KEY
+    - PRODUCTION_DATABASE_URL
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+
+ssh:
+  user: kamal
+
+volumes:
+  - /mnt/media:/private/media
+  - /mnt/submissions:/private/submissions
+  - /mnt/caches:/caches
+
+# for asset bridging across deploys
+asset_path: /rails/public/assets
+
+accessories:
+  # https://railsboilerplate.com/articles/how-to-configure-postgres-accessory-kamal-2-rails-8
+  db:
+    image: postgres:17-bookworm
+    host: 91.98.178.89
+    port: 127.0.0.1:5363:5363
+    env:
+      clear:
+        POSTGRES_DB: mampf
+        PGPORT: 5363
+      # https://hub.docker.com/_/postgres/#environment-variables
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+        # used in production-init.sh script
+        - DB_MAMPFUSER_PASSWORD
+    files:
+      - db/production-init.sh:/docker-entrypoint-initdb.d/setup.sh
+    directories:
+      - data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6-alpine
+    host: 91.98.178.89
+
+  cache:
+    image: memcached:alpine
+    host: 91.98.178.89

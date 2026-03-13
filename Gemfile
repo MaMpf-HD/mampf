@@ -69,6 +69,7 @@ gem "vite_rails", "~> 3.0", ">= 3.0.17"
 gem "vite_ruby", "3.9.2"
 
 group :development do
+  gem "dotenv", "~> 3.2"
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
