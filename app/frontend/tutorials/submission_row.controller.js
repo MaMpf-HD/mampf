@@ -5,7 +5,6 @@ export default class extends Controller {
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
-    console.log("connect");
   }
 
   saveRow() {

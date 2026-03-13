@@ -258,7 +258,7 @@ class SubmissionsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
-          "submission-row-#{@submission.id}", # matches the tr id
+          "submission-row-#{@submission.id}",
           partial: "tutorials/rows_single",
           locals: { submission: @submission, assignment: @submission.assignment }
         )

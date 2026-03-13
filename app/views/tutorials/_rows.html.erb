@@ -1,12 +1,5 @@
-<tr class="submission-row <%= submission_late_color(submission) %>"
-    data-id="<%= submission.id %>"
-    data-controller="submission-row"
-    data-submission-row-id="<%= submission.id %>"
-    data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean">
-    <%= form_with url: grade_submission_path(submission),
-                  method: :patch,
-                  data: { turbo: false } do |f| %>
-        <%= render partial: 'tutorials/submission_row',
-                    locals: { submission: submission, assignment: assignment, f: f } %>
-    <% end %>
-</tr>
+<li class="list-group-item submission-row <%= submission_late_color(submission) %>"
+    data-id="<%= submission.id %>">
+  <%= render partial: 'tutorials/submission_row',
+             locals: { submission: submission } %>
+</li>

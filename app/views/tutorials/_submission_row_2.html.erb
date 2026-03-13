@@ -1,0 +1,89 @@
+  <!-- Column 1: User names + copy emails + late icon -->
+  <td>
+    <%= submission.users.map(&:tutorial_name).join(', ') %>
+
+    <i class="clipboardpopup far fa-copy clickable
+              text-secondary clipboard-btn ms-3 clipboard-button"
+        data-clipboard-text="<%= submission.users.map(&:email).join(', ') %>"
+        data-bs-toggle="tooltip"
+        data-id="<%= submission.id %>"
+        title="<%= t('buttons.copy_email_to_clipboard') %>">
+      <span class="clipboardpopuptext token-clipboard-popup"
+            data-id="<%= submission.id %>">
+        <%= t('basics.emails_copied_to_clipboard') %>
+      </span>
+    </i>
+
+    <% if submission.too_late? %>
+      <i class="fas fa-exclamation-triangle"
+          data-bs-toggle="tooltip"
+          title="<%= late_submission_info(submission, submission.tutorial) %>">
+      </i>
+    <% end %>
+  </td>
+
+  <% if assignment.assessable? %>
+    <!-- support point by task -->
+    <% for assessment_task in assignment.assessment.tasks %>
+      <td>
+        <input type="number"
+              autocomplete="off"
+              name="task_points[<%= assessment_task.id %>]"
+              value="<%= extract_task_points(submission, assessment_task) %>"
+              step="0.5"
+              data-submission-row-target="input"
+              data-task-id="<%= assessment_task.id %>"
+              data-action="change->submission-row#markDirty input->submission-row#markDirty"
+              class="form-control">
+      </td>
+    <% end %>
+  <% end %>
+
+  <!-- Column 2: Download / Show buttons -->
+  <td>
+    <%= link_to t('buttons.download'),
+                show_submission_manuscript_path(submission,
+                                                params: { download: 'true' }),
+                class: 'btn btn-sm btn-outline-secondary mb-2',
+                data: { turbo: false } %>
+
+    <% unless submission.assignment.accepted_file_type
+                        .in?(Assignment.non_inline_file_types) %>
+      <%= link_to t('buttons.show'),
+                  show_submission_manuscript_path(submission),
+                  class: 'btn btn-sm btn-outline-secondary mb-2',
+                  data: { turbo: false } %>
+    <% end %>
+  </td>
+
+  <!-- Column 3: Correction or download partial -->
+  <td class="correction-column"
+      data-id="<%= submission.id %>">
+    <% if current_user.in?(submission.tutorial.tutors) %>
+      <%= render partial: 'submissions/correction_column',
+                  locals: { submission: submission } %>
+    <% else %>
+      <%= render partial: 'submissions/download',
+                  locals: { submission: submission } %>
+    <% end %>
+  </td>
+
+  <!-- Column 4: Other actions (only for tutors) -->
+  <% if current_user.in?(submission.tutorial.tutors) %>
+    <td class="submission-actions" data-id="<%= submission.id %>">
+      <%= render partial: 'submissions/other_actions',
+                  locals: { submission: submission } %>
+      <!-- Hidden form for this row to submit-->
+      <%= form_with url: grade_submission_path(submission),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+        <input type="hidden" name="task_points" data-submission-row-target="payload">
+      <% end %>
+      <button type="button"
+              class="btn btn-primary"
+              data-action="click->submission-row#saveRow">
+        Save row
+      </button>
+    </td>
+  <% end %>
