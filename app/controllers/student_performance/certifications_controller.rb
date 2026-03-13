@@ -70,7 +70,7 @@ module StudentPerformance
 
       cert.assign_attributes(
         status: certification_params[:status],
-        source: :computed,
+        source: :manual,
         certified_by: current_user,
         certified_at: Time.current,
         rule: @rule
@@ -107,7 +107,12 @@ module StudentPerformance
                  @lecture.student_performance_certifications
                          .build(user_id: record.user_id)
 
-          next if cert.persisted? && cert.manual?
+          if cert.persisted? &&
+             (cert.manual? ||
+              (!cert.pending? &&
+               cert.status.to_sym != result.proposed_status))
+            next
+          end
 
           cert.assign_attributes(
             status: result.proposed_status,

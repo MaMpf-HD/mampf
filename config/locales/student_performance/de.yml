@@ -149,11 +149,16 @@ de:
         uncertified: "Offen"
         stale: "Veraltet"
         stale_hint: "Zugelassen bevor Regeln oder Daten geändert wurden"
-        bulk_accept: "Alle Vorschläge akzeptieren"
+        bulk_accept: "Offene Vorschläge akzeptieren"
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
         accept: "Akzeptieren"
         override: "Überschreiben"
+        certify_pass: "Zulassen"
+        certify_fail: "Nicht zulassen"
+        edit_certification: "Entscheidung bearbeiten"
+        save: "Speichern"
+        cancel: "Abbrechen"
         empty: "Keine Studierenden-Datensätze gefunden."
         rule_info: "Aktive Regel"
         setup_rule: "Regel einrichten"
@@ -180,6 +185,7 @@ de:
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
       columns:
         proposed: "Vorschlag"
+        rule_suggests: "Laut Regel:"
         certification: "Zulassung"
         note: "Anmerkung"
       filters:
@@ -198,7 +204,7 @@ de:
       flash:
         created: "Zulassung gespeichert."
         updated: "Zulassung aktualisiert."
-        manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie das Überschreiben-Modal, um sie zu ändern."
+        manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie die Bearbeitungsfunktion, um sie zu ändern."
         bulk_accepted:
           one: "%{count} Zulassung akzeptiert."
           other: "%{count} Zulassungen akzeptiert."

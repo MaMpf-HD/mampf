@@ -149,11 +149,16 @@ en:
         uncertified: "Undecided"
         stale: "Stale"
         stale_hint: "Decided before rules or data changed"
-        bulk_accept: "Accept All Proposals"
+        bulk_accept: "Accept Open Proposals"
         proposed_passed: "eligible"
         proposed_failed: "not eligible"
         accept: "Accept"
         override: "Override"
+        certify_pass: "Certify: Eligible"
+        certify_fail: "Certify: Not Eligible"
+        edit_certification: "Edit decision"
+        save: "Save"
+        cancel: "Cancel"
         empty: "No student records found."
         rule_info: "Active rule"
         setup_rule: "Set up rule"
@@ -180,6 +185,7 @@ en:
         stale: "Outdated — reconciliation needed"
       columns:
         proposed: "Proposed"
+        rule_suggests: "Per rule:"
         certification: "Decision"
         note: "Note"
       filters:
@@ -198,7 +204,7 @@ en:
       flash:
         created: "Decision saved."
         updated: "Decision updated."
-        manual_exists: "A manual override exists for this student. Use the override modal to change it."
+        manual_exists: "A manual override exists for this student. Use the edit button to change it."
         bulk_accepted:
           one: "%{count} decision accepted."
           other: "%{count} decisions accepted."

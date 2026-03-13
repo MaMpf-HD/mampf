@@ -539,7 +539,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
         cert = StudentPerformance::Certification.last
         expect(cert.status).to eq("passed")
-        expect(cert.source).to eq("computed")
+        expect(cert.source).to eq("manual")
         expect(cert.certified_by).to eq(editor)
         expect(cert.rule).to eq(rule)
       end
@@ -725,6 +725,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         existing.reload
         expect(existing.status).to eq("passed")
         expect(existing.certified_by).to eq(editor)
+      end
+
+      it "skips certifications whose status differs from the proposal" do
+        divergent = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: failing_user,
+          source: :computed, certified_by: editor
+        )
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        divergent.reload
+        expect(divergent.status).to eq("passed")
       end
 
       it "shows the count in the flash message" do
