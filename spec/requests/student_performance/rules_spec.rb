@@ -165,6 +165,11 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      it "renders inside rule-editor-frame by default" do
+        get edit_lecture_student_performance_rules_path(lecture)
+        expect(response.body).to include("rule-editor-frame")
+      end
+
       context "with an existing rule" do
         let!(:rule) do
           FactoryBot.create(:student_performance_rule, :active,

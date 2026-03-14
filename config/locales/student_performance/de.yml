@@ -66,7 +66,7 @@ de:
         throttled: "Eine Neuberechnung wurde kürzlich gestartet. Bitte warten Sie, bevor Sie eine weitere auslösen."
     rules:
       show:
-        title: "Zulassungsregeln"
+        title: "Zulassungsregel"
         subtitle: "Kriterien, die Studierende für die Prüfungszulassung erfüllen müssen."
         no_rule: "Für diese Veranstaltung wurde noch keine Zulassungsregel konfiguriert."
         point_threshold: "Punkteschwelle"
@@ -74,17 +74,17 @@ de:
         points_absolute: "Punkte erforderlich (absolut)"
         no_point_threshold: "Keine Punkteschwelle konfiguriert."
         required_achievements: "Erforderliche Nachweise"
-        edit_button: "Regeln bearbeiten"
-        edit_hint: "Die Bearbeitung von Regeln wird in einem zukünftigen Update verfügbar sein."
+        edit_button: "Regel bearbeiten"
+        edit_hint: "Die Bearbeitung der Regel wird in einem zukünftigen Update verfügbar sein."
         value_types:
           boolean: "Erforderlich"
           numeric: "min. %{threshold}"
           percentage: "min. %{threshold}%"
       edit:
-        title: "Zulassungsregeln bearbeiten"
+        title: "Zulassungsregel bearbeiten"
         subtitle: "Kriterien konfigurieren, die Studierende erfüllen müssen, um die Prüfungszulassung zu erhalten."
         cancel: "Abbrechen"
-        save: "Regeln speichern"
+        save: "Regel speichern"
         threshold_section: "Punkteschwelle"
         none_mode: "Keine Punkteschwelle"
         none_hint: "Zulassung wird ausschließlich anhand der Nachweise bestimmt."
@@ -95,9 +95,8 @@ de:
         points_unit: "Pkt"
         achievements_section: "Erforderliche Nachweise"
         achievements_hint: "Wählen Sie, welche Nachweise Studierende erbringen müssen."
-        save_hint: "Vorschläge werden anhand der aktualisierten Regel neu generiert."
       flash:
-        updated: "Zulassungsregeln aktualisiert."
+        updated: "Zulassungsregel aktualisiert."
     evaluator:
       no_rule: "Keine aktive Zulassungsregel konfiguriert. Bitte richten Sie zuerst eine Regel ein."
       back_to_records: "Zurück zur Übersicht"
@@ -151,7 +150,7 @@ de:
         failed: "Nicht zugelassen"
         uncertified: "Offen"
         stale: "Veraltet"
-        stale_hint: "Zugelassen bevor Regeln oder Daten geändert wurden"
+        stale_hint: "Zugelassen bevor Regel oder Daten geändert wurden"
         bulk_accept: "Offene Vorschläge akzeptieren"
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
@@ -163,12 +162,12 @@ de:
         save: "Speichern"
         cancel: "Abbrechen"
         empty: "Keine Studierenden-Datensätze gefunden."
-        rule_info: "Aktive Regel"
+        rule_info: "Zulassungsregel"
         setup_rule: "Regel einrichten"
         required_achievements_label: "Nachweise"
         stale_rule_warning:
-          one: "Zulassungsregeln wurden geändert — %{count} Zulassung ist nicht mehr aktuell."
-          other: "Zulassungsregeln wurden geändert — %{count} Zulassungen sind nicht mehr aktuell."
+          one: "Zulassungsregel wurde geändert — %{count} Zulassung ist nicht mehr aktuell."
+          other: "Zulassungsregel wurde geändert — %{count} Zulassungen sind nicht mehr aktuell."
         stale_rule_manual_warning:
           one: "%{count} manuelle Einzelentscheidung sollte nach Regeländerung überprüft werden."
           other: "%{count} manuelle Einzelentscheidungen sollten nach Regeländerung überprüft werden."
@@ -178,7 +177,7 @@ de:
         stale_data_manual_warning:
           one: "%{count} manuelle Einzelentscheidung sollte nach Datenänderung überprüft werden."
           other: "%{count} manuelle Einzelentscheidungen sollten nach Datenänderung überprüft werden."
-        reevaluate_rules: "Mit aktuellen Regeln abgleichen"
+        reevaluate_rules: "Mit aktueller Regel abgleichen"
         reevaluate_data: "Mit aktuellen Daten abgleichen"
         confirm_manual: "Einzelentscheidungen bestätigen"
       status:

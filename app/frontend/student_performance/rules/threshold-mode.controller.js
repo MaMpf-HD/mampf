@@ -1,0 +1,20 @@
+import { Controller } from "@hotwired/stimulus";
+
+export default class extends Controller {
+  static targets = ["percentageInput", "absoluteInput"];
+
+  connect() {
+    console.log("[threshold-mode] connected");
+    this.toggle();
+  }
+
+  toggle() {
+    const selected = this.element.querySelector(
+      "input[name='rule[threshold_mode]']:checked"
+    )?.value;
+    console.log("[threshold-mode] toggle →", selected);
+
+    this.percentageInputTarget.hidden = selected !== "percentage";
+    this.absoluteInputTarget.hidden = selected !== "absolute";
+  }
+}
