@@ -240,7 +240,7 @@ en:
         desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
         currently_in: "currently in %{tutorial}"
       dashboard:
-        title: "Allocation Dashboard"
+        title: "Allocation"
         last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"

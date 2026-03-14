@@ -240,7 +240,7 @@ de:
         desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Sie die Zuteilung durchführen, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
         currently_in: "aktuell in %{tutorial}"
       dashboard:
-        title: "Zuteilungs-Dashboard"
+        title: "Zuteilung"
         last_updated: "Stand: %{time}"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
