@@ -7,7 +7,6 @@
 
 <% tab = "allocations" if show_allocation_dashboard && tab == "items" %>
 
-<% show_registrations_tab = campaign.open? %>
 <% show_top_actions = (campaign.draft? && campaign.registration_items.any?) ||
   campaign.open? || campaign.closed? || campaign.processing? %>
 
@@ -101,30 +100,6 @@
     </button>
   </li>
 
-  <% if show_registrations_tab %>
-    <li class="nav-item" role="presentation">
-      <button
-        class="nav-link <%= 'active' if tab == 'registrations' %>"
-        id="<%= campaign_registrations_tab_id(campaign) %>-tab"
-        data-bs-toggle="tab"
-        data-bs-target="#<%= campaign_registrations_tab_id(campaign) %>"
-        type="button"
-        role="tab"
-        aria-controls="<%= campaign_registrations_tab_id(campaign) %>"
-        aria-selected="<%= tab == 'registrations' %>"
-      >
-        <%= t("registration.user_registration.index.title", default: "Registrations") %>
-
-        <span
-          class="badge rounded-pill bg-secondary ms-1"
-          id="<%= campaign_registrations_tab_count_id(campaign) %>"
-        >
-          <%= campaign.user_registrations.distinct.count(:user_id) %>
-        </span>
-      </button>
-    </li>
-  <% end %>
-
   <% if show_allocation_dashboard %>
     <li class="nav-item" role="presentation">
       <button
@@ -161,17 +136,6 @@
   >
     <%= render "registration/policies/index", campaign: campaign %>
   </div>
-
-  <% if show_registrations_tab %>
-    <div
-      class="tab-pane fade <%= 'show active' if tab == 'registrations' %>"
-      id="<%= campaign_registrations_tab_id(campaign) %>"
-      role="tabpanel"
-      aria-labelledby="<%= campaign_registrations_tab_id(campaign) %>-tab"
-    >
-      <%= render "registration/user_registrations/index", campaign: campaign %>
-    </div>
-  <% end %>
 
   <% if show_allocation_dashboard %>
     <div

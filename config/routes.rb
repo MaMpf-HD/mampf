@@ -325,7 +325,11 @@ Rails.application.routes.draw do
 
       resources :items,
                 controller: "registration/items",
-                only: [:create, :destroy, :update]
+                only: [:create, :destroy, :update] do
+        member do
+          get :roster
+        end
+      end
 
       resources :registrations,
                 controller: "registration/user_registrations",

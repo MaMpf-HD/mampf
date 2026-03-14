@@ -3,7 +3,7 @@ module Registration
     helper RosterHelper
     before_action :set_campaign
     before_action :set_locale
-    before_action :set_item, only: [:destroy, :update]
+    before_action :set_item, only: [:destroy, :update, :roster]
     authorize_resource class: "Registration::Item", except: [:create]
 
     def current_ability
@@ -56,6 +56,25 @@ module Registration
 
       @item.destroy
       respond_with_success(t("registration.item.destroyed"))
+    end
+
+    def roster
+      unless params[:source] == "panel"
+        redirect_to after_action_path
+        return
+      end
+
+      students = panel_students_for(@item)
+
+      render turbo_stream: turbo_stream.replace(
+        "tutorial-roster-side-panel",
+        partial: "registration/campaigns/tutorial_roster_side_panel",
+        locals: {
+          registerable: @item.registerable,
+          students: students,
+          read_only: true
+        }
+      )
     end
 
     private
@@ -141,6 +160,19 @@ module Registration
         else
           registration_campaign_path(@campaign, tab: "items")
         end
+      end
+
+      def panel_students_for(item)
+        registrations = if @campaign.first_come_first_served?
+          item.user_registrations
+        else
+          item.user_registrations.where(preference_rank: 1)
+        end
+
+        registrations.includes(:user)
+                     .filter_map(&:user)
+                     .uniq(&:id)
+                     .sort_by { |user| [user.name.to_s.downcase, user.email.to_s.downcase] }
       end
   end
 end

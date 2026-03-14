@@ -23,6 +23,15 @@ elsif is_cohort
   cohort_roster_path(registerable, source: :panel, format: :turbo_stream)
 end %>
 
+<% if local_assigns[:item] && item.registration_campaign.open? %>
+  <% roster_panel_path = roster_registration_campaign_item_path(
+    item.registration_campaign,
+    item,
+    source: :panel,
+    format: :turbo_stream
+  ) %>
+<% end %>
+
 <% edit_path = if is_tutorial
   edit_tutorial_path(registerable, group_type: :tutorials)
 elsif is_cohort

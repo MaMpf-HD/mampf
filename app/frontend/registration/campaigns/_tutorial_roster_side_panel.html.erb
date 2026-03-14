@@ -1,5 +1,6 @@
 <% registerable = local_assigns[:registerable] %>
 <% students = local_assigns[:students] || [] %>
+<% read_only = local_assigns[:read_only] || false %>
 <% is_tutorial = registerable.is_a?(Tutorial) if registerable %>
 <% is_cohort = registerable.is_a?(Cohort) if registerable %>
 
@@ -22,7 +23,13 @@ end %>
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
-      <h5 class="mb-1"><%= t("roster.details.participants") %></h5>
+      <h5 class="mb-1">
+        <%= if read_only
+          t("registration.user_registration.index.title", default: "Registrations")
+        else
+          t("roster.details.participants")
+        end %>
+      </h5>
 
       <% if registerable %>
         <div class="text-muted small">
@@ -48,28 +55,30 @@ end %>
 
   <div class="card-body border-0">
     <% if registerable %>
-      <div class="mb-3">
-        <%= form_with url: add_member_path,
-                      method: :post,
-                      data: { turbo: true },
-                      class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
-          <%= f.label :email,
-                      t("roster.actions.add_student_label"),
-                      class: "visually-hidden" %>
+      <% unless read_only %>
+        <div class="mb-3">
+          <%= form_with url: add_member_path,
+                        method: :post,
+                        data: { turbo: true },
+                        class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
+            <%= f.label :email,
+                        t("roster.actions.add_student_label"),
+                        class: "visually-hidden" %>
 
-          <%= f.email_field :email,
-                            class: "form-control form-control-sm",
-                            placeholder: t("roster.actions.add_student_placeholder"),
-                            required: true,
-                            autocomplete: "on" %>
+            <%= f.email_field :email,
+                              class: "form-control form-control-sm",
+                              placeholder: t("roster.actions.add_student_placeholder"),
+                              required: true,
+                              autocomplete: "on" %>
 
-          <%= f.button type: "submit",
-                       class: "btn btn-sm btn-primary text-nowrap" do %>
-            <i class="bi bi-plus-lg me-1"></i>
-            <%= t("roster.actions.add") %>
+            <%= f.button type: "submit",
+                         class: "btn btn-sm btn-primary text-nowrap" do %>
+              <i class="bi bi-plus-lg me-1"></i>
+              <%= t("roster.actions.add") %>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
       <div class="mb-3">
         <label class="visually-hidden" for="tutorial-roster-filter">
           <%= t("roster.actions.search", default: "Filter students") %>
@@ -115,20 +124,22 @@ end %>
                 remove_member_cohort_path(registerable, student, source: :panel)
               end %>
 
-              <%= button_to remove_member_path,
-                            method: :delete,
-                            class: "btn btn-sm btn-outline-danger " \
-                                   "tutorial-roster-student-remove",
-                            form: {
-                              class: "mb-0 d-flex h-100
-                                      position-absolute top-50 end-0 translate-middle-y
-                                      ",
-                              data: {
-                                turbo_confirm:
-                                  t("roster.warnings.confirm_kick_from_group")
-                              }
-                            } do %>
-                <i class="bi bi-trash"></i>
+              <% unless read_only %>
+                <%= button_to remove_member_path,
+                              method: :delete,
+                              class: "btn btn-sm btn-outline-danger " \
+                                     "tutorial-roster-student-remove",
+                              form: {
+                                class: "mb-0 d-flex h-100
+                                        position-absolute top-50 end-0 translate-middle-y
+                                        ",
+                                data: {
+                                  turbo_confirm:
+                                    t("roster.warnings.confirm_kick_from_group")
+                                }
+                              } do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
               <% end %>
             </div>
           </div>
@@ -144,8 +155,13 @@ end %>
       <div class="tutorial-roster-empty">
         <i class="bi bi-info-circle me-1"></i>
 
-        <%= t("roster.details.select_group",
-              default: "Select a group to inspect and manage participants") %>
+        <%= if read_only
+          t("roster.details.select_group",
+            default: "Select a group to inspect registrations")
+        else
+          t("roster.details.select_group",
+            default: "Select a group to inspect and manage participants")
+        end %>
       </div>
     <% end %>
   </div>
