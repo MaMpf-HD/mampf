@@ -32,12 +32,30 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
-            streams = [
-              turbo_stream.replace(@item,
-                                   partial: "registration/campaigns/group_tile",
-                                   locals: { item: @item }),
-              stream_flash
-            ]
+            streams = if ["allocation", "allocation_embedded"].include?(params[:source])
+              embedded = params[:source] == "allocation_embedded"
+              dashboard = Registration::AllocationDashboard.new(@campaign)
+              [
+                turbo_stream.replace("allocation-dashboard",
+                                     partial: "registration/allocations/dashboard",
+                                     locals: {
+                                       campaign: @campaign,
+                                       dashboard: dashboard,
+                                       embedded: embedded
+                                     }),
+                turbo_stream.replace(@item,
+                                     partial: "registration/campaigns/group_tile",
+                                     locals: { item: @item }),
+                stream_flash
+              ]
+            else
+              [
+                turbo_stream.replace(@item,
+                                     partial: "registration/campaigns/group_tile",
+                                     locals: { item: @item }),
+                stream_flash
+              ]
+            end
             render turbo_stream: streams
           end
         end

@@ -235,7 +235,47 @@
                 <td><%= data[:item].title %></td>
 
                 <td class="text-end">
-                  <%= data[:count] %> / <%= data[:capacity] || "∞" %>
+                  <span>
+                    <%= data[:count] %> / <%= data[:capacity] || "∞" %>
+                  </span>
+
+                  <% if data[:item].registerable_type == "Tutorial" %>
+                    <details
+                      class="allocation-capacity-editor d-inline-block ms-1"
+                      ontoggle="if (this.open) { const input = this.querySelector('input[type=number]'); if (input) { input.focus(); input.select(); } }"
+                    >
+                      <summary class="btn btn-sm btn-link text-secondary p-0 align-baseline">
+                        <i class="bi bi-pencil"></i>
+                      </summary>
+
+                      <%= form_with url: registration_campaign_item_path(campaign, data[:item]),
+                                    method: :patch,
+                                    scope: :registration_item,
+                                    class: "d-inline-flex align-items-center gap-1 ms-1" do |f| %>
+                        <%= hidden_field_tag :source, allocation_source %>
+
+                        <%= f.number_field :capacity,
+                                           value: data[:capacity],
+                                           class: "form-control form-control-sm",
+                                           style: "width: 4.5rem;" %>
+
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-primary p-1"
+                        >
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary p-1"
+                          onclick="this.closest('details').removeAttribute('open')"
+                        >
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      <% end %>
+                    </details>
+                  <% end %>
                 </td>
 
                 <td class="align-middle">

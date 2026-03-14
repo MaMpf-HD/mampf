@@ -11,3 +11,21 @@
                 rgba(135, 161, 221, 0.25) 100%);
     }
 }
+
+.allocation-capacity-editor summary {
+    list-style: none;
+}
+
+.allocation-capacity-editor summary::-webkit-details-marker {
+    display: none;
+}
+
+.allocation-capacity-editor[open] > summary {
+    display: none;
+}
+
+.allocation-capacity-editor form {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
