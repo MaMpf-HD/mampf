@@ -384,28 +384,26 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
-      it "renders edit with error when percentage mode has blank value" do
+      it "renders edit with inline error when percentage mode has blank value" do
         patch lecture_student_performance_rules_path(lecture),
               params: { rule: {
                 threshold_mode: "percentage",
                 min_percentage: ""
               } }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include(
-          I18n.t("student_performance.rules.errors.threshold_blank")
-        )
+        expect(response.body).to include("is-invalid")
+        expect(response.body).to include("blank")
       end
 
-      it "renders edit with error when absolute mode has blank value" do
+      it "renders edit with inline error when absolute mode has blank value" do
         patch lecture_student_performance_rules_path(lecture),
               params: { rule: {
                 threshold_mode: "absolute",
                 min_points_absolute: ""
               } }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include(
-          I18n.t("student_performance.rules.errors.threshold_blank")
-        )
+        expect(response.body).to include("is-invalid")
+        expect(response.body).to include("blank")
       end
 
       it "renders edit inside records frame when source_frame is records" do

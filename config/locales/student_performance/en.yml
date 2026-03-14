@@ -96,8 +96,6 @@ en:
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
         save_hint: "Proposals will be regenerated based on the updated rule."
-      errors:
-        threshold_blank: "Please enter a threshold value."
       flash:
         updated: "Eligibility rules updated."
     evaluator:

@@ -78,27 +78,12 @@ module StudentPerformance
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
+        @rule.threshold_mode = mode
         if mode == "percentage"
-          value = params.dig(:rule, :min_percentage)
-          if value.blank?
-            @rule.errors.add(
-              :min_percentage,
-              I18n.t("student_performance.rules.errors.threshold_blank")
-            )
-            raise(ActiveRecord::RecordInvalid, @rule)
-          end
-          @rule.min_percentage = value
+          @rule.min_percentage = params.dig(:rule, :min_percentage)
           @rule.min_points_absolute = nil
         elsif mode == "absolute"
-          value = params.dig(:rule, :min_points_absolute)
-          if value.blank?
-            @rule.errors.add(
-              :min_points_absolute,
-              I18n.t("student_performance.rules.errors.threshold_blank")
-            )
-            raise(ActiveRecord::RecordInvalid, @rule)
-          end
-          @rule.min_points_absolute = value
+          @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
           @rule.min_percentage = nil
         else
           @rule.min_percentage = nil

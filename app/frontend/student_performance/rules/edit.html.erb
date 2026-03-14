@@ -29,11 +29,11 @@
     </div>
 
     <div class="card-body">
-      <% if @rule.errors.any? %>
+      <% if @rule.errors.where(:base).any? %>
         <div class="alert alert-danger mb-4">
           <ul class="mb-0">
-            <% @rule.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
+            <% @rule.errors.where(:base).each do |error| %>
+              <li><%= error.full_message %></li>
             <% end %>
           </ul>
         </div>
@@ -92,7 +92,7 @@
                   type="number"
                   name="rule[min_percentage]"
                   value="<%= @rule.min_percentage %>"
-                  class="form-control"
+                  class="form-control<% if @rule.errors[:min_percentage].any? %> is-invalid <% end %>"
                   min="0"
                   max="100"
                   step="0.1"
@@ -101,6 +101,12 @@
 
                 <span class="input-group-text">%</span>
               </div>
+
+              <% if @rule.errors[:min_percentage].any? %>
+                <div class="text-danger small mt-1">
+                  <%= @rule.errors.full_messages_for(:min_percentage).first %>
+                </div>
+              <% end %>
 
               <div class="form-text">
                 <%= t("student_performance.rules.edit.percentage_hint") %>
@@ -132,7 +138,7 @@
                   type="number"
                   name="rule[min_points_absolute]"
                   value="<%= @rule.min_points_absolute %>"
-                  class="form-control"
+                  class="form-control<% if @rule.errors[:min_points_absolute].any? %> is-invalid <% end %>"
                   min="0"
                   step="0.5"
                   autocomplete="off"
@@ -142,6 +148,12 @@
                   <%= t("student_performance.rules.edit.points_unit") %>
                 </span>
               </div>
+
+              <% if @rule.errors[:min_points_absolute].any? %>
+                <div class="text-danger small mt-1">
+                  <%= @rule.errors.full_messages_for(:min_points_absolute).first %>
+                </div>
+              <% end %>
 
               <div class="form-text">
                 <%= t("student_performance.rules.edit.absolute_hint") %>
