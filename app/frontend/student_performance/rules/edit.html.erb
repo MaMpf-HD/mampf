@@ -1,4 +1,12 @@
-<%= turbo_frame_tag "performance-certifications-frame" do %>
+<% edit_frame = @source_frame.presence || "performance-certifications-frame" %>
+
+<% cancel_path = if edit_frame == "performance-records-frame"
+                   lecture_student_performance_records_path(@lecture)
+                 else
+                   lecture_student_performance_certifications_path(@lecture)
+                 end %>
+
+<%= turbo_frame_tag edit_frame do %>
   <div class="card">
     <div class="card-header bg-white border-bottom">
       <div class="d-flex justify-content-between align-items-center">
@@ -11,9 +19,9 @@
         </div>
 
         <a
-          href="<%= lecture_student_performance_certifications_path(@lecture) %>"
+          href="<%= cancel_path %>"
           class="btn btn-outline-secondary btn-sm"
-          data-turbo-frame="performance-certifications-frame"
+          data-turbo-frame="<%= edit_frame %>"
         >
           <%= t("student_performance.rules.edit.cancel") %>
         </a>
@@ -39,17 +47,23 @@
       <%= form_with(
             url: lecture_student_performance_rules_path(@lecture),
             method: :patch,
-            data: { turbo_frame: "performance-certifications-frame" }
+            data: { turbo_frame: edit_frame }
           ) do |f| %>
+        <%= hidden_field_tag :source_frame, edit_frame %>
+
         <fieldset class="mb-4">
           <legend class="h5 fw-semibold">
             <%= t("student_performance.rules.edit.threshold_section") %>
           </legend>
 
-          <% threshold_mode = if @rule.min_percentage.present?
+          <% threshold_mode = @threshold_mode || if @rule.min_percentage.present?
                                 "percentage"
                               elsif @rule.min_points_absolute.present?
                                 "absolute"
+                              elsif @rule.persisted? &&
+                                    @rule.min_percentage.nil? &&
+                                    @rule.min_points_absolute.nil?
+                                "none"
                               else
                                 "percentage"
                               end %>
@@ -62,7 +76,9 @@
                 value="percentage"
                 id="threshold-percentage"
                 class="form-check-input"
-                <%= "checked" if threshold_mode == "percentage" %>
+                <% if threshold_mode == "percentage" %>
+                  checked
+                <% end %>
               >
 
               <label class="form-check-label" for="threshold-percentage">
@@ -80,7 +96,6 @@
                   min="0"
                   max="100"
                   step="0.1"
-                  placeholder="50"
                   autocomplete="off"
                 >
 
@@ -101,7 +116,9 @@
                 value="absolute"
                 id="threshold-absolute"
                 class="form-check-input"
-                <%= "checked" if threshold_mode == "absolute" %>
+                <% if threshold_mode == "absolute" %>
+                  checked
+                <% end %>
               >
 
               <label class="form-check-label" for="threshold-absolute">
@@ -118,7 +135,6 @@
                   class="form-control"
                   min="0"
                   step="0.5"
-                  placeholder="60"
                   autocomplete="off"
                 >
 
@@ -129,6 +145,29 @@
 
               <div class="form-text">
                 <%= t("student_performance.rules.edit.absolute_hint") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                type="radio"
+                name="rule[threshold_mode]"
+                value="none"
+                id="threshold-none"
+                class="form-check-input"
+                <% if threshold_mode == "none" %>
+                  checked
+                <% end %>
+              >
+
+              <label class="form-check-label" for="threshold-none">
+                <%= t("student_performance.rules.edit.none_mode") %>
+              </label>
+
+              <div class="form-text">
+                <%= t("student_performance.rules.edit.none_hint") %>
               </div>
             </div>
           </div>
@@ -152,7 +191,9 @@
                   value="<%= achievement.id %>"
                   id="achievement-<%= achievement.id %>"
                   class="form-check-input"
-                  <%= "checked" if @selected_achievement_ids.include?(achievement.id) %>
+                  <% if @selected_achievement_ids.include?(achievement.id) %>
+                    checked
+                  <% end %>
                 >
 
                 <label
@@ -197,9 +238,9 @@
           </button>
 
           <a
-            href="<%= lecture_student_performance_certifications_path(@lecture) %>"
+            href="<%= cancel_path %>"
             class="btn btn-outline-secondary"
-            data-turbo-frame="performance-certifications-frame"
+            data-turbo-frame="<%= edit_frame %>"
           >
             <%= t("student_performance.rules.edit.cancel") %>
           </a>

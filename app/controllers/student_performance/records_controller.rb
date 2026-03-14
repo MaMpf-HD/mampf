@@ -55,6 +55,7 @@ module StudentPerformance
 
     def recompute_status
       scope = @lecture.student_performance_records
+      record_count = scope.count
       null_count = scope.where(computed_at: nil).count
       has_null = null_count.positive?
       oldest = scope.minimum(:computed_at)
@@ -62,7 +63,10 @@ module StudentPerformance
       member_count = @lecture.members.count
       has_members = member_count.positive?
       done = threshold.present? &&
-             (!has_members || (!has_null && oldest.present? && oldest > threshold))
+             ((!has_members && record_count.zero?) ||
+              (has_members &&
+               record_count >= member_count &&
+               !has_null && oldest.present? && oldest > threshold))
 
       render json: { done: done }
     rescue ArgumentError

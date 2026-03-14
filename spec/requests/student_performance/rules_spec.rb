@@ -225,6 +225,31 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(rule).to be_active
       end
 
+      it "redirects to records when source_frame is performance-records-frame" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: {
+                source_frame: "performance-records-frame",
+                rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                }
+              }
+        expect(response).to redirect_to(
+          lecture_student_performance_records_path(lecture)
+        )
+      end
+
+      it "redirects to certifications by default" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "50"
+              } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+
       it "creates a rule with absolute points threshold" do
         patch lecture_student_performance_rules_path(lecture),
               params: { rule: {
@@ -357,6 +382,43 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(response.body).to include(
           I18n.t("student_performance.rules.edit.title")
         )
+      end
+
+      it "renders edit with error when percentage mode has blank value" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: ""
+              } }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include(
+          I18n.t("student_performance.rules.errors.threshold_blank")
+        )
+      end
+
+      it "renders edit with error when absolute mode has blank value" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "absolute",
+                min_points_absolute: ""
+              } }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include(
+          I18n.t("student_performance.rules.errors.threshold_blank")
+        )
+      end
+
+      it "renders edit inside records frame when source_frame is records" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: {
+                source_frame: "performance-records-frame",
+                rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "150"
+                }
+              }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("performance-records-frame")
       end
     end
 

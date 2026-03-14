@@ -222,6 +222,53 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe "performance record invalidation" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "enqueues recompute when threshold changes" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      expect(PerformanceRecordUpdateJob).to receive(:perform_async)
+        .with(lecture.id)
+      achievement.update!(threshold: 20)
+    end
+
+    it "enqueues recompute when value_type changes" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      expect(PerformanceRecordUpdateJob).to receive(:perform_async)
+        .with(lecture.id)
+      achievement.update!(value_type: :percentage, threshold: 75)
+    end
+
+    it "does not enqueue recompute when only title changes" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      expect(PerformanceRecordUpdateJob).not_to receive(:perform_async)
+      achievement.update!(title: "Renamed")
+    end
+
+    it "touches linked rules when threshold changes" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      rule = FactoryBot.create(:student_performance_rule,
+                               :active, :with_percentage,
+                               lecture: lecture)
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+      original_updated_at = rule.updated_at
+
+      sleep(0.1)
+      achievement.update!(threshold: 20)
+
+      expect(rule.reload.updated_at).to be > original_updated_at
+    end
+  end
+
   describe "assessable wiring" do
     before { Flipper.enable(:assessment_grading) }
 

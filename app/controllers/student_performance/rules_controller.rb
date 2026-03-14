@@ -29,6 +29,7 @@ module StudentPerformance
     end
 
     def update
+      @source_frame = params[:source_frame].presence
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
 
@@ -39,9 +40,16 @@ module StudentPerformance
         sync_rule_achievements
       end
 
-      redirect_to lecture_student_performance_certifications_path(@lecture),
+      target = if @source_frame == "performance-records-frame"
+        lecture_student_performance_records_path(@lecture)
+      else
+        lecture_student_performance_certifications_path(@lecture)
+      end
+
+      redirect_to target,
                   notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
+      @threshold_mode = params.dig(:rule, :threshold_mode)
       @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = Set.new(
         Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
@@ -71,10 +79,26 @@ module StudentPerformance
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
         if mode == "percentage"
-          @rule.min_percentage = params.dig(:rule, :min_percentage)
+          value = params.dig(:rule, :min_percentage)
+          if value.blank?
+            @rule.errors.add(
+              :min_percentage,
+              I18n.t("student_performance.rules.errors.threshold_blank")
+            )
+            raise(ActiveRecord::RecordInvalid, @rule)
+          end
+          @rule.min_percentage = value
           @rule.min_points_absolute = nil
         elsif mode == "absolute"
-          @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
+          value = params.dig(:rule, :min_points_absolute)
+          if value.blank?
+            @rule.errors.add(
+              :min_points_absolute,
+              I18n.t("student_performance.rules.errors.threshold_blank")
+            )
+            raise(ActiveRecord::RecordInvalid, @rule)
+          end
+          @rule.min_points_absolute = value
           @rule.min_percentage = nil
         else
           @rule.min_percentage = nil

@@ -86,6 +86,8 @@ en:
         cancel: "Cancel"
         save: "Save Rules"
         threshold_section: "Point Threshold"
+        none_mode: "No point threshold"
+        none_hint: "Eligibility is determined solely by achievements."
         percentage_mode: "Percentage of total points"
         percentage_hint: "Students must reach this percentage of total points."
         absolute_mode: "Absolute points"
@@ -94,6 +96,8 @@ en:
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
         save_hint: "Proposals will be regenerated based on the updated rule."
+      errors:
+        threshold_blank: "Please enter a threshold value."
       flash:
         updated: "Eligibility rules updated."
     evaluator:
@@ -118,6 +122,7 @@ en:
         subtitle: "See how a different threshold would affect eligibility outcomes."
         current_rule: "Current rule"
         try_percentage: "Try a different percentage"
+        try_points: "Try different points"
         preview: "Preview"
         try_threshold: "Try different threshold"
         total_changes: "Students Affected"

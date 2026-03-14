@@ -22,6 +22,9 @@ class Achievement < ApplicationRecord
   after_create :setup_assessment,
                if: -> { Flipper.enabled?(:assessment_grading) }
 
+  after_update_commit :invalidate_performance_records,
+                      if: :threshold_or_type_changed?
+
   def student_met_threshold?(user)
     return false unless assessment
 
@@ -40,6 +43,22 @@ class Achievement < ApplicationRecord
   end
 
   private
+
+    def threshold_or_type_changed?
+      saved_change_to_threshold? || saved_change_to_value_type?
+    end
+
+    def invalidate_performance_records
+      PerformanceRecordUpdateJob.perform_async(lecture_id)
+      touch_linked_rules
+    end
+
+    def touch_linked_rules
+      rule_ids = rule_achievements.pluck(:rule_id)
+      return if rule_ids.empty?
+
+      StudentPerformance::Rule.where(id: rule_ids).touch_all
+    end
 
     def setup_assessment
       ensure_assessment!(requires_points: false, requires_submission: false)

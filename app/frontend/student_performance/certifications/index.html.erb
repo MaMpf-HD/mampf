@@ -346,15 +346,13 @@
               <%= t("student_performance.records.columns.student") %>
             </th>
 
-            <% if @rule&.min_points_absolute.present? %>
-              <th scope="col" class="text-end">
+            <th scope="col" class="text-end">
+              <% if @rule&.min_points_absolute.present? %>
                 <%= t("student_performance.records.columns.points") %>
-              </th>
-            <% else %>
-              <th scope="col" class="text-end">
+              <% else %>
                 <%= t("student_performance.records.columns.percentage") %>
-              </th>
-            <% end %>
+              <% end %>
+            </th>
 
             <% @achievements.each do |achievement| %>
               <th
@@ -393,20 +391,18 @@
             >
               <td><%= record.user.tutorial_name %></td>
 
-              <% if @rule&.min_points_absolute.present? %>
-                <td class="text-end font-monospace">
+              <td class="text-end font-monospace">
+                <% if @rule&.min_points_absolute.present? %>
                   <%= number_with_precision(
                             record.points_total_materialized,
                             precision: 1,
                             strip_insignificant_zeros: true) %>
-                </td>
-              <% else %>
-                <td class="text-end font-monospace">
+                <% else %>
                   <%= number_to_percentage(
                             record.percentage_materialized.to_f,
                             precision: 1) %>
-                </td>
-              <% end %>
+                <% end %>
+              </td>
 
               <% @achievements.each do |achievement| %>
                 <td class="text-center">
@@ -468,11 +464,21 @@
                       data-certification-inline-target="statusSelect"
                       class="form-select form-select-sm"
                     >
-                      <option value="passed" <%= "selected" if cert.passed? %>>
+                      <option
+                        value="passed"
+                        <% if cert.passed? %>
+                          selected
+                        <% end %>
+                      >
                         <%= t("student_performance.certifications.status.passed") %>
                       </option>
 
-                      <option value="failed" <%= "selected" if cert.failed? %>>
+                      <option
+                        value="failed"
+                        <% if cert.failed? %>
+                          selected
+                        <% end %>
+                      >
                         <%= t("student_performance.certifications.status.failed") %>
                       </option>
                     </select>

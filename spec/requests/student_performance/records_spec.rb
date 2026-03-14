@@ -305,14 +305,35 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       it "returns done: true when all records are newer than since" do
+        user = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
         FactoryBot.create(:student_performance_record,
                           lecture: lecture,
+                          user: user,
                           computed_at: Time.current)
 
         get recompute_status_lecture_student_performance_records_path(lecture),
             params: { since: 1.minute.ago.iso8601 }
         body = response.parsed_body
         expect(body["done"]).to be(true)
+      end
+
+      it "returns done: false when records exist but fewer than members" do
+        user_one = FactoryBot.create(:confirmed_user)
+        user_two = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership,
+                          lecture: lecture, user: user_one)
+        FactoryBot.create(:lecture_membership,
+                          lecture: lecture, user: user_two)
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          user: user_one,
+                          computed_at: Time.current)
+
+        get recompute_status_lecture_student_performance_records_path(lecture),
+            params: { since: 1.minute.ago.iso8601 }
+        body = response.parsed_body
+        expect(body["done"]).to be(false)
       end
 
       it "returns done: false when some records are older than since" do

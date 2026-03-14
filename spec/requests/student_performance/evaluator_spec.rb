@@ -286,6 +286,83 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           end
         end
       end
+
+      context "with an active rule at 60 absolute points" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_absolute_points,
+                            lecture: lecture,
+                            min_points_absolute: 60)
+        end
+
+        let!(:passing_user) { FactoryBot.create(:confirmed_user) }
+        let!(:borderline_user) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: passing_user,
+                            percentage_materialized: 70,
+                            points_total_materialized: 70,
+                            points_max_materialized: 100)
+
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: borderline_user,
+                            percentage_materialized: 55,
+                            points_total_materialized: 55,
+                            points_max_materialized: 100)
+        end
+
+        it "renders the points input instead of percentage" do
+          post path,
+               params: { preview: { min_points_absolute: 50 } }
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include("preview_min_points_absolute")
+          expect(response.body).not_to include("preview_min_percentage")
+        end
+
+        it "shows affected students when lowering threshold" do
+          post path,
+               params: { preview: { min_points_absolute: 50 } }
+          expect(response.body).to include(borderline_user.tutorial_name)
+        end
+
+        it "shows the apply button for changed threshold" do
+          post path,
+               params: { preview: { min_points_absolute: 50 } }
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator" \
+                   ".preview_rule_change.apply_threshold")
+          )
+        end
+
+        it "posts absolute mode in the apply form" do
+          post path,
+               params: { preview: { min_points_absolute: 50 } }
+          expect(response.body).to include(
+            'value="absolute"'
+          )
+        end
+
+        it "shows no changes when threshold is unchanged" do
+          post path,
+               params: { preview: { min_points_absolute: 60 } }
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator" \
+                   ".preview_rule_change.no_changes")
+          )
+        end
+
+        it "defaults to current rule when no params given" do
+          post path
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator" \
+                   ".preview_rule_change.no_changes")
+          )
+        end
+      end
     end
 
     context "as a student" do

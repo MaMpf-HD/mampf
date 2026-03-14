@@ -86,6 +86,8 @@ de:
         cancel: "Abbrechen"
         save: "Regeln speichern"
         threshold_section: "Punkteschwelle"
+        none_mode: "Keine Punkteschwelle"
+        none_hint: "Zulassung wird ausschließlich anhand der Leistungen bestimmt."
         percentage_mode: "Prozent der Gesamtpunkte"
         percentage_hint: "Studierende müssen diesen Prozentsatz der Gesamtpunkte erreichen."
         absolute_mode: "Absolute Punkte"
@@ -94,6 +96,8 @@ de:
         achievements_section: "Erforderliche Leistungen"
         achievements_hint: "Wählen Sie, welche Leistungen Studierende erbringen müssen."
         save_hint: "Vorschläge werden anhand der aktualisierten Regel neu generiert."
+      errors:
+        threshold_blank: "Bitte geben Sie einen Schwellenwert ein."
       flash:
         updated: "Zulassungsregeln aktualisiert."
     evaluator:
@@ -118,6 +122,7 @@ de:
         subtitle: "Sehen Sie, wie eine andere Schwelle die Zulassungsentscheidungen beeinflussen würde."
         current_rule: "Aktuelle Regel"
         try_percentage: "Anderen Prozentsatz ausprobieren"
+        try_points: "Andere Punktzahl ausprobieren"
         preview: "Vorschau"
         try_threshold: "Andere Schwelle ausprobieren"
         total_changes: "Betroffene Studierende"
