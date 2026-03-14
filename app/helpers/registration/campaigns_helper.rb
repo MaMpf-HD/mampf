@@ -30,10 +30,6 @@ module Registration
       "campaign_#{campaign.id}_policies"
     end
 
-    def campaign_registrations_tab_id(campaign)
-      "campaign_#{campaign.id}_registrations"
-    end
-
     def campaign_allocations_tab_id(campaign)
       "campaign_#{campaign.id}_allocations"
     end
@@ -44,14 +40,6 @@ module Registration
 
     def campaign_policies_list_frame_id(campaign)
       "policies_list_#{campaign.id}"
-    end
-
-    def campaign_registrations_tab_count_id(campaign)
-      "registrations_tab_count_#{campaign.id}"
-    end
-
-    def campaign_user_registrations_list_id(campaign)
-      "user_registrations_list_#{campaign.id}"
     end
 
     def item_stats_label(campaign)
