@@ -241,13 +241,16 @@ module Registration
         end
       end
 
-      def respond_with_form_error(message, action)
+      def respond_with_form_error(_message, action)
         respond_to do |format|
           format.html { render action, status: :unprocessable_content }
           format.turbo_stream do
-            flash.now[:alert] = message
-            render_turbo_update(lecture: @campaign.campaignable,
-                                new_campaign: @campaign)
+            render turbo_stream: turbo_stream.replace(
+              "new_campaign_form",
+              partial: "registration/campaigns/form",
+              locals: { campaign: @campaign,
+                        lecture: @campaign.campaignable }
+            ), status: :unprocessable_content
           end
         end
       end
