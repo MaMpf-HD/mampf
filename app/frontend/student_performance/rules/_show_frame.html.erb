@@ -10,7 +10,7 @@
           </p>
         </div>
 
-        <%= link_to edit_lecture_student_performance_rules_path(@lecture),
+        <%= link_to edit_lecture_student_performance_rules_path(lecture),
                    class: "btn btn-outline-primary btn-sm",
                    data: { turbo_frame: "performance-rules-frame" } do %>
           <i class="bi bi-pencil me-1"></i>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="card-body">
-      <% if @rule.nil? %>
+      <% if rule.nil? %>
         <div class="text-center text-muted py-4">
           <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
           <p><%= t("student_performance.rules.show.no_rule") %></p>
@@ -31,18 +31,18 @@
             <%= t("student_performance.rules.show.point_threshold") %>
           </h5>
 
-          <% if @rule.min_percentage.present? %>
+          <% if rule.min_percentage.present? %>
             <p class="fs-5 mb-0">
               <span class="badge bg-primary">
-                <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+                <%= number_to_percentage(rule.min_percentage, precision: 0) %>
               </span>
 
               <%= t("student_performance.rules.show.of_total_points") %>
             </p>
-          <% elsif @rule.min_points_absolute.present? %>
+          <% elsif rule.min_points_absolute.present? %>
             <p class="fs-5 mb-0">
               <span class="badge bg-primary">
-                <%= @rule.min_points_absolute %>
+                <%= rule.min_points_absolute %>
               </span>
 
               <%= t("student_performance.rules.show.points_absolute") %>
@@ -53,14 +53,14 @@
             </p>
           <% end %>
         </div>
-        <% if @rule.required_achievements.any? %>
+        <% if rule.required_achievements.any? %>
           <div class="mb-4">
             <h5 class="fw-semibold">
               <%= t("student_performance.rules.show.required_achievements") %>
             </h5>
 
             <div class="list-group">
-              <% @rule.rule_achievements.includes(:achievement).order(:position).each do |ra| %>
+              <% rule.rule_achievements.includes(:achievement).order(:position).each do |ra| %>
                 <div
                   class="
                     list-group-item d-flex justify-content-between

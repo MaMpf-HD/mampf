@@ -62,7 +62,9 @@
               <% @lecture.tutorials.each do |tutorial| %>
                 <option
                   value="<%= tutorial.id %>"
-                  <%= "selected" if params[:tutorial_id].to_s == tutorial.id.to_s %>
+                  <% if params[:tutorial_id].to_s == tutorial.id.to_s %>
+                    selected
+                  <% end %>
                 >
                   <%= tutorial.title %>
                 </option>

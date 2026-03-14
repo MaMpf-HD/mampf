@@ -504,6 +504,53 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         end
       end
 
+      context "when adding an achievement requirement" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:record_without_achievement) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 60,
+                            achievements_met_ids: [])
+        end
+
+        it "shows newly failed when students lack the achievement" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [achievement.id.to_s]
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.newly_failed")
+          )
+        end
+
+        it "shows no changes when students already meet the achievement" do
+          record_without_achievement
+            .update!(achievements_met_ids: [achievement.id])
+
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [achievement.id.to_s]
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_changes")
+          )
+        end
+      end
+
       context "without an active rule" do
         it "shows the no-rule message" do
           patch preview_lecture_student_performance_rules_path(lecture),
