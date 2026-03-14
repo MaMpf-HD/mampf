@@ -67,7 +67,7 @@ de:
       actions:
         open: "Anmeldung starten"
         close: "Anmeldung beenden"
-        reopen: "Anmeldung wiedereröffnen"
+        reopen: "Anmeldung erneut öffnen"
         finalize: "Zuteilung durchführen"
         force_finalize: "Finalisierung erzwingen (Fehler ignorieren)"
         allocate: "Zuteilung berechnen"
@@ -79,7 +79,7 @@ de:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
-        reopen: "Sind Sie sicher, dass Sie die Anmeldung wiedereröffnen möchten?"
+        reopen: "Sind Sie sicher, dass Sie die Anmeldung erneut öffnen möchten?"
         finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
         force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
         reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
