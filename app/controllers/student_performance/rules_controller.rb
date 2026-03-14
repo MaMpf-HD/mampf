@@ -57,6 +57,44 @@ module StudentPerformance
       render :edit, status: :unprocessable_content
     end
 
+    def preview
+      @rule = StudentPerformance::Rule
+              .where(lecture: @lecture, active: true)
+              .includes(rule_achievements: :achievement)
+              .first
+
+      unless @rule
+        render :preview
+        return
+      end
+
+      preview_rule = build_preview_rule
+      records = @lecture.student_performance_records
+                        .includes(:user)
+                        .order(:created_at)
+
+      current_eval = StudentPerformance::Evaluator.new(@rule)
+      preview_eval = StudentPerformance::Evaluator.new(preview_rule)
+
+      @changes = records.filter_map do |record|
+        current = current_eval.evaluate(record)
+        preview = preview_eval.evaluate(record)
+        next if current.proposed_status == preview.proposed_status
+
+        { from: current.proposed_status, to: preview.proposed_status }
+      end
+
+      @newly_passed = @changes.count { |c| c[:to] == :passed }
+      @newly_failed = @changes.count { |c| c[:to] == :failed }
+    end
+
+    PreviewRule = Struct.new(
+      :min_percentage,
+      :min_points_absolute,
+      :required_achievements,
+      keyword_init: true
+    )
+
     private
 
       def set_lecture
@@ -115,6 +153,28 @@ module StudentPerformance
           end
           position += 1
         end
+      end
+
+      def build_preview_rule
+        mode = params.dig(:rule, :threshold_mode)
+        pct = mode == "percentage" ?
+              params.dig(:rule, :min_percentage).presence&.to_f : nil
+        pts = mode == "absolute" ?
+              params.dig(:rule, :min_points_absolute).presence&.to_f : nil
+
+        achievement_ids = Set.new(
+          Array(params.dig(:rule, :achievement_ids))
+            .compact_blank.map(&:to_i)
+        )
+        achievements = Achievement.where(
+          id: achievement_ids, lecture: @lecture
+        )
+
+        PreviewRule.new(
+          min_percentage: pct,
+          min_points_absolute: pts,
+          required_achievements: achievements
+        )
       end
   end
 end

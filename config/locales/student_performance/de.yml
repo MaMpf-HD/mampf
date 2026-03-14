@@ -97,6 +97,14 @@ de:
         achievements_hint: "Wählen Sie, welche Nachweise Studierende erbringen müssen."
       flash:
         updated: "Zulassungsregel aktualisiert."
+      preview:
+        button: "Vorschau"
+        impact: "Auswirkung"
+        affected: "betroffen"
+        newly_passed: "neu zugelassen"
+        newly_failed: "neu nicht zugelassen"
+        no_changes: "Keine Studierenden würden mit diesen Einstellungen den Status wechseln."
+        no_rule: "Speichern Sie zuerst eine Regel, um deren Auswirkung zu sehen."
     evaluator:
       no_rule: "Keine aktive Zulassungsregel konfiguriert. Bitte richten Sie zuerst eine Regel ein."
       back_to_records: "Zurück zur Übersicht"

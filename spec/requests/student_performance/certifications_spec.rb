@@ -304,10 +304,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        it "shows the try different threshold button" do
+        it "shows the edit rule button" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
-            I18n.t("student_performance.evaluator.preview_rule_change.try_threshold")
+            I18n.t("student_performance.rules.show.edit_button")
           )
         end
 

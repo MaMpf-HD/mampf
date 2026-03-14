@@ -438,4 +438,84 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
       end
     end
   end
+
+  describe "PATCH /lectures/:lecture_id/performance/rules/preview" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "with an active rule and records" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:passing_record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 60)
+        end
+
+        let!(:failing_record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 40)
+        end
+
+        it "returns http success" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response).to have_http_status(:success)
+        end
+
+        it "shows no changes when threshold is the same" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_changes")
+          )
+        end
+
+        it "shows impact when threshold changes" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "35"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.newly_passed")
+          )
+        end
+
+        it "renders inside the rule-preview-frame" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include("rule-preview-frame")
+        end
+      end
+
+      context "without an active rule" do
+        it "shows the no-rule message" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_rule")
+          )
+        end
+      end
+    end
+  end
 end

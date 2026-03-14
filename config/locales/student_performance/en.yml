@@ -97,6 +97,14 @@ en:
         achievements_hint: "Select which achievements students must complete."
       flash:
         updated: "Eligibility rule updated."
+      preview:
+        button: "Preview"
+        impact: "Impact"
+        affected: "affected"
+        newly_passed: "newly eligible"
+        newly_failed: "newly ineligible"
+        no_changes: "No students would change status with these settings."
+        no_rule: "Save a rule first to preview its impact."
     evaluator:
       no_rule: "No active eligibility rule configured. Please set up a rule first."
       back_to_records: "Back to records"

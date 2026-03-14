@@ -27,6 +27,18 @@
         </span>
 
         <div class="d-flex gap-2">
+          <button
+            type="submit"
+            formaction="<%= preview_lecture_student_performance_rules_path(
+                            @lecture
+                          ) %>"
+            data-turbo-frame="rule-preview-frame"
+            class="btn btn-outline-primary btn-sm"
+          >
+            <i class="bi bi-eye me-1"></i>
+            <%= t("student_performance.rules.preview.button") %>
+          </button>
+
           <button type="submit" class="btn btn-primary btn-sm">
             <i class="bi bi-check-lg me-1"></i>
             <%= t("student_performance.rules.edit.save") %>
@@ -211,6 +223,8 @@
           </div>
         <% end %>
       </div>
+
+      <%= turbo_frame_tag "rule-preview-frame" %>
     <% end %>
   </div>
 <% end %>
