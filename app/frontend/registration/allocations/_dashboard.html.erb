@@ -85,26 +85,12 @@
     </div>
   <% end %>
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2><%= t("registration.allocation.dashboard.title") %></h2>
-
-      <% if campaign.last_allocation_calculated_at %>
-        <small class="text-muted">
-          <%= t("registration.allocation.dashboard.last_updated", time: l(campaign.last_allocation_calculated_at, format: :short)) %>
-        </small>
-      <% end %>
-    </div>
-
-    <div class="d-flex gap-2">
-      <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign, size: "btn-sm") %>
-      <% end %>
-
-      <%= finalize_campaign_button(campaign,
-                                   size: "btn-sm",
-                                   disabled: dashboard.policy_violations.present?) %>
-    </div>
+  <div>
+    <% if campaign.last_allocation_calculated_at %>
+      <small class="text-muted">
+        <%= t("registration.allocation.dashboard.last_updated", time: l(campaign.last_allocation_calculated_at, format: :short)) %>
+      </small>
+    <% end %>
   </div>
 
   <div class="alert alert-info mb-4">
