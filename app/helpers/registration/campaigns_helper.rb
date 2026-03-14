@@ -34,6 +34,10 @@ module Registration
       "campaign_#{campaign.id}_registrations"
     end
 
+    def campaign_allocations_tab_id(campaign)
+      "campaign_#{campaign.id}_allocations"
+    end
+
     def campaign_policy_form_frame_id(campaign)
       "policy_form_#{campaign.id}"
     end
@@ -118,15 +122,18 @@ module Registration
       (tutorials.to_a + cohorts.to_a).sort_by { |registerable| registerable.title.to_s.downcase }
     end
 
-    def finalize_campaign_button(campaign)
+    def finalize_campaign_button(campaign, size: nil, disabled: false)
+      classes = ["btn", "btn-danger", size].compact.join(" ")
+
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
                 method: :patch,
                 data: { confirm: t("registration.campaign.confirmations.finalize") },
-                class: "btn btn-danger")
+                class: classes,
+                disabled: disabled)
     end
 
-    def allocate_campaign_button(campaign)
+    def allocate_campaign_button(campaign, size: nil)
       has_allocation = campaign.last_allocation_calculated_at.present?
       label = if has_allocation
         t("registration.campaign.actions.reallocate")
@@ -134,11 +141,12 @@ module Registration
         t("registration.campaign.actions.allocate")
       end
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
+      classes = ["btn", "btn-primary", size].compact.join(" ")
 
       button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
-                class: "btn btn-primary",
+                class: classes,
                 data: { confirm: confirm, turbo_stream: true })
     end
 

@@ -17,11 +17,8 @@
       <ul>
         <% dashboard.policy_violations.each do |violation| %>
           <li class="mb-1">
-            <strong><%= violation[:name] %></strong>
-            (
-            <%= violation[:email] %>
-            ) -
-            <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+            <strong><%= violation[:name] %></strong> ( <%= violation[:email] %>)
+            - <%= t("registration.policy.kinds.#{violation[:policy]}") %>
             <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: violation[:user_id], source: allocation_source),
                           method: :delete,
                           class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
@@ -57,10 +54,8 @@
       <ul>
         <% dashboard.conflicting_registrations.each do |conflict| %>
           <li class="mb-1">
-            <strong><%= conflict[:user].name %></strong>
-            (
-            <%= conflict[:user].email %>
-            ) -
+            <strong><%= conflict[:user].name %></strong> (
+            <%= conflict[:user].email %>) -
             <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
             <% if conflict[:registration] %>
               <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: conflict[:user].id, source: allocation_source),
@@ -103,15 +98,12 @@
 
     <div class="d-flex gap-2">
       <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign) %>
+        <%= allocate_campaign_button(campaign, size: "btn-sm") %>
       <% end %>
 
-      <%= button_to t("registration.campaign.actions.finalize"),
-                    finalize_registration_campaign_allocation_path(campaign),
-                    method: :patch,
-                    data: { confirm: t("registration.campaign.confirmations.finalize") },
-                    class: "btn btn-danger",
-                    disabled: dashboard.policy_violations.present? %>
+      <%= finalize_campaign_button(campaign,
+                                   size: "btn-sm",
+                                   disabled: dashboard.policy_violations.present?) %>
     </div>
   </div>
 
