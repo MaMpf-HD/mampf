@@ -101,7 +101,7 @@ module Registration
       end
 
       if @campaign.update(attributes)
-        respond_with_success(t("registration.campaign.closed"))
+        respond_with_success(t("registration.campaign.closed"), tab: "allocations")
       else
         respond_with_error(@campaign.errors.full_messages.join(", "))
       end

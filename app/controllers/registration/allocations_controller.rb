@@ -19,7 +19,7 @@ module Registration
                                                    locals: {
                                                      lecture: @campaign.campaignable,
                                                      expanded_campaign_id: @campaign.id,
-                                                     tab: "registrations"
+                                                     tab: "allocations"
                                                    })
         end
       end
@@ -44,7 +44,7 @@ module Registration
                                   locals: {
                                     lecture: @campaign.campaignable,
                                     expanded_campaign_id: @campaign.id,
-                                    tab: "registrations"
+                                    tab: "allocations"
                                   }),
               stream_flash
             ]
@@ -102,7 +102,7 @@ module Registration
                                   locals: {
                                     lecture: @campaign.campaignable,
                                     expanded_campaign_id: @campaign.id,
-                                    tab: "registrations"
+                                    tab: "allocations"
                                   }),
               stream_flash
             ]
