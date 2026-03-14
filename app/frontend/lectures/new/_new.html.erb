@@ -22,8 +22,6 @@
                           action: 'turbo:submit-end->lectures--new--form#submitEnd' } do |f| %>
       <% term_independent = (from != 'course' && first_course_independent?) ||
                               (from == 'course' && lecture.course.term_independent) %>
-      <% course_error = lecture.errors[:course].join(' ') %>
-      <% term_error = lecture.errors[:term].join(' ') %>
       <div class="row">
         <div class="col-8" data-cy="new-lecture-course-select-div">
           <%= f.label :course_id, t('basics.course'),
@@ -35,7 +33,7 @@
                                             .natural_sort_by(&:first),
                                           lecture.course&.id),
                       {},
-                      { class: "selectize form-select#{course_error.present? ? ' is-invalid' : ''}",
+                      { class: "selectize form-select",
                         disabled: from == 'course',
                         required: true,
                         data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) } 
@@ -43,10 +41,6 @@
           <% if from == 'course' %>
             <%= f.hidden_field :course_id, value: lecture.course.id %>
           <% end %>
-          <div class="invalid-feedback"
-              id="new-lecture-course-error">
-            <%= course_error %>
-          </div>
         </div>
         <div class="col-4" id="newLectureTerm"  
             style="<%= term_independent ? 'display: none;' : '' %>">
@@ -57,12 +51,8 @@
           <%= f.select :term_id,
                       options_for_select(Term.select_terms, lecture.term_id),
                       {},
-                      { class: "form-select#{term_error.present? ? ' is-invalid' : ''}",
+                      { class: "form-select",
                         disabled: term_independent } %>
-          <div class="invalid-feedback"
-              id="new-lecture-term-error">
-            <%= term_error %>
-          </div>
         </div>
         <div class="col-12 mt-4">
           <%= teacher_select(f, is_new_lecture=true) %>

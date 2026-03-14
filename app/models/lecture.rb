@@ -111,6 +111,8 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
+  after_validation :map_association_errors_to_foreign_keys
+
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -939,6 +941,19 @@ class Lecture < ApplicationRecord
       return unless Lecture.where(course: course).any?
 
       errors.add(:course, :already_present)
+    end
+
+    def map_association_errors_to_foreign_keys
+      map_error(:course, :course_id)
+      map_error(:term, :term_id)
+    end
+
+    def map_error(source, target)
+      return if errors[source].blank?
+
+      errors[source].each do |error_message|
+        errors.add(target, error_message) unless errors[target].include?(error_message)
+      end
     end
 
     def older_than?(timespan)
