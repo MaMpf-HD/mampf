@@ -4,6 +4,7 @@ import { Turbo } from "@hotwired/turbo-rails";
 export default class extends Controller {
   static targets = [
     "tile",
+    "panelShell",
     "panelCard",
     "filterInput",
     "list",
@@ -13,8 +14,10 @@ export default class extends Controller {
   activeTile = null;
   activeRosterKey = null;
   isOpen = false;
+  lecturePaneElement = null;
 
   connect() {
+    this.lecturePaneElement = this.element.querySelector(".lecture-pane");
     this.close();
   }
 
@@ -59,6 +62,7 @@ export default class extends Controller {
     this.isOpen = false;
     this.element.classList.remove("tutorial-roster-layout--open");
     this.element.classList.add("tutorial-roster-layout--closed");
+    this.lecturePaneElement?.classList.remove("lecture-pane--roster-panel-open");
 
     if (this.hasActiveTile()) {
       this.activeTile.classList.remove("tutorial-gtile--selected");
@@ -87,10 +91,20 @@ export default class extends Controller {
     this.isOpen = true;
     this.element.classList.add("tutorial-roster-layout--open");
     this.element.classList.remove("tutorial-roster-layout--closed");
+    this.lecturePaneElement?.classList.add("lecture-pane--roster-panel-open");
 
-    if (window.matchMedia("(max-width: 1399.98px)").matches) {
+    if (this.panelIsStacked()) {
       this.panelCardTarget.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }
+
+  panelIsStacked() {
+    if (!this.hasPanelShellTarget) {
+      return false;
+    }
+
+    const shellStyles = window.getComputedStyle(this.panelShellTarget);
+    return shellStyles.position === "static";
   }
 
   filter() {
@@ -109,7 +123,8 @@ export default class extends Controller {
       if (visible) visibleCount += 1;
     });
 
-    this.noResultsTarget.classList.toggle("d-none", visibleCount > 0);
+    const showNoResults = query.length > 0 && visibleCount === 0;
+    this.noResultsTarget.classList.toggle("d-none", !showNoResults);
   }
 
   activateTile(tile) {

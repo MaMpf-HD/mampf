@@ -104,6 +104,12 @@
   border-radius: 0.4em;
 }
 
+@include media-breakpoint-down(xxl) {
+  .lecture-pane.lecture-pane--roster-panel-open {
+    margin-bottom: 1em;
+  }
+}
+
 .lecture-pane-separator {
   border-top: 3px dotted #555555;
   margin-top: 2em;

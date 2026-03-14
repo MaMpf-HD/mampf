@@ -446,7 +446,7 @@
     width: 100% !important;
     margin-left: 0 !important;
     margin-top: 0.35rem !important;
-    margin-bottom: 6em;
+    margin-bottom: 0;
     transform: translateX(0.7rem);
     transition: opacity 0.32s ease, transform 0.32s ease;
   }
@@ -460,6 +460,7 @@
     opacity: 1;
     transform: translateX(0);
     max-height: none;
+    margin-bottom: 12em;
   }
 
   .tutorial-roster-side-panel {
