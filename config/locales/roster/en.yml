@@ -180,6 +180,7 @@ en:
     details:
       participants: 'Participants'
       empty: 'No participants in this group.'
+      empty_filtered: 'No students match the current filter.'
     candidates:
       title: 'Unallocated Registrations'
       help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'

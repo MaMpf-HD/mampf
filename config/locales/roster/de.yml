@@ -181,6 +181,7 @@ de:
     details:
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
+      empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
     candidates:
       title: 'Unzugeteilte Anmeldungen'
       help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
