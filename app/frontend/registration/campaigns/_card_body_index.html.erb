@@ -28,29 +28,6 @@
                          campaign: campaign,
                          tab: active_tab %>
             </div>
-
-            <% if campaign.draft? && campaign.registration_items.any? %>
-              <div class="card-footer bg-body">
-                <%= button_to open_registration_campaign_path(campaign),
-                              method: :patch,
-                              form: {
-                                data: {
-                                  controller: "campaign-action",
-                                  "campaign-action-campaign-id-value": campaign.id,
-                                  "campaign-action-confirm-message-value":
-                                    t("registration.campaign.confirmations.open"),
-                                  "campaign-action-warning-message-value":
-                                    t("registration.campaign.warnings.unlimited_items"),
-                                  action: "submit->campaign-action#confirm",
-                                  turbo_stream: true
-                                }
-                              },
-                              class: "btn w-100 registration-campaign-start-btn" do %>
-                  <i class="bi bi-play-fill"></i>
-                  <%= t("registration.campaign.actions.open") %>
-                <% end %>
-              </div>
-            <% end %>
           </div>
         <% end %>
       <% else %>

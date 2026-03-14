@@ -132,6 +132,18 @@
       color: #fff;
     }
   }
+
+  .registration-campaign-actions {
+    .button_to {
+      flex: 1 1 0;
+      min-width: 12rem;
+      margin: 0;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
 }
 
 @media (hover: none) {
