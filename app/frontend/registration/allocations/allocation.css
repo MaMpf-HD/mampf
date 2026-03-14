@@ -1,0 +1,13 @@
+.nav-tabs .registration-campaign-allocations-tab {
+    background-image: linear-gradient(135deg,
+            rgba(135, 161, 221, 0.2) 0%,
+            rgba(135, 161, 221, 0.12) 100%);
+    border-color: rgba(34, 62, 98, 0.2);
+
+    &:hover,
+    &.active {
+        background-image: linear-gradient(135deg,
+                rgba(135, 161, 221, 0.4) 0%,
+                rgba(135, 161, 221, 0.25) 100%);
+    }
+}

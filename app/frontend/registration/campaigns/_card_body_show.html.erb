@@ -1,3 +1,5 @@
+<%= vite_stylesheet_tag "registration/allocations/allocation.css" %>
+
 <% tab ||= "items" %>
 
 <% show_allocation_dashboard = campaign.closed? || campaign.processing? ||
@@ -108,7 +110,7 @@
   <% if show_allocation_dashboard %>
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link <%= 'active' if tab == 'allocations' %>"
+        class="nav-link registration-campaign-allocations-tab <%= 'active' if tab == 'allocations' %>"
         id="<%= campaign_allocations_tab_id(campaign) %>-tab"
         data-bs-toggle="tab"
         data-bs-target="#<%= campaign_allocations_tab_id(campaign) %>"
