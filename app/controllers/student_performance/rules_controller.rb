@@ -14,13 +14,6 @@ module StudentPerformance
       @current_ability ||= LectureAbility.new(current_user)
     end
 
-    def show
-      @rule = StudentPerformance::Rule
-              .where(lecture: @lecture, active: true)
-              .includes(rule_achievements: :achievement)
-              .first
-    end
-
     def edit
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)

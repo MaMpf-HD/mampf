@@ -66,16 +66,9 @@ de:
         throttled: "Eine Neuberechnung wurde kürzlich gestartet. Bitte warten Sie, bevor Sie eine weitere auslösen."
     rules:
       show:
-        title: "Zulassungsregel"
-        subtitle: "Kriterien, die Studierende für die Prüfungszulassung erfüllen müssen."
-        no_rule: "Für diese Veranstaltung wurde noch keine Zulassungsregel konfiguriert."
-        point_threshold: "Punkteschwelle"
         of_total_points: "der Gesamtpunkte erforderlich"
         points_absolute: "Punkte erforderlich (absolut)"
-        no_point_threshold: "Keine Punkteschwelle konfiguriert."
-        required_achievements: "Erforderliche Nachweise"
         edit_button: "Regel bearbeiten"
-        edit_hint: "Die Bearbeitung der Regel wird in einem zukünftigen Update verfügbar sein."
         value_types:
           boolean: "Erforderlich"
           numeric: "min. %{threshold}"

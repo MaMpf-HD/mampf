@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["percentageInput", "absoluteInput"];
 
   connect() {
-    console.log("[threshold-mode] connected");
     this.toggle();
   }
 
@@ -12,7 +11,6 @@ export default class extends Controller {
     const selected = this.element.querySelector(
       "input[name='rule[threshold_mode]']:checked"
     )?.value;
-    console.log("[threshold-mode] toggle →", selected);
 
     this.percentageInputTarget.hidden = selected !== "percentage";
     this.absoluteInputTarget.hidden = selected !== "absolute";

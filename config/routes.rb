@@ -336,7 +336,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :rules, only: [:show, :edit, :update] do
+        resource :rules, only: [:edit, :update] do
           patch :preview, on: :collection
         end
 

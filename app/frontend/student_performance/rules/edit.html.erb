@@ -1,6 +1,10 @@
 <% edit_frame = @source_frame.presence || "rule-editor-frame" %>
 
-<% cancel_path = lecture_student_performance_certifications_path(@lecture) %>
+<% cancel_path = if edit_frame == "performance-records-frame"
+                   lecture_student_performance_records_path(@lecture)
+                 else
+                   lecture_student_performance_certifications_path(@lecture)
+                 end %>
 
 <%= turbo_frame_tag edit_frame do %>
   <div class="border rounded mt-3 mb-4 p-3">
@@ -46,7 +50,7 @@
 
           <%= link_to cancel_path,
                      class: "btn btn-outline-secondary btn-sm",
-                     data: { turbo_frame: "rule-editor-frame" } do %>
+                     data: { turbo_frame: edit_frame } do %>
             <%= t("student_performance.rules.edit.cancel") %>
           <% end %>
         </div>
