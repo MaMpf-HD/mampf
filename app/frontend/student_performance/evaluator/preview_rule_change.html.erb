@@ -15,23 +15,19 @@
         </div>
 
         <% if frame_id == "performance-certifications-frame" %>
-          <a
-            href="<%= lecture_student_performance_certifications_path(@lecture) %>"
-            class="btn btn-outline-secondary btn-sm"
-            data-turbo-frame="performance-certifications-frame"
-          >
+          <%= link_to lecture_student_performance_certifications_path(@lecture),
+                     class: "btn btn-outline-secondary btn-sm",
+                     data: { turbo_frame: "performance-certifications-frame" } do %>
             <i class="bi bi-arrow-left me-1"></i>
             <%= t("student_performance.certifications.back_to_dashboard") %>
-          </a>
+          <% end %>
         <% else %>
-          <a
-            href="<%= lecture_student_performance_records_path(@lecture) %>"
-            class="btn btn-outline-secondary btn-sm"
-            data-turbo-frame="performance-records-frame"
-          >
+          <%= link_to lecture_student_performance_records_path(@lecture),
+                     class: "btn btn-outline-secondary btn-sm",
+                     data: { turbo_frame: "performance-records-frame" } do %>
             <i class="bi bi-arrow-left me-1"></i>
             <%= t("student_performance.evaluator.back_to_records") %>
-          </a>
+          <% end %>
         <% end %>
       </div>
     </div>

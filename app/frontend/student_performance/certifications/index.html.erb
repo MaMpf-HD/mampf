@@ -90,16 +90,12 @@
           </div>
 
           <div class="d-flex gap-2 ms-3">
-            <a
-              href="<%= edit_lecture_student_performance_rules_path(
-                        @lecture
-                      ) %>"
-              class="btn btn-outline-primary btn-sm text-nowrap"
-              data-turbo-frame="rule-editor-frame"
-            >
+            <%= link_to edit_lecture_student_performance_rules_path(@lecture),
+                       class: "btn btn-outline-primary btn-sm text-nowrap",
+                       data: { turbo_frame: "rule-editor-frame" } do %>
               <i class="bi bi-pencil me-1"></i>
               <%= t("student_performance.rules.show.edit_button") %>
-            </a>
+            <% end %>
           </div>
         </div>
       </div>
@@ -111,14 +107,12 @@
           <%= t("student_performance.evaluator.no_rule") %>
         </p>
 
-        <a
-          href="<%= edit_lecture_student_performance_rules_path(@lecture) %>"
-          class="btn btn-outline-primary btn-sm"
-          data-turbo-frame="rule-editor-frame"
-        >
+        <%= link_to edit_lecture_student_performance_rules_path(@lecture),
+                   class: "btn btn-outline-primary btn-sm",
+                   data: { turbo_frame: "rule-editor-frame" } do %>
           <i class="bi bi-plus-lg me-1"></i>
           <%= t("student_performance.certifications.index.setup_rule") %>
-        </a>
+        <% end %>
       </div>
     <% end %>
   <% end %>
@@ -303,15 +297,13 @@
     <% %i[all passed failed uncertified stale].each do |filter| %>
       <% active = (params[:status].presence || "all") == filter.to_s %>
 
-      <a
-        href="<%= lecture_student_performance_certifications_path(
-                        @lecture,
-                        status: filter == :all ? nil : filter) %>"
-        class="nav-link rounded-pill py-1 px-3 <%= 'active' if active %> <%= 'text-muted' unless active %>"
-        data-turbo-frame="performance-certifications-frame"
-      >
+      <%= link_to lecture_student_performance_certifications_path(
+                    @lecture,
+                    status: filter == :all ? nil : filter),
+                 class: "nav-link rounded-pill py-1 px-3 #{'active' if active} #{'text-muted' unless active}",
+                 data: { turbo_frame: "performance-certifications-frame" } do %>
         <%= t("student_performance.certifications.filters.#{filter}") %>
-      </a>
+      <% end %>
     <% end %>
   </nav>
 
@@ -520,6 +512,7 @@
                     <input
                       type="text"
                       data-certification-inline-target="noteInput"
+                      data-action="keydown.enter->certification-inline#save"
                       class="form-control form-control-sm"
                       value="<%= cert.note %>"
                       placeholder="<%= t('student_performance.certifications.override.note_hint') %>"

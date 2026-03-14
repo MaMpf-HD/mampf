@@ -157,10 +157,16 @@ module StudentPerformance
 
       def build_preview_rule
         mode = params.dig(:rule, :threshold_mode)
-        pct = mode == "percentage" ?
-              params.dig(:rule, :min_percentage).presence&.to_f : nil
-        pts = mode == "absolute" ?
-              params.dig(:rule, :min_points_absolute).presence&.to_f : nil
+        pct = if mode == "percentage"
+          params.dig(:rule, :min_percentage).presence&.to_f
+        else
+          nil
+        end
+        pts = if mode == "absolute"
+          params.dig(:rule, :min_points_absolute).presence&.to_f
+        else
+          nil
+        end
 
         achievement_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))

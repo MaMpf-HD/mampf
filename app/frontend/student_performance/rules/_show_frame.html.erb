@@ -10,14 +10,12 @@
           </p>
         </div>
 
-        <a
-          href="<%= edit_lecture_student_performance_rules_path(@lecture) %>"
-          class="btn btn-outline-primary btn-sm"
-          data-turbo-frame="performance-rules-frame"
-        >
+        <%= link_to edit_lecture_student_performance_rules_path(@lecture),
+                   class: "btn btn-outline-primary btn-sm",
+                   data: { turbo_frame: "performance-rules-frame" } do %>
           <i class="bi bi-pencil me-1"></i>
           <%= t("student_performance.rules.show.edit_button") %>
-        </a>
+        <% end %>
       </div>
     </div>
 
