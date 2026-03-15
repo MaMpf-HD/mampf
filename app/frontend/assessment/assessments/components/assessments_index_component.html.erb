@@ -6,7 +6,6 @@
       <p class="text-muted small mb-2">
         <%= t('assessment.info.talks_created_in_roster') %>
       </p>
-
       <% if assessables_with_assessment.any? %>
         <table class="table table-hover mb-4">
           <thead>
@@ -17,6 +16,7 @@
               <th><%= t('assessment.date') %></th>
             </tr>
           </thead>
+
           <tbody id="assessment-talks-list">
             <% assessables_with_assessment.each do |assessable| %>
               <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
@@ -28,12 +28,10 @@
           <%= t('assessment.no_talks_yet') %>
         </p>
       <% end %>
-
     <% elsif type == "Assignment" %>
       <p class="text-muted small mb-2">
         <%= t('assessment.subtitle.assignments') %>
       </p>
-
       <div class="row mb-3">
         <div class="col-12 text-center">
           <%= link_to t('admin.assignment.new'),
@@ -43,9 +41,7 @@
                       data: { turbo_stream: true } %>
         </div>
       </div>
-
       <div id="assignment_form_container"></div>
-
       <div id="assessment-assignments-wrapper">
         <% if assessables_with_assessment.any? %>
           <table class="table table-hover mb-4">
@@ -56,10 +52,18 @@
                 <th><%= t('admin.assignment.filetype') %></th>
                 <th class="text-center"><%= t('assessment.tasks') %></th>
                 <th class="text-center"><%= t('assessment.points') %></th>
-                <th class="text-center"><i class="bi bi-cloud-upload" title="<%= t('assessment.requires_submission') %>"></i></th>
+
+                <th class="text-center">
+                  <i
+                    class="bi bi-cloud-upload"
+                    title="<%= t('assessment.requires_submission') %>"
+                  ></i>
+                </th>
+
                 <th><%= t('assessment.due_at') %></th>
               </tr>
             </thead>
+
             <tbody id="assessment-assignments-list">
               <% assessables_with_assessment.each do |assessable| %>
                 <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
@@ -86,7 +90,6 @@
     <h5 class="mb-3">
       <%= t('assessment.submission_settings') %>
     </h5>
-
     <%= helpers.turbo_frame_tag "lecture-submission-settings" do %>
       <%= render "assessment/assessments/submission_settings", lecture: lecture %>
     <% end %>
@@ -94,7 +97,6 @@
 
   <% if legacy.any? %>
     <div class="lecture-pane-separator"></div>
-
     <% if legacy_by_type["Assignment"]&.any? %>
       <h5 class="mb-3">
         <%= t('assessment.legacy_assignments') %>
@@ -102,7 +104,6 @@
       <p class="text-muted small">
         <%= t('assessment.legacy_assignments_info') %>
       </p>
-
       <div data-turbo="false">
         <div class="list-group">
           <% legacy_by_type["Assignment"].each do |assessable| %>
@@ -111,7 +112,6 @@
         </div>
       </div>
     <% end %>
-
     <% if legacy_by_type["Talk"]&.any? %>
       <h5 class="mb-3 <%= 'mt-4' if legacy_by_type['Assignment']&.any? %>">
         <%= t('assessment.legacy_talks') %>
@@ -119,7 +119,6 @@
       <p class="text-muted small">
         <%= t('assessment.legacy_talks_info') %>
       </p>
-
       <table class="table">
         <tbody>
           <% legacy_by_type["Talk"].each do |assessable| %>
