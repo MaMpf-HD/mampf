@@ -1,230 +1,221 @@
 <%= turbo_frame_tag "performance-records-frame" do %>
-  <div class="card">
-    <div class="card-header bg-white border-bottom">
-      <div class="d-flex justify-content-between align-items-center">
-        <p class="text-muted small mb-0">
-          <%= t("student_performance.records.index.subtitle") %>
-        </p>
+  <div class="d-flex justify-content-between align-items-end pb-2 mb-2 mt-2">
+    <p class="text-muted small mb-0">
+      <%= t("student_performance.records.index.subtitle") %>
+    </p>
 
-        <div
-          class="d-flex gap-2"
-          data-controller="recompute-poll"
-          data-recompute-poll-status-url-value="<%= recompute_status_lecture_student_performance_records_path(@lecture) %>"
-          data-recompute-poll-reload-url-value="<%= lecture_student_performance_records_path(@lecture) %>"
-        >
-          <%= button_to recompute_lecture_student_performance_records_path(@lecture),
-                      method: :post,
-                      class: "btn btn-outline-secondary",
-                      form: { data: { action: "turbo:submit-end->recompute-poll#handleSubmitEnd" } } do %>
-            <i class="bi bi-arrow-clockwise me-1"></i>
-            <%= t("student_performance.records.index.recompute_all") %>
-          <% end %>
+    <div
+      class="d-flex gap-2"
+      data-controller="recompute-poll"
+      data-recompute-poll-status-url-value="<%= recompute_status_lecture_student_performance_records_path(@lecture) %>"
+      data-recompute-poll-reload-url-value="<%= lecture_student_performance_records_path(@lecture) %>"
+    >
+      <%= button_to recompute_lecture_student_performance_records_path(@lecture),
+                    method: :post,
+                    class: "btn btn-outline-secondary",
+                    form: { data: { action: "turbo:submit-end->recompute-poll#handleSubmitEnd" } } do %>
+        <i class="bi bi-arrow-clockwise me-1"></i>
+        <%= t("student_performance.records.index.recompute_all") %>
+      <% end %>
 
-          <span
-            class="d-none align-self-center"
-            data-recompute-poll-target="indicator"
-          >
-            <span
-              class="spinner-border spinner-border-sm text-secondary me-1"
-              role="status"
-            ></span>
+      <span
+        class="d-none align-self-center"
+        data-recompute-poll-target="indicator"
+      >
+        <span
+          class="spinner-border spinner-border-sm text-secondary me-1"
+          role="status"
+        ></span>
 
-            <span class="text-muted small">
-              <%= t("student_performance.records.index.recomputing") %>
-            </span>
-          </span>
-        </div>
-      </div>
+        <span class="text-muted small">
+          <%= t("student_performance.records.index.recomputing") %>
+        </span>
+      </span>
     </div>
+  </div>
 
-    <div class="card-body">
-      <div class="row mb-3 g-2">
-        <div class="col-12 col-md-4">
-          <%= form_tag lecture_student_performance_records_path(@lecture),
-                     method: :get, class: "d-inline",
-                     data: { controller: "auto-submit-form",
-                             turbo_frame: "performance-records-frame" } do %>
-            <select
-              name="tutorial_id"
-              class="form-select"
-              data-action="change->auto-submit-form#submit"
+  <div class="row mb-3 g-2">
+    <div class="col-12 col-md-4">
+      <%= form_tag lecture_student_performance_records_path(@lecture),
+                   method: :get, class: "d-inline",
+                   data: { controller: "auto-submit-form",
+                           turbo_frame: "performance-records-frame" } do %>
+        <select
+          name="tutorial_id"
+          class="form-select"
+          data-action="change->auto-submit-form#submit"
+        >
+          <option value="">
+            <%= t("student_performance.records.index.all_tutorials") %>
+          </option>
+
+          <% @lecture.tutorials.each do |tutorial| %>
+            <option
+              value="<%= tutorial.id %>"
+              <% if params[:tutorial_id].to_s == tutorial.id.to_s %>
+                selected
+              <% end %>
             >
-              <option value="">
-                <%= t("student_performance.records.index.all_tutorials") %>
-              </option>
-
-              <% @lecture.tutorials.each do |tutorial| %>
-                <option
-                  value="<%= tutorial.id %>"
-                  <% if params[:tutorial_id].to_s == tutorial.id.to_s %>
-                    selected
-                  <% end %>
-                >
-                  <%= tutorial.title %>
-                </option>
-              <% end %>
-            </select>
+              <%= tutorial.title %>
+            </option>
           <% end %>
-        </div>
-      </div>
-
-      <% if @records.empty? %>
-        <p class="text-center text-muted py-4">
-          <%= t("student_performance.records.index.empty") %>
-        </p>
-      <% else %>
-        <div class="table-responsive">
-          <table class="table table-sm table-hover align-middle">
-            <thead class="table-light">
-              <tr>
-                <th scope="col" class="sticky-start bg-light">
-                  <%= t("student_performance.records.columns.student") %>
-                </th>
-
-                <th scope="col" class="text-end">
-                  <%= t("student_performance.records.columns.points") %>
-                  <br>
-
-                  <span class="fw-normal text-muted" style="font-size: 0.75em">
-                    (<%= number_with_precision(@standard_max,
-                          precision: 1,
-                          strip_insignificant_zeros: true) %>)
-                  </span>
-                </th>
-
-                <th scope="col" class="text-end">
-                  <%= t("student_performance.records.columns.percentage") %>
-                </th>
-
-                <% @assessments.each do |assessment| %>
-                  <th
-                    scope="col"
-                    class="text-center small"
-                    title="<%= assessment.title %>"
-                  >
-                    <%= assessment.short_title %>
-
-                    <br>
-
-                    <span
-                      class="fw-normal text-muted"
-                      style="font-size: 0.75em"
-                    >
-                      (<%= number_with_precision(
-                            assessment.effective_total_points,
-                            precision: 1,
-                            strip_insignificant_zeros: true) %>)
-                    </span>
-                  </th>
-                <% end %>
-
-                <% @achievements.each do |achievement| %>
-                  <th
-                    scope="col"
-                    class="text-center small"
-                    title="<%= achievement.title %>"
-                  >
-                    <%= truncate(achievement.title, length: 12) %>
-                  </th>
-                <% end %>
-
-                <th scope="col" class="small">
-                  <%= t("student_performance.records.columns.computed_at") %>
-                </th>
-
-                <th scope="col" class="small"></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <% @records.each do |record| %>
-                <tr id="<%= dom_id(record) %>">
-                  <td class="sticky-start"><%= record.user.tutorial_name %></td>
-
-                  <td class="text-end font-monospace">
-                    <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
-
-                    <% if record.points_max_materialized != @standard_max %>
-                      /
-                      <%= number_with_precision(record.points_max_materialized, precision: 1, strip_insignificant_zeros: true) %>
-                    <% end %>
-                  </td>
-
-                  <td class="text-end">
-                    <span class="fw-semibold">
-                      <%= number_to_percentage(record.percentage_materialized.to_f, precision: 0) %>
-                    </span>
-                  </td>
-
-                  <% @assessments.each do |assessment| %>
-                    <% status = @participation_map&.dig([record.user_id, assessment.id]) || :not_submitted %>
-                    <% points = @points_map&.dig([record.user_id, assessment.id]) %>
-                    <% max = assessment.effective_total_points %>
-
-                    <% badge = ParticipationStatusBadgeComponent.new(
-                         status: status, variant: :compact, points: points) %>
-
-                    <td
-                      class="text-center font-monospace small"
-                      title="<%= badge.tooltip(assessment.title) { max } %>"
-                    >
-                      <%= render badge %>
-                    </td>
-                  <% end %>
-
-                  <% @achievements.each do |achievement| %>
-                    <% met = record.achievements_met_ids&.include?(achievement.id) %>
-
-                    <td
-                      class="text-center"
-                      title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : t('student_performance.records.columns.achievement_not_met') %>"
-                    >
-                      <% if met %>
-                        <i class="bi bi-check-circle-fill text-success"></i>
-                      <% else %>
-                        <i class="bi bi-x-circle text-muted"></i>
-                      <% end %>
-                    </td>
-                  <% end %>
-
-                  <td class="text-muted small">
-                    <% if record.computed_at %>
-                      <% if record.stale? %>
-                        <span class="text-warning">
-                          <i class="bi bi-exclamation-triangle me-1"></i>
-                        </span>
-                      <% end %>
-                      <%= time_ago_in_words(record.computed_at) %>
-                      <%= t("student_performance.records.index.ago") %>
-                    <% else %>
-                      &mdash;
-                    <% end %>
-                  </td>
-
-                  <td>
-                    <%= link_to lecture_student_performance_record_path(
-                                  @lecture, record),
-                                class: "btn btn-outline-secondary btn-sm",
-                                data: { turbo_frame: "performance-records-frame" } do %>
-                      <%= t("student_performance.records.index.details") %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-        <% if @pagy.pages > 1 %>
-          <div class="d-flex justify-content-between align-items-center mt-3">
-            <div class="text-muted small">
-              <%= t("student_performance.records.index.showing",
-                  from: @pagy.from, to: @pagy.to, count: @pagy.count) %>
-            </div>
-
-            <nav><%== pagy_series_nav(@pagy) %></nav>
-          </div>
-        <% end %>
+        </select>
       <% end %>
     </div>
   </div>
+
+  <% if @records.empty? %>
+    <p class="text-center text-muted py-4">
+      <%= t("student_performance.records.index.empty") %>
+    </p>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="sticky-start bg-light">
+              <%= t("student_performance.records.columns.student") %>
+            </th>
+
+            <th scope="col" class="text-end">
+              <%= t("student_performance.records.columns.points") %>
+              <br>
+
+              <span class="fw-normal text-muted" style="font-size: 0.75em">
+                (<%= number_with_precision(@standard_max,
+                      precision: 1,
+                      strip_insignificant_zeros: true) %>)
+              </span>
+            </th>
+
+            <th scope="col" class="text-end">
+              <%= t("student_performance.records.columns.percentage") %>
+            </th>
+
+            <% @assessments.each do |assessment| %>
+              <th
+                scope="col"
+                class="text-center small"
+                title="<%= assessment.title %>"
+              >
+                <%= assessment.short_title %>
+
+                <br>
+
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  (<%= number_with_precision(
+                        assessment.effective_total_points,
+                        precision: 1,
+                        strip_insignificant_zeros: true) %>)
+                </span>
+              </th>
+            <% end %>
+
+            <% @achievements.each do |achievement| %>
+              <th
+                scope="col"
+                class="text-center small"
+                title="<%= achievement.title %>"
+              >
+                <%= truncate(achievement.title, length: 12) %>
+              </th>
+            <% end %>
+
+            <th scope="col" class="small">
+              <%= t("student_performance.records.columns.computed_at") %>
+            </th>
+
+            <th scope="col" class="small"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @records.each do |record| %>
+            <tr id="<%= dom_id(record) %>">
+              <td class="sticky-start"><%= record.user.tutorial_name %></td>
+
+              <td class="text-end font-monospace">
+                <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
+
+                <% if record.points_max_materialized != @standard_max %>
+                  /
+                  <%= number_with_precision(record.points_max_materialized, precision: 1, strip_insignificant_zeros: true) %>
+                <% end %>
+              </td>
+
+              <td class="text-end">
+                <span class="fw-semibold">
+                  <%= number_to_percentage(record.percentage_materialized.to_f, precision: 0) %>
+                </span>
+              </td>
+
+              <% @assessments.each do |assessment| %>
+                <% status = @participation_map&.dig([record.user_id, assessment.id]) || :not_submitted %>
+                <% points = @points_map&.dig([record.user_id, assessment.id]) %>
+                <% max = assessment.effective_total_points %>
+
+                <% badge = ParticipationStatusBadgeComponent.new(
+                     status: status, variant: :compact, points: points) %>
+
+                <td
+                  class="text-center font-monospace small"
+                  title="<%= badge.tooltip(assessment.title) { max } %>"
+                >
+                  <%= render badge %>
+                </td>
+              <% end %>
+
+              <% @achievements.each do |achievement| %>
+                <% met = record.achievements_met_ids&.include?(achievement.id) %>
+
+                <td
+                  class="text-center"
+                  title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : t('student_performance.records.columns.achievement_not_met') %>"
+                >
+                  <% if met %>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                  <% else %>
+                    <i class="bi bi-x-circle text-muted"></i>
+                  <% end %>
+                </td>
+              <% end %>
+
+              <td class="text-muted small">
+                <% if record.computed_at %>
+                  <% if record.stale? %>
+                    <span class="text-warning">
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                    </span>
+                  <% end %>
+                  <%= time_ago_in_words(record.computed_at) %>
+                  <%= t("student_performance.records.index.ago") %>
+                <% else %>
+                  &mdash;
+                <% end %>
+              </td>
+
+              <td>
+                <%= link_to lecture_student_performance_record_path(
+                              @lecture, record),
+                            class: "btn btn-outline-secondary btn-sm",
+                            data: { turbo_frame: "performance-records-frame" } do %>
+                  <%= t("student_performance.records.index.details") %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% if @pagy.pages > 1 %>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted small">
+          <%= t("student_performance.records.index.showing",
+              from: @pagy.from, to: @pagy.to, count: @pagy.count) %>
+        </div>
+
+        <nav><%== pagy_series_nav(@pagy) %></nav>
+      </div>
+    <% end %>
+  <% end %>
 <% end %>
