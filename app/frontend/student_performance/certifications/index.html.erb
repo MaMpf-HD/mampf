@@ -6,9 +6,12 @@
 
     <div class="d-flex gap-2">
       <% if @rule && @uncertified_count > 0 %>
+        <% actionable = @proposed_passed + @proposed_failed %>
+
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
-                    class: "btn btn-success btn-sm" do %>
+                    disabled: actionable.zero?,
+                    class: "btn btn-sm #{ actionable.zero? ? 'btn-outline-secondary' : 'btn-success' }" do %>
           <i class="bi bi-check-all me-1"></i>
           <%= t("student_performance.certifications.index.bulk_accept") %>
 

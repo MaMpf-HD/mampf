@@ -17,8 +17,6 @@ class AchievementMarkingTableComponent < ViewComponent::Base
     return "\u2014" if participation.grade_text.blank?
 
     case achievement.value_type
-    when "boolean"
-      participation.grade_text == "pass" ? icon_pass : icon_fail
     when "numeric"
       "#{participation.grade_text.to_i} / #{threshold.to_i}"
     when "percentage"
@@ -67,14 +65,6 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     def assessment
       achievement.assessment
-    end
-
-    def icon_pass
-      helpers.tag.i(class: "bi bi-check-circle-fill text-success")
-    end
-
-    def icon_fail
-      helpers.tag.i(class: "bi bi-x-circle-fill text-danger")
     end
 
     def format_percentage(value)

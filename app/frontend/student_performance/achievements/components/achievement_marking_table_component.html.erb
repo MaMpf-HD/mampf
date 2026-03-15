@@ -11,9 +11,11 @@
       <tr>
         <th><%= t("basics.name") %></th>
 
-        <th class="text-center">
-          <%= t("assessment.achievements.marking.value") %>
-        </th>
+        <% unless boolean? %>
+          <th class="text-center">
+            <%= t("assessment.achievements.marking.value") %>
+          </th>
+        <% end %>
 
         <th class="text-center">
           <%= t("assessment.achievements.marking.status") %>
@@ -28,7 +30,9 @@
         <tr>
           <td><%= participation.user.tutorial_name %></td>
 
-          <td class="text-center"><%= value_display(participation) %></td>
+          <% unless boolean? %>
+            <td class="text-center"><%= value_display(participation) %></td>
+          <% end %>
 
           <td class="text-center">
             <% case badge %>
