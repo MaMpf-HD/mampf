@@ -148,29 +148,19 @@
 
                   <td class="text-center">
                     <% if result.details[:meets_points] %>
-                      <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-check-circle-fill text-success"></i>
                     <% else %>
-                      <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-x-circle text-danger"></i>
                     <% end %>
                   </td>
 
                   <td class="text-center">
                     <% if result.details[:meets_achievements] %>
-                      <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-check-circle text-success"></i>
                     <% elsif result.details[:achievements_ungraded] %>
-                      <span class="text-warning">
-                        <i class="bi bi-question-circle"></i>
-                      </span>
+                      <i class="bi bi-question-circle text-amber"></i>
                     <% else %>
-                      <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-x-circle text-danger"></i>
                     <% end %>
                   </td>
 
@@ -180,7 +170,7 @@
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
                     <% elsif result.proposed_status == :inconclusive %>
-                      <span class="badge bg-warning">
+                      <span class="badge bg-amber-subtle text-amber">
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
                     <% else %>

@@ -34,7 +34,7 @@
             <% case badge %>
             <% when :met %>
               <i
-                class="bi bi-check-circle-fill text-success"
+                class="bi bi-check-circle text-success"
                 title="<%= t("assessment.achievements.marking.met") %>"
               ></i>
             <% when :not_met %>
@@ -44,7 +44,7 @@
               ></i>
             <% when :unmarked %>
               <i
-                class="bi bi-dash-circle text-muted"
+                class="bi bi-question-circle text-amber"
                 title="<%= t("assessment.achievements.marking.unmarked") %>"
               ></i>
             <% end %>

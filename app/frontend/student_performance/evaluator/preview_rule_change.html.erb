@@ -231,7 +231,7 @@
 
           <div class="col-12 col-md-3">
             <div class="text-center p-3 border rounded bg-light">
-              <div class="display-6 fw-bold text-warning">
+              <div class="display-6 fw-bold text-amber">
                 <%= @newly_inconclusive %>
               </div>
 
@@ -291,7 +291,7 @@
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
                     <% elsif change[:from] == :inconclusive %>
-                      <span class="badge bg-warning">
+                      <span class="badge bg-amber-subtle text-amber">
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
                     <% else %>
@@ -307,7 +307,7 @@
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
                     <% elsif change[:to] == :inconclusive %>
-                      <span class="badge bg-warning">
+                      <span class="badge bg-amber-subtle text-amber">
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
                     <% else %>

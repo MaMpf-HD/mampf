@@ -174,7 +174,7 @@
     </div>
 
     <div class="d-flex flex-column">
-      <span class="fs-5 fw-bold text-warning-emphasis lh-1 mb-1">
+      <span class="fs-5 fw-bold text-amber lh-1 mb-1">
         <%= @uncertified_count %>
       </span>
 
@@ -382,21 +382,19 @@
                 <td class="text-center">
                   <% if record.achievements_met_ids&.include?(achievement.id) %>
                     <i
-                      class="bi bi-check-lg text-secondary"
+                      class="bi bi-check-circle text-success"
                       title="<%= t('student_performance.records.columns.achievement_met') %>"
                     ></i>
                   <% elsif record.achievements_ungraded_ids&.include?(achievement.id) %>
                     <i
-                      class="bi bi-question-circle text-warning"
+                      class="bi bi-question-circle text-amber"
                       title="<%= t('student_performance.records.columns.achievement_ungraded') %>"
                     ></i>
                   <% else %>
-                    <span
-                      class="text-muted"
+                    <i
+                      class="bi bi-x-circle text-danger"
                       title="<%= t('student_performance.records.columns.achievement_not_met') %>"
-                    >
-                      &ndash;
-                    </span>
+                    ></i>
                   <% end %>
                 </td>
               <% end %>
@@ -478,7 +476,7 @@
                         <i class="bi bi-check-circle text-success me-1"></i>
                         <%= t("student_performance.evaluator.status.passed") %>
                       <% elsif proposal.proposed_status == :inconclusive %>
-                        <i class="bi bi-question-circle text-warning me-1"></i>
+                        <i class="bi bi-question-circle text-amber me-1"></i>
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       <% else %>
                         <i class="bi bi-x-circle text-danger me-1"></i>
@@ -495,7 +493,7 @@
                 <% if cert %>
                   <div data-certification-inline-target="display">
                     <% if proposal && proposal.proposed_status != cert.status.to_sym %>
-                      <span class="badge text-warning-emphasis bg-warning-subtle fw-normal mb-1">
+                      <span class="badge text-amber bg-amber-subtle fw-normal mb-1">
                         <i class="bi bi-arrow-left-right me-1"></i>
                         <%= t("student_performance.certifications.columns.rule_suggests") %>
 
