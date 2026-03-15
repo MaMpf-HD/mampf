@@ -13,8 +13,9 @@ module StudentPerformance
     def compute_and_upsert_record_for(user)
       stats = aggregate_points(user)
       met_ids = achievement_ids_met_by(user)
+      ungraded_ids = achievement_ids_ungraded_by_id(user.id)
 
-      upsert_records([build_row(user.id, stats, met_ids)])
+      upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
     end
 
     def compute_and_upsert_all_records!
@@ -30,7 +31,8 @@ module StudentPerformance
         parts = participations_by_user.fetch(uid, [])
         stats = aggregate_from_prefetched(parts, points_by_participation)
         met_ids = achievement_ids_met_by_id(uid)
-        build_row(uid, stats, met_ids)
+        ungraded_ids = achievement_ids_ungraded_by_id(uid)
+        build_row(uid, stats, met_ids, ungraded_ids)
       end
 
       rows.each_slice(UPSERT_BATCH_SIZE) do |batch|
@@ -147,6 +149,20 @@ module StudentPerformance
         end.map(&:id)
       end
 
+      def achievement_ids_ungraded_by_id(user_id)
+        return [] if lecture_achievements.empty?
+
+        graded_assessment_ids = achievement_participations_cache
+                                .fetch(user_id, {})
+                                .keys
+                                .to_set
+
+        lecture_achievements.reject do |a|
+          a.assessment.nil? ||
+            graded_assessment_ids.include?(a.assessment.id)
+        end.map(&:id)
+      end
+
       def achievement_participations_cache
         @achievement_participations_cache ||= begin
           a_ids = lecture_achievements.filter_map { |a| a.assessment&.id }
@@ -175,7 +191,8 @@ module StudentPerformance
         (points_total / points_max * 100).round(2)
       end
 
-      def build_row(user_id, stats, achievements_met_ids)
+      def build_row(user_id, stats, achievements_met_ids,
+                    achievements_ungraded_ids)
         now = Time.current
         percentage = compute_percentage(
           stats[:points_total], stats[:points_max]
@@ -188,6 +205,7 @@ module StudentPerformance
           points_max_materialized: stats[:points_max],
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
+          achievements_ungraded_ids: achievements_ungraded_ids,
           assessments_total_count: stats[:counts][:total],
           assessments_reviewed_count: stats[:counts][:reviewed],
           assessments_pending_grading_count:

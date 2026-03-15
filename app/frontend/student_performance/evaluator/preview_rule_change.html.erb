@@ -195,7 +195,7 @@
 
       <% if @changes.any? %>
         <div class="row mb-3 g-3">
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-3">
             <div class="text-center p-3 border rounded bg-light">
               <div class="display-6 fw-bold"><%= @changes.size %></div>
 
@@ -205,7 +205,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-3">
             <div class="text-center p-3 border rounded bg-light">
               <div class="display-6 fw-bold text-success">
                 <%= @newly_passed %>
@@ -217,7 +217,7 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-3">
             <div class="text-center p-3 border rounded bg-light">
               <div class="display-6 fw-bold text-danger">
                 <%= @newly_failed %>
@@ -225,6 +225,18 @@
 
               <div class="text-muted small">
                 <%= t("student_performance.evaluator.preview_rule_change.newly_failed") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <div class="text-center p-3 border rounded bg-light">
+              <div class="display-6 fw-bold text-warning">
+                <%= @newly_inconclusive %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.evaluator.preview_rule_change.newly_inconclusive") %>
               </div>
             </div>
           </div>
@@ -278,6 +290,10 @@
                       <span class="badge bg-success">
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
+                    <% elsif change[:from] == :inconclusive %>
+                      <span class="badge bg-warning">
+                        <%= t("student_performance.evaluator.status.inconclusive") %>
+                      </span>
                     <% else %>
                       <span class="badge bg-danger">
                         <%= t("student_performance.evaluator.status.failed") %>
@@ -289,6 +305,10 @@
                     <% if change[:to] == :passed %>
                       <span class="badge bg-success">
                         <%= t("student_performance.evaluator.status.passed") %>
+                      </span>
+                    <% elsif change[:to] == :inconclusive %>
+                      <span class="badge bg-warning">
+                        <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
                     <% else %>
                       <span class="badge bg-danger">

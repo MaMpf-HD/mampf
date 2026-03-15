@@ -26,6 +26,10 @@
             <span class="badge bg-success fs-6">
               <%= t("student_performance.evaluator.status.passed") %>
             </span>
+          <% elsif @result.proposed_status == :inconclusive %>
+            <span class="badge bg-warning fs-6">
+              <%= t("student_performance.evaluator.status.inconclusive") %>
+            </span>
           <% else %>
             <span class="badge bg-danger fs-6">
               <%= t("student_performance.evaluator.status.failed") %>
@@ -126,12 +130,20 @@
                            .map(&:to_i)
                            .include?(achievement.id) %>
 
+                <% ungraded = Array(@record.achievements_ungraded_ids)
+                                .map(&:to_i)
+                                .include?(achievement.id) %>
+
                 <div class="d-flex justify-content-between mb-2">
                   <span><%= achievement.title %></span>
 
                   <% if met %>
                     <span class="text-success">
                       <i class="bi bi-check-circle-fill"></i>
+                    </span>
+                  <% elsif ungraded %>
+                    <span class="text-warning">
+                      <i class="bi bi-question-circle"></i>
                     </span>
                   <% else %>
                     <span class="text-danger">
@@ -150,6 +162,11 @@
                   <span class="text-success fw-bold">
                     <i class="bi bi-check-circle-fill me-1"></i>
                     <%= t("student_performance.evaluator.status.passed") %>
+                  </span>
+                <% elsif @result.details[:achievements_ungraded] %>
+                  <span class="text-warning fw-bold">
+                    <i class="bi bi-question-circle me-1"></i>
+                    <%= t("student_performance.evaluator.status.inconclusive") %>
                   </span>
                 <% else %>
                   <span class="text-danger fw-bold">

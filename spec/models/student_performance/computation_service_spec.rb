@@ -494,6 +494,8 @@ RSpec.describe(StudentPerformance::ComputationService) do
           record = StudentPerformance::Record
                    .find_by(lecture: lecture, user: user)
           expect(record.achievements_met_ids).to include(achievement.id)
+          expect(record.achievements_ungraded_ids)
+            .not_to include(achievement.id)
         end
 
         it "excludes achievement when grade_text is fail" do
@@ -557,6 +559,16 @@ RSpec.describe(StudentPerformance::ComputationService) do
           record = StudentPerformance::Record
                    .find_by(lecture: lecture, user: user)
           expect(record.achievements_met_ids).to eq([])
+        end
+
+        it "includes achievement in achievements_ungraded_ids" do
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_ungraded_ids)
+            .to include(achievement.id)
         end
       end
 

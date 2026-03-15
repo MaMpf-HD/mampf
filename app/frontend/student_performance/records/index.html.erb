@@ -165,13 +165,16 @@
 
               <% @achievements.each do |achievement| %>
                 <% met = record.achievements_met_ids&.include?(achievement.id) %>
+                <% ungraded = record.achievements_ungraded_ids&.include?(achievement.id) %>
 
                 <td
                   class="text-center"
-                  title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : t('student_performance.records.columns.achievement_not_met') %>"
+                  title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : ungraded ? t('student_performance.records.columns.achievement_ungraded') : t('student_performance.records.columns.achievement_not_met') %>"
                 >
                   <% if met %>
                     <i class="bi bi-check-circle-fill text-success"></i>
+                  <% elsif ungraded %>
+                    <i class="bi bi-question-circle text-warning"></i>
                   <% else %>
                     <i class="bi bi-x-circle text-muted"></i>
                   <% end %>

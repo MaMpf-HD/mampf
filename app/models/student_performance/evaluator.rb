@@ -12,20 +12,29 @@ module StudentPerformance
       return Result.new(proposed_status: :failed, details: {}) unless record
 
       meets_points = points_met?(record)
-      meets_achievements = achievements_met?(record)
-      proposed = meets_points && meets_achievements ? :passed : :failed
+      achievement_status = achievements_status(record)
+
+      proposed = if achievement_status == :ungraded
+        :inconclusive
+      elsif meets_points && achievement_status == :met
+        :passed
+      else
+        :failed
+      end
 
       Result.new(
         proposed_status: proposed,
         details: {
           meets_points: meets_points,
-          meets_achievements: meets_achievements,
+          meets_achievements: achievement_status == :met,
+          achievements_ungraded: achievement_status == :ungraded,
           points_total: record.points_total_materialized,
           points_max: record.points_max_materialized,
           percentage: record.percentage_materialized,
           required_points: required_points_threshold,
           required_percentage: rule.min_percentage,
           achievement_ids_met: record.achievements_met_ids,
+          achievement_ids_ungraded: Array(record.achievements_ungraded_ids),
           achievement_ids_required: required_achievement_ids
         }
       )
@@ -47,12 +56,19 @@ module StudentPerformance
         end
       end
 
-      def achievements_met?(record)
-        return true if required_achievement_ids.empty?
+      def achievements_status(record)
+        return :met if required_achievement_ids.empty?
 
-        have = Array(record.achievements_met_ids).to_set(&:to_i)
+        have = Array(record.achievements_met_ids).map(&:to_i).to_set
         need = required_achievement_ids.to_set
-        have >= need
+        return :met if have >= need
+
+        ungraded = Array(record.achievements_ungraded_ids)
+                   .map(&:to_i).to_set
+        missing = need - have
+        return :ungraded if missing.any? { |id| ungraded.include?(id) }
+
+        :not_met
       end
 
       def required_achievement_ids

@@ -15,6 +15,7 @@ module StudentPerformance
     end
 
     def edit
+      @source_frame = params[:source_frame]
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
       @achievements = Achievement.where(lecture: @lecture).order(:title)
@@ -79,6 +80,7 @@ module StudentPerformance
 
       @newly_passed = @changes.count { |c| c[:to] == :passed }
       @newly_failed = @changes.count { |c| c[:to] == :failed }
+      @newly_inconclusive = @changes.count { |c| c[:to] == :inconclusive }
     end
 
     PreviewRule = Struct.new(

@@ -32,6 +32,7 @@ en:
         exempt: "Exempt"
         achievement_met: "Met"
         achievement_not_met: "Not met"
+        achievement_ungraded: "Not yet graded"
       index:
         subtitle: "Factual performance data computed from assessments."
         recompute_all: "Recompute All"
@@ -95,6 +96,7 @@ en:
         affected: "affected"
         newly_passed: "newly eligible"
         newly_failed: "newly ineligible"
+        newly_inconclusive: "newly inconclusive"
         no_changes: "No students would change status with these settings."
         no_rule: "Save a rule first to preview its impact."
     evaluator:
@@ -103,12 +105,14 @@ en:
       status:
         passed: "Eligible"
         failed: "Not Eligible"
+        inconclusive: "Inconclusive"
       bulk_proposals:
         title: "Eligibility Proposals"
         subtitle: "Evaluated all students against the active eligibility rule."
         total: "Total Students"
         passed: "Proposed Eligible"
         failed: "Proposed Not Eligible"
+        inconclusive: "Proposed Inconclusive"
         meets_points: "Points"
         meets_achievements: "Achievements"
         proposal: "Proposal"
@@ -125,6 +129,7 @@ en:
         total_changes: "Students Affected"
         newly_passed: "Newly Eligible"
         newly_failed: "Newly Not Eligible"
+        newly_inconclusive: "Newly Inconclusive"
         current_status: "Current"
         new_status: "With new rule"
         no_changes: "No students would change status with this threshold."
@@ -153,6 +158,7 @@ en:
         bulk_accept: "Accept Open Proposals"
         proposed_passed: "eligible"
         proposed_failed: "not eligible"
+        proposed_inconclusive: "inconclusive"
         accept: "Accept"
         override: "Override"
         certify_pass: "Certify: Eligible"

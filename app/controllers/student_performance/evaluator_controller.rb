@@ -29,6 +29,7 @@ module StudentPerformance
       @proposals = evaluator.bulk_evaluate(records)
       @passed_count = @proposals.count { |_, r| r.proposed_status == :passed }
       @failed_count = @proposals.count { |_, r| r.proposed_status == :failed }
+      @inconclusive_count = @proposals.count { |_, r| r.proposed_status == :inconclusive }
     end
 
     def preview_rule_change
@@ -64,6 +65,7 @@ module StudentPerformance
 
       @newly_passed = @changes.count { |c| c[:to] == :passed }
       @newly_failed = @changes.count { |c| c[:to] == :failed }
+      @newly_inconclusive = @changes.count { |c| c[:to] == :inconclusive }
     end
 
     def single_proposal

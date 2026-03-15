@@ -32,6 +32,7 @@ de:
         exempt: "Befreit"
         achievement_met: "Erfüllt"
         achievement_not_met: "Nicht erfüllt"
+        achievement_ungraded: "Noch nicht bewertet"
       index:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
         recompute_all: "Alle neu berechnen"
@@ -95,6 +96,7 @@ de:
         affected: "betroffen"
         newly_passed: "neu zugelassen"
         newly_failed: "neu nicht zugelassen"
+        newly_inconclusive: "neu unklar"
         no_changes: "Keine Studierenden würden mit diesen Einstellungen den Status wechseln."
         no_rule: "Speichern Sie zuerst eine Regel, um deren Auswirkung zu sehen."
     evaluator:
@@ -103,12 +105,14 @@ de:
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
+        inconclusive: "Unklar"
       bulk_proposals:
         title: "Zulassungsvorschläge"
         subtitle: "Alle Studierenden anhand der aktiven Zulassungsregel ausgewertet."
         total: "Studierende gesamt"
         passed: "Vorschlag: Zugelassen"
         failed: "Vorschlag: Nicht zugelassen"
+        inconclusive: "Vorschlag: Unklar"
         meets_points: "Punkte"
         meets_achievements: "Zusatzkriterien"
         proposal: "Vorschlag"
@@ -125,6 +129,7 @@ de:
         total_changes: "Betroffene Studierende"
         newly_passed: "Neu zugelassen"
         newly_failed: "Neu nicht zugelassen"
+        newly_inconclusive: "Neu unklar"
         current_status: "Aktuell"
         new_status: "Mit neuer Regel"
         no_changes: "Kein/e Studierende/r würde mit dieser Schwelle den Status ändern."
@@ -153,6 +158,7 @@ de:
         bulk_accept: "Offene Vorschläge akzeptieren"
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
+        proposed_inconclusive: "unklar"
         accept: "Akzeptieren"
         override: "Überschreiben"
         certify_pass: "Zulassen"

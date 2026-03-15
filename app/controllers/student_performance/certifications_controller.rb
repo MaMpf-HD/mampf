@@ -114,6 +114,8 @@ module StudentPerformance
             next
           end
 
+          next if result.proposed_status == :inconclusive
+
           cert.assign_attributes(
             status: result.proposed_status,
             source: :computed,
@@ -263,6 +265,9 @@ module StudentPerformance
         uncertified_proposals = @proposal_by_user.except(*certified_user_ids)
         @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
         @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
+        @proposed_inconclusive = uncertified_proposals.count do |_, r|
+          r.proposed_status == :inconclusive
+        end
       end
 
       def load_filtered_records
