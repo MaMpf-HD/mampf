@@ -54,19 +54,28 @@ module StudentPerformance
     end
 
     def recompute_status
-      scope = @lecture.student_performance_records
-      record_count = scope.count
-      null_count = scope.where(computed_at: nil).count
-      has_null = null_count.positive?
-      oldest = scope.minimum(:computed_at)
       threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
+      unless threshold
+        render json: { done: false }
+        return
+      end
+
+      stats = @lecture.student_performance_records
+                      .pick(
+                        Arel.sql("COUNT(*)"),
+                        Arel.sql("COUNT(*) FILTER (WHERE computed_at IS NULL)"),
+                        Arel.sql("MIN(computed_at)")
+                      )
+      record_count, null_count, oldest = stats
       member_count = @lecture.members.count
-      has_members = member_count.positive?
-      done = threshold.present? &&
-             ((!has_members && record_count.zero?) ||
-              (has_members &&
-               record_count >= member_count &&
-               !has_null && oldest.present? && oldest > threshold))
+
+      done = if member_count.zero?
+        record_count.zero?
+      else
+        record_count >= member_count &&
+          null_count.zero? &&
+          oldest.present? && oldest > threshold
+      end
 
       render json: { done: done }
     rescue ArgumentError
