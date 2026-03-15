@@ -130,11 +130,6 @@ module StudentPerformance
       def achievement_ids_met_by_id(user_id)
         return [] if lecture_achievements.empty?
 
-        assessment_ids = lecture_achievements.filter_map do |a|
-          a.assessment&.id
-        end
-        return [] if assessment_ids.empty?
-
         grade_texts = achievement_participations_cache
                       .fetch(user_id, {})
 
