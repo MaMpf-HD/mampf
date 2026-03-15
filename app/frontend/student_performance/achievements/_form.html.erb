@@ -55,7 +55,10 @@
                        },
                        {},
                        { class: "form-select",
-                         data: { action: "achievement-form#toggle" } } %>
+                         data: {
+                           achievement_form_target: "valueType",
+                           action: "achievement-form#toggle"
+                         } } %>
         </div>
 
         <div
@@ -69,7 +72,10 @@
 
           <%= f.number_field :threshold,
                              class: "form-control",
-                             step: "any" %>
+                             step: "any",
+                             data: {
+                               achievement_form_target: "thresholdInput"
+                             } %>
 
           <% if achievement.errors[:threshold].any? %>
             <div class="text-danger small mt-1">
