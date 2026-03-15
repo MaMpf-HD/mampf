@@ -25,10 +25,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      it "shows the dashboard title" do
+      it "shows the dashboard subtitle" do
         get lecture_student_performance_certifications_path(lecture)
         expect(response.body).to include(
-          I18n.t("student_performance.certifications.index.title")
+          I18n.t("student_performance.certifications.index.subtitle")
         )
       end
 

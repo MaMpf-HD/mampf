@@ -3,14 +3,9 @@
     <% assessables_with_assessment = assessables.select(&:assessment) %>
 
     <% if type == "Talk" %>
-      <h3 class="lecture-pane-header">
-        <%= t('assessment.talks') %>
-      </h3>
-
-      <div class="alert alert-info mb-3">
-        <i class="bi bi-info-circle me-2"></i>
+      <p class="text-muted small mb-2">
         <%= t('assessment.info.talks_created_in_roster') %>
-      </div>
+      </p>
 
       <% if assessables_with_assessment.any? %>
         <table class="table table-hover mb-4">
@@ -35,9 +30,9 @@
       <% end %>
 
     <% elsif type == "Assignment" %>
-      <h3 class="lecture-pane-header">
-        <%= t('assessment.assignments') %>
-      </h3>
+      <p class="text-muted small mb-2">
+        <%= t('assessment.subtitle.assignments') %>
+      </p>
 
       <div class="row mb-3">
         <div class="col-12 text-center">

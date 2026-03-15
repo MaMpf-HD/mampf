@@ -1,19 +1,13 @@
 <%= turbo_frame_tag "performance-certifications-frame" do %>
   <div
     class="
-      d-flex justify-content-between align-items-end border-bottom pb-3 mb-4
+      d-flex justify-content-between align-items-end pb-2 mb-2
       mt-2
     "
   >
-    <div>
-      <h4 class="mb-1">
-        <%= t("student_performance.certifications.index.title") %>
-      </h4>
-
-      <p class="text-muted small mb-0">
-        <%= t("student_performance.certifications.index.subtitle") %>
-      </p>
-    </div>
+    <p class="text-muted small mb-0">
+      <%= t("student_performance.certifications.index.subtitle") %>
+    </p>
 
     <div class="d-flex gap-2">
       <% if @rule && @uncertified_count > 0 %>

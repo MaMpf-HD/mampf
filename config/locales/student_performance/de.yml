@@ -33,7 +33,6 @@ de:
         achievement_met: "Erfüllt"
         achievement_not_met: "Nicht erfüllt"
       index:
-        title: "Leistungsdaten"
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
         recompute_all: "Alle neu berechnen"
         generate_proposals: "Vorschläge generieren"
@@ -144,7 +143,6 @@ de:
     certifications:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
-        title: "Prüfungszulassungen"
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
         total: "Studierende gesamt"
         passed: "Zugelassen"

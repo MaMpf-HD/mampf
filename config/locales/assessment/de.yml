@@ -8,6 +8,8 @@ de:
       achievements: "Nachweise"
       certifications: "Prüfungszulassungen"
     assessments: 'Testate'
+    subtitle:
+      assignments: 'Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten.'
     achievements:
       placeholder: 'Nachweise werden in einem späteren Schritt hier angezeigt.'
       flash:
@@ -17,7 +19,7 @@ de:
       errors:
         not_found: 'Nachweis nicht gefunden.'
         referenced_by_rules: 'Löschen nicht möglich: Nachweis wird von einer Regel referenziert.'
-      title: 'Nachweise'
+      subtitle: 'Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen.'
       new: 'Neuer Nachweis'
       edit: 'Nachweis bearbeiten'
       value_types:
