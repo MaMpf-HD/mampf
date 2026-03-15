@@ -9,7 +9,7 @@ export default class extends Controller {
 
   toggle() {
     const selected = this.element.querySelector(
-      "input[name='rule[threshold_mode]']:checked"
+      "input[name='rule[threshold_mode]']:checked",
     )?.value;
 
     this.percentageInputTarget.hidden = selected !== "percentage";
