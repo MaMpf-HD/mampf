@@ -59,12 +59,11 @@ module StudentPerformance
       def achievements_status(record)
         return :met if required_achievement_ids.empty?
 
-        have = Array(record.achievements_met_ids).map(&:to_i).to_set
+        have = Array(record.achievements_met_ids).to_set(&:to_i)
         need = required_achievement_ids.to_set
         return :met if have >= need
 
-        ungraded = Array(record.achievements_ungraded_ids)
-                   .map(&:to_i).to_set
+        ungraded = Array(record.achievements_ungraded_ids).to_set(&:to_i)
         missing = need - have
         return :ungraded if missing.any? { |id| ungraded.include?(id) }
 

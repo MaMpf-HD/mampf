@@ -349,7 +349,7 @@ namespace :assessment do
     count = Assessment::Participation
             .where(assessment_id: ids)
             .where.not(grade_text: [nil, ""])
-            .update_all(grade_text: nil)
+            .update_all(grade_text: nil) # rubocop:disable Rails/SkipsModelValidations
     puts "✅ Cleared grade_text for #{count} achievement participations."
   end
 
