@@ -1,4 +1,5 @@
-# Renders an overview of assessments, including tabs for performance and rules.
+# Renders an overview of assessments with tabs for assessments, achievements,
+# performance, and certifications.
 class AssessmentsOverviewComponent < ViewComponent::Base
   TABS = [:assessments, :achievements, :performance,
           :certifications].freeze
