@@ -25,15 +25,19 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def performance_enabled?
-    Flipper.enabled?(:student_performance)
+    Flipper.enabled?(:student_performance) && !lecture.seminar?
   end
 
   def achievements_enabled?
-    Flipper.enabled?(:student_performance)
+    Flipper.enabled?(:student_performance) && !lecture.seminar?
   end
 
   def certifications_enabled?
-    Flipper.enabled?(:student_performance)
+    Flipper.enabled?(:student_performance) && !lecture.seminar?
+  end
+
+  def single_tab?
+    visible_tabs.size == 1
   end
 
   def visible_tabs

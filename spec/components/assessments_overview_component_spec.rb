@@ -117,5 +117,45 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
         expect(component.visible_tabs).not_to include(:achievements)
       end
     end
+
+    context "for a seminar with student_performance enabled" do
+      before { Flipper.enable(:student_performance) }
+
+      let(:seminar) do
+        create(:lecture, :released_for_all,
+               teacher: teacher, sort: "seminar")
+      end
+
+      it "only includes :assessments" do
+        component = described_class.new(lecture: seminar)
+        expect(component.visible_tabs).to eq([:assessments])
+      end
+
+      it "reports single_tab? as true" do
+        component = described_class.new(lecture: seminar)
+        expect(component.single_tab?).to be(true)
+      end
+
+      it "falls back to :assessments for :performance" do
+        component = described_class.new(
+          lecture: seminar, active_tab: :performance
+        )
+        expect(component.active_tab).to eq(:assessments)
+      end
+    end
+  end
+
+  describe "#single_tab?" do
+    it "is false for a lecture with student_performance enabled" do
+      Flipper.enable(:student_performance)
+      component = described_class.new(lecture: lecture)
+      expect(component.single_tab?).to be(false)
+    end
+
+    it "is true when student_performance is disabled" do
+      Flipper.disable(:student_performance)
+      component = described_class.new(lecture: lecture)
+      expect(component.single_tab?).to be(true)
+    end
   end
 end
