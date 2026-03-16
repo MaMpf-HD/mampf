@@ -9,9 +9,20 @@ de:
     talk: 'Vortrag'
     talks: 'Vorträge'
     tasks: 'Aufgaben'
+    submissions: 'Abgaben'
     points: 'Punkte'
+    grades: 'Noten'
+    grade: 'Note'
     participants: 'Teilnehmer'
     grading: 'Bewertung'
+    graded_by: 'Bewertet von'
+    graded_at: 'Bewertet am'
+    no_grades_yet: 'Es wurden noch keine Noten eingetragen.'
+    grade_table:
+      absent: 'nicht angetreten'
+      exempt: 'entschuldigt'
+      excluded_heading: 'Sonderfälle'
+      reason: 'Grund'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe erforderlich'
@@ -98,9 +109,10 @@ de:
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grading_overview:
-      submission_progress: 'Abgabefortschritt'
+      submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
       missing: 'Ausstehend'
+      not_submitted: 'Nicht abgegeben'
       progress: 'Fortschritt'
       unassigned: 'Nicht zugewiesen'
       no_submission_required: 'Für diese Bewertung ist keine digitale Abgabe erforderlich.'
@@ -114,9 +126,7 @@ de:
     overview: 'Übersicht'
     settings: 'Einstellungen'
     roster: 'Teilnehmerliste'
-    grading_management: 'Bewertungsverwaltung'
-    grading_placeholder: 'Bewertungsverwaltung ist noch nicht verfügbar'
-    grading_description: 'Hier können Sie Noten und Bewertungskriterien für diese Prüfung verwalten.'
+    points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     statistics_analysis: 'Statistiken & Analyse'
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
@@ -128,6 +138,10 @@ de:
           attributes:
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            grade_numeric:
+              not_gradable: "kann nicht für ein nicht-benotbares Assessment gesetzt werden"
         assessment/task_point:
           attributes:
             base:

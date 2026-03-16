@@ -1,0 +1,144 @@
+<% if any_gradeable? %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th><%= t("basics.name") %></th>
+
+        <% if show_tutorial_column? %>
+          <th><%= t("basics.tutorial") %></th>
+        <% end %>
+
+        <% if show_points_column? %>
+          <th class="text-center"><%= t("assessment.points") %></th>
+        <% end %>
+
+        <th class="text-center"><%= t("assessment.grade") %></th>
+        <th><%= t("assessment.graded_by") %></th>
+        <th><%= t("assessment.graded_at") %></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% gradeable_participations.each do |participation| %>
+        <tr>
+          <td><%= participation.user.tutorial_name %></td>
+
+          <% if show_tutorial_column? %>
+            <td><%= participation.tutorial&.title %></td>
+          <% end %>
+
+          <% if show_points_column? %>
+            <td class="text-center"><%= points_display(participation) %></td>
+          <% end %>
+
+          <td class="text-center"><%= grade_display(participation) %></td>
+          <td class="text-muted small"><%= grader_display(participation) %></td>
+
+          <td class="text-muted small">
+            <%= graded_at_display(participation) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-mortarboard me-1"></i>
+    <%= t("assessment.no_grades_yet") %>
+  </div>
+<% end %>
+
+<% if any_excluded? %>
+  <% if absent_participations.any? %>
+    <div class="card mt-3 border-danger">
+      <div class="card-header bg-danger bg-opacity-10">
+        <h6 class="mb-0">
+          <i class="bi bi-person-x me-1"></i>
+          <%= t("assessment.grade_table.absent").capitalize %>
+
+          <span class="badge bg-danger ms-1">
+            <%= absent_participations.size %>
+          </span>
+        </h6>
+      </div>
+
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+
+              <% if show_tutorial_column? %>
+                <th><%= t("basics.tutorial") %></th>
+              <% end %>
+
+              <th class="text-center"><%= t("assessment.grade") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% absent_participations.each do |participation| %>
+              <tr>
+                <td><%= participation.user.tutorial_name %></td>
+
+                <% if show_tutorial_column? %>
+                  <td><%= participation.tutorial&.title %></td>
+                <% end %>
+
+                <td class="text-center">
+                  <span class="badge bg-danger">
+                    <%= absent_grade_display(participation) %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+  <% if exempt_participations.any? %>
+    <div class="card mt-3">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="bi bi-person-dash me-1"></i>
+          <%= t("assessment.grade_table.exempt").capitalize %>
+
+          <span class="badge bg-secondary ms-1">
+            <%= exempt_participations.size %>
+          </span>
+        </h6>
+      </div>
+
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+
+              <% if show_tutorial_column? %>
+                <th><%= t("basics.tutorial") %></th>
+              <% end %>
+
+              <th class="text-center"><%= t("assessment.grade") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% exempt_participations.each do |participation| %>
+              <tr>
+                <td><%= participation.user.tutorial_name %></td>
+
+                <% if show_tutorial_column? %>
+                  <td><%= participation.tutorial&.title %></td>
+                <% end %>
+
+                <td class="text-center text-muted">&mdash;</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+<% end %>

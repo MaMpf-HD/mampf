@@ -6,8 +6,9 @@
 # ## Lazy Participation Creation Model
 #
 # In production, Assessment::Participation records are created lazily:
-# - When a student submits work → status: :submitted
-# - When a tutor grades → status: :graded
+# - When a student submits work → status: :pending
+# - When a tutor reviews → status: :reviewed
+# - When marked absent → status: :absent
 # - When marked exempt → status: :exempt
 #
 # The absence of a participation record means "not started".
@@ -19,8 +20,10 @@
 # assessment:create_assignments  - Creates 3 test assignments
 # assessment:create_tasks        - Creates 3-5 random tasks per assignment
 # assessment:seed_participations - Seeds participations (simulates submissions)
-# assessment:randomize_statuses  - Randomizes: some graded, some exempt, some deleted
-# assessment:setup               - Runs all of the above
+# assessment:randomize_statuses  - Randomizes: some reviewed, some exempt, some deleted
+# assessment:seed_grades         - Assigns random German grades to reviewed participations
+# assessment:seed_seminar_grades - Grades speakers in the two-stage seminar campaign
+# assessment:setup               - Runs all of the above (except seed_seminar_grades)
 # assessment:reset               - Destroys test assignments
 #
 # ## Usage
@@ -125,13 +128,53 @@ namespace :assessment do
         assessment.assessment_participations.create!(
           user_id: membership.user_id,
           tutorial_id: membership.tutorial_id,
-          status: :submitted,
+          status: :pending,
           submitted_at: assignment.deadline - rand(1..72).hours
         )
         created += 1
       end
 
       puts "✓ Created #{created} participations for: #{assignment.title}"
+    end
+
+    if lecture.respond_to?(:exams)
+      membership_lookup = TutorialMembership
+                          .where(tutorial_id: lecture.tutorial_ids)
+                          .pluck(:user_id, :tutorial_id)
+                          .to_h
+
+      lecture.exams.each do |exam|
+        assessment = exam.assessment
+        next unless assessment
+
+        existing_count = assessment.assessment_participations.count
+        if existing_count.positive?
+          puts "✓ Participations already exist for: #{exam.title} (#{existing_count})"
+          next
+        end
+
+        roster_user_ids = exam.exam_rosters.pluck(:user_id)
+        if roster_user_ids.empty?
+          puts "  ⏭ No roster entries for: #{exam.title} (run exam:setup first)"
+          next
+        end
+
+        created = 0
+        roster_user_ids.each do |uid|
+          tutorial_id = membership_lookup[uid]
+          next unless tutorial_id
+
+          assessment.assessment_participations.create!(
+            user_id: uid,
+            tutorial_id: tutorial_id,
+            status: :pending,
+            submitted_at: (exam.date || Time.current) - rand(1..4).hours
+          )
+          created += 1
+        end
+
+        puts "✓ Created #{created} participations for: #{exam.title}"
+      end
     end
   end
 
@@ -143,47 +186,86 @@ namespace :assessment do
     abort "No lecture with tutorials found." unless lecture
 
     lecture.tutorials.each do |tutorial|
-      submission_rate = rand(40..95) / 100.0
-      grading_rate = rand(20..60) / 100.0
+      submission_rate = rand(70..90) / 100.0
+      grading_rate = rand(50..85) / 100.0
 
       participations = Assessment::Participation.where(tutorial_id: tutorial.id)
       next if participations.empty?
 
       participations.each do |p|
-        roll = rand
+        is_physical = p.assessment.assessable_type.in?(["Exam", "Talk"])
+        assessable = p.assessment.assessable
+        future_deadline = assessable.respond_to?(:deadline) &&
+                          assessable.deadline&.future?
 
-        if roll < 0.02
+        if rand < 0.05
           p.update!(status: :exempt, submitted_at: nil)
-        elsif roll < (1 - submission_rate)
-          p.destroy!
-        elsif rand < grading_rate
+        elsif is_physical && rand < 0.10
+          p.update!(status: :absent, submitted_at: nil)
+        elsif !is_physical && rand > submission_rate
+          if future_deadline
+            p.destroy!
+          else
+            p.update!(submitted_at: nil)
+          end
+        elsif !future_deadline && rand < grading_rate
+          base_time = p.submitted_at || Time.current
           p.update!(
-            status: :graded,
-            graded_at: p.submitted_at + rand(1..48).hours,
+            status: :reviewed,
+            graded_at: base_time + rand(1..48).hours,
             grader_id: tutorial.tutors.first&.id
           )
         end
       end
 
       remaining = Assessment::Participation.where(tutorial_id: tutorial.id)
-      submitted = remaining.where(status: :submitted).count
-      graded = remaining.where(status: :graded).count
+      pending = remaining.where(status: :pending).count
+      reviewed = remaining.where(status: :reviewed).count
+      absent = remaining.where(status: :absent).count
       exempt = remaining.where(status: :exempt).count
 
       puts "✓ Tutorial '#{tutorial.title}': #{remaining.count} total " \
-           "(#{submitted} submitted, #{graded} graded, #{exempt} exempt)"
+           "(#{pending} pending, #{reviewed} reviewed, " \
+           "#{absent} absent, #{exempt} exempt)"
+    end
+  end
+
+  desc "Assign random German grades to reviewed participations"
+  task seed_grades: :environment do
+    Flipper.enable(:assessment_grading)
+
+    lecture = Lecture.joins(:tutorials).distinct.first
+    abort "No lecture with tutorials found." unless lecture
+
+    german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+
+    if lecture.respond_to?(:talks)
+      lecture.talks.each do |talk|
+        seed_grades_for(talk.assessment, german_grades, talk.title)
+      end
+    end
+
+    if lecture.respond_to?(:exams)
+      lecture.exams.each do |exam|
+        seed_grades_for(exam.assessment, german_grades, exam.title)
+      end
     end
   end
 
   desc "Run full assessment playground setup"
   task setup: :environment do
+    old_level = ActiveRecord::Base.logger&.level
+    ActiveRecord::Base.logger&.level = :warn
+
     Rake::Task["assessment:create_assignments"].invoke
     Rake::Task["assessment:create_tasks"].invoke
     Rake::Task["assessment:seed_participations"].invoke
     Rake::Task["assessment:randomize_statuses"].invoke
+    Rake::Task["assessment:seed_grades"].invoke
 
-    puts "\n✅ Assessment playground setup complete!"
-    puts "Visit the lecture's Grading tab to see the results."
+    print_summary
+
+    ActiveRecord::Base.logger&.level = old_level
   end
 
   desc "Reset assessment playground (destroy test assignments)"
@@ -202,11 +284,135 @@ namespace :assessment do
       assignment = lecture.assignments.find_by(title: title)
       next unless assignment
 
+      if assignment.assessment
+        pid = assignment.assessment.assessment_participations.select(:id)
+        Assessment::TaskPoint.where(assessment_participation_id: pid).delete_all
+        assignment.assessment.assessment_participations.delete_all
+        assignment.assessment.tasks.delete_all
+      end
+
       assignment.destroy!
       destroyed += 1
       puts "✓ Destroyed: #{title}"
     end
 
     puts "Done. Destroyed #{destroyed} test assignments."
+  end
+
+  def print_summary
+    lecture = Lecture.joins(:tutorials).distinct.first
+    return unless lecture
+
+    puts "\n#{"=" * 85}"
+    puts "Assessment Playground Summary"
+    puts "=" * 85
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades"
+    puts "-" * 85
+
+    assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
+    if lecture.respond_to?(:talks)
+      assessables += lecture.talks.map { |t| [t.title, t.assessment, t] }
+    end
+    if lecture.respond_to?(:exams)
+      assessables += lecture.exams.map { |e| [e.title, e.assessment, e] }
+    end
+
+    assessables.each do |label, assessment, assessable|
+      next unless assessment
+
+      parts = assessment.assessment_participations
+      reviewed = parts.where(status: :reviewed).count
+      pending_sub = parts.where(status: :pending)
+                         .where.not(submitted_at: nil).count
+      pending_nosub = parts.where(status: :pending, submitted_at: nil).count
+      absent = parts.where(status: :absent).count
+      exempt = parts.where(status: :exempt).count
+      gradable = assessable.is_a?(Assessment::Gradable)
+      grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
+      puts format(
+        "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<g>s",
+        name: label.truncate(35), r: reviewed, p: pending_sub,
+        ns: pending_nosub, a: absent, e: exempt, g: grades
+      )
+    end
+
+    puts "=" * 85
+    puts "✅ Setup complete! Visit the lecture's Grading tab."
+  end
+
+  desc "Seed grades for talks in the two-stage seminar campaign"
+  task seed_seminar_grades: :environment do
+    Flipper.enable(:assessment_grading)
+
+    course = Course.find_by(title: "Campaign Test Seminar")
+    abort "Seminar course not found. Run solver:create_two_stage_campaign first." unless course
+
+    seminar = Lecture.find_by(course: course)
+    abort "Seminar lecture not found." unless seminar
+
+    german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+    graded_count = 0
+    skipped_count = 0
+
+    seminar.talks.includes(:speakers).find_each do |talk|
+      assessment = talk.assessment
+      unless assessment
+        puts "  ⏭ No assessment for talk: #{talk.title}"
+        skipped_count += 1
+        next
+      end
+
+      if talk.speakers.empty?
+        puts "  ⏭ No speakers for talk: #{talk.title}"
+        skipped_count += 1
+        next
+      end
+
+      talk.speakers.each do |speaker|
+        participation = assessment.assessment_participations
+                                  .find_or_initialize_by(user: speaker)
+
+        if participation.grade_numeric.present?
+          puts "  ✓ Already graded: #{speaker.tutorial_name} → #{talk.title}"
+          next
+        end
+
+        grade = german_grades.sample
+        participation.assign_attributes(
+          status: :reviewed,
+          grade_numeric: grade,
+          graded_at: Time.current - rand(1..72).hours,
+          grader: seminar.teacher
+        )
+        participation.save!
+        graded_count += 1
+      end
+    end
+
+    puts "\nDone. Graded #{graded_count} talk participations, " \
+         "skipped #{skipped_count} talks."
+  end
+
+  def seed_grades_for(assessment, german_grades, label)
+    return unless assessment
+
+    graded = assessment.assessment_participations.where(status: :reviewed)
+    if graded.empty?
+      puts "  ⏭ No reviewed participations for: #{label}"
+      return
+    end
+
+    already_graded = graded.where.not(grade_numeric: nil).count
+    if already_graded == graded.count
+      puts "  ✓ Grades already set for: #{label} (#{already_graded})"
+      return
+    end
+
+    graded.where(grade_numeric: nil).find_each do |p|
+      grade = german_grades.sample
+      p.update!(grade_numeric: grade)
+    end
+
+    puts "  ✓ Assigned grades to #{graded.count} participations for: #{label}"
   end
 end

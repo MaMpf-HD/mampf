@@ -48,20 +48,38 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "common header"
     include_examples "visible tab", "settings"
     include_examples "visible tab", "tasks"
-    include_examples "visible tab", "grading"
+    include_examples "visible tab", "points"
     include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "grades"
 
     describe "#tabs" do
-      it "returns four TabConfig entries" do
+      it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
-        expect(keys).to eq(["settings", "tasks", "grading", "statistics"])
+        expect(keys).to eq(
+          ["settings", "tasks", "points", "statistics"]
+        )
+      end
+    end
+
+    describe "submissions in statistics tab" do
+      it "includes submission overview when requires_submission is true" do
+        assessment.update!(requires_submission: true)
+        render_inline(component)
+        expect(rendered_content).to include("grading_overview_component")
       end
 
-      it "uses GradingOverviewComponent for the grading tab" do
-        grading = component.tabs.find { |t| t.key == "grading" }
-        expect(grading.component).to be_a(GradingOverviewComponent)
+      it "does not include submission overview when requires_submission is false" do
+        assessment.update!(requires_submission: false)
+        comp = described_class.new(
+          assessable: assignment, assessment: assessment, lecture: lecture
+        )
+        render_inline(comp)
+        pane_id = "#{comp.dom_prefix}-statistics"
+        pane_html = rendered_content[/id="#{pane_id}".*?(?=<div[^>]*id="#{comp.dom_prefix}-)/m] ||
+                    rendered_content
+        expect(pane_html).not_to include("grading_overview_component")
       end
     end
 
@@ -104,11 +122,6 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
         /nav-link\s+active[^>]*data-bs-target="#[^"]*-tasks"/m
       )
     end
-
-    it "renders the GradingOverviewComponent inside the grading pane" do
-      render_inline(component)
-      expect(rendered_content).to include("grading_overview_component")
-    end
   end
 
   context "with an exam" do
@@ -125,27 +138,23 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "visible tab", "overview"
     include_examples "visible tab", "settings"
     include_examples "visible tab", "tasks"
-    include_examples "visible tab", "grading"
+    include_examples "visible tab", "points"
+    include_examples "visible tab", "grades"
     include_examples "visible tab", "roster"
     include_examples "visible tab", "statistics"
 
     describe "#tabs" do
-      it "returns six TabConfig entries" do
+      it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["overview", "settings", "tasks", "grading", "roster", "statistics"]
+          ["overview", "settings", "tasks", "points", "grades", "roster", "statistics"]
         )
-      end
-
-      it "uses PlaceholderTabComponent for the grading tab" do
-        grading = component.tabs.find { |t| t.key == "grading" }
-        expect(grading.component).to be_a(PlaceholderTabComponent)
       end
     end
 
-    it "renders all six tabs" do
+    it "renders GradeTableComponent in the grades pane" do
       render_inline(component)
-      expect(rendered_content.scan("nav-link").size).to eq(6)
+      expect(rendered_content).to include("grade_table_component")
     end
 
     describe "#default_tab" do
@@ -191,33 +200,35 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     end
 
     include_examples "common header"
-    include_examples "visible tab", "grading"
-    include_examples "visible tab", "statistics"
+    include_examples "visible tab", "grades"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "settings"
     include_examples "hidden tab", "tasks"
     include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "submissions"
+    include_examples "hidden tab", "points"
+    include_examples "hidden tab", "statistics"
 
     describe "#tabs" do
-      it "returns two TabConfig entries" do
+      it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
-        expect(keys).to eq(["grading", "statistics"])
-      end
-
-      it "uses PlaceholderTabComponent for the grading tab" do
-        grading = component.tabs.find { |t| t.key == "grading" }
-        expect(grading.component).to be_a(PlaceholderTabComponent)
+        expect(keys).to eq(["grades"])
       end
     end
 
-    it "renders exactly two tabs" do
+    it "renders exactly one tab" do
       render_inline(component)
-      expect(rendered_content.scan("nav-link").size).to eq(2)
+      expect(rendered_content.scan("nav-link").size).to eq(1)
+    end
+
+    it "renders GradeTableComponent in the grades pane" do
+      render_inline(component)
+      expect(rendered_content).to include("grade_table_component")
     end
 
     describe "#default_tab" do
-      it 'returns "grading"' do
-        expect(component.default_tab).to eq("grading")
+      it 'returns "grades"' do
+        expect(component.default_tab).to eq("grades")
       end
     end
 
@@ -237,10 +248,10 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       end
     end
 
-    it "activates the grading tab by default" do
+    it "activates the grades tab by default" do
       render_inline(component)
       expect(rendered_content).to match(
-        /nav-link\s+active[^>]*data-bs-target="#[^"]*-grading"/m
+        /nav-link\s+active[^>]*data-bs-target="#[^"]*-grades"/m
       )
     end
   end

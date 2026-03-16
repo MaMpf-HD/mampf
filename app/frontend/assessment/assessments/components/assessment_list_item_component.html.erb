@@ -12,6 +12,13 @@
 
   <% if assessable.is_a?(Talk) %>
     <td><%= speaker_names %></td>
+    <td class="text-center">
+      <% if grade_display %>
+        <span class="badge bg-success"><%= grade_display %></span>
+      <% else %>
+        <span class="text-muted">&mdash;</span>
+      <% end %>
+    </td>
     <td><%= talk_date %></td>
   <% elsif legacy %>
     <td colspan="5" class="text-muted">

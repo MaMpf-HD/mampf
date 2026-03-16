@@ -50,7 +50,7 @@ RSpec.describe(Assessment::Gradable) do
       participation = talk.assessment.assessment_participations.find_by(user: user)
       expect(participation.grade_numeric).to eq(1.3)
       expect(participation.grader_id).to eq(grader.id)
-      expect(participation.status).to eq("graded")
+      expect(participation.status).to eq("reviewed")
       expect(participation.graded_at).to be_present
     end
 

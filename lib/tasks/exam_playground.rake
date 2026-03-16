@@ -74,7 +74,7 @@ namespace :exam do
     if assessment.tasks.any?
       puts "✓ Tasks already exist for exam (#{assessment.tasks.count} tasks, " \
            "#{assessment.tasks.sum(:max_points)} pts total)"
-      return
+      next
     end
 
     tasks_spec = [
@@ -217,14 +217,51 @@ namespace :exam do
 
   desc "Run full exam playground setup"
   task setup: :environment do
+    old_level = ActiveRecord::Base.logger&.level
+    ActiveRecord::Base.logger&.level = :warn
+
     Rake::Task["exam:create_exam"].invoke
     Rake::Task["exam:create_tasks"].invoke
     Rake::Task["exam:create_campaign"].invoke
     Rake::Task["exam:create_registrations"].invoke
     Rake::Task["exam:finalize_campaign"].invoke
 
-    puts "\n✅ Exam playground setup complete!"
-    puts "Visit the exam dashboard to explore all tabs."
+    ActiveRecord::Base.logger&.level = old_level
+
+    lecture = Lecture.joins(:tutorials).distinct.first
+    exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
+    campaign = Registration::Campaign.find_by(campaignable: lecture,
+                                              description: "Exam Registration Campaign")
+
+    puts "\n#{"=" * 60}"
+    puts "Exam Playground Summary"
+    puts "=" * 60
+
+    if exam
+      assessment = exam.assessment
+      tasks_count = assessment&.tasks&.count || 0
+      total_pts = assessment&.tasks&.sum(:max_points) || 0
+      roster_count = exam.exam_rosters.count
+      puts format("%-25<k>s %<v>s", k: "Exam:", v: exam.title)
+      date_str = exam.date&.strftime("%Y-%m-%d") || "n/a"
+      puts format("%-25<k>s %<v>s", k: "Date:", v: date_str)
+      puts format("%-25<k>s %<n>d (%<p>s pts)",
+                  k: "Tasks:", n: tasks_count, p: total_pts)
+      puts format("%-25<k>s %<v>d",
+                  k: "Roster entries:", v: roster_count)
+    end
+
+    if campaign
+      regs = campaign.user_registrations.count
+      puts format("%-25<k>s %<v>s",
+                  k: "Campaign status:", v: campaign.status)
+      puts format("%-25<k>s %<v>d",
+                  k: "Registrations:", v: regs)
+    end
+
+    puts "=" * 60
+    puts "✅ Exam setup complete!"
+    puts "Next: run assessment:setup to seed participations + grades."
   end
 
   desc "Reset exam playground (destroy exam + campaign)"
@@ -237,14 +274,24 @@ namespace :exam do
                                               description: "Exam Registration Campaign")
 
     if campaign
-      campaign.user_registrations.destroy_all
-      campaign.registration_items.destroy_all
-      campaign.destroy!
+      campaign.update_column(:status, 0) # rubocop:disable Rails/SkipsModelValidations
+      campaign.reload
+      campaign.user_registrations.delete_all
+      campaign.registration_items.delete_all
+      exam&.exam_rosters&.delete_all
+      campaign.delete
       puts "✓ Destroyed exam campaign + registrations"
     end
 
     if exam
-      exam.destroy!
+      if exam.assessment
+        pid = exam.assessment.assessment_participations.select(:id)
+        Assessment::TaskPoint.where(assessment_participation_id: pid).delete_all
+        exam.assessment.assessment_participations.delete_all
+        exam.assessment.tasks.delete_all
+        exam.assessment.delete
+      end
+      exam.delete
       puts "✓ Destroyed exam: Midterm Exam - Playground"
     end
 

@@ -45,10 +45,13 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
 
     context "grade_numeric validation" do
-      it "accepts valid German grades" do
+      let(:gradable_assessment) { FactoryBot.create(:assessment, :gradable) }
+
+      it "accepts valid German grades on gradable assessments" do
         valid_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
         valid_grades.each do |grade|
           participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
                                            grade_numeric: grade)
           expect(participation).to be_valid
         end
@@ -58,10 +61,19 @@ RSpec.describe(Assessment::Participation, type: :model) do
         invalid_grades = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.0]
         invalid_grades.each do |grade|
           participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
                                            grade_numeric: grade)
           expect(participation).not_to be_valid
           expect(participation.errors[:grade_numeric]).to be_present
         end
+      end
+
+      it "rejects grade_numeric on non-gradable assessments" do
+        participation = FactoryBot.build(:assessment_participation,
+                                         assessment: assessment,
+                                         grade_numeric: 1.0)
+        expect(participation).not_to be_valid
+        expect(participation.errors[:grade_numeric]).to be_present
       end
 
       it "allows nil" do

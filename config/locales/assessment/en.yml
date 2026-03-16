@@ -9,9 +9,20 @@ en:
     talk: 'Talk'
     talks: 'Talks'
     tasks: 'Tasks'
+    submissions: 'Submissions'
     points: 'Points'
+    grades: 'Grades'
+    grade: 'Grade'
     participants: 'Participants'
     grading: 'Grading'
+    graded_by: 'Graded by'
+    graded_at: 'Graded at'
+    no_grades_yet: 'No grades have been entered yet.'
+    grade_table:
+      absent: 'absent'
+      exempt: 'exempt'
+      excluded_heading: 'Special Cases'
+      reason: 'Reason'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
     requires_submission: 'Requires digital submission'
@@ -98,9 +109,10 @@ en:
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
     grading_overview:
-      submission_progress: 'Submission Progress'
+      submission_progress: 'Submissions'
       submitted: 'Submitted'
       missing: 'Missing'
+      not_submitted: 'Not submitted'
       progress: 'Progress'
       unassigned: 'Unassigned'
       no_submission_required: 'No digital submission required for this assessment.'
@@ -114,9 +126,7 @@ en:
     overview: 'Overview'
     settings: 'Settings'
     roster: 'Roster'
-    grading_management: 'Grading Management'
-    grading_placeholder: 'Grading management is not yet available'
-    grading_description: 'Here you can manage grades and grading criteria for this exam.'
+    points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
@@ -128,6 +138,10 @@ en:
           attributes:
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            grade_numeric:
+              not_gradable: "cannot be set on a non-gradable assessment"
         assessment/task_point:
           attributes:
             base:

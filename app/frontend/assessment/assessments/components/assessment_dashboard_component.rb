@@ -28,7 +28,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     elsif assignment?
       "settings"
     else
-      "grading"
+      "grades"
     end
   end
 
@@ -69,14 +69,19 @@ class AssessmentDashboardComponent < ViewComponent::Base
       assessable.is_a?(Assessment::Pointable)
     end
 
+    def gradable?
+      assessable.is_a?(Assessment::Gradable)
+    end
+
     def build_tabs
       [].tap do |t|
         t << overview_tab if exam?
         t << settings_tab if exam? || assignment?
         t << tasks_tab if pointable?
-        t << grading_tab
+        t << points_tab if pointable?
+        t << grades_tab if gradable?
         t << roster_tab if exam?
-        t << statistics_tab
+        t << statistics_tab unless assessable.is_a?(Talk)
       end
     end
 
@@ -125,22 +130,22 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
-    def grading_tab
+    def points_tab
       TabConfig.new(
-        "grading",
-        I18n.t("assessment.grading"),
-        grading_component
+        "points",
+        I18n.t("assessment.points"),
+        PlaceholderTabComponent.new(
+          message: I18n.t("assessment.points_grid_placeholder")
+        )
       )
     end
 
-    def grading_component
-      if assignment?
-        GradingOverviewComponent.new(assessment: assessment, lecture: lecture)
-      else
-        PlaceholderTabComponent.new(
-          message: I18n.t("assessment.grading_placeholder")
-        )
-      end
+    def grades_tab
+      TabConfig.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradeTableComponent.new(assessment: assessment)
+      )
     end
 
     def roster_tab
@@ -158,8 +163,8 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "statistics",
         I18n.t("assessment.statistics"),
-        PlaceholderTabComponent.new(
-          message: I18n.t("assessment.statistics_placeholder")
+        StatisticsTabComponent.new(
+          assessment: assessment, lecture: lecture
         )
       )
     end
