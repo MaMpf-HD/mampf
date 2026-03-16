@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -135,6 +135,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
     t.boolean "locked", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "note"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
@@ -181,6 +182,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_05_000001) do
     t.datetime "updated_at", null: false
     t.text "accepted_file_type", default: ".pdf"
     t.date "deletion_date", default: "2200-01-01", null: false
+    t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end

@@ -92,4 +92,22 @@ RSpec.describe(Assessment::Participation, type: :model) do
       end
     end
   end
+
+  describe ".tutorial_for" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    it "returns the tutorial_id for a user enrolled in the lecture" do
+      TutorialMembership.create!(user: user, tutorial: tutorial)
+
+      result = described_class.tutorial_for(user, lecture)
+      expect(result).to eq(tutorial.id)
+    end
+
+    it "returns nil when the user has no tutorial membership" do
+      result = described_class.tutorial_for(user, lecture)
+      expect(result).to be_nil
+    end
+  end
 end

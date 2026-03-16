@@ -28,6 +28,13 @@ module Assessment
               }
     validate :assessment_must_be_gradable, if: -> { grade_numeric.present? }
 
+    def self.tutorial_for(user, lecture)
+      TutorialMembership.joins(:tutorial)
+                        .where(tutorials: { lecture_id: lecture.id },
+                               user_id: user.id)
+                        .pick(:tutorial_id)
+    end
+
     private
 
       def assessment_must_be_gradable
