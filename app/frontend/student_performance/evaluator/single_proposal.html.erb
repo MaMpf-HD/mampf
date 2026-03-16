@@ -26,6 +26,10 @@
             <span class="badge bg-success fs-6">
               <%= t("student_performance.evaluator.status.passed") %>
             </span>
+          <% elsif @result.proposed_status == :inconclusive %>
+            <span class="badge bg-amber-subtle text-amber fs-6">
+              <%= t("student_performance.evaluator.status.inconclusive") %>
+            </span>
           <% else %>
             <span class="badge bg-danger fs-6">
               <%= t("student_performance.evaluator.status.failed") %>
@@ -126,17 +130,19 @@
                            .map(&:to_i)
                            .include?(achievement.id) %>
 
+                <% ungraded = Array(@record.achievements_ungraded_ids)
+                                .map(&:to_i)
+                                .include?(achievement.id) %>
+
                 <div class="d-flex justify-content-between mb-2">
                   <span><%= achievement.title %></span>
 
                   <% if met %>
-                    <span class="text-success">
-                      <i class="bi bi-check-circle-fill"></i>
-                    </span>
+                    <i class="bi bi-check-circle text-success"></i>
+                  <% elsif ungraded %>
+                    <i class="bi bi-question-circle text-amber"></i>
                   <% else %>
-                    <span class="text-danger">
-                      <i class="bi bi-x-circle-fill"></i>
-                    </span>
+                    <i class="bi bi-x-circle text-danger"></i>
                   <% end %>
                 </div>
               <% end %>
@@ -150,6 +156,11 @@
                   <span class="text-success fw-bold">
                     <i class="bi bi-check-circle-fill me-1"></i>
                     <%= t("student_performance.evaluator.status.passed") %>
+                  </span>
+                <% elsif @result.details[:achievements_ungraded] %>
+                  <span class="text-amber fw-bold">
+                    <i class="bi bi-question-circle me-1"></i>
+                    <%= t("student_performance.evaluator.status.inconclusive") %>
                   </span>
                 <% else %>
                   <span class="text-danger fw-bold">

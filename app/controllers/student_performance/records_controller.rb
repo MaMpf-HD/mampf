@@ -36,6 +36,7 @@ module StudentPerformance
       @pagy, @records = pagy(scope)
       load_assessment_statuses
       @standard_max = @assessments.sum(&:effective_total_points)
+      @achievements = @lecture.achievements.order(:title)
     end
 
     def show
@@ -53,12 +54,28 @@ module StudentPerformance
     end
 
     def recompute_status
-      scope = @lecture.student_performance_records
-      has_null = scope.exists?(computed_at: nil)
-      oldest = scope.minimum(:computed_at)
       threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
-      done = !has_null && threshold.present? &&
-             oldest.present? && oldest > threshold
+      unless threshold
+        render json: { done: false }
+        return
+      end
+
+      stats = @lecture.student_performance_records
+                      .pick(
+                        Arel.sql("COUNT(*)"),
+                        Arel.sql("COUNT(*) FILTER (WHERE computed_at IS NULL)"),
+                        Arel.sql("MIN(computed_at)")
+                      )
+      record_count, null_count, oldest = stats
+      member_count = @lecture.members.count
+
+      done = if member_count.zero?
+        record_count.zero?
+      else
+        record_count >= member_count &&
+          null_count.zero? &&
+          oldest.present? && oldest > threshold
+      end
 
       render json: { done: done }
     rescue ArgumentError
@@ -122,7 +139,13 @@ module StudentPerformance
           return respond_with_throttled
         end
 
-        PerformanceRecordUpdateJob.perform_async(@lecture.id)
+        enqueue_time = Time.current
+        set_recompute_poll_headers(queued: true, since: enqueue_time)
+
+        PerformanceRecordUpdateJob.perform_async(
+          @lecture.id,
+          nil
+        )
 
         respond_to do |format|
           format.turbo_stream do
@@ -141,6 +164,7 @@ module StudentPerformance
 
       def respond_with_throttled
         msg = I18n.t("student_performance.records.recompute.throttled")
+        set_recompute_poll_headers(queued: false)
 
         respond_to do |format|
           format.turbo_stream do
@@ -152,6 +176,13 @@ module StudentPerformance
                         alert: msg
           end
         end
+      end
+
+      def set_recompute_poll_headers(queued:, since: nil)
+        response.set_header("X-Recompute-Queued", queued ? "1" : "0")
+        return unless since
+
+        response.set_header("X-Recompute-Since", since.iso8601(6))
       end
 
       def load_show_data

@@ -54,16 +54,19 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
 
       it "shows check icon for pass" do
         render_inline(component)
-        expect(rendered_content).to include("bi-check-circle-fill")
+        expect(rendered_content).to include("bi-check-circle")
       end
 
       it "shows x icon for fail" do
         render_inline(component)
-        expect(rendered_content).to include("bi-x-circle-fill")
+        expect(rendered_content).to include("bi-x-circle")
       end
 
-      it "shows em-dash for unmarked" do
-        expect(component.value_display(unmarked)).to eq("\u2014")
+      it "does not show the value column" do
+        render_inline(component)
+        expect(rendered_content).not_to include(
+          I18n.t("assessment.achievements.marking.value")
+        )
       end
 
       it "returns correct met? results" do

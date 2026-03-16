@@ -104,4 +104,33 @@ RSpec.describe(StudentPerformance::RuleAchievement, type: :model) do
       expect(ra2.position).to eq(1)
     end
   end
+
+  describe "touch: true on rule" do
+    it "updates the rule's updated_at when a rule_achievement is created" do
+      rule = FactoryBot.create(:student_performance_rule)
+      achievement = FactoryBot.create(:achievement, lecture: rule.lecture)
+      original_updated_at = rule.updated_at
+
+      rule.update_column(:updated_at, 1.hour.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+
+      expect(rule.reload.updated_at).to be > original_updated_at
+    end
+
+    it "updates the rule's updated_at when a rule_achievement is destroyed" do
+      rule = FactoryBot.create(:student_performance_rule)
+      achievement = FactoryBot.create(:achievement, lecture: rule.lecture)
+      ra = FactoryBot.create(:student_performance_rule_achievement,
+                             rule: rule, achievement: achievement)
+
+      rule.update_column(:updated_at, 1.hour.ago) # rubocop:disable Rails/SkipsModelValidations
+      stale_time = rule.reload.updated_at
+
+      ra.destroy!
+
+      expect(rule.reload.updated_at).to be > stale_time
+    end
+  end
 end

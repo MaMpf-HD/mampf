@@ -29,21 +29,19 @@
             </button>
           <% end %>
 
-          <a
-            href="<%= lecture_student_performance_records_path(@lecture) %>"
-            class="btn btn-outline-secondary btn-sm"
-            data-turbo-frame="performance-records-frame"
-          >
+          <%= link_to lecture_student_performance_records_path(@lecture),
+                     class: "btn btn-outline-secondary btn-sm",
+                     data: { turbo_frame: "performance-records-frame" } do %>
             <i class="bi bi-arrow-left me-1"></i>
             <%= t("student_performance.evaluator.back_to_records") %>
-          </a>
+          <% end %>
         </div>
       </div>
     </div>
 
     <div class="card-body">
       <div class="row mb-4 g-3">
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold"><%= @proposals.size %></div>
 
@@ -53,7 +51,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold text-success">
               <%= @passed_count %>
@@ -65,7 +63,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold text-danger">
               <%= @failed_count %>
@@ -73,6 +71,18 @@
 
             <div class="text-muted small">
               <%= t("student_performance.evaluator.bulk_proposals.failed") %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-3">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold text-warning">
+              <%= @inconclusive_count %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.evaluator.bulk_proposals.inconclusive") %>
             </div>
           </div>
         </div>
@@ -138,25 +148,19 @@
 
                   <td class="text-center">
                     <% if result.details[:meets_points] %>
-                      <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-check-circle-fill text-success"></i>
                     <% else %>
-                      <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-x-circle text-danger"></i>
                     <% end %>
                   </td>
 
                   <td class="text-center">
                     <% if result.details[:meets_achievements] %>
-                      <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-check-circle text-success"></i>
+                    <% elsif result.details[:achievements_ungraded] %>
+                      <i class="bi bi-question-circle text-amber"></i>
                     <% else %>
-                      <span class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i>
-                      </span>
+                      <i class="bi bi-x-circle text-danger"></i>
                     <% end %>
                   </td>
 
@@ -164,6 +168,10 @@
                     <% if result.proposed_status == :passed %>
                       <span class="badge bg-success">
                         <%= t("student_performance.evaluator.status.passed") %>
+                      </span>
+                    <% elsif result.proposed_status == :inconclusive %>
+                      <span class="badge bg-amber-subtle text-amber">
+                        <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
                     <% else %>
                       <span class="badge bg-danger">

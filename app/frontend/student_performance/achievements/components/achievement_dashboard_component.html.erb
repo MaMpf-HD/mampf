@@ -5,7 +5,19 @@
         <h1 class="h3 mb-1"><%= achievement.title %></h1>
       </div>
 
-      <div>
+      <div class="d-flex gap-2">
+        <% if achievement.persisted? %>
+          <%= button_to t("basics.delete"),
+                        lecture_student_performance_achievement_path(lecture,
+                                                                    achievement),
+                        method: :delete,
+                        class: "btn btn-outline-danger btn-sm",
+                        data: {
+                          turbo_confirm:
+                            t("assessment.achievements.confirm_delete")
+                        } %>
+        <% end %>
+
         <%= link_to t("back"), back_path,
                     class: "btn btn-sm btn-outline-secondary",
                     data: { turbo_stream: true } %>
@@ -13,32 +25,14 @@
     </div>
   </div>
 
-  <ul class="nav nav-tabs mb-3" role="tablist">
-    <% tabs.each do |tab| %>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link <%= 'active' if tab_active?(tab.key) %>"
-          data-bs-toggle="tab"
-          data-bs-target="#<%= dom_prefix %>-<%= tab.key %>"
-          type="button"
-          role="tab"
-          aria-selected="<%= tab_active?(tab.key) %>"
-        >
-          <%= tab.label %>
-        </button>
-      </li>
-    <% end %>
-  </ul>
+  <%= render partial: "student_performance/achievements/settings",
+             locals: { achievement: achievement, lecture: lecture } %>
 
-  <div class="tab-content">
-    <% tabs.each do |tab| %>
-      <div
-        class="tab-pane fade <%= 'show active' if tab_active?(tab.key) %>"
-        id="<%= dom_prefix %>-<%= tab.key %>"
-        role="tabpanel"
-      >
-        <%= render tab.component %>
-      </div>
-    <% end %>
-  </div>
+  <% if grading_enabled? %>
+    <hr class="my-4">
+    <h2 class="h5 mb-3"><%= t("assessment.grading") %></h2>
+    <%= render AchievementMarkingTableComponent.new(
+      achievement: achievement
+    ) %>
+  <% end %>
 </div>

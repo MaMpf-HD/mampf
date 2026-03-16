@@ -844,6 +844,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_000001) do
     t.integer "assessments_pending_grading_count", default: 0, null: false
     t.integer "assessments_not_submitted_count", default: 0, null: false
     t.integer "assessments_exempt_count", default: 0, null: false
+    t.jsonb "achievements_ungraded_ids", default: []
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
   end

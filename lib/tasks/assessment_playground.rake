@@ -342,6 +342,17 @@ namespace :assessment do
     puts "✅ Achievement grades seeded."
   end
 
+  desc "Clear all achievement grade_text values"
+  task reset_achievement_grades: :environment do
+    ids = Assessment::Assessment.where(assessable_type: "Achievement")
+                                .pluck(:id)
+    count = Assessment::Participation
+            .where(assessment_id: ids)
+            .where.not(grade_text: [nil, ""])
+            .update_all(grade_text: nil) # rubocop:disable Rails/SkipsModelValidations
+    puts "✅ Cleared grade_text for #{count} achievement participations."
+  end
+
   desc "Run full assessment playground setup"
   task setup: :environment do
     old_level = ActiveRecord::Base.logger&.level
@@ -392,6 +403,20 @@ namespace :assessment do
     end
 
     puts "Done. Destroyed #{destroyed} test assignments."
+
+    achievement_titles = ["Blackboard Talk", "Homework Points",
+                          "Attendance Rate"]
+    achievement_titles.each do |title|
+      achievement = lecture.achievements.find_by(title: title)
+      next unless achievement
+
+      if achievement.assessment
+        achievement.assessment.assessment_participations.delete_all
+        achievement.assessment.destroy!
+      end
+      achievement.destroy!
+      puts "✓ Destroyed achievement: #{title}"
+    end
   end
 
   def print_summary
@@ -634,13 +659,18 @@ namespace :assessment do
       return
     end
 
+    graded = 0
     ungradeable.find_each do |p|
+      if rand < 0.1
+        graded += 1
+        next
+      end
       quality = student_quality(p.user_id)
       p.update!(grade_text: random_grade_text(achievement, quality))
     end
 
-    puts "  ✓ Seeded grade_text for #{count} " \
-         "participations: #{label}"
+    puts "  ✓ Seeded grade_text for #{count - graded} " \
+         "participations (#{graded} left ungraded): #{label}"
   end
 
   def random_grade_text(achievement, quality)

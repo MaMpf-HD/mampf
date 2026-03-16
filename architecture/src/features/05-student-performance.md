@@ -335,14 +335,15 @@ A configuration record that defines the criteria a student must meet to be eligi
 | `lecture_id`                   | DB column (FK)   | The lecture this rule applies to                               |
 | `min_percentage`               | DB column        | Minimum percentage of points (0-100), mutually exclusive with `min_points_absolute` |
 | `min_points_absolute`          | DB column        | Minimum absolute points, mutually exclusive with `min_percentage` |
-| `active`                       | DB column (Bool) | Whether this rule is currently in effect                       |
+| `active`                       | DB column (Bool) | Whether this rule is currently in effect (see note below)      |
 | `rule_achievements`            | Association      | Join records linking to required achievements                  |
 | `required_achievements`        | Association      | Achievement records that must be completed (via `rule_achievements`) |
 
 ### Behavior Highlights
 
 - Stored as a database record (not just JSONB config) for better querying and validation
-- One lecture can have one active rule at a time
+- One lecture can have one active rule at a time (enforced by partial unique index on `active = true`)
+- The `active` column currently has no user-facing toggle. Rules are always set to `active: true` on save. The column exists as infrastructure for future rule versioning (deactivate old rule, create new one, certifications keep FK to historical rule). See [Future Extensions - Section 5](../features/10-future-extensions.md#5-student-performance--certification).
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds

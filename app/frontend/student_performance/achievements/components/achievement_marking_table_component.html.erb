@@ -11,9 +11,11 @@
       <tr>
         <th><%= t("basics.name") %></th>
 
-        <th class="text-center">
-          <%= t("assessment.achievements.marking.value") %>
-        </th>
+        <% unless boolean? %>
+          <th class="text-center">
+            <%= t("assessment.achievements.marking.value") %>
+          </th>
+        <% end %>
 
         <th class="text-center">
           <%= t("assessment.achievements.marking.status") %>
@@ -28,22 +30,27 @@
         <tr>
           <td><%= participation.user.tutorial_name %></td>
 
-          <td class="text-center"><%= value_display(participation) %></td>
+          <% unless boolean? %>
+            <td class="text-center"><%= value_display(participation) %></td>
+          <% end %>
 
           <td class="text-center">
             <% case badge %>
             <% when :met %>
-              <span class="badge bg-success">
-                <%= t("assessment.achievements.marking.met") %>
-              </span>
+              <i
+                class="bi bi-check-circle text-success"
+                title="<%= t("assessment.achievements.marking.met") %>"
+              ></i>
             <% when :not_met %>
-              <span class="badge bg-danger">
-                <%= t("assessment.achievements.marking.not_met") %>
-              </span>
+              <i
+                class="bi bi-x-circle text-danger"
+                title="<%= t("assessment.achievements.marking.not_met") %>"
+              ></i>
             <% when :unmarked %>
-              <span class="badge bg-secondary">
-                <%= t("assessment.achievements.marking.unmarked") %>
-              </span>
+              <i
+                class="bi bi-question-circle text-amber"
+                title="<%= t("assessment.achievements.marking.unmarked") %>"
+              ></i>
             <% end %>
           </td>
         </tr>

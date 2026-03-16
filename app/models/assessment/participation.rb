@@ -20,6 +20,9 @@ module Assessment
 
     scope :submitted, -> { where.not(submitted_at: nil) }
 
+    after_commit :recompute_performance_record,
+                 if: :achievement_grade_text_changed?
+
     validates :user_id, uniqueness: { scope: :assessment_id }
     validates :grade_numeric,
               inclusion: {
@@ -46,6 +49,18 @@ module Assessment
     end
 
     private
+
+      def achievement_grade_text_changed?
+        saved_change_to_grade_text? &&
+          assessment&.assessable_type == "Achievement"
+      end
+
+      def recompute_performance_record
+        lecture_id = assessment&.lecture_id
+        return unless lecture_id
+
+        PerformanceRecordUpdateJob.perform_async(lecture_id, user_id)
+      end
 
       def assessment_must_be_gradable
         return unless assessment&.assessable

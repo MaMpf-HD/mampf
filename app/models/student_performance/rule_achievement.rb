@@ -1,6 +1,6 @@
 module StudentPerformance
   class RuleAchievement < ApplicationRecord
-    belongs_to :rule, class_name: "StudentPerformance::Rule"
+    belongs_to :rule, class_name: "StudentPerformance::Rule", touch: true
     belongs_to :achievement
 
     validates :rule_id, uniqueness: { scope: :achievement_id }

@@ -6,9 +6,10 @@ en:
       talks: "Talks"
       performance: "Performance"
       achievements: "Achievements"
-      rules: "Rules"
-      certifications: "Certifications"
+      certifications: "Exam Eligibility"
     assessments: 'Assessments'
+    subtitle:
+      assignments: 'Manage homework sheets, grading, and point allocation.'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
       flash:
@@ -18,7 +19,7 @@ en:
       errors:
         not_found: 'Achievement not found.'
         referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
-      title: 'Achievements'
+      subtitle: 'Define additional criteria students must fulfill beyond points.'
       new: 'New Achievement'
       edit: 'Edit Achievement'
       value_types:

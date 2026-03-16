@@ -14,14 +14,8 @@ module StudentPerformance
       @current_ability ||= LectureAbility.new(current_user)
     end
 
-    def show
-      @rule = StudentPerformance::Rule
-              .where(lecture: @lecture, active: true)
-              .includes(rule_achievements: :achievement)
-              .first
-    end
-
     def edit
+      @source_frame = params[:source_frame]
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
       @achievements = Achievement.where(lecture: @lecture).order(:title)
@@ -29,6 +23,7 @@ module StudentPerformance
     end
 
     def update
+      @source_frame = params[:source_frame].presence
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
 
@@ -39,41 +34,61 @@ module StudentPerformance
         sync_rule_achievements
       end
 
-      @rule = StudentPerformance::Rule
-              .where(lecture: @lecture, active: true)
-              .includes(rule_achievements: :achievement)
-              .first
-
-      flash.now[:notice] = I18n.t("student_performance.rules.flash.updated")
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace(
-              "performance-rules-frame",
-              partial: "student_performance/rules/show_frame"
-            ),
-            turbo_stream.replace(
-              "performance-certifications-frame",
-              helpers.turbo_frame_tag(
-                "performance-certifications-frame",
-                src: lecture_student_performance_certifications_path(@lecture),
-                loading: "lazy"
-              ) { "" }
-            )
-          ]
-        end
-        format.html do
-          redirect_to lecture_student_performance_rules_path(@lecture),
-                      notice: I18n.t("student_performance.rules.flash.updated")
-        end
+      target = if @source_frame == "performance-records-frame"
+        lecture_student_performance_records_path(@lecture)
+      else
+        lecture_student_performance_certifications_path(@lecture)
       end
+
+      redirect_to target,
+                  notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
+      @threshold_mode = params.dig(:rule, :threshold_mode)
       @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = Set.new(
         Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
       )
       render :edit, status: :unprocessable_content
     end
+
+    def preview
+      @rule = StudentPerformance::Rule
+              .where(lecture: @lecture, active: true)
+              .includes(rule_achievements: :achievement)
+              .first
+
+      unless @rule
+        render :preview
+        return
+      end
+
+      preview_rule = build_preview_rule
+      records = @lecture.student_performance_records
+                        .includes(:user)
+                        .order(:created_at)
+
+      current_eval = StudentPerformance::Evaluator.new(@rule)
+      preview_eval = StudentPerformance::Evaluator.new(preview_rule)
+
+      @changes = records.filter_map do |record|
+        current = current_eval.evaluate(record)
+        preview = preview_eval.evaluate(record)
+        next if current.proposed_status == preview.proposed_status
+
+        { from: current.proposed_status, to: preview.proposed_status }
+      end
+
+      @newly_passed = @changes.count { |c| c[:to] == :passed }
+      @newly_failed = @changes.count { |c| c[:to] == :failed }
+      @newly_inconclusive = @changes.count { |c| c[:to] == :inconclusive }
+    end
+
+    PreviewRule = Struct.new(
+      :min_percentage,
+      :min_points_absolute,
+      :required_achievements,
+      keyword_init: true
+    )
 
     private
 
@@ -96,6 +111,7 @@ module StudentPerformance
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
+        @rule.threshold_mode = mode
         if mode == "percentage"
           @rule.min_percentage = params.dig(:rule, :min_percentage)
           @rule.min_points_absolute = nil
@@ -132,6 +148,26 @@ module StudentPerformance
           end
           position += 1
         end
+      end
+
+      def build_preview_rule
+        mode = params.dig(:rule, :threshold_mode)
+        pct = (params.dig(:rule, :min_percentage).presence&.to_f if mode == "percentage")
+        pts = (params.dig(:rule, :min_points_absolute).presence&.to_f if mode == "absolute")
+
+        achievement_ids = Set.new(
+          Array(params.dig(:rule, :achievement_ids))
+            .compact_blank.map(&:to_i)
+        )
+        achievements = Achievement.where(
+          id: achievement_ids, lecture: @lecture
+        )
+
+        PreviewRule.new(
+          min_percentage: pct,
+          min_points_absolute: pts,
+          required_achievements: achievements
+        )
       end
   end
 end

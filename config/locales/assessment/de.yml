@@ -5,22 +5,23 @@ de:
       assignments: "Hausaufgaben"
       talks: "Vorträge"
       performance: "Leistungen"
-      achievements: "Nachweise"
-      rules: "Regeln"
-      certifications: "Zertifizierungen"
+      achievements: "Zusatzkriterien"
+      certifications: "Prüfungszulassungen"
     assessments: 'Testate'
+    subtitle:
+      assignments: 'Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten.'
     achievements:
-      placeholder: 'Nachweise werden in einem späteren Schritt hier angezeigt.'
+      placeholder: 'Zusatzkriterien werden in einem späteren Schritt hier angezeigt.'
       flash:
-        created: 'Nachweis erfolgreich erstellt.'
-        updated: 'Nachweis erfolgreich aktualisiert.'
-        destroyed: 'Nachweis erfolgreich gelöscht.'
+        created: 'Zusatzkriterium erfolgreich erstellt.'
+        updated: 'Zusatzkriterium erfolgreich aktualisiert.'
+        destroyed: 'Zusatzkriterium erfolgreich gelöscht.'
       errors:
-        not_found: 'Nachweis nicht gefunden.'
-        referenced_by_rules: 'Löschen nicht möglich: Nachweis wird von einer Regel referenziert.'
-      title: 'Nachweise'
-      new: 'Neuer Nachweis'
-      edit: 'Nachweis bearbeiten'
+        not_found: 'Zusatzkriterium nicht gefunden.'
+        referenced_by_rules: 'Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert.'
+      subtitle: 'Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen.'
+      new: 'Neues Zusatzkriterium'
+      edit: 'Zusatzkriterium bearbeiten'
       value_types:
         boolean: 'Ja/Nein'
         numeric: 'Numerisch'
@@ -30,8 +31,8 @@ de:
         value_type: 'Typ'
         threshold: 'Schwellenwert'
         description: 'Beschreibung'
-      no_achievements_yet: 'Noch keine Nachweise angelegt.'
-      confirm_delete: 'Nachweis wirklich löschen?'
+      no_achievements_yet: 'Noch keine Zusatzkriterien angelegt.'
+      confirm_delete: 'Zusatzkriterium wirklich löschen?'
       marking:
         marked: 'bewertet'
         met_label: 'erfüllt'

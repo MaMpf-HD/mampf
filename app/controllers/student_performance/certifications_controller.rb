@@ -22,10 +22,23 @@ module StudentPerformance
       compute_proposal_counts if @rule
       @stale_user_ids = @lecture.student_performance_certifications
                                 .stale.pluck(:user_id).to_set
-      @stale_from_rule_count = @lecture.student_performance_certifications
-                                       .stale_from_rule.count
-      @stale_from_data_count = @lecture.student_performance_certifications
-                                       .stale_from_data.count
+      stale_from_rule = @lecture.student_performance_certifications
+                                .stale_from_rule
+      @stale_from_rule_auto_count = stale_from_rule
+                                    .where.not(source: :manual).count
+      @stale_from_rule_manual_count = stale_from_rule
+                                      .where(source: :manual).count
+      stale_from_data = @lecture.student_performance_certifications
+                                .stale_from_data
+      @stale_from_data_auto_count = stale_from_data
+                                    .where.not(source: :manual).count
+      @stale_from_data_manual_count = stale_from_data
+                                      .where(source: :manual).count
+      @achievements = if @rule
+        @rule.required_achievements.order(:title)
+      else
+        Achievement.none
+      end
       load_filtered_records
     end
 
@@ -57,7 +70,7 @@ module StudentPerformance
 
       cert.assign_attributes(
         status: certification_params[:status],
-        source: :computed,
+        source: :manual,
         certified_by: current_user,
         certified_at: Time.current,
         rule: @rule
@@ -94,7 +107,14 @@ module StudentPerformance
                  @lecture.student_performance_certifications
                          .build(user_id: record.user_id)
 
-          next if cert.persisted? && cert.manual?
+          if cert.persisted? &&
+             (cert.manual? ||
+              (!cert.pending? &&
+               cert.status.to_sym != result.proposed_status))
+            next
+          end
+
+          next if result.proposed_status == :inconclusive
 
           cert.assign_attributes(
             status: result.proposed_status,
@@ -150,6 +170,20 @@ module StudentPerformance
                   notice: I18n.t(
                     "student_performance.certifications.flash.reevaluated",
                     count: updated
+                  )
+    end
+
+    def bulk_confirm_manual
+      # rubocop:disable Rails/SkipsModelValidations
+      confirmed = @lecture.student_performance_certifications
+                          .stale.where(source: :manual)
+                          .update_all(certified_at: Time.current)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t(
+                    "student_performance.certifications.flash.confirmed",
+                    count: confirmed
                   )
     end
 
@@ -231,6 +265,9 @@ module StudentPerformance
         uncertified_proposals = @proposal_by_user.except(*certified_user_ids)
         @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
         @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
+        @proposed_inconclusive = uncertified_proposals.count do |_, r|
+          r.proposed_status == :inconclusive
+        end
       end
 
       def load_filtered_records

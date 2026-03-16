@@ -1,24 +1,12 @@
-<% if achievement.persisted? %>
-  <div class="text-end mb-3">
-    <%= button_to t("basics.delete"),
-                  lecture_student_performance_achievement_path(lecture,
-                                                              achievement),
-                  method: :delete,
-                  class: "btn btn-outline-danger btn-sm",
-                  data: {
-                    turbo_confirm:
-                      t("assessment.achievements.confirm_delete")
-                  } %>
-  </div>
-<% end %>
-
 <%= form_with model: achievement,
               url: lecture_student_performance_achievement_path(lecture,
                                                                achievement),
-              method: :patch do |f| %>
-  <input type="hidden" name="tab" value="settings">
-
-  <div class="row g-3" data-controller="achievement-form">
+              method: :patch,
+              data: {
+                controller: "achievement-form",
+                action: "turbo:submit-end->achievement-form#resetAfterSave"
+              } do |f| %>
+  <div class="row g-3">
     <div class="col-md-4">
       <%= f.label :title,
                   t("assessment.achievements.fields.title"),
@@ -26,7 +14,11 @@
 
       <%= f.text_field :title,
                        class: "form-control",
-                       required: true %>
+                       required: true,
+                       data: {
+                         achievement_form_target: "title",
+                         action: "input->achievement-form#checkForChanges"
+                       } %>
 
       <% if achievement.errors[:title].any? %>
         <div class="text-danger small mt-1">
@@ -46,7 +38,11 @@
                    },
                    {},
                    { class: "form-select",
-                     data: { action: "achievement-form#toggle" } } %>
+                     data: {
+                       achievement_form_target: "valueType",
+                       action: "achievement-form#toggle " \
+                               "input->achievement-form#checkForChanges"
+                     } } %>
     </div>
 
     <div
@@ -60,7 +56,11 @@
 
       <%= f.number_field :threshold,
                          class: "form-control",
-                         step: "any" %>
+                         step: "any",
+                         data: {
+                           achievement_form_target: "thresholdInput",
+                           action: "input->achievement-form#checkForChanges"
+                         } %>
 
       <% if achievement.errors[:threshold].any? %>
         <div class="text-danger small mt-1">
@@ -76,12 +76,37 @@
 
       <%= f.text_area :description,
                       class: "form-control",
-                      rows: 3 %>
+                      rows: 3,
+                      data: {
+                        achievement_form_target: "description",
+                        action: "input->achievement-form#checkForChanges"
+                      } %>
     </div>
 
-    <div class="col-12 mt-4">
+    <div
+      class="col-12 mt-3 text-center d-none"
+      data-achievement-form-target="warning"
+    >
+      <div class="alert alert-warning d-inline-block mb-2" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <%= t("warnings.unsaved_changes") %>
+      </div>
+    </div>
+
+    <div
+      class="col-12 text-center d-none"
+      data-achievement-form-target="submitButton"
+    >
       <%= f.submit t("buttons.save"),
-                   class: "btn btn-primary" %>
+                   class: "btn btn-sm btn-primary me-2" %>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-secondary"
+        data-action="click->achievement-form#cancel"
+      >
+        <%= t("buttons.cancel") %>
+      </button>
     </div>
   </div>
 <% end %>

@@ -25,10 +25,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      it "shows the dashboard title" do
+      it "shows the dashboard subtitle" do
         get lecture_student_performance_certifications_path(lecture)
         expect(response.body).to include(
-          I18n.t("student_performance.certifications.index.title")
+          I18n.t("student_performance.certifications.index.subtitle")
         )
       end
 
@@ -179,6 +179,50 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               I18n.t("student_performance.certifications.index.reevaluate_data")
             )
           end
+
+          it "shows the manual-review banner for stale manual overrides" do
+            manual_cert = FactoryBot.create(
+              :student_performance_certification, :passed, :manual,
+              lecture: lecture,
+              user: FactoryBot.create(:confirmed_user),
+              rule: rule,
+              note: "Special"
+            )
+            # rubocop:disable Rails/SkipsModelValidations
+            manual_cert.update_columns(certified_at: 2.hours.ago)
+            rule.update_columns(updated_at: 1.hour.ago)
+            # rubocop:enable Rails/SkipsModelValidations
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t(
+                "student_performance.certifications.index" \
+                ".stale_rule_manual_warning",
+                count: 1
+              )
+            )
+          end
+
+          it "does not show reconcile button for manual-only staleness" do
+            manual_cert = FactoryBot.create(
+              :student_performance_certification, :passed, :manual,
+              lecture: lecture,
+              user: FactoryBot.create(:confirmed_user),
+              rule: rule,
+              note: "Override"
+            )
+            # rubocop:disable Rails/SkipsModelValidations
+            manual_cert.update_columns(certified_at: 2.hours.ago)
+            rule.update_columns(updated_at: 1.hour.ago)
+            # rubocop:enable Rails/SkipsModelValidations
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).not_to include(
+              I18n.t(
+                "student_performance.certifications.index.reevaluate_rules"
+              )
+            )
+          end
         end
       end
 
@@ -225,6 +269,34 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        it "shows the edit rules button" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.edit_button")
+          )
+        end
+
+        context "when rule has required achievements" do
+          let!(:achievement) do
+            FactoryBot.create(:achievement, lecture: lecture,
+                                            title: "Homework A")
+          end
+
+          before do
+            FactoryBot.create(:student_performance_rule_achievement,
+                              rule: rule, achievement: achievement)
+          end
+
+          it "shows the required achievements in the rule info" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include("Homework A")
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index" \
+                     ".required_achievements_label")
+            )
+          end
+        end
+
         it "shows the bulk accept button" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
@@ -232,10 +304,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        it "shows the try different threshold button" do
+        it "shows the edit rule button" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
-            I18n.t("student_performance.evaluator.preview_rule_change.try_threshold")
+            I18n.t("student_performance.rules.show.edit_button")
           )
         end
 
@@ -252,6 +324,84 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(body).to include(
             I18n.t("student_performance.certifications.index.proposed_failed")
           )
+        end
+
+        it "shows the percentage column (not points) for a percentage rule" do
+          get lecture_student_performance_certifications_path(lecture)
+          body = response.body
+          expect(body).to include(
+            I18n.t("student_performance.records.columns.percentage")
+          )
+          expect(body).not_to include(
+            ">#{I18n.t("student_performance.records.columns.points")}<"
+          )
+        end
+      end
+
+      context "with absolute-points rule and records" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_absolute_points,
+                            lecture: lecture,
+                            min_points_absolute: 60)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: FactoryBot.create(:confirmed_user),
+                            percentage_materialized: 70,
+                            points_total_materialized: 70,
+                            points_max_materialized: 100)
+        end
+
+        it "shows the points column (not percentage)" do
+          get lecture_student_performance_certifications_path(lecture)
+          body = response.body
+          expect(body).to include(
+            I18n.t("student_performance.records.columns.points")
+          )
+          expect(body).not_to include(
+            ">#{I18n.t("student_performance.records.columns.percentage")}<"
+          )
+        end
+      end
+
+      context "with rule and achievements" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:achievement) do
+          FactoryBot.create(:achievement, lecture: lecture,
+                                          title: "Homework A")
+        end
+
+        let(:student) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: achievement)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: student,
+                            percentage_materialized: 80,
+                            points_total_materialized: 80,
+                            points_max_materialized: 100,
+                            achievements_met_ids: [achievement.id])
+        end
+
+        it "renders the achievement column header" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include("Homework A")
+        end
+
+        it "renders met icon for met achievement" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include("bi-check-lg")
         end
       end
 
@@ -291,6 +441,13 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
             I18n.t("student_performance.evaluator.no_rule")
+          )
+        end
+
+        it "shows the setup rule button" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.setup_rule")
           )
         end
 
@@ -382,7 +539,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
         cert = StudentPerformance::Certification.last
         expect(cert.status).to eq("passed")
-        expect(cert.source).to eq("computed")
+        expect(cert.source).to eq("manual")
         expect(cert.certified_by).to eq(editor)
         expect(cert.rule).to eq(rule)
       end
@@ -568,6 +725,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         existing.reload
         expect(existing.status).to eq("passed")
         expect(existing.certified_by).to eq(editor)
+      end
+
+      it "skips certifications whose status differs from the proposal" do
+        divergent = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: failing_user,
+          source: :computed, certified_by: editor
+        )
+        post bulk_accept_lecture_student_performance_certifications_path(
+          lecture
+        )
+        divergent.reload
+        expect(divergent.status).to eq("passed")
       end
 
       it "shows the count in the flash message" do
@@ -825,6 +995,124 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
     context "as an unauthenticated user" do
       it "redirects to sign in" do
         post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_confirm_manual" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage,
+                        lecture: lecture,
+                        min_percentage: 50)
+    end
+
+    let(:user_a) { FactoryBot.create(:confirmed_user) }
+    let(:user_b) { FactoryBot.create(:confirmed_user) }
+    let(:user_c) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      [user_a, user_b, user_c].each do |u|
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: u,
+                          percentage_materialized: 60,
+                          points_total_materialized: 60,
+                          points_max_materialized: 100)
+      end
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "confirms stale manual certifications" do
+        stale_manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_a,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        stale_manual.reload
+        expect(stale_manual.certified_at).to be > 1.minute.ago
+        expect(stale_manual.status).to eq("passed")
+        expect(stale_manual.source).to eq("manual")
+      end
+
+      it "does not touch non-stale manual certifications" do
+        fresh_manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_b,
+          certified_by: editor,
+          certified_at: Time.current
+        )
+        original_time = fresh_manual.certified_at
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        fresh_manual.reload
+        expect(fresh_manual.certified_at).to be_within(1.second)
+          .of(original_time)
+      end
+
+      it "does not touch computed certifications" do
+        stale_computed = FactoryBot.create(
+          :student_performance_certification, :passed,
+          lecture: lecture, user: user_c,
+          source: :computed,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+        original_time = stale_computed.certified_at
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        stale_computed.reload
+        expect(stale_computed.certified_at).to be_within(1.second)
+          .of(original_time)
+      end
+
+      it "redirects with flash count" do
+        FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: user_a,
+          certified_by: editor,
+          certified_at: 1.day.ago
+        )
+        rule.update_column(:updated_at, Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
+          lecture
+        )
+        expect(response).to redirect_to(root_url)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        post bulk_confirm_manual_lecture_student_performance_certifications_path(
           lecture
         )
         expect(response).to redirect_to(new_user_session_path)

@@ -336,7 +336,9 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :rules, only: [:show, :edit, :update]
+        resource :rules, only: [:edit, :update] do
+          patch :preview, on: :collection
+        end
 
         resource :evaluator, only: [], controller: "evaluator" do
           post :bulk_proposals, on: :collection
@@ -351,6 +353,7 @@ Rails.application.routes.draw do
           collection do
             post :bulk_accept
             post :bulk_reevaluate
+            post :bulk_confirm_manual
           end
         end
       end

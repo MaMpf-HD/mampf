@@ -146,6 +146,32 @@ RSpec.describe(StudentPerformance::Evaluator) do
         result = evaluator.evaluate(record)
         expect(result.proposed_status).to eq(:failed)
       end
+
+      it "proposes :inconclusive when a required achievement is ungraded" do
+        record = FactoryBot.create(
+          :student_performance_record,
+          lecture: lecture,
+          achievements_met_ids: [achievement1.id],
+          achievements_ungraded_ids: [achievement2.id]
+        )
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:inconclusive)
+        expect(result.details[:achievements_ungraded]).to be(true)
+      end
+
+      it "proposes :passed when all required met even if others ungraded" do
+        record = FactoryBot.create(
+          :student_performance_record,
+          lecture: lecture,
+          achievements_met_ids: [achievement1.id, achievement2.id],
+          achievements_ungraded_ids: []
+        )
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:achievements_ungraded]).to be(false)
+      end
     end
 
     context "with both points and achievements required" do
@@ -215,9 +241,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  lecture: lecture, percentage_materialized: 60)
 
       result = described_class.new(rule).evaluate(record)
-      expected_keys = [:meets_points, :meets_achievements, :points_total, :points_max,
+      expected_keys = [:meets_points, :meets_achievements,
+                       :achievements_ungraded, :points_total, :points_max,
                        :percentage, :required_points, :required_percentage,
-                       :achievement_ids_met, :achievement_ids_required]
+                       :achievement_ids_met, :achievement_ids_ungraded,
+                       :achievement_ids_required]
       expect(result.details.keys).to match_array(expected_keys)
     end
   end
