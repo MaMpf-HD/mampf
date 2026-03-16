@@ -77,7 +77,8 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
         )
         render_inline(comp)
         pane_id = "#{comp.dom_prefix}-statistics"
-        pane_html = rendered_content[/id="#{pane_id}".*?(?=<div[^>]*id="#{comp.dom_prefix}-)/m] || rendered_content
+        pane_html = rendered_content[/id="#{pane_id}".*?(?=<div[^>]*id="#{comp.dom_prefix}-)/m] ||
+                    rendered_content
         expect(pane_html).not_to include("grading_overview_component")
       end
     end
