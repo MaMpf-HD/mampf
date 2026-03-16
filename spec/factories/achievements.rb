@@ -21,5 +21,14 @@ FactoryBot.define do
       value_type { :percentage }
       threshold { 75.0 }
     end
+
+    trait :with_assessment do
+      after(:create) do |achievement|
+        achievement.ensure_assessment!(
+          requires_points: false,
+          requires_submission: false
+        )
+      end
+    end
   end
 end

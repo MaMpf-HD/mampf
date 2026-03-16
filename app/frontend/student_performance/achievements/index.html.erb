@@ -1,0 +1,37 @@
+<%= turbo_frame_tag "performance-achievements-frame" do %>
+  <h3 class="lecture-pane-header"><%= t("assessment.achievements.title") %></h3>
+
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= link_to t("assessment.achievements.new"),
+                  new_lecture_student_performance_achievement_path(@lecture),
+                  class: "btn btn-sm btn-primary",
+                  id: "newAchievementButton",
+                  data: { turbo_stream: true } %>
+    </div>
+  </div>
+
+  <% if @achievements.any? %>
+    <table class="table table-hover align-middle mb-4">
+      <thead class="table-light">
+        <tr>
+          <th><%= t("assessment.achievements.fields.title") %></th>
+          <th><%= t("assessment.achievements.fields.value_type") %></th>
+          <th><%= t("assessment.achievements.fields.threshold") %></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @achievements.each do |achievement| %>
+          <%= render partial: "student_performance/achievements/achievement",
+                     locals: { lecture: @lecture,
+                               achievement: achievement } %>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-center text-muted py-4">
+      <%= t("assessment.achievements.no_achievements_yet") %>
+    </p>
+  <% end %>
+<% end %>

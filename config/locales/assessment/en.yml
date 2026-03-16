@@ -2,10 +2,36 @@ en:
   assessment:
     tabs:
       assessments: "Assessments"
+      assignments: "Assignments"
+      talks: "Talks"
       performance: "Performance"
+      achievements: "Achievements"
       rules: "Rules"
       certifications: "Certifications"
     assessments: 'Assessments'
+    achievements:
+      placeholder: 'Achievements will be displayed here in a later step.'
+      flash:
+        created: 'Achievement created successfully.'
+        updated: 'Achievement updated successfully.'
+        destroyed: 'Achievement deleted successfully.'
+      errors:
+        not_found: 'Achievement not found.'
+        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
+      title: 'Achievements'
+      new: 'New Achievement'
+      edit: 'Edit Achievement'
+      value_types:
+        boolean: 'Yes/No'
+        numeric: 'Numeric'
+        percentage: 'Percentage'
+      fields:
+        title: 'Title'
+        value_type: 'Type'
+        threshold: 'Threshold'
+        description: 'Description'
+      no_achievements_yet: 'No achievements defined yet.'
+      confirm_delete: 'Really delete this achievement?'
     assignment: 'Assignment'
     assignments: 'Assignments'
     exam: 'Exam'

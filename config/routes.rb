@@ -344,6 +344,9 @@ Rails.application.routes.draw do
           get :single_proposal, on: :member
         end
 
+        resources :achievements,
+                  only: [:index, :new, :show, :create, :update, :destroy]
+
         resources :certifications, only: [:index, :create, :update] do
           collection do
             post :bulk_accept

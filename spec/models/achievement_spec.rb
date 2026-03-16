@@ -111,4 +111,39 @@ RSpec.describe(Achievement, type: :model) do
       )
     end
   end
+
+  describe "assessable wiring" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    it "creates an assessment on create" do
+      achievement = FactoryBot.create(:achievement)
+      expect(achievement.assessment).to be_present
+      expect(achievement.assessment).to be_a(Assessment::Assessment)
+    end
+
+    it "configures assessment without points or submission" do
+      achievement = FactoryBot.create(:achievement)
+      assessment = achievement.assessment
+      expect(assessment.requires_points).to be(false)
+      expect(assessment.requires_submission).to be(false)
+    end
+
+    it "seeds participations from lecture members" do
+      lecture = FactoryBot.create(:lecture)
+      users = FactoryBot.create_list(:user, 3)
+      users.each do |user|
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      end
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+      expect(achievement.assessment.assessment_participations.count).to eq(3)
+    end
+
+    it "does not create assessment when flag is disabled" do
+      Flipper.disable(:assessment_grading)
+      achievement = FactoryBot.create(:achievement)
+      expect(achievement.assessment).to be_nil
+    end
+  end
 end

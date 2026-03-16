@@ -246,8 +246,8 @@ An assessable type that tracks qualitative student accomplishments during a lect
 
 ### Behavior Highlights
 
-- **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`
-- **Participation Seeding:** When created, participations are seeded for all students in the lecture roster
+- **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`. The assessment callback is gated by the `:assessment_grading` feature flag, while the CRUD UI is gated by `:student_performance`. When only `:student_performance` is enabled, achievements exist as lightweight entities without assessment infrastructure.
+- **Participation Seeding:** When created (and `:assessment_grading` is enabled), participations are seeded for all members of the lecture
 - **Tutor Grading:** Tutors mark achievement completion via existing `Assessment::Participation` editing UI:
   - Boolean: Check/uncheck "Completed" → sets `grade_value: "Pass"/"Fail"`
   - Numeric: Enter count → sets `grade_value: <count>`

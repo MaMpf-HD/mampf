@@ -698,17 +698,58 @@ Activity Tracking — Step 12: Achievement CRUD & UI (post-MVP)
 ```admonish note
 Activity tracking is a post-MVP enhancement. The Achievement table
 already exists from Step 10 as a schema stub. This step adds the full
-CRUD, marking UI, and student views.
+CRUD, marking UI, service integration, and student views across four
+PRs.
+
+**Dependency graph:**
+- PR 12.1 is the foundation (model + CRUD).
+- PR 12.2 (marking UI) and PR 12.4 (student view) can be developed
+  in parallel on top of 12.1.
+- PR 12.3 (service integration) depends on 12.2.
+- PR 12.4 is intended for a different programmer and can proceed as
+  soon as 12.1 lands.
 ```
 
-```admonish example "PR-12.1 — Achievement CRUD & marking UI"
-- Scope: Full Achievement feature on top of the model shell from Step 10.
-- Model: Wire `Assessment::Assessable` concern (but NOT Pointable or Gradable). Add value type support (boolean/numeric/percentage).
-- Controllers: `AchievementsController` (CRUD), extend `Assessment::ParticipationsController` with achievement marking actions
-- UI: Checkbox/numeric input for marking; student list view
-- Rationale: Achievements track attendance/involvement but don't contribute to grades. Rules that only use point thresholds work without any achievements.
+```admonish example "PR-12.1 — Achievement CRUD"
+- Scope: Wire the Achievement model into the Assessment infrastructure and provide full CRUD.
+- Model: Add `include Assessment::Assessable` to Achievement (but NOT Pointable or Gradable). Add `after_create` callback to create assessment infrastructure (`requires_points: false`, `requires_submission: false`) and seed participations from the lecture roster. Note: the assessment callback is gated by `:assessment_grading`, while the CRUD UI is gated by `:student_performance`. Achievements can exist as lightweight entities without assessment infrastructure if only the UI flag is enabled.
+- Controllers: `AchievementsController` (index, new, show, create, update, destroy) nested under lecture. The `show` action renders an `AchievementDashboardComponent` (following the assignment dashboard pattern) whose settings tab serves as the edit form.
+- Routes: Nested resource under lectures, feature-flag gated.
+- Ability: Reuses `LectureAbility` — any user who can `:edit` the lecture can manage achievements.
+- Views: Achievement list (index with clickable rows), new-achievement form (rendered into container via Turbo Stream), dashboard with settings tab (title, value_type selector, conditional threshold input, description), delete with confirmation.
+- i18n: Keys for both locales (titles, labels, flash messages, value type names).
+- Rationale: Achievements track attendance/involvement but don't contribute to grades. Rules that only use point thresholds work without any achievements. This PR establishes the data foundation that marking (12.2) and the student view (12.4) build on.
 - Refs: [Achievement model](04-assessments-and-grading.md#achievement-model), [Activity tracking](04-assessments-and-grading.md#activity-tracking)
-- Acceptance: Achievement CRUD works; teachers can mark achievements; students see progress; value_type validated; feature flag gates UI.
+- Acceptance: Achievement CRUD works; creating an achievement auto-creates its Assessment and seeds Participations; value_type validated; threshold conditional on type; deletion blocked when referenced by rules; feature flag gates UI.
+```
+
+```admonish example "PR-12.2 — Achievement marking UI"
+- Scope: Teacher/tutor interface for marking student achievement completion.
+- UI: Per-achievement student list showing participations. Input depends on value_type: boolean → checkbox (Pass/Fail), numeric → number input, percentage → number input with % suffix.
+- Controller: Extend achievement's assessment show view with a marking/grading tab, or add marking actions to `AchievementsController`.
+- Bulk actions: "Mark all as Pass" for boolean achievements.
+- Persistence: Updates `Assessment::Participation#grade_value` for each student.
+- Refs: [Tutor grading](05-student-performance.md#achievement-model)
+- Acceptance: Teachers can mark achievements per student; correct input type shown per value_type; bulk marking works for boolean; changes persist to participation records; feature flag gates UI.
+```
+
+```admonish example "PR-12.3 — Achievement service integration"
+- Scope: Wire achievements into the StudentPerformance computation pipeline.
+- Model: Add `Achievement#student_met_threshold?(user)` method that reads `Assessment::Participation#grade_value` and compares against threshold/type.
+- Service: Update `StudentPerformance::Service` to include achievement evaluation when computing records. Populate `achievements_met_ids` on `StudentPerformance::Record`.
+- Evaluator: Update `StudentPerformance::Evaluator` to incorporate achievements into certification proposals (rules with achievement requirements).
+- Triggers: Recompute affected `StudentPerformance::Record` when a participation's `grade_value` changes.
+- Refs: [Service computation](05-student-performance.md#studentperformanceservice), [Evaluator](05-student-performance.md#studentperformanceevaluator)
+- Acceptance: Service correctly evaluates achievement thresholds; records include `achievements_met_ids`; evaluator proposals reflect achievement status; recomputation fires on marking changes.
+```
+
+```admonish example "PR-12.4 — Student achievement progress view"
+- Scope: Read-only student-facing view of their achievements in a lecture. Narrow scope: just achievements, not the broader performance dashboard (Steps 13-14).
+- UI: List of achievements for the lecture with status per student: met/not met, current value vs threshold for numeric/percentage types.
+- Controller: Student-accessible action (read-only) showing the current user's achievement participations.
+- Note: This PR is intended for a different programmer and can be developed in parallel with 12.2/12.3, as it only depends on 12.1 (model + participations exist). Empty/pending states are shown for not-yet-marked achievements.
+- Refs: [Student dashboard](student_dashboard.md)
+- Acceptance: Students see their achievement status per lecture; correct display per value_type; graceful handling of unmarked achievements; feature flag gates UI.
 ```
 
 ```admonish note
