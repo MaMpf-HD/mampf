@@ -12,6 +12,20 @@ module StudentPerformance
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
 
+    scope :stale, lambda {
+      record_table = Record.arel_table
+      cert_table = arel_table
+
+      joins(
+        cert_table.join(record_table).on(
+          record_table[:lecture_id].eq(cert_table[:lecture_id])
+            .and(record_table[:user_id].eq(cert_table[:user_id]))
+        ).join_sources
+      ).where(
+        record_table[:computed_at].gt(cert_table[:certified_at])
+      )
+    }
+
     def self.passed?(lecture:, user:)
       find_by(lecture: lecture, user: user)&.passed? || false
     end
