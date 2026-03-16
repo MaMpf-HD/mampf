@@ -78,7 +78,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << overview_tab if exam?
         t << settings_tab if exam? || assignment?
         t << tasks_tab if pointable?
-        t << submissions_tab if pointable? && assessment&.requires_submission
         t << points_tab if pointable?
         t << grades_tab if gradable?
         t << roster_tab if exam?
@@ -131,14 +130,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
-    def submissions_tab
-      TabConfig.new(
-        "submissions",
-        I18n.t("assessment.submissions"),
-        GradingOverviewComponent.new(assessment: assessment, lecture: lecture)
-      )
-    end
-
     def points_tab
       TabConfig.new(
         "points",
@@ -172,8 +163,8 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "statistics",
         I18n.t("assessment.statistics"),
-        PlaceholderTabComponent.new(
-          message: I18n.t("assessment.statistics_placeholder")
+        StatisticsTabComponent.new(
+          assessment: assessment, lecture: lecture
         )
       )
     end
