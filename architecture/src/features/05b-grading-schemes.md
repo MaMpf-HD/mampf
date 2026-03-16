@@ -18,7 +18,7 @@ After an exam is graded and all points are recorded, MaMpf needs to:
 - **Enable analysis:** Show distribution statistics before applying scheme
 - **Allow adjustments:** Let instructors tweak cutoffs based on difficulty
 - **Handle manual overrides:** Respect individual grade adjustments for special cases
-- **Ensure idempotency:** Re-applying same scheme produces same results
+- **Ensure idempotency:** Re-applying same scheme only grades ungraded participations, preserving manual corrections
 - **Maintain audit trail:** Track which scheme was applied when and by whom
 
 ## Solution Architecture
@@ -138,7 +138,7 @@ end
 
 - **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
 
-- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and returns early (idempotent).
+- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and only grades participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
 
 ---
 
@@ -492,7 +492,7 @@ The "grade calculator" that transforms points into grades according to the confi
 
 ### Behavior Highlights
 
-- **Idempotent:** Checks `version_hash` before applying; skip if already applied
+- **Idempotent:** Checks `version_hash` before applying; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
 - **Statistics:** Analyzes distribution for informed decision-making
@@ -534,18 +534,18 @@ flowchart TD
     Apply --> Transaction[Database transaction starts]
 
     Transaction --> CheckHash{version_hash<br/>already applied?}
-    CheckHash -->|Yes| SkipAll[Skip - idempotent]
-    CheckHash -->|No| IterateParticipations[Iterate all participations]
+    CheckHash -->|Yes| CheckUngraded{Any ungraded<br/>participations?}
+    CheckUngraded -->|No| SkipAll[Skip - nothing to do]
+    CheckUngraded -->|Yes| IterateUngraded[Iterate ungraded participations]
+    CheckHash -->|No| IterateAll[Iterate all reviewed participations]
 
-    IterateParticipations --> CheckOverride{Has manual<br/>override?}
-    CheckOverride -->|Yes| SkipStudent[Skip this student]
-    CheckOverride -->|No| ComputeGrade[Compute grade from points]
+    IterateAll --> ComputeGrade[Compute grade from points]
+    IterateUngraded --> ComputeGrade
 
-    ComputeGrade --> UpdateGrade[Update grade_value]
+    ComputeGrade --> UpdateGrade[Update grade_numeric]
     UpdateGrade --> MoreStudents{More students?}
-    SkipStudent --> MoreStudents
 
-    MoreStudents -->|Yes| CheckOverride
+    MoreStudents -->|Yes| ComputeGrade
     MoreStudents -->|No| MarkApplied[Mark scheme as applied]
 
     MarkApplied --> Commit[Commit transaction]

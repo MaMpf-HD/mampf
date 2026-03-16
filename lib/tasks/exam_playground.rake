@@ -288,6 +288,7 @@ namespace :exam do
         Assessment::TaskPoint.where(assessment_participation_id: pid).delete_all
         exam.assessment.assessment_participations.delete_all
         exam.assessment.tasks.delete_all
+        Assessment::GradeScheme.where(assessment_id: exam.assessment.id).delete_all
         exam.assessment.delete
       end
       exam.delete
