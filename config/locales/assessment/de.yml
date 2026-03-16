@@ -150,9 +150,10 @@ de:
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grading_overview:
-      submission_progress: 'Abgabefortschritt'
+      submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
       missing: 'Ausstehend'
+      not_submitted: 'Nicht abgegeben'
       progress: 'Fortschritt'
       unassigned: 'Nicht zugewiesen'
       no_submission_required: 'Für diese Bewertung ist keine digitale Abgabe erforderlich.'

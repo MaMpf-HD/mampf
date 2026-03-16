@@ -287,11 +287,11 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       expect(component.progress_bar_color).to eq(:success)
     end
 
-    it "returns :info when less than 100% progress" do
+    it "returns :secondary when less than 100% progress" do
       create(:assessment_participation, assessment: assessment,
                                         user: user1, tutorial: tutorial1,
                                         submitted_at: 1.day.ago)
-      expect(component.progress_bar_color).to eq(:info)
+      expect(component.progress_bar_color).to eq(:secondary)
     end
   end
 end
