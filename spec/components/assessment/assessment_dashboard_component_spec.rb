@@ -48,7 +48,6 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "common header"
     include_examples "visible tab", "settings"
     include_examples "visible tab", "tasks"
-    include_examples "visible tab", "submissions"
     include_examples "visible tab", "points"
     include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
@@ -59,49 +58,27 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["settings", "tasks", "submissions", "points", "statistics"]
+          ["settings", "tasks", "points", "statistics"]
         )
       end
     end
 
-    describe "submissions tab (conditional)" do
-      it "is included when requires_submission is true" do
+    describe "submissions in statistics tab" do
+      it "includes submission overview when requires_submission is true" do
         assessment.update!(requires_submission: true)
-        keys = described_class.new(
-          assessable: assignment, assessment: assessment, lecture: lecture
-        ).tabs.map(&:key)
-        expect(keys).to include("submissions")
+        render_inline(component)
+        expect(rendered_content).to include("grading_overview_component")
       end
 
-      it "is excluded when requires_submission is false" do
+      it "does not include submission overview when requires_submission is false" do
         assessment.update!(requires_submission: false)
-        keys = component.tabs.map(&:key)
-        expect(keys).not_to include("submissions")
-      end
-
-      context "when requires_submission is true" do
-        before { assessment.update!(requires_submission: true) }
-
-        it "renders the submissions tab" do
-          render_inline(component)
-          expect(rendered_content).to include("-submissions\"")
-        end
-
-        it "renders GradingOverviewComponent in the submissions pane" do
-          render_inline(component)
-          expect(rendered_content).to include("grading_overview_component")
-        end
-      end
-
-      context "when requires_submission is false" do
-        before { assessment.update!(requires_submission: false) }
-
-        it "does not render the submissions tab" do
-          render_inline(component)
-          expect(rendered_content).not_to include(
-            "#{component.dom_prefix}-submissions\""
-          )
-        end
+        comp = described_class.new(
+          assessable: assignment, assessment: assessment, lecture: lecture
+        )
+        render_inline(comp)
+        pane_id = "#{comp.dom_prefix}-statistics"
+        pane_html = rendered_content[/id="#{pane_id}".*?(?=<div[^>]*id="#{comp.dom_prefix}-)/m] || rendered_content
+        expect(pane_html).not_to include("grading_overview_component")
       end
     end
 
