@@ -252,15 +252,36 @@ namespace :assessment do
     end
   end
 
+  desc "Seed random task points for reviewed participations"
+  task seed_task_points: :environment do
+    Flipper.enable(:assessment_grading)
+
+    lecture = Lecture.joins(:tutorials).distinct.first
+    abort "No lecture with tutorials found." unless lecture
+
+    lecture.assignments.each do |assignment|
+      seed_task_points_for(assignment.assessment, assignment.title)
+    end
+
+    if lecture.respond_to?(:exams)
+      lecture.exams.each do |exam|
+        seed_task_points_for(exam.assessment, exam.title)
+      end
+    end
+  end
+
   desc "Run full assessment playground setup"
   task setup: :environment do
     old_level = ActiveRecord::Base.logger&.level
     ActiveRecord::Base.logger&.level = :warn
 
+    clean_invalid_grades!
+
     Rake::Task["assessment:create_assignments"].invoke
     Rake::Task["assessment:create_tasks"].invoke
     Rake::Task["assessment:seed_participations"].invoke
     Rake::Task["assessment:randomize_statuses"].invoke
+    Rake::Task["assessment:seed_task_points"].invoke
     Rake::Task["assessment:seed_grades"].invoke
 
     print_summary
@@ -306,7 +327,8 @@ namespace :assessment do
     puts "\n#{"=" * 85}"
     puts "Assessment Playground Summary"
     puts "=" * 85
-    puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Grades"
+    puts "Assessment                           Revwd   Pendng   No-sub   Absent   " \
+         "Exempt   Grades   Points"
     puts "-" * 85
 
     assessables = lecture.assignments.map { |a| [a.title, a.assessment, a] }
@@ -329,10 +351,18 @@ namespace :assessment do
       exempt = parts.where(status: :exempt).count
       gradable = assessable.is_a?(Assessment::Gradable)
       grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
+      pointable = assessable.is_a?(Assessment::Pointable)
+      points = if pointable
+        Assessment::TaskPoint
+          .where(assessment_participation_id: parts.select(:id))
+          .select(:assessment_participation_id).distinct.count
+      else
+        "-"
+      end
       puts format(
-        "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<g>s",
+        "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<g>s %8<pt>s",
         name: label.truncate(35), r: reviewed, p: pending_sub,
-        ns: pending_nosub, a: absent, e: exempt, g: grades
+        ns: pending_nosub, a: absent, e: exempt, g: grades, pt: points
       )
     end
 
@@ -414,5 +444,76 @@ namespace :assessment do
     end
 
     puts "  ✓ Assigned grades to #{graded.count} participations for: #{label}"
+  end
+
+  def seed_task_points_for(assessment, label)
+    return unless assessment&.requires_points?
+
+    assessable = assessment.assessable
+    if assessable.respond_to?(:deadline) && assessable.deadline&.future?
+      puts "  ⏭ Deadline not yet passed for: #{label}"
+      return
+    end
+
+    tasks = assessment.tasks.order(:position)
+    if tasks.empty?
+      puts "  ⏭ No tasks for: #{label}"
+      return
+    end
+
+    all_participation_ids = assessment.assessment_participations.select(:id)
+    Assessment::TaskPoint
+      .where(assessment_participation_id: all_participation_ids)
+      .delete_all
+    # rubocop:disable Rails/SkipsModelValidations
+    assessment.assessment_participations
+              .where.not(points_total: nil)
+              .update_all(points_total: nil)
+    # rubocop:enable Rails/SkipsModelValidations
+
+    gradeable = assessment.assessment_participations
+                          .where(status: :reviewed)
+                          .where.not(submitted_at: nil)
+    if gradeable.empty?
+      puts "  ⏭ No reviewed participations for: #{label}"
+      return
+    end
+
+    gradeable.find_each do |participation|
+      total = 0.0
+      tasks.each do |task|
+        half_steps = (task.max_points * 2).to_i
+        points = rand(0..half_steps) / 2.0
+        Assessment::TaskPoint.create!(
+          assessment_participation: participation,
+          task: task,
+          points: points,
+          grader_id: participation.grader_id
+        )
+        total += points
+      end
+      participation.update!(points_total: total)
+    end
+
+    puts "  ✓ Seeded task points for #{gradeable.count} participations: #{label}"
+  end
+
+  def clean_invalid_grades!
+    non_gradable_ids = Assessment::Assessment
+                       .includes(:assessable)
+                       .reject { |a| a.assessable.is_a?(Assessment::Gradable) }
+                       .map(&:id)
+    return if non_gradable_ids.empty?
+
+    dirty = Assessment::Participation
+            .where(assessment_id: non_gradable_ids)
+            .where.not(grade_numeric: nil)
+    return if dirty.empty?
+
+    # rubocop:disable Rails/SkipsModelValidations
+    dirty.update_all(grade_numeric: nil, grade_text: nil)
+    # rubocop:enable Rails/SkipsModelValidations
+    puts "⚠ Cleaned #{dirty.count} invalid grade_numeric values " \
+         "on non-gradable assessments"
   end
 end

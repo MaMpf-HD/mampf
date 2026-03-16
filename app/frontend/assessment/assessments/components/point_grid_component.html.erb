@@ -1,0 +1,92 @@
+<% if tasks.empty? %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-list-task me-1"></i>
+    <%= t("assessment.no_tasks_yet") %>
+  </div>
+<% elsif any_scoring? %>
+  <div class="table-responsive">
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th><%= t("basics.name") %></th>
+          <% if show_tutorial_column? %>
+            <th><%= t("basics.tutorial") %></th>
+          <% end %>
+          <% tasks.each do |task| %>
+            <th class="text-center">
+              <div><%= task.description %></div>
+              <small class="text-muted">
+                / <%= max_points_display(task) %>
+              </small>
+            </th>
+          <% end %>
+          <th class="text-center">
+            <div><%= t("assessment.point_grid.total") %></div>
+            <small class="text-muted">
+              / <%= max_total_display %>
+            </small>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% scoring_participations.each do |participation| %>
+          <tr>
+            <td><%= participation.user.tutorial_name %></td>
+            <% if show_tutorial_column? %>
+              <td><%= participation.tutorial&.title %></td>
+            <% end %>
+            <% tasks.each do |task| %>
+              <td class="text-center"><%= points_display(participation, task) %></td>
+            <% end %>
+            <td class="text-center fw-bold">
+              <%= total_display(participation) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-grid-3x3 me-1"></i>
+    <%= t("assessment.no_points_yet") %>
+  </div>
+<% end %>
+
+<% if any_excluded? %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <i class="bi bi-person-dash me-1"></i>
+        <%= t("assessment.grade_table.excluded_heading") %>
+        <span class="badge bg-secondary ms-1">
+          <%= excluded_participations.size %>
+        </span>
+      </h6>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th><%= t("basics.name") %></th>
+            <% if show_tutorial_column? %>
+              <th><%= t("basics.tutorial") %></th>
+            <% end %>
+            <th><%= t("assessment.grade_table.reason") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% excluded_participations.each do |participation| %>
+            <tr>
+              <td><%= participation.user.tutorial_name %></td>
+              <% if show_tutorial_column? %>
+                <td><%= participation.tutorial&.title %></td>
+              <% end %>
+              <td><%= status_label(participation) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

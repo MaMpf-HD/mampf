@@ -16,7 +16,9 @@ RSpec.describe(GradeTableComponent, type: :component) do
     context "when no participations exist" do
       it "renders the empty state" do
         render_inline(component)
-        expect(rendered_content).to include(I18n.t("assessment.no_grades_yet"))
+        expect(rendered_content).to include(
+          I18n.t("assessment.no_grades_yet")
+        )
       end
 
       it "reports any_gradeable? as false" do

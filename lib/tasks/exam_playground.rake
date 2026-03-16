@@ -151,7 +151,7 @@ namespace :exam do
     if existing.positive?
       puts "✓ Registrations already exist (#{existing}). Skipping."
       puts "  Run exam:reset_registrations to clear and re-create."
-      return
+      next
     end
 
     memberships = TutorialMembership.where(tutorial_id: lecture.tutorial_ids)
@@ -199,7 +199,7 @@ namespace :exam do
       roster_count = ExamRoster.joins(:exam)
                                .where(exams: { lecture_id: lecture.id }).count
       puts "  Exam roster has #{roster_count} entries."
-      return
+      next
     end
 
     unless campaign.closed?
@@ -261,7 +261,6 @@ namespace :exam do
 
     puts "=" * 60
     puts "✅ Exam setup complete!"
-    puts "Next: run assessment:setup to seed participations + grades."
   end
 
   desc "Reset exam playground (destroy exam + campaign)"

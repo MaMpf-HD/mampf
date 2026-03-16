@@ -21,6 +21,7 @@ en:
     grade_table:
       absent: 'absent'
       exempt: 'exempt'
+      not_submitted: 'not submitted'
       excluded_heading: 'Special Cases'
       reason: 'Reason'
     statistics: 'Statistics'
@@ -127,6 +128,9 @@ en:
     settings: 'Settings'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
+    no_points_yet: 'No points have been entered yet.'
+    point_grid:
+      total: 'Total'
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'

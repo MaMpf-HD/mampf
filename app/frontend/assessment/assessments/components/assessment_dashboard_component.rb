@@ -134,9 +134,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "points",
         I18n.t("assessment.points"),
-        PlaceholderTabComponent.new(
-          message: I18n.t("assessment.points_grid_placeholder")
-        )
+        PointGridComponent.new(assessment: assessment)
       )
     end
 
