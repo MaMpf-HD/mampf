@@ -18,13 +18,6 @@
           data-recompute-poll-status-url-value="<%= recompute_status_lecture_student_performance_records_path(@lecture) %>"
           data-recompute-poll-reload-url-value="<%= lecture_student_performance_records_path(@lecture) %>"
         >
-          <%= button_to bulk_proposals_lecture_student_performance_evaluator_path(@lecture),
-                      method: :post,
-                      class: "btn btn-outline-primary" do %>
-            <i class="bi bi-clipboard-check me-1"></i>
-            <%= t("student_performance.records.index.generate_proposals") %>
-          <% end %>
-
           <%= button_to recompute_lecture_student_performance_records_path(@lecture),
                       method: :post,
                       class: "btn btn-outline-secondary",

@@ -14,6 +14,7 @@ module StudentPerformance
 
     scope :stale, lambda {
       record_table = Record.arel_table
+      rule_table = Rule.arel_table
       cert_table = arel_table
 
       joins(
@@ -21,9 +22,37 @@ module StudentPerformance
           record_table[:lecture_id].eq(cert_table[:lecture_id])
             .and(record_table[:user_id].eq(cert_table[:user_id]))
         ).join_sources
+      ).joins(
+        cert_table.join(rule_table, Arel::Nodes::OuterJoin).on(
+          rule_table[:id].eq(cert_table[:rule_id])
+        ).join_sources
       ).where(
         record_table[:computed_at].gt(cert_table[:certified_at])
+          .or(rule_table[:updated_at].gt(cert_table[:certified_at]))
       )
+    }
+
+    scope :stale_from_rule, lambda {
+      rule_table = Rule.arel_table
+      cert_table = arel_table
+
+      joins(
+        cert_table.join(rule_table).on(
+          rule_table[:id].eq(cert_table[:rule_id])
+        ).join_sources
+      ).where(rule_table[:updated_at].gt(cert_table[:certified_at]))
+    }
+
+    scope :stale_from_data, lambda {
+      record_table = Record.arel_table
+      cert_table = arel_table
+
+      joins(
+        cert_table.join(record_table).on(
+          record_table[:lecture_id].eq(cert_table[:lecture_id])
+            .and(record_table[:user_id].eq(cert_table[:user_id]))
+        ).join_sources
+      ).where(record_table[:computed_at].gt(cert_table[:certified_at]))
     }
 
     def self.passed?(lecture:, user:)

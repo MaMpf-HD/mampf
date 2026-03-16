@@ -336,12 +336,19 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :rules, only: [:show]
+        resource :rules, only: [:show, :edit, :update]
 
         resource :evaluator, only: [], controller: "evaluator" do
           post :bulk_proposals, on: :collection
           post :preview_rule_change, on: :collection
           get :single_proposal, on: :member
+        end
+
+        resources :certifications, only: [:index, :create, :update] do
+          collection do
+            post :bulk_accept
+            post :bulk_reevaluate
+          end
         end
       end
     end

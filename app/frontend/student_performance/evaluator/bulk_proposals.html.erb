@@ -21,6 +21,8 @@
                 class: "d-inline",
                 data: { turbo_frame: "performance-records-frame" }
               ) do %>
+            <%= hidden_field_tag :source_frame, "performance-records-frame" %>
+
             <button type="submit" class="btn btn-outline-primary btn-sm">
               <i class="bi bi-sliders me-1"></i>
               <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>

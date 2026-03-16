@@ -21,6 +21,60 @@ module StudentPerformance
               .first
     end
 
+    def edit
+      @rule = StudentPerformance::Rule
+              .find_or_initialize_by(lecture: @lecture)
+      @achievements = Achievement.where(lecture: @lecture).order(:title)
+      @selected_achievement_ids = @rule.rule_achievement_ids_set
+    end
+
+    def update
+      @rule = StudentPerformance::Rule
+              .find_or_initialize_by(lecture: @lecture)
+
+      ActiveRecord::Base.transaction do
+        apply_threshold_params
+        @rule.active = true
+        @rule.save!
+        sync_rule_achievements
+      end
+
+      @rule = StudentPerformance::Rule
+              .where(lecture: @lecture, active: true)
+              .includes(rule_achievements: :achievement)
+              .first
+
+      flash.now[:notice] = I18n.t("student_performance.rules.flash.updated")
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace(
+              "performance-rules-frame",
+              partial: "student_performance/rules/show_frame"
+            ),
+            turbo_stream.replace(
+              "performance-certifications-frame",
+              helpers.turbo_frame_tag(
+                "performance-certifications-frame",
+                src: lecture_student_performance_certifications_path(@lecture),
+                loading: "lazy"
+              ) { "" }
+            )
+          ]
+        end
+        format.html do
+          redirect_to lecture_student_performance_rules_path(@lecture),
+                      notice: I18n.t("student_performance.rules.flash.updated")
+        end
+      end
+    rescue ActiveRecord::RecordInvalid
+      @achievements = Achievement.where(lecture: @lecture).order(:title)
+      @selected_achievement_ids = Set.new(
+        Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
+      )
+      render :edit, status: :unprocessable_content
+    end
+
     private
 
       def set_lecture
@@ -38,6 +92,46 @@ module StudentPerformance
       def use_lecture_locale
         locale = @lecture&.locale_with_inheritance || I18n.default_locale
         I18n.locale = locale
+      end
+
+      def apply_threshold_params
+        mode = params.dig(:rule, :threshold_mode)
+        if mode == "percentage"
+          @rule.min_percentage = params.dig(:rule, :min_percentage)
+          @rule.min_points_absolute = nil
+        elsif mode == "absolute"
+          @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
+          @rule.min_percentage = nil
+        else
+          @rule.min_percentage = nil
+          @rule.min_points_absolute = nil
+        end
+      end
+
+      def sync_rule_achievements
+        lecture_achievement_ids = Achievement.where(lecture: @lecture)
+                                             .pluck(:id).to_set
+        wanted_ids = Set.new(
+          Array(params.dig(:rule, :achievement_ids))
+            .compact_blank.map(&:to_i)
+        ) & lecture_achievement_ids
+        existing = @rule.rule_achievements.index_by(&:achievement_id)
+
+        (existing.keys.to_set - wanted_ids).each do |removed_id|
+          existing[removed_id].destroy!
+        end
+
+        position = 1
+        wanted_ids.each do |aid|
+          if existing[aid]
+            existing[aid].update!(position: position)
+          else
+            @rule.rule_achievements.create!(
+              achievement_id: aid, position: position
+            )
+          end
+          position += 1
+        end
       end
   end
 end

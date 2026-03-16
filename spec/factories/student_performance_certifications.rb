@@ -26,6 +26,7 @@ FactoryBot.define do
 
     trait :manual do
       source { :manual }
+      note { "Manual override" }
     end
   end
 end

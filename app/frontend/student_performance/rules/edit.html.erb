@@ -1,0 +1,210 @@
+<%= turbo_frame_tag "performance-rules-frame" do %>
+  <div class="card">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1"><%= t("student_performance.rules.edit.title") %></h4>
+
+          <p class="text-muted small mb-0">
+            <%= t("student_performance.rules.edit.subtitle") %>
+          </p>
+        </div>
+
+        <a
+          href="<%= lecture_student_performance_rules_path(@lecture) %>"
+          class="btn btn-outline-secondary btn-sm"
+          data-turbo-frame="performance-rules-frame"
+        >
+          <%= t("student_performance.rules.edit.cancel") %>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <% if @rule.errors.any? %>
+        <div class="alert alert-danger mb-4">
+          <ul class="mb-0">
+            <% @rule.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="alert alert-info d-flex align-items-center mb-4">
+        <i class="bi bi-info-circle me-2"></i>
+        <%= t("student_performance.rules.edit.save_hint") %>
+      </div>
+
+      <%= form_with(
+            url: lecture_student_performance_rules_path(@lecture),
+            method: :patch,
+            data: { turbo_frame: "performance-rules-frame" }
+          ) do |f| %>
+        <fieldset class="mb-4">
+          <legend class="h5 fw-semibold">
+            <%= t("student_performance.rules.edit.threshold_section") %>
+          </legend>
+
+          <% threshold_mode = if @rule.min_percentage.present?
+                                "percentage"
+                              elsif @rule.min_points_absolute.present?
+                                "absolute"
+                              else
+                                "percentage"
+                              end %>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                type="radio"
+                name="rule[threshold_mode]"
+                value="percentage"
+                id="threshold-percentage"
+                class="form-check-input"
+                <%= "checked" if threshold_mode == "percentage" %>
+              >
+
+              <label class="form-check-label" for="threshold-percentage">
+                <%= t("student_performance.rules.edit.percentage_mode") %>
+              </label>
+            </div>
+
+            <div class="ms-4 mt-2">
+              <div class="input-group" style="max-width: 200px">
+                <input
+                  type="number"
+                  name="rule[min_percentage]"
+                  value="<%= @rule.min_percentage %>"
+                  class="form-control"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  placeholder="50"
+                  autocomplete="off"
+                >
+
+                <span class="input-group-text">%</span>
+              </div>
+
+              <div class="form-text">
+                <%= t("student_performance.rules.edit.percentage_hint") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                type="radio"
+                name="rule[threshold_mode]"
+                value="absolute"
+                id="threshold-absolute"
+                class="form-check-input"
+                <%= "checked" if threshold_mode == "absolute" %>
+              >
+
+              <label class="form-check-label" for="threshold-absolute">
+                <%= t("student_performance.rules.edit.absolute_mode") %>
+              </label>
+            </div>
+
+            <div class="ms-4 mt-2">
+              <div class="input-group" style="max-width: 200px">
+                <input
+                  type="number"
+                  name="rule[min_points_absolute]"
+                  value="<%= @rule.min_points_absolute %>"
+                  class="form-control"
+                  min="0"
+                  step="0.5"
+                  placeholder="60"
+                  autocomplete="off"
+                >
+
+                <span class="input-group-text">
+                  <%= t("student_performance.rules.edit.points_unit") %>
+                </span>
+              </div>
+
+              <div class="form-text">
+                <%= t("student_performance.rules.edit.absolute_hint") %>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <% if @achievements.any? %>
+          <fieldset class="mb-4">
+            <legend class="h5 fw-semibold">
+              <%= t("student_performance.rules.edit.achievements_section") %>
+            </legend>
+
+            <p class="text-muted small">
+              <%= t("student_performance.rules.edit.achievements_hint") %>
+            </p>
+
+            <% @achievements.each do |achievement| %>
+              <div class="form-check mb-2">
+                <input
+                  type="checkbox"
+                  name="rule[achievement_ids][]"
+                  value="<%= achievement.id %>"
+                  id="achievement-<%= achievement.id %>"
+                  class="form-check-input"
+                  <%= "checked" if @selected_achievement_ids.include?(achievement.id) %>
+                >
+
+                <label
+                  class="form-check-label"
+                  for="achievement-<%= achievement.id %>"
+                >
+                  <strong><%= achievement.title %></strong>
+
+                  <% if achievement.description.present? %>
+                    <br>
+                    <small class="text-muted">
+                      <%= achievement.description %>
+                    </small>
+                  <% end %>
+
+                  <% case achievement.value_type %>
+                  <% when "boolean" %>
+                    <span class="badge bg-secondary ms-1">
+                      <%= t("student_performance.rules.show.value_types.boolean") %>
+                    </span>
+                  <% when "numeric" %>
+                    <span class="badge bg-secondary ms-1">
+                      <%= t("student_performance.rules.show.value_types.numeric",
+                            threshold: achievement.threshold) %>
+                    </span>
+                  <% when "percentage" %>
+                    <span class="badge bg-secondary ms-1">
+                      <%= t("student_performance.rules.show.value_types.percentage",
+                            threshold: achievement.threshold) %>
+                    </span>
+                  <% end %>
+                </label>
+              </div>
+            <% end %>
+          </fieldset>
+        <% end %>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>
+            <%= t("student_performance.rules.edit.save") %>
+          </button>
+
+          <a
+            href="<%= lecture_student_performance_rules_path(@lecture) %>"
+            class="btn btn-outline-secondary"
+            data-turbo-frame="performance-rules-frame"
+          >
+            <%= t("student_performance.rules.edit.cancel") %>
+          </a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

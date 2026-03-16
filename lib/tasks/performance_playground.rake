@@ -23,6 +23,9 @@ namespace :performance do
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
+    deleted_certs = StudentPerformance::Certification.where(lecture: lecture).delete_all
+    puts "✓ Deleted #{deleted_certs} certifications."
+
     records = lecture.student_performance_records.delete_all
     puts "✓ Deleted #{records} performance records."
 

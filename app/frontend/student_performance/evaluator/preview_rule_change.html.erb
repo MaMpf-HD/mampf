@@ -1,4 +1,6 @@
-<%= turbo_frame_tag "performance-records-frame" do %>
+<% frame_id = params[:source_frame].presence || "performance-records-frame" %>
+
+<%= turbo_frame_tag frame_id do %>
   <div class="card">
     <div class="card-header bg-white border-bottom">
       <div class="d-flex justify-content-between align-items-center">
@@ -12,14 +14,25 @@
           </p>
         </div>
 
-        <a
-          href="<%= lecture_student_performance_records_path(@lecture) %>"
-          class="btn btn-outline-secondary btn-sm"
-          data-turbo-frame="performance-records-frame"
-        >
-          <i class="bi bi-arrow-left me-1"></i>
-          <%= t("student_performance.evaluator.back_to_records") %>
-        </a>
+        <% if frame_id == "performance-certifications-frame" %>
+          <a
+            href="<%= lecture_student_performance_certifications_path(@lecture) %>"
+            class="btn btn-outline-secondary btn-sm"
+            data-turbo-frame="performance-certifications-frame"
+          >
+            <i class="bi bi-arrow-left me-1"></i>
+            <%= t("student_performance.certifications.back_to_dashboard") %>
+          </a>
+        <% else %>
+          <a
+            href="<%= lecture_student_performance_records_path(@lecture) %>"
+            class="btn btn-outline-secondary btn-sm"
+            data-turbo-frame="performance-records-frame"
+          >
+            <i class="bi bi-arrow-left me-1"></i>
+            <%= t("student_performance.evaluator.back_to_records") %>
+          </a>
+        <% end %>
       </div>
     </div>
 
@@ -47,8 +60,10 @@
                 ),
                 method: :post,
                 class: "row g-3 align-items-end",
-                data: { turbo_frame: "performance-records-frame" }
+                data: { turbo_frame: frame_id }
               ) do %>
+            <%= hidden_field_tag :source_frame, frame_id %>
+
             <div class="col-auto">
               <label
                 for="preview_min_percentage"
