@@ -141,9 +141,10 @@ en:
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
     grading_overview:
-      submission_progress: 'Submission Progress'
+      submission_progress: 'Submissions'
       submitted: 'Submitted'
       missing: 'Missing'
+      not_submitted: 'Not submitted'
       progress: 'Progress'
       unassigned: 'Unassigned'
       no_submission_required: 'No digital submission required for this assessment.'
