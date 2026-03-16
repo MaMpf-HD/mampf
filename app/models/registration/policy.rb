@@ -56,6 +56,15 @@ module Registration
       self.config["prerequisite_campaign_id"] = value
     end
 
+    def lecture_id
+      config&.fetch("lecture_id", nil)
+    end
+
+    def lecture_id=(value)
+      self.config ||= {}
+      self.config["lecture_id"] = value
+    end
+
     def config_summary
       handler.summary || "-"
     end
@@ -71,7 +80,7 @@ module Registration
                    when :prerequisite_campaign
                      Registration::Policy::PrerequisiteCampaignHandler.new(self)
                    when :student_performance
-                     Registration::Policy::Handler.new(self)
+                     Registration::Policy::StudentPerformanceHandler.new(self)
                    else
                      raise(ArgumentError, "Unknown policy kind: #{kind}")
       end

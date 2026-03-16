@@ -147,6 +147,8 @@ en:
         missing_domains: "At least one allowed domain must be specified."
         missing_prerequisite_campaign: "A prerequisite campaign must be selected."
         prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
+        missing_lecture: "A lecture must be selected."
+        lecture_not_found: "The selected lecture does not exist."
       configs:
         allowed_domains: "Allowed Domains"
         prerequisite_campaign_id: "Prerequisite Campaign"

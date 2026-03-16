@@ -147,6 +147,8 @@ de:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
+        missing_lecture: "Es muss eine Veranstaltung ausgewählt werden."
+        lecture_not_found: "Die ausgewählte Veranstaltung existiert nicht."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
