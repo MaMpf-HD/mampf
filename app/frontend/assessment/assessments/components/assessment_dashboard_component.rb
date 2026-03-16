@@ -5,18 +5,22 @@ class AssessmentDashboardComponent < ViewComponent::Base
 
   # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
-                 active_tab: nil, tasks: nil, task: nil)
+                 active_tab: nil, tasks: nil, task: nil,
+                 grade_scheme: nil, preview_mode: false)
     super()
     @assessable = assessable
     @assessment = assessment
     @lecture = lecture
     @tasks = tasks || assessment&.tasks&.order(:position) || []
     @task = task
+    @grade_scheme = grade_scheme
+    @preview_mode = preview_mode
     @active_tab = active_tab || default_tab
   end
   # rubocop: enable Metrics/ParameterLists
 
-  attr_reader :assessable, :assessment, :lecture, :active_tab, :tasks, :task
+  attr_reader :assessable, :assessment, :lecture, :active_tab, :tasks, :task,
+              :grade_scheme
 
   def tabs
     @tabs ||= build_tabs
@@ -80,6 +84,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << tasks_tab if pointable?
         t << points_tab if pointable?
         t << grades_tab if gradable?
+        t << grade_scheme_tab if pointable? && gradable?
         t << roster_tab if exam?
         t << statistics_tab unless assessable.is_a?(Talk)
       end
@@ -143,6 +148,18 @@ class AssessmentDashboardComponent < ViewComponent::Base
         "grades",
         I18n.t("assessment.grades"),
         GradeTableComponent.new(assessment: assessment)
+      )
+    end
+
+    def grade_scheme_tab
+      TabConfig.new(
+        "grade_scheme",
+        I18n.t("assessment.grade_scheme.label"),
+        GradeSchemeTabComponent.new(
+          assessment: assessment,
+          grade_scheme: grade_scheme,
+          preview_mode: @preview_mode
+        )
       )
     end
 

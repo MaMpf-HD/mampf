@@ -140,6 +140,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "visible tab", "tasks"
     include_examples "visible tab", "points"
     include_examples "visible tab", "grades"
+    include_examples "visible tab", "grade_scheme"
     include_examples "visible tab", "roster"
     include_examples "visible tab", "statistics"
 
@@ -147,7 +148,8 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["overview", "settings", "tasks", "points", "grades", "roster", "statistics"]
+          ["overview", "settings", "tasks", "points", "grades",
+           "grade_scheme", "roster", "statistics"]
         )
       end
     end

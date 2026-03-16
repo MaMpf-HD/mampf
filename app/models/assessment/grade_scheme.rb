@@ -3,10 +3,14 @@ module Assessment
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 
+    PASSING_GRADES = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0].freeze
+
     enum :kind, { banded: 0 }
 
     validates :config, presence: true
-    validates :assessment_id, uniqueness: true, if: :active?
+    validates :assessment_id, uniqueness: { conditions: -> { where(active: true) } },
+                              if: :active?
+    validates :points_step, numericality: { greater_than: 0 }
     validate :config_matches_kind
     validate :immutable_when_applied, on: :update
     validate :assessable_must_be_pointable_and_gradable
@@ -23,12 +27,40 @@ module Assessment
       )
     end
 
+    def self.two_point_auto(excellence:, passing:, max_points:, step: 1)
+      raise(ArgumentError, "excellence must be > passing") unless excellence > passing
+      raise(ArgumentError, "passing must be >= 0") if passing.negative?
+      raise(ArgumentError, "excellence must be <= max_points") if excellence > max_points
+
+      min_range = (PASSING_GRADES.size - 1) * step
+      if (excellence - passing) < min_range
+        raise(ArgumentError, "range too narrow: need at least #{min_range} points for step=#{step}")
+      end
+
+      raw_step = (excellence - passing).to_f / (PASSING_GRADES.size - 1)
+
+      bands = PASSING_GRADES.each_with_index.map do |grade, i|
+        raw = passing + (i * raw_step)
+        min_pts = (raw / step).round * step
+        { "min_points" => min_pts, "grade" => grade.to_s }
+      end
+
+      pts_values = bands.pluck("min_points")
+      if pts_values.uniq.size < pts_values.size
+        raise(ArgumentError, "range too narrow: grade boundaries collapse with step=#{step}")
+      end
+
+      bands.unshift({ "min_points" => 0, "grade" => "5.0" }) if passing.positive?
+
+      { "bands" => bands }
+    end
+
     private
 
       def immutable_when_applied
         return if applied_at_was.blank?
 
-        protected_attrs = changed - ["applied_at", "applied_by_id", "updated_at"]
+        protected_attrs = changed - ["active", "applied_at", "applied_by_id", "updated_at"]
         return if protected_attrs.empty?
 
         errors.add(:base, :immutable_when_applied)

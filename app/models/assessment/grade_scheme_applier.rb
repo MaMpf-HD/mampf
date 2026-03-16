@@ -10,13 +10,15 @@ module Assessment
       return empty_distribution if points.empty?
 
       sorted = points.sort
+      mean = sorted.sum.to_f / sorted.size
 
       {
         count: sorted.size,
         min: sorted.first,
         max: sorted.last,
-        mean: (sorted.sum.to_f / sorted.size).round(2),
+        mean: mean.round(2),
         median: median(sorted),
+        std_dev: std_dev(sorted, mean),
         percentiles: calculate_percentiles(sorted),
         max_possible: @assessment.effective_total_points
       }
@@ -43,7 +45,15 @@ module Assessment
         reviewed_participations
       end
 
-      return if already_applied? && target.none?
+      absent_target = if already_applied?
+        ungraded_absent_participations
+      else
+        absent_participations
+      end
+
+      target_count = target.count
+      absent_count = absent_target.count
+      return 0 if already_applied? && target_count.zero? && absent_count.zero?
 
       now = Time.current
 
@@ -57,12 +67,42 @@ module Assessment
           )
         end
 
+        absent_target.find_each do |participation|
+          participation.update!(
+            grade_numeric: 5.0,
+            grader: applied_by,
+            graded_at: now
+          )
+        end
+
         unless already_applied?
           @scheme.update!(
             applied_at: now,
             applied_by: applied_by
           )
         end
+      end
+
+      target_count + absent_count
+    end
+
+    def compute_grade_for(participation)
+      points = participation.points_total
+      return 5.0 if points.nil?
+
+      bands = @scheme.config["bands"]
+      first_band = bands.first
+
+      if first_band.key?("min_points")
+        apply_absolute_scheme(points, bands)
+      elsif first_band.key?("min_pct")
+        max = @assessment.effective_total_points
+        return 5.0 if max.nil? || max.zero?
+
+        pct = (points.to_f / max * 100).round(2)
+        apply_percentage_scheme(pct, bands)
+      else
+        5.0
       end
     end
 
@@ -76,28 +116,16 @@ module Assessment
         reviewed_participations.where(grade_numeric: nil)
       end
 
-      def already_applied?
-        @scheme.applied?
+      def absent_participations
+        @assessment.assessment_participations.where(status: :absent)
       end
 
-      def compute_grade_for(participation)
-        points = participation.points_total
-        return 5.0 if points.nil?
+      def ungraded_absent_participations
+        absent_participations.where(grade_numeric: nil)
+      end
 
-        bands = @scheme.config["bands"]
-        first_band = bands.first
-
-        if first_band.key?("min_points")
-          apply_absolute_scheme(points, bands)
-        elsif first_band.key?("min_pct")
-          max = @assessment.effective_total_points
-          return 5.0 if max.nil? || max.zero?
-
-          pct = (points.to_f / max * 100).round(2)
-          apply_percentage_scheme(pct, bands)
-        else
-          5.0
-        end
+      def already_applied?
+        @scheme.applied?
       end
 
       def apply_absolute_scheme(points, bands)
@@ -119,6 +147,13 @@ module Assessment
         else
           ((sorted[mid - 1] + sorted[mid]) / 2.0).round(2)
         end
+      end
+
+      def std_dev(sorted, mean)
+        return 0.0 if sorted.size < 2
+
+        variance = sorted.sum { |x| (x - mean)**2 } / (sorted.size - 1).to_f
+        Math.sqrt(variance).round(2)
       end
 
       def calculate_percentiles(sorted)
@@ -144,6 +179,7 @@ module Assessment
           max: nil,
           mean: nil,
           median: nil,
+          std_dev: nil,
           percentiles: {},
           max_possible: @assessment.effective_total_points
         }

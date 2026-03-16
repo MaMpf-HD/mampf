@@ -23,6 +23,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
       result = applier.analyze_distribution
       expect(result[:count]).to eq(0)
       expect(result[:min]).to be_nil
+      expect(result[:std_dev]).to be_nil
       expect(result[:max_possible]).to eq(60)
     end
 
@@ -36,6 +37,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
       expect(result[:max]).to eq(60)
       expect(result[:mean]).to eq(43)
       expect(result[:median]).to eq(45)
+      expect(result[:std_dev]).to eq(16.05)
       expect(result[:max_possible]).to eq(60)
       expect(result[:percentiles]).to include(50)
     end
@@ -190,7 +192,7 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(scheme.reload.applied_at).to be_present
       end
 
-      it "skips non-reviewed participations" do
+      it "skips pending participations but grades absent as 5.0" do
         pending_p = FactoryBot.create(:assessment_participation, :pending,
                                       assessment: assessment)
         absent_p = FactoryBot.create(:assessment_participation, :absent,
@@ -200,8 +202,39 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         applier.apply!(applied_by: professor)
 
         expect(pending_p.reload.grade_numeric).to be_nil
-        expect(absent_p.reload.grade_numeric).to be_nil
+        expect(absent_p.reload.grade_numeric).to eq(5.0)
         expect(reviewed_p.reload.grade_numeric).to eq(1.0)
+      end
+
+      it "assigns 5.0 to absent students with grader and timestamp" do
+        absent_p = FactoryBot.create(:assessment_participation, :absent,
+                                     assessment: assessment)
+        applier.apply!(applied_by: professor)
+
+        absent_p.reload
+        expect(absent_p.grade_numeric).to eq(5.0)
+        expect(absent_p.grader).to eq(professor)
+        expect(absent_p.graded_at).to be_present
+      end
+
+      it "does not grade exempt participations" do
+        exempt_p = FactoryBot.create(:assessment_participation, :exempt,
+                                     assessment: assessment)
+        applier.apply!(applied_by: professor)
+
+        expect(exempt_p.reload.grade_numeric).to be_nil
+      end
+
+      it "preserves manually corrected absent grades on re-apply" do
+        absent_p = FactoryBot.create(:assessment_participation, :absent,
+                                     assessment: assessment)
+        create_reviewed_participation(points: 50)
+        applier.apply!(applied_by: professor)
+        expect(absent_p.reload.grade_numeric).to eq(5.0)
+
+        absent_p.update_column(:grade_numeric, 4.0) # rubocop:disable Rails/SkipsModelValidations
+        applier.apply!(applied_by: professor)
+        expect(absent_p.reload.grade_numeric).to eq(4.0)
       end
 
       it "assigns 5.0 when points_total is nil on reviewed participation" do
