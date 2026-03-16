@@ -150,3 +150,9 @@ de:
           attributes:
             base:
               assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
+        assessment/grade_scheme:
+          attributes:
+            base:
+              immutable_when_applied: "Angewandte Notenschemata können nicht geändert werden."
+            assessment:
+              must_be_pointable_and_gradable: "muss sowohl punktebasiert als auch benotbar sein (z.B. Klausur)"

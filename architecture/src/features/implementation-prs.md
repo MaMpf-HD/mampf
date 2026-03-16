@@ -502,29 +502,28 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish example "PR-9.1 — Grade scheme schema"
-- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
-- Migrations:
-  - `20251110000001_create_grade_schemes.rb`
-  - `20251110000002_create_grade_scheme_thresholds.rb`
-- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
-- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
+- Scope: Create `assessment_grade_schemes` table; `Assessment::GradeScheme` model with factory and spec.
+- Design decision: bands are stored as JSONB in `config` (no separate thresholds table). Bands are always read/written as a unit, JSONB keeps versioning via `version_hash` atomic, and the schema stays flexible for future `kind` values.
+- Migration: `20260220000000_create_grade_schemes.rb`
+- Refs: [Assessment::GradeScheme](05b-grading-schemes.md#assessmentgradescheme-activerecord-model)
+- Acceptance: Migration runs; `Assessment::GradeScheme` model has correct associations, validations, `applied?`, `compute_hash`, and `config_matches_kind`; factory covers absolute-points, percentage, and applied traits; spec covers all validations and uniqueness of active scheme per assessment.
 ```
 
 ```admonish example "PR-9.2 — Grade scheme applier (service)"
-- Scope: `GradeScheme::Applier` for converting exam points to grades.
+- Scope: `Assessment::GradeSchemeApplier` for converting exam points to grades.
 - Implementation: Supports absolute points and percentage-based bands; idempotent application via version_hash; respects manual overrides
-- Refs: [GradeScheme applier](05b-grading-schemes.md#gradeschemesapplier-service-object)
+- Refs: [Assessment::GradeSchemeApplier](05b-grading-schemes.md#assessmentgradeschemeapplier-service-object)
 - Acceptance: Service computes grades from points; handles both absolute and percentage schemes; version_hash prevents duplicate applications.
 ```
 
 ```admonish example "PR-9.3 — Grade scheme UI + distribution analysis"
 - Scope: UI for grade scheme configuration and application (layers on top of PR-8.4 point grid).
-- Controllers: `GradeScheme::SchemesController` (configuration, preview, apply)
+- Controllers: `Assessment::GradeSchemesController` (configuration, preview, apply)
 - UI:
   - Distribution analysis (histogram, statistics) based on entered points
   - Scheme configuration (two-point auto-generation + manual adjustment)
   - Grade preview showing how scheme maps to students
-  - Apply action (runs GradeScheme::Applier)
+  - Apply action (runs Assessment::GradeSchemeApplier)
 - Integration: Uses existing read-only point grid from PR-8.4; adds grade scheme layer
 - Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
 - Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.10 toggle; feature flag gates UI.
