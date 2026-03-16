@@ -326,6 +326,25 @@ Rails.application.routes.draw do
                 only: [:index, :new, :create],
                 as: :registration_campaigns
     end
+
+    constraints ->(_req) { Flipper.enabled?(:student_performance) } do
+      namespace :student_performance, path: "performance" do
+        resources :records, only: [:index, :show] do
+          collection do
+            post :recompute
+            get :recompute_status
+          end
+        end
+
+        resource :rules, only: [:show]
+
+        resource :evaluator, only: [], controller: "evaluator" do
+          post :bulk_proposals, on: :collection
+          post :preview_rule_change, on: :collection
+          get :single_proposal, on: :member
+        end
+      end
+    end
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do

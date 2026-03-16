@@ -596,34 +596,55 @@ background jobs) that are better reviewed together:
 - Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. Jobs run on schedule; recomputed Records are accurate; stale certifications flagged for teacher review.
 ```
 
-```admonish example "PR-10.3 — Read-only UI (Records + Evaluator endpoints)"
+```admonish example "PR-10.3 — Read-only UI (Records + Evaluator + Rules read-only)"
 - Scope: All read-only and proposal-generating UI for student
   performance — everything teachers see *before* making certification
-  decisions.
+  decisions. Adds the Assessments overview subtab navigation
+  (`AssessmentsOverviewComponent`) with three subtabs: Assessments,
+  Performance, and Rules (read-only).
 - Controllers:
   - `StudentPerformance::RecordsController`: index/show actions for
     factual performance data.
   - `StudentPerformance::EvaluatorController`: `bulk_proposals`,
     `preview_rule_change`, `single_proposal`.
+  - `StudentPerformance::RulesController`: `show` action (read-only
+    display of the active rule and its criteria).
 - UI:
+  - `AssessmentsOverviewComponent` with subtab navigation
+    (Assessments | Performance | Rules), feature-flag gated.
   - Records table view with points, achievements, `computed_at`
     timestamp.
   - Evaluator proposal list (bulk proposals for all students).
   - Modal for rule change preview showing diff of affected students.
+  - Rules subtab: read-only display of the active rule (thresholds,
+    linked achievements). Info alert: "Rule editing available in a
+    future update."
 - Refs: [RecordsController](11-controllers.md#lectureperformancerecordscontroller),
-  [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller)
-- Acceptance: Teachers can view Records; teachers can generate proposals; preview rule changes; does NOT create Certifications automatically; feature flag gates access.
+  [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller),
+  [RulesController](11-controllers.md#lectureperformancerulescontroller)
+- Acceptance: Teachers can view Records; teachers can generate proposals; preview rule changes; Rules subtab shows current criteria read-only; does NOT create Certifications automatically; feature flag gates access.
 ```
 
-```admonish example "PR-10.4 — Certifications controller (teacher workflow)"
+```admonish example "PR-10.4 — Certifications controller + Rules edit (teacher workflow)"
 - Scope: `StudentPerformance::CertificationsController` for teacher
-  certification — the write-heavy decision-making UI.
-- Controllers: Index (dashboard), create (bulk), update (override),
-  bulk_accept.
-- UI: Certification dashboard with proposals; bulk accept/reject;
-  manual override with notes.
-- Refs: [CertificationsController](11-controllers.md#lectureperformancecertificationscontroller)
-- Acceptance: Teachers can review proposals; bulk accept; override with manual status; remediation workflow for stale certifications.
+  certification — the write-heavy decision-making UI. Also adds
+  write-side Rules (edit/update) and the Certifications subtab to
+  `AssessmentsOverviewComponent`.
+- Controllers:
+  - `StudentPerformance::CertificationsController`: index (dashboard),
+    create (bulk), update (override), bulk_accept.
+  - `StudentPerformance::RulesController`: `edit`, `update` actions
+    (criteria editing with rule change preview).
+- UI:
+  - Certifications subtab added to `AssessmentsOverviewComponent`
+    (Assessments | Performance | Rules | Certifications).
+  - Certification dashboard with proposals; bulk accept/reject;
+    manual override with notes.
+  - Rules subtab upgraded from read-only to editable: inline form
+    for thresholds, achievement checkboxes, preview + save.
+- Refs: [CertificationsController](11-controllers.md#lectureperformancecertificationscontroller),
+  [RulesController](11-controllers.md#lectureperformancerulescontroller)
+- Acceptance: Teachers can review proposals; bulk accept; override with manual status; edit rules with preview; Certifications subtab visible; remediation workflow for stale certifications.
 ```
 
 ```admonish abstract

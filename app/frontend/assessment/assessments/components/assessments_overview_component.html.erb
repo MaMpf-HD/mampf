@@ -1,0 +1,92 @@
+<div class="mb-3">
+  <ul class="nav nav-tabs mb-3" id="assessmentOverviewTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link <%= 'active' if tab_active?(:assessments) %>"
+        id="assessments-list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#assessments-list-pane"
+        type="button"
+        role="tab"
+      >
+        <%= t("assessment.tabs.assessments") %>
+      </button>
+    </li>
+
+    <% if performance_enabled? %>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link <%= 'active' if tab_active?(:performance) %>"
+          id="assessments-performance-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#assessments-performance-pane"
+          type="button"
+          role="tab"
+        >
+          <%= t("assessment.tabs.performance") %>
+        </button>
+      </li>
+    <% end %>
+
+    <% if rules_enabled? %>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link <%= 'active' if tab_active?(:rules) %>"
+          id="assessments-rules-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#assessments-rules-pane"
+          type="button"
+          role="tab"
+        >
+          <%= t("assessment.tabs.rules") %>
+        </button>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="tab-content" id="assessmentOverviewTabsContent">
+    <div
+      class="tab-pane fade <%= 'show active' if tab_active?(:assessments) %>"
+      id="assessments-list-pane"
+      role="tabpanel"
+    >
+      <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
+    </div>
+
+    <% if performance_enabled? %>
+      <div
+        class="tab-pane fade <%= 'show active' if tab_active?(:performance) %>"
+        id="assessments-performance-pane"
+        role="tabpanel"
+      >
+        <%= helpers.turbo_frame_tag "performance-records-frame",
+                                    src: lecture_student_performance_records_path(lecture),
+                                    loading: "lazy" do %>
+          <div class="text-center my-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden"><%= t("basics.loading") %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if rules_enabled? %>
+      <div
+        class="tab-pane fade <%= 'show active' if tab_active?(:rules) %>"
+        id="assessments-rules-pane"
+        role="tabpanel"
+      >
+        <%= helpers.turbo_frame_tag "performance-rules-frame",
+                                    src: lecture_student_performance_rules_path(lecture),
+                                    loading: "lazy" do %>
+          <div class="text-center my-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden"><%= t("basics.loading") %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

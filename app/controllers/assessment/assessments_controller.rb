@@ -12,12 +12,16 @@ module Assessment
     def index
       authorize! :index, @lecture
 
+      @active_tab = params[:tab]
+
       respond_to do |format|
         format.html
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
             "assessments_container",
-            AssessmentsIndexComponent.new(lecture: @lecture)
+            AssessmentsOverviewComponent.new(
+              lecture: @lecture, active_tab: @active_tab
+            )
           )
         end
       end

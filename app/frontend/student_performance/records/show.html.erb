@@ -1,0 +1,208 @@
+<%= turbo_frame_tag "performance-records-frame" do %>
+  <div class="mb-3">
+    <%= link_to lecture_student_performance_records_path(@lecture),
+              class: "text-decoration-none" do %>
+      <i class="bi bi-arrow-left me-1"></i>
+      <%= t("student_performance.records.show.back") %>
+    <% end %>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1"><%= @record.user.tutorial_name %></h4>
+          <p class="text-muted small mb-0"><%= @record.user.email %></p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= link_to single_proposal_lecture_student_performance_evaluator_path(
+                     @lecture, record_id: @record.id),
+                   class: "btn btn-outline-primary btn-sm",
+                   data: { turbo_frame: "performance-records-frame" } do %>
+            <i class="bi bi-clipboard-check me-1"></i>
+            <%= t("student_performance.records.show.review_proposal") %>
+          <% end %>
+
+          <%= button_to recompute_lecture_student_performance_records_path(@lecture,
+                        user_id: @record.user_id),
+                      method: :post,
+                      class: "btn btn-outline-secondary btn-sm" do %>
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            <%= t("student_performance.records.show.recompute") %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold text-primary">
+              <%= number_with_precision(@record.points_total_materialized,
+                                      precision: 1,
+                                      strip_insignificant_zeros: true) %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.records.show.total_points") %>
+            </div>
+
+            <div class="text-muted small mt-1">
+              <%= t("student_performance.records.show.out_of",
+                  max: number_with_precision(@record.points_max_materialized,
+                                             precision: 1,
+                                             strip_insignificant_zeros: true)) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold">
+              <%= number_to_percentage(@record.percentage_materialized.to_f, precision: 0) %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.records.show.percentage") %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold">
+              <%= @record.achievements_met_ids.size %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.records.show.achievements_met") %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="mb-3">
+        <%= t("student_performance.records.show.assessment_breakdown") %>
+      </h5>
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">
+                <%= t("student_performance.records.show.assignment") %>
+              </th>
+
+              <th scope="col">
+                <%= t("student_performance.records.show.status") %>
+              </th>
+
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.columns.points") %>
+              </th>
+
+              <th scope="col" class="text-end">
+                <%= t("student_performance.records.show.max_points") %>
+              </th>
+
+              <th scope="col" class="text-center">
+                <%= t("student_performance.records.show.files") %>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @assessments.each do |assessment| %>
+              <% participation = @participation_by_assessment[assessment.id] %>
+              <% status = participation&.display_status || :not_submitted %>
+              <% points = @points_by_assessment[assessment.id] %>
+              <% max = assessment.effective_total_points %>
+
+              <% submission = @submission_by_assignment[assessment.assessable_id] %>
+
+              <tr>
+                <td><%= assessment.title %></td>
+
+                <td>
+                  <%= render ParticipationStatusBadgeComponent.new(
+                      status: status, variant: :full) %>
+                </td>
+
+                <td class="text-end font-monospace">
+                  <% if points %>
+                    <%= number_with_precision(points, precision: 1,
+                                            strip_insignificant_zeros: true) %>
+                  <% else %>
+                    <span class="text-muted">&mdash;</span>
+                  <% end %>
+                </td>
+
+                <td class="text-end font-monospace text-muted">
+                  <%= number_with_precision(max, precision: 1,
+                                          strip_insignificant_zeros: true) %>
+                </td>
+
+                <td class="text-center">
+                  <% if submission&.manuscript %>
+                    <%= link_to show_submission_manuscript_path(submission),
+                                target: "_blank",
+                                class: "text-decoration-none",
+                                title: t("student_performance.records.show.view_manuscript") do %>
+                      <i class="bi bi-file-earmark-text"></i>
+                    <% end %>
+                  <% end %>
+
+                  <% if submission&.correction %>
+                    <%= link_to show_correction_path(submission),
+                                target: "_blank",
+                                class: "text-decoration-none ms-2",
+                                title: t("student_performance.records.show.view_correction") do %>
+                      <i class="bi bi-file-earmark-check text-success"></i>
+                    <% end %>
+                  <% end %>
+
+                  <% unless submission&.manuscript || submission&.correction %>
+                    <span class="text-muted">&mdash;</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+
+          <tfoot class="table-light">
+            <tr class="fw-bold">
+              <td><%= t("student_performance.records.show.total_row") %></td>
+
+              <td></td>
+
+              <td class="text-end font-monospace">
+                <%= number_with_precision(@record.points_total_materialized,
+                                        precision: 1,
+                                        strip_insignificant_zeros: true) %>
+              </td>
+
+              <td class="text-end font-monospace text-muted">
+                <%= number_with_precision(@record.points_max_materialized,
+                                        precision: 1,
+                                        strip_insignificant_zeros: true) %>
+              </td>
+
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <% if @record.computed_at %>
+        <div class="text-muted small mt-4">
+          <i class="bi bi-info-circle me-1"></i>
+
+          <%= t("student_performance.records.show.last_computed",
+              time: time_ago_in_words(@record.computed_at)) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

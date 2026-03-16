@@ -42,7 +42,7 @@ namespace :exam do
       exam = Exam.create!(
         lecture: lecture,
         title: title,
-        date: 2.weeks.from_now,
+        date: 2.weeks.ago,
         location: "Lecture Hall A, Building 42",
         capacity: 80,
         description: "Playground midterm covering topics 1-5."

@@ -1,0 +1,180 @@
+<%= turbo_frame_tag "performance-records-frame" do %>
+  <div class="card">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1">
+            <%= t("student_performance.evaluator.bulk_proposals.title") %>
+          </h4>
+
+          <p class="text-muted small mb-0">
+            <%= t("student_performance.evaluator.bulk_proposals.subtitle") %>
+          </p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= form_tag(
+                preview_rule_change_lecture_student_performance_evaluator_path(
+                  @lecture
+                ),
+                method: :post,
+                class: "d-inline",
+                data: { turbo_frame: "performance-records-frame" }
+              ) do %>
+            <button type="submit" class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-sliders me-1"></i>
+              <%= t("student_performance.evaluator.preview_rule_change.try_threshold") %>
+            </button>
+          <% end %>
+
+          <a
+            href="<%= lecture_student_performance_records_path(@lecture) %>"
+            class="btn btn-outline-secondary btn-sm"
+            data-turbo-frame="performance-records-frame"
+          >
+            <i class="bi bi-arrow-left me-1"></i>
+            <%= t("student_performance.evaluator.back_to_records") %>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-4 g-3">
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold"><%= @proposals.size %></div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.evaluator.bulk_proposals.total") %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold text-success">
+              <%= @passed_count %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.evaluator.bulk_proposals.passed") %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="text-center p-3 border rounded bg-light">
+            <div class="display-6 fw-bold text-danger">
+              <%= @failed_count %>
+            </div>
+
+            <div class="text-muted small">
+              <%= t("student_performance.evaluator.bulk_proposals.failed") %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle me-1"></i>
+        <%= t("student_performance.evaluator.bulk_proposals.info") %>
+      </div>
+
+      <% if @proposals.empty? %>
+        <p class="text-center text-muted py-4">
+          <%= t("student_performance.evaluator.bulk_proposals.empty") %>
+        </p>
+      <% else %>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">
+                  <%= t("student_performance.records.columns.student") %>
+                </th>
+
+                <th scope="col" class="text-end">
+                  <%= t("student_performance.records.columns.points") %>
+                </th>
+
+                <th scope="col" class="text-end">
+                  <%= t("student_performance.records.columns.percentage") %>
+                </th>
+
+                <th scope="col" class="text-center">
+                  <%= t("student_performance.evaluator.bulk_proposals.meets_points") %>
+                </th>
+
+                <th scope="col" class="text-center">
+                  <%= t("student_performance.evaluator.bulk_proposals.meets_achievements") %>
+                </th>
+
+                <th scope="col" class="text-center">
+                  <%= t("student_performance.evaluator.bulk_proposals.proposal") %>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @proposals.each do |record, result| %>
+                <tr>
+                  <td><%= record.user.tutorial_name %></td>
+
+                  <td class="text-end font-monospace">
+                    <%= number_with_precision(
+                        record.points_total_materialized,
+                        precision: 1,
+                        strip_insignificant_zeros: true) %>
+                  </td>
+
+                  <td class="text-end font-monospace">
+                    <%= number_to_percentage(
+                        record.percentage_materialized.to_f,
+                        precision: 1) %>
+                  </td>
+
+                  <td class="text-center">
+                    <% if result.details[:meets_points] %>
+                      <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                      </span>
+                    <% else %>
+                      <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i>
+                      </span>
+                    <% end %>
+                  </td>
+
+                  <td class="text-center">
+                    <% if result.details[:meets_achievements] %>
+                      <span class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                      </span>
+                    <% else %>
+                      <span class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i>
+                      </span>
+                    <% end %>
+                  </td>
+
+                  <td class="text-center">
+                    <% if result.proposed_status == :passed %>
+                      <span class="badge bg-success">
+                        <%= t("student_performance.evaluator.status.passed") %>
+                      </span>
+                    <% else %>
+                      <span class="badge bg-danger">
+                        <%= t("student_performance.evaluator.status.failed") %>
+                      </span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

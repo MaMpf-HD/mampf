@@ -47,11 +47,10 @@ namespace :assessment do
 
     puts "Creating assignments for lecture: #{lecture.title}"
 
-    assignments = [
-      { title: "Homework 1 - Past deadline", deadline: 2.weeks.ago },
-      { title: "Homework 2 - Recent deadline", deadline: 3.days.ago },
-      { title: "Homework 3 - Future deadline", deadline: 1.week.from_now }
-    ]
+    assignments = (1..10).map do |i|
+      deadline = i < 10 ? (10 - i).weeks.ago : 3.days.ago
+      { title: "Homework #{i}", deadline: deadline }
+    end
 
     assignments.each do |attrs|
       existing = lecture.assignments.find_by(title: attrs[:title])
@@ -88,13 +87,11 @@ namespace :assessment do
         next
       end
 
-      point_options = [5, 10, 15, 20]
-      task_count = rand(3..5)
+      task_count = rand(4..5)
       task_count.times do |i|
-        max_points = point_options.sample
         assessment.tasks.create!(
           description: "Problem #{i + 1}",
-          max_points: max_points,
+          max_points: 4,
           position: i + 1
         )
       end
@@ -185,11 +182,15 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
 
-    lecture.tutorials.each do |tutorial|
-      submission_rate = rand(70..90) / 100.0
-      grading_rate = rand(50..85) / 100.0
+    sorted_assignments = lecture.assignments.order(:deadline)
+    dropout_cutoffs = {}
 
-      participations = Assessment::Participation.where(tutorial_id: tutorial.id)
+    lecture.tutorials.each do |tutorial|
+      grader_id = tutorial.tutors.first&.id
+
+      participations = Assessment::Participation
+                       .where(tutorial_id: tutorial.id)
+                       .includes(assessment: :assessable)
       next if participations.empty?
 
       participations.each do |p|
@@ -197,23 +198,44 @@ namespace :assessment do
         assessable = p.assessment.assessable
         future_deadline = assessable.respond_to?(:deadline) &&
                           assessable.deadline&.future?
+        recent_deadline = !future_deadline &&
+                          assessable.respond_to?(:deadline) &&
+                          assessable.deadline &&
+                          assessable.deadline > 1.week.ago
 
-        if rand < 0.05
+        profile = student_profile(p.user_id)
+
+        if profile == :dropout && !is_physical
+          cutoff = dropout_cutoffs[p.user_id] ||= rand(1..3)
+          hw_index = sorted_assignments.index do |a|
+            a.assessment&.id == p.assessment_id
+          end
+          if hw_index && hw_index >= cutoff
+            p.destroy!
+            next
+          end
+        end
+
+        sub_rate = submission_rate_for(profile)
+
+        if rand < 0.03
           p.update!(status: :exempt, submitted_at: nil)
         elsif is_physical && rand < 0.10
           p.update!(status: :absent, submitted_at: nil)
-        elsif !is_physical && rand > submission_rate
+        elsif !is_physical && rand > sub_rate
           if future_deadline
             p.destroy!
           else
             p.update!(submitted_at: nil)
           end
-        elsif !future_deadline && rand < grading_rate
+        elsif future_deadline || (recent_deadline && rand < 0.6)
+          next
+        else
           base_time = p.submitted_at || Time.current
           p.update!(
             status: :reviewed,
             graded_at: base_time + rand(1..48).hours,
-            grader_id: tutorial.tutors.first&.id
+            grader_id: grader_id
           )
         end
       end
@@ -294,7 +316,8 @@ namespace :assessment do
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
 
-    test_titles = [
+    test_titles = (1..10).map { |i| "Homework #{i}" }
+    test_titles += [
       "Homework 1 - Past deadline",
       "Homework 2 - Recent deadline",
       "Homework 3 - Future deadline"
@@ -480,10 +503,12 @@ namespace :assessment do
     end
 
     gradeable.find_each do |participation|
+      quality = student_quality(participation.user_id)
       total = 0.0
       tasks.each do |task|
-        half_steps = (task.max_points * 2).to_i
-        points = rand(0..half_steps) / 2.0
+        raw = (quality * task.max_points) + rand(-1.0..1.0)
+        half_steps = (raw * 2).round.clamp(0, (task.max_points * 2).to_i)
+        points = half_steps / 2.0
         Assessment::TaskPoint.create!(
           assessment_participation: participation,
           task: task,
@@ -515,5 +540,37 @@ namespace :assessment do
     # rubocop:enable Rails/SkipsModelValidations
     puts "⚠ Cleaned #{dirty.count} invalid grade_numeric values " \
          "on non-gradable assessments"
+  end
+
+  def student_profile(user_id)
+    bucket = user_id.hash.abs % 100
+    if bucket < 15 then :top
+    elsif bucket < 60 then :good
+    elsif bucket < 75 then :struggling
+    elsif bucket < 90 then :dropout
+    else
+      :occasional
+    end
+  end
+
+  def student_quality(user_id)
+    rng = Random.new(user_id.hash)
+    case student_profile(user_id)
+    when :top then rng.rand(0.82..0.98)
+    when :good then rng.rand(0.55..0.82)
+    when :struggling then rng.rand(0.20..0.50)
+    when :dropout then rng.rand(0.55..0.85)
+    when :occasional then rng.rand(0.40..0.70)
+    end
+  end
+
+  def submission_rate_for(profile)
+    case profile
+    when :top then rand(0.93..0.99)
+    when :good then rand(0.83..0.95)
+    when :struggling then rand(0.60..0.80)
+    when :dropout then rand(0.80..0.95)
+    when :occasional then rand(0.55..0.75)
+    end
   end
 end

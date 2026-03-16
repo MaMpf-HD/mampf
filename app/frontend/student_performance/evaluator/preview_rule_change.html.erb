@@ -1,0 +1,192 @@
+<%= turbo_frame_tag "performance-records-frame" do %>
+  <div class="card">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1">
+            <%= t("student_performance.evaluator.preview_rule_change.title") %>
+          </h4>
+
+          <p class="text-muted small mb-0">
+            <%= t("student_performance.evaluator.preview_rule_change.subtitle") %>
+          </p>
+        </div>
+
+        <a
+          href="<%= lecture_student_performance_records_path(@lecture) %>"
+          class="btn btn-outline-secondary btn-sm"
+          data-turbo-frame="performance-records-frame"
+        >
+          <i class="bi bi-arrow-left me-1"></i>
+          <%= t("student_performance.evaluator.back_to_records") %>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="card bg-light mb-4">
+        <div class="card-body">
+          <h6 class="card-title mb-3">
+            <%= t("student_performance.evaluator.preview_rule_change.current_rule") %>
+            :
+            <% if @rule.min_percentage.present? %>
+              <span class="fw-normal">
+                <%= number_to_percentage(@rule.min_percentage, precision: 0) %>
+              </span>
+            <% elsif @rule.min_points_absolute.present? %>
+              <span class="fw-normal">
+                <%= @rule.min_points_absolute %>
+                <%= t("student_performance.rules.show.points_absolute") %>
+              </span>
+            <% end %>
+          </h6>
+
+          <%= form_tag(
+                preview_rule_change_lecture_student_performance_evaluator_path(
+                  @lecture
+                ),
+                method: :post,
+                class: "row g-3 align-items-end",
+                data: { turbo_frame: "performance-records-frame" }
+              ) do %>
+            <div class="col-auto">
+              <label
+                for="preview_min_percentage"
+                class="form-label small fw-bold"
+              >
+                <%= t("student_performance.evaluator.preview_rule_change.try_percentage") %>
+              </label>
+
+              <div class="input-group" style="max-width: 200px;">
+                <input
+                  type="number"
+                  name="preview[min_percentage]"
+                  id="preview_min_percentage"
+                  class="form-control"
+                  value="<%= @preview_percentage || @rule.min_percentage %>"
+                  min="0"
+                  max="100"
+                  step="1"
+                  autocomplete="off"
+                >
+
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-eye me-1"></i>
+                <%= t("student_performance.evaluator.preview_rule_change.preview") %>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @changes.any? %>
+        <div class="row mb-3 g-3">
+          <div class="col-12 col-md-4">
+            <div class="text-center p-3 border rounded bg-light">
+              <div class="display-6 fw-bold"><%= @changes.size %></div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.evaluator.preview_rule_change.total_changes") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="text-center p-3 border rounded bg-light">
+              <div class="display-6 fw-bold text-success">
+                <%= @newly_passed %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.evaluator.preview_rule_change.newly_passed") %>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="text-center p-3 border rounded bg-light">
+              <div class="display-6 fw-bold text-danger">
+                <%= @newly_failed %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("student_performance.evaluator.preview_rule_change.newly_failed") %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">
+                  <%= t("student_performance.records.columns.student") %>
+                </th>
+
+                <th scope="col" class="text-end">
+                  <%= t("student_performance.records.columns.percentage") %>
+                </th>
+
+                <th scope="col" class="text-center">
+                  <%= t("student_performance.evaluator.preview_rule_change.current_status") %>
+                </th>
+
+                <th scope="col" class="text-center">
+                  <%= t("student_performance.evaluator.preview_rule_change.new_status") %>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @changes.each do |change| %>
+                <tr>
+                  <td><%= change[:record].user.tutorial_name %></td>
+
+                  <td class="text-end font-monospace">
+                    <%= number_to_percentage(
+                          change[:record].percentage_materialized.to_f,
+                          precision: 1) %>
+                  </td>
+
+                  <td class="text-center">
+                    <% if change[:from] == :passed %>
+                      <span class="badge bg-success">
+                        <%= t("student_performance.evaluator.status.passed") %>
+                      </span>
+                    <% else %>
+                      <span class="badge bg-danger">
+                        <%= t("student_performance.evaluator.status.failed") %>
+                      </span>
+                    <% end %>
+                  </td>
+
+                  <td class="text-center">
+                    <% if change[:to] == :passed %>
+                      <span class="badge bg-success">
+                        <%= t("student_performance.evaluator.status.passed") %>
+                      </span>
+                    <% else %>
+                      <span class="badge bg-danger">
+                        <%= t("student_performance.evaluator.status.failed") %>
+                      </span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-secondary text-center">
+          <i class="bi bi-check-circle me-1"></i>
+          <%= t("student_performance.evaluator.preview_rule_change.no_changes") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
