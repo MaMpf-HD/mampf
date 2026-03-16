@@ -17,6 +17,18 @@ class GradingOverviewComponent < ViewComponent::Base
     @deadline ||= assessment.assessable&.deadline
   end
 
+  def closed?
+    deadline.present? && deadline < Time.current
+  end
+
+  def missing_label
+    if closed?
+      I18n.t("assessment.grading_overview.not_submitted")
+    else
+      I18n.t("assessment.grading_overview.missing")
+    end
+  end
+
   def deadline_status
     return nil unless deadline
 
@@ -39,7 +51,7 @@ class GradingOverviewComponent < ViewComponent::Base
   end
 
   def progress_bar_color
-    progress_percentage == 100 ? :success : :info
+    progress_percentage == 100 ? :success : :secondary
   end
 
   def total_expected
