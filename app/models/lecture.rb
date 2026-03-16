@@ -89,6 +89,20 @@ class Lecture < ApplicationRecord
   # a lecture has many exams (scheduled assessment events)
   has_many :exams, dependent: :destroy
 
+  has_many :student_performance_records,
+           class_name: "StudentPerformance::Record",
+           dependent: :destroy
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification",
+           dependent: :destroy
+  has_many :student_performance_rules,
+           class_name: "StudentPerformance::Rule",
+           dependent: :destroy
+  has_one :active_performance_rule,
+          -> { where(active: true) },
+          class_name: "StudentPerformance::Rule"
+  has_many :achievements, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
