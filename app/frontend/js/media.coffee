@@ -239,23 +239,13 @@ $(document).on 'turbo:load', ->
     selected = JSON.parse(importTab.dataset.selected)
     if $(this).data('purpose') == 'import'
       lectureId = importTab.dataset.lecture
-      csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
-      fetch Routes.lecture_import_media_path(lectureId),
-        method: 'POST'
-        headers: {
-          'Content-Type': 'application/json'
-          'Accept': 'text/vnd.turbo-stream.html'
-          'X-CSRF-Token': csrfToken
-        }
-        body: JSON.stringify(media_ids: selected)
-      .then (response) ->
-        unless response.ok
-          throw new Error("Import failed with status #{response.status}")
-        response.text()
-      .then (streamMessage) ->
-        Turbo.renderStreamMessage(streamMessage)
-      .catch (error) ->
-        console.log("Turbo Import Error: #{error}")
+      $.ajax Routes.lecture_import_media_path(lectureId),
+        type: 'POST'
+        contentType: 'application/json'
+        headers: { 'Accept': 'text/vnd.turbo-stream.html' }
+        data: JSON.stringify(media_ids: selected)
+        success: (response) -> Turbo.renderStreamMessage(response)
+        error: (xhr) -> console.log("Turbo Import Error: #{xhr.status}")
     else if $(this).data('purpose') == 'quiz'
       quizId = $('#new_vertex').data('quiz')
       $.ajax Routes.quiz_vertices_path(quiz_id: quizId),
