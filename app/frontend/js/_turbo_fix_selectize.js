@@ -153,6 +153,7 @@ $(document).on("turbo:load", function () {
   }));
 });
 
+// Re-initialize TomSelect in updated Turbo Frames
 $(document).on("turbo:frame-load", function (event) {
   const frame = event.target;
   fillOptionsByAjax($(frame).find(".selectize").filter(function () {
@@ -160,10 +161,13 @@ $(document).on("turbo:frame-load", function (event) {
   }));
 });
 
+// Intercept Turbo Streams to re-initialize TomSelect
 document.addEventListener("turbo:before-stream-render", function (event) {
   const stream = event.target;
   const originalRender = event.detail.render;
 
+  // Initialize immediately after render to prevent FOUC (Flash of Unstyled Content)
+  // Since this happens in the same execution tick, the browser won't paint the unstyled element
   event.detail.render = function (currentElement) {
     originalRender(currentElement);
 
