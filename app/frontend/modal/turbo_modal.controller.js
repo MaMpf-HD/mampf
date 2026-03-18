@@ -4,10 +4,8 @@ import * as Turbo from "@hotwired/turbo";
 
 export default class extends Controller {
   static values = {
-    url: String,
     selector: String,
     frameId: String,
-    errorMessage: String,
   };
 
   async open(event) {
@@ -19,27 +17,43 @@ export default class extends Controller {
     const modal = Modal.getOrCreateInstance(modalEl);
     modal.show();
 
-    const response = await fetch(this.urlValue, {
-      headers: {
-        "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
-        "Turbo-Frame": this.frameIdValue,
-      },
-    });
+    const url = this.element.getAttribute("href");
 
-    if (response.ok) {
-      const html = await response.text();
-      Turbo.renderStreamMessage(html);
-    }
-    else {
-      console.error("Failed to load modal content:", response.statusText);
-      const body = modalEl.querySelector(".modal-body");
-      if (body) {
-        const alert = document.createElement("div");
-        alert.className = "alert alert-danger";
-        alert.setAttribute("role", "alert");
-        alert.textContent = this.errorMessageValue;
-        body.replaceChildren(alert);
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
+          "Turbo-Frame": this.frameIdValue,
+        },
+      });
+
+      if (response.ok) {
+        const html = await response.text();
+        Turbo.renderStreamMessage(html);
       }
+      else {
+        console.error("Failed to load modal content:", response.statusText);
+        this.showErrorMessage(modalEl);
+      }
+    }
+    catch (error) {
+      console.error("Network error loading modal content:", error);
+      this.showErrorMessage(modalEl);
+    }
+  }
+
+  showErrorMessage(modalEl) {
+    const body = modalEl.querySelector(".modal-body");
+    if (body) {
+      const alert = document.createElement("div");
+      alert.className = "alert alert-danger";
+      alert.setAttribute("role", "alert");
+
+      const meta = document.querySelector('meta[name="turbo-modal-error-message"]');
+      const message = meta?.content || "An error occurred.";
+
+      alert.textContent = message;
+      body.replaceChildren(alert);
     }
   }
 }
