@@ -163,9 +163,15 @@ class LecturesController < ApplicationController
       return
     end
 
+    @terms = Term.select_terms
+
     render turbo_stream: [
-      turbo_stream.update("lecture-teacher-error", @errors[:teacher].join(" ")),
-      turbo_stream.update("lecture-term-error", @errors[:course].join(" "))
+      turbo_stream.update("edit_preferences", template: "lectures/edit/_preferences", locals: {
+                            lecture: @lecture
+                          }),
+      turbo_stream.update("edit_people", template: "lectures/edit/_people", locals: {
+                            lecture: @lecture
+                          })
     ], status: :unprocessable_content
   end
 

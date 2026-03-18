@@ -16,9 +16,6 @@
                                         lecture.term&.id),
                       {},
                       { class: 'form-select' } %>
-          <div class="invalid-feedback d-block"
-              id="lecture-term-error">
-        </div>
       </div>
     <% end %>
     <% unless lecture.course.term_independent %>
@@ -30,9 +27,6 @@
                       options_for_select(Lecture.select_sorts, lecture.sort),
                       {},
                       { class: 'form-select' } %>
-          <div class="invalid-feedback d-block"
-            id="lecture-sort-error">
-        </div>
       </div>
     <% end %>
     <% unless lecture.seminar? %>

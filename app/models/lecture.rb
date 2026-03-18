@@ -945,7 +945,9 @@ class Lecture < ApplicationRecord
 
     def map_association_errors_to_foreign_keys
       map_error(:course, :course_id)
+      map_error(:course, :term_id)
       map_error(:term, :term_id)
+      map_error(:teacher, :teacher_id)
     end
 
     def map_error(source, target)

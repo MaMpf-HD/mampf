@@ -140,17 +140,17 @@ module LecturesHelper
     if current_user.admin?
       label = form.label(:teacher_id, t("basics.teacher"), class: "form-label")
       help_desk = helpdesk(t("admin.lecture.info.teacher"), false)
-      teacher_error = form.object.errors[:teacher].join(" ")
-      teacher_select_class = "selectize form-select#{" is-invalid" if teacher_error.present?}"
 
       preselection = if is_new_lecture
         options_for_select([[current_user.info, current_user.id]], current_user.id)
-      else
+      elsif lecture.teacher
         options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id)
+      else
+        []
       end
 
       # TODO: Rubocop bug when trying to break the last object on a new line
-      select = form.select(:teacher_id, preselection, {}, { class: teacher_select_class,
+      select = form.select(:teacher_id, preselection, {}, { class: "selectize form-select",
                                                             data: {
                                                               ajax: true,
                                                               filled: false,
@@ -161,10 +161,7 @@ module LecturesHelper
                                                               testid: "teacher-admin-select"
                                                             } })
 
-      error_div = content_tag(:div, teacher_error, class: "invalid-feedback d-block",
-                                                   id: "lecture-teacher-error")
-
-      return label + help_desk + select + error_div
+      return label + help_desk + select
     end
 
     # Non-admin cases
@@ -180,7 +177,7 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher.info, "data-testid": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "", "data-testid": "teacher-info")
     end
 
     p1 + p2
