@@ -19,12 +19,15 @@ class Submission < ApplicationRecord
   delegate :assessment, to: :assignment
 
   def representative_task_points
+    representative_participation&.task_points
+  end
+
+  def representative_participation
     if assignment.assessable?
       assessment = assignment.assessment
-      participation = assessment.assessment_participations
-                                .where(user: users)
-                                .first
-      participation.task_points
+      assessment.assessment_participations
+                .where(user: users)
+                .first
     else
       nil
     end

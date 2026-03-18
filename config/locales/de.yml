@@ -2904,6 +2904,8 @@ de:
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
+    graded: Benote
+    pending: Benotung ausstehend
     accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >

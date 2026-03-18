@@ -22,7 +22,8 @@
     <% end %>
   </td>
 
-  <% if assignment.assessable? %>
+  <!-- batch of columns A.1: grade zone -->
+  <% if gradding_enabled?(assignment) %>
     <!-- support point by task -->
     <% for assessment_task in assignment.assessment.tasks %>
       <td>
@@ -39,8 +40,8 @@
     <% end %>
   <% end %>
 
-  <!-- Column 1: Save -->
-  <% if current_user.in?(submission.tutorial.tutors) && assignment.assessable? %>
+  <!-- Column A.2: Save and refresh -->
+  <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment)  %>
     <td class="text-center task-col" data-id="<%= submission.id %>">
       <!-- Hidden form for this row to submit-->
       <%= form_with url: grade_submission_path(submission),
@@ -69,6 +70,16 @@
         refresh
       </button>
         </td>
+  <% end %>
+
+  <!-- Column A.3: Status -->
+  <% if gradding_enabled?(assignment) %>
+    <td class="text-center task-col">
+      <% status = submission&.representative_participation&.status%>
+      <span class="badge bg-<%= badge_status_participation_color(status) %>">
+        <%= status %>
+      </span>
+    </td>
   <% end %>
 
   <!-- Column 2: Download / Show buttons -->

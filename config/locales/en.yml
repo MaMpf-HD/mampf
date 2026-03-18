@@ -2725,6 +2725,8 @@ en:
     de: 'German'
   submission:
     invited: You have been invited by '%{inviter}' for this submission.
+    graded: graded
+    pending: pending
     accept_invitation: Accept invitation
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
