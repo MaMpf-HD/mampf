@@ -1,0 +1,35 @@
+<%= turbo_frame_tag term do %>
+  <div class="row mx-2 px-4 border-bottom" data-testid="term-row-<%= term.year %>-<%= term.season %>">
+    <div class="col-2">
+      <%= term.year %>
+    </div>
+    <div class="col-2">
+      <%= term.season %>
+    </div>
+    <div class="col-4">
+      <ul class="list-unstyled">
+        <% term.lectures.each do |l| %>
+          <li>
+            <%= link_to l.title_teacher_info,
+                        edit_lecture_path(l),
+                        data: { turbo_frame: "_top" } %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="col-4">
+      <%= link_to t('buttons.edit'),
+                  edit_term_path(term),
+                  class: 'btn btn-sm btn-outline-primary my-1',
+                  data: { turbo_frame: dom_id(term) } %>
+      <% if term.lectures.empty? %>
+        <%= button_to t('buttons.delete'),
+                      term_path(term),
+                      method: :delete,
+                      data: { turbo_confirm: t('confirmation.generic') },
+                      class: 'btn btn-sm btn-outline-danger my-1',
+                      form: { class: 'd-inline' } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
