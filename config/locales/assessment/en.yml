@@ -86,6 +86,7 @@ en:
       updated: 'Task updated successfully.'
       deleted: 'Task deleted successfully.'
       delete_failed: 'Failed to delete task.'
+      has_points: 'Cannot delete: Points have been entered for this task.'
       points_abbrev: 'pts'
       description: 'Description (Optional)'
       description_placeholder: 'Optional: Add details or instructions'

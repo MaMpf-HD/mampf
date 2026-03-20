@@ -8,7 +8,13 @@ module Assessment
     validates :max_points, numericality: { greater_than_or_equal_to: 0 }
     validate :assessment_requires_points
 
+    before_destroy :check_no_points_entered, prepend: true
+
     acts_as_list scope: :assessment
+
+    def points_entered?
+      task_points.where.not(points: nil).exists?
+    end
 
     private
 
@@ -16,6 +22,10 @@ module Assessment
         return if assessment&.requires_points
 
         errors.add(:base, :requires_points_true)
+      end
+
+      def check_no_points_entered
+        throw(:abort) if points_entered?
       end
   end
 end

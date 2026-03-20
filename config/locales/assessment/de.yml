@@ -86,6 +86,7 @@ de:
       updated: 'Aufgabe erfolgreich aktualisiert.'
       deleted: 'Aufgabe erfolgreich gelöscht.'
       delete_failed: 'Löschen der Aufgabe fehlgeschlagen.'
+      has_points: 'Löschen nicht möglich: Es wurden bereits Punkte eingetragen.'
       points_abbrev: 'Pkt'
       description: 'Beschreibung (Optional)'
       description_placeholder: 'Optional: Details oder Hinweise hinzufügen'
