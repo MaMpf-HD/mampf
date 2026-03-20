@@ -9,35 +9,45 @@
       <thead>
         <tr>
           <th><%= t("basics.name") %></th>
+
           <% if show_tutorial_column? %>
             <th><%= t("basics.tutorial") %></th>
           <% end %>
-          <% tasks.each do |task| %>
+
+          <% tasks.each_with_index do |task, i| %>
             <th class="text-center">
-              <div><%= task.description %></div>
+              <div>
+                <%= task.description.presence || t("assessment.task.default_name", number: i + 1) %>
+              </div>
+
               <small class="text-muted">
                 / <%= max_points_display(task) %>
               </small>
             </th>
           <% end %>
+
           <th class="text-center">
             <div><%= t("assessment.point_grid.total") %></div>
-            <small class="text-muted">
-              / <%= max_total_display %>
-            </small>
+            <small class="text-muted">/ <%= max_total_display %></small>
           </th>
         </tr>
       </thead>
+
       <tbody>
         <% scoring_participations.each do |participation| %>
           <tr>
             <td><%= participation.user.tutorial_name %></td>
+
             <% if show_tutorial_column? %>
               <td><%= participation.tutorial&.title %></td>
             <% end %>
+
             <% tasks.each do |task| %>
-              <td class="text-center"><%= points_display(participation, task) %></td>
+              <td class="text-center">
+                <%= points_display(participation, task) %>
+              </td>
             <% end %>
+
             <td class="text-center fw-bold">
               <%= total_display(participation) %>
             </td>
@@ -59,29 +69,36 @@
       <h6 class="mb-0">
         <i class="bi bi-person-dash me-1"></i>
         <%= t("assessment.grade_table.excluded_heading") %>
+
         <span class="badge bg-secondary ms-1">
           <%= excluded_participations.size %>
         </span>
       </h6>
     </div>
+
     <div class="card-body p-0">
       <table class="table table-sm mb-0">
         <thead>
           <tr>
             <th><%= t("basics.name") %></th>
+
             <% if show_tutorial_column? %>
               <th><%= t("basics.tutorial") %></th>
             <% end %>
+
             <th><%= t("assessment.grade_table.reason") %></th>
           </tr>
         </thead>
+
         <tbody>
           <% excluded_participations.each do |participation| %>
             <tr>
               <td><%= participation.user.tutorial_name %></td>
+
               <% if show_tutorial_column? %>
                 <td><%= participation.tutorial&.title %></td>
               <% end %>
+
               <td><%= status_label(participation) %></td>
             </tr>
           <% end %>
