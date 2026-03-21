@@ -3,8 +3,6 @@ $('#assignment_title_').removeClass('is-invalid')
 $('#assignment-title-error').empty()
 $('#assignment_deadline').removeClass('is-invalid')
 $('#assignment-deadline-error').empty()
-$('#assignment_deletion_date_').removeClass('is-invalid')
-$('#assignment-deletion-date-error').empty()
 
 # display error message
 <% if @errors.present? %>
@@ -17,11 +15,6 @@ $('#assignment_title_').addClass('is-invalid')
 $('#assignment-deadline-error')
   .append('<%= @errors[:deadline].join(" ") %>').show()
 $('#assignment_deadline').addClass('is-invalid')
-<% end %>
-<% if @errors[:deletion_date].present? %>
-$('#assignment-deletion-date-error')
-  .append('<%= @errors[:deletion_date].join(" ") %>').show()
-$('#assignment_deletion_date_').addClass('is-invalid')
 <% end %>
 <% else %>
 $('.assignmentRow[data-id="0"')

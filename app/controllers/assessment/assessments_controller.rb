@@ -141,7 +141,7 @@ module Assessment
         params.expect(
           assessment_assessment: [:requires_submission,
                                   { assessable_attributes: [:id, :title, :deadline, :medium_id,
-                                                            :accepted_file_type, :deletion_date] }]
+                                                            :accepted_file_type] }]
         )
       end
   end

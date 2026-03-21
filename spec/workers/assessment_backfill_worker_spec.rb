@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(AssessmentBackfillWorker) do
-  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:lecture) { create(:lecture, :released_for_all, submission_deletion_date: 6.months.from_now) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let(:user1) { create(:confirmed_user) }
   let(:user2) { create(:confirmed_user) }
@@ -18,8 +18,7 @@ RSpec.describe(AssessmentBackfillWorker) do
     context "with an expired assignment" do
       let!(:assignment) do
         create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago,
-                            deletion_date: 6.months.from_now)
+                            deadline: 1.day.ago)
       end
 
       it "creates participations for all roster students" do
@@ -111,8 +110,7 @@ RSpec.describe(AssessmentBackfillWorker) do
       it "picks up old expired assignments with future deletion_date" do
         old_assignment = create(
           :assignment, lecture: lecture,
-                       deadline: 2.weeks.ago,
-                       deletion_date: 6.months.from_now
+                       deadline: 2.weeks.ago
         )
 
         described_class.new.perform
@@ -121,15 +119,17 @@ RSpec.describe(AssessmentBackfillWorker) do
           .to eq(2)
       end
 
-      it "skips assignments whose deletion_date has passed" do
-        past_assignment = create(
-          :assignment, lecture: lecture,
-                       deadline: 2.months.ago,
-                       deletion_date: 6.months.from_now
+      it "skips assignments whose lecture deletion_date has passed" do
+        past_lecture = create(
+          :lecture, :released_for_all,
+          submission_deletion_date: 1.day.ago.to_date
         )
-        # rubocop:disable Rails/SkipsModelValidations
-        past_assignment.update_column(:deletion_date, 1.day.ago.to_date)
-        # rubocop:enable Rails/SkipsModelValidations
+        past_tutorial = create(:tutorial, lecture: past_lecture)
+        create(:tutorial_membership, user: user1, tutorial: past_tutorial)
+        past_assignment = create(
+          :assignment, lecture: past_lecture,
+                       deadline: 2.months.ago
+        )
 
         expect do
           described_class.new.perform
@@ -142,8 +142,7 @@ RSpec.describe(AssessmentBackfillWorker) do
     context "with an active assignment" do
       before do
         create(:assignment, lecture: lecture,
-                            deadline: 1.week.from_now,
-                            deletion_date: 6.months.from_now)
+                            deadline: 1.week.from_now)
       end
 
       it "does not create any participations" do
@@ -158,8 +157,7 @@ RSpec.describe(AssessmentBackfillWorker) do
 
       it "does not create any participations" do
         create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago,
-                            deletion_date: 6.months.from_now)
+                            deadline: 1.day.ago)
 
         expect do
           described_class.new.perform
@@ -174,8 +172,7 @@ RSpec.describe(AssessmentBackfillWorker) do
 
       it "does not create any participations" do
         create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago,
-                            deletion_date: 6.months.from_now)
+                            deadline: 1.day.ago)
 
         expect do
           described_class.new.perform

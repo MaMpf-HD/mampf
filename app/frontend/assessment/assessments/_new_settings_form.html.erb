@@ -7,6 +7,7 @@
   <div class="row g-3">
     <div class="col-md-6">
       <%= f.label :title, t("basics.title"), class: "form-label" %>
+
       <%= f.text_field :title,
                        class: "form-control",
                        required: true %>
@@ -14,29 +15,40 @@
 
     <div class="col-md-6">
       <%= f.label :deadline, t("basics.deadline"), class: "form-label" %>
-      <div class="input-group td-picker"
-           id="assignment-deadline-picker"
-           data-controller="datetimepicker"
-           data-td-target-input="nearest"
-           data-td-target-toggle="nearest">
+
+      <div
+        class="input-group td-picker"
+        id="assignment-deadline-picker"
+        data-controller="datetimepicker"
+        data-td-target-input="nearest"
+        data-td-target-toggle="nearest"
+      >
         <%= f.text_field :deadline,
                          class: "form-control td-input",
                          data: { td_target: "#assignment-deadline-picker" },
                          value: assignment.deadline&.strftime("%Y-%m-%d %H:%M"),
                          autocomplete: "off" %>
-        <span class="input-group-text td-picker-button"
-              role="button"
-              data-td-target="#assignment-deadline-picker"
-              data-td-toggle="datetimepicker">
+
+        <span
+          class="input-group-text td-picker-button"
+          role="button"
+          data-td-target="#assignment-deadline-picker"
+          data-td-toggle="datetimepicker"
+        >
           <i class="bi bi-calendar-fill"></i>
         </span>
       </div>
-      <div class="invalid-feedback td-error" id="assignment-deadline-error"
-           data-td-invalid-date="<%= t("datetimepicker.invalid_date") %>"></div>
+
+      <div
+        class="invalid-feedback td-error"
+        id="assignment-deadline-error"
+        data-td-invalid-date="<%= t("datetimepicker.invalid_date") %>"
+      ></div>
     </div>
 
     <div class="col-md-6">
       <%= f.label :medium_id, t("medium.singular"), class: "form-label" %>
+
       <%= f.select :medium_id,
                    options_for_select(Medium.where(teachable: lecture, sort: "Exercise")
                                     .map { |m| [m.local_title_for_viewers, m.id] },
@@ -47,6 +59,7 @@
 
     <div class="col-md-6">
       <%= f.label :accepted_file_type, t("submission.file_format"), class: "form-label" %>
+
       <%= f.select :accepted_file_type,
                    options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
                                       assignment.accepted_file_type),
@@ -54,20 +67,14 @@
                    { class: "form-select" } %>
     </div>
 
-    <div class="col-md-6">
-      <%= f.label :deletion_date, t("assignment.deletion_date"), class: "form-label" %>
-      <%= f.select :deletion_date,
-                   Term.possible_deletion_dates_localized,
-                   { selected: assignment.localized_deletion_date },
-                   class: "form-select" %>
-    </div>
-
     <div class="col-12">
       <div class="form-check">
         <%= f.check_box :requires_submission,
                         class: "form-check-input",
                         checked: assignment.requires_submission.nil? ? true : assignment.requires_submission %>
+
         <%= f.label :requires_submission, t("assessment.requires_submission"), class: "form-check-label" %>
+
         <div class="form-text text-muted">
           <%= t("assessment.requires_submission_hint") %>
         </div>
@@ -77,6 +84,7 @@
     <div class="col-12 mt-4 d-flex justify-content-between">
       <div>
         <%= f.submit t("assessment.form.submit"), class: "btn btn-primary me-2" %>
+
         <%= link_to t("buttons.cancel"),
                     assessment_assessments_path(lecture_id: lecture.id),
                     class: "btn btn-secondary",

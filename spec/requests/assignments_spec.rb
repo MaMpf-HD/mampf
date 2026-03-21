@@ -92,7 +92,6 @@ RSpec.describe("Assignments", type: :request) do
         title: "New Assignment",
         lecture_id: lecture.id,
         deadline: 2.weeks.from_now.iso8601,
-        deletion_date: 4.weeks.from_now.iso8601,
         accepted_file_type: ".pdf"
       }
     end
@@ -101,8 +100,7 @@ RSpec.describe("Assignments", type: :request) do
       {
         title: "",
         lecture_id: lecture.id,
-        deadline: 1.day.ago.iso8601,
-        deletion_date: 2.days.from_now.iso8601
+        deadline: 1.day.ago.iso8601
       }
     end
 
@@ -211,8 +209,7 @@ RSpec.describe("Assignments", type: :request) do
     let(:invalid_attributes) do
       {
         title: "",
-        deadline: 1.day.ago.iso8601,
-        deletion_date: assignment.deletion_date.iso8601
+        deadline: 1.day.ago.iso8601
       }
     end
 
@@ -477,7 +474,6 @@ RSpec.describe("Assignments", type: :request) do
                  title: "Test",
                  lecture_id: german_lecture.id,
                  deadline: 2.weeks.from_now.iso8601,
-                 deletion_date: 4.weeks.from_now.iso8601,
                  accepted_file_type: ".pdf"
                }
              },

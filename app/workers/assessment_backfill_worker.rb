@@ -5,7 +5,8 @@ class AssessmentBackfillWorker
     return unless ::Flipper.enabled?(:assessment_grading)
 
     Assignment.expired
-              .where(deletion_date: Date.current..)
+              .joins(:lecture)
+              .where(lectures: { submission_deletion_date: Date.current.. })
               .find_each do |assignment|
       backfill_assignment(assignment)
     end

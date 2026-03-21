@@ -12,20 +12,24 @@ RSpec.describe(SubmissionCleaner, type: :model) do
       ActionMailer::Base.deliveries = []
       @term1 = FactoryBot.create(:term, year: Time.zone.today.year, season: "SS")
       @term2 = FactoryBot.create(:term, year: Time.zone.today.year - 1, season: "WS")
-      @lecture1 = FactoryBot.create(:lecture)
-      @lecture2 = FactoryBot.create(:lecture)
+      @lecture1 = FactoryBot.create(
+        :lecture,
+        submission_deletion_date: Time.zone.today + 14.days
+      )
+      @lecture2 = FactoryBot.create(
+        :lecture,
+        submission_deletion_date: Time.zone.today + 14.days
+      )
+      @lecture3 = FactoryBot.create(
+        :lecture,
+        submission_deletion_date: Time.zone.today + 21.days
+      )
       tutorial1 = FactoryBot.create(:tutorial, :with_tutors, lecture: @lecture1)
       tutorial2 = FactoryBot.create(:tutorial, :with_tutors, lecture: @lecture2)
-      tutorial3 = FactoryBot.create(:tutorial, :with_tutors, lecture: @lecture2)
-      assignment1 = FactoryBot.create(:assignment,
-                                      lecture: @lecture1,
-                                      deletion_date: Time.zone.today + 14.days)
-      assignment2 = FactoryBot.create(:assignment,
-                                      lecture: @lecture2,
-                                      deletion_date: Time.zone.today + 14.days)
-      assignment3 = FactoryBot.create(:assignment,
-                                      lecture: @lecture2,
-                                      deletion_date: Time.zone.today + 21.days)
+      tutorial3 = FactoryBot.create(:tutorial, :with_tutors, lecture: @lecture3)
+      assignment1 = FactoryBot.create(:assignment, lecture: @lecture1)
+      assignment2 = FactoryBot.create(:assignment, lecture: @lecture2)
+      assignment3 = FactoryBot.create(:assignment, lecture: @lecture3)
       @user1 = FactoryBot.create(:confirmed_user,
                                  locale: I18n.available_locales.first)
       @user2 = FactoryBot.create(:confirmed_user,

@@ -69,6 +69,23 @@
   </div>
   <div class="row">
     <div class="col-auto mb-3">
+      <%= f.label :submission_deletion_date,
+                  t('admin.lecture.submission_deletion_date'),
+                  class: "form-label" %>
+      <%= helpdesk(t('admin.lecture.info.submission_deletion_date'),
+                   false) %>
+      <%= f.select :submission_deletion_date,
+                   options_for_select(
+                     Term.possible_deletion_dates_localized,
+                     lecture.effective_submission_deletion_date
+                           .strftime(I18n.t("date.formats.concise"))
+                   ),
+                   {},
+                   { class: 'form-select' } %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-auto mb-3">
       <%= f.label :passphrase,
                   t('admin.lecture.passphrase'),
                   class: "form-label" %>

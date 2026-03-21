@@ -7,6 +7,7 @@ class Assignment < ApplicationRecord
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
+  before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   before_destroy :check_destructibility, prepend: true
 
@@ -18,16 +19,6 @@ class Assignment < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
-  validates :deletion_date, presence: true
-  validate :deletion_date_cannot_be_in_the_past
-
-  def deletion_date_cannot_be_in_the_past
-    return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
-
-    errors.add(:deletion_date, I18n.t("activerecord.errors.models." \
-                                      "assignment.attributes.deletion_date." \
-                                      "in_past"))
-  end
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -169,11 +160,11 @@ class Assignment < ApplicationRecord
     ".gz"
   end
 
-  def localized_deletion_date
-    deletion_date.strftime(I18n.t("date.formats.concise"))
-  end
-
   private
+
+    def inherit_deletion_date_from_lecture
+      self.deletion_date = lecture.effective_submission_deletion_date
+    end
 
     def grading_data?
       return false unless assessment&.assessment_participations

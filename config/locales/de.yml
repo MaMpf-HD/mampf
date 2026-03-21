@@ -509,6 +509,7 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      submission_deletion_date: Löschdatum für Abgaben
       import_toc: Gliederung aus anderer Veranstaltung importieren
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
@@ -731,6 +732,9 @@ de:
           Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
+        submission_deletion_date: >
+          Hier kannst Du festlegen, wann Abgaben und Korrekturen dieser
+          Veranstaltung automatisch gelöscht werden.
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um

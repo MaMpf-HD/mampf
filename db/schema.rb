@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_26_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -529,6 +529,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_26_000001) do
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0
+    t.date "submission_deletion_date"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"

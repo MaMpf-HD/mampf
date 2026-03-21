@@ -692,11 +692,15 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
-  def submission_deletion_date
-    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
+  def default_submission_deletion_date
+    Rails.cache.fetch("#{cache_key_with_version}/default_submission_deletion_date") do
       (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
         15.days
     end
+  end
+
+  def effective_submission_deletion_date
+    submission_deletion_date || default_submission_deletion_date
   end
 
   def assignments_by_deadline

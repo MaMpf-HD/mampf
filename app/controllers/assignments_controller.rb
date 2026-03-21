@@ -147,6 +147,6 @@ class AssignmentsController < ApplicationController
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
                                  :deadline, :accepted_file_type,
-                                 :deletion_date, :requires_submission])
+                                 :requires_submission])
     end
 end
