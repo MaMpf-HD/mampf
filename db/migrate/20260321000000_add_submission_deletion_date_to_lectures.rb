@@ -14,9 +14,13 @@ class AddSubmissionDeletionDateToLectures < ActiveRecord::Migration[8.0]
       )
     end
     # rubocop: enable Rails/SkipsModelValidations
+
+    change_column_null :lectures, :submission_deletion_date, false
+    add_index :lectures, :submission_deletion_date
   end
 
   def down
+    remove_index :lectures, :submission_deletion_date, if_exists: true
     remove_column :lectures, :submission_deletion_date
   end
 end

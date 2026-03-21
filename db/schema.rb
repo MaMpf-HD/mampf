@@ -529,9 +529,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_21_000000) do
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0
-    t.date "submission_deletion_date"
+    t.date "submission_deletion_date", null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
+    t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
