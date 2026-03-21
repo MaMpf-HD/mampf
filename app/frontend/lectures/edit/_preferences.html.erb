@@ -77,7 +77,7 @@
       <%= f.select :submission_deletion_date,
                    options_for_select(
                      Term.possible_deletion_dates_localized,
-                     lecture.effective_submission_deletion_date
+                     lecture.submission_deletion_date
                            .strftime(I18n.t("date.formats.concise"))
                    ),
                    {},

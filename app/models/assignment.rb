@@ -163,7 +163,7 @@ class Assignment < ApplicationRecord
   private
 
     def inherit_deletion_date_from_lecture
-      self.deletion_date = lecture.effective_submission_deletion_date
+      self.deletion_date = lecture.submission_deletion_date
     end
 
     def grading_data?

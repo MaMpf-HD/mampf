@@ -64,39 +64,6 @@ class Term < ApplicationRecord
     Term.find_by(year: next_year, season: next_season)
   end
 
-  def assignments
-    Assignment.where(lecture: lectures)
-  end
-
-  def submissions
-    Submission.where(assignment: assignments)
-  end
-
-  def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
-  end
-
-  def submitters
-    User.where(id: submitter_ids)
-  end
-
-  def assignments_with_submissions
-    Assignment.where(id: submissions.pluck(:assignment_id).uniq)
-  end
-
-  def lectures_with_submissions
-    Lecture.where(id: assignments_with_submissions.pluck(:lecture_id).uniq)
-  end
-
-  def people_in_charge_of_submissions
-    (lectures_with_submissions.map(&:editors).flatten +
-      lectures_with_submissions.map(&:teacher)).uniq
-  end
-
-  def submission_deletion_info_dates
-    [end_date + 1.day, end_date + 8.days, submission_deletion_date]
-  end
-
   def self.possible_deletion_dates
     return [Time.zone.today + 6.months] if Term.active.blank?
 
