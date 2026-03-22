@@ -23,12 +23,14 @@
   <% elsif legacy %>
     <td colspan="5" class="text-muted">
       <%= I18n.t("assessment.legacy_description") %>
+
       <% if edit_path.present? || delete_path.present? %>
         <div class="float-end d-flex gap-2">
           <% if edit_path.present? %>
             <%= link_to t("basics.edit"), edit_path,
                 class: "btn btn-sm btn-outline-primary", remote: true %>
           <% end %>
+
           <% if delete_path.present? %>
             <%= button_to t("basics.delete"), delete_path,
                 method: :delete,
@@ -41,10 +43,13 @@
     </td>
   <% else %>
     <td>
-      <% if medium_title %>
-        <span class="text-truncate d-inline-block"
-              style="max-width: 200px;" title="<%= medium_title %>">
-          <%= medium_title %>
+      <% if medium %>
+        <span
+          class="text-truncate d-inline-block"
+          style="max-width: 200px;"
+          title="<%= medium_title %>"
+        >
+          <%= link_to medium_title, medium_path(medium) %>
         </span>
       <% end %>
     </td>
@@ -53,10 +58,13 @@
     </td>
     <td class="text-center">
       <%= tasks_count %>
+
       <% if tasks_count.zero? %>
-        <span class="ms-1 text-warning"
-              title="<%= t('assessment.task.missing_warning') %>"
-              data-bs-toggle="tooltip">
+        <span
+          class="ms-1 text-warning"
+          title="<%= t('assessment.task.missing_warning') %>"
+          data-bs-toggle="tooltip"
+        >
           <i class="bi bi-exclamation-triangle-fill"></i>
         </span>
       <% end %>
@@ -66,11 +74,15 @@
     </td>
     <td class="text-center">
       <% if requires_submission? %>
-        <i class="bi bi-check-lg text-success"
-           title="<%= t('assessment.requires_submission') %>"></i>
+        <i
+          class="bi bi-check-lg text-success"
+          title="<%= t('assessment.requires_submission') %>"
+        ></i>
       <% else %>
-        <i class="bi bi-x-lg text-muted"
-           title="<%= t('assessment.no_submission_required') %>"></i>
+        <i
+          class="bi bi-x-lg text-muted"
+          title="<%= t('assessment.no_submission_required') %>"
+        ></i>
       <% end %>
     </td>
     <td><%= deadline_display %></td>

@@ -35,10 +35,14 @@ class AssessmentListItemComponent < ViewComponent::Base
     attrs
   end
 
-  def medium_title
-    return nil unless assessable.respond_to?(:medium) && assessable.medium
+  def medium
+    return nil unless assessable.respond_to?(:medium)
 
-    assessable.medium.local_title_for_viewers
+    assessable.medium
+  end
+
+  def medium_title
+    medium&.local_title_for_viewers
   end
 
   def file_type

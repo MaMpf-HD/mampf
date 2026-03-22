@@ -255,7 +255,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     end
 
     context "when deadline passed less than 24 hours ago" do
-      before { assignment.update!(deadline: 6.hours.ago) }
+      before { assignment.update_column(:deadline, 6.hours.ago) }
 
       it "returns just_closed phase" do
         expect(component.deadline_status[:phase]).to eq(:just_closed)
@@ -264,7 +264,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     end
 
     context "when deadline passed more than 24 hours ago" do
-      before { assignment.update!(deadline: 3.days.ago) }
+      before { assignment.update_column(:deadline, 3.days.ago) }
 
       it "returns grading phase" do
         expect(component.deadline_status[:phase]).to eq(:grading)

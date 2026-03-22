@@ -106,6 +106,30 @@
       </p>
       <div data-turbo="false">
         <div class="list-group">
+          <div class="list-group-item bg-light">
+            <div class="row">
+              <div class="col-2">
+                <h6><%= t('basics.title') %></h6>
+              </div>
+
+              <div class="col-4">
+                <h6><%= t('basics.deadline') %></h6>
+              </div>
+
+              <div class="col-2">
+                <h6><%= t('basics.medium') %></h6>
+              </div>
+
+              <div class="col-2">
+                <h6><%= t('submission.file_format') %></h6>
+              </div>
+
+              <div class="col-2">
+                <h6><%= t('basics.action') %></h6>
+              </div>
+            </div>
+          </div>
+
           <% legacy_by_type["Assignment"].each do |assessable| %>
             <%= render 'assignments/row', assignment: assessable %>
           <% end %>
