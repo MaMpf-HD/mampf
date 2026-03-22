@@ -4035,6 +4035,8 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+              in_past: >
+                Der Abgabetermin darf nicht in der Vergangenheit liegen.
             deletion_date:
               blank: >
                 Es muss ein Löschdatum angegeben werden.

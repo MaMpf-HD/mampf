@@ -16,7 +16,7 @@
       <%# Datetimepicker for assignment deadline %>
       <div class="col-4 form-group">
         <div
-          class="input-group log-event td-picker"
+          class="input-group flex-nowrap align-items-start log-event td-picker"
           id="assignment-picker"
           data-td-target-input="nearest"
           data-td-target-toggle="nearest">
@@ -31,10 +31,10 @@
             data-td-toggle="datetimepicker">
             <i class="bi bi-calendar-fill"></i>
           </span>
-          <div class="invalid-feedback td-error"
-            id="assignment-deadline-error"
-            data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
-          </div>
+        </div>
+        <div class="invalid-feedback td-error"
+          id="assignment-deadline-error"
+          data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
         </div>
       </div>
 

@@ -71,7 +71,10 @@ class AssignmentsController < ApplicationController
   def update
     set_assignment_locale
 
-    return unless @assignment.update(assignment_params)
+    unless @assignment.update(assignment_params)
+      @errors = @assignment.errors
+      return
+    end
 
     @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
     @assignment.reload

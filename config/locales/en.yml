@@ -3780,6 +3780,7 @@ en:
               blank: You need to give a title.
             deadline:
               blank: You need to give a due date.
+              in_past: Due date can't be in the past.
             deletion_date:
               blank: You need to give a deletion date.
               in_past: Deletion date can't lie in the past.

@@ -54,21 +54,23 @@
         <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
 
         <div
-          class="input-group td-picker"
+          class="input-group flex-nowrap align-items-start td-picker"
           id="assessment-deadline-picker"
           data-controller="datetimepicker"
           data-td-target-input="nearest"
           data-td-target-toggle="nearest"
         >
-          <%= af.text_field :deadline,
-              class: 'form-control td-input',
-              data: {
-                td_target: '#assessment-deadline-picker',
-                assessments__settings_target: 'deadline',
-                action: 'input->assessments--settings#checkForChanges change->assessments--settings#checkForChanges'
-              },
-              value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
-              autocomplete: 'off' %>
+          <div class="flex-grow-1">
+            <%= af.text_field :deadline,
+                class: 'form-control td-input',
+                data: {
+                  td_target: '#assessment-deadline-picker',
+                  assessments__settings_target: 'deadline',
+                  action: 'input->assessments--settings#checkForChanges change->assessments--settings#checkForChanges'
+                },
+                value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
+                autocomplete: 'off' %>
+          </div>
 
           <span
             class="input-group-text td-picker-button"

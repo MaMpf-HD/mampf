@@ -19,6 +19,7 @@ class Assignment < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
+  validate :deadline_not_in_past, if: -> { deadline_changed? }
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -162,6 +163,12 @@ class Assignment < ApplicationRecord
 
   private
 
+    def deadline_not_in_past
+      return if deadline.blank?
+
+      errors.add(:deadline, :in_past) if deadline < Time.zone.now
+    end
+
     def inherit_deletion_date_from_lecture
       self.deletion_date = lecture.submission_deletion_date
     end
@@ -175,6 +182,6 @@ class Assignment < ApplicationRecord
     end
 
     def setup_assessment
-      ensure_pointbook!(requires_submission: true)
+      ensure_pointbook!(requires_submission: requires_submission)
     end
 end
