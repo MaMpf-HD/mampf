@@ -1,53 +1,57 @@
-<div class="col-12 col-xl-6">
-  <div class="border rounded p-2 h-100">
+<div>
 
-    <% items_selected = item_preferences.map { |i| i.item.id } %>
+  <% items_selected = item_preferences.map { |i| i.item.id } %>
+  <div class="fw-semibold mt-2 mb-2 text-muted">
+    <%= t('registration.user_registration.options_title') %>
+  </div>
 
-    <% items.group_by(&:registerable_type).each do |group, group_items| %>
-
-      <div class="fw-bold text-dark mb-2 mt-4">
-        <%= group %>
-      </div>
+  <% items.group_by(&:registerable_type).each do |group, group_items| %>
+    <!-- Flex container-->
+    <div class="d-flex flex-wrap gap-3">
 
       <% group_items.each do |item| %>
-        <div class="card mb-3 shadow-sm">
-          <div class="card-body">
+        <div class="card shadow-sm p-2"
+            style="width: 260px; flex: 0 0 auto;">
 
-            <!-- Title + Type -->
-            <div class="fw-semibold mb-1">
-              <%= item_display_type(item) %>: <%= item.registerable.title %>
+          <!-- Title + Type -->
+          <div class="d-flex justify-content-between align-items-start mb-2">
+
+            <!-- Left: Title + Type -->
+            <div class="d-flex align-items-baseline gap-1">
+              <div class="fw-semibold"><%= item.registerable.title %></div>
+              <div class="small text-muted">(<%= item_display_type(item) %>)</div>
             </div>
 
-            <!-- Details -->
-            <div class="row small mb-2">
-              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-                <div class="col-6 d-flex gap-1">
-                  <span class="fw-medium"><%= t(col[:header]) %>:</span>
-                  <span><%= col[:field].call(item) %></span>
-                </div>
-              <% end %>
-
-              <div class="col-6 d-flex gap-1">
-                <span class="fw-medium"><%= t("basics.seats") %>:</span>
-                <span><%= nullable_capacity_display(item.capacity) %></span>
-              </div>
-            </div>
-
-            <!-- Add button -->
-            <div class="text-end">
-              <button type="submit"
-                      class="material-icons clickable playlist_add border-0 bg-transparent"
-                      <%= "disabled" if items_selected.include?(item.id) %>
-                      formaction="<%= add_preference_path(item.id) %>">
-                playlist_add
-              </button>
-            </div>
-
+            <!-- Right: Add button -->
+            <button type="submit"
+                    class="material-icons clickable playlist_add border-0 bg-transparent"
+                    <%= "disabled" if items_selected.include?(item.id) %>
+                    formaction="<%= add_preference_path(item.id) %>">
+              playlist_add
+            </button>
           </div>
+
+          <!-- Details -->
+          <div class="small mb-2">
+            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+              <div class="d-flex gap-1">
+                <span class="fw-medium"><%= t(col[:header]) %>:</span>
+                <span><%= col[:field].call(item) %></span>
+              </div>
+            <% end %>
+
+            <div class="d-flex gap-1">
+              <span class="fw-medium"><%= t("basics.seats") %>:</span>
+              <span><%= nullable_capacity_display(item.capacity) %></span>
+            </div>
+          </div>
+
         </div>
       <% end %>
 
-    <% end %>
+    </div>
 
-  </div>
+  <% end %>
+
+
 </div>

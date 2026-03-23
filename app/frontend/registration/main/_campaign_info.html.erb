@@ -4,27 +4,23 @@
       <span class="h4 me-2">
         <%= campaign.description %>
       </span>
-      <span class="d-inline-flex align-items-center
-             px-3 py-1 rounded-pill
-             small fw-medium
-             <%= status_campaign_style(campaign.status) %>">
-        <%= campaign.status&.humanize %>
-      </span>
-      <% if campaign.only_planning_cohort? %>
-        <span class="d-inline-flex align-items-center
-             px-3 py-1 rounded-pill
-             small fw-medium bg-info-subtle text-info">
-          <%= t('registration.user_registration.planning') %>
-        </span>
-      <% end %>
     </div>
   </div>
 
   <div class="text-end">
-    <div class="text-muted small mb-1">
-      <%= t('registration.user_registration.campaign_main') %>
-    </div>
-
+    <span class="d-inline-flex align-items-center
+            px-3 py-1 rounded-pill
+            small fw-medium
+            <%= status_campaign_style(campaign.status) %>">
+      <%= campaign.status&.humanize %>
+    </span>
+    <% if campaign.only_planning_cohort? %>
+      <span class="d-inline-flex align-items-center
+            px-3 py-1 rounded-pill
+            small fw-medium bg-info-subtle text-info">
+        <%= t('registration.user_registration.planning') %>
+      </span>
+    <% end %>
     <% if campaign.open_for_registrations? %>
       <span class="d-inline-flex align-items-center gap-1
              px-3 py-1

@@ -233,6 +233,7 @@ en:
       campaign_main: "Campaign: Main registration"
       eligibility_title: "Your Eligibility"
       preferences_title: Your selected preferences
+      options_title: "Available options"
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite Campaign"

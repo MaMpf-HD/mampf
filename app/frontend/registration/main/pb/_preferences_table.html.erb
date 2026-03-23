@@ -1,97 +1,93 @@
-<div class="col-12 col-xl-6">
-  <div class="border rounded p-2 h-100">
+<div>
+  <div class="fw-semibold mt-2 mb-2 text-muted">
+    <%= t('registration.user_registration.preferences_title') %>
+  </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="fw-semibold h6 m-2"><%= t('registration.user_registration.preferences_title') %></div>
+  <% if item_preferences.present? %>
+    <% item_preferences.each do |pref| %>
+      <% item = pref.item %>
 
-      <% last_updated = campaign.user_registrations_last_updated(current_user) %>
-      <% if last_updated %>
-        <div class="small text-success fw-semibold">
-          <%= t("basics.saved_at", time: format_date(last_updated)) %>
+      <div class="card shadow-sm p-2"
+          style="width: 260px; flex: 0 0 auto;">
+
+        <!-- Title + Type + Rank -->
+        <div class="d-flex justify-content-between align-items-start mb-2">
+
+          <!-- Left: Title + Type -->
+          <div class="d-flex align-items-baseline gap-1">
+            <div class="fw-semibold"><%= item.title %></div>
+            <div class="small text-muted">(<%= item_display_type(item) %>)</div>
+          </div>
+
+          <!-- Right: Rank badge -->
+          <span class="badge rounded-pill text-primary border border-primary-subtle px-2 py-1 small">
+            <%= t("registration.user_registration.rank") %>:
+            <span class="fw-bold"><%= pref.rank %></span>
+          </span>
         </div>
-      <% end %>
-    </div>
 
-    <% if item_preferences.present? %>
-      <% item_preferences.each do |pref| %>
-        <% item = pref.item %>
-
-        <div class="card mb-3 shadow-sm">
-          <div class="card-body">
-
-            <!-- Title + Type -->
-            <div class="fw-semibold text-primary mb-1">
-              <%= item_display_type(item) %>: <%= item.title %>
+        <!-- Details -->
+        <div class="small mb-2">
+          <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+            <div class="d-flex gap-1">
+              <span class="fw-medium"><%= t(col[:header]) %>:</span>
+              <span><%= col[:field].call(item) %></span>
             </div>
+          <% end %>
 
-            <!-- Details -->
-            <div class="row small mb-2">
-              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-                <div class="col-6 d-flex gap-1">
-                  <span class="fw-medium"><%= t(col[:header]) %>:</span>
-                  <span><%= col[:field].call(item) %></span>
-                </div>
-              <% end %>
-
-              <div class="col-6 d-flex gap-1">
-                <span class="fw-medium"><%= t("basics.seats") %>:</span>
-                <span><%= nullable_capacity_display(item.capacity) %></span>
-              </div>
-            </div>
-
-            <!-- Rank + Actions -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge rounded-pill text-primary border border-primary-subtle px-3">
-                Rank: <span class="fw-bold fs-6"><%= pref.rank %></span>
-              </span>
-
-              <div class="d-flex gap-2">
-                <button type="submit"
-                        class="material-icons clickable arrow_upward border-0 bg-transparent"
-                        <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %>
-                        formaction="<%= preference_up_path(item.id) %>">
-                  arrow_upward
-                </button>
-
-                <button type="submit"
-                        class="material-icons clickable arrow_downward border-0 bg-transparent"
-                        <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %>
-                        formaction="<%= preference_down_path(item.id) %>">
-                  arrow_downward
-                </button>
-
-                <button type="submit"
-                        class="material-icons clickable playlist_remove border-0 bg-transparent"
-                        <%= "disabled" if !campaign.open_for_registrations? %>
-                        formaction="<%= remove_preference_path(item.id) %>">
-                  playlist_remove
-                </button>
-              </div>
-            </div>
-
+          <div class="d-flex gap-1">
+            <span class="fw-medium"><%= t("basics.seats") %>:</span>
+            <span><%= nullable_capacity_display(item.capacity) %></span>
           </div>
         </div>
 
-      <% end %>
-    <% else %>
-      <%= render partial: 'shared/no_selection' %>
+        <!-- Actions -->
+        <div class="d-flex justify-content-end gap-0">
+
+          <!-- Move Up -->
+          <button type="submit"
+                  class="material-icons clickable arrow_upward border-0 bg-transparent p-0"
+                  <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %>
+                  formaction="<%= preference_up_path(item.id) %>">
+            arrow_upward
+          </button>
+
+          <!-- Move Down -->
+          <button type="submit"
+                  class="material-icons clickable arrow_downward border-0 bg-transparent p-0"
+                  <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %>
+                  formaction="<%= preference_down_path(item.id) %>">
+            arrow_downward
+          </button>
+
+          <!-- Remove -->
+          <button type="submit"
+                  class="material-icons clickable playlist_remove border-0 bg-transparent text-danger p-0"
+                  <%= "disabled" if !campaign.open_for_registrations? %>
+                  formaction="<%= remove_preference_path(item.id) %>">
+            playlist_remove
+          </button>
+        </div>
+      </div>
     <% end %>
+  <% else %>
+    <%= render partial: 'shared/no_selection' %>
+  <% end %>
 
-    <!-- Save / Reset -->
-    <div class="d-flex justify-content-end gap-3 mt-3">
-      <button type="submit"
-              class="btn btn-outline-primary btn-sm"
-              formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
-        <%= t('buttons.reset') %>
-      </button>
+  <!-- Save / Reset -->
+  <div class="d-flex justify-content-end gap-3 mt-3">
+    <button type="submit"
+            class="btn btn-outline-primary btn-sm"
+            formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
+      <%= t('buttons.reset') %>
+    </button>
 
-      <button type="submit"
-              class="btn btn-primary btn-sm"
-              data-turbo="false"
-              formaction="<%= save_campaign_preferences_path(campaign.id) %>">
-        <%= t('buttons.save') %>
-      </button>
-    </div>
-
+    <button type="submit"
+            class="btn btn-primary btn-sm"
+            data-turbo="false"
+            formaction="<%= save_campaign_preferences_path(campaign.id) %>">
+      <%= t('buttons.save') %>
+    </button>
   </div>
+
 </div>
