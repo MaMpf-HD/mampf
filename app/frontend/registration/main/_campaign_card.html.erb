@@ -1,0 +1,49 @@
+<%= turbo_frame_tag dom_id(campaign, :main_student_registration_campaign) do %>
+
+  <div class="card mb-4 shadow-sm p-3">
+
+    <!-- Campaign info -->
+    <div class="mb-2">
+      <%= render partial: 'registration/main/campaign_info',
+               locals: { campaignable_host: campaignable_host,
+                         campaign: campaign } %>
+    </div>
+    <!-- Closed early banner -->
+    <% if closed_early?(campaign) %>
+      <div class="alert alert-warning py-2 my-2">
+        <%= t("registration.user_registration.closed_before_deadline") %>
+      </div>
+    <% end %>
+
+    <div class="row justify-content-between">
+      <div class="col-12 col-lg-6">
+        <!-- Eligibility -->
+        <%= render partial: 'registration/main/eligibility',
+                   locals: { eligibility: eligibility } %>
+      </div>
+      <div class="col-12 col-lg-5">
+        <!-- Campaign details (compact) -->
+        <%= render partial: 'registration/main/campaign_details',
+                   locals: { campaign: campaign, items: items } %>
+      </div>
+    </div>
+
+    <!-- Selection interface -->
+    <div>
+      <% if campaign.first_come_first_served? %>
+        <%= render partial: 'registration/main/fcfs/select_fcfs',
+                   locals: { campaign: campaign,
+                             campaignable_host: campaignable_host,
+                             items: items } %>
+      <% else %>
+        <%= render partial: 'registration/main/pb/select_preference',
+                   locals: { campaign: campaign,
+                             campaignable_host: campaignable_host,
+                             item_preferences: item_preferences,
+                             items: items } %>
+      <% end %>
+    </div>
+
+  </div>
+
+<% end %>

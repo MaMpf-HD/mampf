@@ -1,44 +1,18 @@
-<div class="table-wrap mb-3 term-group">
-  <table class="table align-middle mb-0">
-    <thead>
-      <tr>
-        <th><%= t('registration.student_campaigns.index.columns.title') %></th>
-        <th><%= t('registration.student_campaigns.index.columns.lecture') %></th>
-        <th><%= t('registration.student_campaigns.index.columns.mode') %></th>
-        <th><%= t('registration.student_campaigns.index.columns.closes') %></th>
-        <th><%= t('registration.student_campaigns.index.columns.eligibility') %></th>
-        <th><%= t('registration.student_campaigns.index.columns.status') %></th>
-        <th class="text-end"><%= t('registration.student_campaigns.index.columns.action') %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @courses_seminars_campaigns.each do |campaign| %>
-        <tr>
-          <td><%= campaign.description %></td>
-          <td><%= campaign.campaignable.title %></td>
-          <td>
-            <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
-            <span class="<%= mode_info[:badge_class] %>"><%= mode_info[:abbr] %></span>
-          </td>
-          <td>
-            <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
-          </td>
-          <td>
-            <% pass = @eligibilities[campaign].all? {|policy| policy[:outcome][:pass] } %>
-            <%= eligibility_badge(pass) %>
-          </td>
-          <td>
-            <span class="badge <%= status_campaign_style(campaign.status) %>">
-              <%= campaign.status&.humanize %>
-            </span>
-          </td>
-          <td class="text-end">
-            <%= link_to t('registration.student_campaigns.index.view_details'), 
-              campaign_registrations_for_campaign_path(campaign_id: campaign.id), 
-              class: "btn btn-sm btn-primary" %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="campaign-list d-flex flex-column gap-4">
+
+  <% @courses_seminars_campaigns.each do |campaign| %>
+    <div class="card shadow-sm p-3">
+
+      <%= render partial: 'registration/main/campaign_card',
+                 locals: {
+                   campaign: campaign,
+                   campaignable_host: @campaignable_host_by_id[campaign.id],
+                   eligibility: @eligibility_by_campaign_id[campaign.id],
+                   item_preferences: nil,
+                   items: @items_by_campaign_id[campaign.id]
+                 } %>
+
+    </div>
+  <% end %>
+
 </div>

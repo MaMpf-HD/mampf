@@ -1,81 +1,53 @@
-<div class="col align-items-center m-3">
-  <% items_selected = item_preferences.map { |i| i.item.id } %>
+<div class="col-12 col-xl-6">
+  <div class="border rounded p-2 h-100">
 
-  <div data-controller="registration-item-search">
+    <% items_selected = item_preferences.map { |i| i.item.id } %>
 
-    <div class="mb-3">
-      <%= render partial: "registration/item_search_form/search_form",
-                 locals: {
-                   controller: "registration-item-search",
-                   placeholder: t("registration.user_registration.filter_placeholder")
-                 } %>
-    </div>
+    <% items.group_by(&:registerable_type).each do |group, group_items| %>
 
-    <div class="table-responsive">
-      <table class="table table-sm align-middle mb-2">
-        <thead class="bg-grey-lighten-5 text-dark small">
-          <tr>
-            <th class="fw-semibold"><%= t("registration.user_registration.pb_columns.type") %></th>
-            <th class="fw-semibold"><%= t("registration.user_registration.pb_columns.title") %></th>
-            <th class="fw-semibold"><%= t("registration.user_registration.pb_columns.details") %></th>
-            <th class="fw-semibold text-center"><%= t("registration.user_registration.pb_columns.seats") %></th>
-            <th class="text-end fw-semibold pe-2"><%= t("registration.user_registration.pb_columns.action") %></th>
-          </tr>
-        </thead>
+      <div class="fw-bold text-dark mb-2 mt-4">
+        <%= group %>
+      </div>
 
-        <tbody>
-          <% items.each do |item| %>
-            <tr data-registration-item-search-target="row">
+      <% group_items.each do |item| %>
+        <div class="card mb-3 shadow-sm">
+          <div class="card-body">
 
-              <!-- type -->
-              <td class="small text-dark">
-                <%= item_display_type(item) %>
-              </td>
+            <!-- Title + Type -->
+            <div class="fw-semibold mb-1">
+              <%= item_display_type(item) %>: <%= item.registerable.title %>
+            </div>
 
-              <!-- title -->
-              <td class="small text-dark">
-                <%= item.registerable.title %>
-              </td>
+            <!-- Details -->
+            <div class="row small mb-2">
+              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                <div class="col-6 d-flex gap-1">
+                  <span class="fw-medium"><%= t(col[:header]) %>:</span>
+                  <span><%= col[:field].call(item) %></span>
+                </div>
+              <% end %>
 
-              <!-- attribute data column -->
-              <td class="small text-dark">
-                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type]
-                     .each do |col| %>
-                  <div class="d-flex gap-1">
-                    <span class="fw-medium small"><%= t(col[:header]) %>:</span>
-                    <span class="fw-normal small"><%= col[:field].call(item) %></span>
-                  </div>
-                <% end %>
-              </td>
+              <div class="col-6 d-flex gap-1">
+                <span class="fw-medium"><%= t("basics.seats") %>:</span>
+                <span><%= nullable_capacity_display(item.capacity) %></span>
+              </div>
+            </div>
 
-              <!-- seats -->
-              <td class="text-center small fw-semibold text-dark">
-                <%= nullable_capacity_display(item.capacity) %>
-              </td>
+            <!-- Add button -->
+            <div class="text-end">
+              <button type="submit"
+                      class="material-icons clickable playlist_add border-0 bg-transparent"
+                      <%= "disabled" if items_selected.include?(item.id) %>
+                      formaction="<%= add_preference_path(item.id) %>">
+                playlist_add
+              </button>
+            </div>
 
-              <!-- action -->
-              <td class="text-end">
-                <button type="submit"
-                        class="material-icons clickable playlist_add w-auto
-                               border-0 bg-transparent p-0 m-0"
-                        data-action="touched-check#mark"
-                        data-bs-toggle="tooltip"
-                        <%= "disabled" if items_selected.include?(item.id) %>
-                        title="<%= t('buttons.add_to_list') %>"
-                        formaction="<%= add_preference_path(item.id) %>">
-                  playlist_add
-                </button>
-              </td>
+          </div>
+        </div>
+      <% end %>
 
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
+    <% end %>
 
   </div>
-
-  <span class="text-muted small" id="catalogCount">
-    <%= t("basics.item_count", count: items.count) %>
-  </span>
 </div>

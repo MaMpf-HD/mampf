@@ -27,9 +27,14 @@ module Registration
 
     def index
       @courses_seminars_campaigns = Registration::Campaign.where.not(status: :draft)
-      @eligibilities = @courses_seminars_campaigns.index_with do |c|
-        Registration::EligibilityService.new(c, current_user,
+      @campaigns_by_id = @courses_seminars_campaigns.index_by(&:id)
+      @campaignable_host_by_id = @campaigns_by_id.transform_values { |c| c.campaignable }
+      @eligibility_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
+        Registration::EligibilityService.new(campaign, current_user,
                                              phase_scope: :registration).call
+      end
+      @items_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
+        campaign.registration_items.includes(:user_registrations)
       end
       render template: "registration/index", layout: "application_no_sidebar"
     end
@@ -114,13 +119,15 @@ module Registration
           respond_to do |format|
             format.turbo_stream do
               render turbo_stream: turbo_stream.update(
-                "main-student-registration-campaign",
-                partial: "registration/main/main_campaign",
-                locals: { campaign: @campaign,
-                          campaignable_host: @campaignable_host,
-                          eligibility: @eligibility,
-                          items: @items,
-                          item_preferences: @item_preferences }
+                view_context.dom_id(@campaign, :main_student_registration_campaign),
+                partial: "registration/main/campaign_card",
+                locals: {
+                  campaign: @campaign,
+                  campaignable_host: @campaignable_host,
+                  eligibility: @eligibility,
+                  items: @items,
+                  item_preferences: @item_preferences
+                }
               )
             end
             format.html do

@@ -1,37 +1,22 @@
-<div class="card-body">
-  <div class="h5 mb-3"><%= t('basics.details') %></div>
+<div class="col mb-2">
+  <!-- Mode -->
+  <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
+  <div class="col align-items-baseline gap-1">
+    <div class="fw-bold text-dark"><%= t('basics.mode') %>:</div>
+    <span class="fw-normal"><%= mode_info[:mode_name] %> (<%= mode_info[:abbr] %>)</span>
+  </div>
 
-  <ul class="list-group">
+  <!-- Capacity -->
+  <div class="col align-items-baseline gap-1">
+    <div class="fw-bold text-dark"><%= t('basics.capacity') %>:</div>
+    <span class="fw-normal">
+      <%= sum_of_nullable(items.map(&:capacity)) %> <%= t('basics.seats') %>
+      —
+      <%= items.sum(&:item_capacity_used) %> /
+      <%= nullable_capacity_display(sum_of_nullable(items.map(&:capacity))) %>
+      <%= t('basics.filled') %>
+      <%= t('basics.across_group') if items.size > 1 %>
+    </span>
+  </div>
 
-    <!-- Allocation mode detail -->
-    <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div class="fw-semibold"><%= t('basics.mode') %></div>
-        <small class="text-muted"><%= mode_info[:mode_name] %></small>
-      </div>
-      <span class="d-inline-flex align-items-center px-3 py-1 rounded-pill small fw-medium <%= mode_info[:badge_class] %>">
-        <%= mode_info[:abbr] %>
-      </span>
-    </li>
-
-    <!-- Capacity detail -->
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div class="fw-semibold"><%= t('basics.capacity') %></div>
-        <small class="text-muted">
-          <%= sum_of_nullable(items.map(&:capacity)) %> <%= t('basics.seats') %>
-        </small>
-      </div>
-      <span class="d-inline-flex align-items-center
-             px-3 py-1 rounded-pill
-             border border-secondary-subtle
-             text-dark
-             small fw-semibold">
-        <%= items.sum(&:item_capacity_used) %> / <%= nullable_capacity_display(sum_of_nullable(items.map(&:capacity))) %> <%= t('basics.filled') %>
-        <%= t('basics.across_group') if items.size > 1 %>
-      </span>
-    </li>
-
-  </ul>
 </div>

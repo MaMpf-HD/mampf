@@ -1,98 +1,80 @@
 <div data-test="multi-item-fcfs">
+  <div>
 
-  <div data-controller="registration-item-search">
-    <div class="row m-2 align-items-center">
-      <!-- search form -->
-      <div class="col-8 mb-2 mt-2">
-        <%= render partial: "registration/item_search_form/search_form",
-                   locals: { controller: "registration-item-search",
-                             placeholder: t("registration.user_registration.filter_placeholder") } %>
-      </div>
-
-      <!-- saved time -->
-      <% last_updated = campaign.user_registrations_last_updated(current_user) %>
-      <% if last_updated %>
-        <div class="col-4 small text-success text-end fw-semibold">
-          <%= t("basics.saved_at", time: format_date(last_updated)) %>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- notification banner if registered -->
-    <% if campaign.user_registration_confirmed?(current_user) %>
-      <div class="alert alert-info py-2 px-2 m-3">
-        <span>
-        <%= t("registration.user_registration.currently_registered", 
-            name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
-        </span>
+    <!-- Saved time -->
+    <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+    <% if last_updated %>
+      <div class="small text-success text-end fw-semibold m-3">
+        <%= t("basics.saved_at", time: format_date(last_updated)) %>
       </div>
     <% end %>
 
-    <div class="table-responsive m-3">
-      <table class="table table-sm align-middle mb-2" id="itemsTable">
-        <thead class="bg-grey-lighten-5 text-dark small">
-          <tr>
-            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.type") %></th>
-            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.title") %></th>
-            <th class="fw-semibold"><%= t("registration.user_registration.fcfs_columns.details") %></th>
-            <th class="fw-semibold text-center"><%= t("registration.user_registration.fcfs_columns.seats") %></th>
-            <th class="fw-semibold text-center"><%= t("registration.user_registration.fcfs_columns.status") %></th>
-            <th class="text-end fw-semibold pe-2"><%= t("registration.user_registration.fcfs_columns.action") %></th>
-          </tr>
-        </thead>
+    <!-- Registered banner -->
+    <% if campaign.user_registration_confirmed?(current_user) %>
+      <div class="alert alert-info py-2 px-2 m-3">
+        <%= t("registration.user_registration.currently_registered",
+              name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
+      </div>
+    <% end %>
 
-        <tbody>
-          <% items.group_by(&:registerable_type).each do |group, group_items| %>
-            <!-- group header row -->
-            <tr class="table-group-row">
-              <td colspan="6" class="fw-semibold text-dark py-2 ps-2 border-top" 
-                              style="background: #eceff1;">
-                <%= group %> 
-              </td>
-            </tr>
+    <!-- Groups -->
+    <div class="m-3">
+      <% items.group_by(&:registerable_type).each do |group, group_items| %>
 
-            <% group_items.each do |item| %>
-            <tr data-registration-item-search-target="row">
-              <td class="small text-dark">
-                <%= item_display_type(item) %>
-              </td>
-              <td class="small text-dark">
-                <%= item.registerable.title %>
-              </td>
+        <!-- Group title -->
+        <div class="fw-bold text-dark mb-2 mt-4">
+          <%= group %>
+        </div>
 
-              <!-- details data column -->
-              <td class="small text-dark">
-                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-                  <div class="d-flex gap-1">
-                    <span class="fw-medium small"><%= t(col[:header]) %>:</span>
-                    <span class="fw-normal small"><%= col[:field].call(item) %></span>
-                  </div>
-                <% end %>
-              </td>
+        <!-- Flex container -->
+        <div class="d-flex flex-wrap gap-3">
 
-              <td class="text-center small fw-semibold text-dark">
-                <%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %>
-              </td>
+          <% group_items.each do |item| %>
+            <div class="card shadow-sm p-2"
+                 style="width: 260px; flex: 0 0 auto;">
 
-              <!-- status column -->
-              <td class="text-center">
+              <!-- Title + Type -->
+              <div class="mb-2">
+                <div class="fw-semibold"><%= item.registerable.title %></div>
+                <div class="small text-muted"><%= item_display_type(item) %></div>
+              </div>
+
+              <!-- Status badge -->
+              <div class="mb-2">
                 <% if !item.user_registered?(current_user) %>
                   <% if item.still_has_capacity? %>
-                    <span class="badge rounded-pill fw-medium small bg-light-blue-lighten-4 text-dark"  style="min-width: 80px;">
-                                <%= t("basics.available") %></span>
+                    <span class="badge bg-light-blue-lighten-4 text-dark fw-medium small">
+                      <%= t("basics.available") %>
+                    </span>
                   <% else %>
-                    <span class="badge rounded-pill fw-medium small text-dark bg-grey-lighten-4 text-dark"  style="min-width: 80px;">
-                                <%= t("basics.full") %></span>
+                    <span class="badge bg-grey-lighten-4 text-dark fw-medium small">
+                      <%= t("basics.full") %>
+                    </span>
                   <% end %>
                 <% else %>
-                  <span class="badge rounded-pill fw-medium small text-bg-success"  style="min-width: 80px;">
-                                <%= t("registration.user_registration.registered") %></span>
+                  <span class="badge text-bg-success fw-medium small">
+                    <%= t("registration.user_registration.registered") %>
+                  </span>
                 <% end %>
-              </td>
+              </div>
 
-              <!-- action column -->
-              <td class="d-flex justify-content-end py-2">
-                <!-- current group type has no confirmed registration -->
+              <!-- Details -->
+              <div class="small mb-2">
+                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                  <div class="d-flex gap-1">
+                    <span class="fw-medium"><%= t(col[:header]) %>:</span>
+                    <span><%= col[:field].call(item) %></span>
+                  </div>
+                <% end %>
+
+                <div class="d-flex gap-1">
+                  <span class="fw-medium"><%= t("registration.user_registration.fcfs_columns.seats") %>:</span>
+                  <span><%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %></span>
+                </div>
+              </div>
+
+              <!-- Action -->
+              <div class="text-end">
                 <% if !campaign.user_registration_confirmed_for_group_type?(current_user, item.registerable_type) %>
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.user_registration.withdraw"),
@@ -105,10 +87,9 @@
                                   register_item_path(campaign.id, item.id),
                                   method: :post,
                                   disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
-                                  class: "btn btn-sm btn-primary" %>
+                                  class: "btn btn-primary btn-sm" %>
                   <% end %>
                 <% else %>
-                  <!-- current group type has confirmed registration -->
                   <% if item.user_registered?(current_user) %>
                     <%= button_to t("registration.user_registration.withdraw"),
                                   withdraw_item_path(campaign.id, item.id),
@@ -119,13 +100,15 @@
                     <span class="text-muted small"><%= t("registration.user_registration.withdraw_first") %></span>
                   <% end %>
                 <% end %>
-              </td>
-            </tr>
+              </div>
+
+            </div>
           <% end %>
-          <% end %>
-          
-        </tbody>
-      </table>
+
+        </div> <!-- flex container -->
+
+      <% end %>
     </div>
+
   </div>
 </div>

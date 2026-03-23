@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "main-student-registration-campaign" do %>
+<%= turbo_frame_tag "main-student-registration-campaign_test" do %>
   <!-- Breadcrumb navigation -->
   <nav class="mb-2">
     <ol class="breadcrumb mb-0">
@@ -6,8 +6,8 @@
         <%= link_to t('registration.user_registration.registrations'), user_registrations_path %>
       </li>
       <li class="breadcrumb-item active" aria-current="page">
-        <%= campaignable_host.title %> - 
-        <%= campaign.description %> 
+        <%= campaignable_host.title %> -
+        <%= campaign.description %>
         (<%= campaign.campaignable_type %>)
       </li>
     </ol>

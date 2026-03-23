@@ -1,5 +1,5 @@
-<div class="card-body">
-  <div class="h5 mb-3"><%= t('registration.user_registration.eligibility_title') %></div>
+<div>
+  <div class="fw-bold text-dark"><%= t('registration.user_registration.eligibility_title') %></div>
 
   <p class="mb-2">
     <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
@@ -13,15 +13,17 @@
           <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
 
           <% policy_info = get_policy_config_info(policy) %>
-          <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
-            <small class="text-muted">
+          <small class="text-muted">
+            <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
+
               <%= link_to t('registration.user_registration.prerequisite_campaign'),
                           campaign_registrations_for_campaign_path(campaign_id: policy_info),
                           target: :_blank %>
-            </small>
-          <% else %>
-            <small class="text-muted"><%= policy_info %></small>
-          <% end %>
+
+            <% else %>
+              <%= policy_info %>
+            <% end %>
+          </small>
         </div>
 
         <% info = get_outcome_info(policy[:outcome]) %>
