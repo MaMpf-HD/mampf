@@ -732,9 +732,17 @@ de:
           Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
-        submission_deletion_date: >
-          Hier kannst Du festlegen, wann Abgaben und Korrekturen dieser
-          Veranstaltung automatisch gelöscht werden.
+        submission_deletion_date: >-
+          Hier kannst Du festlegen, wann Abgaben und Korrekturen
+          dieser Veranstaltung automatisch gelöscht werden. Die
+          erste Option entspricht dem Semesterende plus ca. zwei
+          Wochen, die zweite dem Semesterende plus ca. vier
+          Monate und zwei Wochen. Zwei Wochen vor dem gewählten
+          Datum werden die Studierenden per E-Mail informiert,
+          eine Woche vorher erhalten sie eine Erinnerung. Am
+          gewählten Datum werden die Abgaben unwiderruflich
+          gelöscht. Sollte das Datum bereits verstrichen sein,
+          erfolgt die Löschung beim nächsten Durchlauf.
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
