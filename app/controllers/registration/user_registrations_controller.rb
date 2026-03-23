@@ -26,17 +26,25 @@ module Registration
     end
 
     def index
-      @courses_seminars_campaigns = Registration::Campaign.where.not(status: :draft)
+      lecture_id = params[:lecture_id]&.to_i
+      @courses_seminars_campaigns = Registration::Campaign
+                                    .where(campaignable_id: lecture_id)
+                                    .where.not(status: :draft)
       @campaigns_by_id = @courses_seminars_campaigns.index_by(&:id)
-      @campaignable_host_by_id = @campaigns_by_id.transform_values { |c| c.campaignable }
+      @campaignable_host_by_id = @campaigns_by_id.transform_values(&:campaignable)
       @eligibility_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
-        Registration::EligibilityService.new(campaign, current_user,
-                                             phase_scope: :registration).call
+        Registration::EligibilityService.new(
+          campaign,
+          current_user,
+          phase_scope: :registration
+        ).call
       end
       @items_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
         campaign.registration_items.includes(:user_registrations)
       end
-      render template: "registration/index", layout: "application_no_sidebar"
+      # render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "registration/index",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
 
     def registrations_for_campaign

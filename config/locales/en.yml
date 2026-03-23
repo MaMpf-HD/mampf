@@ -20,6 +20,9 @@ en:
     script:
       singular: 'Manuscript'
       short: 'Man'
+    enrollment:
+      singular: 'Enrollment'
+      short: 'Enr'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'

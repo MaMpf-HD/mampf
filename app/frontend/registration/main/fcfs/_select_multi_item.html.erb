@@ -18,7 +18,7 @@
     <% end %>
 
     <!-- Groups -->
-    <div class="m-3">
+    <div>
       <% items.group_by(&:registerable_type).each do |group, group_items| %>
 
         <!-- Group title -->
@@ -30,17 +30,17 @@
         <div class="d-flex flex-wrap gap-3">
 
           <% group_items.each do |item| %>
-            <div class="card shadow-sm p-2"
-                 style="width: 260px; flex: 0 0 auto;">
+          <div class="card shadow-sm p-2"
+              style="width: 260px; flex: 0 0 auto;">
 
-              <!-- Title + Type -->
-              <div class="mb-2">
+            <!-- Title + Type + Status -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
                 <div class="fw-semibold"><%= item.registerable.title %></div>
                 <div class="small text-muted"><%= item_display_type(item) %></div>
               </div>
 
-              <!-- Status badge -->
-              <div class="mb-2">
+              <div class="ms-2">
                 <% if !item.user_registered?(current_user) %>
                   <% if item.still_has_capacity? %>
                     <span class="badge bg-light-blue-lighten-4 text-dark fw-medium small">
@@ -57,52 +57,54 @@
                   </span>
                 <% end %>
               </div>
-
-              <!-- Details -->
-              <div class="small mb-2">
-                <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-                  <div class="d-flex gap-1">
-                    <span class="fw-medium"><%= t(col[:header]) %>:</span>
-                    <span><%= col[:field].call(item) %></span>
-                  </div>
-                <% end %>
-
-                <div class="d-flex gap-1">
-                  <span class="fw-medium"><%= t("registration.user_registration.fcfs_columns.seats") %>:</span>
-                  <span><%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %></span>
-                </div>
-              </div>
-
-              <!-- Action -->
-              <div class="text-end">
-                <% if !campaign.user_registration_confirmed_for_group_type?(current_user, item.registerable_type) %>
-                  <% if item.user_registered?(current_user) %>
-                    <%= button_to t("registration.user_registration.withdraw"),
-                                  withdraw_item_path(campaign.id, item.id),
-                                  method: :delete,
-                                  disabled: !campaign.open_for_withdrawals?,
-                                  class: "btn btn-outline-danger btn-sm" %>
-                  <% else %>
-                    <%= button_to t("registration.user_registration.register_now"),
-                                  register_item_path(campaign.id, item.id),
-                                  method: :post,
-                                  disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
-                                  class: "btn btn-primary btn-sm" %>
-                  <% end %>
-                <% else %>
-                  <% if item.user_registered?(current_user) %>
-                    <%= button_to t("registration.user_registration.withdraw"),
-                                  withdraw_item_path(campaign.id, item.id),
-                                  method: :delete,
-                                  disabled: !campaign.open_for_withdrawals?,
-                                  class: "btn btn-outline-danger btn-sm" %>
-                  <% else %>
-                    <span class="text-muted small"><%= t("registration.user_registration.withdraw_first") %></span>
-                  <% end %>
-                <% end %>
-              </div>
-
             </div>
+
+            <!-- Details -->
+            <div class="small mb-2">
+              <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
+                <div class="d-flex gap-1">
+                  <span class="fw-medium"><%= t(col[:header]) %>:</span>
+                  <span><%= col[:field].call(item) %></span>
+                </div>
+              <% end %>
+
+              <div class="d-flex gap-1">
+                <span class="fw-medium"><%= t("registration.user_registration.fcfs_columns.seats") %>:</span>
+                <span><%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %></span>
+              </div>
+            </div>
+
+            <!-- Action -->
+            <div class="text-end">
+              <% if !campaign.user_registration_confirmed_for_group_type?(current_user, item.registerable_type) %>
+                <% if item.user_registered?(current_user) %>
+                  <%= button_to t("registration.user_registration.withdraw"),
+                                withdraw_item_path(campaign.id, item.id),
+                                method: :delete,
+                                disabled: !campaign.open_for_withdrawals?,
+                                class: "btn btn-outline-danger btn-sm" %>
+                <% else %>
+                  <%= button_to t("registration.user_registration.register_now"),
+                                register_item_path(campaign.id, item.id),
+                                method: :post,
+                                disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
+                                class: "btn btn-primary btn-sm" %>
+                <% end %>
+              <% else %>
+                <% if item.user_registered?(current_user) %>
+                  <%= button_to t("registration.user_registration.withdraw"),
+                                withdraw_item_path(campaign.id, item.id),
+                                method: :delete,
+                                disabled: !campaign.open_for_withdrawals?,
+                                class: "btn btn-outline-danger btn-sm" %>
+                <% else %>
+                  <span class="text-muted small"><%= t("registration.user_registration.withdraw_first") %></span>
+                <% end %>
+              <% end %>
+            </div>
+
+          </div>
+
           <% end %>
 
         </div> <!-- flex container -->

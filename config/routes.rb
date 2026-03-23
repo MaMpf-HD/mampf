@@ -299,6 +299,11 @@ Rails.application.routes.draw do
                 only: [:index, :new, :create],
                 as: :registration_campaigns
     end
+
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :campaign_registrations, only: [:index],
+                                         controller: "registration/user_registrations"
+    end
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
@@ -994,7 +999,7 @@ Rails.application.routes.draw do
   # registration routes
   scope module: "registration", path: "" do
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
-      resources :user_registrations, only: [:index], path: "campaign_registrations"
+      # resources :user_registrations, only: [:index], path: "campaign_registrations"
       get "campaign_registrations/:campaign_id",
           to: "user_registrations#registrations_for_campaign",
           as: :campaign_registrations_for_campaign

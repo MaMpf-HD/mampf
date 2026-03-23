@@ -3,7 +3,7 @@
   <div class="card mb-4 shadow-sm p-3">
 
     <!-- Campaign info -->
-    <div class="mb-2">
+    <div>
       <%= render partial: 'registration/main/campaign_info',
                locals: { campaignable_host: campaignable_host,
                          campaign: campaign } %>
@@ -15,7 +15,7 @@
       </div>
     <% end %>
 
-    <div class="row justify-content-between">
+    <div class="row justify-content-between mb-2 mt-4">
       <div class="col-12 col-lg-6">
         <!-- Eligibility -->
         <%= render partial: 'registration/main/eligibility',

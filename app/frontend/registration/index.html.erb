@@ -1,18 +1,22 @@
 <div class="campaign-list d-flex flex-column gap-4">
+  <% if @courses_seminars_campaigns.any? %>
+    <% @courses_seminars_campaigns.each do |campaign| %>
+      <div>
 
-  <% @courses_seminars_campaigns.each do |campaign| %>
-    <div class="card shadow-sm p-3">
+        <%= render partial: 'registration/main/campaign_card',
+                  locals: {
+                    campaign: campaign,
+                    campaignable_host: @campaignable_host_by_id[campaign.id],
+                    eligibility: @eligibility_by_campaign_id[campaign.id],
+                    item_preferences: nil,
+                    items: @items_by_campaign_id[campaign.id]
+                  } %>
 
-      <%= render partial: 'registration/main/campaign_card',
-                 locals: {
-                   campaign: campaign,
-                   campaignable_host: @campaignable_host_by_id[campaign.id],
-                   eligibility: @eligibility_by_campaign_id[campaign.id],
-                   item_preferences: nil,
-                   items: @items_by_campaign_id[campaign.id]
-                 } %>
-
-    </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p>No available campaigns.</p>
   <% end %>
+
 
 </div>

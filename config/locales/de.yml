@@ -20,6 +20,9 @@ de:
     script:
       singular: 'Skript'
       short: 'Skr'
+    enrollment:
+      singular: 'Einschreibung'
+      short: 'ESch'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
