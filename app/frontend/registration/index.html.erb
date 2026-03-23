@@ -2,14 +2,14 @@
   <% if @courses_seminars_campaigns.any? %>
     <% @courses_seminars_campaigns.each do |campaign| %>
       <div>
-
         <%= render partial: 'registration/main/campaign_card',
                   locals: {
                     campaign: campaign,
                     campaignable_host: @campaignable_host_by_id[campaign.id],
                     eligibility: @eligibility_by_campaign_id[campaign.id],
                     item_preferences: nil,
-                    items: @items_by_campaign_id[campaign.id]
+                    items: @items_by_campaign_id[campaign.id],
+                    item_preferences: @item_preferences_by_campaign_id[campaign.id]
                   } %>
 
       </div>

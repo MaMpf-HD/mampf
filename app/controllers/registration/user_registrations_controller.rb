@@ -42,6 +42,14 @@ module Registration
       @items_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
         campaign.registration_items.includes(:user_registrations)
       end
+      @item_preferences_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
+        if campaign.preference_based?
+          UserRegistration::PreferencesHandler.new
+                                              .preferences_info(campaign, current_user)
+        else
+          {}
+        end
+      end
       # render layout: turbo_frame_request? ? "turbo_frame" : "application"
       render template: "registration/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"

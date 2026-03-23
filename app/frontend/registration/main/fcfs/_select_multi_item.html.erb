@@ -1,28 +1,32 @@
 <div data-test="multi-item-fcfs">
   <div>
 
-    <!-- Saved time -->
-    <% last_updated = campaign.user_registrations_last_updated(current_user) %>
-    <% if last_updated %>
-      <div class="small text-success text-end fw-semibold m-3">
-        <%= t("basics.saved_at", time: format_date(last_updated)) %>
-      </div>
-    <% end %>
+    <!-- status row -->
+    <div class="d-flex justify-content-between align-items-center small text-muted mb-2 mt-2">
+      <!-- Registered info -->
+      <% if campaign.user_registration_confirmed?(current_user) %>
+        <div class="fw-normal">
+          <%= t("registration.user_registration.currently_registered",
+                name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
+        </div>
+      <% end %>
 
-    <!-- Registered banner -->
-    <% if campaign.user_registration_confirmed?(current_user) %>
-      <div class="alert alert-info py-2 px-2 m-3">
-        <%= t("registration.user_registration.currently_registered",
-              name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
-      </div>
-    <% end %>
+      <% last_updated = campaign.user_registrations_last_updated(current_user) %>
+      <!-- Saved time -->
+      <% if last_updated %>
+        <div class="text-success fw-semibold">
+          <%= t("basics.saved_at", time: format_date(last_updated)) %>
+        </div>
+      <% end %>
+    </div>
+
 
     <!-- Groups -->
     <div>
       <% items.group_by(&:registerable_type).each do |group, group_items| %>
 
         <!-- Group title -->
-        <div class="fw-bold text-dark mb-2 mt-4">
+        <div class="fw-bold text-dark mb-2 mt-2">
           <%= group %>
         </div>
 
