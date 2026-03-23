@@ -106,10 +106,18 @@
                                         assessable.accepted_file_type),
                      {},
                      { class: 'form-select',
+                       disabled: assessable.past_deadline?,
                        data: {
                          assessments__settings_target: 'acceptedFileType',
                          action: 'change->assessments--settings#checkForChanges'
                        } } %>
+
+        <% if assessable.past_deadline? %>
+          <div class="form-text text-muted">
+            <i class="bi bi-lock-fill me-1"></i>
+            <%= t('assessment.locked_after_deadline') %>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>
@@ -120,6 +128,7 @@
         <%= f.check_box :requires_submission,
                         class: "form-check-input",
                         checked: assessment.requires_submission,
+                        disabled: assessable.past_deadline?,
                         data: {
                           assessments__settings_target: 'requiresSubmission',
                           action: 'change->assessments--settings#checkForChanges'
@@ -128,7 +137,12 @@
         <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
 
         <div class="form-text text-muted">
-          <%= t('assessment.requires_submission_hint') %>
+          <% if assessable.past_deadline? %>
+            <i class="bi bi-lock-fill me-1"></i>
+            <%= t('assessment.locked_after_deadline') %>
+          <% else %>
+            <%= t('assessment.requires_submission_hint') %>
+          <% end %>
         </div>
       </div>
     </div>

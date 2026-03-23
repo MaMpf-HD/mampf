@@ -69,6 +69,7 @@ de:
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe erforderlich'
     requires_submission_hint: 'Studierende müssen eine Datei hochladen'
+    locked_after_deadline: 'Gesperrt (Abgabefrist abgelaufen)'
     no_submission_required: 'Keine digitale Abgabe'
     not_destructible:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
@@ -362,3 +363,7 @@ de:
             registration_deadline:
               must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"
               must_be_in_future: "muss in der Zukunft liegen"
+        assessment/assessment:
+          attributes:
+            requires_submission:
+              locked_after_deadline: "kann nach Ablauf der Abgabefrist nicht mehr geändert werden"

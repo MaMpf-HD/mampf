@@ -57,6 +57,21 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </span>
+          <% elsif task.deadline_passed? %>
+            <span
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="<%= t('assessment.locked_after_deadline') %>"
+            >
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                disabled
+                style="pointer-events: none;"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </span>
           <% else %>
             <%= button_to assessment_assessment_task_path(assessment, task),
                           method: :delete,

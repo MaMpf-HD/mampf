@@ -51,6 +51,29 @@ RSpec.describe(Assessment::Assessment, type: :model) do
                                     lecture: assignment.lecture)
       expect(assessment).to be_valid
     end
+
+    describe "requires_submission locking after deadline" do
+      let(:assignment) { FactoryBot.create(:assignment, :with_lecture) }
+      let(:assessment) do
+        FactoryBot.create(:assessment,
+                          assessable: assignment,
+                          lecture: assignment.lecture,
+                          requires_submission: true).tap do
+          assignment.update_column(:deadline, 1.day.ago)
+        end
+      end
+
+      it "prevents changing requires_submission after deadline" do
+        assessment.requires_submission = false
+        expect(assessment).to be_invalid
+        expect(assessment.errors[:requires_submission]).to be_present
+      end
+
+      it "allows saving without changing requires_submission" do
+        assessment.total_points = 100
+        expect(assessment).to be_valid
+      end
+    end
   end
 
   describe "delegation" do

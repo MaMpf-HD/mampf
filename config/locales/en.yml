@@ -3802,6 +3802,8 @@ en:
             deletion_date:
               blank: You need to give a deletion date.
               in_past: Deletion date can't lie in the past.
+            accepted_file_type:
+              locked_after_deadline: can't be changed after the deadline has passed.
         chapter:
           attributes:
             title:

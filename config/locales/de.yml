@@ -4061,6 +4061,9 @@ de:
                 Es muss ein Löschdatum angegeben werden.
               in_past: >
                 Löschdatum darf nicht in der Vergangenheit liegen.
+            accepted_file_type:
+              locked_after_deadline: >
+                kann nach Ablauf der Abgabefrist nicht mehr geändert werden.
         chapter:
           attributes:
             title:

@@ -30,6 +30,42 @@ RSpec.describe(Assignment, type: :model) do
     expect(assignment).to be_invalid
   end
 
+  describe "#past_deadline?" do
+    it "returns true when deadline is in the past" do
+      assignment = FactoryBot.build(:valid_assignment, :inactive)
+      expect(assignment.past_deadline?).to be(true)
+    end
+
+    it "returns false when deadline is in the future" do
+      assignment = FactoryBot.build(:valid_assignment)
+      expect(assignment.past_deadline?).to be(false)
+    end
+  end
+
+  describe "locked fields after deadline" do
+    let(:assignment) do
+      FactoryBot.create(:valid_assignment).tap do |a|
+        a.update_column(:deadline, 1.day.ago)
+      end
+    end
+
+    it "prevents changing accepted_file_type" do
+      assignment.accepted_file_type = ".zip"
+      expect(assignment).to be_invalid
+      expect(assignment.errors[:accepted_file_type]).to be_present
+    end
+
+    it "allows saving without changing accepted_file_type" do
+      assignment.title = "New title"
+      expect(assignment).to be_valid
+    end
+
+    it "allows extending the deadline forward" do
+      assignment.deadline = 2.days.from_now
+      expect(assignment).to be_valid
+    end
+  end
+
   # test traits
   describe "with lecture" do
     it "has a lecture" do

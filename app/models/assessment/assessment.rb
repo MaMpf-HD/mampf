@@ -32,6 +32,8 @@ module Assessment
     end
 
     validate :lecture_matches_assessable
+    validate :requires_submission_locked_after_deadline,
+             if: -> { requires_submission_changed? }
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {})
       existing = assessment_participations.pluck(:user_id).to_set
@@ -69,6 +71,12 @@ module Assessment
         return unless assessable.lecture_id != lecture_id
 
         errors.add(:lecture_id, :must_match_assessable_lecture)
+      end
+
+      def requires_submission_locked_after_deadline
+        return unless assessable.is_a?(Assignment) && assessable.past_deadline?
+
+        errors.add(:requires_submission, :locked_after_deadline)
       end
   end
 end

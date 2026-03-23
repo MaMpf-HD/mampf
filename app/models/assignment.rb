@@ -31,6 +31,7 @@ class Assignment < ApplicationRecord
 
   validates :accepted_file_type,
             inclusion: { in: Assignment.accepted_file_types }
+  validate :locked_fields_unchanged, if: -> { persisted? && past_deadline? }
 
   def submission(user)
     UserSubmissionJoin.where(submission: Submission.where(assignment: self),
@@ -44,6 +45,10 @@ class Assignment < ApplicationRecord
 
   def submitters
     User.where(id: submitter_ids)
+  end
+
+  def past_deadline?
+    deadline.present? && deadline < Time.zone.now
   end
 
   def active?
@@ -162,6 +167,12 @@ class Assignment < ApplicationRecord
   end
 
   private
+
+    def locked_fields_unchanged
+      return unless accepted_file_type_changed?
+
+      errors.add(:accepted_file_type, :locked_after_deadline)
+    end
 
     def deadline_not_in_past
       return if deadline.blank?

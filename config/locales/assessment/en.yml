@@ -69,6 +69,7 @@ en:
     updated: 'Assessment updated successfully.'
     requires_submission: 'Requires digital submission'
     requires_submission_hint: 'Students must upload a file'
+    locked_after_deadline: 'Locked (deadline has passed)'
     no_submission_required: 'No digital submission'
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
@@ -362,3 +363,7 @@ en:
             registration_deadline:
               must_be_before_exam_date: "must be before the exam date"
               must_be_in_future: "must be in the future"
+        assessment/assessment:
+          attributes:
+            requires_submission:
+              locked_after_deadline: "can't be changed after the deadline has passed"

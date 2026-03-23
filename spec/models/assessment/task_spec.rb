@@ -106,5 +106,37 @@ RSpec.describe(Assessment::Task, type: :model) do
       task.destroy
       expect(Assessment::TaskPoint.find_by(id: tp.id)).to be_present
     end
+
+    context "when assignment deadline has passed" do
+      let(:assignment) do
+        FactoryBot.create(:assignment, :with_lecture).tap do |a|
+          a.update_column(:deadline, 1.day.ago)
+        end
+      end
+      let(:assessment) do
+        FactoryBot.create(:assessment,
+                          requires_points: true,
+                          assessable: assignment,
+                          lecture: assignment.lecture)
+      end
+      let(:past_deadline_task) do
+        FactoryBot.create(:assessment_task, assessment: assessment)
+      end
+
+      it "cannot be destroyed" do
+        expect(past_deadline_task.destroy).to be(false)
+        expect(past_deadline_task.reload).to be_persisted
+      end
+
+      it "reports deadline_passed? as true" do
+        expect(past_deadline_task.deadline_passed?).to be(true)
+      end
+    end
+
+    context "when assignment deadline has not passed" do
+      it "reports deadline_passed? as false" do
+        expect(task.deadline_passed?).to be(false)
+      end
+    end
   end
 end
