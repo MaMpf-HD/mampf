@@ -1433,6 +1433,9 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
+        assignment_further_settings: >-
+          Weitere Einstellungen wie Aufgaben und Punkte können auf
+          der Vorlesungsseite unter „Testate" konfiguriert werden.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'

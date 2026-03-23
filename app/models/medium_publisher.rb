@@ -2,13 +2,15 @@
 class MediumPublisher
   attr_reader :medium_id, :user_id, :release_now, :release_for, :release_date,
               :lock_comments, :vertices, :create_assignment, :assignment_title,
-              :assignment_file_type, :assignment_deadline
+              :assignment_file_type, :assignment_deadline,
+              :requires_submission
 
   def initialize(medium_id:, user_id:, release_now:, # rubocop:todo Metrics/ParameterLists
                  release_for: "all", release_date: nil,
                  lock_comments: false, vertices: false,
                  create_assignment: false, assignment_title: "",
-                 assignment_file_type: "", assignment_deadline: nil)
+                 assignment_file_type: "", assignment_deadline: nil,
+                 requires_submission: true)
     @medium_id = medium_id
     @user_id = user_id
     @release_now = release_now
@@ -20,6 +22,7 @@ class MediumPublisher
     @assignment_title = assignment_title
     @assignment_file_type = assignment_file_type
     @assignment_deadline = assignment_deadline
+    @requires_submission = requires_submission
   end
 
   def self.load(text)
@@ -58,7 +61,8 @@ class MediumPublisher
                         create_assignment: params[:create_assignment] == "1",
                         assignment_title: params[:assignment_title],
                         assignment_file_type: params[:assignment_file_type],
-                        assignment_deadline: assignment_deadline)
+                        assignment_deadline: assignment_deadline,
+                        requires_submission: params[:requires_submission] == "1")
   end
 
   def publish!
@@ -85,7 +89,8 @@ class MediumPublisher
                    medium_id: @medium_id,
                    title: @assignment_title,
                    deadline: @assignment_deadline,
-                   accepted_file_type: @assignment_file_type)
+                   accepted_file_type: @assignment_file_type,
+                   requires_submission: @requires_submission)
   end
 
   def errors

@@ -1287,6 +1287,9 @@ en:
         assignment_settings: >
           Settings that will hold for <i>all</i> assignments in this lecture
           can be adjusted on the lecture page under "Assignments".
+        assignment_further_settings: >-
+          Further settings such as tasks and points can be configured
+          on the lecture page under "Assessment".
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
