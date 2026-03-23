@@ -13,6 +13,12 @@ class AddSubmissionDeletionDateToLectures < ActiveRecord::Migration[8.0]
         lecture.default_submission_deletion_date
       )
     end
+
+    cap = Term.possible_deletion_dates.last
+    if cap
+      Lecture.where(Lecture.arel_table[:submission_deletion_date].gt(cap))
+             .update_all(submission_deletion_date: cap)
+    end
     # rubocop: enable Rails/SkipsModelValidations
 
     change_column_null :lectures, :submission_deletion_date, false

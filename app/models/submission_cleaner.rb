@@ -36,8 +36,13 @@ class SubmissionCleaner
 
   def check_for_deletion
     @deletion_date = @date
-    fetch_props
+    @lectures = Lecture.where(
+      Lecture.arel_table[:submission_deletion_date].lteq(@deletion_date)
+    )
     return if @lectures.empty?
+
+    @assignments = Assignment.where(lecture: @lectures)
+    @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
 
     @submissions = Submission.where(assignment: @assignments)
     @submissions.each(&:destroy!)

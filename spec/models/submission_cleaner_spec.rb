@@ -85,7 +85,7 @@ RSpec.describe(SubmissionCleaner, type: :model) do
 
         expect do
           cleaner.clean!
-        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        end.to change { ActionMailer::Base.deliveries.count }.by(4)
       end
     end
 
@@ -103,15 +103,15 @@ RSpec.describe(SubmissionCleaner, type: :model) do
                                    date: Time.zone.today + 21.days)
         cleaner.clean!
 
-        expect(Submission.all.size).to be(2)
+        expect(Submission.all.size).to be(0)
       end
 
-      it "does not destroy submissions if no assignments to be deleted" do
+      it "destroys past-due submissions" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 20.days)
         cleaner.clean!
 
-        expect(Submission.all.size).to be(3)
+        expect(Submission.all.size).to be(1)
       end
     end
   end
