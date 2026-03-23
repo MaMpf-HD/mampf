@@ -446,6 +446,7 @@ en:
         maximal team size for submissions
       submission_grace_period: >
         grace period for submissions (in minutes)
+      submission_deletion_date: Submission deletion date
       import_toc: Import table of contents from other lecture
       import_chapters: import chapters
       import_sections: import sections
@@ -639,6 +640,16 @@ en:
           submissions. Files that are uploaded after the deadline but before the
           grace period is expired will be accepted by the system, but will be
           timestamped and marked as "too late".
+        submission_deletion_date: >-
+          Here you can set when submissions and corrections for this
+          event series will be automatically deleted. The first
+          option corresponds to end of term plus approx. two weeks,
+          the second to end of term plus approx. four months and
+          two weeks. Two weeks before the chosen date, students
+          will be notified by email; one week before, they receive
+          a reminder. On the chosen date, submissions will be
+          irrevocably deleted. If the date has already passed,
+          deletion occurs on the next scheduled run.
         section_needed: Please create a section first
         voucher_for_tutor: >
           Vouchers for tutors can be redeemed by users to obtain tutor status

@@ -1,4 +1,43 @@
 de:
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: etwa einer Stunde
+        other: etwa %{count} Stunden
+      about_x_months:
+        one: etwa einem Monat
+        other: etwa %{count} Monaten
+      about_x_years:
+        one: etwa einem Jahr
+        other: etwa %{count} Jahren
+      almost_x_years:
+        one: fast einem Jahr
+        other: fast %{count} Jahren
+      half_a_minute: einer halben Minute
+      less_than_x_seconds:
+        one: weniger als einer Sekunde
+        other: weniger als %{count} Sekunden
+      less_than_x_minutes:
+        one: weniger als einer Minute
+        other: weniger als %{count} Minuten
+      over_x_years:
+        one: mehr als einem Jahr
+        other: mehr als %{count} Jahren
+      x_seconds:
+        one: einer Sekunde
+        other: "%{count} Sekunden"
+      x_minutes:
+        one: einer Minute
+        other: "%{count} Minuten"
+      x_days:
+        one: einem Tag
+        other: "%{count} Tagen"
+      x_months:
+        one: einem Monat
+        other: "%{count} Monaten"
+      x_years:
+        one: einem Jahr
+        other: "%{count} Jahren"
   mampf: 'MaMpf'
   views:
     pagination:
@@ -470,6 +509,7 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      submission_deletion_date: Löschdatum für Abgaben
       import_toc: Gliederung aus anderer Veranstaltung importieren
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
@@ -692,6 +732,17 @@ de:
           Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
+        submission_deletion_date: >-
+          Hier kannst Du festlegen, wann Abgaben und Korrekturen
+          dieser Veranstaltung automatisch gelöscht werden. Die
+          erste Option entspricht dem Semesterende plus ca. zwei
+          Wochen, die zweite dem Semesterende plus ca. vier
+          Monate und zwei Wochen. Zwei Wochen vor dem gewählten
+          Datum werden die Studierenden per E-Mail informiert,
+          eine Woche vorher erhalten sie eine Erinnerung. Am
+          gewählten Datum werden die Abgaben unwiderruflich
+          gelöscht. Sollte das Datum bereits verstrichen sein,
+          erfolgt die Löschung beim nächsten Durchlauf.
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um

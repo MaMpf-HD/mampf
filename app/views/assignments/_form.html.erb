@@ -14,7 +14,7 @@
       </div>
 
       <%# Datetimepicker for assignment deadline %>
-      <div class="col-3 form-group">
+      <div class="col-4 form-group">
         <div
           class="input-group log-event td-picker"
           id="assignment-picker"
@@ -59,16 +59,6 @@
                        id: "assignment_filetype_id_#{assignment.id}" } %>
       </div>
       <div class="form-group col-2">
-        <%= f.select :deletion_date,
-                     Term.possible_deletion_dates_localized,
-                     { selected: assignment.localized_deletion_date },
-                     class: 'form-select',
-                     id: "assignment_deletion_date_#{assignment.id}" %>
-        <div class="invalid-feedback"
-             id="assignment-deletion-date-error">
-        </div>
-      </div>
-      <div class="form-group col-1">
         <!-- Submit button -->
         <%= f.button nil, class: "btn btn-primary" do %>
           <i class="fas fa-save"></i>

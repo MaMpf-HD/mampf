@@ -9,10 +9,12 @@
                    class: "btn btn-outline-danger btn-sm",
                    data: { turbo_confirm: t('basics.confirm_delete') } %>
     <% else %>
-      <span class="d-inline-block"
-            tabindex="0"
-            title="<%= t("assessment.not_destructible.#{assessable.non_destructible_reason}") %>"
-            data-bs-toggle="tooltip">
+      <span
+        class="d-inline-block"
+        tabindex="0"
+        title="<%= t("assessment.not_destructible.#{assessable.non_destructible_reason}") %>"
+        data-bs-toggle="tooltip"
+      >
         <button class="btn btn-outline-secondary btn-sm" disabled>
           <i class="bi bi-lock-fill me-1"></i>
           <%= t('basics.delete') %>
@@ -38,6 +40,7 @@
     <div class="row g-3">
       <div class="col-md-6">
         <%= af.label :title, t('basics.title'), class: "form-label" %>
+
         <%= af.text_field :title,
                           class: 'form-control',
                           required: true,
@@ -49,11 +52,14 @@
 
       <div class="col-md-6">
         <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
-        <div class="input-group td-picker"
-             id="assessment-deadline-picker"
-             data-controller="datetimepicker"
-             data-td-target-input="nearest"
-             data-td-target-toggle="nearest">
+
+        <div
+          class="input-group td-picker"
+          id="assessment-deadline-picker"
+          data-controller="datetimepicker"
+          data-td-target-input="nearest"
+          data-td-target-toggle="nearest"
+        >
           <%= af.text_field :deadline,
               class: 'form-control td-input',
               data: {
@@ -63,10 +69,13 @@
               },
               value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
               autocomplete: 'off' %>
-          <span class="input-group-text td-picker-button"
-                role="button"
-                data-td-target="#assessment-deadline-picker"
-                data-td-toggle="datetimepicker">
+
+          <span
+            class="input-group-text td-picker-button"
+            role="button"
+            data-td-target="#assessment-deadline-picker"
+            data-td-toggle="datetimepicker"
+          >
             <i class="bi bi-calendar-fill"></i>
           </span>
         </div>
@@ -74,6 +83,7 @@
 
       <div class="col-md-6">
         <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
+
         <%= af.select :medium_id,
                      options_for_select(Medium.where(teachable: lecture, sort: 'Exercise')
                                               .map { |m| [m.local_title_for_viewers, m.id] },
@@ -88,6 +98,7 @@
 
       <div class="col-md-6">
         <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
+
         <%= af.select :accepted_file_type,
                      options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
                                         assessable.accepted_file_type),
@@ -97,18 +108,6 @@
                          assessments__settings_target: 'acceptedFileType',
                          action: 'change->assessments--settings#checkForChanges'
                        } } %>
-      </div>
-
-      <div class="col-md-6">
-        <%= af.label :deletion_date, t('assignment.deletion_date'), class: "form-label" %>
-        <%= af.select :deletion_date,
-                     Term.possible_deletion_dates_localized,
-                     { selected: assessable.localized_deletion_date },
-                     class: 'form-select',
-                     data: {
-                       assessments__settings_target: 'deletionDate',
-                       action: 'change->assessments--settings#checkForChanges'
-                     } %>
       </div>
     </div>
   <% end %>
@@ -123,27 +122,36 @@
                           assessments__settings_target: 'requiresSubmission',
                           action: 'change->assessments--settings#checkForChanges'
                         } %>
+
         <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
+
         <div class="form-text text-muted">
           <%= t('assessment.requires_submission_hint') %>
         </div>
       </div>
     </div>
 
-    <div class="col-12 mt-3 text-center d-none"
-         data-assessments--settings-target="warning">
+    <div
+      class="col-12 mt-3 text-center d-none"
+      data-assessments--settings-target="warning"
+    >
       <div class="alert alert-warning d-inline-block mb-2" role="alert">
         <i class="bi bi-exclamation-triangle me-2"></i>
         <%= t('warnings.unsaved_changes') %>
       </div>
     </div>
 
-    <div class="col-12 mt-4 text-center d-none"
-         data-assessments--settings-target="submitButton">
+    <div
+      class="col-12 mt-4 text-center d-none"
+      data-assessments--settings-target="submitButton"
+    >
       <%= f.submit t('assessment.form.submit'), class: "btn btn-primary me-2" %>
-      <button type="button"
-              class="btn btn-secondary"
-              data-action="click->assessments--settings#cancel">
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-action="click->assessments--settings#cancel"
+      >
         <%= t('buttons.cancel') %>
       </button>
     </div>

@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["submitButton", "warning", "title", "deadline", "mediumId",
-    "acceptedFileType", "deletionDate", "requiresSubmission"];
+    "acceptedFileType", "requiresSubmission"];
 
   connect() {
     this.storeOriginalValues();
@@ -14,7 +14,6 @@ export default class extends Controller {
     this.originalDeadline = this.deadlineTarget.value;
     this.originalMediumId = this.mediumIdTarget.value;
     this.originalAcceptedFileType = this.acceptedFileTypeTarget.value;
-    this.originalDeletionDate = this.deletionDateTarget.value;
     if (this.hasRequiresSubmissionTarget) {
       this.originalRequiresSubmission = this.requiresSubmissionTarget.checked;
     }
@@ -25,12 +24,11 @@ export default class extends Controller {
     const deadlineChanged = this.deadlineTarget.value !== this.originalDeadline;
     const mediumIdChanged = this.mediumIdTarget.value !== this.originalMediumId;
     const fileTypeChanged = this.acceptedFileTypeTarget.value !== this.originalAcceptedFileType;
-    const deletionDateChanged = this.deletionDateTarget.value !== this.originalDeletionDate;
     const requiresSubmissionChanged = this.hasRequiresSubmissionTarget
       && this.requiresSubmissionTarget.checked !== this.originalRequiresSubmission;
 
     if (titleChanged || deadlineChanged || mediumIdChanged
-      || fileTypeChanged || deletionDateChanged || requiresSubmissionChanged) {
+      || fileTypeChanged || requiresSubmissionChanged) {
       this.showSubmitElements();
     }
     else {
@@ -53,7 +51,6 @@ export default class extends Controller {
     this.deadlineTarget.value = this.originalDeadline;
     this.mediumIdTarget.value = this.originalMediumId;
     this.acceptedFileTypeTarget.value = this.originalAcceptedFileType;
-    this.deletionDateTarget.value = this.originalDeletionDate;
     if (this.hasRequiresSubmissionTarget) {
       this.requiresSubmissionTarget.checked = this.originalRequiresSubmission;
     }

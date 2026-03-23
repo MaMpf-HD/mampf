@@ -7,8 +7,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let(:user) { create(:confirmed_user) }
   let(:assignment) do
-    create(:assignment, lecture: lecture, deadline: 1.week.from_now,
-                        deletion_date: 2.months.from_now)
+    create(:assignment, lecture: lecture, deadline: 1.week.from_now)
   end
   let(:submission) do
     sub = create(:submission, tutorial: tutorial, assignment: assignment)

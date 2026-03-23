@@ -546,8 +546,7 @@ class MediaController < ApplicationController
       params.expect(medium: [:release_now, :released, :release_date,
                              :lock_comments, :publish_vertices,
                              :create_assignment, :assignment_title,
-                             :assignment_deadline, :assignment_file_type,
-                             :assignment_deletion_date])
+                             :assignment_deadline, :assignment_file_type])
     end
 
     def set_medium

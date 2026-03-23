@@ -283,4 +283,41 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.supported_assessable_types).to eq(["Talk"])
     end
   end
+
+  describe "#submission_deletion_date callbacks" do
+    it "initializes submission_deletion_date from default when not set" do
+      lecture = create(:lecture)
+      expect(lecture.submission_deletion_date).to be_present
+      expect(lecture.submission_deletion_date).to be_a(Date)
+    end
+
+    it "keeps an explicitly set submission_deletion_date" do
+      date = 1.year.from_now.to_date
+      lecture = create(:lecture, submission_deletion_date: date)
+      expect(lecture.submission_deletion_date).to eq(date)
+    end
+
+    it "fans out submission_deletion_date changes to assignments" do
+      lecture = create(:lecture,
+                       submission_deletion_date: 6.months.from_now.to_date)
+      a1 = create(:assignment, lecture: lecture, deadline: 1.week.from_now)
+      a2 = create(:assignment, lecture: lecture, deadline: 2.weeks.from_now)
+
+      new_date = 1.year.from_now.to_date
+      lecture.update!(submission_deletion_date: new_date)
+
+      expect(a1.reload.deletion_date).to eq(new_date)
+      expect(a2.reload.deletion_date).to eq(new_date)
+    end
+
+    it "does not fan out when unrelated attributes change" do
+      original_date = 6.months.from_now.to_date
+      lecture = create(:lecture, submission_deletion_date: original_date)
+      a1 = create(:assignment, lecture: lecture, deadline: 1.week.from_now)
+
+      lecture.update!(passphrase: "new-passphrase")
+
+      expect(a1.reload.deletion_date).to eq(original_date)
+    end
+  end
 end

@@ -63,7 +63,6 @@ namespace :assessment do
       assignment = lecture.assignments.create!(
         title: attrs[:title],
         deadline: attrs[:deadline],
-        deletion_date: attrs[:deadline] + 6.months,
         accepted_file_type: ".pdf"
       )
       puts "  ✓ Created: #{assignment.title} (deadline: #{assignment.deadline})"

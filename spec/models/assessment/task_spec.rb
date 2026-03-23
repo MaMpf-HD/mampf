@@ -57,4 +57,54 @@ RSpec.describe(Assessment::Task, type: :model) do
       expect(task3.reload.position).to eq(3)
     end
   end
+
+  describe "#points_entered?" do
+    let(:task) { FactoryBot.create(:assessment_task) }
+
+    it "returns false when no task points exist" do
+      expect(task.points_entered?).to be(false)
+    end
+
+    it "returns false when task points exist but all have nil points" do
+      FactoryBot.create(:assessment_task_point, task: task, points: nil)
+      expect(task.points_entered?).to be(false)
+    end
+
+    it "returns true when a task point with non-nil points exists" do
+      FactoryBot.create(:assessment_task_point, task: task, points: 5)
+      expect(task.points_entered?).to be(true)
+    end
+
+    it "returns true when a task point with zero points exists" do
+      FactoryBot.create(:assessment_task_point, task: task, points: 0)
+      expect(task.points_entered?).to be(true)
+    end
+  end
+
+  describe "destruction" do
+    let(:task) { FactoryBot.create(:assessment_task) }
+
+    it "can be destroyed when no points have been entered" do
+      expect(task.destroy).to be_truthy
+      expect(Assessment::Task.find_by(id: task.id)).to be_nil
+    end
+
+    it "can be destroyed when only nil-points task points exist" do
+      FactoryBot.create(:assessment_task_point, task: task, points: nil)
+      expect(task.destroy).to be_truthy
+      expect(Assessment::Task.find_by(id: task.id)).to be_nil
+    end
+
+    it "cannot be destroyed when points have been entered" do
+      FactoryBot.create(:assessment_task_point, task: task, points: 8)
+      expect(task.destroy).to be(false)
+      expect(task.reload).to be_persisted
+    end
+
+    it "preserves task points when destruction is blocked" do
+      tp = FactoryBot.create(:assessment_task_point, task: task, points: 8)
+      task.destroy
+      expect(Assessment::TaskPoint.find_by(id: tp.id)).to be_present
+    end
+  end
 end
