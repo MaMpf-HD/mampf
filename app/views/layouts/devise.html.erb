@@ -54,7 +54,9 @@
                 <%= t('main.media_platform') %>
               </p>
 
-              <% if ENV["PRODUCTION_NAME"] != "mampf" && request.host == "localhost" %>
+              <% mampf_name = "mampf" %>
+              <% production_name = ENV.fetch("PRODUCTION_NAME", mampf_name) %>
+              <% if production_name != mampf_name %>
                  <div class="alert w-100 mt-2" role="alert"
                    style="background-color: rgba(80, 0, 0, 0.35);
                    border: 2px solid rgba(255, 255, 255, 0.12);">
