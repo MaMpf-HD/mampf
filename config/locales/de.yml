@@ -2845,9 +2845,9 @@ de:
   main:
     media_platform: Mathematische Medienplattform der Universität Heidelberg
     non_mampf_login_notice_html: >
-      Dies ist eine Entwicklungsumgebung von MaMpf.
+      Dies ist eine Testumgebung von MaMpf.
       Deine Login-Daten funktionieren hier nicht.
-      Bitte nutze die echte MaMpf-App: %{app_link}
+      Bitte nutze stattdessen die echte MaMpf-Website: %{app_link}
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
