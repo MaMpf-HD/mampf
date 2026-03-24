@@ -2,7 +2,7 @@
 <html>
   <head>
     <% if controller.controller_name == "sessions" && controller.action_name == "new" %>
-      <meta name="view-transition" content="same-origin">
+      <meta name="view-transition" content="same-origin" />
       <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
     <% end %>
 
@@ -54,7 +54,7 @@
                 <%= t('main.media_platform') %>
               </p>
 
-              <% if ENV["PRODUCTION_NAME"] != "mampf" && request.host != "localhost" %>
+              <% if ENV["PRODUCTION_NAME"] != "mampf" && request.host == "localhost" %>
                  <div class="alert w-100 mt-2" role="alert"
                    style="background-color: rgba(80, 0, 0, 0.35);
                    border: 2px solid rgba(255, 255, 255, 0.12);">
