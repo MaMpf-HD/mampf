@@ -2,7 +2,7 @@
 <html>
   <head>
     <% if controller.controller_name == "sessions" && controller.action_name == "new" %>
-      <meta name="view-transition" content="same-origin" />
+      <meta name="view-transition" content="same-origin">
       <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
     <% end %>
 
@@ -16,7 +16,7 @@
 
     <%= render partial: "flash/messages" %>
 
-    <main class="w-100 d-flex flex-column align-items-center justify-content-center"        
+    <main class="w-100 d-flex flex-column align-items-center justify-content-center"
           style="min-height: 100vh; position: relative;">
 
       <div id="landing-background"></div>
@@ -54,6 +54,20 @@
                 <%= t('main.media_platform') %>
               </p>
 
+              <% if ENV["PRODUCTION_NAME"] != "mampf" && request.host != "localhost" %>
+                 <div class="alert w-100 mt-2" role="alert"
+                   style="background-color: rgba(80, 0, 0, 0.35);
+                   border: 2px solid rgba(255, 255, 255, 0.12);">
+                  <%= t(
+                    "main.non_mampf_login_notice_html",
+                    app_link: link_to(
+                      "https://mampf.mathi.uni-heidelberg.de",
+                      "https://mampf.mathi.uni-heidelberg.de",
+                    )
+                  ) %>
+                </div>
+              <% end %>
+
               <div class="alert alert-danger" id="js-messages" role="alert"
                   style="display: none;">
               </div>
@@ -62,7 +76,7 @@
                 <%= yield %>
               </div>
 
-            </div> 
+            </div>
           </div>
         </div>
       </div>
