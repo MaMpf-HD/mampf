@@ -18,14 +18,14 @@ After an exam is graded and all points are recorded, MaMpf needs to:
 - **Enable analysis:** Show distribution statistics before applying scheme
 - **Allow adjustments:** Let instructors tweak cutoffs based on difficulty
 - **Handle manual overrides:** Respect individual grade adjustments for special cases
-- **Ensure idempotency:** Re-applying same scheme produces same results
+- **Ensure idempotency:** Re-applying same scheme only grades ungraded participations, preserving manual corrections
 - **Maintain audit trail:** Track which scheme was applied when and by whom
 
 ## Solution Architecture
 We use a configurable scheme model with service-based application:
-- **Canonical Source:** `GradeScheme::Scheme` stores scheme configuration per assessment
-- **Absolute Bands:** JSON config defines grade bands with either absolute points or percentages
-- **Service-Based Application:** `GradeScheme::Applier` iterates participations and computes grades
+- **Canonical Source:** `Assessment::GradeScheme` stores scheme configuration per assessment
+- **Banded Config:** JSON config defines grade bands with either absolute points or percentages
+- **Service-Based Application:** `Assessment::GradeSchemeApplier` iterates participations and computes grades
 - **Version Control:** Hash-based versioning prevents duplicate applications
 - **Override Respect:** Manual grades bypass scheme application
 - **Distribution Analysis:** Service provides statistics for informed decision-making
@@ -33,7 +33,7 @@ We use a configurable scheme model with service-based application:
 
 ---
 
-## GradeScheme::Scheme (ActiveRecord Model)
+## Assessment::GradeScheme (ActiveRecord Model)
 **_Grade Mapping Configuration_**
 
 ```admonish info "What it represents"
@@ -44,12 +44,12 @@ A versioned configuration that defines how to convert assessment points into fin
 "The grading curve for the Linear Algebra final exam: 54+ points gets 1.0, 48-53 points gets 1.3, ... or alternatively 90%+ gets 1.0, 80-89% gets 1.3, ..."
 ```
 
-The main fields and methods of `GradeScheme::Scheme` are:
+The main fields and methods of `Assessment::GradeScheme` are:
 
 | Name/Field       | Type/Kind        | Description                                                    |
 |------------------|------------------|----------------------------------------------------------------|
 | `assessment_id`  | DB column (FK)   | The assessment this scheme applies to                          |
-| `kind`           | DB column (Enum) | Scheme type: currently only `absolute`                         |
+| `kind`           | DB column (Enum) | Scheme type: currently only `banded`                           |
 | `config`         | DB column (JSONB)| Scheme-specific configuration (bands, coefficients, etc.)      |
 | `version_hash`   | DB column        | MD5 hash of config for idempotency checking                    |
 | `applied_at`     | DB column        | Timestamp when scheme was last applied (nil if draft)          |
@@ -71,64 +71,74 @@ The main fields and methods of `GradeScheme::Scheme` are:
 ### Example Implementation
 
 ```ruby
-module GradeScheme
-  class Scheme < ApplicationRecord
-    self.table_name = "grade_schemes"
-
+module Assessment
+  class GradeScheme < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :applied_by, class_name: "User", optional: true
 
-    enum kind: { absolute: 0 }
+    enum :kind, { banded: 0 }
 
-  validates :assessment_id, uniqueness: { scope: :active, if: :active? }
-  validates :config, presence: true
-  validate :config_matches_kind
+    validates :config, presence: true
+    validates :assessment_id, uniqueness: true, if: :active?
+    validate :config_matches_kind
 
-  before_save :compute_hash, if: :config_changed?
+    before_save :compute_hash, if: :config_changed?
 
-  def applied?
-    applied_at.present?
-  end
+    def applied?
+      applied_at.present?
+    end
 
-  def compute_hash
-    self.version_hash = Digest::MD5.hexdigest(config.to_json)
-  end
+    def compute_hash
+      self.version_hash = Digest::MD5.hexdigest(config.to_json)
+    end
 
-  private
+    private
 
-  def config_matches_kind
-    case kind.to_sym
-    when :absolute
-      # Check for either absolute points or percentage-based bands
-      has_bands = config["bands"].is_a?(Array)
-      errors.add(:config, "must have bands array") unless has_bands
-      
-      if has_bands
-        first_band = config["bands"].first
-        has_points = first_band&.key?("min_points")
-        has_pct = first_band&.key?("min_pct")
-        
-        unless has_points || has_pct
-          errors.add(:config, "bands must have either min_points/max_points or min_pct/max_pct")
+      def config_matches_kind
+        case kind.to_sym
+        when :banded
+          validate_banded_config
         end
       end
-    end
-  end
+
+      def validate_banded_config
+        return unless config.is_a?(Hash)
+
+        bands = config["bands"]
+        unless bands.is_a?(Array) && bands.any?
+          errors.add(:config, "must have a non-empty bands array")
+          return
+        end
+
+        first = bands.first
+        has_points = first.key?("min_points")
+        has_pct = first.key?("min_pct")
+
+        unless has_points || has_pct
+          errors.add(:config, "bands must use min_points or min_pct")
+          return
+        end
+
+        key = has_points ? "min_points" : "min_pct"
+        return if bands.all? { |b| b.key?(key) }
+
+        errors.add(:config, "all bands must use the same format")
+      end
   end
 end
 ```
 
 ### Usage Scenarios
 
-- **Creating a draft scheme:** After an exam is graded, the professor creates: `GradeScheme::Scheme.create!(assessment: exam_assessment, kind: :absolute, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
+- **Creating a draft scheme:** After an exam is graded, the professor creates: `Assessment::GradeScheme.create!(assessment: exam_assessment, kind: :banded, active: true, config: { bands: [...] })`. The scheme is saved but `applied_at` remains `nil`.
 
-- **Analyzing distribution:** Before applying, the professor requests distribution stats: `GradeScheme::Applier.new(scheme).analyze_distribution`. This returns `{ min: 15, max: 98, mean: 72, median: 74, percentiles: { 10 => 45, 25 => 60, ... } }`.
+- **Analyzing distribution:** Before applying, the professor requests distribution stats: `Assessment::GradeSchemeApplier.new(scheme).analyze_distribution`. This returns `{ min: 15, max: 98, mean: 72, median: 74, percentiles: { 10 => 45, 25 => 60, ... } }`.
 
 - **Adjusting cutoffs:** Seeing the exam was harder than expected, the professor lowers cutoffs: `scheme.update!(config: { bands: [...] })`. The `version_hash` updates automatically.
 
-- **Applying scheme:** The professor finalizes: `GradeScheme::Applier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
+- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
 
-- **Preventing re-application:** Someone tries to apply again: `GradeScheme::Applier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and returns early (idempotent).
+- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and only grades participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
 
 ---
 
@@ -142,7 +152,7 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 |-------------|------------------|---------------|--------|
 | Absolute Points | Standard approach - fixed point thresholds | `min_points`/`max_points` | ✅ In use |
 | Percentage-Based | Cross-exam comparison | `min_pct`/`max_pct` | ✅ In use |
-| Interactive Curve | UI convenience for teachers | Generates absolute config | 🚧 Planned |
+| Interactive Curve | UI convenience for teachers | Generates `banded` config | 🚧 Planned |
 | Percentile/Linear | Advanced statistical schemes | N/A | ⏸️ Future |
 
 ### Absolute Cutoffs
@@ -234,18 +244,18 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Dave | 22 pts | 36.67% | 5.0 | Failed |
 
 ```admonish note "Detection Logic"
-The `GradeScheme::Applier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :absolute` enum value.
+The `Assessment::GradeSchemeApplier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
 ```
 
 ### Interactive Curve Generation (Frontend Convenience)
 
 ```admonish warning "Implementation Status"
-**Backend:** ✅ Already supported via `absolute` scheme  
+**Backend:** ✅ Already supported via `banded` scheme
 **Frontend:** 🚧 Planned - Interactive UI needs to be built
 ```
 
 ```admonish info "Design Philosophy"
-The backend only needs to support the `absolute` scheme with bands. The "curve generation" is purely a **frontend convenience feature** that produces valid `absolute` configs by helping teachers visualize and set boundaries.
+The backend only needs to support the `banded` scheme. The "curve generation" is purely a **frontend convenience feature** that produces valid `banded` configs by helping teachers visualize and set boundaries.
 ```
 
 **Comparison of UI approaches:**
@@ -271,32 +281,32 @@ Teacher sets just two anchors ("54+ gets 1.0", "30+ gets 4.0"), system fills in 
 4. Frontend calculates linear interpolation for intermediate grades
 5. Frontend displays preview: "54-60→1.0, 48-53→1.3, 42-47→1.7, ..."
 6. Teacher can manually adjust any band boundary if desired (see below)
-7. Frontend sends final `absolute` config to backend
+7. Frontend sends final `banded` config to backend
 
 **Example JavaScript helper:**
 ```javascript
 function generateLinearBands(excellentPts, passingPts, maxPts, gradeSteps) {
   const range = excellentPts - passingPts;
   const stepSize = range / (gradeSteps.length - 1);
-  
+
   const bands = gradeSteps.map((grade, index) => {
     const minPts = Math.round(passingPts + (stepSize * index));
-    const maxPts = index === 0 ? maxPts : 
+    const maxPts = index === 0 ? maxPts :
                    Math.round(passingPts + (stepSize * (index + 1)) - 1);
     return { min_points: minPts, max_points: maxPts, grade };
   });
-  
+
   // Add fail band below passing threshold
   bands.push({ min_points: 0, max_points: passingPts - 1, grade: "5.0" });
-  
+
   return bands.sort((a, b) => b.min_points - a.min_points);
 }
 
 // Usage
-const bands = generateLinearBands(54, 30, 60, 
+const bands = generateLinearBands(54, 30, 60,
   ["1.0", "1.3", "1.7", "2.0", "2.3", "3.0", "3.7", "4.0"]
 );
-// Send to backend: { kind: "absolute", config: { bands } }
+// Send to backend: { kind: "banded", config: { bands } }
 ```
 
 | Benefit | Description |
@@ -319,7 +329,7 @@ Teacher drags individual boundary markers for each grade on the histogram.
    - Drag "1.3/1.7 boundary" to adjust next boundary
    - ... (continues for all grades)
 4. Frontend displays current band configuration
-5. Frontend sends complete `absolute` config to backend
+5. Frontend sends complete `banded` config to backend
 
 | Benefit | Description |
 |---------|-------------|
@@ -343,7 +353,7 @@ Auto-generate initial bands from two points, then allow manual tweaking of indiv
      - **Option A:** Auto-adjusts neighboring bands to fill gaps
      - **Option B:** Shows warning "Gap detected between 1.0 and 1.3"
 4. Teacher previews grade distribution with adjusted boundaries
-5. Frontend sends final `absolute` config to backend
+5. Frontend sends final `banded` config to backend
 
 **Example of manual adjustment after auto-generation:**
 ```javascript
@@ -355,12 +365,12 @@ const initialBands = generateLinearBands(54, 30, 60, grades);
 function adjustBand(bands, gradeToAdjust, newMinPoints) {
   const index = bands.findIndex(b => b.grade === gradeToAdjust);
   bands[index].min_points = newMinPoints;
-  
+
   // Auto-adjust next band to avoid gaps
   if (index < bands.length - 1) {
     bands[index + 1].max_points = newMinPoints - 1;
   }
-  
+
   return bands;
 }
 
@@ -379,7 +389,7 @@ const adjustedBands = adjustBand(initialBands, "1.0", 50);
 | 🥧 Distribution chart | Pie/bar chart showing final grade distribution |
 
 ```admonish note "Backend Simplicity"
-- Backend receives only `{ kind: "absolute", config: { bands: [...] } }`
+- Backend receives only `{ kind: "banded", config: { bands: [...] } }`
 - Doesn't know or care how bands were generated (manual, auto, or hybrid)
 - No special "two-point" or "curve" scheme type needed
 - Simple validation: bands must not overlap, must cover 0 to max_points
@@ -391,47 +401,47 @@ const adjustedBands = adjustBand(initialBands, "1.0", 50);
 flowchart TD
     Start([Teacher opens grading UI]) --> LoadData[Load all student scores from assessment]
     LoadData --> ShowHistogram[Display histogram of score distribution]
-    
+
     ShowHistogram --> ChooseMode{Teacher chooses mode}
-    
+
     ChooseMode -->|Two-Point Auto| TwoPoint[Select two-point auto-generation]
     ChooseMode -->|Manual Drawing| Manual[Select manual curve mode]
-    
+
     TwoPoint --> DragMarkers[Drag two markers on histogram]
     DragMarkers --> CalcInterpolation[Frontend calculates linear interpolation]
     CalcInterpolation --> GenerateBands[Generate bands array with all grades]
     GenerateBands --> ShowPreview
-    
+
     Manual --> DragBoundaries[Drag individual grade boundaries]
     DragBoundaries --> BuildManualBands[Build bands from boundary positions]
     BuildManualBands --> ShowPreview
-    
+
     ShowPreview[Show preview with histogram overlay] --> DisplayStats[Display grade distribution stats]
-    
+
     DisplayStats --> TeacherReview{Teacher satisfied?}
-    
+
     TeacherReview -->|No - adjust| AdjustChoice{Adjustment type?}
     AdjustChoice -->|Tweak specific band| DragOneBoundary[Drag single boundary marker]
     AdjustChoice -->|Reset and retry| ResetButton[Click reset button]
-    
+
     DragOneBoundary --> AutoAdjustNeighbor[Auto-adjust neighboring band to avoid gaps]
     AutoAdjustNeighbor --> UpdatePreview[Update preview with new distribution]
     UpdatePreview --> DisplayStats
-    
+
     ResetButton --> TwoPoint
-    
+
     TeacherReview -->|Yes| ValidateBands{Bands valid?}
-    
+
     ValidateBands -->|No gaps/overlaps| BuildConfig[Build config JSON]
     ValidateBands -->|Issues found| ShowWarning[Show validation warning]
     ShowWarning --> TeacherReview
-    
+
     BuildConfig --> SendToBackend[Send POST request to backend]
     SendToBackend --> BackendValidate[Backend validates config]
-    
-    BackendValidate --> SaveScheme[Save GradeScheme::Scheme record]
+
+    BackendValidate --> SaveScheme[Save Assessment::GradeScheme record]
     SaveScheme --> Success([Scheme created successfully])
-    
+
     style Start fill:#e1f5ff
     style Success fill:#d4edda
     style ShowHistogram fill:#fff3cd
@@ -448,9 +458,19 @@ Additional grading schemes (percentile-based ranking, piecewise mapping, etc.) c
 The flexible JSONB config structure makes it easy to add new scheme types without database migrations.
 ```
 
+```admonish todo "Manual Grade Override (Deferred)"
+A `manual_grade_override` boolean flag on `Assessment::Participation` could
+allow teachers to protect hand-picked grades from being overwritten by
+scheme (re-)application. The typical workflow — apply scheme first, then
+manually correct a few grades — does not require this flag initially.
+It becomes relevant only when re-application is needed (e.g. after fixing
+task points or adjusting band config). Deferred until the UI for manual
+grade editing exists and the re-application workflow is clearer.
+```
+
 ---
 
-## GradeScheme::Applier (Service Object)
+## Assessment::GradeSchemeApplier (Service Object)
 **_Grade Computer_**
 
 ```admonish info "What it represents"
@@ -472,8 +492,7 @@ The "grade calculator" that transforms points into grades according to the confi
 
 ### Behavior Highlights
 
-- **Idempotent:** Checks `version_hash` before applying; skip if already applied
-- **Manual override respect:** Skips participations with `manual_grade_override` flag
+- **Idempotent:** Checks `version_hash` before applying; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
 - **Statistics:** Analyzes distribution for informed decision-making
@@ -487,7 +506,7 @@ The exam grading workflow progresses through four distinct phases with dedicated
 **High-level phases:**
 
 1. **Phase 1: Point Entry** — Teachers enter task points for each student; grade column remains empty
-2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points  
+2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points
 3. **Phase 3: Scheme Configuration** — Set excellence/passing thresholds (Two-Point Auto) or manually define grade boundaries (Manual Curve)
 4. **Phase 4: Scheme Applied** — Grades auto-computed; point edits trigger automatic grade recalculation
 
@@ -495,44 +514,44 @@ The exam grading workflow progresses through four distinct phases with dedicated
 flowchart TD
     Start([Exam grading complete]) --> CreateScheme[Professor creates draft scheme]
     CreateScheme --> AnalyzeDist[Analyze distribution statistics]
-    
+
     AnalyzeDist --> ViewStats[View: min, max, mean, median, percentiles]
     ViewStats --> InitialConfig[Set initial config bands]
-    
+
     InitialConfig --> Preview[Preview grade distribution]
     Preview --> ReviewResults[Review: How many pass/fail?]
-    
+
     ReviewResults --> Satisfied{Satisfied with<br/>distribution?}
-    
+
     Satisfied -->|No - too harsh| LowerThreshold[Lower cutoff thresholds]
     Satisfied -->|No - too lenient| RaiseThreshold[Raise cutoff thresholds]
-    
+
     LowerThreshold --> UpdateConfig[Update scheme config]
     RaiseThreshold --> UpdateConfig
     UpdateConfig --> Preview
-    
+
     Satisfied -->|Yes| Apply[Apply scheme to all participations]
     Apply --> Transaction[Database transaction starts]
-    
+
     Transaction --> CheckHash{version_hash<br/>already applied?}
-    CheckHash -->|Yes| SkipAll[Skip - idempotent]
-    CheckHash -->|No| IterateParticipations[Iterate all participations]
-    
-    IterateParticipations --> CheckOverride{Has manual<br/>override?}
-    CheckOverride -->|Yes| SkipStudent[Skip this student]
-    CheckOverride -->|No| ComputeGrade[Compute grade from points]
-    
-    ComputeGrade --> UpdateGrade[Update grade_value]
+    CheckHash -->|Yes| CheckUngraded{Any ungraded<br/>participations?}
+    CheckUngraded -->|No| SkipAll[Skip - nothing to do]
+    CheckUngraded -->|Yes| IterateUngraded[Iterate ungraded participations]
+    CheckHash -->|No| IterateAll[Iterate all reviewed participations]
+
+    IterateAll --> ComputeGrade[Compute grade from points]
+    IterateUngraded --> ComputeGrade
+
+    ComputeGrade --> UpdateGrade[Update grade_numeric]
     UpdateGrade --> MoreStudents{More students?}
-    SkipStudent --> MoreStudents
-    
-    MoreStudents -->|Yes| CheckOverride
+
+    MoreStudents -->|Yes| ComputeGrade
     MoreStudents -->|No| MarkApplied[Mark scheme as applied]
-    
+
     MarkApplied --> Commit[Commit transaction]
     SkipAll --> Done([Application complete])
     Commit --> Done
-    
+
     style Start fill:#e1f5ff
     style Done fill:#d4edda
     style Apply fill:#fff3cd
@@ -549,33 +568,33 @@ After scheme application, if a teacher edits any task points for a student, the 
 flowchart TD
     Start([compute_grade_for participation]) --> GetPoints[Get points_total from participation]
     GetPoints --> GetMaxPoints[Get effective_total_points from assessment]
-    
+
     GetMaxPoints --> InspectBand[Inspect first band in config]
     InspectBand --> CheckFormat{Band format?}
-    
+
     CheckFormat -->|Has min_points| AbsoluteFlow[Use absolute points scheme]
     CheckFormat -->|Has min_pct| PercentageFlow[Use percentage scheme]
     CheckFormat -->|Neither| Fallback[Return grade 5.0 - malformed config]
-    
+
     AbsoluteFlow --> SortAbsBands[Sort bands by min_points descending]
     SortAbsBands --> FindAbsBand[Find band where:<br/>points >= min_points AND<br/>points <= max_points]
     FindAbsBand --> AbsFound{Band found?}
     AbsFound -->|Yes| ReturnAbsGrade[Return band grade]
     AbsFound -->|No| Return50Abs[Return grade 5.0]
-    
+
     PercentageFlow --> CalcPct[Calculate percentage:<br/>points / max_points * 100]
     CalcPct --> SortPctBands[Sort bands by min_pct descending]
     SortPctBands --> FindPctBand[Find band where:<br/>percentage >= min_pct AND<br/>percentage <= max_pct]
     FindPctBand --> PctFound{Band found?}
     PctFound -->|Yes| ReturnPctGrade[Return band grade]
     PctFound -->|No| Return50Pct[Return grade 5.0]
-    
+
     ReturnAbsGrade --> End([Grade returned])
     Return50Abs --> End
     ReturnPctGrade --> End
     Return50Pct --> End
     Fallback --> End
-    
+
     style Start fill:#e1f5ff
     style End fill:#d4edda
     style Fallback fill:#f8d7da
@@ -588,15 +607,15 @@ flowchart TD
 ### Example Implementation
 
 ```ruby
-module GradeScheme
-  class Applier
+module Assessment
+  class GradeSchemeApplier
     def initialize(scheme)
       @scheme = scheme
       @assessment = scheme.assessment
     end
 
   def analyze_distribution
-    participations = @assessment.participations.where(status: :graded)
+    participations = @assessment.participations.where(status: :reviewed)
     points = participations.pluck(:points_total)
     max_points = @assessment.effective_total_points
 
@@ -615,11 +634,9 @@ module GradeScheme
     return if already_applied?
 
     Assessment::Participation.transaction do
-      participations = @assessment.participations.where(status: :graded)
-      
+      participations = @assessment.participations.where(status: :reviewed)
+
       participations.each do |participation|
-        next if participation.manual_grade_override?
-        
         grade = compute_grade_for(participation)
         participation.update!(grade_value: grade)
       end
@@ -629,8 +646,8 @@ module GradeScheme
   end
 
   def preview
-    participations = @assessment.participations.where(status: :graded)
-    
+    participations = @assessment.participations.where(status: :reviewed)
+
     participations.map do |p|
       {
         user_id: p.user_id,
@@ -651,10 +668,10 @@ module GradeScheme
   def compute_grade_for(participation)
     points = participation.points_total
     max_points = @assessment.effective_total_points
-    
+
     # Determine if using absolute points or percentage-based
     first_band = @scheme.config["bands"].first
-    
+
     if first_band.key?("min_points")
       apply_absolute_points_scheme(points)
     elsif first_band.key?("min_pct")
@@ -699,15 +716,13 @@ end
 
 ### Usage Scenarios
 
-- **Preview before applying:** Professor wants to see results: `preview = GradeScheme::Applier.new(scheme).preview`. They review the proposed grades and see that 5 students would fail.
+- **Preview before applying:** Professor wants to see results: `preview = Assessment::GradeSchemeApplier.new(scheme).preview`. They review the proposed grades and see that 5 students would fail.
 
 - **Adjust and re-preview:** Professor lowers the passing threshold: `scheme.update!(config: { ... })`, then previews again. Now only 2 students fail, which seems fair.
 
-- **Final application:** Professor applies: `GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
+- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
 
-- **Manual override:** One student had exceptional circumstances. The tutor marks: `participation.update!(manual_grade_override: true, grade_value: "2.0")`. Future scheme applications will skip this record.
-
-- **Idempotent reapplication:** System accidentally triggers apply again: `GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
+- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
 
 ---
 
@@ -741,9 +756,7 @@ Grading schemes add:
 
 ### Usage Scenarios
 
-- **After exam grading:** All task points are entered and `Assessment::Participation.points_total` values are computed. The professor creates a `GradeScheme::Scheme` to convert these points to final grades.
-
-- **Manual grade override:** A student with exceptional circumstances gets `participation.manual_grade_override = true` and a direct grade entry. When the scheme is applied, this participation is skipped.
+- **After exam grading:** All task points are entered and `Assessment::Participation.points_total` values are computed. The professor creates an `Assessment::GradeScheme` to convert these points to final grades.
 
 - **Re-grading scenario:** A mistake is found in one student's exam. The tutor corrects their task points. The `points_total` updates via callback. The professor could re-apply the scheme (with same config) to update just that grade, but the idempotency check would skip all unchanged participations.
 
@@ -767,8 +780,8 @@ erDiagram
 sequenceDiagram
     actor Professor
     participant Assessment as Assessment::Assessment
-    participant Scheme as GradeScheme::Scheme
-    participant Applier as GradeScheme::Applier
+    participant Scheme as Assessment::GradeScheme
+    participant Applier as Assessment::GradeSchemeApplier
     participant Participation as Assessment::Participation
 
     rect rgb(235, 245, 255)
@@ -779,7 +792,7 @@ sequenceDiagram
 
     rect rgb(255, 245, 235)
     note over Professor,Scheme: Phase 2: Scheme Configuration
-    Professor->>Scheme: create(kind: absolute, config: {...})
+    Professor->>Scheme: create(kind: banded, config: {...})
     Professor->>Applier: analyze_distribution
     Applier->>Participation: aggregate points statistics
     Applier-->>Professor: show distribution (mean, percentiles)
@@ -794,11 +807,7 @@ sequenceDiagram
     Professor->>Applier: apply!(applied_by: professor)
     Applier->>Applier: check version_hash (idempotency)
     loop for each participation
-        alt not manual override
-            Applier->>Participation: update(grade_value: computed_grade)
-        else manual override
-            Applier->>Participation: skip
-        end
+        Applier->>Participation: update(grade_value: computed_grade)
     end
     Applier->>Scheme: update(applied_at, applied_by)
     end
@@ -811,14 +820,14 @@ sequenceDiagram
 ```text
 app/
 └── models/
-    └── grade_scheme/
-        ├── scheme.rb
-        └── applier.rb
+    └── assessment/
+        ├── grade_scheme.rb
+        └── grade_scheme_applier.rb
 ```
 
 ### Key Files
-- `app/models/grade_scheme/scheme.rb` - Versioned scheme configuration
-- `app/models/grade_scheme/applier.rb` - Grade computation and application logic
+- `app/models/assessment/grade_scheme.rb` - Versioned scheme configuration
+- `app/models/assessment/grade_scheme_applier.rb` - Grade computation and application logic
 
 ---
 
@@ -827,5 +836,5 @@ app/
 - `grade_schemes` - Scheme configurations with version control
 
 ```admonish note
-Column details are documented in the GradeScheme::Scheme model section above.
+Column details are documented in the Assessment::GradeScheme model section above.
 ```

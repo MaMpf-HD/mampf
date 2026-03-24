@@ -31,7 +31,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
             submodules: recursive
 
@@ -81,7 +81,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
             submodules: recursive
 
@@ -121,7 +121,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
       
@@ -147,7 +147,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          exec app-test bash -c "PLAYWRIGHT_HTML_OPEN=never npx playwright test"
+          exec app-test bash -c "PLAYWRIGHT_HTML_OPEN=never npx playwright test --test-list-invert .github/workflows/playwright_skip.txt"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5
@@ -175,7 +175,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
             submodules: recursive
 

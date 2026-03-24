@@ -23,47 +23,25 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
-### Scheduled Campaign Opening
-
-**Current State:** Campaigns require manual teacher action to transition `draft → open`.
-
-**Proposed Enhancement:** Automatic opening via background job.
-
-**Implementation:**
-```ruby
-add_column :registration_campaigns, :registration_start, :datetime
-
-# Validation
-validates :registration_start, presence: true
-validate :start_before_deadline
-
-# Background job (every 5 minutes)
-Registration::CampaignOpenerJob.perform_async
-  Registration::Campaign.where(status: :draft)
-    .where("registration_start <= ?", Time.current)
-    .find_each(&:open!)
-end
-```
-
-**Benefits:**
-- Symmetry: auto-open + auto-close provides full automation
-- Teacher workflow: set up campaign in advance, forget about it
-- Reduces manual intervention during high-traffic registration windows
-
-**Trade-offs:**
-- Adds complexity (another background job, another timestamp)
-- Teachers lose last-minute verification opportunity before going live
-- Current manual flow forces review before opening
-
-**Recommendation:** Defer to post-MVP. Current workaround (manual open) is acceptable. Implement if teachers report frequent "forgot to open" incidents during beta testing.
-
-**Complexity:** Low (additive change, no schema conflicts)
-
-**References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+- **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
+- **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
+- **Asynchronous Allocation (`:calculating` status)**: When moving the allocation solver to a background job, introduce a `:calculating` status to lock the campaign during execution. This distinguishes "solver running" (locked) from "results ready for review" (`:processing`, unlocked for adjustments).
+- Policy trace persistence (store evaluation results for audit)
+- User-facing explanations (API endpoint showing why ineligible)
+- Rate limiting for FCFS hotspots
+- Bulk eligibility preview (matrix: users × policies)
+- Policy simulation mode (test changes without affecting real data)
+- Automated certification proposals (ML-based predictions from partial semester data)
+- Certification templates (pre-fill common override scenarios)
+- Certification bulk operations (approve/reject multiple students at once)
 
 ---
 
-### Full Trace for Policy Evaluation
+## 3. Roster Management
+
+- Batch operations (CSV import/export)
+- Capacity forecasting and rebalancing suggestions
+- Automatic load ### Full Trace for Policy Evaluation
 
 **Context:** The current policy engine stops at the first failure (`eligible?` returns false immediately).
 
@@ -118,6 +96,20 @@ end
 
 ---
 
+### Relaxed Policy Freezing
+
+**Current State:** All policies are frozen once a campaign leaves the `draft` state.
+
+**Proposed Enhancement:** Allow adding or editing policies with `phase: :finalization` even when the campaign is `open`.
+
+**Rationale:**
+Finalization policies (e.g., "Min/Max Credits") are only evaluated during the allocation algorithm and do not affect a student's ability to register. Changing them mid-flight does not invalidate existing registration records.
+
+**Implementation Challenges:**
+Requires conditional UI logic to show the "Add Policy" button but restrict the form to only allow the `finalization` phase, preventing accidental addition of `registration` policies which *must* remain frozen.
+
+---
+
 - **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
 - **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
 - Policy trace persistence (store evaluation results for audit)
@@ -137,6 +129,32 @@ end
 - Capacity forecasting and rebalancing suggestions
 - Automatic load balancing (heuristic-based)
 - Enhanced change history UI
+
+### Generic Registration Groups (Lightweight Rosterables)
+
+**Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like "Lecture Admission" (where no tutorials exist) or "Event Registration" (e.g., Faculty Barbecue).
+
+**Proposed Solution:** Introduce a `Cohort` model (contained within a generic `Grouping`) that acts as a lightweight container.
+
+**New Models:**
+1.  **`Cohort` (The Bucket):**
+    - **Concerns:** `Registration::Registerable`, `Rosters::Rosterable`.
+    - **Attributes:** `capacity`, `title`.
+    - **Polymorphic Parent:** Belongs to `context` (Lecture, Offering, etc.).
+    - **No Scheduling:** No tutors, rooms, or time slots.
+
+2.  **`Grouping` (The Context):**
+    - **Role:** Acts as the generic `campaignable` for non-academic scenarios (events, polls, organizational tasks).
+    - **Attributes:** `title`, `description`.
+    - **Associations:** `has_one :campaign`, `has_many :cohorts`.
+    - **Examples:**
+        - **Event:** "Faculty Barbecue" containing cohorts "Meat", "Vegetarian".
+        - **Poll:** "New Building Name" containing cohorts "Turing Hall", "Noether Hall".
+
+**Benefits:**
+- Decouples registration from academic scheduling.
+- Simplifies UI for non-tutorial use cases.
+- Reuses existing `MaintenanceController` and `Allocation` logic.
 
 ---
 
@@ -377,7 +395,249 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 11. Security & Compliance
+## 11. Assessment System Extensions
+
+### Assessment-Based Submissions (Unified Grading Integration)
+
+**Current State:** Submissions are tightly coupled to the `Assignment` model via `assignment_id`. Only assignments support file uploads.
+
+**Limitation:** To support submissions for exams (scanned answer sheets) or talks (presentation slides), we'd need to keep adding more foreign keys or create separate submission models.
+
+**Proposed Enhancement:** Link submissions directly to `Assessment::Assessment` instead of polymorphic domain models.
+
+**Motivation:**
+- **Exam submissions:** Upload scanned answer sheets after in-person exam
+- **Talk submissions:** Upload presentation slides before/after seminar talk
+- **Lab reports, project deliverables, etc.**
+- **Unified grading:** Submissions already flow to `TaskPoint` records through Assessment
+- **Simpler architecture:** Single foreign key instead of polymorphic associations
+- **Consistent with existing patterns:** `TaskPoint` already uses `assessment_id`
+
+**Why `assessment_id` instead of polymorphic `submissible`?**
+
+Every Assignment/Exam/Talk that accepts submissions already has an `Assessment::Assessment` record (created via `Assessable` concern). We leverage this existing relationship:
+
+```ruby
+Submission → Assessment → Assessable (Assignment/Exam/Talk)
+```
+
+**Implementation:**
+
+```ruby
+# Migration: Replace assignment_id with assessment_id
+class ReplaceAssignmentIdWithAssessmentId < ActiveRecord::Migration[7.2]
+  def up
+    add_column :submissions, :assessment_id, :uuid
+    add_foreign_key :submissions, :assessment_assessments, column: :assessment_id
+    add_index :submissions, :assessment_id
+
+    # Make tutorial_id nullable (not all submissions need it)
+    change_column_null :submissions, :tutorial_id, true
+
+    # Backfill existing submissions
+    execute <<-SQL
+      UPDATE submissions
+      SET assessment_id = assessment_assessments.id
+      FROM assignments
+      INNER JOIN assessment_assessments
+        ON assessment_assessments.assessable_type = 'Assignment'
+        AND assessment_assessments.assessable_id = assignments.id
+      WHERE submissions.assignment_id = assignments.id
+    SQL
+
+    # Verify backfill before dropping
+    # remove_column :submissions, :assignment_id
+  end
+
+  def down
+    change_column_null :submissions, :tutorial_id, false
+    remove_column :submissions, :assessment_id
+  end
+end
+
+# Update Submission model
+class Submission < ApplicationRecord
+  belongs_to :assessment, class_name: "Assessment::Assessment"
+  belongs_to :tutorial, optional: true  # Only for assignments
+
+  # Convenience method for accessing domain object
+  def submissible
+    assessment.assessable  # Returns Assignment, Exam, or Talk
+  end
+
+  # Domain-specific methods updated
+  def in_time?
+    deadline = case submissible
+    when Assignment then submissible.deadline
+    when Exam then submissible.held_at
+    when Talk then submissible.date
+    end
+    (last_modification_by_users_at || created_at) <= deadline
+  end
+
+  # Validation updated for optional tutorial
+  def matching_lecture
+    return true unless tutorial  # Skip for exam/talk submissions
+    return true if tutorial.lecture == submissible.lecture
+
+    errors.add(:tutorial, :lecture_not_matching)
+  end
+end
+```
+
+**Tutorial Context:**
+
+The `tutorial_id` column is assignment-specific and should be nullable:
+
+- **Assignment submissions:** `tutorial_id` is populated (student's tutorial context)
+- **Exam submissions:** `tutorial_id` is `nil` (exams aren't tied to tutorials)
+- **Talk submissions:** `tutorial_id` is `nil` (the talk itself is the rosterable unit)
+
+**Why keep `tutorial_id` at all?**
+
+For assignments, it provides:
+1. **Performance:** Fast queries like "all submissions for Tutorial X"
+2. **Context:** Which tutorial/tutor graded the submission
+3. **Disambiguation:** For cross-tutorial teams, which tutorial "owns" the grading
+
+For exam/talk submissions, this context doesn't apply, so the column remains null.
+
+**Submissible Concern (Provides Submissions Association):**
+
+The concern gives assessable models access to their submissions:
+
+```ruby
+# app/models/assessment/submissible.rb
+module Assessment
+  module Submissible
+    extend ActiveSupport::Concern
+
+    included do
+      # Access submissions through assessment
+      has_many :submissions, through: :assessment,
+        class_name: "Submission"
+    end
+
+    # Helper methods provided by the concern
+    def has_submissions?
+      submissions.any?
+    end
+
+    def proper_submissions
+      submissions.where.not(manuscript_data: nil)
+    end
+
+    def submission_count
+      submissions.count
+    end
+
+    def accepts_team_submissions?
+      lecture&.submission_max_team_size.to_i > 1
+    end
+  end
+end
+
+# Usage in models
+class Assignment < ApplicationRecord
+  include Assessment::Pointable
+  include Assessment::Submissible  # Provides has_many :submissions
+end
+
+class Exam < ApplicationRecord
+  include Assessment::Pointable
+  include Assessment::Gradable
+  include Assessment::Submissible  # Provides has_many :submissions for scanned answer sheets
+end
+
+class Talk < ApplicationRecord
+  include Assessment::Gradable
+  include Assessment::Submissible  # Provides has_many :submissions for presentation slides
+end
+```
+
+**Assessment Model Update:**
+
+The Assessment model needs the reverse association:
+
+```ruby
+class Assessment::Assessment < ApplicationRecord
+  belongs_to :assessable, polymorphic: true
+  has_many :submissions, dependent: :destroy  # Add this
+  has_many :assessment_participations, dependent: :destroy
+  # ...
+end
+```
+
+Now models can access submissions easily:
+
+```ruby
+assignment.submissions         # Works via Submissible concern
+assignment.assessment.submissions  # Also works (direct path)
+```
+
+**Controller Changes:**
+
+```ruby
+# Current (assignment-only):
+@submission = Submission.new(assignment_id: params[:assignment_id])
+
+# Assessment-based (works for any type):
+assignment = Assignment.find(params[:assignment_id])
+@submission = Submission.new(assessment: assignment.assessment)
+
+# Or for exams:
+exam = Exam.find(params[:exam_id])
+@submission = Submission.new(assessment: exam.assessment)
+```
+
+**View Changes:**
+
+```erb
+<!-- Current: -->
+<%= submission.assignment.title %>
+<%= link_to "Assignment", assignment_path(submission.assignment) %>
+
+<!-- Assessment-based: -->
+<%= submission.submissible.title %>
+<%= link_to submission.submissible.class.name, polymorphic_path(submission.submissible) %>
+
+<!-- Or with helper: -->
+<%= submission.assessment.title %>  <!-- Delegated to assessable -->
+<%= link_to_assessable(submission.assessment) %>
+```
+
+**Benefits:**
+- **Simpler:** Single foreign key, no polymorphic associations
+- **Consistent:** Matches existing `TaskPoint.assessment_id` pattern
+- **Grading-ready:** Direct path from Submission → Assessment → TaskPoint
+- **Less refactoring:** No need to update polymorphic routes/controllers
+- **Works for all types:** Assignment/Exam/Talk submissions unified
+
+**Required Changes:**
+- Migration: Add `assessment_id`, backfill from `assignment_id` via Assessment lookup
+- Model: Update methods that reference `assignment` to use `submissible` helper
+- Views: Replace `submission.assignment` with `submission.submissible`
+- Controllers: Build submissions via `assessment` instead of `assignment_id`
+
+**Complexity:** Medium
+- Schema migration with backfill required
+- Model method updates for deadline/expiration logic
+- View updates for display and navigation
+- Controllers need assessment lookup logic
+
+**Testing Strategy:**
+- Ensure all existing assignment submissions work unchanged
+- Add specs for exam submissions (when implemented)
+- Add specs for talk submissions (when implemented)
+- Integration tests for submission → grading workflow
+
+**Timeline:** Post-MVP. Current state (assignment-only submissions via `assignment_id`) is sufficient for initial release. Implement when exam submissions or talk submissions become a concrete requirement.
+
+**Related:** See [Submission Model](04-assessments-and-grading.md#submission-extended-model) for current implementation.
+
+---
+
+## 12. Security & Compliance
 
 - Policy audit trail (tamper-evident logs)
 - PII minimization (anonymize exports, configurable retention)
@@ -385,7 +645,7 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 12. Developer Experience
+## 13. Developer Experience
 
 - Reference seed script (generate realistic test data)
 - Scenario generator (complex allocation/grading scenarios)
@@ -395,7 +655,17 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 13. UI/UX
+## 13. Developer Experience
+
+- Reference seed script (generate realistic test data)
+- Scenario generator (complex allocation/grading scenarios)
+- Solver visualizer (export flow network to DOT/Mermaid)
+- Benchmark harness (compare algorithm performance)
+- Documentation sync (CI check for broken mdbook links)
+
+---
+
+## 14. UI/UX
 
 - Real-time capacity counters (WebSocket updates)
 - Drag-drop preference ordering with validation
@@ -403,7 +673,7 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 14. Migration & Cleanup
+## 15. Migration & Cleanup
 
 - Dual-write (new + legacy systems)
 - Backfill historical data
@@ -415,7 +685,19 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 15. Research Opportunities
+## 15. Migration & Cleanup
+
+- Dual-write (new + legacy systems)
+- Backfill historical data
+- Read switch with parity monitoring
+- Remove deprecated code/columns
+- Legacy eligibility flags cleanup
+- Manual roster seeding code removal
+- Obsolete submission routing cleanup
+
+---
+
+## 16. Research Opportunities
 
 - Fairness metrics (study allocation algorithm properties)
 - Optimal grading curves (per-subject analysis)
@@ -424,6 +706,6 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 ---
 
-## 16. Full Trace for Policy Evaluation
+## 17. Full Trace for Policy Evaluation
 
 (Moved to Section 2: Registration & Policy System)

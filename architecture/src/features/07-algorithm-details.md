@@ -195,7 +195,8 @@ module Registration
                 end
 
                 @items.each do |item|
-                    cap = [item.registerable.capacity.to_i, 0].max
+                    # Treat nil capacity as unlimited (total supply)
+                    cap = item.registerable.capacity.nil? ? @users.size : [item.registerable.capacity.to_i, 0].max
                     mcf.add_arc_with_capacity_and_unit_cost(
                         idx_item[item.id],
                         (@allow_unassigned ? sink_real : sink_final),

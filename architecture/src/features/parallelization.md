@@ -12,6 +12,15 @@ to work concurrently on independent PRs.
 
 ## Overview
 
+```admonish warning "Stale step numbering"
+This chapter uses an older step numbering (14 steps) that predates the
+current 14-step plan. In particular, Steps 10–14 here do not match
+the current plan. Refer to the [Implementation Plan](plan.md) and
+[PR Roadmap](implementation-prs.md) for the authoritative ordering.
+This chapter will be updated when those steps are closer to
+implementation.
+```
+
 The Implementation Plan consists of 14 steps across 4 phases. Some steps
 must be sequential due to hard dependencies, while others can be highly
 parallelized. With a 3-developer team, strategic work distribution can
@@ -473,7 +482,7 @@ graph TD
 
 ---
 
-#### Step 9: Participation Tracking (Moderate Parallelization)
+#### Step 9: Activity Tracking (Moderate Parallelization)
 
 **Parallelization level:** 2 developers
 

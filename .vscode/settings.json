@@ -1,7 +1,7 @@
 {
     "editor.formatOnSave": false, // autosave configured via options below
     //////////////////////////////////////
-    // ESLint: JS, HTML & ERB
+    // ESLint: JS (and TS)
     //////////////////////////////////////
     // https://eslint.style/guide/faq#how-to-auto-format-on-save
     // https://github.com/microsoft/vscode-eslint#settings-options
@@ -25,8 +25,16 @@
     // Disable VSCode-native JS validation since our JS files might include
     // ERB syntax, that would otherwise be flagged as invalid
     "javascript.validate.enable": false,
-    "[html]": {
-        "editor.formatOnSave": false // TODO: activate once HTML formatter installed
+    //////////////////////////////////////
+    // HTML & ERB
+    //////////////////////////////////////
+    "languageServerHerb.linter.enabled": true,
+    "languageServerHerb.formatter.enabled": true,
+    "[erb]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "marcoroth.herb-lsp",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     //////////////////////////////////////
     // Ruby (RuboCop)

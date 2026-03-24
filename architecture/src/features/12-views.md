@@ -252,6 +252,96 @@ Student “Show”.
 | Confirmation (result)                  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show       | After submit/close                    | Shows assignment and summary |
 | Fulfill requirements (policy)          | —                                                                                      | Policy-configured flow | External or internal                  | Follow instructions to satisfy policy, then retry |
 
+## Roster Maintenance
+
+The **Roster Maintenance** view is the central hub for managing group allocations. It provides both a high-level overview of all groups in a lecture and detailed management for individual groups.
+
+### Placement & Access
+- **Location:** Accessible via the `Roster::MaintenanceController#index` action.
+- **Route:** `/lectures/:id/roster`
+- **Entry Points:**
+    - **Lecture Settings:** From the "Participants" tab in `Lecture#edit`.
+    - **Navigation:** (Future) Direct link from the lecture dashboard.
+
+### Architecture
+The view uses a **Tabbed Layout** to switch between different management contexts.
+
+#### 1. Groups Tab (Overview)
+*Focus: How are students distributed?*
+- **List View:** Displays all groups (Tutorials, Talks) with their current occupancy and capacity.
+- **Stats:** Shows total participants and unassigned candidates count.
+- **Actions:**
+    - **Manage:** Drill down into a specific group's detail view.
+    - **Skip Campaigns:** Toggle direct management for individual groups (if eligible).
+
+#### 2. Enrollment Tab (Candidates)
+*Focus: Who needs a spot?*
+- **Candidates List:** Displays students who registered via a campaign but are currently unassigned.
+- **Context:** Shows the student's original preferences (top 3) to aid in placement.
+- **Actions:**
+    - **Assign:** Directly assign a candidate to a specific group (checks capacity).
+
+#### 3. Performance Tab (Future)
+*Focus: How are they doing?*
+- Placeholder for future gradebook integration.
+
+### Detail View (Single Group)
+When selecting "Manage" on a group, the view updates (via Turbo Frame) to show the details for that specific group.
+
+- **Participants List:** Table of all students in the group.
+- **Actions:**
+    - **Add Member:** Manually add a student by email.
+    - **Move:** Move a student to another group (dropdown with capacity checks).
+    - **Remove:** Remove a student from the group.
+- **Navigation:** "Back" button returns to the Groups overview.
+
+### Performance Tab (Student Performance Management)
+
+```admonish tip "Primary Management Interface"
+The Performance subtab is the primary interface for Student Performance management. See [Student Performance → Information Architecture](05-student-performance.md#information-architecture) for complete details.
+```
+
+The Roster tab includes a Performance subtab for lecture-wide student performance management:
+
+```
+Roster Tab
+├── Overview (groups)
+├── Participants (lecture roster)
+└── Performance ← Primary performance management
+```
+
+**Key elements:**
+- **Certification Dashboard**: Decision-making interface for pass/fail certification
+  - Summary cards (total, passed, failed, pending, stale counts)
+  - Current rule display (thresholds + required achievements)
+  - Filter buttons (All/Passed/Failed/Pending/Stale)
+  - Student table with columns: Name, Matriculation, Points (%), Achievements, Proposed Status, Certification Status, Actions
+  - Bulk actions: "Accept All Proposals", "Mark Selected as Passed/Failed"
+  - Manual override modal for special cases
+  - Export functionality
+
+- **Performance Records**: Read-only factual data view
+  - Computed points and achievement counts per student
+  - Last computation timestamp
+  - Recompute button (triggers background job)
+  - No override or status columns (pure data)
+
+- **Rule Configuration**: Inline or modal configuration
+  - Tabs: "Percentage-based" and "Absolute Points"
+  - Threshold inputs (e.g., 50% points)
+  - Required achievements checkboxes
+  - Preview button showing rule change impact
+  - Warning when changing criteria affects proposals
+
+**Mockups:**
+- Certification Dashboard: [student_performance_certifications_index.html](../mockups/student_performance_certifications_index.html)
+- Performance Records: [student_performance_records_index.html](../mockups/student_performance_records_index.html)
+- Rule Configuration: [student_performance_rule_configuration.html](../mockups/student_performance_rule_configuration.html)
+- Rule Change Preview: [student_performance_rule_change_preview.html](../mockups/student_performance_rule_change_preview.html)
+
+### Integration in Lecture Settings
+The roster maintenance view is integrated directly into the `Lecture#edit` page as a tab, allowing seamless management without leaving the settings context. It uses Turbo Frames to load lazily and handle updates without full page reloads.
+
 ## Rosters
 
 #### Flow
@@ -267,8 +357,7 @@ flowchart LR
 
 | View     | Key elements                                       | Mockup |
 |----------|-----------------------------------------------------|--------|
-| Overview | List/table of groups with Tutor/Time/Place; search/filter; per-row capacity meter; Manage action; right-side “Candidates from campaign” panel (unassigned only) with search, top-3 preferences, Assign to…; capacity guard. For exams, the candidates panel is not shown. | [Tutorials](../mockups/roster_overview.html); [Seminar](../mockups/roster_overview_seminar.html); [Exam](../mockups/roster_overview_exam.html) |
-| Detail   | Participants table with search; remove/move; capacity guard | [Tutorial](../mockups/roster_detail.html); [Seminar](../mockups/roster_detail_seminar.html); [Exam](../mockups/roster_detail_exam.html); [Tutor (read-only)](../mockups/roster_detail_tutor.html) |
+| Overview | List/table of groups with Tutor/Time/Place; search/filter; per-row capacity meter; Manage action; right-side “Candidates from campaign” panel (unassigned only) with search, top-3 preferences, Assign to…; capacity guard. For exams, the candidates panel is not shown. | [Tutorials](../mockups/roster_overview.html); [Seminar](../mockups/roster_overview_seminar.html); [Exam](../mockups/roster_overview_exam.html) || Overview (Tiles) | Tile-based layout with groups organized by propagation status (with/without enrollment); planning cohorts collapsed; visual capacity indicators; quick actions per tile | [Tiles Basic](../mockups/roster_maintenance_tiles.html); [Tiles Advanced](../mockups/roster_tiles_advanced.html) || Detail   | Participants table with search; remove/move; capacity guard | [Tutorial](../mockups/roster_detail.html); [Seminar](../mockups/roster_detail_seminar.html); [Exam](../mockups/roster_detail_exam.html); [Tutor (read-only)](../mockups/roster_detail_tutor.html) |
 
 #### Controller and actions mapping (teacher/editor)
 | Surface/Control                 | Controller                                                   | Action(s) | Preconditions      | Notes |
@@ -312,9 +401,30 @@ The views below apply to regular lectures. For seminar-specific views, see the [
 | New         | Form with type dropdown (Assignment/Exam); dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
 | Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Mockup](../mockups/assessments_show_assignment_open.html) |
 | Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Tutorials/Grading/Statistics); submission progress; tutorials publication management; grading table with filters and sorting | [Mockup](../mockups/assessments_show_assignment_closed.html) |
-| Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
-| Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Mockup](../mockups/assessments_show_exam_closed.html) |
-| Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
+| Show (Exam - Draft) | Exam Dashboard with tabs: Overview, Settings, Tasks, Grading (disabled), Roster, Logistics (Eligibility/Roster Admin/Room Assignments via pills); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
+| Show (Exam - Closed) | Exam Dashboard with tabs: Overview, Settings, Tasks, Grading, Roster, Logistics; grading in progress; roster shows registered students | [Mockup](../mockups/assessments_show_exam_closed.html) |
+| Show (Exam - Graded) | Exam Dashboard with tabs including Statistics; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
+
+```admonish note "Exam Dashboard Tab Structure"
+**Main tabs:** Overview | Settings | Tasks | Grading | Roster | Logistics | Statistics
+
+- **Roster tab**: Registered students table (reuses/adapts RosterParticipantsComponent)
+  - Participant list with search and pagination
+  - Remove/add actions (no group assignment logic)
+  - Export roster functionality
+
+- **Logistics tab**: Sub-tabs with pills for exam administration
+  - **Eligibility**: Performance verification (read-only certification status of registrants)
+  - **Roster Admin**: Manual roster adjustments if needed
+  - **Room Assignments**: Seat allocation (future feature)
+
+**Navigation levels:**
+1. Lecture tabs (Content/Settings/.../Assessments)
+2. Assessment type list (Assignments/Exams table)
+3. Exam Dashboard tabs (6 main tabs, Logistics has 3 subtabs)
+
+This avoids deep nesting while keeping related functionality grouped. Student Performance management stays in Roster → Performance (lecture level), with read-only verification views in Exam Dashboard → Logistics → Eligibility.
+```
 
 #### Flow
 
@@ -338,8 +448,9 @@ flowchart LR
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, new, create, show, edit, update, destroy   | Setup                          |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update, export, import                      | Grading + bulk ops             |
-| Tutor         | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update                                      | Grading (enter/update points)  |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update, mark_absent, mark_exempt, export, import  | Grade entry (Gradable)         |
+| Teacher/Editor| [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (Pointable)        |
+| Tutor         | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index, update, update_team                        | Point entry (tutorial-scoped)  |
 | Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only                       |
 | Student       | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller)| index, show                                       | Own results (when published)    |
 
@@ -372,8 +483,8 @@ flowchart LR
 #### Controller/action mapping
 | Role  | Controller                          | Actions                    | Scope                          |
 |-------|-------------------------------------|----------------------------|--------------------------------|
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | show                       | Display grading table for tutorial |
-| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | update                     | Save points for one team (creates TaskPoints for all members) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | index                      | Display point grid for tutorial (auto-scoped by authorization) |
+| Tutor | [Assessment::TaskPointsController](11-controllers.md#assessmenttaskpointscontroller) | update_team                | Save points for one team (creates TaskPoints for all members) |
 
 ```admonish note "Team Grading Service"
 The backend uses `Assessment::TeamGradingService` to propagate points from team input to individual `Assessment::TaskPoint` records for each team member. This ensures consistent grading within teams while maintaining per-user granularity for reporting.
@@ -444,7 +555,7 @@ For advanced users, Manual Curve mode allows direct control of each grade bounda
 ```
 
 ```admonish note "Controller Reference"
-Grade scheme functionality is implemented in `GradeScheme::SchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
+Grade scheme functionality is implemented in `Assessment::GradeSchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
 ```
 
 ### Assessments (Lectures - Student)
@@ -511,7 +622,7 @@ flowchart LR
 | Role          | Controller                          | Actions                                           | Scope                          |
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only list; inline grading |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | update                                            | Save inline grade              |
+| Teacher/Editor| [Assessment::GradesController](11-controllers.md#assessmentgradescontroller)         | update                                            | Save inline grade              |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | show (detail view)                                | Add feedback notes             |
 | Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
 
@@ -532,11 +643,12 @@ Students can only register for exams if they have a **passed** certification.
 
 ### Student Performance (Teacher/Editor)
 
-```admonish tip "Three Distinct Views"
-Teachers interact with three separate interfaces:
-1. **Performance Records** (factual data): View computed points and achievements for all students
-2. **Certification Dashboard** (decision-making): Review proposals, bulk accept, manual override
-3. **Rule Configuration** (criteria setup): Define thresholds for automatic proposals
+```admonish tip "Four Distinct Views"
+Teachers interact with four separate interfaces (added incrementally):
+1. **Performance Records** (factual data): View computed points and achievements for all students (PR 10.3)
+2. **Rules** (criteria): Read-only display of eligibility criteria (PR 10.3); editable inline form (PR 10.4)
+3. **Certification Dashboard** (decision-making): Review proposals, bulk accept, manual override (PR 10.4)
+4. **Rule Change Preview Modal** (impact analysis): Triggered when saving rule changes (PR 10.4)
 ```
 
 #### Screens
@@ -545,7 +657,7 @@ Teachers interact with three separate interfaces:
 |------|--------------|--------|
 | Performance Records Index | Read-only factual data view. Table showing all lecture students (150) with columns: student name, matriculation, tutorial group, total points (computed), percentage, achievements completed (checkmarks), last computed timestamp. Filter by tutorial group. Search by name/matriculation. Recompute button (triggers background job). No override or status columns (this is pure data). Export list button. Pagination. | [Mockup](../mockups/student_performance_records_index.html) |
 | Certification Dashboard | Decision-making interface. Summary cards (total students, passed count, failed count, pending count, stale count). Rule info alert (current thresholds: 50% points + 2 achievements). Filter buttons (All/Passed/Failed/Pending/Stale). Search by name. Table with columns: student name, matriculation, current points/achievements (from Records), proposed status (from Evaluator), certification status (from Certification table), override note (if manual), actions (Accept Proposal/Override). Bulk actions: "Accept All Proposals" button, "Mark Selected as Passed/Failed". Remediation alert if pending certifications block campaign. Export list button. Pagination. Includes manual override modal. | [Mockup](../mockups/student_performance_certifications_index.html) |
-| Rule Configuration (inline on Lecture Settings) | Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/student_performance_rule_configuration.html) |
+| Rule Configuration (Assessments → Rules subtab) | **Read-only (PR 10.3):** Card displaying active rule: point threshold (percentage or absolute), required achievements list with type badges, "No rule configured" placeholder if empty. **Editable (PR 10.4):** Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/student_performance_rule_configuration.html) |
 | Rule Change Preview Modal | Triggered when saving rule changes. Side-by-side rule comparison (current vs new). Summary cards: total students, would pass (+12), would fail (-12), status changes (12). Alert: "12 students would change status". Diff table showing affected students: columns (student name, matriculation, current points/achievements, current proposal, new proposal, change indicator with arrow icon). Actions: "Apply Changes" (updates proposals only, teacher must review), "Cancel". Warning: manual overrides preserved, proposals regenerated, teacher review required. | [Mockup](../mockups/student_performance_rule_change_preview.html) |
 | Certification Remediation Modal (finalization) | Triggered when teacher tries to finalize campaign **that has a finalization-phase student_performance policy** with pending certifications among confirmed registrants. Allows inline resolution of pending certifications during finalization workflow. Warning alert: "6 students have pending certifications. Resolve to continue finalization." Table showing only confirmed registrants with pending status, columns: checkbox, student name, matriculation, points, percentage, achievements, proposed status (from Evaluator), quick-resolve dropdown (pre-filled based on proposal: passed/failed), note field (optional). Bulk resolve buttons: "Mark All as Passed", "Mark All as Failed". Info alert explaining consequences (passed → added to roster, failed → auto-rejected from exam). Confirmation checkbox required to enable submit. Actions: "Cancel Finalization" (blocks finalization, returns to campaign), "Apply & Retry Finalization" (saves certifications, re-runs finalization check with auto-rejection of failed students). | [Mockup](../mockups/student_performance_certification_remediation.html) |
 
@@ -593,7 +705,7 @@ flowchart LR
 | Teacher/Editor | [StudentPerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | index, show, recompute | Read-only factual data; trigger background recomputation |
 | Teacher/Editor | [StudentPerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index, create, update, bulk_accept | Certification dashboard; bulk accept proposals; manual override with notes; remediation workflow for pending |
 | Teacher/Editor | [StudentPerformance::EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller) | bulk_proposals, preview_rule_change, single_proposal | Generate proposals (does NOT create Certifications); preview rule change impact |
-| Teacher/Editor | [StudentPerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | edit, update | Configure thresholds; preview shows diff before save |
+| Teacher/Editor | [StudentPerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | show (PR 10.3), edit, update (PR 10.4) | Read-only rule display (10.3); configure thresholds with preview (10.4) |
 
 ```admonish warning "Evaluator Does Not Create Certifications"
 The Evaluator only generates proposals. Teachers must explicitly accept or override via the Certification Dashboard. This ensures teacher accountability for certification decisions.
