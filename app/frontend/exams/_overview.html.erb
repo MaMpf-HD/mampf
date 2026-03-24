@@ -7,8 +7,10 @@
             <th class="w-25"><%= t('basics.title') %>:</th>
             <td><%= exam.title %></td>
           </tr>
+
           <tr>
             <th><%= t('assessment.date') %>:</th>
+
             <td>
               <% if exam.date %>
                 <%= l(exam.date, format: :long) %>
@@ -17,20 +19,25 @@
               <% end %>
             </td>
           </tr>
+
           <tr>
             <th><%= t('basics.location') %>:</th>
+
             <td>
               <%= exam.location.presence || content_tag(:span, t('basics.not_specified'), class: 'text-muted') %>
             </td>
           </tr>
+
           <tr>
             <th><%= t('basics.capacity') %>:</th>
+
             <td>
               <% if exam.capacity %>
                 <%= exam.capacity %>
                 <% if exam.roster_entries_count.positive? %>
                   <span class="text-muted small">
-                    (<%= exam.roster_entries_count %> <%= t('roster.registered') %>)
+                    (<%= exam.roster_entries_count %>
+                    <%= t('roster.registered') %>)
                   </span>
                 <% end %>
               <% else %>
@@ -38,65 +45,37 @@
               <% end %>
             </td>
           </tr>
+
           <% if Flipper.enabled?(:registration_campaigns) %>
             <tr>
-              <th><%= t('registration.campaign.title') %>:</th>
+              <th><%= t('assessment.registration') %>:</th>
+
               <td>
                 <% if exam.skip_campaigns %>
                   <span class="badge bg-secondary">
                     <i class="bi bi-person-gear me-1"></i><%= t("assessment.campaign_status.direct") %>
                   </span>
-                <% elsif exam.in_campaign? %>
+                <% elsif exam.registration_campaign %>
                   <% campaign = exam.registration_campaign %>
-                  <% if campaign %>
-                    <div class="d-flex align-items-center flex-wrap gap-2">
-                      <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-                        <%= t("registration.campaign.status.#{campaign.status}") %>
-                      </span>
-                      <%= link_to edit_lecture_path(exam.lecture,
-                                tab: "campaigns",
-                                campaign_id: campaign.id),
-                              class: "btn btn-sm btn-outline-secondary",
-                              title: t("assessment.campaign_status.go_to_campaign"),
-                              data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-calendar-event"></i>
-                      <% end %>
-                      <div class="vr mx-1 text-body-tertiary"></div>
-                      <div class="small text-muted text-nowrap">
-                        <i class="bi bi-calendar-range me-1"></i>
-                        <%= t('registration.campaign.deadline_label') %>:
-                        <%= l(campaign.registration_deadline, format: :long) %>
-                      </div>
-                      <div class="vr mx-1 text-body-tertiary"></div>
-                      <div class="small text-muted text-nowrap">
-                        <i class="bi bi-people me-1"></i>
-                        <%= campaign.total_registrations_count %> <%= t('registration.campaign.overview.registrations') %>
-                        <span class="text-body-secondary">
-                          (<%= campaign.confirmed_count %> <%= t('registration.user_registration.status.confirmed') %><% if campaign.pending_count > 0 %>,
-                          <%= campaign.pending_count %> <%= t('registration.user_registration.status.pending') %><% end %>)
-                        </span>
-                      </div>
-                    </div>
-                  <% end %>
-                <% else %>
-                  <span class="badge bg-warning text-dark">
-                    <i class="bi bi-exclamation-triangle me-1"></i><%= t("assessment.campaign_status.none") %>
+                  <span class="badge bg-<%= campaign_badge_color(campaign) %>">
+                    <%= t("registration.campaign.status.#{campaign.status}") %>
                   </span>
-                  <%= link_to edit_lecture_path(exam.lecture,
-                                tab: "campaigns",
-                                new_campaign: true),
-                            class: "btn btn-sm btn-outline-secondary ms-1",
-                            title: t("assessment.campaign_status.create"),
-                            data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-                    <i class="bi bi-calendar-plus"></i>
-                  <% end %>
+                  <span class="text-muted small ms-2">
+                    <i class="bi bi-people me-1"></i>
+                    <%= campaign.confirmed_count %>
+                    <%= t("registration.user_registration.status.confirmed") %>
+                  </span>
                 <% end %>
               </td>
             </tr>
           <% end %>
+
           <tr>
             <th><%= t('basics.description') %>:</th>
-            <td><%= exam.description.present? ? simple_format(exam.description) : "-" %></td>
+
+            <td>
+              <%= exam.description.present? ? simple_format(exam.description) : "-" %>
+            </td>
           </tr>
         </tbody>
       </table>

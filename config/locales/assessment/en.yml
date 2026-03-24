@@ -130,8 +130,10 @@ en:
     exam_capacity_hint: 'Leave empty for unlimited capacity'
     exam_capacity_placeholder: 'Number of seats'
     exam_description_placeholder: 'Optional notes about the exam'
-    skip_campaigns_label: 'Skip registration system (manual management)'
-    skip_campaigns_hint: 'Only enable if this exam has never been part of a registration campaign'
+    skip_campaigns_label: 'No registration required (manage roster manually)'
+    skip_campaigns_hint: 'Enable if students do not need to register for this exam'
+    registration_deadline_label: 'Registration deadline'
+    registration_deadline_hint: 'Defaults to the exam date if left empty'
     campaign_status:
       title: 'Campaign'
       none: 'No campaign'
@@ -141,6 +143,9 @@ en:
     campaign_cta:
       message: 'This exam has no registration campaign. Students cannot register yet.'
       create: 'Create campaign now'
+    registration_tab:
+      skip_campaigns_info: 'Registration is managed manually for this exam. Use the Roster tab to add participants directly.'
+      no_campaign: 'No registration campaign found for this exam.'
     no_talks_yet: 'No talks created yet.'
     no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assessables_yet: 'No assessments created yet.'
@@ -169,6 +174,8 @@ en:
         grading_phase: 'Closed %{time} ago — Grading phase'
     overview: 'Overview'
     settings: 'Settings'
+    registration: 'Registration'
+    policies: 'Policies'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
     no_points_yet: 'No points have been entered yet.'

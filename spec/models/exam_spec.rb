@@ -159,6 +159,7 @@ RSpec.describe(Exam, type: :model) do
   describe "assessment setup" do
     context "when assessment_grading feature flag is enabled" do
       before do
+        allow(Flipper).to receive(:enabled?).and_call_original
         allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
       end
 
@@ -174,6 +175,7 @@ RSpec.describe(Exam, type: :model) do
 
     context "when assessment_grading feature flag is disabled" do
       before do
+        allow(Flipper).to receive(:enabled?).and_call_original
         allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(false)
       end
 
@@ -181,6 +183,79 @@ RSpec.describe(Exam, type: :model) do
         expect do
           create(:exam)
         end.not_to change(Assessment::Assessment, :count)
+      end
+    end
+  end
+
+  describe "auto-campaign creation" do
+    context "when registration_campaigns flag is enabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+      end
+
+      it "creates a campaign and registration item" do
+        exam = create(:exam, :with_date)
+
+        campaign = exam.registration_campaign
+        expect(campaign).to be_present
+        expect(campaign).to be_draft
+        expect(campaign).to be_first_come_first_served
+        expect(campaign.campaignable).to eq(exam.lecture)
+      end
+
+      it "sets deadline from registration_deadline attr" do
+        deadline = 2.weeks.from_now
+        exam = create(:exam, registration_deadline: deadline)
+
+        campaign = exam.registration_campaign
+        expect(campaign.registration_deadline)
+          .to be_within(1.second).of(deadline)
+      end
+
+      it "falls back to exam date for deadline" do
+        exam = create(:exam, :with_date)
+
+        campaign = exam.registration_campaign
+        expect(campaign.registration_deadline)
+          .to be_within(1.second).of(exam.date)
+      end
+
+      it "creates a registration item linked to the exam" do
+        exam = create(:exam)
+        item = Registration::Item.find_by(registerable: exam)
+
+        expect(item).to be_present
+        expect(item.registration_campaign)
+          .to eq(exam.registration_campaign)
+      end
+
+      it "sets item capacity from exam capacity" do
+        exam = create(:exam, :with_capacity)
+        item = Registration::Item.find_by(registerable: exam)
+
+        expect(item.capacity).to eq(exam.capacity)
+      end
+
+      it "does not create campaign when skip_campaigns is true" do
+        exam = create(:exam, skip_campaigns: true)
+
+        expect(exam.registration_campaign).to be_nil
+        expect(Registration::Item.where(registerable: exam)).not_to exist
+      end
+    end
+
+    context "when registration_campaigns flag is disabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(false)
+      end
+
+      it "does not create a campaign" do
+        exam = create(:exam)
+        expect(exam.registration_campaign).to be_nil
       end
     end
   end

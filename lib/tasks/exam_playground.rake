@@ -103,23 +103,29 @@ namespace :exam do
     exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
     abort "Exam not found. Run exam:create_exam first." unless exam
 
-    campaign_desc = "Exam Registration Campaign"
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: campaign_desc)
+    campaign = exam.registration_campaign
+
+    if campaign.nil?
+      campaign_desc = "Exam Registration Campaign"
+      campaign = Registration::Campaign.find_by(campaignable: lecture,
+                                                description: campaign_desc)
+    end
 
     if campaign
-      puts "✓ Campaign already exists (ID: #{campaign.id}, status: #{campaign.status})"
+      puts "✓ Campaign already exists (ID: #{campaign.id}, " \
+           "status: #{campaign.status})"
     else
       campaign = FactoryBot.create(:registration_campaign,
                                    campaignable: lecture,
                                    status: :draft,
                                    allocation_mode: :first_come_first_served,
                                    registration_deadline: 1.week.from_now,
-                                   description: campaign_desc)
+                                   description: "Exam Registration Campaign")
       puts "✓ Created campaign: #{campaign.id}"
     end
 
-    unless Registration::Item.exists?(registration_campaign: campaign, registerable: exam)
+    unless Registration::Item.exists?(registration_campaign: campaign,
+                                      registerable: exam)
       FactoryBot.create(:registration_item,
                         registration_campaign: campaign,
                         registerable: exam)
@@ -127,7 +133,12 @@ namespace :exam do
     end
 
     if campaign.draft?
-      campaign.update!(status: :open)
+      if campaign.registration_deadline < Time.current
+        campaign.update!(registration_deadline: 1.week.from_now,
+                         status: :open)
+      else
+        campaign.update!(status: :open)
+      end
       puts "✓ Opened campaign"
     end
   end
@@ -137,17 +148,20 @@ namespace :exam do
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
 
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "Exam Registration Campaign")
+    exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
+    abort "Exam not found. Run exam:create_exam first." unless exam
+
+    campaign = exam.registration_campaign
+    campaign ||= Registration::Campaign.find_by(
+      campaignable: lecture, description: "Exam Registration Campaign"
+    )
     abort "Campaign not found. Run exam:create_campaign first." unless campaign
 
     exam_item = campaign.registration_items
                         .find_by(registerable_type: "Exam")
     abort "No exam item in campaign." unless exam_item
 
-    exam = exam_item.registerable
     existing = campaign.user_registrations.count
-
     if existing.positive?
       puts "✓ Registrations already exist (#{existing}). Skipping."
       puts "  Run exam:reset_registrations to clear and re-create."
@@ -190,8 +204,13 @@ namespace :exam do
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
 
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "Exam Registration Campaign")
+    exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
+    abort "Exam not found." unless exam
+
+    campaign = exam.registration_campaign
+    campaign ||= Registration::Campaign.find_by(
+      campaignable: lecture, description: "Exam Registration Campaign"
+    )
     abort "Campaign not found. Run exam:create_campaign first." unless campaign
 
     if campaign.completed?
@@ -230,8 +249,10 @@ namespace :exam do
 
     lecture = Lecture.joins(:tutorials).distinct.first
     exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "Exam Registration Campaign")
+    campaign = exam&.registration_campaign
+    campaign ||= Registration::Campaign.find_by(
+      campaignable: lecture, description: "Exam Registration Campaign"
+    )
 
     puts "\n#{"=" * 60}"
     puts "Exam Playground Summary"
@@ -269,8 +290,10 @@ namespace :exam do
     abort "No lecture with tutorials found." unless lecture
 
     exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "Exam Registration Campaign")
+    campaign = exam&.registration_campaign
+    campaign ||= Registration::Campaign.find_by(
+      campaignable: lecture, description: "Exam Registration Campaign"
+    )
 
     if campaign
       campaign.update_column(:status, 0) # rubocop:disable Rails/SkipsModelValidations
@@ -303,11 +326,14 @@ namespace :exam do
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
 
-    campaign = Registration::Campaign.find_by(campaignable: lecture,
-                                              description: "Exam Registration Campaign")
-    abort "Campaign not found." unless campaign
-
     exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
+    abort "Exam not found." unless exam
+
+    campaign = exam.registration_campaign
+    campaign ||= Registration::Campaign.find_by(
+      campaignable: lecture, description: "Exam Registration Campaign"
+    )
+    abort "Campaign not found." unless campaign
 
     campaign.user_registrations.destroy_all
     exam&.exam_rosters&.destroy_all

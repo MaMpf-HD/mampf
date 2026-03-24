@@ -1,21 +1,26 @@
 <div class="row">
   <div class="col-md-6 mb-3">
     <%= f.label :title, t('basics.title'), class: "form-label" %>
+
     <%= f.text_field :title,
                      class: 'form-control',
                      placeholder: t('assessment.exam_title_placeholder'),
                      data: { exams__form_target: "title",
                              action: "input->exams--form#checkForChanges" } %>
+
     <div class="invalid-feedback" id="exam-title-error"></div>
   </div>
 
   <div class="col-md-6 mb-3">
     <%= f.label :date, t('basics.date'), class: "form-label" %>
-    <div class="input-group td-picker"
-         id="exam-date-picker"
-         data-controller="datetimepicker"
-         data-td-target-input="nearest"
-         data-td-target-toggle="nearest">
+
+    <div
+      class="input-group td-picker"
+      id="exam-date-picker"
+      data-controller="datetimepicker"
+      data-td-target-input="nearest"
+      data-td-target-toggle="nearest"
+    >
       <%= f.text_field :date,
                        class: "form-control td-input",
                        data: { td_target: "#exam-date-picker",
@@ -23,20 +28,27 @@
                                action: "change->exams--form#checkForChanges" },
                        value: exam.date&.strftime("%Y-%m-%d %H:%M"),
                        autocomplete: "off" %>
-      <span class="input-group-text td-picker-button"
-            role="button"
-            data-td-target="#exam-date-picker"
-            data-td-toggle="datetimepicker">
+
+      <span
+        class="input-group-text td-picker-button"
+        role="button"
+        data-td-target="#exam-date-picker"
+        data-td-toggle="datetimepicker"
+      >
         <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
       </span>
     </div>
-    <small class="text-muted d-block"><%= t('assessment.exam_date_hint') %></small>
+
+    <small class="text-muted d-block">
+      <%= t('assessment.exam_date_hint') %>
+    </small>
   </div>
 </div>
 
 <div class="row">
   <div class="col-md-6 mb-3">
     <%= f.label :location, t('basics.location'), class: "form-label" %>
+
     <%= f.text_field :location,
                      class: 'form-control',
                      placeholder: t('assessment.exam_location_placeholder'),
@@ -46,18 +58,23 @@
 
   <div class="col-md-6 mb-3">
     <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
+
     <%= f.number_field :capacity,
                        class: 'form-control',
                        min: 1,
                        placeholder: t('assessment.exam_capacity_placeholder'),
                        data: { exams__form_target: "capacity",
                                action: "input->exams--form#checkForChanges" } %>
-    <small class="text-muted d-block"><%= t('assessment.exam_capacity_hint') %></small>
+
+    <small class="text-muted d-block">
+      <%= t('assessment.exam_capacity_hint') %>
+    </small>
   </div>
 </div>
 
 <div class="mb-3">
   <%= f.label :description, t('basics.description'), class: "form-label" %>
+
   <%= f.text_area :description,
                   class: 'form-control',
                   rows: 3,
@@ -71,25 +88,73 @@
     <%= f.check_box :skip_campaigns,
                     class: 'form-check-input',
                     data: { exams__form_target: "skipCampaigns",
-                            action: "change->exams--form#checkForChanges" } %>
+                            action: "change->exams--form#checkForChanges change->exams--form#toggleDeadline" } %>
+
     <%= f.label :skip_campaigns,
                 t('assessment.skip_campaigns_label'),
                 class: 'form-check-label' %>
-    <small class="text-muted d-block"><%= t('assessment.skip_campaigns_hint') %></small>
+
+    <small class="text-muted d-block">
+      <%= t('assessment.skip_campaigns_hint') %>
+    </small>
   </div>
+  <% if exam.new_record? %>
+    <div
+      class="mb-3"
+      data-exams--form-target="deadlineGroup"
+      <%= 'style="display:none"'.html_safe if exam.skip_campaigns %>
+    >
+      <%= f.label :registration_deadline,
+                  t('assessment.registration_deadline_label'),
+                  class: "form-label" %>
+
+      <div
+        class="input-group td-picker"
+        id="exam-deadline-picker"
+        data-controller="datetimepicker"
+        data-td-target-input="nearest"
+        data-td-target-toggle="nearest"
+      >
+        <%= f.text_field :registration_deadline,
+                         class: "form-control td-input",
+                         data: { td_target: "#exam-deadline-picker",
+                                 action: "change->exams--form#checkForChanges" },
+                         value: exam.registration_deadline,
+                         autocomplete: "off" %>
+
+        <span
+          class="input-group-text td-picker-button"
+          role="button"
+          data-td-target="#exam-deadline-picker"
+          data-td-toggle="datetimepicker"
+        >
+          <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
+        </span>
+      </div>
+
+      <small class="text-muted d-block">
+        <%= t('assessment.registration_deadline_hint') %>
+      </small>
+    </div>
+  <% end %>
 <% end %>
 
 <%= f.hidden_field :lecture_id, value: exam.lecture&.id || exam.lecture_id %>
 
 <div class="mt-4 text-center d-none" data-exams--form-target="warning">
   <div class="d-inline-block">
-    <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
+    <div
+      class="alert alert-warning d-flex align-items-center mb-3"
+      role="alert"
+    >
       <i class="fas fa-exclamation-triangle me-2"></i>
       <%= t('warnings.unsaved_changes') %>
     </div>
+
     <%= f.submit t('buttons.save'),
                  class: 'btn btn-primary me-2',
                  data: { exams__form_target: "submitButton" } %>
+
     <%= button_tag t('buttons.cancel'),
                    type: "button",
                    class: 'btn btn-secondary',

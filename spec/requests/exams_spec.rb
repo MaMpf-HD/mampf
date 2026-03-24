@@ -131,6 +131,48 @@ RSpec.describe("Exams", type: :request) do
                as: :turbo_stream
           expect(response.body).to include("exams_container")
         end
+
+        context "when registration_campaigns is enabled" do
+          before { Flipper.enable(:registration_campaigns) }
+          after { Flipper.disable(:registration_campaigns) }
+
+          it "auto-creates a registration campaign" do
+            expect do
+              post(exams_path,
+                   params: { exam: valid_attributes },
+                   as: :turbo_stream)
+            end.to change(Registration::Campaign, :count).by(1)
+
+            exam = Exam.order(created_at: :desc).first
+            campaign = exam.registration_campaign
+            expect(campaign).to be_present
+            expect(campaign).to be_draft
+            expect(campaign).to be_first_come_first_served
+          end
+
+          it "uses registration_deadline when provided" do
+            deadline = 3.weeks.from_now.beginning_of_hour
+            attrs = valid_attributes.merge(
+              registration_deadline: deadline.strftime("%Y-%m-%d %H:%M")
+            )
+            post(exams_path,
+                 params: { exam: attrs },
+                 as: :turbo_stream)
+
+            exam = Exam.order(created_at: :desc).first
+            expect(exam.registration_campaign.registration_deadline)
+              .to be_within(1.minute).of(deadline)
+          end
+
+          it "does not create a campaign when skip_campaigns is true" do
+            attrs = valid_attributes.merge(skip_campaigns: "1")
+            expect do
+              post(exams_path,
+                   params: { exam: attrs },
+                   as: :turbo_stream)
+            end.not_to change(Registration::Campaign, :count)
+          end
+        end
       end
 
       context "with invalid parameters" do

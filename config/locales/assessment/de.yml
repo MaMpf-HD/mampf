@@ -130,8 +130,10 @@ de:
     exam_capacity_hint: 'Leer lassen für unbegrenzte Kapazität'
     exam_capacity_placeholder: 'Anzahl der Plätze'
     exam_description_placeholder: 'Optionale Hinweise zur Prüfung'
-    skip_campaigns_label: 'Anmeldesystem überspringen (manuelle Verwaltung)'
-    skip_campaigns_hint: 'Nur aktivieren, wenn diese Prüfung noch nie Teil eines Anmeldeverfahrens war'
+    skip_campaigns_label: 'Keine Anmeldung erforderlich (Teilnehmer manuell verwalten)'
+    skip_campaigns_hint: 'Aktivieren, wenn sich Studierende nicht für diese Prüfung anmelden müssen'
+    registration_deadline_label: 'Anmeldefrist'
+    registration_deadline_hint: 'Wird auf das Prüfungsdatum gesetzt, wenn leer gelassen'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
@@ -141,6 +143,9 @@ de:
     campaign_cta:
       message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
       create: 'Jetzt Verfahren erstellen'
+    registration_tab:
+      skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet. Verwende den Teilnehmer-Tab, um Teilnehmer direkt hinzuzufügen.'
+      no_campaign: 'Kein Anmeldeverfahren für diese Prüfung gefunden.'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
     no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
@@ -169,6 +174,8 @@ de:
         grading_phase: 'Geschlossen vor %{time} — Bewertungsphase'
     overview: 'Übersicht'
     settings: 'Einstellungen'
+    registration: 'Anmeldung'
+    policies: 'Richtlinien'
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     grade_scheme:

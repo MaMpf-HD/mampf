@@ -559,4 +559,57 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.roster_group_type).to eq("cohorts")
     end
   end
+
+  describe ".non_exam" do
+    it "excludes campaigns whose items are all exams" do
+      lecture = create(:lecture)
+      exam = create(:exam, lecture: lecture)
+      exam_campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: exam_campaign,
+             registerable: exam)
+
+      regular_campaign = create(:registration_campaign, campaignable: lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:registration_item,
+             registration_campaign: regular_campaign,
+             registerable: tutorial)
+
+      result = Registration::Campaign.non_exam
+      expect(result).to include(regular_campaign)
+      expect(result).not_to include(exam_campaign)
+    end
+
+    it "includes campaigns with no items" do
+      campaign = create(:registration_campaign)
+      expect(Registration::Campaign.non_exam).to include(campaign)
+    end
+  end
+
+  describe "#exam_campaign?" do
+    it "returns true when all items are exams" do
+      campaign = create(:registration_campaign)
+      exam = create(:exam)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: exam)
+
+      expect(campaign.exam_campaign?).to be(true)
+    end
+
+    it "returns false when items are tutorials" do
+      campaign = create(:registration_campaign)
+      tutorial = create(:tutorial)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+
+      expect(campaign.exam_campaign?).to be(false)
+    end
+
+    it "returns false when no items exist" do
+      campaign = create(:registration_campaign)
+      expect(campaign.exam_campaign?).to be(false)
+    end
+  end
 end

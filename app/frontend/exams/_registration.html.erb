@@ -1,0 +1,97 @@
+<% campaign = exam.registration_campaign %>
+<% frame_id = "exam_#{exam.id}_registration" %>
+<% bp = { frame_id: frame_id } %>
+
+<div id="<%= frame_id %>">
+  <% if exam.skip_campaigns %>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      <%= t("assessment.registration_tab.skip_campaigns_info") %>
+    </div>
+  <% elsif campaign.nil? %>
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t("assessment.registration_tab.no_campaign") %>
+    </div>
+  <% else %>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-<%= campaign_badge_color(campaign) %> fs-6">
+          <%= t("registration.campaign.status.#{campaign.status}") %>
+        </span>
+
+        <% if campaign.registration_deadline %>
+          <span class="text-muted small">
+            <i class="bi bi-calendar-range me-1"></i>
+            <%= t("registration.campaign.deadline_label") %>:
+            <%= l(campaign.registration_deadline, format: :long) %>
+          </span>
+        <% end %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <% if campaign.draft? %>
+          <%= open_campaign_button(campaign, params: bp) %>
+        <% elsif campaign.open? %>
+          <%= close_campaign_button(campaign, params: bp) %>
+        <% elsif campaign.closed? %>
+          <%= reopen_campaign_button(campaign, params: bp) %>
+          <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                      registration_campaign_allocation_path(campaign),
+                      class: "btn btn-primary" %>
+        <% elsif campaign.processing? %>
+          <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                      registration_campaign_allocation_path(campaign),
+                      class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+    <% unless campaign.draft? %>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body py-3">
+              <div class="fs-3 fw-bold">
+                <%= campaign.total_registrations_count %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("registration.campaign.overview.total") %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body py-3">
+              <div class="fs-3 fw-bold text-success">
+                <%= campaign.confirmed_count %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("registration.user_registration.status.confirmed") %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card text-center">
+            <div class="card-body py-3">
+              <div class="fs-3 fw-bold text-warning">
+                <%= campaign.pending_count %>
+              </div>
+
+              <div class="text-muted small">
+                <%= t("registration.user_registration.status.pending") %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%= render "registration/user_registrations/index",
+                 campaign: campaign %>
+    <% end %>
+  <% end %>
+</div>

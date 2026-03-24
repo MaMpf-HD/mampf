@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["warning", "submitButton", "cancelButton", "title", "date",
-    "location", "capacity", "description", "skipCampaigns"];
+    "location", "capacity", "description", "skipCampaigns", "deadlineGroup"];
 
   connect() {
     this.storeOriginalValues();
@@ -65,5 +65,13 @@ export default class extends Controller {
   resetAfterSave() {
     this.storeOriginalValues();
     this.hideSubmitElements();
+  }
+
+  toggleDeadline() {
+    if (!this.hasDeadlineGroupTarget) return;
+
+    const hidden = this.hasSkipCampaignsTarget
+      && this.skipCampaignsTarget.checked;
+    this.deadlineGroupTarget.style.display = hidden ? "none" : "";
   }
 }
