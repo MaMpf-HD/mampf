@@ -95,7 +95,7 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message if message
             render turbo_stream: [
-              turbo_stream.update("campaigns_container",
+              turbo_stream.update(target_frame_id,
                                   partial: "registration/campaigns/card_body_show",
                                   locals: { campaign: @campaign, tab: "policies" }),
               stream_flash
@@ -116,6 +116,10 @@ module Registration
             render turbo_stream: stream_flash
           end
         end
+      end
+
+      def target_frame_id
+        params[:frame_id].presence || "campaigns_container"
       end
   end
 end

@@ -163,7 +163,7 @@ module Registration
       end
 
       def render_card_body(partial, locals)
-        render turbo_stream: turbo_stream.update("campaigns_container",
+        render turbo_stream: turbo_stream.update(target_frame_id,
                                                  partial: partial,
                                                  locals: locals)
       end
@@ -171,7 +171,7 @@ module Registration
       def render_turbo_update(partial, locals)
         lecture = locals[:lecture] || @lecture || @campaign&.campaignable
         streams = [
-          turbo_stream.update("campaigns_container", partial: partial, locals: locals),
+          turbo_stream.update(target_frame_id, partial: partial, locals: locals),
           stream_flash
         ]
         streams += refresh_roster_streams(lecture)
@@ -245,6 +245,10 @@ module Registration
             render turbo_stream: stream_flash
           end
         end
+      end
+
+      def target_frame_id
+        params[:frame_id].presence || "campaigns_container"
       end
   end
 end

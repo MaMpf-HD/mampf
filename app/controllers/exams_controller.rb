@@ -86,11 +86,6 @@ class ExamsController < ApplicationController
                                           exams: @lecture.exams.order(date: :asc) }),
             stream_flash
           ]
-          if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
-            streams << turbo_stream.append("exams_container",
-                                           partial: "exams/campaign_cta",
-                                           locals: { exam: @exam })
-          end
           render turbo_stream: streams
         end
       else
@@ -128,11 +123,6 @@ class ExamsController < ApplicationController
                                             exams: @lecture.exams.order(date: :asc) }),
               stream_flash
             ]
-            if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
-              streams << turbo_stream.append("exams_container",
-                                             partial: "exams/campaign_cta",
-                                             locals: { exam: @exam })
-            end
             render turbo_stream: streams
           end
         end
@@ -207,6 +197,7 @@ class ExamsController < ApplicationController
     def exam_params
       params.expect(exam: [:title, :date, :location, :capacity,
                            :description, :skip_campaigns,
+                           :registration_deadline,
                            :lecture_id])
     end
 
