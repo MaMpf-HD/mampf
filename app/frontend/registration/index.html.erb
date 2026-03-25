@@ -9,7 +9,8 @@
                     eligibility: @eligibility_by_campaign_id[campaign.id],
                     item_preferences: nil,
                     items: @items_by_campaign_id[campaign.id],
-                    item_preferences: @item_preferences_by_campaign_id[campaign.id]
+                    item_preferences: @item_preferences_by_campaign_id[campaign.id],
+                    results: @results_by_campaign_id[campaign.id]
                   } %>
 
       </div>
@@ -17,6 +18,5 @@
   <% else %>
     <p>No available campaigns.</p>
   <% end %>
-
 
 </div>

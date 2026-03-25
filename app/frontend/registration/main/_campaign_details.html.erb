@@ -7,6 +7,7 @@
   </div>
 
   <!-- Capacity -->
+  <% if campaign.status != "completed" %>
   <div class="col align-items-baseline gap-1">
     <div class="fw-bold text-dark"><%= t('basics.capacity') %>:</div>
     <span class="fw-normal">
@@ -18,5 +19,6 @@
       <%= t('basics.across_group') if items.size > 1 %>
     </span>
   </div>
+  <% end %>
 
 </div>

@@ -29,16 +29,7 @@
              small fw-medium">
         <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
       </span>
-    <% elsif campaign.completed? %>
-      <% if assigned %>
-        <span class="badge text-bg-success">
-          <%= t('basics.assigned') %>
-        </span>
-      <% else %>
-        <span class="badge text-bg-danger">
-          <%= t('basics.dismissed') %>
-        </span>
-      <% end %>
+
     <% end %>
   </div>
 </div>

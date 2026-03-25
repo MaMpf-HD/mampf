@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "preferences_workspace" do %>
+<%= turbo_frame_tag dom_id(campaign, :preferences_workspace) do %>
 
   <% last_updated = campaign.user_registrations_last_updated(current_user) %>
   <% if last_updated %>

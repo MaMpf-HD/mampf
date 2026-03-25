@@ -2,7 +2,7 @@ module Registration
   class UserRegistrationsController < ApplicationController
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
-    before_action :set_campaign, only: [:registrations_for_campaign, :create, :reset_preferences,
+    before_action :set_campaign, only: [:create, :reset_preferences,
                                         :update, :destroy_for_user]
     before_action :set_locale
     before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
@@ -50,29 +50,23 @@ module Registration
           {}
         end
       end
-      # render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      @results_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
+        items_selected = campaign.registration_items
+                                 .includes(:user_registrations)
+                                 .where(user_registrations: { user_id: current_user.id })
+        items_succeed = Rosters::StudentMainResultResolver
+                        .new(campaign, current_user).succeed_items
+        { item_selected: items_selected,
+          item_succeed: items_succeed,
+          status_items_selected: items_selected.each_with_object({}) do |i, hash|
+            hash[i.id] = items_succeed.pluck(:id).include?(i.id) ? "confirmed" : "dismissed"
+          end }
+      end
+      # @rosterized_items = Registration::Item.where(campaignable_id: @lecture_id,
+      #                                              campaignable_type: "Lecture")
+      #                                       .map(&:registerable)
       render template: "registration/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
-    end
-
-    def registrations_for_campaign
-      target = resolve_render_target(@campaign)
-      case target
-      when :index
-        redirect_to user_registrations_path,
-                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
-      when :details
-        init_details
-        render template: "registration/main/show_main_campaign",
-               layout: "application_no_sidebar"
-      when :result
-        init_result
-        render template: "registration/main/show_result_main_campaign",
-               layout: "application_no_sidebar"
-      else # rubocop:disable Lint/DuplicateBranch
-        redirect_to user_registrations_path,
-                    notice: I18n.t("registration.user_registration.messages.campaign_unavailable")
-      end
     end
 
     def create
@@ -147,7 +141,7 @@ module Registration
               )
             end
             format.html do
-              redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+              redirect_to lecture_campaign_registrations_path(@campaign.campaignable),
                           notice: success_message
             end
           end
@@ -155,7 +149,7 @@ module Registration
           respond_with_flash(
             :alert,
             result.errors.join(", "),
-            fallback_location: campaign_registrations_for_campaign_path(campaign_id: @campaign.id)
+            fallback_location: lecture_campaign_registrations_path(@campaign.campaignable)
           )
         end
       end
@@ -261,19 +255,6 @@ module Registration
         @item = Registration::Item.find(params[:item_id])
       end
 
-      def resolve_render_target(campaign)
-        case campaign.status.to_sym
-        when :draft
-          :index
-        when :open, :closed, :processing
-          :details
-        when :completed
-          :result
-        else
-          :index
-        end
-      end
-
       def init_details
         init_eligibility
         init_items
@@ -333,8 +314,11 @@ module Registration
       end
 
       def rerender_preferences
-        render partial: "registration/main/pb/preferences_workspace",
-               locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
+        render turbo_stream: turbo_stream.update(
+          view_context.dom_id(@campaign, :preferences_workspace),
+          partial: "registration/main/pb/preferences_workspace",
+          locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
+        )
       end
   end
 end

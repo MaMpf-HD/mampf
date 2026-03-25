@@ -999,11 +999,6 @@ Rails.application.routes.draw do
   # registration routes
   scope module: "registration", path: "" do
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
-      # resources :user_registrations, only: [:index], path: "campaign_registrations"
-      get "campaign_registrations/:campaign_id",
-          to: "user_registrations#registrations_for_campaign",
-          as: :campaign_registrations_for_campaign
-
       post "campaign_registrations/:campaign_id/items/:item_id/register",
            to: "user_registrations#create",
            as: :register_item
