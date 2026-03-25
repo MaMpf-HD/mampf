@@ -1,9 +1,14 @@
 module Registration
   class UserRegistration
     class PreferencesHandler
+      # struct for store temporary preference items during modification process, 
+      # will be used in form
       SimpleItemPreference = Struct.new(:id, :rank)
+
+      # struct for render preference items in FE
       ItemPreference       = Struct.new(:item, :rank)
 
+      # parse json from FE
       def pref_item_from_json(json)
         Array(JSON.parse(json)).map do |h|
           SimpleItemPreference.new(
@@ -17,6 +22,7 @@ module Registration
         normalize_ranks(pref_item_from_json(json))
       end
 
+      # preferences info saved in DB
       def preferences_info(campaign, user)
         user_registrations = campaign.user_registrations
                                      .where(user_id: user.id)
@@ -71,12 +77,14 @@ module Registration
           item.rank, other.rank = other.rank, item.rank
         end
 
+        # ensure ranks are continuous from 1 to n without duplication
         def normalize_ranks(pref_items)
           pref_items.sort_by!(&:rank)
           pref_items.each_with_index { |i, idx| i.rank = idx + 1 }
           pref_items
         end
 
+        # build preference info based on given info
         def build_preferences(pref_items)
           normalize_ranks(pref_items)
           items = Registration::Item.where(id: pref_items.map(&:id)).index_by(&:id)

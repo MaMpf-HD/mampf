@@ -2,6 +2,7 @@ module Registration
   class UserRegistrationsController < ApplicationController
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
+    before_action :set_lecture, only: [:index]
     before_action :set_campaign, only: [:create, :reset_preferences,
                                         :update, :destroy_for_user]
     before_action :set_locale
@@ -26,42 +27,9 @@ module Registration
     end
 
     def index
-      lecture_id = params[:lecture_id]&.to_i
-      @courses_seminars_campaigns = Registration::Campaign
-                                    .where(campaignable_id: lecture_id)
-                                    .where.not(status: :draft)
-      @campaigns_by_id = @courses_seminars_campaigns.index_by(&:id)
-      @campaignable_host_by_id = @campaigns_by_id.transform_values(&:campaignable)
-      @eligibility_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
-        Registration::EligibilityService.new(
-          campaign,
-          current_user,
-          phase_scope: :registration
-        ).call
-      end
-      @items_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
-        campaign.registration_items.includes(:user_registrations)
-      end
-      @item_preferences_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
-        if campaign.preference_based?
-          UserRegistration::PreferencesHandler.new
-                                              .preferences_info(campaign, current_user)
-        else
-          {}
-        end
-      end
-      @results_by_campaign_id = @campaigns_by_id.transform_values do |campaign|
-        items_selected = campaign.registration_items
-                                 .includes(:user_registrations)
-                                 .where(user_registrations: { user_id: current_user.id })
-        items_succeed = Rosters::StudentMainResultResolver
-                        .new(campaign, current_user).succeed_items
-        { item_selected: items_selected,
-          item_succeed: items_succeed,
-          status_items_selected: items_selected.each_with_object({}) do |i, hash|
-            hash[i.id] = items_succeed.pluck(:id).include?(i.id) ? "confirmed" : "dismissed"
-          end }
-      end
+      @campaigns = Campaign::LectureCampaignsService
+                   .new(@lecture, current_user)
+                   .call
       # @rosterized_items = Registration::Item.where(campaignable_id: @lecture_id,
       #                                              campaignable_type: "Lecture")
       #                                       .map(&:registerable)
@@ -81,8 +49,7 @@ module Registration
                    .new.pref_item_build_for_save(params[:preferences_json])
       result = Registration::UserRegistration::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
-      respond_to_student_registration(result,
-                                      I18n.t("registration.user_registration.messages.preferences_saved"))
+      reset_preferences if result.success?
     end
 
     def destroy
@@ -100,44 +67,43 @@ module Registration
     end
 
     def up
-      handle_preference_action(:up)
+      locals = handle_preference_action(:up)
+      rerender_preferences(locals)
     end
 
     def down
-      handle_preference_action(:down)
+      locals = handle_preference_action(:down)
+      rerender_preferences(locals)
     end
 
     def add
-      handle_preference_action(:add)
+      locals = handle_preference_action(:add)
+      rerender_preferences(locals)
     end
 
     def remove
-      handle_preference_action(:remove)
+      locals = handle_preference_action(:remove)
+      rerender_preferences(locals)
     end
 
     def reset_preferences
-      init_items
-      init_preferences
-      rerender_preferences
+      locals = Registration::Campaign::CampaignDetailsService.new(@campaign, current_user)
+                                                             .preferences_info
+      rerender_preferences(locals)
     end
 
     private
 
       def respond_to_student_registration(result, success_message)
         if result.success?
-          init_details
+          @details = Registration::Campaign::CampaignDetailsService.new(@campaign, current_user)
+                                                                   .call
           respond_to do |format|
             format.turbo_stream do
               render turbo_stream: turbo_stream.update(
                 view_context.dom_id(@campaign, :main_student_registration_campaign),
                 partial: "registration/main/campaign_card",
-                locals: {
-                  campaign: @campaign,
-                  campaignable_host: @campaignable_host,
-                  eligibility: @eligibility,
-                  items: @items,
-                  item_preferences: @item_preferences
-                }
+                locals: { details: @details, campaign: @campaign }
               )
             end
             format.html do
@@ -255,69 +221,31 @@ module Registration
         @item = Registration::Item.find(params[:item_id])
       end
 
-      def init_details
-        init_eligibility
-        init_items
-        init_campaignable_host
-        init_preferences if @campaign.preference_based?
-      end
+      def set_lecture
+        lecture_id = params[:lecture_id]&.to_i
+        @lecture = Lecture.find_by(id: lecture_id)
+        return if @lecture
 
-      def init_eligibility
-        @eligibility = Registration::EligibilityService.new(@campaign, current_user,
-                                                            phase_scope: :registration).call
-      end
-
-      def init_result
-        init_selected_items
-        init_succeed_items
-        succeed_ids = @items_succeed.pluck(:id)
-        @status_items_selected = @items_selected.each_with_object({}) do |i, hash|
-          hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
-        end
-        init_campaignable_host
-        init_preferences if @campaign.preference_based?
-      end
-
-      def init_selected_items
-        @items_selected = @campaign.registration_items
-                                   .includes(:user_registrations)
-                                   .where(user_registrations: { user_id: current_user.id })
-      end
-
-      def init_succeed_items
-        @items_succeed = Rosters::StudentMainResultResolver
-                         .new(@campaign, current_user).succeed_items
-        @item_succeed = @items_succeed.first || nil
-      end
-
-      def init_items
-        @items = @campaign.registration_items.includes(:user_registrations)
-      end
-
-      def init_campaignable_host
-        @campaignable_host = @campaign.campaignable
-      end
-
-      def init_preferences
-        @item_preferences = UserRegistration::PreferencesHandler.new
-                                                                .preferences_info(@campaign,
-                                                                                  current_user)
+        respond_with_error(t("registration.lecture.not_found"), redirect_path: root_path)
       end
 
       def handle_preference_action(action)
         @campaign = @item.registration_campaign
-        init_items
-        @item_preferences = UserRegistration::PreferencesHandler
-                            .new.public_send(action, params[:item_id],
-                                             params[:preferences_json])
-        rerender_preferences
+        items = @campaign.registration_items.includes(:user_registrations)
+        item_preferences = UserRegistration::PreferencesHandler
+                           .new.public_send(action, params[:item_id],
+                                            params[:preferences_json])
+        @campaign.reload
+        { item_preferences: item_preferences,
+          campaign: @campaign,
+          items: items }
       end
 
-      def rerender_preferences
+      def rerender_preferences(locals)
         render turbo_stream: turbo_stream.update(
           view_context.dom_id(@campaign, :preferences_workspace),
           partial: "registration/main/pb/preferences_workspace",
-          locals: { item_preferences: @item_preferences, campaign: @campaign, items: @items }
+          locals: locals
         )
       end
   end

@@ -45,7 +45,7 @@
         <div class="d-flex justify-content-end gap-0">
 
           <!-- Move Up -->
-          <button type="submit"
+          <button type="submit" name="up_<%= campaign.id %>"
                   class="material-icons clickable arrow_upward border-0 bg-transparent p-0"
                   <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %>
                   formaction="<%= preference_up_path(item.id) %>">
@@ -53,7 +53,7 @@
           </button>
 
           <!-- Move Down -->
-          <button type="submit"
+          <button type="submit" name="down_<%= campaign.id %>"
                   class="material-icons clickable arrow_downward border-0 bg-transparent p-0"
                   <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %>
                   formaction="<%= preference_down_path(item.id) %>">
@@ -61,7 +61,7 @@
           </button>
 
           <!-- Remove -->
-          <button type="submit"
+          <button type="submit" name="remove_<%= campaign.id %>"
                   class="material-icons clickable playlist_remove border-0 bg-transparent text-danger p-0"
                   <%= "disabled" if !campaign.open_for_registrations? %>
                   formaction="<%= remove_preference_path(item.id) %>">
@@ -76,15 +76,14 @@
 
   <!-- Save / Reset -->
   <div class="d-flex justify-content-end gap-3 mt-3">
-    <button type="submit"
+    <button type="submit" name="reset_<%= campaign.id %>"
             class="btn btn-outline-primary btn-sm"
             formaction="<%= reset_campaign_preferences_path(campaign.id) %>">
       <%= t('buttons.reset') %>
     </button>
 
-    <button type="submit"
+    <button type="submit" name="save_<%= campaign.id %>"
             class="btn btn-primary btn-sm"
-            data-turbo="false"
             formaction="<%= save_campaign_preferences_path(campaign.id) %>">
       <%= t('buttons.save') %>
     </button>

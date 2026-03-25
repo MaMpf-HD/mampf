@@ -2,23 +2,32 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   connect() {
-    this.element.dataset.touched = "false";
+    console.log("Touch check controller connected");
     this.update(false);
   }
 
-  mark() {
-    this.element.dataset.touched = "true";
-    this.update(true);
+  handleMarkState(event) {
+    const [typeAction, campaignId] = event.submitter.name.split("_");
+    if (typeAction === "reset" || typeAction === "save") {
+      this.reset(campaignId);
+    }
+    else if (typeAction === "up" || typeAction === "down"
+      || typeAction === "remove" || typeAction === "add") {
+      this.mark(campaignId);
+    }
   }
 
-  reset() {
-    this.element.dataset.touched = "false";
-    this.update(false);
+  mark(campaignId) {
+    this.update(true, campaignId);
   }
 
-  update(status) {
+  reset(campaignId) {
+    this.update(false, campaignId);
+  }
+
+  update(status, campaignId) {
     try {
-      const ele = document.querySelector("[data-requires-touch-display]");
+      const ele = document.querySelector(`.required-touch-display-${campaignId}`);
       if (!ele) return;
 
       if (status === true)

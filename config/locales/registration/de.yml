@@ -322,6 +322,8 @@ de:
           action: "Aktion"
           status: "Status"
         view_details: "Details"
+    lecture:
+      not_found: "Veranstaltung nicht gefunden."
   activerecord:
     errors:
       models:
