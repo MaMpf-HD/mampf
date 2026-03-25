@@ -135,8 +135,8 @@ en:
     registration_deadline_label: 'Registration deadline'
     registration_deadline_hint: 'Defaults to the exam date if left empty'
     campaign_status:
-      title: 'Campaign'
-      none: 'No campaign'
+      title: 'Registration'
+      none: 'No registration'
       direct: 'Direct management'
       create: 'Create campaign'
       go_to_campaign: 'Go to campaign'

@@ -111,14 +111,6 @@
         <% end %>
       <% end %>
 
-      <% if Flipper.enabled?(:registration_campaigns) %>
-        <% component.with_tab(name: "campaigns", label: t("registration.campaign.index.title")) do %>
-          <div class="container small-width lecture-pane">
-            <%= render partial: "registration/campaigns/index", locals: { lecture: @lecture, campaign: @campaign, new_campaign: @new_campaign } %>
-          </div>
-        <% end %>
-      <% end %>
-
       <% if @lecture.sort == "vignettes" %>
         <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
           <div class="container small-width lecture-pane mb-3">
