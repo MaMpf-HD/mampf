@@ -26,7 +26,7 @@ class ExamsController < ApplicationController
 
   def show
     authorize! :show, @exam
-    @active_tab = params[:tab] || "overview"
+    @active_tab = params[:tab] || "settings"
     set_exam_locale
 
     respond_to do |format|

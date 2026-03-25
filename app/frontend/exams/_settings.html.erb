@@ -1,4 +1,64 @@
 <div id="exam-settings">
+  <div
+    class="
+      d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
+      bg-light rounded border text-muted small
+    "
+  >
+    <span>
+      <i class="bi bi-calendar-event me-1"></i>
+
+      <% if exam.date %>
+        <%= l(exam.date, format: :long) %>
+      <% else %>
+        <%= t('basics.not_specified') %>
+      <% end %>
+    </span>
+
+    <span class="text-black-50">·</span>
+
+    <span>
+      <i class="bi bi-geo-alt me-1"></i>
+      <%= exam.location.presence || t('basics.not_specified') %>
+    </span>
+
+    <span class="text-black-50">·</span>
+
+    <span>
+      <i class="bi bi-people me-1"></i>
+
+      <% if exam.capacity %>
+        <%= exam.capacity %>
+        <% if exam.roster_entries_count.positive? %>
+          (
+          <%= exam.roster_entries_count %>
+          <%= t('roster.registered') %>
+          )
+        <% end %>
+      <% else %>
+        <%= t('basics.unlimited') %>
+      <% end %>
+    </span>
+
+    <% if Flipper.enabled?(:registration_campaigns) %>
+      <span class="text-black-50">·</span>
+      <% if exam.skip_campaigns %>
+        <span class="badge bg-secondary">
+          <i class="bi bi-person-gear me-1"></i><%= t("assessment.campaign_status.direct") %>
+        </span>
+      <% elsif exam.registration_campaign %>
+        <% campaign = exam.registration_campaign %>
+        <span class="badge bg-<%= campaign_badge_color(campaign) %>">
+          <%= t("registration.campaign.status.#{campaign.status}") %>
+        </span>
+        <span>
+          <%= campaign.confirmed_count %>
+          <%= t("registration.user_registration.status.confirmed") %>
+        </span>
+      <% end %>
+    <% end %>
+  </div>
+
   <div class="row">
     <div class="col-12">
       <%= render "exams/delete_button", exam: exam %>
