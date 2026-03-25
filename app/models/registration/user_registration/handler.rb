@@ -1,5 +1,7 @@
 module Registration
   class UserRegistration
+    # Encapsulates the logic for handling user registrations for a campaign,
+    # including checks for campaign status, user eligibility, and capacity.
     class Handler
       Result = Struct.new(:success?, :errors)
 
@@ -39,6 +41,15 @@ module Registration
                        @campaign.policies_satisfied?(@user, phase: :both)].all?
 
         I18n.t("registration.user_registration.messages.requirements_not_met")
+      end
+
+      def check_items(pref_items)
+        item_ids = pref_items.map(&:id)
+        valid_ids = @campaign.registration_items.where(id: item_ids).pluck(:id)
+        invalid_ids = item_ids - valid_ids
+        return nil unless invalid_ids.any?
+
+        I18n.t("registration.user_registration.messages.invalid_options")
       end
 
       def check_not_referenced_as_prerequisite

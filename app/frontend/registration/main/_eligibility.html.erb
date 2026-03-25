@@ -1,25 +1,33 @@
 <div style="width: min(100%, 30rem);">
-  <div class="fw-bold text-dark"><%= t('registration.user_registration.eligibility_title') %></div>
+  <div class="row justify-content-start align-items-center">
+    <div class="fw-bold text-dark w-auto">
+      <%= t('registration.user_registration.eligibility_title') %>
+    </div>
 
-  <p class="mb-2">
-    <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
-    <span class="small text-muted"><%= t('basics.status') %></span>: <%= eligibility_badge(pass) %>
-  </p>
+    <p class="mb-1 w-auto">
+      <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
+      <%= eligibility_badge(pass) %>
+    </p>
+  </div>
 
   <ul class="list-group list-group-flush">
     <% eligibility.each do |policy| %>
-      <li class="list-group-item d-flex justify-content-between align-items-center pt-1 pb-1">
+      <li
+        class="
+          list-group-item d-flex justify-content-between align-items-center
+          pt-1 pb-1
+        "
+      >
         <div>
           <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
 
           <% policy_info = get_policy_config_info(policy) %>
+
           <small class="text-muted">
             <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
-
               <%= link_to t('registration.user_registration.prerequisite_campaign'),
                           campaign_registrations_for_campaign_path(campaign_id: policy_info),
                           target: :_blank %>
-
             <% else %>
               <%= policy_info %>
             <% end %>

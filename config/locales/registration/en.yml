@@ -275,6 +275,7 @@ en:
         already_registered: "You are already registered for this campaign."
         no_slots: "No seats available."
         requirements_not_met: "You do not meet the requirements."
+        invalid_options: "Invalid options selected."
         withdrawn: "You have withdrawn your registration."
         preferences_saved: "Your preferences have been saved."
         dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"

@@ -30,8 +30,7 @@ module Registration
       end
 
       def eligibility
-        Registration::EligibilityService.new(@campaign, @user,
-                                             phase_scope: :registration).call
+        PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: :registration)
       end
 
       def items

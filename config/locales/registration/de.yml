@@ -275,6 +275,7 @@ de:
         already_registered: "Sie sind bereits für dieses Anmeldeverfahren registriert."
         no_slots: "Keine Plätze verfügbar."
         requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
+        invalid_options: "Ungültige Optionen ausgewählt."
         preferences_saved: "Ihre Einstellungen wurden gespeichert."
         withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
         dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"

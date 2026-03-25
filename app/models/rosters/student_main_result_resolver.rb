@@ -1,4 +1,5 @@
 module Rosters
+  # get roster results for student
   class StudentMainResultResolver
     def initialize(campaign, user)
       @campaign = campaign

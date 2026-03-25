@@ -3445,6 +3445,7 @@ en:
     failed: "Failed"
     select_type: "Select preferences"
     saved_at: "Saved %{time}"
+    last_saved_at: "Last saved %{time}"
     available: "Available"
     full: "Full"
     position: "Position"

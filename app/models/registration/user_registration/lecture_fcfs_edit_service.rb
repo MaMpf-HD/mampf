@@ -1,5 +1,7 @@
 module Registration
   class UserRegistration
+    # Service for handling user registration and withdrawal in lecture based registration campaign
+    # with FCFS policy.
     class LectureFcfsEditService < UserRegistration::Handler
       def register!(item)
         ActiveRecord::Base.transaction do
@@ -38,12 +40,14 @@ module Registration
         # 1. Check if user has already registered for this campaign this group type
         # 2. Check if item still has capacity
         # 3. Check if user satisfies all policies (phase: registration and both)
+        # 4. Check if items are valid for this campaign
         def validate_register(item)
           [
             check_campaign_open_for_registrations,
             check_already_registered_current_type(item),
             check_capacity(item),
-            check_policies
+            check_policies,
+            check_items([item])
           ].compact
         end
 

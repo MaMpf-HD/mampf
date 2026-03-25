@@ -3655,6 +3655,7 @@ de:
     failed: "Nicht bestanden"
     select_type: "Wählen Sie Präferenzen"
     saved_at: "Gespeichert %{time}"
+    last_saved_at: "Zuletzt gespeichert %{time}"
     available: "Verfügbar"
     full: "Ausgebucht"
     position: "Position"

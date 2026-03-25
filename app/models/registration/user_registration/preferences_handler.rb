@@ -1,5 +1,7 @@
 module Registration
   class UserRegistration
+    # Handler for managing user preferences in preference-based registration campaigns,
+    # including parsing preference data from the frontend and preparing preference data for display.
     class PreferencesHandler
       # struct for store temporary preference items during modification process, 
       # will be used in form
