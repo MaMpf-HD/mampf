@@ -27,36 +27,27 @@
     <span>
       <i class="bi bi-people me-1"></i>
 
+      <% campaign = exam.registration_campaign if Flipper.enabled?(:registration_campaigns)
+        in_registration = campaign && !campaign.completed?
+
+        if in_registration
+          count = campaign.total_registrations_count
+          label = t("assessment.info_bar.registered")
+        else
+          count = exam.roster_entries_count
+          label = t("assessment.info_bar.participants")
+        end %>
+
       <% if exam.capacity %>
+        <%= count %>
+        /
         <%= exam.capacity %>
-        <% if exam.roster_entries_count.positive? %>
-          (
-          <%= exam.roster_entries_count %>
-          <%= t('roster.registered') %>
-          )
-        <% end %>
+        <%= label %>
       <% else %>
-        <%= t('basics.unlimited') %>
+        <%= count %>
+        <%= label %>
       <% end %>
     </span>
-
-    <% if Flipper.enabled?(:registration_campaigns) %>
-      <span class="text-black-50">·</span>
-      <% if exam.skip_campaigns %>
-        <span class="badge bg-secondary">
-          <i class="bi bi-person-gear me-1"></i><%= t("assessment.campaign_status.direct") %>
-        </span>
-      <% elsif exam.registration_campaign %>
-        <% campaign = exam.registration_campaign %>
-        <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-          <%= t("registration.campaign.status.#{campaign.status}") %>
-        </span>
-        <span>
-          <%= campaign.confirmed_count %>
-          <%= t("registration.user_registration.status.confirmed") %>
-        </span>
-      <% end %>
-    <% end %>
   </div>
 
   <div class="row">

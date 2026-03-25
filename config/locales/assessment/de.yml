@@ -133,7 +133,11 @@ de:
     skip_campaigns_label: 'Keine Anmeldung erforderlich (Teilnehmer manuell verwalten)'
     skip_campaigns_hint: 'Aktivieren, wenn sich Studierende nicht für diese Prüfung anmelden müssen'
     registration_deadline_label: 'Anmeldefrist'
-    registration_deadline_hint: 'Wird auf das Prüfungsdatum gesetzt, wenn leer gelassen'
+    registration_deadline_hint: 'Wird auf 3 Tage vor dem Prüfungsdatum gesetzt, wenn leer gelassen'
+    registration_deadline_locked_hint: 'Anmeldung ist abgeschlossen'
+    info_bar:
+      participants: 'Teilnehmende'
+      registered: 'angemeldet'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'

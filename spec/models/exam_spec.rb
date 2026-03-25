@@ -214,12 +214,12 @@ RSpec.describe(Exam, type: :model) do
           .to be_within(1.second).of(deadline)
       end
 
-      it "falls back to exam date for deadline" do
+      it "falls back to 3 days before exam date for deadline" do
         exam = create(:exam, :with_date)
 
         campaign = exam.registration_campaign
         expect(campaign.registration_deadline)
-          .to be_within(1.second).of(exam.date)
+          .to be_within(1.second).of(exam.date - 3.days)
       end
 
       it "creates a registration item linked to the exam" do

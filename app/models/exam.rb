@@ -16,6 +16,10 @@ class Exam < ApplicationRecord
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   after_create :create_registration_campaign,
                if: -> { !skip_campaigns && Flipper.enabled?(:registration_campaigns) }
+  after_update :update_campaign_deadline,
+               if: lambda {
+                 registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
+               }
 
   def roster_entries
     exam_rosters
@@ -27,6 +31,10 @@ class Exam < ApplicationRecord
 
   def registration_campaign
     Registration::Item.find_by(registerable: self)&.registration_campaign
+  end
+
+  def load_registration_deadline
+    self.registration_deadline = registration_campaign&.registration_deadline
   end
 
   def registration_title
@@ -41,8 +49,15 @@ class Exam < ApplicationRecord
       ensure_pointbook!(requires_submission: false)
     end
 
+    def update_campaign_deadline
+      campaign = registration_campaign
+      return unless campaign && !campaign.completed?
+
+      campaign.update(registration_deadline: registration_deadline)
+    end
+
     def create_registration_campaign
-      deadline = registration_deadline.presence || date || 1.month.from_now
+      deadline = registration_deadline.presence || (date && (date - 3.days)) || 1.month.from_now
       campaign = Registration::Campaign.create!(
         campaignable: lecture,
         allocation_mode: :first_come_first_served,

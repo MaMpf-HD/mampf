@@ -133,7 +133,11 @@ en:
     skip_campaigns_label: 'No registration required (manage roster manually)'
     skip_campaigns_hint: 'Enable if students do not need to register for this exam'
     registration_deadline_label: 'Registration deadline'
-    registration_deadline_hint: 'Defaults to the exam date if left empty'
+    registration_deadline_hint: 'Defaults to 3 days before the exam date if left empty'
+    registration_deadline_locked_hint: 'Registration is completed'
+    info_bar:
+      participants: 'participants'
+      registered: 'registered'
     campaign_status:
       title: 'Registration'
       none: 'No registration'
