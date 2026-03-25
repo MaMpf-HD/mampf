@@ -15,6 +15,8 @@ de:
       cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
+      completed_campaign_title: "Abgeschlossene Kampagnen"
+      active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
       lecture_not_found: "Veranstaltung nicht gefunden."
@@ -214,6 +216,7 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
+        confirmed_cases: "Ihre Anmeldung ist bestätigt für:"
       status:
         pending: "Ausstehend"
         confirmed: "Bestätigt"

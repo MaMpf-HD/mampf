@@ -30,10 +30,9 @@ module Registration
       @campaigns = Campaign::LectureCampaignsService
                    .new(@lecture, current_user)
                    .call
-      # @rosterized_items = Registration::Item.where(campaignable_id: @lecture_id,
-      #                                              campaignable_type: "Lecture")
-      #                                       .map(&:registerable)
-      render template: "registration/index",
+      rosterized_items = @campaigns.flat_map { |details| details.results[:items_succeed] }.uniq
+      @rosterized_items = rosterized_items.any? ? rosterized_items.map(&:title).join(", ") : nil
+      render template: "registration/main/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
 

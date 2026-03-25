@@ -1,8 +1,25 @@
+<!-- rosterized items summary -->
+<% if @rosterized_items %>
+  <div
+    style="
+    background-color: #e6f4ea;
+    border: 1px solid #c3e6cb;
+    color: #1e4620;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  "
+  >
+    <%= t("registration.user_registrations.index.confirmed_cases") %>
+    <strong><%= @rosterized_items %></strong>
+  </div>
+<% end %>
+
+<!-- campaign list -->
 <div class="campaign-list d-flex flex-column gap-4">
   <% if @campaigns.any? %>
     <% uncompleted_campaigns = @campaigns.select { |cd| !(cd.campaign.status == "completed") } %>
     <% completed_campaigns = @campaigns - uncompleted_campaigns %>
-
     <!-- Active campaigns -->
     <% uncompleted_campaigns.each do |campaign_details| %>
       <div>
@@ -15,7 +32,6 @@
         <% end %>
       </div>
     <% end %>
-
     <!-- Collapsible section for completed campaigns -->
     <div
       style="cursor: pointer;font-weight: 600;padding: 10px 0;
@@ -27,7 +43,7 @@
         const icon = this.querySelector('span:last-child');
         icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';"
     >
-      <span>Completed Campaigns</span>
+      <span><%= t("registration.campaign.completed_campaign_title") %></span>
       <span style="transition: transform 0.2s ease;">∨</span>
     </div>
     <div
@@ -48,7 +64,6 @@
         <% end %>
       </div>
     </div>
-
   <% else %>
     <p>No available campaigns.</p>
   <% end %>

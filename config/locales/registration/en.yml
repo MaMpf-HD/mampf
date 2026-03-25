@@ -15,6 +15,8 @@ en:
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       not_found: "Registration campaign not found."
       completed_title: "Campaign Completed"
+      completed_campaign_title: "Completed Campaigns"
+      active_campaign_title: "Active Campaigns"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
       go_to_roster: "Go to Roster"
       lecture_not_found: "Lecture not found."
@@ -214,6 +216,7 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        confirmed_cases: "Your registration is confirmed for:"
       status:
         pending: "Pending"
         confirmed: "Confirmed"

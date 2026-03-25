@@ -120,16 +120,16 @@ module Registration
       case status
       when "confirmed"
         content_tag(:span, I18n.t("basics.confirmed"),
-                    class: "badge rounded-pill w-auto text-bg-success")
+                    class: "badge text-bg-success fw-medium small w-auto text-bg-success")
       when "pending"
         content_tag(:span, I18n.t("basics.pending"),
-                    class: "badge rounded-pill w-auto text-bg-warning")
+                    class: "badge text-bg-success fw-medium small w-auto text-bg-warning")
       when "rejected"
         content_tag(:span, I18n.t("basics.rejected"),
-                    class: "badge rounded-pill w-auto text-bg-danger")
+                    class: "badge text-bg-success fw-medium small w-auto text-bg-danger")
       when "dismissed"
         content_tag(:span, I18n.t("basics.dismissed"),
-                    class: "badge rounded-pill w-auto text-bg-danger")
+                    class: "badge text-bg-success fw-medium small w-auto text-bg-danger")
       else
         content_tag(:span, "")
       end

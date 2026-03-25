@@ -54,8 +54,8 @@ module Registration
         status_items_selected = items_selected.each_with_object({}) do |i, hash|
           hash[i.id] = items_succeed.pluck(:id).include?(i.id) ? "confirmed" : "dismissed"
         end
-        { item_selected: items_selected,
-          item_succeed: items_succeed,
+        { items_selected: items_selected,
+          items_succeed: items_succeed,
           status_items_selected: status_items_selected }
       end
     end
