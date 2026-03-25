@@ -1,6 +1,10 @@
 <div class="campaign-list d-flex flex-column gap-4">
   <% if @campaigns.any? %>
-    <% @campaigns.each do |campaign_details| %>
+    <% uncompleted_campaigns = @campaigns.select { |cd| !(cd.campaign.status == "completed") } %>
+    <% completed_campaigns = @campaigns - uncompleted_campaigns %>
+
+    <!-- Active campaigns -->
+    <% uncompleted_campaigns.each do |campaign_details| %>
       <div>
         <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
           <%= render partial: 'registration/main/campaign_card',
@@ -11,6 +15,40 @@
         <% end %>
       </div>
     <% end %>
+
+    <!-- Collapsible section for completed campaigns -->
+    <div
+      style="cursor: pointer;font-weight: 600;padding: 10px 0;
+        display: flex;justify-content: space-between;
+        align-items: center;border-bottom: 1px solid #dee2e6;"
+      data-bs-toggle="collapse"
+      data-bs-target="#collapseStudentRegistrationCompletedCampaigns"
+      onclick="
+        const icon = this.querySelector('span:last-child');
+        icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';"
+    >
+      <span>Completed Campaigns</span>
+      <span style="transition: transform 0.2s ease;">∨</span>
+    </div>
+    <div
+      class="collapse mt-2"
+      id="collapseStudentRegistrationCompletedCampaigns"
+    >
+      <div class="card card-body">
+        <% completed_campaigns.each do |campaign_details| %>
+          <div>
+            <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+              <%= render partial: 'registration/main/campaign_card',
+                      locals: {
+                        details: campaign_details,
+                        campaign: campaign_details.campaign
+                      } %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
   <% else %>
     <p>No available campaigns.</p>
   <% end %>
