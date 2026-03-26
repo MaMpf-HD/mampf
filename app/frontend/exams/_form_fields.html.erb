@@ -92,6 +92,67 @@
 </div>
 
 <% if Flipper.enabled?(:registration_campaigns) %>
+  <% unless exam.skip_campaigns %>
+    <% campaign = exam.registration_campaign unless exam.new_record?
+      deadline_disabled = campaign&.completed?
+      exam.load_registration_deadline if campaign && exam.registration_deadline.blank? %>
+    <div
+      class="row mb-3"
+      <% if exam.new_record? %>
+        data-exams--form-target="deadlineGroup"
+        <% if exam.skip_campaigns %>
+          style="display:none"
+        <% end %>
+      <% end %>
+    >
+      <div class="col-md-2">
+        <%= f.label :registration_deadline,
+                  t('assessment.registration_deadline_label'),
+                  class: "col-form-label" %>
+      </div>
+
+      <div class="col-md-5">
+        <div
+          class="input-group td-picker flex-nowrap align-items-start"
+          id="exam-deadline-picker"
+          data-controller="datetimepicker"
+          data-td-target-input="nearest"
+          data-td-target-toggle="nearest"
+        >
+          <div class="flex-grow-1">
+            <%= f.text_field :registration_deadline,
+                           class: "form-control td-input",
+                           disabled: deadline_disabled,
+                           data: { exams__form_target: "registrationDeadline",
+                                   td_target: "#exam-deadline-picker",
+                                   action: "change->exams--form#checkForChanges" },
+                           value: exam.registration_deadline.try(:strftime, "%Y-%m-%d %H:%M") || exam.registration_deadline,
+                           autocomplete: "off" %>
+          </div>
+
+          <span
+            class="input-group-text td-picker-button"
+            style="height: 38px"
+            role="button"
+            data-td-target="#exam-deadline-picker"
+            data-td-toggle="datetimepicker"
+          >
+            <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
+          </span>
+        </div>
+
+        <% if deadline_disabled %>
+          <small class="text-muted d-block">
+            <%= t('assessment.registration_deadline_locked_hint') %>
+          </small>
+        <% elsif exam.new_record? %>
+          <small class="text-muted d-block">
+            <%= t('assessment.registration_deadline_hint') %>
+          </small>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
   <% if exam.new_record? %>
     <div class="mb-3">
       <div class="form-check">
@@ -109,63 +170,6 @@
         </small>
       </div>
     </div>
-  <% end %>
-  <% unless exam.skip_campaigns %>
-    <%
-      campaign = exam.registration_campaign unless exam.new_record?
-      deadline_disabled = campaign&.completed?
-      exam.load_registration_deadline if campaign && exam.registration_deadline.blank?
-    %>
-  <div
-    class="row mb-3"
-    <% if exam.new_record? %>
-      data-exams--form-target="deadlineGroup"
-      <%= 'style="display:none"'.html_safe if exam.skip_campaigns %>
-    <% end %>
-  >
-    <div class="col-md-2">
-      <%= f.label :registration_deadline,
-                  t('assessment.registration_deadline_label'),
-                  class: "col-form-label" %>
-    </div>
-
-    <div class="col-md-5">
-      <div
-        class="input-group td-picker"
-        id="exam-deadline-picker"
-        data-controller="datetimepicker"
-        data-td-target-input="nearest"
-        data-td-target-toggle="nearest"
-      >
-        <%= f.text_field :registration_deadline,
-                         class: "form-control td-input",
-                         disabled: deadline_disabled,
-                         data: { td_target: "#exam-deadline-picker",
-                                 action: "change->exams--form#checkForChanges" },
-                         value: exam.registration_deadline&.strftime("%Y-%m-%d %H:%M"),
-                         autocomplete: "off" %>
-
-        <span
-          class="input-group-text td-picker-button"
-          role="button"
-          data-td-target="#exam-deadline-picker"
-          data-td-toggle="datetimepicker"
-        >
-          <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
-        </span>
-      </div>
-
-      <% if deadline_disabled %>
-        <small class="text-muted d-block">
-          <%= t('assessment.registration_deadline_locked_hint') %>
-        </small>
-      <% elsif exam.new_record? %>
-        <small class="text-muted d-block">
-          <%= t('assessment.registration_deadline_hint') %>
-        </small>
-      <% end %>
-    </div>
-  </div>
   <% end %>
 <% end %>
 

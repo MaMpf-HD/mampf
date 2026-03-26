@@ -49,7 +49,7 @@ class ExamsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
-                                                 partial: "exams/form",
+                                                 partial: "exams/settings",
                                                  locals: { exam: @exam,
                                                            lecture: @lecture })
       end
@@ -79,11 +79,10 @@ class ExamsController < ApplicationController
       if @exam.save
         format.turbo_stream do
           flash[:success] = t("assessment.exam_created")
+          @active_tab = "settings"
           streams = [
             turbo_stream.update("exams_container",
-                                partial: "exams/list",
-                                locals: { lecture: @lecture,
-                                          exams: @lecture.exams.order(date: :asc) }),
+                                build_dashboard_component),
             stream_flash
           ]
           render turbo_stream: streams
@@ -91,7 +90,7 @@ class ExamsController < ApplicationController
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("exams_container",
-                                                   partial: "exams/form",
+                                                   partial: "exams/settings",
                                                    locals: { exam: @exam,
                                                              lecture: @lecture }),
                  status: :unprocessable_content

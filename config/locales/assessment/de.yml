@@ -75,7 +75,7 @@ de:
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
     exam_not_destructible:
       roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
-      in_campaign: 'Löschen nicht möglich: Prüfung ist Teil eines Anmeldeverfahrens'
+      in_campaign: 'Löschen nicht möglich: Anmeldung wurde bereits geöffnet oder abgeschlossen'
     form:
       submit: 'Speichern'
     task:
@@ -328,3 +328,7 @@ de:
               immutable_when_applied: "Angewandte Notenschemata können nicht geändert werden."
             assessment:
               must_be_pointable_and_gradable: "muss sowohl punktebasiert als auch benotbar sein (z.B. Klausur)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"

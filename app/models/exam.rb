@@ -12,6 +12,7 @@ class Exam < ApplicationRecord
 
   validates :title, presence: true
   validates :capacity, numericality: { greater_than: 0, allow_nil: true }
+  validate :registration_deadline_before_exam_date
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   after_create :create_registration_campaign,
@@ -20,6 +21,16 @@ class Exam < ApplicationRecord
                if: lambda {
                  registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
                }
+  before_destroy :destroy_draft_campaign, prepend: true
+
+  def non_destructible_reason
+    return :roster_not_empty unless roster_empty?
+
+    campaign = registration_campaign
+    return :in_campaign if campaign && !campaign.draft?
+
+    nil
+  end
 
   def roster_entries
     exam_rosters
@@ -49,6 +60,15 @@ class Exam < ApplicationRecord
       ensure_pointbook!(requires_submission: false)
     end
 
+    def registration_deadline_before_exam_date
+      return if registration_deadline.blank? || date.blank?
+
+      parsed = registration_deadline.is_a?(String) ? Time.zone.parse(registration_deadline) : registration_deadline
+      return if parsed.blank? || parsed < date
+
+      errors.add(:registration_deadline, :must_be_before_exam_date)
+    end
+
     def update_campaign_deadline
       campaign = registration_campaign
       return unless campaign && !campaign.completed?
@@ -69,5 +89,12 @@ class Exam < ApplicationRecord
         registerable: self,
         capacity: capacity
       )
+    end
+
+    def destroy_draft_campaign
+      campaign = registration_campaign
+      return unless campaign&.draft?
+
+      campaign.destroy!
     end
 end

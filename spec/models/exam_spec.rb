@@ -289,10 +289,32 @@ RSpec.describe(Exam, type: :model) do
       end
     end
 
-    context "when exam is part of a registration campaign" do
+    context "when exam is part of a draft campaign" do
       before do
-        campaign = create(:registration_campaign)
-        create(:registration_item, registerable: exam, registration_campaign: campaign)
+        campaign = create(:registration_campaign, status: :draft)
+        create(:registration_item, registerable: exam,
+                                   registration_campaign: campaign)
+      end
+
+      it "is destructible" do
+        expect(exam.destructible?).to be(true)
+      end
+
+      it "returns nil for non_destructible_reason" do
+        expect(exam.non_destructible_reason).to be_nil
+      end
+
+      it "#in_campaign? returns true" do
+        expect(exam.in_campaign?).to be(true)
+      end
+    end
+
+    context "when exam is part of an open campaign" do
+      before do
+        campaign = create(:registration_campaign, campaignable: exam.lecture)
+        create(:registration_item, registerable: exam,
+                                   registration_campaign: campaign)
+        campaign.update!(status: :open)
       end
 
       it "is not destructible" do
@@ -302,9 +324,24 @@ RSpec.describe(Exam, type: :model) do
       it "returns :in_campaign as non_destructible_reason" do
         expect(exam.non_destructible_reason).to eq(:in_campaign)
       end
+    end
 
-      it "#in_campaign? returns true" do
-        expect(exam.in_campaign?).to be(true)
+    context "when exam is part of a completed campaign" do
+      before do
+        campaign = create(:registration_campaign,
+                          campaignable: exam.lecture,
+                          registration_deadline: 2.weeks.ago)
+        create(:registration_item, registerable: exam,
+                                   registration_campaign: campaign)
+        campaign.update_column(:status, Registration::Campaign.statuses[:completed])
+      end
+
+      it "is not destructible" do
+        expect(exam.destructible?).to be(false)
+      end
+
+      it "returns :in_campaign as non_destructible_reason" do
+        expect(exam.non_destructible_reason).to eq(:in_campaign)
       end
     end
 
@@ -322,6 +359,76 @@ RSpec.describe(Exam, type: :model) do
 
       it "returns :roster_not_empty as first non_destructible_reason (checked first)" do
         expect(exam.non_destructible_reason).to eq(:roster_not_empty)
+      end
+    end
+  end
+
+  describe "destroy with draft campaign" do
+    let(:lecture) { create(:lecture) }
+
+    before do
+      allow(Flipper).to receive(:enabled?).and_call_original
+      allow(Flipper).to receive(:enabled?)
+        .with(:registration_campaigns).and_return(true)
+    end
+
+    context "when auto-created campaign is still draft" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+      it "destroys the exam" do
+        expect { exam.destroy! }.not_to raise_error
+      end
+
+      it "destroys even after destructible? memoizes in_campaign?" do
+        expect(exam.destructible?).to be(true)
+        expect { exam.destroy! }.not_to raise_error
+        expect(Exam.find_by(id: exam.id)).to be_nil
+      end
+
+      it "destroys the draft campaign" do
+        campaign = exam.registration_campaign
+        exam.destroy!
+        expect(Registration::Campaign.find_by(id: campaign.id)).to be_nil
+      end
+
+      it "destroys associated registration items" do
+        item = Registration::Item.find_by(registerable: exam)
+        exam.destroy!
+        expect(Registration::Item.find_by(id: item.id)).to be_nil
+      end
+    end
+
+    context "when campaign has been opened" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+      before do
+        exam.registration_campaign.update!(status: :open)
+      end
+
+      it "is not destructible" do
+        expect(exam.destructible?).to be(false)
+      end
+
+      it "does not destroy the exam" do
+        expect(exam.destroy).to be(false)
+      end
+
+      it "preserves the campaign" do
+        campaign = exam.registration_campaign
+        exam.destroy
+        expect(Registration::Campaign.find_by(id: campaign.id)).to be_present
+      end
+    end
+
+    context "when skip_campaigns is true" do
+      let(:exam) { create(:exam, lecture: lecture, skip_campaigns: true) }
+
+      it "has no campaign" do
+        expect(exam.registration_campaign).to be_nil
+      end
+
+      it "destroys normally" do
+        expect { exam.destroy! }.not_to raise_error
       end
     end
   end

@@ -75,7 +75,7 @@ en:
       has_grading_data: 'Cannot delete: Grading data exists'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
-      in_campaign: 'Cannot delete: Exam is part of a registration campaign'
+      in_campaign: 'Cannot delete: Registration is already open or completed'
     form:
       submit: 'Save'
     task:
@@ -328,3 +328,7 @@ en:
               immutable_when_applied: "Applied grade schemes cannot be modified."
             assessment:
               must_be_pointable_and_gradable: "must be both pointable and gradable (e.g. Exam)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "must be before the exam date"
