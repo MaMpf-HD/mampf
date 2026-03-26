@@ -3,6 +3,8 @@ import { TempusDominus, Namespace } from "@eonasdan/tempus-dominus";
 import "@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css";
 
 export default class extends Controller {
+  static values = { clearable: { type: Boolean, default: false } };
+
   connect() {
     this.initDatetimePicker();
   }
@@ -17,6 +19,9 @@ export default class extends Controller {
     this.picker = new TempusDominus(this.element, {
       display: {
         sideBySide: true,
+        buttons: {
+          clear: this.clearableValue,
+        },
         icons: this.getDateTimePickerIcons(),
       },
       localization: {
