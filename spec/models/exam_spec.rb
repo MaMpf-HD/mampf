@@ -41,6 +41,74 @@ RSpec.describe(Exam, type: :model) do
     it "is valid with nil capacity (unlimited)" do
       expect(build(:exam, capacity: nil)).to be_valid
     end
+
+    describe "registration_deadline" do
+      it "is invalid when deadline is in the past on create" do
+        exam = build(:exam, :with_date,
+                     registration_deadline: 1.day.ago)
+        expect(exam).to be_invalid
+        expect(exam.errors.where(:registration_deadline, :must_be_in_future))
+          .to be_present
+      end
+
+      it "is valid when deadline is in the future on create" do
+        exam = build(:exam, :with_date,
+                     registration_deadline: 1.week.from_now)
+        expect(exam).to be_valid
+      end
+
+      it "is invalid when deadline is after the exam date" do
+        exam = build(:exam, date: 1.week.from_now,
+                            registration_deadline: 2.weeks.from_now)
+        expect(exam).to be_invalid
+        expect(exam.errors.where(:registration_deadline, :must_be_before_exam_date))
+          .to be_present
+      end
+
+      context "on update with an active campaign" do
+        let(:exam) { create(:exam, :with_date) }
+
+        before do
+          allow(Flipper).to receive(:enabled?).and_call_original
+          allow(Flipper).to receive(:enabled?)
+            .with(:registration_campaigns).and_return(true)
+          campaign = exam.registration_campaign
+          campaign.update!(status: :open) if campaign
+        end
+
+        it "is invalid when deadline is changed to the past" do
+          exam.registration_deadline = 1.day.ago
+          expect(exam).to be_invalid
+        end
+
+        it "is valid when deadline is changed to the future" do
+          exam.registration_deadline = 1.week.from_now
+          expect(exam).to be_valid
+        end
+      end
+
+      context "on update with a completed campaign" do
+        let(:exam) { create(:exam, :with_date) }
+
+        before do
+          allow(Flipper).to receive(:enabled?).and_call_original
+          allow(Flipper).to receive(:enabled?)
+            .with(:registration_campaigns).and_return(true)
+          campaign = exam.registration_campaign
+          if campaign
+            campaign.update_column(
+              :status,
+              Registration::Campaign.statuses[:completed]
+            )
+          end
+        end
+
+        it "allows a past deadline (campaign already finished)" do
+          exam.registration_deadline = 1.day.ago
+          expect(exam).to be_valid
+        end
+      end
+    end
   end
 
   describe "associations" do

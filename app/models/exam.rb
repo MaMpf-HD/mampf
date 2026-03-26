@@ -13,6 +13,7 @@ class Exam < ApplicationRecord
   validates :title, presence: true
   validates :capacity, numericality: { greater_than: 0, allow_nil: true }
   validate :registration_deadline_before_exam_date
+  validate :registration_deadline_in_future
 
   after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   after_create :create_registration_campaign,
@@ -67,6 +68,18 @@ class Exam < ApplicationRecord
       return if parsed.blank? || parsed < date
 
       errors.add(:registration_deadline, :must_be_before_exam_date)
+    end
+
+    def registration_deadline_in_future
+      return if registration_deadline.blank?
+
+      campaign = registration_campaign unless new_record?
+      return if campaign && (campaign.closed? || campaign.completed?)
+
+      parsed = registration_deadline.is_a?(String) ? Time.zone.parse(registration_deadline) : registration_deadline
+      return if parsed.blank? || parsed > Time.current
+
+      errors.add(:registration_deadline, :must_be_in_future)
     end
 
     def update_campaign_deadline

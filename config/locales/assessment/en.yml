@@ -138,6 +138,8 @@ en:
     info_bar:
       participants: 'participants'
       registered: 'registered'
+      registration_not_open: 'Registration not yet open.'
+      go_to_registration: 'Go to Registration →'
     campaign_status:
       title: 'Registration'
       none: 'No registration'
@@ -148,8 +150,17 @@ en:
       message: 'This exam has no registration campaign. Students cannot register yet.'
       create: 'Create campaign now'
     registration_tab:
-      skip_campaigns_info: 'Registration is managed manually for this exam. Use the Roster tab to add participants directly.'
+      skip_campaigns_info: 'Registration is managed manually for this exam.'
       no_campaign: 'No registration campaign found for this exam.'
+      participants_heading: 'Participants'
+      registered_count:
+        zero: 'No registrations yet'
+        one: '%{count} registered'
+        other: '%{count} registered'
+      capacity_label: 'Capacity: %{capacity}'
+      unlimited_capacity: 'unlimited'
+      filter_placeholder: 'Filter by name or email'
+      no_filter_results: 'No matching students'
     no_talks_yet: 'No talks created yet.'
     no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assessables_yet: 'No assessments created yet.'
@@ -332,3 +343,4 @@ en:
           attributes:
             registration_deadline:
               must_be_before_exam_date: "must be before the exam date"
+              must_be_in_future: "must be in the future"

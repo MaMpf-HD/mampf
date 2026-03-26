@@ -138,6 +138,8 @@ de:
     info_bar:
       participants: 'Teilnehmende'
       registered: 'angemeldet'
+      registration_not_open: 'Anmeldung noch nicht geöffnet.'
+      go_to_registration: 'Zur Anmeldung →'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
@@ -148,8 +150,17 @@ de:
       message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
       create: 'Jetzt Verfahren erstellen'
     registration_tab:
-      skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet. Verwende den Teilnehmer-Tab, um Teilnehmer direkt hinzuzufügen.'
+      skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet.'
       no_campaign: 'Kein Anmeldeverfahren für diese Prüfung gefunden.'
+      participants_heading: 'Teilnehmende'
+      registered_count:
+        zero: 'Noch keine Anmeldungen'
+        one: '%{count} angemeldet'
+        other: '%{count} angemeldet'
+      capacity_label: 'Kapazität: %{capacity}'
+      unlimited_capacity: 'unbegrenzt'
+      filter_placeholder: 'Nach Name oder E-Mail filtern'
+      no_filter_results: 'Keine passenden Studierenden'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
     no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
@@ -332,3 +343,4 @@ de:
           attributes:
             registration_deadline:
               must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"
+              must_be_in_future: "muss in der Zukunft liegen"

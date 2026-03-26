@@ -86,7 +86,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << points_tab if pointable?
         t << grades_tab if gradable?
         t << grade_scheme_tab if pointable? && gradable?
-        t << roster_tab if exam?
         t << statistics_tab unless assessable.is_a?(Talk)
       end
     end

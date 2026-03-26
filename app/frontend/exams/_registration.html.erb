@@ -47,51 +47,88 @@
       </div>
     </div>
     <% unless campaign.draft? %>
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body py-3">
-              <div class="fs-3 fw-bold">
-                <%= campaign.total_registrations_count %>
-              </div>
+      <% count = campaign.total_registrations_count %>
+      <% cap = exam.capacity %>
+      <div class="mb-3" data-controller="exams--registration-list">
+        <div class="d-flex align-items-baseline gap-2 mb-3">
+          <span class="fs-4 fw-bold">
+            <%= t("assessment.registration_tab.registered_count",
+                  count: count) %>
+          </span>
 
-              <div class="text-muted small">
-                <%= t("registration.campaign.overview.total") %>
-              </div>
-            </div>
-          </div>
+          <span class="text-muted">&middot;</span>
+
+          <span class="text-muted">
+            <%= t("assessment.registration_tab.capacity_label",
+                  capacity: cap.present? ? cap : t("assessment.registration_tab.unlimited_capacity")) %>
+          </span>
         </div>
 
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body py-3">
-              <div class="fs-3 fw-bold text-success">
-                <%= campaign.confirmed_count %>
-              </div>
+        <% grouped = campaign.user_registrations_grouped_by_user %>
 
-              <div class="text-muted small">
-                <%= t("registration.user_registration.status.confirmed") %>
+        <% if grouped.any? %>
+          <input
+            type="text"
+            class="form-control form-control-sm mb-3"
+            placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+            autocomplete="off"
+            data-action="input->exams--registration-list#filter"
+          >
+          <div class="d-grid gap-2">
+            <% grouped.each do |user, registrations| %>
+              <div
+                class="exam-registration-entry card rounded-3"
+                data-exams--registration-list-target="entry"
+                data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
+              >
+                <div class="card-body border-0 py-2 px-3 d-flex gap-2">
+                  <div>
+                    <div class="fw-semibold">
+                      <%= user.tutorial_name.presence || user.email %>
+                    </div>
+
+                    <div class="text-muted small">
+                      <i class="bi bi-envelope me-1"></i>
+                      <%= user.email %>
+                    </div>
+                  </div>
+
+                  <% unless campaign.completed? %>
+                    <%= button_to destroy_for_user_registration_campaign_registrations_path(
+                                    campaign, user_id: user.id,
+                                    source: "registrations"),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger " \
+                                         "exam-registration-remove",
+                                  form: {
+                                    class: "mb-0",
+                                    data: {
+                                      turbo_confirm: t("basics.confirm")
+                                    }
+                                  } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
               </div>
-            </div>
+            <% end %>
           </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body py-3">
-              <div class="fs-3 fw-bold text-warning">
-                <%= campaign.pending_count %>
-              </div>
-
-              <div class="text-muted small">
-                <%= t("registration.user_registration.status.pending") %>
-              </div>
-            </div>
+          <div
+            class="small text-muted mt-2 d-none"
+            data-exams--registration-list-target="noResults"
+          >
+            <%= t("assessment.registration_tab.no_filter_results") %>
           </div>
-        </div>
+        <% end %>
       </div>
-      <%= render "registration/user_registrations/index",
-                 campaign: campaign %>
     <% end %>
   <% end %>
+
+  <hr class="my-4">
+
+  <h5 class="mb-3">
+    <%= t("assessment.registration_tab.participants_heading") %>
+  </h5>
+
+  <%= render ExamParticipantsComponent.new(exam: exam) %>
 </div>

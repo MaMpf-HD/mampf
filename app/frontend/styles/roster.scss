@@ -83,3 +83,38 @@
   border-radius: 0.5rem;
   overflow: hidden;
 }
+
+.exam-registration-entry {
+  border: 1px solid var(--bs-border-color) !important;
+  transition: border-color 0.15s ease-in-out,
+             box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    border-color: rgba(13, 110, 253, 0.45) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.exam-registration-entry .card-body {
+  position: relative;
+  padding-right: 3.25rem;
+}
+
+.exam-registration-remove {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.12s ease-in-out;
+}
+
+.exam-registration-entry:hover .exam-registration-remove {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .exam-registration-remove {
+    opacity: 1;
+  }
+}
