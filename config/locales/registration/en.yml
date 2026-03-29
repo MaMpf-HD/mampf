@@ -246,11 +246,11 @@ en:
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g. too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
-        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
         workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
         item_capacities: "Tutorial Capacities"
       stats:
-        total_registrations: "Total Applicants"
+        total_registrations: "Total Registrations"
         assigned: "Assigned"
         unassigned: "Unassigned"
         happiness_distribution: "Preference Distribution"
