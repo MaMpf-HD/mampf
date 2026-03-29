@@ -1,6 +1,88 @@
 <% entries ||= [] %>
+<% editable ||= false %>
+<% exam ||= nil %>
 
-<% if entries.any? %>
+<% if editable && exam %>
+  <div data-controller="exams--registration-list">
+    <div class="d-flex gap-2 mb-3">
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+        autocomplete="off"
+        data-action="input->exams--registration-list#filter"
+      >
+
+      <%= form_with url: participants_exam_path(exam), method: :post,
+                    local: true,
+                    class: "d-flex gap-2 flex-nowrap" do |f| %>
+        <%= f.email_field :email,
+                          class: "form-control form-control-sm",
+                          placeholder: t("assessment.registration_tab.add_placeholder"),
+                          required: true,
+                          autocomplete: "off",
+                          style: "min-width: 220px;" %>
+
+        <%= f.submit t("assessment.registration_tab.add_button"),
+                     class: "btn btn-sm btn-outline-primary flex-shrink-0" %>
+      <% end %>
+    </div>
+
+    <% if entries.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+              <th class="text-end"><%= t("basics.actions") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% entries.each do |entry| %>
+              <% user = entry.user %>
+
+              <tr
+                data-exams--registration-list-target="entry"
+                data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
+              >
+                <td><%= user.tutorial_name.presence || user.email %></td>
+                <td class="text-muted"><%= user.email %></td>
+
+                <td class="text-end">
+                  <%= button_to remove_participant_exam_path(exam,
+                                                             user_id: user.id),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                form: {
+                                  class: "d-inline-block mb-0",
+                                  data: {
+                                    turbo_confirm: t("basics.confirm")
+                                  }
+                                } do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="small text-muted mt-2 text-center d-none"
+        data-exams--registration-list-target="noResults"
+      >
+        <%= t("assessment.registration_tab.no_filter_results") %>
+      </div>
+    <% else %>
+      <div class="py-3 text-center text-muted">
+        <i class="bi bi-people d-block mb-1" style="font-size: 1.5rem;"></i>
+        <small><%= t("roster.no_participants_yet") %></small>
+      </div>
+    <% end %>
+  </div>
+<% elsif entries.any? %>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">

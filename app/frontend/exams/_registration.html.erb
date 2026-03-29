@@ -15,7 +15,8 @@
     <%= render "exams/participants_table",
                entries: exam.exam_rosters.includes(:user)
                             .joins(:user).merge(User.order(:name)),
-               editable: false %>
+               editable: true,
+               exam: exam %>
   <% elsif campaign.nil? %>
     <div class="alert alert-warning">
       <i class="bi bi-exclamation-triangle me-2"></i>
@@ -150,7 +151,8 @@
     <%= render "exams/participants_table",
                entries: exam.exam_rosters.includes(:user)
                             .joins(:user).merge(User.order(:name)),
-               editable: false %>
+               editable: true,
+               exam: exam %>
     <% rejected = campaign.user_registrations.where(status: :rejected) %>
     <% if rejected.any? %>
       <h6 class="text-muted fw-semibold small text-uppercase mt-4 mb-2">
