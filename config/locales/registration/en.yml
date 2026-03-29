@@ -17,6 +17,7 @@ en:
       completed_title: "Campaign Completed"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
       go_to_roster: "Go to Roster"
+      dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
       helpdesk:

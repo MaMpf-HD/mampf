@@ -17,6 +17,7 @@ de:
       completed_title: "Anmeldeverfahren abgeschlossen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
+      dissolved_enrolled: "zugeteilt"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
       helpdesk:

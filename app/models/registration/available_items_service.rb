@@ -46,8 +46,10 @@ module Registration
       end
 
       def campaign_item_ids_for(type)
+        active_campaigns = @lecture.registration_campaigns
+                                   .where.not(status: :completed)
         Registration::Item
-          .where(registration_campaign: @lecture.registration_campaigns)
+          .where(registration_campaign: active_campaigns)
           .where(registerable_type: type)
           .select(:registerable_id)
       end

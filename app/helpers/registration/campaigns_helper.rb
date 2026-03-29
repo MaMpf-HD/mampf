@@ -103,11 +103,31 @@ module Registration
     end
 
     def no_campaign_registerables(lecture)
-      tutorials = lecture.tutorials.includes(:tutors)
-                         .where(skip_campaigns: true)
-      cohorts = lecture.cohorts
+      active_campaign_ids = lecture.registration_campaigns
+                                   .where.not(status: :completed)
+                                   .select(:id)
 
-      (tutorials.to_a + cohorts.to_a).sort_by { |registerable| registerable.title.to_s.downcase }
+      tutorial_ids_in_active = Registration::Item
+                               .where(registration_campaign_id: active_campaign_ids)
+                               .where(registerable_type: "Tutorial")
+                               .select(:registerable_id)
+
+      cohort_ids_in_active = Registration::Item
+                             .where(registration_campaign_id: active_campaign_ids)
+                             .where(registerable_type: "Cohort")
+                             .select(:registerable_id)
+
+      tutorials = lecture.tutorials.includes(:tutors).where(
+        "skip_campaigns = ? OR tutorials.id NOT IN (?)",
+        true,
+        tutorial_ids_in_active
+      )
+
+      cohorts = lecture.cohorts
+                       .where.not(id: cohort_ids_in_active)
+
+      (tutorials.to_a + cohorts.to_a)
+        .sort_by { |r| r.title.to_s.downcase }
     end
 
     def finalize_campaign_button(campaign, size: nil, disabled: false)
@@ -116,7 +136,10 @@ module Registration
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
                 method: :patch,
-                data: { confirm: t("registration.campaign.confirmations.finalize") },
+                data: {
+                  confirm: t("registration.campaign.confirmations.finalize"),
+                  turbo_stream: true
+                },
                 class: classes,
                 disabled: disabled)
     end

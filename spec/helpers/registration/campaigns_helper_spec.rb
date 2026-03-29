@@ -153,15 +153,39 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
                                 lecture: lecture,
                                 title: "A tutorial",
                                 skip_campaigns: true)
-      create(:tutorial,
-             lecture: lecture,
-             title: "B tutorial",
-             skip_campaigns: false)
+      tutorial_in_campaign = create(:tutorial,
+                                    lecture: lecture,
+                                    title: "B tutorial",
+                                    skip_campaigns: false)
+      campaign = create(:registration_campaign,
+                        :open,
+                        campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial_in_campaign)
 
       result = helper.no_campaign_registerables(lecture)
 
       expect(result).to include(tutorial_visible)
+      expect(result).not_to include(tutorial_in_campaign)
       expect(result.count { |entry| entry.is_a?(Tutorial) }).to eq(1)
+    end
+
+    it "includes tutorials from completed campaigns" do
+      tutorial = create(:tutorial,
+                        lecture: lecture,
+                        title: "C tutorial",
+                        skip_campaigns: false)
+      campaign = create(:registration_campaign,
+                        :completed,
+                        campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(tutorial)
     end
   end
 

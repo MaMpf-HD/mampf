@@ -1,0 +1,27 @@
+<div class="dissolved-campaign-bar mb-2">
+  <span
+    class="dissolved-campaign-pill"
+    title="<%= t("registration.campaign.completed_description") %>"
+  >
+    <span class="dissolved-campaign-pill-dot"></span>
+
+    <span class="dissolved-campaign-pill-name">
+      <%= campaign.description.presence || t("registration.campaign.default_description") %>
+    </span>
+
+    <span class="dissolved-campaign-pill-sep">&middot;</span>
+
+    <span>
+      <%= t("registration.campaign.status.completed") %>
+      <%= l(campaign.updated_at, format: :short) %>
+    </span>
+
+    <span class="dissolved-campaign-pill-sep">&middot;</span>
+
+    <span>
+      <%= campaign.confirmed_count %> /
+      <%= campaign.total_registrations_count %>
+      <%= t("registration.campaign.dissolved_enrolled") %>
+    </span>
+  </span>
+</div>

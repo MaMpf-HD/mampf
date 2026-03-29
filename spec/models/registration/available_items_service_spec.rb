@@ -108,6 +108,12 @@ RSpec.describe(Registration::AvailableItemsService) do
       it "still includes unused items" do
         expect(service.items[:tutorials]).to include(tutorial_free)
       end
+
+      it "includes items from completed campaigns" do
+        other_campaign.update!(status: :completed)
+
+        expect(service.items[:tutorials]).to include(tutorial_in_other)
+      end
     end
 
     context "when campaigns can mix item types" do

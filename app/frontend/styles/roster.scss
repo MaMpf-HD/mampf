@@ -5,14 +5,14 @@
   --roster-tile-border: #d1d5db;
   --roster-tile-bg: #fafbfc;
   --roster-tile-hover-shadow: rgba(0, 0, 0, 0.12);
-  
+
   // Cohort-specific colors
   --cohort-gradient-start: #faf7f0;
   --cohort-gradient-end: #f2ede3;
   --cohort-border: #ddd6c8;
   --cohort-progress-bg: #d9d3c5;
   --cohort-progress-border: #c4bdb0;
-  
+
   // Section header colors
   --section-header-gradient-start: #d4e4f7;
   --section-header-gradient-mid: #e8f0fa;
@@ -181,6 +181,101 @@
     box-shadow: 0 0.35rem 0.85rem rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
   }
+}
+
+@keyframes dissolved-pill-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.85);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(1px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dissolved-tile-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.9);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(4px) scale(1.02);
+  }
+
+  80% {
+    transform: translateY(-1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dissolved-campaign-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-height: 0;
+}
+
+.dissolved-campaign-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.65rem;
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  color: var(--bs-gray-600);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  animation: dissolved-pill-appear 0.7s ease both;
+  animation-delay: 0.15s;
+}
+
+.dissolved-campaign-ambient .registration-group-tile-col {
+  animation: dissolved-tile-settle 0.6s ease both;
+}
+
+@for $i from 1 through 12 {
+  .dissolved-campaign-ambient .registration-group-tile-col:nth-child(#{$i}) {
+    animation-delay: #{300 + $i * 120}ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dissolved-campaign-pill,
+  .dissolved-campaign-ambient .registration-group-tile-col {
+    animation: none;
+  }
+}
+
+.dissolved-campaign-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bs-gray-400);
+  flex-shrink: 0;
+}
+
+.dissolved-campaign-pill-name {
+  font-weight: 600;
+  color: var(--bs-gray-700);
+}
+
+.dissolved-campaign-pill-sep {
+  color: var(--bs-gray-300);
 }
 
 .registration-campaign-ghost-zone {

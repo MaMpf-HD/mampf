@@ -4,6 +4,8 @@
              lecture: lecture %>
 <% else %>
   <% campaigns = lecture.registration_campaigns.order(created_at: :desc) %>
+  <% active_campaigns = campaigns.reject(&:completed?) %>
+  <% completed_campaigns = campaigns.select(&:completed?) %>
   <% no_campaign_groups = no_campaign_registerables(lecture) %>
   <div class="d-flex flex-column gap-2">
     <section>
@@ -16,7 +18,7 @@
             <%= t("registration.campaign.index.new_campaign") %>
           <% end %>
         </div>
-        <% campaigns.each do |campaign| %>
+        <% active_campaigns.each do |campaign| %>
           <% active_tab = campaign.id == local_assigns[:expanded_campaign_id] ?
             (local_assigns[:tab] || "items") : "items" %>
 
@@ -50,10 +52,16 @@
     </section>
 
     <section>
+      <% completed_campaigns.each do |campaign| %>
+        <%= render "registration/campaigns/dissolved_footnote",
+                   campaign: campaign %>
+      <% end %>
+
       <div
         class="
           row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
           registration-group-grid
+          <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
         "
       >
         <%= render partial: "registration/campaigns/group_tile",
