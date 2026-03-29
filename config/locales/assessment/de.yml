@@ -166,6 +166,7 @@ de:
         zero: 'Noch keine Anmeldungen'
         one: '%{count} angemeldet'
         other: '%{count} angemeldet'
+      registered_count_label: 'angemeldet'
       capacity_label: 'Kapazität: %{capacity}'
       unlimited_capacity: 'unbegrenzt'
       filter_placeholder: 'Nach Name oder E-Mail filtern'

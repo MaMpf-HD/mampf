@@ -166,6 +166,7 @@ en:
         zero: 'No registrations yet'
         one: '%{count} registered'
         other: '%{count} registered'
+      registered_count_label: 'registered'
       capacity_label: 'Capacity: %{capacity}'
       unlimited_capacity: 'unlimited'
       filter_placeholder: 'Filter by name or email'
