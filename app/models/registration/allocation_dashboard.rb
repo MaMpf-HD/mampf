@@ -34,6 +34,7 @@ module Registration
     private
 
       def calculate_conflicts
+        return [] if @campaign.completed?
         return [] unless @campaign.campaignable.is_a?(Lecture)
 
         registered_user_ids = @campaign.user_registrations.pluck(:user_id)

@@ -66,5 +66,24 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
         expect(dashboard.conflicting_registrations).to be_empty
       end
     end
+
+    context "when campaign is already completed" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:completed_campaign) do
+        create(:registration_campaign, :completed, campaignable: lecture)
+      end
+      let(:completed_dashboard) { described_class.new(completed_campaign) }
+
+      before do
+        create(:registration_user_registration,
+               registration_campaign: completed_campaign, user: student)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+      end
+
+      it "returns empty array" do
+        expect(completed_dashboard.conflicting_registrations).to be_empty
+      end
+    end
   end
 end
