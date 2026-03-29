@@ -6,19 +6,17 @@
 <div class="<%= embedded ? "" : "container mt-4" %>" id="allocation-dashboard">
   <% if dashboard.policy_violations.present? %>
     <div class="alert alert-danger">
-      <h4 class="alert-heading">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <%= t("registration.allocation.errors.policy_violation_title") %>
-      </h4>
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+      
+      <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
+      — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
-      <p><%= t("registration.allocation.errors.policy_violation_desc") %></p>
-      <hr>
 
-      <ul>
+      <ul class="mt-2 mb-2">
         <% dashboard.policy_violations.each do |violation| %>
           <li class="mb-1">
-            <strong><%= violation[:name] %></strong> ( <%= violation[:email] %>)
-            - <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+            <strong><%= violation[:name] %></strong> (<%= violation[:email] %>)
+            — <%= t("registration.policy.kinds.#{violation[:policy]}") %>
             <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: violation[:user_id], source: allocation_source),
                           method: :delete,
                           class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
@@ -31,31 +29,26 @@
         <% end %>
       </ul>
 
-      <div class="mt-3">
-        <%= button_to t("registration.campaign.actions.force_finalize"),
-                      finalize_registration_campaign_allocation_path(campaign, force: true),
-                      method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.force_finalize") },
-                      class: "btn btn-danger" %>
-      </div>
+      <%= button_to t("registration.campaign.actions.force_finalize"),
+                    finalize_registration_campaign_allocation_path(campaign, force: true),
+                    method: :patch,
+                    data: { confirm: t("registration.campaign.confirmations.force_finalize") },
+                    class: "btn btn-sm btn-danger" %>
     </div>
   <% end %>
 
   <% if dashboard.conflicting_registrations.present? %>
     <div class="alert alert-warning">
-      <h4 class="alert-heading">
-        <i class="bi bi-exclamation-circle-fill"></i>
-        <%= t("registration.allocation.conflicts.title") %>
-      </h4>
+      <i class="bi bi-exclamation-circle-fill me-1"></i>
+      <strong><%= t("registration.allocation.conflicts.title") %></strong> —
+      <%= t("registration.allocation.conflicts.desc") %>
 
-      <p><%= t("registration.allocation.conflicts.desc") %></p>
-      <hr>
 
-      <ul>
+      <ul class="mt-2 mb-0">
         <% dashboard.conflicting_registrations.each do |conflict| %>
           <li class="mb-1">
-            <strong><%= conflict[:user].name %></strong> (
-            <%= conflict[:user].email %>) -
+            <strong><%= conflict[:user].name %></strong>
+            (<%= conflict[:user].email %>) —
             <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
             <% if conflict[:registration] %>
               <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: conflict[:user].id, source: allocation_source),
@@ -85,80 +78,59 @@
     </div>
   <% end %>
 
-  <div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <span class="fw-medium">
+        <%= dashboard.stats.total_registrations %>
+        <%= t("registration.allocation.stats.total_registrations").downcase %>
+      </span>
+
+      <span class="mx-1 text-muted">·</span>
+
+      <span class="text-success fw-medium">
+        <%= dashboard.stats.assigned_users %>
+        <%= t("registration.allocation.stats.assigned").downcase %>
+        (<%= number_to_percentage(dashboard.stats.assigned_percentage, precision: 0) %>)
+      </span>
+
+      <span class="mx-1 text-muted">·</span>
+
+      <span class="<%= dashboard.stats.unassigned_users > 0 ? 'text-danger' : 'text-muted' %> fw-medium">
+        <%= dashboard.stats.unassigned_users %>
+        <%= t("registration.allocation.stats.unassigned").downcase %>
+      </span>
+    </div>
+
     <% if campaign.last_allocation_calculated_at %>
       <small class="text-muted">
-        <%= t("registration.allocation.dashboard.last_updated", time: l(campaign.last_allocation_calculated_at, format: :short)) %>
+        <%= t("registration.allocation.dashboard.last_updated",
+              time: l(campaign.last_allocation_calculated_at, format: :short)) %>
       </small>
     <% end %>
   </div>
 
-  <div class="alert alert-info mb-4">
-    <i class="bi bi-info-circle-fill me-2"></i>
+  <small class="text-muted d-block mb-4">
+    <i class="bi bi-info-circle me-1"></i>
 
     <% if campaign.first_come_first_served? %>
       <%= t("registration.allocation.dashboard.workflow_info_fcfs") %>
     <% else %>
       <%= t("registration.allocation.dashboard.workflow_info") %>
     <% end %>
-  </div>
-
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card text-center h-100">
-        <div class="card-body">
-          <h5 class="card-title">
-            <%= t("registration.allocation.stats.total_registrations") %>
-          </h5>
-
-          <p class="display-4"><%= dashboard.stats.total_registrations %></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card text-center h-100 border-success">
-        <div class="card-body text-success">
-          <h5 class="card-title">
-            <%= t("registration.allocation.stats.assigned") %>
-          </h5>
-
-          <p class="display-4"><%= dashboard.stats.assigned_users %></p>
-
-          <p class="card-text">
-            <%= number_to_percentage(dashboard.stats.assigned_percentage, precision: 0) %>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card text-center h-100 border-danger">
-        <div class="card-body text-danger">
-          <h5 class="card-title">
-            <%= t("registration.allocation.stats.unassigned") %>
-          </h5>
-
-          <p class="display-4"><%= dashboard.stats.unassigned_users %></p>
-
-          <p class="card-text">
-            <%= number_to_percentage(dashboard.stats.unassigned_percentage, precision: 0) %>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+  </small>
 
   <% unless campaign.first_come_first_served? %>
     <div class="card mb-4">
-      <div class="card-header">
-        <%= t("registration.allocation.stats.happiness_distribution") %>
+      <div class="card-header bg-light">
+        <h5 class="card-title mb-0">
+          <%= t("registration.allocation.stats.happiness_distribution") %>
+        </h5>
       </div>
 
-      <div class="card-body">
+      <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-sm">
-            <thead>
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
               <tr>
                 <th><%= t("registration.allocation.stats.rank") %></th>
 
@@ -180,14 +152,14 @@
                   <td><%= rank_label(rank) %></td>
                   <td class="text-end"><%= count %></td>
 
-                  <td class="align-middle">
+                  <td>
                     <div class="d-flex align-items-center">
                       <div class="flex-grow-1">
                         <%= progress_bar(count, dashboard.stats.assigned_users,
-                                                      classification: rank_color(rank),
-                                                      height: "10px",
-                                                      show_label: false,
-                                                      container_class: "progress") %>
+                                         classification: rank_color(rank),
+                                         height: "10px",
+                                         show_label: false,
+                                         container_class: "progress") %>
                       </div>
 
                       <div class="ms-2 text-end" style="width: 3.5rem;">
@@ -205,14 +177,16 @@
   <% end %>
 
   <div class="card mb-4">
-    <div class="card-header">
-      <%= t("registration.allocation.dashboard.item_capacities") %>
+    <div class="card-header bg-light">
+      <h5 class="card-title mb-0">
+        <%= t("registration.allocation.dashboard.item_capacities") %>
+      </h5>
     </div>
 
-    <div class="card-body">
+    <div class="card-body p-0">
       <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
             <tr>
               <th><%= t("basics.title") %></th>
 
@@ -278,15 +252,15 @@
                   <% end %>
                 </td>
 
-                <td class="align-middle">
+                <td>
                   <% if data[:capacity] %>
                     <div class="d-flex align-items-center">
                       <div class="flex-grow-1">
                         <%= progress_bar(data[:count], data[:capacity],
-                                                      classification: :utilization,
-                                                      height: "10px",
-                                                      show_label: false,
-                                                      container_class: "progress") %>
+                                         classification: :utilization,
+                                         height: "10px",
+                                         show_label: false,
+                                         container_class: "progress") %>
                       </div>
 
                       <div class="ms-2 text-end" style="width: 3.5rem;">
@@ -294,7 +268,7 @@
                       </div>
                     </div>
                   <% else %>
-                    <span class="text-muted">-</span>
+                    <span class="text-muted">—</span>
                   <% end %>
                 </td>
               </tr>
@@ -306,15 +280,23 @@
   </div>
 
   <div class="card">
-    <div class="card-header <%= dashboard.unassigned_students.any? ? 'bg-danger' : 'bg-success' %> text-white">
-      <%= t("registration.allocation.dashboard.unassigned_students") %>
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">
+        <%= t("registration.allocation.dashboard.unassigned_students") %>
+
+        <% if dashboard.unassigned_students.any? %>
+          <span class="badge bg-danger ms-2">
+            <%= dashboard.unassigned_students.size %>
+          </span>
+        <% end %>
+      </h5>
     </div>
 
     <div class="card-body p-0">
       <% if dashboard.unassigned_students.any? %>
         <div class="table-responsive">
-          <table class="table table-striped mb-0">
-            <thead>
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
               <tr>
                 <th><%= t("basics.display_name") %></th>
                 <th><%= t("basics.email") %></th>
@@ -325,14 +307,15 @@
               <% dashboard.unassigned_students.each do |student| %>
                 <tr>
                   <td><%= student.tutorial_name %></td>
-                  <td><%= student.email %></td>
+                  <td class="text-muted"><%= student.email %></td>
                 </tr>
               <% end %>
             </tbody>
           </table>
         </div>
       <% else %>
-        <div class="p-3 text-center text-muted">
+        <div class="p-4 text-center text-muted">
+          <i class="bi bi-check-circle display-6 d-block mb-2"></i>
           <%= t("registration.allocation.dashboard.no_unassigned") %>
         </div>
       <% end %>
