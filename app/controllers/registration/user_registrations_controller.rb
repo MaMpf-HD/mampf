@@ -27,10 +27,12 @@ module Registration
     end
 
     def index
-      @campaigns = Campaign::LectureCampaignsService
-                   .new(@lecture, current_user)
-                   .call
-      rosterized_items = @campaigns.flat_map { |details| details.results[:items_succeed] }.uniq
+      @campaigns_details = Campaign::LectureCampaignsService
+                           .new(@lecture, current_user)
+                           .call
+      rosterized_items = @campaigns_details.flat_map do |details|
+        details.results[:items_succeed]
+      end.uniq
       @rosterized_items = rosterized_items.any? ? rosterized_items.map(&:title).join(", ") : nil
       render template: "registration/main/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
@@ -48,7 +50,8 @@ module Registration
                    .new.pref_item_build_for_save(params[:preferences_json])
       result = Registration::UserRegistration::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
-      reset_preferences if result.success?
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.registration_success"))
     end
 
     def destroy
@@ -95,15 +98,20 @@ module Registration
 
       def respond_to_student_registration(result, success_message)
         if result.success?
-          @details = Registration::Campaign::CampaignDetailsService.new(@campaign, current_user)
-                                                                   .call
+          flash.now[:notice] = success_message
           respond_to do |format|
             format.turbo_stream do
-              render turbo_stream: turbo_stream.update(
-                view_context.dom_id(@campaign, :main_student_registration_campaign),
-                partial: "registration/main/campaign_card",
-                locals: { details: @details, campaign: @campaign }
-              )
+              @details = Registration::Campaign::CampaignDetailsService.new(@campaign,
+                                                                            current_user)
+                                                                       .call
+              render turbo_stream: [
+                turbo_stream.replace("flash-messages", partial: "flash/messages"),
+                turbo_stream.update(
+                  view_context.dom_id(@campaign, :main_student_registration_campaign),
+                  partial: "registration/main/campaign_card",
+                  locals: { details: @details, campaign: @campaign }
+                )
+              ]
             end
             format.html do
               redirect_to lecture_campaign_registrations_path(@campaign.campaignable),
@@ -117,6 +125,14 @@ module Registration
             fallback_location: lecture_campaign_registrations_path(@campaign.campaignable)
           )
         end
+      end
+
+      def rerender_preferences(locals)
+        render turbo_stream: turbo_stream.update(
+          view_context.dom_id(@campaign, :preferences_workspace),
+          partial: "registration/main/pb/preferences_workspace",
+          locals: locals
+        )
       end
 
       def render_turbo_stream_response
@@ -238,14 +254,6 @@ module Registration
         { item_preferences: item_preferences,
           campaign: @campaign,
           items: items }
-      end
-
-      def rerender_preferences(locals)
-        render turbo_stream: turbo_stream.update(
-          view_context.dom_id(@campaign, :preferences_workspace),
-          partial: "registration/main/pb/preferences_workspace",
-          locals: locals
-        )
       end
   end
 end

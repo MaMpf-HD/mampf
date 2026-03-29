@@ -236,6 +236,7 @@ de:
       campaign_main: "Anmeldeverfahren: Allgemeine Anmeldung"
       eligibility_title: "Ihre Berechtigung"
       preferences_title: Ihre ausgewählten Einstellungen
+      success_preferences_title: Ihre erfolgreichen Einstellungen
       option_title: "Verfügbare Optionen"
       eligible: "Berechtigt"
       not_eligible: "Nicht berechtigt"

@@ -26,10 +26,10 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
     it "creates a confirmed registration" do
       campaign.update!(status: :open)
-      service = described_class.new(campaign, user, item)
+      service = described_class.new(campaign, user)
 
       expect do
-        service.register!
+        service.register!(item)
       end.to change { Registration::UserRegistration.count }.by(1)
 
       registration = Registration::UserRegistration.last
@@ -40,9 +40,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "fully deletes a registration on withdraw" do
-      service = described_class.new(campaign, user, item)
-      service.register!
-      service.withdraw!
+      service = described_class.new(campaign, user)
+      service.register!(item)
+      service.withdraw!(item)
       registration = Registration::UserRegistration.first
       expect(registration).to be_nil
     end
@@ -57,10 +57,10 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     let(:item2) { campaign.registration_items.second }
 
     it "creates a confirmed registration when validations pass, case no user registration" do
-      service = described_class.new(campaign, user, item)
+      service = described_class.new(campaign, user)
 
       expect do
-        service.register!
+        service.register!(item)
       end.to change { Registration::UserRegistration.count }.by(1)
 
       registration = Registration::UserRegistration.last
@@ -72,9 +72,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
     context "invalid cases" do
       it "raises error if campaign is closed" do
-        service = described_class.new(campaign_draft, user, item)
+        service = described_class.new(campaign_draft, user)
 
-        result = service.register!
+        result = service.register!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
           I18n.t("registration.user_registration.messages.campaign_not_opened")
@@ -89,9 +89,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
           status: :confirmed
         )
 
-        service = described_class.new(campaign, user, item)
+        service = described_class.new(campaign, user)
 
-        result = service.register!
+        result = service.register!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
           I18n.t("registration.user_registration.messages.already_registered")
@@ -100,9 +100,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
 
       it "raises error if item has no capacity" do
         item.registerable.update!(capacity: 0)
-        service = described_class.new(campaign, user, item)
+        service = described_class.new(campaign, user)
 
-        result = service.register!
+        result = service.register!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(I18n.t("registration.user_registration.messages.no_slots"))
       end
@@ -125,15 +125,15 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       end
 
       it "deletes registration" do
-        service = described_class.new(campaign, user, item)
-        service.withdraw!
+        service = described_class.new(campaign, user)
+        service.withdraw!(item)
         expect(Registration::UserRegistration.first).to be_nil
       end
 
       it "raises error if campaign is closed" do
         campaign.update!(status: :closed)
-        service = described_class.new(campaign, user, item)
-        result = service.withdraw!
+        service = described_class.new(campaign, user)
+        result = service.withdraw!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
           I18n.t("registration.user_registration.messages.campaign_not_opened")
@@ -152,9 +152,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       end
 
       it "raise error if incorrect item is given" do
-        service = described_class.new(campaign, user, item)
+        service = described_class.new(campaign, user)
         expect do
-          service.withdraw!
+          service.withdraw!(item)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -182,8 +182,8 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "fail to register child if parent has not been registered" do
-      service = described_class.new(campaign_child, user, item_child)
-      result = service.register!
+      service = described_class.new(campaign_child, user)
+      result = service.register!(item_child)
       expect(result.success?).to be(false)
       expect(result.errors).to include(
         I18n.t("registration.user_registration.messages.requirements_not_met")
@@ -191,10 +191,10 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "success to register child if parent has been registered" do
-      service_parent = described_class.new(campaign_parent, user, item_parent)
-      service_parent.register!
-      service = described_class.new(campaign_child, user, item_child)
-      result = service.register!
+      service_parent = described_class.new(campaign_parent, user)
+      service_parent.register!(item_parent)
+      service = described_class.new(campaign_child, user)
+      result = service.register!(item_child)
       expect(result.success?).to be(true)
     end
   end
@@ -234,8 +234,8 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     end
 
     it "allows registering for cohort" do
-      service = described_class.new(campaign, user, item_cohort)
-      result = service.register!
+      service = described_class.new(campaign, user)
+      result = service.register!(item_cohort)
       expect(result.success?).to be(true)
       registration = Registration::UserRegistration.last
       expect(registration.registration_item).to eq(item_cohort)
@@ -249,12 +249,15 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
         user: user,
         status: :confirmed
       )
-      service = described_class.new(campaign, user, item_cohort)
-      result = service.register!
+      service = described_class.new(campaign, user)
+      result = service.register!(item_cohort)
       expect(result.success?).to be(true)
-      registration = Registration::UserRegistration.last
-      expect(registration.registration_item).to eq(item_cohort)
-      expect(registration.status).to eq("confirmed")
+      registration1 = Registration::UserRegistration.last
+      registration2 = Registration::UserRegistration.second_to_last
+      expect([registration1.registration_item, registration2.registration_item])
+        .to include(item_cohort)
+      expect(registration1.status).to eq("confirmed")
+      expect(registration2.status).to eq("confirmed")
     end
   end
 end

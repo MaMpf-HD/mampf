@@ -40,7 +40,7 @@ module Registration
         domains = Array(policy[:config]["allowed_domains"])
         domains.join(", ")
       when "prerequisite_campaign"
-        policy[:config]["prerequisite_campaign_id"]
+        policy[:config]["prerequisite_campaign"]
       else
         "No configuration available"
       end
@@ -49,7 +49,11 @@ module Registration
     def get_details_render_type_policy_kind(kind)
       case kind
       when "prerequisite_campaign"
-        "link"
+        "text"
+      when "institutional_email"
+        "text"
+      when "lecture_performance"
+        "badge"
       else
         "text"
       end

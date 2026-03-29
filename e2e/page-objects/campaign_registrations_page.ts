@@ -7,9 +7,9 @@ export class CampaignRegistrationPage {
   readonly page: Page;
   readonly link: string;
 
-  constructor(page: Page, campaignId: string | number) {
+  constructor(page: Page, lectureId: string | number) {
     this.page = page;
-    this.link = `/campaign_registrations/${campaignId}`;
+    this.link = `lectures/${lectureId}/campaign_registrations`;
   }
 
   async goto() {

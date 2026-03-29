@@ -1,6 +1,10 @@
 <div>
   <div class="fw-semibold mt-2 mb-2 text-muted">
-    <%= t('registration.user_registration.preferences_title') %>
+    <% if campaign.open_for_registrations? %>
+      <%= t('registration.user_registration.preferences_title') %>
+    <%else%>
+      <%= t('registration.user_registration.success_preferences_title') %>
+    <% end %>
   </div>
 
   <% if item_preferences.present? %>

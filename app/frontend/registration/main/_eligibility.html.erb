@@ -24,11 +24,7 @@
           <% policy_info = get_policy_config_info(policy) %>
 
           <small class="text-muted">
-            <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
-              <%= link_to t('registration.user_registration.prerequisite_campaign'),
-                          campaign_registrations_for_campaign_path(campaign_id: policy_info),
-                          target: :_blank %>
-            <% else %>
+            <% if get_details_render_type_policy_kind(policy[:kind]) == 'text' %>
               <%= policy_info %>
             <% end %>
           </small>

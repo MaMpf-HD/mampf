@@ -17,9 +17,9 @@
 
 <!-- campaign list -->
 <div class="campaign-list d-flex flex-column gap-4">
-  <% if @campaigns.any? %>
-    <% uncompleted_campaigns = @campaigns.select { |cd| !(cd.campaign.status == "completed") } %>
-    <% completed_campaigns = @campaigns - uncompleted_campaigns %>
+  <% if @campaigns_details.any? %>
+    <% uncompleted_campaigns = @campaigns_details.select { |cd| !(cd.campaign.status == "completed") } %>
+    <% completed_campaigns = @campaigns_details - uncompleted_campaigns %>
     <!-- Active campaigns -->
     <% uncompleted_campaigns.each do |campaign_details| %>
       <div>
@@ -44,7 +44,7 @@
         icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';"
     >
       <span><%= t("registration.campaign.completed_campaign_title") %></span>
-      <span style="transition: transform 0.2s ease;">	&#9660;</span>
+      <span style="transition: transform 0.2s ease;"> &#9660;</span>
     </div>
     <div
       class="collapse mt-2"

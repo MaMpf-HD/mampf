@@ -30,7 +30,20 @@ module Registration
       end
 
       def eligibility
-        PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: :registration)
+        trace = PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: :registration)
+        trace.each do |policy_result|
+          next unless policy_result[:kind] == "prerequisite_campaign"
+
+          id = policy_result[:config]["prerequisite_campaign_id"]
+          campaign = Registration::Campaign.find_by(id: id)
+          policy_result[:config]["prerequisite_campaign"] =
+            if campaign
+              "#{campaign&.campaignable&.title}: #{campaign&.description}"
+            else
+              "Campaign not found"
+            end
+        end
+        trace
       end
 
       def items

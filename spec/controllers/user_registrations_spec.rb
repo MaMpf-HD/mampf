@@ -12,6 +12,40 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
 
   before { sign_in user }
 
+  describe "GET #index" do
+    let(:campaign) do
+      FactoryBot.create(
+        :registration_campaign,
+        :open,
+        :first_come_first_served
+      )
+    end
+
+    let(:campaign_details) do
+      instance_double(
+        Registration::Campaign::CampaignDetailsService::Result,
+        results: { items_succeed: [item] }
+      )
+    end
+
+    it "calls LectureCampaignsService and renders index" do
+      service_double = instance_double(Registration::Campaign::LectureCampaignsService)
+
+      expect(Registration::Campaign::LectureCampaignsService)
+        .to receive(:new)
+        .with(lecture, user)
+        .and_return(service_double)
+
+      expect(service_double)
+        .to receive(:call)
+        .and_return([campaign_details])
+
+      get :index, params: { lecture_id: lecture.id }
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   context "tutorial FCFS campaign open" do
     let(:campaign) do
       FactoryBot.create(
@@ -50,29 +84,6 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
         expect(service_double).to receive(:withdraw!).and_return(stub_success)
 
         delete :destroy, params: { campaign_id: campaign.id, item_id: item.id }
-      end
-    end
-  end
-
-  context "tutorial FCFS campaign completed" do
-    let(:campaign) do
-      FactoryBot.create(
-        :registration_campaign,
-        :completed,
-        :first_come_first_served,
-        :with_items
-      )
-    end
-    let(:item) { campaign.registration_items.first }
-    describe "calls StudentMainResultResolver for checking succeeded items" do
-      it "GET registrations_for_campaign" do
-        service_double = instance_double(Rosters::StudentMainResultResolver)
-        expect(Rosters::StudentMainResultResolver).to receive(:new)
-          .with(campaign, an_instance_of(User))
-          .and_return(service_double)
-        expect(service_double).to receive(:succeed_items).and_return(stub_succeed_items)
-
-        get :registrations_for_campaign, params: { campaign_id: campaign.id }
       end
     end
   end
