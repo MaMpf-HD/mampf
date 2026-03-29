@@ -43,6 +43,21 @@
     <% end %>
   </li>
 
+  <%# Enrollment %>
+  <% if lecture %>
+    <% project_name = 'enrollment' %>
+    <% fullpath = lecture_campaign_registrations_path(lecture) %>
+    <% active_class = get_class_for_project(project_name) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture ? "disabled" : ""%>">
+      <%= link_to url_for(fullpath),
+          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+        <i class="bi bi-person-check<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('categories.enrollment.singular') %>
+      <% end %>
+    </li>
+  <% end %>
+
   <%# Divider %>
   <span class="border-top my-3"></span>
 

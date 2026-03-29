@@ -1,7 +1,12 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    before_action :set_campaign
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
+    before_action :set_lecture, only: [:index]
+    before_action :set_campaign, only: [:create, :reset_preferences,
+                                        :update, :destroy_for_user]
     before_action :set_locale
+    before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -21,7 +26,114 @@ module Registration
       destroy_registrations(registrations)
     end
 
+    def index
+      @campaigns_details = Campaign::LectureCampaignsService
+                           .new(@lecture, current_user)
+                           .call
+      rosterized_items = @campaigns_details.flat_map do |details|
+        details.results[:items_succeed]
+      end.uniq
+      @rosterized_items = rosterized_items.any? ? rosterized_items.map(&:title).join(", ") : nil
+      render template: "registration/main/index",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
+    end
+
+    def create
+      result = Registration::UserRegistration::LectureFcfsEditService
+               .new(@campaign, current_user).register!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.registration_success"))
+    end
+
+    def update
+      pref_items = UserRegistration::PreferencesHandler
+                   .new.pref_item_build_for_save(params[:preferences_json])
+      result = Registration::UserRegistration::LecturePreferenceEditService
+               .new(@campaign, current_user).update!(pref_items)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.registration_success"))
+    end
+
+    def destroy
+      @campaign = @item.user_registrations.find_by!(user_id: current_user.id,
+                                                    status: :confirmed)
+                       .registration_campaign
+      result = Registration::UserRegistration::LectureFcfsEditService
+               .new(@campaign, current_user).withdraw!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.withdrawn"))
+    end
+
+    def render_not_found(exception)
+      render json: { error: exception.message }, status: :unprocessable_content
+    end
+
+    def up
+      locals = handle_preference_action(:up)
+      rerender_preferences(locals)
+    end
+
+    def down
+      locals = handle_preference_action(:down)
+      rerender_preferences(locals)
+    end
+
+    def add
+      locals = handle_preference_action(:add)
+      rerender_preferences(locals)
+    end
+
+    def remove
+      locals = handle_preference_action(:remove)
+      rerender_preferences(locals)
+    end
+
+    def reset_preferences
+      locals = Registration::Campaign::CampaignDetailsService.new(@campaign, current_user)
+                                                             .preferences_info
+      rerender_preferences(locals)
+    end
+
     private
+
+      def respond_to_student_registration(result, success_message)
+        if result.success?
+          flash.now[:notice] = success_message
+          respond_to do |format|
+            format.turbo_stream do
+              @details = Registration::Campaign::CampaignDetailsService.new(@campaign,
+                                                                            current_user)
+                                                                       .call
+              render turbo_stream: [
+                turbo_stream.replace("flash-messages", partial: "flash/messages"),
+                turbo_stream.update(
+                  view_context.dom_id(@campaign, :main_student_registration_campaign),
+                  partial: "registration/main/campaign_card",
+                  locals: { details: @details, campaign: @campaign }
+                )
+              ]
+            end
+            format.html do
+              redirect_to lecture_campaign_registrations_path(@campaign.campaignable),
+                          notice: success_message
+            end
+          end
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: lecture_campaign_registrations_path(@campaign.campaignable)
+          )
+        end
+      end
+
+      def rerender_preferences(locals)
+        render turbo_stream: turbo_stream.update(
+          view_context.dom_id(@campaign, :preferences_workspace),
+          partial: "registration/main/pb/preferences_workspace",
+          locals: locals
+        )
+      end
 
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
@@ -57,7 +169,8 @@ module Registration
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        id = params[:registration_campaign_id] || params[:campaign_id]
+        @campaign = Registration::Campaign.find_by(id: id)
         return if @campaign
 
         respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
@@ -117,6 +230,30 @@ module Registration
             render_turbo_stream_response
           end
         end
+      end
+
+      def set_item
+        @item = Registration::Item.find(params[:item_id])
+      end
+
+      def set_lecture
+        lecture_id = params[:lecture_id]&.to_i
+        @lecture = Lecture.find_by(id: lecture_id)
+        return if @lecture
+
+        respond_with_error(t("registration.lecture.not_found"), redirect_path: root_path)
+      end
+
+      def handle_preference_action(action)
+        @campaign = @item.registration_campaign
+        items = @campaign.registration_items.includes(:user_registrations)
+        item_preferences = UserRegistration::PreferencesHandler
+                           .new.public_send(action, params[:item_id],
+                                            params[:preferences_json])
+        @campaign.reload
+        { item_preferences: item_preferences,
+          campaign: @campaign,
+          items: items }
       end
   end
 end

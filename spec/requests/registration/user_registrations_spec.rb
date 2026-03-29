@@ -81,3 +81,56 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
   end
 end
+
+RSpec.describe("Registration::UserRegistrations", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture) }
+  let(:seminar) { create(:lecture, :is_seminar) }
+
+  before do
+    Flipper.enable(:registration_campaigns)
+    sign_in user
+  end
+
+  describe "GET lectures/:lecture_id/campaign_registrations" do
+    context "should display multi select mode with open + fcfs tutorial campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign,
+                          :first_come_first_served,
+                          :open,
+                          :with_policies,
+                          campaignable: lecture,
+                          description: "Solver Test Campaign")
+      end
+      it "return success response" do
+        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "should display multi select mode with open + fcfs talks campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign, :first_come_first_served, :open, :with_policies,
+                          campaignable: seminar, description: "Solver Test Campaign")
+      end
+      it "return success response" do
+        get lecture_campaign_registrations_path(lecture_id: seminar.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "should display result with completed campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign, :first_come_first_served,
+                          :completed_after_policies, campaignable: seminar, description: "Solver Test Campaign")
+      end
+      it "return success response" do
+        get lecture_campaign_registrations_path(lecture_id: seminar.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+end

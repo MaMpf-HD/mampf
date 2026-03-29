@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-between align-items-start">
+  <div>
+    <div class="mb-1 d-flex align-items-center gap-2">
+      <span class="h4 me-2"><%= campaign.description %></span>
+    </div>
+  </div>
+
+  <div class="text-end">
+    <span
+      class="
+        d-inline-flex align-items-center
+        px-3 py-1 rounded-pill
+        small fw-medium
+        <%= status_campaign_style(campaign.status) %>
+      "
+    >
+      <%= campaign.status&.humanize %>
+    </span>
+
+    <% if campaign.only_planning_cohort? %>
+      <span
+        class="
+          d-inline-flex align-items-center
+          px-3 py-1 rounded-pill
+          small fw-medium bg-info-subtle text-info
+        "
+      >
+        <%= t('registration.user_registration.planning') %>
+      </span>
+    <% end %>
+
+    <% if campaign.open_for_registrations? %>
+      <span
+        class="
+          d-inline-flex align-items-center gap-1
+          px-3 py-1
+          rounded-pill
+          bg-warning-subtle text-warning-emphasis
+          small fw-medium
+        "
+      >
+        <%= t('basics.closes') %>:
+        <%= format_date(campaign.registration_deadline) %>
+      </span>
+    <% end %>
+
+    <% if campaign.status == "completed" && %>
+      <% if campaign.user_registration_confirmed?(current_user) %>
+        <span
+          class="
+            d-inline-flex align-items-center
+            px-3 py-1
+            rounded-pill
+            bg-success-subtle text-success-emphasis
+            small fw-medium
+          "
+        >
+          <%= t('basics.assigned') %>
+        </span>
+      <% else %>
+        <span
+          class="
+            d-inline-flex align-items-center
+            px-3 py-1
+            rounded-pill
+            bg-danger-subtle text-danger-emphasis
+            small fw-medium
+          "
+        >
+          <%= t('basics.dismissed') %>
+        </span>
+      <% end %>
+    <% end %>
+  </div>
+</div>

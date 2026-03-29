@@ -45,14 +45,6 @@ module Registration
               absence: true,
               if: -> { registration_campaign.first_come_first_served? }
 
-    # FCFS campaigns: one row per user+campaign
-    # There is also a DB index to enforce it at the database level (see the schema).
-    validates :user_id,
-              uniqueness: {
-                scope: :registration_campaign_id
-              },
-              if: -> { registration_campaign.first_come_first_served? }
-
     after_create :increment_confirmed_counter
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
