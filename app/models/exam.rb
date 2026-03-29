@@ -55,6 +55,35 @@ class Exam < ApplicationRecord
     "#{title} (#{I18n.l(date, format: :short)})"
   end
 
+  def status_phase
+    campaign = registration_campaign
+
+    if campaign && !campaign.completed?
+      return :draft if campaign.draft?
+      return :registration_open if campaign.open?
+      return :registration_closed if campaign.closed? || campaign.processing?
+    end
+
+    if date && date < Date.current
+      return :graded if assessment&.results_published?
+      return :grading if any_grading_started?
+
+      return :conducted
+    end
+
+    :finalized
+  end
+
+  STATUS_PHASE_BADGE = {
+    draft: "secondary",
+    registration_open: "primary",
+    registration_closed: "info",
+    finalized: "success",
+    conducted: "dark",
+    grading: "warning",
+    graded: "success"
+  }.freeze
+
   private
 
     def setup_assessment
@@ -102,6 +131,11 @@ class Exam < ApplicationRecord
         registerable: self,
         capacity: capacity
       )
+    end
+
+    def any_grading_started?
+      assessment&.assessment_participations
+                &.where(status: :reviewed)&.exists? || false
     end
 
     def destroy_draft_campaign

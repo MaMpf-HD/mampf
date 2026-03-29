@@ -32,7 +32,8 @@ module Registration
         if params[:source] == "allocation"
           load_allocation_data
           streams << turbo_stream.replace("allocation-dashboard",
-                                          partial: "registration/allocations/dashboard")
+                                          partial: "registration/allocations/dashboard",
+                                          locals: { frame_id: params[:frame_id] })
         elsif params[:source] == "registrations"
           streams << turbo_stream.replace("user-registrations-list",
                                           partial: "registration/user_registrations/index",

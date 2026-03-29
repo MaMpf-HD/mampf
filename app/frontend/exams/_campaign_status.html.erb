@@ -1,12 +1,5 @@
-<% if exam.skip_campaigns %>
-  <span class="badge bg-secondary">
-    <i class="bi bi-person-gear me-1"></i><%= t("assessment.campaign_status.direct") %>
-  </span>
-<% elsif exam.registration_campaign %>
-  <% campaign = exam.registration_campaign %>
-  <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-    <%= t("registration.campaign.status.#{campaign.status}") %>
-  </span>
-<% else %>
-  <span class="text-muted">&mdash;</span>
-<% end %>
+<% phase = exam.status_phase %>
+
+<span class="<%= "badge bg-#{Exam::STATUS_PHASE_BADGE[phase]}" %>">
+  <%= t("assessment.exam_status.#{phase}") %>
+</span>

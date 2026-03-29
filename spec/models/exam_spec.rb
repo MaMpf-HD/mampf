@@ -183,6 +183,143 @@ RSpec.describe(Exam, type: :model) do
     end
   end
 
+  describe "#status_phase" do
+    let(:lecture) { create(:lecture) }
+
+    context "with a draft campaign" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+      end
+
+      it "returns :draft" do
+        expect(exam.status_phase).to eq(:draft)
+      end
+    end
+
+    context "with an open campaign" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign.update!(status: :open)
+      end
+
+      it "returns :registration_open" do
+        expect(exam.status_phase).to eq(:registration_open)
+      end
+    end
+
+    context "with a closed campaign" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:closed])
+      end
+
+      it "returns :registration_closed" do
+        expect(exam.status_phase).to eq(:registration_closed)
+      end
+    end
+
+    context "with a completed campaign and future date" do
+      let(:exam) { create(:exam, date: 2.weeks.from_now, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+      end
+
+      it "returns :finalized" do
+        expect(exam.status_phase).to eq(:finalized)
+      end
+    end
+
+    context "with a completed campaign and past date, no grading" do
+      let(:exam) { create(:exam, date: 1.week.ago, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+      end
+
+      it "returns :conducted" do
+        expect(exam.status_phase).to eq(:conducted)
+      end
+    end
+
+    context "with past date and some grading started" do
+      let(:exam) { create(:exam, date: 1.week.ago, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:assessment_grading).and_return(true)
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+        user = create(:confirmed_user)
+        exam.assessment.assessment_participations
+            .create!(user: user, status: :reviewed)
+      end
+
+      it "returns :grading" do
+        expect(exam.status_phase).to eq(:grading)
+      end
+    end
+
+    context "with past date and results published" do
+      let(:exam) { create(:exam, date: 1.week.ago, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:assessment_grading).and_return(true)
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+        exam.assessment.update!(results_published_at: Time.current)
+      end
+
+      it "returns :graded" do
+        expect(exam.status_phase).to eq(:graded)
+      end
+    end
+
+    context "without a campaign (skip_campaigns)" do
+      let(:exam) do
+        create(:exam, date: 2.weeks.from_now,
+                      lecture: lecture, skip_campaigns: true)
+      end
+
+      it "returns :finalized when date is in the future" do
+        expect(exam.status_phase).to eq(:finalized)
+      end
+
+      it "returns :conducted when date is in the past" do
+        exam.update_column(:date, 1.week.ago)
+        expect(exam.status_phase).to eq(:conducted)
+      end
+    end
+  end
+
   describe "#materialize_allocation!" do
     let(:lecture) { create(:lecture) }
     let(:exam) { create(:exam, lecture: lecture) }

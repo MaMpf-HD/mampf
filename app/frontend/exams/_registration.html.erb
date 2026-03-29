@@ -1,6 +1,8 @@
 <% campaign = exam.registration_campaign %>
 <% frame_id = "exam_#{exam.id}_registration" %>
 <% bp = { frame_id: frame_id } %>
+<% phase = exam.status_phase %>
+<% pre_finalization = %i[draft registration_open registration_closed].include?(phase) %>
 
 <div id="<%= frame_id %>">
   <% if exam.skip_campaigns %>
@@ -8,17 +10,16 @@
       <i class="bi bi-info-circle me-2"></i>
       <%= t("assessment.registration_tab.skip_campaigns_info") %>
     </div>
+    <%= render ExamParticipantsComponent.new(exam: exam) %>
   <% elsif campaign.nil? %>
     <div class="alert alert-warning">
       <i class="bi bi-exclamation-triangle me-2"></i>
       <%= t("assessment.registration_tab.no_campaign") %>
     </div>
-  <% else %>
+  <% elsif pre_finalization %>
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-<%= campaign_badge_color(campaign) %> fs-6">
-          <%= t("registration.campaign.status.#{campaign.status}") %>
-        </span>
+        <%= render "exams/campaign_status", exam: exam %>
 
         <% if campaign.registration_deadline %>
           <span class="text-muted small">
@@ -37,12 +38,16 @@
         <% elsif campaign.closed? %>
           <%= reopen_campaign_button(campaign, params: bp) %>
           <%= link_to t("registration.campaign.actions.review_and_finalize"),
-                      registration_campaign_allocation_path(campaign),
-                      class: "btn btn-primary" %>
+                      registration_campaign_allocation_path(campaign,
+                                                            frame_id: frame_id),
+                      class: "btn btn-primary",
+                      data: { turbo_stream: true } %>
         <% elsif campaign.processing? %>
           <%= link_to t("registration.campaign.actions.review_and_finalize"),
-                      registration_campaign_allocation_path(campaign),
-                      class: "btn btn-primary" %>
+                      registration_campaign_allocation_path(campaign,
+                                                            frame_id: frame_id),
+                      class: "btn btn-primary",
+                      data: { turbo_stream: true } %>
         <% end %>
       </div>
     </div>
@@ -122,13 +127,47 @@
         <% end %>
       </div>
     <% end %>
+  <% else %>
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <%= render "exams/campaign_status", exam: exam %>
+
+      <span class="text-muted small">
+        <%= t("assessment.registration_tab.finalized_on",
+              date: campaign.updated_at ? l(campaign.updated_at, format: :long) : "—") %>
+      </span>
+    </div>
+    <%= render ExamParticipantsComponent.new(exam: exam) %>
+    <% rejected = campaign.user_registrations.where(status: :rejected) %>
+    <% if rejected.any? %>
+      <div class="card mt-3 border-secondary">
+        <div class="card-header bg-secondary bg-opacity-10">
+          <h6 class="mb-0">
+            <i class="bi bi-person-slash me-1"></i>
+            <%= t("assessment.registration_tab.rejected_heading") %>
+            <span class="badge bg-secondary ms-1"><%= rejected.count %></span>
+          </h6>
+        </div>
+
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th><%= t("basics.name") %></th>
+                <th><%= t("basics.email") %></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% rejected.includes(:user).each do |reg| %>
+                <tr>
+                  <td><%= reg.user.name %></td>
+                  <td><%= reg.user.email %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
   <% end %>
-
-  <hr class="my-4">
-
-  <h5 class="mb-3">
-    <%= t("assessment.registration_tab.participants_heading") %>
-  </h5>
-
-  <%= render ExamParticipantsComponent.new(exam: exam) %>
 </div>

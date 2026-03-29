@@ -28,7 +28,12 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_show", campaign: @campaign)
+          if exam_campaign_context?
+            render_exam_update("exams/registration")
+          else
+            render_card_body("registration/campaigns/card_body_show",
+                             campaign: @campaign)
+          end
         end
       end
     end

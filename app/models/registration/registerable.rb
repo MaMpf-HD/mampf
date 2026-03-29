@@ -11,6 +11,12 @@ module Registration
       before_update :validate_capacity_change_via_items
     end
 
+    class_methods do
+      def exclusive_assignment?
+        false
+      end
+    end
+
     # Models including this concern must:
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
     # - Have a `skip_campaigns` boolean column (default: false, allows manual-only management)

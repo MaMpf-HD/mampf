@@ -240,8 +240,8 @@ en:
       started: "Allocation has been calculated."
       conflicts:
         title: "Conflicting Registrations"
-        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
-        currently_in: "currently in %{tutorial}"
+        desc: "The following students are already assigned to a group of this type in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{group}"
       dashboard:
         title: "Allocation Dashboard"
         last_updated: "Last updated: %{time}"

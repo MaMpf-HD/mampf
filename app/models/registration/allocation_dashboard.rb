@@ -36,25 +36,43 @@ module Registration
       def calculate_conflicts
         return [] unless @campaign.campaignable.is_a?(Lecture)
 
-        registered_user_ids = @campaign.user_registrations.pluck(:user_id)
+        registerable_class = first_registerable_class
+        return [] unless registerable_class&.exclusive_assignment?
 
-        existing_memberships =
-          TutorialMembership.joins(:tutorial)
-                            .where(tutorials: { lecture_id: @campaign.campaignable.id })
-                            .where(user_id: registered_user_ids)
-                            .includes(:user, :tutorial)
+        registered_user_ids = @campaign.user_registrations.pluck(:user_id)
+        return [] if registered_user_ids.empty?
+
+        lecture = @campaign.campaignable
+        siblings = lecture.public_send(registerable_class.model_name.plural)
+
+        allocated_map = {}
+        siblings.find_each do |sibling|
+          (sibling.allocated_user_ids & registered_user_ids).each do |uid|
+            allocated_map[uid] = sibling
+          end
+        end
+
+        return [] if allocated_map.empty?
 
         registrations_by_user = @campaign.user_registrations
-                                         .where(user_id: existing_memberships.map(&:user_id))
+                                         .where(user_id: allocated_map.keys)
+                                         .includes(:user)
                                          .index_by(&:user_id)
 
-        existing_memberships.map do |m|
+        allocated_map.map do |uid, registerable|
           {
-            user: m.user,
-            tutorial: m.tutorial,
-            registration: registrations_by_user[m.user_id]
+            user: registrations_by_user[uid]&.user,
+            registerable: registerable,
+            registration: registrations_by_user[uid]
           }
         end
+      end
+
+      def first_registerable_class
+        type_name = @campaign.registration_items.pick(:registerable_type)
+        type_name&.constantize
+      rescue NameError
+        nil
       end
   end
 end
