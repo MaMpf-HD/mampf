@@ -267,6 +267,11 @@ de:
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"
         policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        policy_violation_count:
+          one: "Student betroffen"
+          other: "Studenten betroffen"
+      policy_summary:
+        required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
   activerecord:
     errors:

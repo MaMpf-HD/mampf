@@ -267,6 +267,11 @@ en:
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
         policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation_count:
+          one: "student affected"
+          other: "students affected"
+      policy_summary:
+        required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
   activerecord:
     errors:

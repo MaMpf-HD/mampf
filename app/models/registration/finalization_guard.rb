@@ -41,27 +41,30 @@ module Registration
     private
 
       def check_policies
-        # Check policies that apply to finalization phase (or both)
         policies = @campaign.registration_policies.active.for_phase(:finalization)
         return [] if policies.empty?
 
-        invalid_users = []
+        violations = []
 
-        @campaign.user_registrations.confirmed.includes(:user).find_each do |registration|
-          user = registration.user
+        @campaign.user_registrations.confirmed.includes(:user).find_each do |reg|
+          user = reg.user
           policies.each do |policy|
             result = policy.evaluate(user)
             next if result[:pass]
 
-            invalid_users << { user_id: user.id,
-                               registration_id: registration.id,
-                               name: user.name,
-                               email: user.email,
-                               policy: policy.kind }
+            violations << {
+              user_id: user.id,
+              registration_id: reg.id,
+              name: user.name,
+              email: user.email,
+              policy: policy.kind,
+              policy_config: policy.config,
+              evaluate_data: result.except(:pass, :reason_code, :message)
+            }
           end
         end
 
-        invalid_users
+        violations
       end
 
       def success

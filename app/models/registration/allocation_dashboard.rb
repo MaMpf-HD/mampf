@@ -27,6 +27,11 @@ module Registration
       end
     end
 
+    def finalization_policies
+      @finalization_policies ||=
+        @campaign.registration_policies.active.for_phase(:finalization)
+    end
+
     def conflicting_registrations
       @conflicting_registrations ||= calculate_conflicts
     end
