@@ -61,8 +61,8 @@ module Registration
         items_selected = @campaign.registration_items
                                   .includes(:user_registrations)
                                   .where(user_registrations: { user_id: @user.id })
-        items_succeed = Rosters::StudentMainResultResolver
-                        .new(@campaign, @user).succeed_items
+        items_succeed = Rosters::StudentMaterializedResultResolver
+                        .new(@user).succeed_items(@campaign)
         status_items_selected = items_selected.each_with_object({}) do |i, hash|
           hash[i.id] = items_succeed.pluck(:id).include?(i.id) ? "confirmed" : "dismissed"
         end

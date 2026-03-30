@@ -30,10 +30,9 @@ module Registration
       @campaigns_details = Campaign::LectureCampaignsService
                            .new(@lecture, current_user)
                            .call
-      rosterized_items = @campaigns_details.flat_map do |details|
-        details.results[:items_succeed]
-      end.uniq
-      @rosterized_items = rosterized_items.any? ? rosterized_items.map(&:title).join(", ") : nil
+      @rosterized_entries = Rosters::StudentMaterializedResultResolver
+                            .new(current_user)
+                            .all_rosterized_for_lecture(@lecture)
       @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user)
                                                          .call
       render template: "registration/main/index",
