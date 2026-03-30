@@ -1,7 +1,74 @@
 <% frame_id = local_assigns[:frame_id] %>
 
+<% rule = @dashboard.performance_rule
+  achievements = rule&.required_achievements&.order(:title) || []
+  lecture = @dashboard.performance_lecture
+  cert_incomplete = @dashboard.certification_incomplete_data
+  violations = @dashboard.policy_violations
+  grouped = violations.group_by { |v| v[:user_id] }
+  has_perf = violations.any? { |v| v[:policy] == "student_performance" } %>
+
 <div class="container mt-4" id="allocation-dashboard">
-  <% if @dashboard.policy_violations.present? %>
+  <% if cert_incomplete %>
+    <% missing = cert_incomplete[:missing] || [] %>
+    <% pending = cert_incomplete[:pending] || [] %>
+    <div class="alert alert-warning">
+      <i class="bi bi-shield-exclamation me-1"></i>
+      
+      <strong><%= t("registration.allocation.cert_incomplete.title") %></strong>
+      —
+      <%= t("registration.allocation.cert_incomplete.desc",
+            count: missing.size + pending.size) %>
+
+
+      <% if missing.any? %>
+        <details class="mt-2">
+          <summary class="small fw-medium" role="button">
+            <%= t("registration.allocation.cert_incomplete.missing_label",
+                  count: missing.size) %>
+          </summary>
+
+          <ul class="mt-1 mb-0 small">
+            <% missing.each do |u| %>
+              <li><%= u[:name] %> (<%= u[:email] %>)</li>
+            <% end %>
+          </ul>
+        </details>
+      <% end %>
+
+      <% if pending.any? %>
+        <details class="mt-2">
+          <summary class="small fw-medium" role="button">
+            <%= t("registration.allocation.cert_incomplete.pending_label",
+                  count: pending.size) %>
+          </summary>
+
+          <ul class="mt-1 mb-0 small">
+            <% pending.each do |u| %>
+              <li><%= u[:name] %> (<%= u[:email] %>)</li>
+            <% end %>
+          </ul>
+        </details>
+      <% end %>
+
+      <div class="small mt-2 text-muted">
+        <i class="bi bi-info-circle me-1"></i>
+        <%= t("registration.allocation.cert_incomplete.policy_reason") %>
+      </div>
+
+      <% if lecture %>
+        <div class="mt-2">
+          <%= link_to t("registration.allocation.cert_incomplete.go_to_certs"),
+                      edit_lecture_path(lecture,
+                                        tab: "assessments",
+                                        assessment_tab: "certifications"),
+                      class: "btn btn-sm btn-outline-dark" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if violations.present? %>
     <div class="alert alert-danger">
       <i class="bi bi-exclamation-triangle-fill me-1"></i>
 
@@ -9,29 +76,227 @@
       — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
 
-      <ul class="mt-2 mb-2">
-        <% @dashboard.policy_violations.each do |violation| %>
-          <li class="mb-1">
-            <strong><%= violation[:name] %></strong> (<%= violation[:email] %>)
-            — <%= t("registration.policy.kinds.#{violation[:policy]}") %>
-            <%= button_to destroy_for_user_registration_campaign_registrations_path(@campaign, user_id: violation[:user_id], source: "allocation"),
-                          method: :delete,
-                          params: frame_id ? { frame_id: frame_id } : {},
-                          class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
-                          data: { confirm: t("basics.confirm") },
-                          form: { style: "display:inline-block;" },
-                          title: t("registration.user_registration.actions.remove_user") do %>
-              <i class="bi bi-trash"></i>
-            <% end %>
-          </li>
+      <% policy_counts = violations
+           .group_by { |v| v[:policy] }
+           .transform_values(&:size) %>
+
+      <p class="mt-2 mb-2">
+        <strong><%= grouped.size %></strong>
+
+        <%= t("registration.allocation.errors.policy_violation_count",
+              count: grouped.size) %>
+
+        <small class="text-muted ms-1">
+          (
+          <% policy_counts.each_with_index do |(kind, count), i| %>
+            <%= t("registration.policy.kinds.#{kind}") %>: <%= count %>
+            <%= ", " unless i == policy_counts.size - 1 %>
+          <% end %>)
+        </small>
+      </p>
+
+      <%# Policy requirement summaries %>
+      <div class="small mb-2">
+        <% @dashboard.finalization_policies.each do |policy| %>
+          <% if policy.kind == "institutional_email" %>
+            <div class="mb-1">
+              <i class="bi bi-envelope me-1"></i>
+
+              <strong>
+                <%= t("registration.policy.kinds.institutional_email") %>:
+              </strong>
+
+              <%= t("registration.allocation.policy_summary.required_domain") %>
+
+              <code>
+                @<%= Array(policy.config["allowed_domains"]).join(", @") %>
+              </code>
+            </div>
+          <% elsif policy.kind == "student_performance" && has_perf %>
+            <div class="mb-1">
+              <i class="bi bi-bar-chart me-1"></i>
+
+              <strong>
+                <%= t("registration.policy.kinds.student_performance") %>:
+              </strong>
+
+              <% if rule %>
+                <% if rule.min_percentage.present? %>
+                  &ge;
+                  <%= number_to_percentage(rule.min_percentage, precision: 0) %>
+                  <%= t("registration.allocation.policy_summary.of_total_points") %>
+                <% elsif rule.min_points_absolute.present? %>
+                  &ge;
+                  <%= rule.min_points_absolute %>
+                  <%= t("registration.allocation.policy_summary.points_absolute") %>
+                <% end %>
+                <% if rule.required_achievements.any? %>
+                  +
+                  <%= rule.required_achievements.map { |a|
+                    case a.value_type
+                    when "boolean" then a.title
+                    when "numeric" then "#{a.title} (\u2265 #{a.threshold})"
+                    when "percentage" then "#{a.title} (\u2265 #{a.threshold}%)"
+                    end
+                  }.join(", ") %>
+                <% end %>
+              <% else %>
+                <span class="text-warning">
+                  <%= t("registration.allocation.policy_summary.no_rule") %>
+                </span>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
-      </ul>
+      </div>
+
+      <%# Per-student violation table %>
+      <table class="table table-sm table-hover align-middle mb-2 bg-white">
+        <% if has_perf %>
+          <thead class="table-light">
+            <tr>
+              <th></th>
+              <th></th>
+
+              <th class="text-end">
+                <% if rule&.min_points_absolute.present? %>
+                  <%= t("student_performance.records.columns.points") %>
+                <% else %>
+                  <%= t("student_performance.records.columns.percentage") %>
+                <% end %>
+              </th>
+
+              <% achievements.each do |ach| %>
+                <th class="text-center small" title="<%= ach.title %>">
+                  <%= truncate(ach.title, length: 12) %>
+                </th>
+              <% end %>
+
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+        <% end %>
+
+        <tbody>
+          <% grouped.each do |user_id, user_violations| %>
+            <% first = user_violations.first %>
+
+            <% perf_v = user_violations.find do |v|
+              v[:policy] == "student_performance"
+            end %>
+
+            <tr>
+              <td>
+                <strong><%= first[:name] %></strong>
+                <br>
+                <small class="text-muted"><%= first[:email] %></small>
+              </td>
+
+              <td>
+                <% user_violations.each do |v| %>
+                  <span class="badge bg-danger-subtle text-danger">
+                    <%= t("registration.policy.kinds.#{v[:policy]}") %>
+
+                    <% if v[:policy] == "institutional_email" %>
+                      <span class="fw-normal">
+                        @<%= first[:email].split("@").last %>
+                      </span>
+                    <% end %>
+                  </span>
+                <% end %>
+              </td>
+
+              <% if has_perf %>
+                <td class="text-end font-monospace">
+                  <% if perf_v %>
+                    <% pct = perf_v[:percentage] %>
+                    <% if rule&.min_points_absolute.present? %>
+                      <%= pct ? number_with_precision(pct, precision: 1,
+                            strip_insignificant_zeros: true) : "—" %>
+                    <% else %>
+                      <% if pct %>
+                        <span class="<%= pct >= (rule&.min_percentage || 0) ? 'text-success' : 'text-danger' %>">
+                          <%= number_to_percentage(pct, precision: 1) %>
+                        </span>
+                      <% else %>
+                        —
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </td>
+                <% achievements.each do |ach| %>
+                  <td class="text-center">
+                    <% if perf_v %>
+                      <% if perf_v[:achievements_met_ids]&.include?(ach.id) %>
+                        <i class="bi bi-check-circle text-success"></i>
+                      <% elsif perf_v[:achievements_ungraded_ids]&.include?(ach.id) %>
+                        <i class="bi bi-question-circle text-amber"></i>
+                      <% else %>
+                        <i class="bi bi-x-circle text-danger"></i>
+                      <% end %>
+                    <% end %>
+                  </td>
+                <% end %>
+                <td class="small text-muted" style="max-width: 160px">
+                  <% if perf_v && perf_v[:cert_note].present? %>
+                    <span
+                      class="text-truncate d-inline-block"
+                      style="max-width: 150px"
+                      title="<%= perf_v[:cert_note] %>"
+                    >
+                      <%= perf_v[:cert_note] %>
+                    </span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if perf_v && perf_v[:cert_id] && lecture %>
+                    <%= button_to lecture_student_performance_certification_path(
+                                    lecture, perf_v[:cert_id]),
+                                  method: :patch,
+                                  params: {
+                                    certification: { status: :passed }
+                                  },
+                                  class: "btn btn-sm btn-outline-success py-0 px-1",
+                                  title: t("registration.allocation.violations_table.override_pass"),
+                                  data: { confirm: t("basics.confirm") } do %>
+                      <i class="bi bi-check-lg"></i>
+                    <% end %>
+                  <% end %>
+                </td>
+              <% end %>
+
+              <td class="text-end">
+                <%= button_to destroy_for_user_registration_campaign_registrations_path(
+                                @campaign,
+                                user_id: user_id,
+                                source: "allocation"),
+                              method: :delete,
+                              params: frame_id ? { frame_id: frame_id } : {},
+                              class: "btn btn-sm btn-link text-danger p-0",
+                              data: { confirm: t("basics.confirm") },
+                              form: { style: "display:inline-block;" },
+                              title: t("registration.user_registration.actions.remove_user") do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
 
       <%= button_to t("registration.campaign.actions.force_finalize"),
-                    finalize_registration_campaign_allocation_path(@campaign, force: true),
+                    finalize_registration_campaign_allocation_path(
+                      @campaign, force: true
+                    ),
                     method: :patch,
                     params: frame_id ? { frame_id: frame_id } : {},
-                    data: { confirm: t("registration.campaign.confirmations.force_finalize") },
+                    data: {
+                      confirm: t(
+                        "registration.campaign.confirmations.force_finalize"
+                      )
+                    },
                     class: "btn btn-sm btn-danger" %>
     </div>
   <% end %>
@@ -118,7 +383,7 @@
                     params: frame_id ? { frame_id: frame_id } : {},
                     data: { confirm: t("registration.campaign.confirmations.finalize") },
                     class: "btn btn-danger",
-                    disabled: @dashboard.policy_violations.present? %>
+                    disabled: cert_incomplete || violations.present? %>
     </div>
   </div>
 

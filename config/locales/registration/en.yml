@@ -266,10 +266,34 @@ en:
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
+        certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
         policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation_count:
+          one: "student affected"
+          other: "students affected"
         failed: "Allocation failed: %{error}"
+      policy_summary:
+        required_domain: "Required domain:"
+        of_total_points: "of total points"
+        points_absolute: "points (absolute)"
+        no_rule: "No active rule configured"
+      violations_table:
+        override_pass: "Override to passed"
+      cert_incomplete:
+        title: "Certifications Incomplete"
+        desc:
+          one: "%{count} registered student does not have a decided performance certificate. Certifications must be resolved before finalization."
+          other: "%{count} registered students do not have decided performance certificates. Certifications must be resolved before finalization."
+        missing_label:
+          one: "%{count} student not yet certified"
+          other: "%{count} students not yet certified"
+        pending_label:
+          one: "%{count} student with pending certificate"
+          other: "%{count} students with pending certificates"
+        go_to_certs: "Go to Certifications"
+        policy_reason: "This registration campaign has a finalization policy that requires decided certifications."
   activerecord:
     errors:
       models:

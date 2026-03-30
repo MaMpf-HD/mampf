@@ -192,9 +192,14 @@ namespace :exam_policy do
     end
 
     shuffled = example_com_ids.shuffle
-    pass_count = (shuffled.size * 0.6).ceil
+    pass_count = (shuffled.size * 0.45).ceil
+    fail_count = (shuffled.size * 0.25).ceil
+    pending_count = (shuffled.size * 0.10).ceil
     passers = shuffled.first(pass_count)
-    failers = shuffled - passers
+    failers = shuffled[pass_count, fail_count]
+    pending_users = shuffled[pass_count + fail_count, pending_count]
+    # remaining = uncertified (no cert at all)
+    uncertified = shuffled[(pass_count + fail_count + pending_count)..]
 
     created = 0
     skipped = 0
@@ -225,9 +230,24 @@ namespace :exam_policy do
       created += 1
     end
 
+    pending_users.each do |uid|
+      cert = StudentPerformance::Certification
+             .find_or_initialize_by(lecture: lecture, user_id: uid)
+      if cert.persisted? && !cert.pending?
+        skipped += 1
+        next
+      end
+      cert.update!(status: :pending, source: :computed,
+                   rule: rule)
+      created += 1
+    end
+
     puts "✓ Issued #{created} certifications (skipped #{skipped} existing)"
-    puts "  #{passers.size} passed, #{failers.size} failed"
-    puts "  → Failed students will trip the performance policy on finalization"
+    puts "  #{passers.size} passed, #{failers.size} failed,"
+    puts "  #{pending_users.size} pending, #{uncertified.size} uncertified"
+    puts "  → Failed: trip performance policy (override or remove)"
+    puts "  → Pending: need decision before finalization"
+    puts "  → Uncertified: need 'Compute now' on dashboard"
   end
 
   desc "Reset: destroy exam + campaign + outsiders + certifications"

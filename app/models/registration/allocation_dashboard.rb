@@ -20,11 +20,51 @@ module Registration
       @unassigned_students ||= User.where(id: stats.unassigned_user_ids).order(:email)
     end
 
+    def guard_result
+      @guard_result ||=
+        Registration::FinalizationGuard.new(@campaign).check
+    end
+
+    def certification_incomplete?
+      guard_result.error_code == :certification_incomplete
+    end
+
+    def certification_incomplete_data
+      return nil unless certification_incomplete?
+
+      guard_result.data
+    end
+
     def policy_violations
-      @policy_violations ||= begin
-        guard_result = Registration::FinalizationGuard.new(@campaign).check
-        guard_result.success? ? [] : (guard_result.data || [])
-      end
+      return [] if guard_result.success?
+      return [] unless guard_result.error_code == :policy_violation
+
+      guard_result.data || []
+    end
+
+    def finalization_policies
+      @finalization_policies ||=
+        @campaign.registration_policies.active.for_phase(:finalization)
+    end
+
+    def performance_rule
+      return @performance_rule if defined?(@performance_rule)
+
+      perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
+      lid = perf_policy&.config&.dig("lecture_id")
+      @performance_rule = lid &&
+                          StudentPerformance::Rule
+                          .where(lecture_id: lid, active: true)
+                          .includes(rule_achievements: :achievement)
+                          .first
+    end
+
+    def performance_lecture
+      return @performance_lecture if defined?(@performance_lecture)
+
+      perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
+      lid = perf_policy&.config&.dig("lecture_id")
+      @performance_lecture = lid && Lecture.find_by(id: lid)
     end
 
     def conflicting_registrations
