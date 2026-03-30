@@ -1,0 +1,73 @@
+<div class="row gap-3 m-2">
+  <% self_rosterables.rosterables.each do |rosterable| %>
+    <div class="card shadow-sm p-2"
+        style="width: 260px; flex: 0 0 auto;">
+
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <!-- Title + Type -->
+        <div class="d-flex align-items-baseline gap-1">
+          <div class="fw-semibold"><%= rosterable.title %></div>
+          <div class="small text-muted">(<%= rosterable_display_type(rosterable) %>)</div>
+        </div>
+
+        <div class="ms-2">
+          <!-- Status for registration -->
+          <% if !rosterable.user_allocated?(current_user) %>
+            <% if rosterable.allow_self_add?(current_user) %>
+              <span class="badge bg-light-blue-lighten-4 text-dark fw-medium small">
+                <%= t("basics.available") %>
+              </span>
+            <% end %>
+          <% else %>
+            <span class="badge text-bg-success fw-medium small">
+              <%= t("registration.user_registration.registered") %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="small mb-2">
+        <% RosterHelper::SELF_ROSTER_TABLE_CONFIG[rosterable.class.name.capitalize].each do |col| %>
+          <div class="d-flex gap-1">
+            <span class="fw-medium"><%= t(col[:header]) %>:</span>
+            <span><%= col[:field].call(rosterable) %></span>
+          </div>
+        <% end %>
+
+        <div class="d-flex gap-1">
+          <span class="fw-medium"><%= t("registration.user_registration.fcfs_columns.seats") %>:</span>
+          <span><%= "#{rosterable.roster_entries_count} / #{nullable_capacity_display(rosterable.capacity)}" %></span>
+        </div>
+      </div>
+
+      <div class="row justify-content-between g-2 mb-2">
+        <!-- Self-materialization mode -->
+        <div class="small text-muted w-auto">
+          (<%= t("roster.self_materialization.modes.#{rosterable.self_materialization_mode}") %>)
+        </div>
+      
+        <!-- Action -->
+        <div class="w-auto">
+          <% path_self_add = send("self_add_#{rosterable.class.name.underscore}_path", rosterable.id) %>
+          <% path_self_remove = send("self_remove_#{rosterable.class.name.underscore}_path", rosterable.id) %>
+          <% if rosterable.user_allocated?(current_user) %>
+            <% if rosterable.allow_self_remove?(current_user) %>
+              <%= button_to t("registration.user_registration.withdraw"),
+                            path_self_remove,
+                            method: :delete,
+                            class: "btn btn-outline-danger btn-sm" %>
+            <% end %>
+          <% else %>
+            <% if rosterable.allow_self_add?(current_user) %>
+              <%= button_to t("registration.user_registration.register_now"),
+                            path_self_add,
+                            method: :post,
+                            class: "btn btn-primary btn-sm" %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

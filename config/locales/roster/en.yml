@@ -278,6 +278,7 @@ en:
       campaign_running: "cannot be disabled while a campaign is running."
       active_campaign_exists: 'Self-Enrollment cannot be enabled because an active campaign already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
+      lecture_has_other_roster_entry: "You are already enrolled in another group of this lecture and cannot join another group at the same time."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
@@ -370,3 +371,12 @@ en:
           please contact your instructor or the support team.
         </p>
       roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
+    self_enrollment:
+      campaign_enrollment:
+         title: "Enrollment via Registration Campaigns"
+         description: "You can register for this lecture through the active registration campaign."
+      direct_enrollment:
+        title: "Direct Enrollment Options"
+        description: >
+          You can directly join or leave available groups for this lecture (depending on configuration). Changes take effect immediately and update your official roster. 
+          This is separate from registration campaigns.

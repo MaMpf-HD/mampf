@@ -4,25 +4,7 @@ module Rosters
     class RosterFullError < StandardError; end
     class SelfAddNotAllowedError < StandardError; end
     class SelfRemoveNotAllowedError < StandardError; end
-
-    REGISTRY = {
-      "Talk" => {
-        klass: Talk,
-        frames: {
-          "talk_user" => { partial: "talks/talker",
-                           variable: "talk",
-                           turbo_frame: "talk_user" }
-        }
-      },
-      "Tutorial" => {
-        klass: Tutorial,
-        frames: {}
-      },
-      "Cohort" => {
-        klass: Cohort,
-        frames: {}
-      }
-    }.freeze
+    class LectureHasOtherRosterEntryError < StandardError; end
 
     def initialize(rosterable, user)
       @rosterable = rosterable
@@ -40,10 +22,6 @@ module Rosters
       ensure_rosterable_unlocked!
       ensure_rosterable_allow_self_remove!
       Rosters::MaintenanceService.new.remove_user!(@user, @rosterable)
-    end
-
-    def safe_config(frame)
-      REGISTRY.fetch(@rosterable.class.name)[:frames].fetch(frame)
     end
 
     private

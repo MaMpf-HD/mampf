@@ -1,0 +1,38 @@
+<div style="width: min(100%, 30rem);">
+  <div class="row justify-content-start align-items-center">
+    <div class="fw-bold text-dark w-auto">
+      <%= t('registration.user_registration.eligibility_title') %>
+    </div>
+
+    <p class="mb-1 w-auto">
+      <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
+      <%= eligibility_badge(pass) %>
+    </p>
+  </div>
+
+  <ul class="list-group list-group-flush">
+    <% eligibility.each do |policy| %>
+      <li
+        class="
+          list-group-item d-flex justify-content-between align-items-center
+          pt-1 pb-1
+        "
+      >
+        <div>
+          <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
+
+          <% policy_info = get_policy_config_info(policy) %>
+
+          <small class="text-muted">
+            <% if get_details_render_type_policy_kind(policy[:kind]) == 'text' %>
+              <%= policy_info %>
+            <% end %>
+          </small>
+        </div>
+
+        <% info = get_outcome_info(policy[:outcome]) %>
+        <span class="<%= info[:badge_class] %>"><%= t(info[:text]) %></span>
+      </li>
+    <% end %>
+  </ul>
+</div>
