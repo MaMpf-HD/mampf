@@ -1,217 +1,156 @@
 require "rails_helper"
 
-RSpec.describe("Roster::SelfMaterializationController", type: :request) do
-  let(:lecture) { create(:lecture, locale: I18n.default_locale) }
-  let(:seminar) { create(:lecture, :is_seminar, locale: I18n.default_locale) }
-  let(:editor) { create(:confirmed_user) }
-  let(:student) { create(:confirmed_user) }
+RSpec.describe(Roster::SelfMaterializationController, type: :controller) do
+  let(:user) { create(:user) }
+  let(:lecture) { create(:lecture) }
+  let(:tutorial) { create(:tutorial, lecture: lecture) }
 
   before do
-    Flipper.enable(:roster_maintenance)
-    create(:editable_user_join, user: editor, editable: lecture)
-    create(:editable_user_join, user: editor, editable: seminar)
-    editor.reload
-    lecture.reload
+    sign_in user
+    allow_any_instance_of(LectureAbility).to receive(:can?)
+      .with(:self_materialize, lecture).and_return(true)
   end
 
-  describe("POST /roster/id/self_add") do
+  describe "POST #self_add" do
+    let(:params) do
+      {
+        type: "Tutorial",
+        tutorial_id: tutorial.id,
+        format: :turbo_stream
+      }
+    end
+
     before do
-      sign_in student
+      allow_any_instance_of(Rosters::SelfMaterializationService)
+        .to receive(:self_add!)
     end
-    context "for a talk" do
-      context "when not full" do
-        let(:talk) do
-          create(:talk, lecture: seminar, capacity: 1, self_materialization_mode: "add_and_remove")
-        end
 
-        it("allows a user to self-add to a talk if not full") do
-          post self_add_talk_path(talk,
-                                  params: { type: "Talk",
-                                            frame: "talk_user" })
-          expect(talk.allocated_user_ids).to include(student.id)
-        end
-      end
-      context "when full" do
-        let(:talk) do
-          create(:talk, lecture: seminar, capacity: 0, self_materialization_mode: "add_and_remove")
-        end
+    it "calls SelfMaterializationService#self_add!" do
+      expect_any_instance_of(Rosters::SelfMaterializationService)
+        .to receive(:self_add!)
 
-        it("shows an error if trying to self-add to a full talk") do
-          post self_add_talk_path(talk,
-                                  params: { type: "Talk",
-                                            frame: "talk_user" })
-          expect(talk.allocated_user_ids).to_not(include(student.id))
-        end
+      post :self_add, params: params
+    end
+
+    it "returns turbo_stream success response" do
+      post :self_add, params: params
+
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(flash.now[:notice]).to eq(I18n.t("roster.messages.user_added"))
+    end
+
+    context "when service raises RosterLockedError" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_add!)
+          .and_raise(Rosters::SelfMaterializationService::RosterLockedError)
       end
 
-      context "when self_materialization_mode is disabled" do
-        let(:talk) do
-          create(:talk, lecture: seminar, capacity: 10, self_materialization_mode: "disabled")
-        end
+      it "renders turbo_stream error flash" do
+        post :self_add, params: params
 
-        it("shows an error if trying to self-add when self_materialization_mode is disabled") do
-          post self_add_talk_path(talk,
-                                  params: { type: "Talk",
-                                            frame: "talk_user" })
-          expect(talk.allocated_user_ids).to_not(include(student.id))
-        end
+        expect(flash.now[:alert]).to eq(I18n.t("roster.errors.item_locked"))
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
       end
     end
 
-    context "for a tutorial" do
-      context "when locked" do
-        let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
-        let!(:campaign) do
-          create(:registration_campaign, :open,
-                 campaignable: lecture,
-                 registration_items: [build(:registration_item, registerable: tutorial)])
-        end
+    context "when service raises UserAlreadyInBundleError" do
+      let(:group) { create(:tutorial) }
 
-        it("shows an error if trying to self-add to a locked tutorial") do
-          post self_add_tutorial_path(tutorial,
-                                      params: { type: "Tutorial",
-                                                frame: "tutorial_user" })
-          expect(tutorial.allocated_user_ids).to_not(include(student.id))
-        end
+      before do
+        error = Rosters::UserAlreadyInBundleError.new(group)
+        allow(error).to receive(:conflicting_group).and_return(group)
+
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_add!)
+          .and_raise(error)
       end
 
-      context "when not full" do
-        let(:tutorial) do
-          create(:tutorial, lecture: lecture, capacity: 1,
-                            self_materialization_mode: "add_and_remove")
-        end
+      it "renders correct error message" do
+        post :self_add, params: params
 
-        it("allows a user to self-add to a tutorial if not full") do
-          post self_add_tutorial_path(tutorial,
-                                      params: { type: "Tutorial",
-                                                frame: "tutorial_user" })
-          expect(tutorial.allocated_user_ids).to include(student.id)
-        end
-      end
-    end
-
-    context "for a cohort" do
-      context "when not full" do
-        let(:cohort) do
-          create(:cohort,
-                 context: lecture,
-                 title: "test cohort",
-                 capacity: 20,
-                 self_materialization_mode: "add_and_remove")
-        end
-
-        it("allows a user to self-add to a cohort if not full") do
-          post self_add_cohort_path(cohort,
-                                    params: { type: "Cohort",
-                                              frame: "cohort_user" })
-          expect(cohort.allocated_user_ids).to include(student.id)
-        end
+        expect(flash.now[:alert]).to eq(
+          I18n.t("roster.errors.user_already_in_bundle", group: group.title)
+        )
       end
     end
   end
 
-  describe("DELETE /roster/id/self_remove") do
-    context "for a talk" do
-      context "when allowed" do
-        let(:talk) do
-          create(:talk, lecture: seminar, capacity: 1,
-                        self_materialization_mode: "add_and_remove")
-        end
+  describe "POST #self_remove" do
+    let(:params) do
+      {
+        type: "Tutorial",
+        tutorial_id: tutorial.id,
+        format: :turbo_stream
+      }
+    end
 
-        before do
-          sign_in student
-          post self_add_talk_path(talk,
-                                  params: { type: "Talk",
-                                            frame: "talk_user" })
-          sign_in student
-        end
+    before do
+      allow_any_instance_of(Rosters::SelfMaterializationService)
+        .to receive(:self_remove!)
+    end
 
-        it("allows a user to self-remove from a talk") do
-          talk.reload
-          delete self_remove_talk_path(talk,
-                                       params: { type: "Talk",
-                                                 frame: "talk_user" })
-          talk.reload
-          expect(talk.allocated_user_ids).to_not(include(student.id))
-        end
+    it "calls SelfMaterializationService#self_remove!" do
+      expect_any_instance_of(Rosters::SelfMaterializationService)
+        .to receive(:self_remove!)
+
+      post :self_remove, params: params
+    end
+
+    it "returns turbo_stream success response" do
+      post :self_remove, params: params
+
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(flash.now[:notice]).to eq(I18n.t("roster.messages.user_removed"))
+    end
+
+    context "when service raises SelfRemoveNotAllowedError" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_remove!)
+          .and_raise(Rosters::SelfMaterializationService::SelfRemoveNotAllowedError)
       end
 
-      context "when self_materialization_mode is add_only" do
-        let(:talk) do
-          create(:talk, lecture: seminar, self_materialization_mode: "add_only")
-        end
+      it "renders turbo_stream error flash" do
+        post :self_remove, params: params
 
-        before do
-          sign_in student
-          post self_add_talk_path(talk,
-                                  params: { type: "Talk",
-                                            frame: "talk_user" })
-          sign_in student
-        end
+        expect(flash.now[:alert]).to eq(
+          I18n.t("roster.errors.self_remove_not_allowed", type: "Tutorial")
+        )
+      end
+    end
+  end
 
-        it("shows an error if trying to self-remove when not allowed") do
-          talk.reload
-          delete self_remove_talk_path(talk,
-                                       params: { type: "Talk",
-                                                 frame: "talk_user" })
-          talk.reload
-          expect(talk.allocated_user_ids).to(include(student.id))
-        end
+  describe "set_rosterable" do
+    context "when type is invalid" do
+      it "redirects with error" do
+        post :self_add, params: { type: "InvalidType", id: 1 }
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("roster.errors.invalid_type"))
       end
     end
 
-    context "for a tutorial" do
-      context "when allowed" do
-        let(:tutorial) do
-          create(:tutorial, lecture: lecture, capacity: 1,
-                            self_materialization_mode: "add_and_remove")
-        end
+    context "when rosterable does not exist" do
+      it "redirects with error" do
+        post :self_add, params: { type: "Tutorial", tutorial_id: 999 }
 
-        before do
-          sign_in student
-          post self_add_tutorial_path(tutorial,
-                                      params: { type: "Tutorial",
-                                                frame: "tutorial_user" })
-          sign_in student
-        end
-
-        it("allows a user to self-remove from a tutorial when allowed") do
-          tutorial.reload
-          delete self_remove_tutorial_path(tutorial,
-                                           params: { type: "Tutorial",
-                                                     frame: "tutorial_user" })
-          tutorial.reload
-          expect(tutorial.allocated_user_ids).to_not(include(student.id))
-        end
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq(I18n.t("roster.errors.rosterable_not_found"))
       end
     end
+  end
 
-    context "for a cohort" do
-      context "when allowed" do
-        let(:cohort) do
-          create(:cohort,
-                 context: lecture,
-                 title: "test cohort",
-                 capacity: 20,
-                 self_materialization_mode: "add_and_remove")
-        end
+  describe "authorization" do
+    before do
+      allow_any_instance_of(LectureAbility).to receive(:can?)
+        .with(:self_materialize, lecture).and_return(false)
+    end
 
-        before do
-          sign_in student
-          post self_add_cohort_path(cohort,
-                                    params: { type: "Cohort",
-                                              frame: "cohort_user" })
-          sign_in student
-        end
-
-        it("allows a user to self-remove from a cohort when allowed") do
-          delete self_remove_cohort_path(cohort,
-                                         params: { type: "Cohort",
-                                                   frame: "cohort_user" })
-          cohort.reload
-          expect(cohort.allocated_user_ids).to_not(include(student.id))
-        end
-      end
+    it "raises CanCan::AccessDenied" do
+      expect do
+        post(:self_add, params: { type: "Tutorial", tutorial_id: tutorial.id })
+      end.to raise_error(CanCan::AccessDenied)
     end
   end
 end

@@ -305,3 +305,12 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
+    self_enrollment:
+      campaign_enrollment:
+         title: "Enrollment via Registration Campaigns"
+         description: "You can register for this lecture through the active registration campaign."
+      direct_enrollment:
+        title: "Direct Enrollment Options"
+        description: >
+          You can directly join or leave available groups for this lecture (depending on configuration). Changes take effect immediately and update your official roster. 
+          This is separate from registration campaigns.

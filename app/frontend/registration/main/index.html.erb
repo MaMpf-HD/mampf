@@ -16,6 +16,15 @@
 <% end %>
 
 <!-- campaign list -->
+<div class="mb-3">
+  <h5 class="fw-semibold">
+    <%= t("roster.self_enrollment.campaign_enrollment.title") %>
+  </h5>
+
+  <p class="text-muted small">
+    <%= t("roster.self_enrollment.campaign_enrollment.description") %>
+  </p>
+</div>
 <div class="campaign-list d-flex flex-column gap-4">
   <% if @campaigns_details.any? %>
     <% uncompleted_campaigns = @campaigns_details.select { |cd| !(cd.campaign.status == "completed") } %>
@@ -70,6 +79,15 @@
 </div>
 
 <% if Flipper.enabled?(:roster_maintenance) %>
+  <div class="mb-3">
+    <h5 class="fw-semibold">
+      <%= t("roster.self_enrollment.direct_enrollment.title") %>
+    </h5>
+
+    <p class="text-muted small">
+      <%= t("roster.self_enrollment.direct_enrollment.description") %>
+    </p>
+  </div>
   <div class="campaign-list d-flex flex-column gap-4">
     <% if @self_rosterables&.rosterables&.any? %>
       <%= turbo_frame_tag "self_roster_options_zone" do %>

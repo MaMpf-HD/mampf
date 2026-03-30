@@ -309,3 +309,12 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
+    self_enrollment:
+      campaign_enrollment:
+        title: "Einschreibung durch Anmeldeverfahren"
+        description: "Sie können sich über das aktive Anmeldeverfahren für diese Veranstaltung einschreiben."
+      direct_enrollment:
+        title: "Optionen für Selbsteinschreibung"
+        description: >
+          Sie können direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft und aktualisieren Ihren offiziellen Roster. 
+          Dies ist separat von Anmeldeverfahren.
