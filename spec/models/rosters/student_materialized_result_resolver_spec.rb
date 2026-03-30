@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
+RSpec.describe(Rosters::StudentMaterializedResultResolver, type: :service) do
   let(:user) { create(:user) }
 
   describe "get succeeded registration in tutorial campaign" do
     let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
     let(:tutorial) { campaign.registration_items.first.registerable }
-    subject { described_class.new(campaign, user) }
+    subject { described_class.new(user) }
 
     context "when user is already in roster" do
       before do
@@ -16,14 +16,14 @@ RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
                source_campaign_id: campaign.id)
       end
       it "should return a succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(1)
       end
     end
 
     context "when user not in roster" do
       it "should return 0 succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(0)
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
   describe "get succeeded registration in talk campaign" do
     let(:campaign) { create(:registration_campaign, :for_seminar, :with_items, :preference_based) }
     let(:talk) { campaign.registration_items.first.registerable }
-    subject { described_class.new(campaign, user) }
+    subject { described_class.new(user) }
 
     context "when user is already in roster" do
       before do
@@ -42,14 +42,14 @@ RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
                source_campaign_id: campaign.id)
       end
       it "should return a succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(1)
       end
     end
 
     context "when user not in roster" do
       it "should return 0 succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(0)
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
              { for_cohorts: true })
     end
     let(:cohort) { campaign.registration_items.first.registerable }
-    subject { described_class.new(campaign, user) }
+    subject { described_class.new(user) }
 
     context "when user is already in roster" do
       before do
@@ -71,14 +71,14 @@ RSpec.describe(Rosters::StudentMainResultResolver, type: :service) do
                source_campaign_id: campaign.id)
       end
       it "should return a succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(1)
       end
     end
 
     context "when user not in roster" do
       it "should return 0 succeeded item" do
-        result = subject.succeed_items
+        result = subject.succeed_items(campaign)
         expect(result.count).to eq(0)
       end
     end

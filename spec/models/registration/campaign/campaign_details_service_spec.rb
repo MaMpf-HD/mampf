@@ -104,12 +104,12 @@ RSpec.describe(Registration::Campaign::CampaignDetailsService, type: :service) d
   end
 
   describe "#results_roster" do
-    let(:resolver) { instance_double(Rosters::StudentMainResultResolver) }
+    let(:resolver) { instance_double(Rosters::StudentMaterializedResultResolver) }
 
     before do
-      allow(Rosters::StudentMainResultResolver)
+      allow(Rosters::StudentMaterializedResultResolver)
         .to receive(:new)
-        .with(campaign, user)
+        .with(user)
         .and_return(resolver)
     end
 
