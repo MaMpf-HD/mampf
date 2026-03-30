@@ -93,15 +93,15 @@ class RosterNotificationMailer < ApplicationMailer
     def url_for_rosterable(rosterable)
       case rosterable
       when Lecture
-        lecture_tutorial_overview_url(rosterable)
+        lecture_url(rosterable)
       when Tutorial
         # TODO: replace with tutorial details page when it exists
-        lecture_tutorial_overview_url(rosterable.lecture)
+        lecture_campaign_registrations_url(rosterable.lecture)
       when Talk
         talk_url(rosterable)
       when Cohort
         # TODO: replace with cohort details page when it exists
-        nil
+        lecture_campaign_registrations_url(rosterable.lecture)
       else
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")
