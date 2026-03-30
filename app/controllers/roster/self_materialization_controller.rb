@@ -15,6 +15,10 @@ module Roster
       respond_with_error(t("roster.errors.capacity_exceeded"))
     end
 
+    rescue_from "Rosters::MaintenanceService::LectureHasOtherRosterEntryError" do
+      respond_with_error(t("roster.errors.lecture_has_other_roster_entry"))
+    end
+
     rescue_from "Rosters::SelfMaterializationService::RosterLockedError" do
       respond_with_error(t("roster.errors.item_locked"))
     end
@@ -40,13 +44,13 @@ module Roster
     def self_add
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_add!
-      respond_with_success(t("roster.messages.user_added"), service.safe_config(params[:frame]))
+      respond_with_success(t("roster.messages.user_added"))
     end
 
     def self_remove
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_remove!
-      respond_with_success(t("roster.messages.user_removed"), service.safe_config(params[:frame]))
+      respond_with_success(t("roster.messages.user_removed"))
     end
 
     private
@@ -64,20 +68,14 @@ module Roster
         end
       end
 
-      def respond_with_success(message, config)
+      def respond_with_success(message)
         flash.now[:notice] = message
-        render_user_update(config[:turbo_frame],
-                           config[:partial],
-                           { config[:variable].to_sym => @rosterable })
-      end
-
-      def render_user_update(turbo_frame, partial, locals = {})
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.update(
-              turbo_frame,
-              partial: partial,
-              locals: locals
+              "self_roster_options_zone",
+              partial: "roster/self_roster/options_zone",
+              locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
             )
           end
         end

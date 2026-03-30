@@ -68,3 +68,14 @@
     <p>No available campaigns.</p>
   <% end %>
 </div>
+
+<% if Flipper.enabled?(:roster_maintenance) %>
+  <div class="campaign-list d-flex flex-column gap-4">
+    <% if @self_rosterables&.rosterables&.any? %>
+      <%= turbo_frame_tag "self_roster_options_zone" do %>
+        <%= render partial: 'roster/self_roster/options_zone', 
+      locals: { self_rosterables: @self_rosterables } %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

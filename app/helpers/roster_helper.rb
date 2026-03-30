@@ -205,4 +205,82 @@ module RosterHelper
             style: "cursor: pointer;",
             data: { turbo_frame: roster_maintenance_frame_id(group_type), turbo_prefetch: false })
   end
+
+  def rosterable_display_type(rosterable)
+    case rosterable.class.name
+    when "Tutorial"
+      t("registration.item.types.tutorial")
+    when "Talk"
+      t("registration.item.types.talk")
+    when "Cohort"
+      base_type = case rosterable.purpose.to_sym
+                  when :enrollment
+                    t("registration.item.types.enrollment_group")
+                  when :planning
+                    t("registration.item.types.planning_survey")
+                  when :general
+                    t("registration.item.types.other_group")
+      end
+
+      if rosterable.propagate_to_lecture
+        base_type
+      else
+        icon = tag.i(class: "bi bi-person-x ms-1",
+                     style: "color: #495057;",
+                     data: { bs_toggle: "tooltip",
+                             bs_title: t("registration.item.hints.no_propagation") })
+        safe_join([base_type, " ", icon])
+      end
+    end
+  end
+
+  def self_add_path
+    case type
+    when "Tutorial"
+      Rails.application.routes.url_helpers.self_add_tutorial_path(id)
+    when "Talk"
+      Rails.application.routes.url_helpers.self_add_talk_path(id)
+    when "Cohort"
+      Rails.application.routes.url_helpers.self_add_cohort_path(id)
+    end
+  end
+
+  def self_remove_path
+    case type
+    when "Tutorial"
+      Rails.application.routes.url_helpers.self_remove_tutorial_path(id)
+    when "Talk"
+      Rails.application.routes.url_helpers.self_remove_talk_path(id)
+    when "Cohort"
+      Rails.application.routes.url_helpers.self_remove_cohort_path(id)
+    end
+  end
+
+  SELF_ROSTER_TABLE_CONFIG = {
+    "Tutorial" => [
+      { header: "basics.tutor",
+        cell_class: "text-start fw-semibold",
+        icon: "person",
+        field: ->(rosterable) { rosterable.tutor_names } }
+    ],
+    "Talk" => [
+      { header: "basics.position",
+        cell_class: "text-end",
+        icon: "looks_one",
+        field: ->(rosterable) { rosterable.position } },
+      { header: "basics.date",
+        icon: "event",
+        field: lambda { |rosterable|
+          rosterable.dates&.map do |d|
+            format_date(d)
+          end&.join(", ")
+        } }
+    ],
+    "Cohort" => [
+      { header: "basics.description",
+        icon: "description",
+        cell_class: "text-center",
+        field: ->(rosterable) { rosterable.description } }
+    ]
+  }.freeze
 end

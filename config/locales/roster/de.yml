@@ -298,6 +298,7 @@ de:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
+      lecture_has_other_roster_entry: 'Sie sind bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlassen Sie zuerst die andere Gruppe, bevor Sie dieser beitreten.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchten Sie trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Sind Sie sicher?'
       propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'

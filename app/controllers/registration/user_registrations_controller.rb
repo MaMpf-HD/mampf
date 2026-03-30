@@ -34,6 +34,8 @@ module Registration
         details.results[:items_succeed]
       end.uniq
       @rosterized_items = rosterized_items.any? ? rosterized_items.map(&:title).join(", ") : nil
+      @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user)
+                                                        .call
       render template: "registration/main/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
