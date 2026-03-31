@@ -14,6 +14,7 @@ export default class extends Controller {
   sortableInstance = null;
   tileDropInstances = [];
   pendingDrop = null;
+  highlightedTile = null;
 
   connect() {
     this.initDraggable();
@@ -24,6 +25,7 @@ export default class extends Controller {
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];
+    this.clearHighlight();
   }
 
   initDraggable() {
@@ -37,9 +39,9 @@ export default class extends Controller {
       chosenClass: "roster-drag-chosen",
       filter: ".tutorial-roster-student-remove, form, button, a",
       preventOnFilter: false,
-      onStart: () => this.highlightDropZones(true),
+      onMove: evt => this.updateHighlight(evt.to),
       onEnd: (evt) => {
-        this.highlightDropZones(false);
+        this.clearHighlight();
         if (evt.item.parentNode !== this.studentListTarget) {
           evt.item.remove();
         }
@@ -78,6 +80,24 @@ export default class extends Controller {
 
       this.tileDropInstances.push(instance);
     });
+  }
+
+  updateHighlight(dropZone) {
+    const tile = dropZone.closest(".tutorial-gtile");
+    if (tile === this.highlightedTile) return;
+
+    this.clearHighlight();
+    if (tile) {
+      tile.classList.add("tutorial-gtile--drop-target");
+      this.highlightedTile = tile;
+    }
+  }
+
+  clearHighlight() {
+    if (this.highlightedTile) {
+      this.highlightedTile.classList.remove("tutorial-gtile--drop-target");
+      this.highlightedTile = null;
+    }
   }
 
   handleDrop(tile, evt) {
@@ -194,22 +214,6 @@ export default class extends Controller {
     input.name = name;
     input.value = value;
     return input;
-  }
-
-  highlightDropZones(active) {
-    const tiles = document.querySelectorAll(
-      ".tutorial-gtile[data-roster-type][data-roster-id]",
-    );
-
-    tiles.forEach((tile) => {
-      const isSelf
-        = tile.dataset.rosterType === this.sourceTypeValue
-          && tile.dataset.rosterId === String(this.sourceIdValue);
-
-      if (isSelf) return;
-
-      tile.classList.toggle("tutorial-gtile--drop-target", active);
-    });
   }
 
   classNameFor(type) {
