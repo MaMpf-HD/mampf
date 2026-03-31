@@ -132,6 +132,7 @@ en:
         none: "No policies configured."
       hint:
         add_after_creation: "Policies (e.g. email restrictions) can be added after creation."
+        locked: "Policies can only be edited while the campaign is in draft."
       new:
         title: "New Policy"
       edit:

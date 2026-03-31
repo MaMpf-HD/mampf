@@ -107,6 +107,9 @@
           <div
             class="badge bg-light text-dark border me-1 d-inline-block policy-badge<%= " policy-badge--draft" if draft %>"
             data-policy-id="<%= policy.id %>"
+            <% unless draft %>
+              title="<%= t("registration.policy.hint.locked") %>"
+            <% end %>
           >
             <%= t("registration.policy.kinds.#{policy.kind}") %>
 

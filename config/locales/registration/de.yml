@@ -132,6 +132,7 @@ de:
         none: "Keine Richtlinien konfiguriert."
       hint:
         add_after_creation: "Richtlinien (z.B. E-Mail-Einschränkungen) können nach dem Erstellen hinzugefügt werden."
+        locked: "Richtlinien können nur im Entwurfsmodus bearbeitet werden."
       new:
         title: "Neue Richtlinie"
       edit:
