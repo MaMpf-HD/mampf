@@ -277,8 +277,8 @@ namespace :solver do
                         registration_campaign: campaign,
                         kind: :institutional_email,
                         config: { "allowed_domains" => "example.com" },
-                        phase: :both)
-      puts "Added institutional email policy (example.com)"
+                        phase: :finalization)
+      puts "Added institutional email policy (example.com, finalization only)"
     end
 
     # Create FCFS Tutorials (disjoint from other campaigns)
@@ -407,8 +407,11 @@ namespace :solver do
     repeaters_count = 0
     waitlist_count = 0
 
+    violator_indices = [2, 7, 14, 19, 33].to_set
+
     num_users.times do |i|
-      email = "cohort_user_#{i}@example.com"
+      domain = violator_indices.include?(i) ? "external.org" : "example.com"
+      email = "cohort_user_#{i}@#{domain}"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user, email: email, name: "Cohort User #{i}")
 
