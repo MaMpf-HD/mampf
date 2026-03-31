@@ -49,13 +49,21 @@
                       turbo_stream: true
                     },
                     class: "btn btn-success w-100" %>
-      <%= allocate_campaign_button(campaign, size: "w-100") %>
-      <% if campaign.last_allocation_calculated_at.present? %>
+      <% if campaign.preference_based? %>
+        <%= allocate_campaign_button(campaign, size: "w-100") %>
+        <% if campaign.last_allocation_calculated_at.present? %>
+          <%= finalize_campaign_button(campaign, size: "w-100") %>
+        <% end %>
+      <% else %>
         <%= finalize_campaign_button(campaign, size: "w-100") %>
       <% end %>
     <% elsif campaign.processing? %>
-      <%= allocate_campaign_button(campaign, size: "w-100") %>
-      <% if campaign.last_allocation_calculated_at.present? %>
+      <% if campaign.preference_based? %>
+        <%= allocate_campaign_button(campaign, size: "w-100") %>
+        <% if campaign.last_allocation_calculated_at.present? %>
+          <%= finalize_campaign_button(campaign, size: "w-100") %>
+        <% end %>
+      <% else %>
         <%= finalize_campaign_button(campaign, size: "w-100") %>
       <% end %>
     <% end %>
