@@ -36,6 +36,14 @@ module Registration
                                               dashboard: @dashboard,
                                               embedded: true
                                             })
+            streams << turbo_stream.replace(
+              helpers.campaign_actions_id(@campaign),
+              partial: "registration/campaigns/card_body_actions",
+              locals: {
+                campaign: @campaign,
+                has_violators: @dashboard.policy_violations.present?
+              }
+            )
           else
             streams << turbo_stream.replace("allocation-dashboard",
                                             partial: "registration/allocations/dashboard")

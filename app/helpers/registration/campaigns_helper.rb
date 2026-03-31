@@ -22,6 +22,10 @@ module Registration
       "campaign_header_frame_#{campaign.id}"
     end
 
+    def campaign_actions_id(campaign)
+      "campaign_actions_#{campaign.id}"
+    end
+
     def campaign_policy_form_frame_id(campaign)
       "policy_form_#{campaign.id}"
     end

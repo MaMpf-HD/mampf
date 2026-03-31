@@ -3,73 +3,16 @@
 <% show_allocation_dashboard = campaign.closed? || campaign.processing? ||
   campaign.completed? %>
 
-<% show_top_actions = (campaign.draft? && campaign.registration_items.any?) ||
-  campaign.open? || campaign.closed? || campaign.processing? %>
+<% dashboard = Registration::AllocationDashboard.new(campaign) if show_allocation_dashboard %>
+<% has_violators = dashboard&.policy_violations&.present? %>
 
-<% if show_top_actions %>
-  <div class="d-flex flex-wrap gap-2 mb-3 registration-campaign-actions">
-    <% if campaign.draft? && campaign.registration_items.any? %>
-      <%= button_to open_registration_campaign_path(campaign),
-                    method: :patch,
-                    form: {
-                      data: {
-                        controller: "campaign-action",
-                        "campaign-action-campaign-id-value": campaign.id,
-                        "campaign-action-confirm-message-value":
-                          t("registration.campaign.confirmations.open"),
-                        "campaign-action-warning-message-value":
-                          t("registration.campaign.warnings.unlimited_items"),
-                        action: "submit->campaign-action#confirm",
-                        turbo_stream: true
-                      }
-                    },
-                    class: "btn w-100 registration-campaign-start-btn" do %>
-        <i class="bi bi-play-fill"></i>
-        <%= t("registration.campaign.actions.open") %>
-      <% end %>
-    <% elsif campaign.open? %>
-      <%= button_to t("registration.campaign.actions.close"),
-                    close_registration_campaign_path(campaign),
-                    method: :patch,
-                    data: {
-                      confirm: campaign_close_confirmation(campaign),
-                      turbo_stream: true
-                    },
-                    class: "btn btn-warning w-100" %>
-    <% elsif campaign.closed? %>
-      <%= button_to t("registration.campaign.actions.reopen"),
-                    reopen_registration_campaign_path(campaign),
-                    method: :patch,
-                    data: {
-                      confirm: t("registration.campaign.confirmations.reopen"),
-                      turbo_stream: true
-                    },
-                    class: "btn btn-success w-100" %>
-      <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign, size: "w-100") %>
-        <% if campaign.last_allocation_calculated_at.present? %>
-          <%= finalize_campaign_button(campaign, size: "w-100") %>
-        <% end %>
-      <% else %>
-        <%= finalize_campaign_button(campaign, size: "w-100") %>
-      <% end %>
-    <% elsif campaign.processing? %>
-      <% if campaign.preference_based? %>
-        <%= allocate_campaign_button(campaign, size: "w-100") %>
-        <% if campaign.last_allocation_calculated_at.present? %>
-          <%= finalize_campaign_button(campaign, size: "w-100") %>
-        <% end %>
-      <% else %>
-        <%= finalize_campaign_button(campaign, size: "w-100") %>
-      <% end %>
-    <% end %>
-  </div>
-<% end %>
+<%= render "registration/campaigns/card_body_actions",
+           campaign: campaign, has_violators: has_violators %>
 
 <% if show_allocation_dashboard %>
   <%= render "registration/allocations/dashboard",
                campaign: campaign,
-               dashboard: Registration::AllocationDashboard.new(campaign),
+               dashboard: dashboard,
                embedded: true %>
 <% else %>
   <%= render "registration/campaigns/card_body_items", campaign: campaign %>
