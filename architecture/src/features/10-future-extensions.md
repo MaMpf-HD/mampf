@@ -23,6 +23,35 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
+### Soft-Delete Registrations via `excluded` Status (HIGH PRIORITY)
+
+**Current State:** "Remove registrations" (`destroy_for_user`) performs a hard `destroy_all`, permanently deleting all `UserRegistration` rows for a user in a campaign. This leaves no trace that a registration ever existed, even though `materialized_at` was designed as a permanent record.
+
+**Proposed Enhancement:** Add `excluded: 3` to the `UserRegistration` status enum. Instead of deleting rows, transition them to `excluded`. This preserves the registration history for auditing and traceability.
+
+**Impact analysis (8 must-change, ~11 review):**
+
+Must change:
+1. `UserRegistration` — add `excluded: 3` to enum
+2. `UserRegistrationsController#destroy_for_user` — transition to `:excluded` instead of `destroy_all`
+3. `AllocationService#reset_registrations` — add `.where.not(status: :excluded)`
+4. `AllocationService#allocate!` forced-registration cleanup — protect excluded rows from `delete_all`
+5. `Campaign#rejected_count` — filter must account for excluded
+6. EN/DE locale files — add status translation (`"Excluded"` / `"Ausgeschlossen"`)
+7. Factory — add `:excluded` trait
+8. Status color helper — add color for excluded (gray/dark)
+
+Review (semantic decisions):
+- `total_registrations_count`: should excluded inflate the total? (likely no)
+- `pending_count`: could double-count users with both pending + excluded rows
+- `AllocationDashboard#calculate_conflicts`: unfiltered `pluck(:user_id)` includes excluded
+- `_overview.html.erb`: whether to show excluded count to admins
+- Counter cache: `update_all` skips callbacks, so either use individual `update!` (fine for single-user admin action) or manually recalculate `confirmed_registrations_count`
+
+Safe (no changes needed): `FinalizationGuard` (only iterates `.confirmed`), `PolicyEngine` (evaluates user, not status), `Registerable` (no status references), `Campaign#finalize!` (only touches `.pending`).
+
+**Complexity:** Medium. Touches many files but each change is small. The main risk is counter cache consistency when switching from `destroy_all` to status transitions.
+
 - **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
 - **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
 - **Asynchronous Allocation (`:calculating` status)**: When moving the allocation solver to a background job, introduce a `:calculating` status to lock the campaign during execution. This distinguishes "solver running" (locked) from "results ready for review" (`:processing`, unlocked for adjustments).
