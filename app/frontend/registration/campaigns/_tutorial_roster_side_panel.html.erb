@@ -59,7 +59,10 @@ end %>
         <div class="mb-3">
           <%= form_with url: add_member_path,
                         method: :post,
-                        data: { turbo: true },
+                        data: {
+                          turbo: true,
+                          turbo_confirm: (t("roster.warnings.confirm_overbooking") if registerable.full?)
+                        },
                         class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
             <%= f.label :email,
                         t("roster.actions.add_student_label"),
