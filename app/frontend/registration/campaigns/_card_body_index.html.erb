@@ -23,7 +23,8 @@
             (local_assigns[:tab] || "items") : "items" %>
 
           <div class="card mb-3 campaign-section registration-campaign-card">
-            <%= render "registration/campaigns/card_header", campaign: campaign %>
+            <%= render "registration/campaigns/card_header",
+                       campaign: campaign %>
 
             <div class="card-body">
               <%= render "registration/campaigns/card_body_show",

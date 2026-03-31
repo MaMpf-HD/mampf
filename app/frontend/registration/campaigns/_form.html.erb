@@ -96,6 +96,13 @@
                   role: "button",
                   data: cancel_data %>
       </div>
+
+      <% unless campaign.persisted? %>
+        <small class="d-block text-muted mt-2">
+          <i class="bi bi-info-circle me-1"></i>
+          <%= t("registration.policy.hint.add_after_creation") %>
+        </small>
+      <% end %>
     <% end %>
   </div>
 <% end %>

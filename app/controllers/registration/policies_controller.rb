@@ -3,7 +3,8 @@ module Registration
     before_action :set_campaign
     before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
-    authorize_resource class: "Registration::Policy", except: [:new, :create]
+    authorize_resource class: "Registration::Policy",
+                       except: [:new, :create, :reorder]
 
     def current_ability
       @current_ability ||= RegistrationPolicyAbility.new(current_user)
@@ -52,6 +53,17 @@ module Registration
       move(:lower)
     end
 
+    def reorder
+      authorize! :update, @campaign.registration_policies.build
+      policy_ids = params[:policy_ids]
+      return head(:bad_request) unless policy_ids.is_a?(Array)
+
+      policy_ids.each_with_index do |id, index|
+        @campaign.registration_policies.find(id).set_list_position(index + 1)
+      end
+      respond_with_success(nil)
+    end
+
     private
 
       def set_campaign
@@ -67,8 +79,7 @@ module Registration
         return if @policy
 
         respond_with_error(t("registration.policy.not_found"),
-                           redirect_path: registration_campaign_path(@campaign,
-                                                                     tab: "policies"))
+                           redirect_path: registration_campaign_path(@campaign))
       end
 
       def set_locale
@@ -88,7 +99,7 @@ module Registration
       def respond_with_success(message)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign, tab: "policies"),
+            redirect_to registration_campaign_path(@campaign),
                         notice: message
           end
           format.turbo_stream do
@@ -99,7 +110,7 @@ module Registration
                                   locals: {
                                     lecture: @campaign.campaignable,
                                     expanded_campaign_id: @campaign.id,
-                                    tab: "policies"
+                                    tab: "items"
                                   }),
               stream_flash
             ].compact
@@ -110,8 +121,7 @@ module Registration
       def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            path = redirect_path || registration_campaign_path(@campaign,
-                                                               tab: "policies")
+            path = redirect_path || registration_campaign_path(@campaign)
             redirect_to path, alert: message
           end
           format.turbo_stream do

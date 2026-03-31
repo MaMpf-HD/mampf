@@ -2,7 +2,10 @@
 
 <%= turbo_frame_tag campaign_policies_list_frame_id(campaign) do %>
   <% if campaign.registration_policies.any? %>
-    <table class="table table-hover">
+    <table
+      class="table table-sm table-hover mb-0"
+      style="--bs-table-bg: transparent;"
+    >
       <thead>
         <tr>
           <th><%= t("registration.policy.kind") %></th>

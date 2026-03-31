@@ -130,6 +130,8 @@ en:
         title: "Policies"
         add: "Add Policy"
         none: "No policies configured."
+      hint:
+        add_after_creation: "Policies (e.g. email restrictions) can be added after creation."
       new:
         title: "New Policy"
       edit:

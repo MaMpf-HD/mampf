@@ -130,6 +130,8 @@ de:
         title: "Richtlinien"
         add: "Richtlinie hinzufügen"
         none: "Keine Richtlinien konfiguriert."
+      hint:
+        add_after_creation: "Richtlinien (z.B. E-Mail-Einschränkungen) können nach dem Erstellen hinzugefügt werden."
       new:
         title: "Neue Richtlinie"
       edit:

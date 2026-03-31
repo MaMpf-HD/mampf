@@ -79,5 +79,88 @@
         </div>
       </div>
     </div>
+
+    <div class="mt-2">
+      <small class="text-muted fw-normal">
+        <%= t("registration.policy.index.title") %>:
+      </small>
+
+      <% draft = campaign.draft? %>
+      <% policies = campaign.registration_policies.order(:position) %>
+
+      <div
+        class="d-inline policy-badges-container"
+        <% if draft && policies.size > 1 %>
+          data-controller="sortable-policies"
+        <% end %>
+      >
+        <% if draft && policies.size > 1 %>
+          <%= form_with url: reorder_registration_campaign_policies_path(campaign),
+                        method: :patch,
+                        class: "d-none",
+                        data: { sortable_policies_target: "form" } do %>
+            <div data-ids></div>
+          <% end %>
+        <% end %>
+
+        <% policies.each do |policy| %>
+          <div
+            class="badge bg-light text-dark border me-1 d-inline-block policy-badge<%= " policy-badge--draft" if draft %>"
+            data-policy-id="<%= policy.id %>"
+          >
+            <%= t("registration.policy.kinds.#{policy.kind}") %>
+
+            <small class="text-muted">
+              (<%= t("registration.policy.phases.#{policy.phase}") %>)
+            </small>
+
+            <% if policy.config_summary.present? %>
+              <small class="text-muted">
+                &middot; <%= policy.config_summary %>
+              </small>
+            <% end %>
+
+            <% if draft %>
+              <span class="policy-badge-actions">
+                <%= link_to edit_registration_campaign_policy_path(campaign, policy),
+                            class: "policy-badge-action text-secondary",
+                            data: { turbo_frame: campaign_policy_form_frame_id(campaign) },
+                            title: t("basics.edit") do %>
+                  <i class="bi bi-pencil-fill"></i>
+                <% end %>
+
+                <%= button_to registration_campaign_policy_path(campaign, policy),
+                              method: :delete,
+                              class: "policy-badge-action text-danger",
+                              form: { class: "d-inline" },
+                              data: { confirm: t("confirmation.generic"), turbo_stream: true },
+                              title: t("buttons.delete") do %>
+                  <i class="bi bi-x-circle-fill"></i>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if draft %>
+          <%= link_to new_registration_campaign_policy_path(campaign),
+                      class: "policy-add-link btn btn-sm btn-link text-secondary p-0",
+                      title: t("registration.policy.index.add"),
+                      data: { turbo_frame: campaign_policy_form_frame_id(campaign) } do %>
+            <i class="bi bi-plus-circle"></i>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if policies.empty? && !draft %>
+        <small class="text-muted">
+          <%= t("registration.policy.index.none") %>
+        </small>
+      <% end %>
+
+      <% if draft %>
+        <%= turbo_frame_tag campaign_policy_form_frame_id(campaign) %>
+      <% end %>
+    </div>
   </div>
 <% end %>

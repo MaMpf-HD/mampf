@@ -317,6 +317,9 @@ Rails.application.routes.draw do
       resources :policies,
                 controller: "registration/policies",
                 only: [:new, :create, :edit, :update, :destroy] do
+        collection do
+          patch :reorder
+        end
         member do
           patch :move_up
           patch :move_down

@@ -38,6 +38,9 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 
+import SortablePoliciesController from "~/registration/policies/sortable_policies.controller.js";
+window.Stimulus.register("sortable-policies", SortablePoliciesController);
+
 import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
 window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
 
