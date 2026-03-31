@@ -143,21 +143,19 @@ module Roster
         streams = []
 
         if update_tiles
-          streams.concat(items.map do |item|
-            turbo_stream.replace(
+          items.each do |item|
+            streams << turbo_stream.replace(
               view_context.dom_id(item),
               partial: "registration/campaigns/group_tile",
               locals: { item: item }
             )
-          end)
-
-          if items.empty?
-            streams << turbo_stream.replace(
-              view_context.dom_id(@rosterable),
-              partial: "registration/campaigns/group_tile",
-              locals: { tutorial: @rosterable }
-            )
           end
+
+          streams << turbo_stream.replace(
+            view_context.dom_id(@rosterable),
+            partial: "registration/campaigns/group_tile",
+            locals: { tutorial: @rosterable }
+          )
         end
 
         if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort)
