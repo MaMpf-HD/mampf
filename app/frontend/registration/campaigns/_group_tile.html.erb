@@ -77,6 +77,10 @@ end %>
       data-action="click->tutorial-roster-panel#openFromTile"
       data-roster-key="<%= roster_key %>"
       data-roster-panel-path="<%= roster_panel_path if is_panel_registerable %>"
+      data-roster-type="<%= registerable.class.name.underscore %>"
+      data-roster-id="<%= registerable.id %>"
+      data-roster-full="<%= registerable.full? %>"
+      data-roster-title="<%= registerable.title %>"
     >
       <div class="tutorial-gtile-top-bar <%= local_assigns[:item] ? "tutorial-gtile-top-bar--campaign" : "tutorial-gtile-top-bar--free" %>"></div>
 

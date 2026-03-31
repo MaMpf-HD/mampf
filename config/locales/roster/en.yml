@@ -137,6 +137,10 @@ en:
       confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
+    drag:
+      choice_title: 'Drop action for'
+      move: 'Move'
+      add_only: 'Add'
     cohorts:
       kinds:
         with_enrollment: "Group with enrollment"

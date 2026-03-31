@@ -16,10 +16,23 @@ elsif is_cohort
   add_member_cohort_path(registerable, source: :panel)
 end %>
 
+<% move_member_path_template = if is_tutorial
+  move_member_tutorial_path(registerable, "__USER_ID__")
+elsif is_cohort
+  move_member_cohort_path(registerable, "__USER_ID__")
+end %>
+
 <aside
   id="tutorial-roster-side-panel"
   class="card tutorial-roster-side-panel"
   data-tutorial-roster-panel-target="panelCard"
+  <% unless read_only || registerable.nil? %>
+    data-controller="roster-drag"
+    data-roster-drag-source-type-value="<%= registerable.class.name.downcase %>"
+    data-roster-drag-source-id-value="<%= registerable.id %>"
+    data-roster-drag-move-path-value="<%= move_member_path_template %>"
+    data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
+  <% end %>
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
@@ -96,7 +109,11 @@ end %>
           data-tutorial-roster-panel-target="filterInput"
         >
       </div>
-      <div class="d-grid gap-2" data-tutorial-roster-panel-target="list">
+      <div
+        class="d-grid gap-2"
+        data-tutorial-roster-panel-target="list"
+        data-roster-drag-target="studentList"
+      >
         <% students.each do |student| %>
           <% student_name = student.name.presence ||
                             student.try(:tutorial_name).presence ||
@@ -105,6 +122,7 @@ end %>
           <div
             class="tutorial-roster-student card rounded-3"
             data-student-search="<%= "#{student_name} #{student.email}".downcase %>"
+            data-user-id="<%= student.id %>"
           >
             <div
               class="
@@ -168,4 +186,44 @@ end %>
       </div>
     <% end %>
   </div>
+
+  <% unless read_only || registerable.nil? %>
+    <dialog
+      class="roster-drag-choice-dialog"
+      data-roster-drag-target="choiceDialog"
+    >
+      <p class="fw-semibold mb-3">
+        <%= t("roster.drag.choice_title") %>
+        <span data-role="target-name" class="text-primary"></span>
+      </p>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="click->roster-drag#cancelChoice"
+        >
+          <%= t("buttons.cancel") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          data-action="click->roster-drag#chooseAdd"
+        >
+          <i class="bi bi-plus-lg me-1"></i>
+          <%= t("roster.drag.add_only") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          data-action="click->roster-drag#chooseMove"
+        >
+          <i class="bi bi-arrow-right me-1"></i>
+          <%= t("roster.drag.move") %>
+        </button>
+      </div>
+    </dialog>
+  <% end %>
 </aside>

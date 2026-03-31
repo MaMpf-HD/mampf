@@ -1,0 +1,219 @@
+import { Controller } from "@hotwired/stimulus";
+import Sortable from "sortablejs";
+
+export default class extends Controller {
+  static targets = ["studentList", "choiceDialog"];
+
+  static values = {
+    sourceType: String,
+    sourceId: Number,
+    movePath: String,
+    overbookingWarning: String,
+  };
+
+  sortableInstance = null;
+  tileDropInstances = [];
+  pendingDrop = null;
+
+  connect() {
+    this.initDraggable();
+    this.initDropZones();
+  }
+
+  disconnect() {
+    this.sortableInstance?.destroy();
+    this.tileDropInstances.forEach(s => s.destroy());
+    this.tileDropInstances = [];
+  }
+
+  initDraggable() {
+    if (!this.hasStudentListTarget) return;
+
+    this.sortableInstance = new Sortable(this.studentListTarget, {
+      group: { name: "roster-students", pull: "clone", put: false },
+      sort: false,
+      draggable: ".tutorial-roster-student[data-user-id]",
+      ghostClass: "roster-drag-ghost",
+      chosenClass: "roster-drag-chosen",
+      filter: ".tutorial-roster-student-remove, form, button, a",
+      preventOnFilter: false,
+      onStart: () => this.highlightDropZones(true),
+      onEnd: (evt) => {
+        this.highlightDropZones(false);
+        if (evt.item.parentNode !== this.studentListTarget) {
+          evt.item.remove();
+        }
+      },
+    });
+  }
+
+  initDropZones() {
+    this.tileDropInstances.forEach(s => s.destroy());
+    this.tileDropInstances = [];
+
+    const tiles = document.querySelectorAll(
+      ".tutorial-gtile[data-roster-type][data-roster-id]",
+    );
+
+    tiles.forEach((tile) => {
+      if (
+        tile.dataset.rosterType === this.sourceTypeValue
+        && tile.dataset.rosterId === String(this.sourceIdValue)
+      ) {
+        return;
+      }
+
+      const dropZone
+        = tile.querySelector(".card-body") || tile;
+
+      const instance = new Sortable(dropZone, {
+        group: { name: "roster-drop", put: ["roster-students"] },
+        draggable: ".roster-drag-phantom",
+        ghostClass: "d-none",
+        onAdd: (evt) => {
+          evt.item.remove();
+          this.handleDrop(tile, evt);
+        },
+      });
+
+      this.tileDropInstances.push(instance);
+    });
+  }
+
+  handleDrop(tile, evt) {
+    const userId = evt.item?.dataset?.userId;
+    if (!userId) return;
+
+    const targetType = tile.dataset.rosterType;
+    const targetId = tile.dataset.rosterId;
+    const targetFull = tile.dataset.rosterFull === "true";
+    const targetTitle = tile.dataset.rosterTitle;
+
+    const isCohortTarget = targetType === "cohort";
+
+    if (isCohortTarget) {
+      this.showChoiceDialog(userId, targetId, targetType, targetFull, targetTitle);
+    }
+    else {
+      if (targetFull) {
+        if (!confirm(this.overbookingWarningValue)) return;
+      }
+      this.submitMove(userId, targetId, targetType);
+    }
+  }
+
+  showChoiceDialog(userId, targetId, targetType, targetFull, targetTitle) {
+    if (!this.hasChoiceDialogTarget) {
+      this.submitMove(userId, targetId, targetType);
+      return;
+    }
+
+    this.pendingDrop = { userId, targetId, targetType, targetFull, targetTitle };
+
+    const dialog = this.choiceDialogTarget;
+    const titleEl = dialog.querySelector("[data-role='target-name']");
+    if (titleEl) titleEl.textContent = targetTitle;
+
+    dialog.showModal();
+  }
+
+  chooseMove() {
+    if (!this.pendingDrop) return;
+    const { userId, targetId, targetType, targetFull } = this.pendingDrop;
+
+    this.closeDialog();
+    if (targetFull && !confirm(this.overbookingWarningValue)) return;
+    this.submitMove(userId, targetId, targetType);
+  }
+
+  chooseAdd() {
+    if (!this.pendingDrop) return;
+    const { userId, targetId, targetType, targetFull } = this.pendingDrop;
+
+    this.closeDialog();
+    if (targetFull && !confirm(this.overbookingWarningValue)) return;
+    this.submitAdd(userId, targetId, targetType);
+  }
+
+  cancelChoice() {
+    this.pendingDrop = null;
+    this.closeDialog();
+  }
+
+  closeDialog() {
+    if (this.hasChoiceDialogTarget) {
+      this.choiceDialogTarget.close();
+    }
+    this.pendingDrop = null;
+  }
+
+  submitMove(userId, targetId, targetType) {
+    const path = this.movePathValue.replace("__USER_ID__", userId);
+    this.submitAction(path, "PATCH", {
+      target_id: targetId,
+      target_type: this.classNameFor(targetType),
+      source: "panel",
+    });
+  }
+
+  submitAdd(userId, targetId, targetType) {
+    const plural = targetType + "s";
+    const path = `/${plural}/${targetId}/roster/members`;
+    this.submitAction(path, "POST", {
+      user_id: userId,
+      source: "panel",
+    });
+  }
+
+  async submitAction(path, method, params) {
+    const form = document.createElement("form");
+    form.action = path;
+    form.method = "POST";
+    form.hidden = true;
+    form.dataset.turbo = "true";
+
+    if (method !== "POST") {
+      form.appendChild(this.hiddenInput("_method", method));
+    }
+
+    const token = document.querySelector("meta[name='csrf-token']")?.content;
+    if (token) form.appendChild(this.hiddenInput("authenticity_token", token));
+
+    for (const [key, value] of Object.entries(params)) {
+      form.appendChild(this.hiddenInput(key, value));
+    }
+
+    document.body.appendChild(form);
+    form.requestSubmit();
+    form.remove();
+  }
+
+  hiddenInput(name, value) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    return input;
+  }
+
+  highlightDropZones(active) {
+    const tiles = document.querySelectorAll(
+      ".tutorial-gtile[data-roster-type][data-roster-id]",
+    );
+
+    tiles.forEach((tile) => {
+      const isSelf
+        = tile.dataset.rosterType === this.sourceTypeValue
+          && tile.dataset.rosterId === String(this.sourceIdValue);
+
+      if (isSelf) return;
+
+      tile.classList.toggle("tutorial-gtile--drop-target", active);
+    });
+  }
+
+  classNameFor(type) {
+    const map = { tutorial: "Tutorial", cohort: "Cohort", talk: "Talk" };
+    return map[type] || type;
+  }
+}

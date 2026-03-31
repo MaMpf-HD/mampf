@@ -113,7 +113,11 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
-      render_roster_update
+      if panel_source?
+        render_move_panel_update(target)
+      else
+        render_roster_update
+      end
     end
 
     private
@@ -138,25 +142,9 @@ module Roster
 
       def render_panel_update(update_tiles: true)
         @rosterable.reload
-        items = Registration::Item.where(registerable: @rosterable)
 
         streams = []
-
-        if update_tiles
-          items.each do |item|
-            streams << turbo_stream.replace(
-              view_context.dom_id(item),
-              partial: "registration/campaigns/group_tile",
-              locals: { item: item }
-            )
-          end
-
-          streams << turbo_stream.replace(
-            view_context.dom_id(@rosterable),
-            partial: "registration/campaigns/group_tile",
-            locals: { tutorial: @rosterable }
-          )
-        end
+        tile_replacements_for(@rosterable, streams) if update_tiles
 
         if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort)
           streams << turbo_stream.replace(
@@ -171,6 +159,44 @@ module Roster
 
         streams << stream_flash if flash.present?
         render turbo_stream: streams.compact
+      end
+
+      def render_move_panel_update(target)
+        @rosterable.reload
+        target.reload
+
+        streams = []
+
+        tile_replacements_for(@rosterable, streams)
+        tile_replacements_for(target, streams)
+
+        streams << turbo_stream.replace(
+          "tutorial-roster-side-panel",
+          partial: "registration/campaigns/tutorial_roster_side_panel",
+          locals: {
+            registerable: @rosterable,
+            students: @rosterable.members.order(:name)
+          }
+        )
+
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams.compact
+      end
+
+      def tile_replacements_for(rosterable, streams)
+        Registration::Item.where(registerable: rosterable).each do |item|
+          streams << turbo_stream.replace(
+            view_context.dom_id(item),
+            partial: "registration/campaigns/group_tile",
+            locals: { item: item }
+          )
+        end
+
+        streams << turbo_stream.replace(
+          view_context.dom_id(rosterable),
+          partial: "registration/campaigns/group_tile",
+          locals: { tutorial: rosterable }
+        )
       end
 
       def render_roster_update(roster_tab: nil, rosterable: @rosterable)
