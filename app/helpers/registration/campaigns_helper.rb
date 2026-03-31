@@ -34,6 +34,13 @@ module Registration
       "policies_list_#{campaign.id}"
     end
 
+    def policy_kinds_summary(campaign)
+      kinds = campaign.registration_policies.order(:position).map do |p|
+        t("registration.policy.kinds.#{p.kind}")
+      end
+      kinds.join(", ")
+    end
+
     def item_stats_label(campaign)
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         t("registration.item.columns.registrations")

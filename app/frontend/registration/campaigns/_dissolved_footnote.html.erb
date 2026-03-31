@@ -23,5 +23,12 @@
       <%= campaign.total_registrations_count %>
       <%= t("registration.campaign.dissolved_enrolled") %>
     </span>
+
+    <% summary = policy_kinds_summary(campaign) %>
+
+    <% if summary.present? %>
+      <span class="dissolved-campaign-pill-sep">&middot;</span>
+      <span><%= summary %></span>
+    <% end %>
   </span>
 </div>
