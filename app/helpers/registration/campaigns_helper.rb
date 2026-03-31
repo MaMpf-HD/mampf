@@ -22,18 +22,6 @@ module Registration
       "campaign_header_frame_#{campaign.id}"
     end
 
-    def campaign_items_tab_id(campaign)
-      "campaign_#{campaign.id}_items"
-    end
-
-    def campaign_policies_tab_id(campaign)
-      "campaign_#{campaign.id}_policies"
-    end
-
-    def campaign_allocations_tab_id(campaign)
-      "campaign_#{campaign.id}_allocations"
-    end
-
     def campaign_policy_form_frame_id(campaign)
       "policy_form_#{campaign.id}"
     end

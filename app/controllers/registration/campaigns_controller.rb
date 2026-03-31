@@ -27,8 +27,7 @@ module Registration
         format.html
         format.turbo_stream do
           render_campaigns_index_turbo(lecture: @campaign.campaignable,
-                                       expanded_campaign_id: @campaign.id,
-                                       tab: params[:tab])
+                                       expanded_campaign_id: @campaign.id)
         end
       end
     end
@@ -57,7 +56,7 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_with_success(t("registration.campaign.created"), tab: "items")
+        respond_with_success(t("registration.campaign.created"))
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
@@ -101,7 +100,7 @@ module Registration
       end
 
       if @campaign.update(attributes)
-        respond_with_success(t("registration.campaign.closed"), tab: "allocations")
+        respond_with_success(t("registration.campaign.closed"))
       else
         respond_with_error(@campaign.errors.full_messages.join(", "))
       end
@@ -164,21 +163,20 @@ module Registration
       end
 
       def render_campaigns_index_turbo(lecture:, expanded_campaign_id: nil,
-                                       tab: nil, new_campaign: nil)
+                                       new_campaign: nil)
         render turbo_stream: turbo_stream.update(
           "campaigns_container",
           partial: "registration/campaigns/card_body_index",
           locals: {
             lecture: lecture,
             expanded_campaign_id: expanded_campaign_id,
-            tab: tab,
             new_campaign: new_campaign
           }
         )
       end
 
       def render_turbo_update(lecture:, expanded_campaign_id: nil,
-                              tab: nil, new_campaign: nil)
+                              new_campaign: nil)
         streams = [
           turbo_stream.update(
             "campaigns_container",
@@ -186,7 +184,6 @@ module Registration
             locals: {
               lecture: lecture,
               expanded_campaign_id: expanded_campaign_id,
-              tab: tab,
               new_campaign: new_campaign
             }
           ),
@@ -212,17 +209,16 @@ module Registration
         ]
       end
 
-      def respond_with_success(message, tab: nil)
+      def respond_with_success(message)
         lecture = @campaign.campaignable
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign, tab: tab), notice: message
+            redirect_to registration_campaign_path(@campaign), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
             render_turbo_update(lecture: lecture,
-                                expanded_campaign_id: @campaign.id,
-                                tab: tab)
+                                expanded_campaign_id: @campaign.id)
           end
         end
       end

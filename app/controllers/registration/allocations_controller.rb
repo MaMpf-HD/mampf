@@ -18,8 +18,7 @@ module Registration
                                                    partial: "registration/campaigns/card_body_index",
                                                    locals: {
                                                      lecture: @campaign.campaignable,
-                                                     expanded_campaign_id: @campaign.id,
-                                                     tab: "allocations"
+                                                     expanded_campaign_id: @campaign.id
                                                    })
         end
       end
@@ -43,8 +42,7 @@ module Registration
                                   partial: "registration/campaigns/card_body_index",
                                   locals: {
                                     lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id,
-                                    tab: "allocations"
+                                    expanded_campaign_id: @campaign.id
                                   }),
               stream_flash
             ]
@@ -101,8 +99,7 @@ module Registration
                                   partial: "registration/campaigns/card_body_index",
                                   locals: {
                                     lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id,
-                                    tab: "allocations"
+                                    expanded_campaign_id: @campaign.id
                                   }),
               stream_flash
             ]

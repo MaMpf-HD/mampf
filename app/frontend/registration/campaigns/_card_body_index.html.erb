@@ -19,17 +19,13 @@
           <% end %>
         </div>
         <% active_campaigns.each do |campaign| %>
-          <% active_tab = campaign.id == local_assigns[:expanded_campaign_id] ?
-            (local_assigns[:tab] || "items") : "items" %>
-
           <div class="card mb-3 campaign-section registration-campaign-card">
             <%= render "registration/campaigns/card_header",
                        campaign: campaign %>
 
             <div class="card-body">
               <%= render "registration/campaigns/card_body_show",
-                         campaign: campaign,
-                         tab: active_tab %>
+                         campaign: campaign %>
             </div>
           </div>
         <% end %>

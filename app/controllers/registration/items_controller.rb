@@ -121,8 +121,7 @@ module Registration
                                   partial: "registration/campaigns/card_body_index",
                                   locals: {
                                     lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id,
-                                    tab: "items"
+                                    expanded_campaign_id: @campaign.id
                                   }),
               stream_flash
             ]
@@ -176,7 +175,7 @@ module Registration
                               group_type: view_context.roster_group_types(@campaign.campaignable),
                               tab: "enrollment")
         else
-          registration_campaign_path(@campaign, tab: "items")
+          registration_campaign_path(@campaign)
         end
       end
 
