@@ -10,12 +10,20 @@ module Rosters
 
     def call
       filter_mode = @params[:filter] || "all"
+      search = @params[:search].presence
 
       base_scope =
         @lecture.lecture_memberships
                 .joins(:user)
                 .includes(:user)
                 .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+
+      if search
+        base_scope = base_scope.where(
+          "users.name ILIKE :q OR users.email ILIKE :q OR users.name_in_tutorials ILIKE :q",
+          q: "%#{search}%"
+        )
+      end
 
       total_count = base_scope.count
 

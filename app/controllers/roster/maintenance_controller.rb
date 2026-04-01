@@ -152,6 +152,7 @@ module Roster
         @participants_filter = query.filter_mode
         @total_participants_count = query.total_count
         @unassigned_participants_count = query.unassigned_count
+        @search_string = params[:search]
 
         @pagy, @participants = pagy(query.scope)
       end
@@ -197,6 +198,7 @@ module Roster
                                                 participants: @participants,
                                                 pagy: @pagy,
                                                 filter_mode: @participants_filter,
+                                                search_string: @search_string,
                                                 counts: component_counts)
               )
             ]

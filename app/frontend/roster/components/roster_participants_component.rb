@@ -4,18 +4,19 @@
 class RosterParticipantsComponent < ViewComponent::Base
   # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 counts: {})
+                 search_string: nil, counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
     @participants = participants
     @pagy = pagy
     @filter_mode = filter_mode
+    @search_string = search_string
     @counts = counts
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :counts
+  attr_reader :lecture, :group_type, :pagy, :filter_mode, :search_string, :counts
 
   # Returns the officially enrolled participants (Lecture Superset).
   def participants
@@ -63,6 +64,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                             path: helpers.lecture_roster_participants_path(@lecture),
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
+                              p["search"] = @search_string if @search_string.present?
                               p["group_type"] =
                                 if @group_type.is_a?(Array)
                                   @group_type.map(&:to_s)

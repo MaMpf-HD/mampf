@@ -4,4 +4,11 @@ export default class extends Controller {
   submit() {
     this.element.requestSubmit();
   }
+
+  debouncedSubmit() {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.element.requestSubmit();
+    }, 300);
+  }
 }
