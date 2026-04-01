@@ -110,7 +110,7 @@ end %>
             style="top: 0.5rem; right: 0.5rem;"
           >
             <button
-              class="btn btn-sm text-muted p-0 border-0 <%= "text-success" if sm_active %>"
+              class="btn btn-sm p-0 border-0 <%= sm_active ? "text-success" : "text-muted" %>"
               type="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
