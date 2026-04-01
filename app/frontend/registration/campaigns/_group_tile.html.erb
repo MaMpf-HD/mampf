@@ -114,7 +114,7 @@ end %>
               type="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
-              title="<%= t("roster.self_materialization.label", default: "Self-Enrollment") %>"
+              title="<%= t("roster.self_materialization.label", default: "Self-Enrollment") %>: <%= t("roster.self_materialization.modes.#{sm_mode}", default: sm_mode.humanize) %>"
             >
               <% if sm_mode == "add_only" %>
                 <i class="bi bi-box-arrow-in-right"></i>
