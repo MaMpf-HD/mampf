@@ -1,6 +1,8 @@
 <% registerable = local_assigns[:registerable] %>
 <% students = local_assigns[:students] || [] %>
 <% read_only = local_assigns[:read_only] || false %>
+<% is_unassigned = local_assigns[:is_unassigned] || false %>
+<% campaign = local_assigns[:campaign] %>
 <% is_tutorial = registerable.is_a?(Tutorial) if registerable %>
 <% is_cohort = registerable.is_a?(Cohort) if registerable %>
 
@@ -26,25 +28,47 @@ end %>
   id="tutorial-roster-side-panel"
   class="card tutorial-roster-side-panel"
   data-tutorial-roster-panel-target="panelCard"
-  <% unless read_only || registerable.nil? %>
-    data-controller="roster-drag"
-    data-roster-drag-source-type-value="<%= registerable.class.name.downcase %>"
-    data-roster-drag-source-id-value="<%= registerable.id %>"
-    data-roster-drag-move-path-value="<%= move_member_path_template %>"
-    data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
+  <% unless read_only %>
+    <% if is_unassigned && campaign %>
+      data-controller="roster-drag"
+      data-roster-drag-source-type-value="unassigned"
+      data-roster-drag-source-id-value="<%= campaign.id %>"
+      data-roster-drag-move-path-value=""
+      data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
+    <% elsif registerable %>
+      data-controller="roster-drag"
+      data-roster-drag-source-type-value="<%= registerable.class.name.downcase %>"
+      data-roster-drag-source-id-value="<%= registerable.id %>"
+      data-roster-drag-move-path-value="<%= move_member_path_template %>"
+      data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
+    <% end %>
   <% end %>
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
       <h5 class="mb-1">
-        <%= if read_only
+        <%= if is_unassigned
+          t("roster.candidates.title")
+        elsif read_only
           t("registration.user_registration.index.title", default: "Registrations")
         else
           t("roster.details.participants")
         end %>
       </h5>
 
-      <% if registerable %>
+      <% if is_unassigned && campaign %>
+        <div class="text-muted small">
+          <span>
+            <%= campaign.description.presence || "Campaign ##{campaign.id}" %>
+          </span>
+
+          <span class="mx-1">·</span>
+
+          <span>
+            <%= "#{students.size} " + t("basics.participants").downcase %>
+          </span>
+        </div>
+      <% elsif registerable %>
         <div class="text-muted small">
           <span><%= registerable.title %></span>
           <span class="mx-1">·</span>
@@ -67,8 +91,8 @@ end %>
   </div>
 
   <div class="card-body border-0">
-    <% if registerable %>
-      <% unless read_only %>
+    <% if registerable || is_unassigned %>
+      <% unless read_only || is_unassigned %>
         <div class="mb-3">
           <%= form_with url: add_member_path,
                         method: :post,
@@ -137,6 +161,19 @@ end %>
                   <i class="bi bi-envelope me-1"></i>
                   <%= student.email %>
                 </div>
+
+                <% if is_unassigned && campaign %>
+                  <% relevant_regs = student.user_registrations.select { |r| r.registration_campaign_id == campaign.id } %>
+                  <% if relevant_regs.any? %>
+                    <div
+                      class="small text-truncate mt-1 text-secondary"
+                      style="max-width: 250px;"
+                    >
+                      <% wishes = relevant_regs.sort_by { |r| r.preference_rank || 999 }.map { |r| r.registration_item.registerable.title }.join(", ") %>
+                      <%= t('roster.columns.preferences') %>: <%= wishes %>
+                    </div>
+                  <% end %>
+                <% end %>
               </div>
 
               <% remove_member_path = if is_tutorial
@@ -145,7 +182,7 @@ end %>
                 remove_member_cohort_path(registerable, student, source: :panel)
               end %>
 
-              <% unless read_only %>
+              <% unless read_only || is_unassigned %>
                 <%= button_to remove_member_path,
                               method: :delete,
                               class: "btn btn-sm btn-outline-danger " \

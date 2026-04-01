@@ -3232,6 +3232,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    close: "Close"
     capacity: 'Capacity'
     division: 'Division'
     error: Error

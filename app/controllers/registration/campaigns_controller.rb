@@ -32,6 +32,34 @@ module Registration
       end
     end
 
+    def unassigned
+      unless params[:source] == "panel"
+        redirect_to edit_lecture_path(@campaign.campaignable, tab: "groups")
+        return
+      end
+
+      # Exclude any users already on the lecture roster
+      lecture_roster_ids = @campaign.campaignable.allocated_user_ids
+
+      @unassigned_users = @campaign.unassigned_users
+                                   .where.not(id: lecture_roster_ids)
+                                   .includes(user_registrations: [:registration_campaign,
+                                                                  { registration_item: :registerable }])
+                                   .order(:name, :email)
+
+      render turbo_stream: turbo_stream.replace(
+        "tutorial-roster-side-panel",
+        partial: "registration/campaigns/tutorial_roster_side_panel",
+        locals: {
+          campaign: @campaign,
+          students: @unassigned_users,
+          lecture: @campaign.campaignable,
+          is_unassigned: true,
+          registerable: nil
+        }
+      )
+    end
+
     def new
       @campaign = @lecture.registration_campaigns.build
       authorize! :new, @campaign

@@ -6,7 +6,7 @@ export default class extends Controller {
 
   static values = {
     sourceType: String,
-    sourceId: Number,
+    sourceId: String,
     movePath: String,
     overbookingWarning: String,
   };
@@ -109,6 +109,14 @@ export default class extends Controller {
     const targetFull = tile.dataset.rosterFull === "true";
     const targetTitle = tile.dataset.rosterTitle;
 
+    if (this.sourceTypeValue === "unassigned") {
+      if (targetFull && !confirm(this.overbookingWarningValue)) {
+        return;
+      }
+      this.submitAdd(userId, targetId, targetType);
+      return;
+    }
+
     const isCohortTarget = targetType === "cohort";
 
     if (isCohortTarget) {
@@ -179,9 +187,20 @@ export default class extends Controller {
   submitAdd(userId, targetId, targetType) {
     const plural = targetType + "s";
     const path = `/${plural}/${targetId}/roster/members`;
+
+    // Determine the source type to instruct the backend how to render the panel updates
+    const sourceParams = this.sourceTypeValue === "unassigned"
+      ? {
+          source: "unassigned",
+          source_id: this.sourceIdValue,
+        }
+      : {
+          source: "panel",
+        };
+
     this.submitAction(path, "POST", {
       user_id: userId,
-      source: "panel",
+      ...sourceParams,
     });
   }
 

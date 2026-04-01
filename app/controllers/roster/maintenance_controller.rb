@@ -76,7 +76,13 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      panel_source? ? render_panel_update : render_roster_update
+      if unassigned_source?
+        render_unassigned_update
+      elsif panel_source?
+        render_panel_update
+      else
+        render_roster_update
+      end
     end
 
     def remove_member
@@ -147,8 +153,54 @@ module Roster
         authorize! :edit, @lecture
       end
 
+      def unassigned_source?
+        params[:source] == "unassigned" && params[:source_id].present?
+      end
+
       def panel_source?
         params[:source] == "panel"
+      end
+
+      def render_unassigned_update
+        @campaign = Registration::Campaign.find_by(id: params[:source_id])
+        @rosterable.reload
+
+        streams = []
+
+        # Update Target tile
+        tile_replacements_for(@rosterable, streams)
+
+        if @campaign
+          lecture_roster_ids = @campaign.campaignable.allocated_user_ids
+          @unassigned_users = @campaign.unassigned_users
+                                       .where.not(id: lecture_roster_ids)
+                                       .includes(user_registrations: [:registration_campaign,
+                                                                      { registration_item: :registerable }])
+                                       .order(:name, :email)
+
+          # Re-render dissolved footnote
+          streams << turbo_stream.replace(
+            "dissolved_campaign_#{@campaign.id}",
+            partial: "registration/campaigns/dissolved_footnote",
+            locals: { campaign: @campaign }
+          )
+
+          # Re-render the unassigned side panel
+          streams << turbo_stream.replace(
+            "tutorial-roster-side-panel",
+            partial: "registration/campaigns/tutorial_roster_side_panel",
+            locals: {
+              campaign: @campaign,
+              students: @unassigned_users,
+              lecture: @campaign.campaignable,
+              is_unassigned: true,
+              registerable: nil
+            }
+          )
+        end
+
+        streams << stream_flash if flash.present?
+        render turbo_stream: streams.compact
       end
 
       def render_panel_update(update_tiles: true)
@@ -195,7 +247,7 @@ module Roster
       end
 
       def tile_replacements_for(rosterable, streams)
-        Registration::Item.where(registerable: rosterable).each do |item|
+        Registration::Item.where(registerable: rosterable).find_each do |item|
           streams << turbo_stream.replace(
             view_context.dom_id(item),
             partial: "registration/campaigns/group_tile",

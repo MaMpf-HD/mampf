@@ -310,6 +310,7 @@ Rails.application.routes.draw do
         patch :close
         patch :reopen
         get :check_unlimited_items
+        get :unassigned
       end
       resource :allocation,
                controller: "registration/allocations",
