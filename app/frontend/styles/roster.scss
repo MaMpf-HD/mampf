@@ -379,7 +379,6 @@
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   border: 2px solid transparent;
-  overflow: hidden;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease,
               border-color 0.12s ease;
@@ -405,10 +404,16 @@
 
 .tutorial-gtile-top-bar {
   height: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .tutorial-gtile-top-bar--campaign {
   background: var(--bs-primary);
+}
+
+.tutorial-gtile-top-bar--self-enrollment {
+  background: var(--bs-success);
 }
 
 .tutorial-gtile-top-bar--free {

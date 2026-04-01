@@ -4,6 +4,9 @@
 <% is_panel_registerable = is_tutorial || is_cohort %>
 <% is_cohort_without_enrollment = is_cohort && !registerable.propagate_to_lecture? %>
 
+<% sm_mode = registerable.try(:self_materialization_mode) || "disabled" %>
+<% sm_active = sm_mode != "disabled" %>
+
 <% tutors_text = registerable.respond_to?(:tutor_names) ?
    (registerable.tutor_names.presence || t("basics.tba")) : t("basics.tba") %>
 
@@ -71,8 +74,16 @@ end %>
     class="col registration-group-tile-col"
     id="<%= dom_id(local_assigns[:item] || registerable) %>"
   >
+    <% gtile_type_class = if local_assigns[:item]
+         "tutorial-gtile--campaign"
+       elsif sm_active
+         "tutorial-gtile--self-enrollment"
+       else
+         "tutorial-gtile--free"
+       end %>
+
     <div
-      class="card h-100 tutorial-gtile <%= local_assigns[:item] ? "tutorial-gtile--campaign" : "tutorial-gtile--free" %> <%= "tutorial-gtile--without-enrollment" if is_cohort_without_enrollment %>"
+      class="card h-100 tutorial-gtile <%= gtile_type_class %> <%= "tutorial-gtile--without-enrollment" if is_cohort_without_enrollment %>"
       data-tutorial-roster-panel-target="tile"
       data-action="click->tutorial-roster-panel#openFromTile"
       data-roster-key="<%= roster_key %>"
@@ -82,10 +93,81 @@ end %>
       data-roster-full="<%= registerable.full? %>"
       data-roster-title="<%= registerable.title %>"
     >
-      <div class="tutorial-gtile-top-bar <%= local_assigns[:item] ? "tutorial-gtile-top-bar--campaign" : "tutorial-gtile-top-bar--free" %>"></div>
+      <% top_bar_class = if local_assigns[:item]
+           "tutorial-gtile-top-bar--campaign"
+         elsif sm_active
+           "tutorial-gtile-top-bar--self-enrollment"
+         else
+           "tutorial-gtile-top-bar--free"
+         end %>
 
-      <div class="card-body d-flex flex-column">
-        <div class="tutorial-gtile-type"><%= type_text %></div>
+      <div class="tutorial-gtile-top-bar <%= top_bar_class %>"></div>
+
+      <div class="card-body d-flex flex-column position-relative">
+        <% if !local_assigns[:item] && registerable.respond_to?(:skip_campaigns) && !registerable.locked? %>
+          <div
+            class="dropdown position-absolute"
+            style="top: 0.5rem; right: 0.5rem;"
+          >
+            <button
+              class="btn btn-sm text-muted p-0 border-0 <%= "text-success" if sm_active %>"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              title="<%= t("roster.self_materialization.label", default: "Self-Enrollment") %>"
+            >
+              <% if sm_mode == "add_only" %>
+                <i class="bi bi-box-arrow-in-right"></i>
+              <% elsif sm_mode == "remove_only" %>
+                <i class="bi bi-box-arrow-right"></i>
+              <% elsif sm_mode == "add_and_remove" %>
+                <i class="bi bi-arrow-left-right"></i>
+              <% else %>
+                <i class="bi bi-person-slash"></i>
+              <% end %>
+            </button>
+
+            <ul
+              class="dropdown-menu dropdown-menu-end shadow-sm"
+              style="font-size: 0.875rem;"
+            >
+              <li>
+                <h6 class="dropdown-header">
+                  <%= t("roster.self_materialization.label", default: "Self-Enrollment") %>
+                </h6>
+              </li>
+
+              <% registerable.class.self_materialization_modes.keys.each do |mode| %>
+                <% update_path = 
+                  case registerable
+                  when Tutorial then update_self_materialization_tutorial_path(registerable, mode: mode)
+                  when Cohort then update_self_materialization_cohort_path(registerable, mode: mode)
+                  when Talk then update_self_materialization_talk_path(registerable, mode: mode)
+                  end %>
+
+                <% if update_path %>
+                  <li>
+                    <%= link_to update_path, class: "dropdown-item #{'active' if sm_mode == mode}", data: { turbo_method: :patch } do %>
+                      <% if mode == "add_only" %>
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                      <% elsif mode == "remove_only" %>
+                        <i class="bi bi-box-arrow-right me-2"></i>
+                      <% elsif mode == "add_and_remove" %>
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                      <% else %>
+                        <i class="bi bi-person-slash me-2"></i>
+                      <% end %>
+
+                      <%= t(mode, scope: "roster.self_materialization.modes", default: mode.titleize) %>
+                    <% end %>
+                  </li>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="tutorial-gtile-type pe-4"><%= type_text %></div>
 
         <h6
           class="tutorial-gtile-name text-truncate"

@@ -7,7 +7,8 @@ module Roster
 
     before_action :set_lecture, only: [:index, :enroll]
     before_action :set_rosterable,
-                  only: [:show, :add_member, :remove_member, :move_member]
+                  only: [:show, :add_member, :remove_member, :move_member,
+                         :update_self_materialization]
     before_action :authorize_lecture
     before_action :use_lecture_locale
 
@@ -117,6 +118,20 @@ module Roster
         render_move_panel_update(target)
       else
         render_roster_update
+      end
+    end
+
+    def update_self_materialization
+      mode = params[:mode]
+
+      if @rosterable.update(self_materialization_mode: mode)
+        render turbo_stream: turbo_stream.replace(
+          @rosterable,
+          partial: "registration/campaigns/group_tile",
+          locals: { tutorial: @rosterable }
+        )
+      else
+        respond_with_error(@rosterable.errors.full_messages.to_sentence)
       end
     end
 

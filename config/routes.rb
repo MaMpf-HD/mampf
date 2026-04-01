@@ -283,6 +283,8 @@ Rails.application.routes.draw do
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :roster_update_self_materialization
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
@@ -823,6 +825,8 @@ Rails.application.routes.draw do
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
@@ -867,6 +871,8 @@ Rails.application.routes.draw do
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
@@ -883,6 +889,8 @@ Rails.application.routes.draw do
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
