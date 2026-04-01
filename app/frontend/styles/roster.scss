@@ -622,7 +622,7 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-span.tutorial-gtile--selected.text-warning {
+span.tutorial-gtile--selected.unassigned-warning-trigger {
   border-color: transparent !important;
   box-shadow: none !important;
   text-decoration: underline !important;

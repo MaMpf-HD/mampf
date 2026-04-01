@@ -40,16 +40,16 @@
           role="button"
           tabindex="0"
           class="
-            btn-sm btn-link p-0 text-decoration-none text-warning fw-bold
+            p-0 text-decoration-none text-reset unassigned-warning-trigger
             d-inline-flex align-items-center gap-1
           "
-          style="cursor: pointer;"
+          style="cursor: pointer; outline: none;"
           data-tutorial-roster-panel-target="tile"
           data-roster-key="campaign_<%= campaign.id %>_unassigned"
           data-action="click->tutorial-roster-panel#openFromTile"
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
-          <i class="bi bi-exclamation-triangle-fill"></i>
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
           <span><%= unassigned %> <%= t('roster.candidates.title') %></span>
         </span>
       <% end %>
