@@ -22,6 +22,21 @@ export default class extends Controller {
   }
 
   tileTargetConnected(tile) {
+    const params = new URLSearchParams(window.location.search);
+    const openRoster = params.get("open_roster");
+
+    if (openRoster && tile.dataset.rosterKey === openRoster && tile.dataset.rosterPanelPath) {
+      this.activateTile(tile);
+      this.openPanel();
+      this.requestPanel(tile.dataset.rosterPanelPath);
+      
+      params.delete("open_roster");
+      const newSearch = params.toString();
+      const newUrl = window.location.pathname + (newSearch ? "?" + newSearch : "") + window.location.hash;
+      window.history.replaceState({}, "", newUrl);
+      return;
+    }
+
     if (!this.isOpen || !this.activeRosterKey) {
       return;
     }

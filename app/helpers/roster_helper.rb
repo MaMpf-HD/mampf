@@ -203,10 +203,13 @@ module RosterHelper
     # Use light/border (ghost) for isolating groups to differentiate them.
     badge_class = isolating ? "bg-light text-dark border" : "bg-secondary text-white"
 
+    lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
+
     link_to(group.title,
-            polymorphic_path([group, :roster]),
+            edit_lecture_path(lecture, tab: "groups",
+                                       open_roster: "#{group.class.name}-#{group.id}"),
             class: "badge #{badge_class} me-1 text-decoration-none",
             style: "cursor: pointer;",
-            data: { turbo_frame: roster_maintenance_frame_id(group_type), turbo_prefetch: false })
+            data: { turbo: false })
   end
 end
