@@ -60,9 +60,8 @@ class RosterParticipantsComponent < ViewComponent::Base
     return unless @pagy && @pagy.pages > 1
 
     helpers.pagy_series_nav(@pagy,
-                            path: helpers.lecture_roster_path(@lecture),
+                            path: helpers.lecture_roster_participants_path(@lecture),
                             querify: lambda { |p|
-                              p["tab"] = "enrollment"
                               p["filter"] = @filter_mode
                               p["group_type"] =
                                 if @group_type.is_a?(Array)

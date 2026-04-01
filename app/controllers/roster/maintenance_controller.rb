@@ -92,7 +92,14 @@ module Roster
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
       flash.now[:notice] = t("roster.messages.user_removed")
-      panel_source? ? render_panel_update : render_roster_update
+
+      if participants_source?
+        render_participants_update
+      elsif panel_source?
+        render_panel_update
+      else
+        render_roster_update
+      end
     end
 
     def move_member
@@ -159,6 +166,47 @@ module Roster
 
       def panel_source?
         params[:source] == "panel"
+      end
+
+      def participants_source?
+        params[:source] == "participants"
+      end
+
+      def render_participants_update
+        @group_type = if params[:group_type].is_a?(Array)
+          params[:group_type].map(&:to_sym)
+        else
+          params[:group_type]&.to_sym || :all
+        end
+
+        @lecture = eager_load_lecture(@lecture.id)
+        setup_participants
+
+        component_counts = {
+          total: @total_participants_count,
+          unassigned: @unassigned_participants_count
+        }
+
+        respond_to do |format|
+          format.turbo_stream do
+            streams = [
+              turbo_stream.update(
+                "roster_participants_panel",
+                RosterParticipantsComponent.new(lecture: @lecture,
+                                                group_type: @group_type,
+                                                participants: @participants,
+                                                pagy: @pagy,
+                                                filter_mode: @participants_filter,
+                                                counts: component_counts)
+              )
+            ]
+            streams << stream_flash if flash.present?
+            render turbo_stream: streams
+          end
+          format.html do
+            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
+          end
+        end
       end
 
       def render_unassigned_update

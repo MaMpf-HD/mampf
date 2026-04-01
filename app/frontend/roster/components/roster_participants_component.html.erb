@@ -1,110 +1,110 @@
 <div class="row">
   <div class="col-12">
-    <div class="card mb-3">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">
-          <%= t("roster.tabs.participants") %>
-
-          <span class="badge bg-secondary ms-2">
-            <%= @counts[:total] || 0 %>
-          </span>
-
-          <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
-        </h5>
-
-        <!-- Filter Toggle Buttons -->
-        <div class="btn-group btn-group-sm" role="group">
-          <%= link_to lecture_roster_path(@lecture, tab: :enrollment, filter: :all,
-                                          group_type: @group_type),
-                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'all'}",
-                      data: { turbo_action: "advance" } do %>
-            <%= t('roster.filters.all') %>
-            (<span><%= @counts[:total] || 0 %></span>)
-          <% end %>
-
-          <%= link_to lecture_roster_path(@lecture, tab: :enrollment,
-                                          filter: :unassigned,
-                                          group_type: @group_type),
-                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'unassigned'}",
-                      data: { turbo_action: "advance" } do %>
-            <%= t('roster.filters.unassigned') %>
-            (<span><%= @counts[:unassigned] || 0 %></span>)
-          <% end %>
-        </div>
-      </div>
-
-      <div class="card-body p-0">
-        <% if (nav = pagination_nav) %>
-          <div class="d-flex justify-content-center py-2 border-bottom">
-            <%== nav %>
-          </div>
+    <div class="d-flex justify-content-end align-items-center mb-3 gap-3">
+      <!-- Filter Toggle Buttons -->
+      <div class="btn-group btn-group-sm" role="group">
+        <%= link_to lecture_roster_participants_path(@lecture, filter: :all,
+                                                     group_type: @group_type),
+                    class: "btn btn-outline-secondary #{'active' if @filter_mode == 'all'}" do %>
+          <%= t('roster.filters.all') %>
+          (<span><%= @counts[:total] || 0 %></span>)
         <% end %>
 
-        <div class="table-responsive">
-          <table class="table table-hover mb-0 align-middle">
-            <thead class="table-light">
-              <tr>
-                <th scope="col"><%= t("basics.name") %></th>
-                <th scope="col"><%= t("basics.email") %></th>
-                <th scope="col"><%= t("roster.columns.groups") %></th>
-                <th scope="col" class="text-end"><%= t("basics.actions") %></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <% if participants.empty? %>
-                <tr>
-                  <td colspan="4" class="text-center py-4 text-muted">
-                    <%= t("roster.details.empty") %>
-                  </td>
-                </tr>
-              <% else %>
-                <% participants.each do |membership| %>
-                  <% user = membership.user %>
-
-                  <tr data-cy="participant-row-<%= user.id %>">
-                    <td><%= user.tutorial_name %></td>
-                    <td><%= user.email %></td>
-
-                    <td>
-                      <% groups = participant_groups(user) %>
-
-                      <% if groups.any? %>
-                        <% groups.each do |group| %>
-                          <%= helpers.roster_group_badge(group, group_type) %>
-                        <% end %>
-                      <% else %>
-                        <span class="text-muted small">
-                          <%= t("roster.stats.status_unassigned") %>
-                        </span>
-                      <% end %>
-                    </td>
-
-                    <td class="text-end">
-                      <div class="d-flex justify-content-end gap-2">
-                        <%= button_to helpers.remove_member_lecture_path(lecture, user),
-                                      method: :delete,
-                                      params: { group_type: group_type,
-                                                page: @pagy.page },
-                                      class: "btn btn-sm btn-outline-danger",
-                                      title: t('roster.tooltips.kick_from_lecture'),
-                                      data: { bs_toggle: "tooltip",
-                                              turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
-                          <i class="bi bi-trash"></i>
-                        <% end %>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+        <%= link_to lecture_roster_participants_path(@lecture,
+                                                     filter: :unassigned,
+                                                     group_type: @group_type),
+                    class: "btn btn-outline-secondary #{'active' if @filter_mode == 'unassigned'}" do %>
+          <%= t('roster.filters.unassigned') %>
+          (<span><%= @counts[:unassigned] || 0 %></span>)
+        <% end %>
       </div>
 
-      <% if (nav = pagination_nav) %>
-        <div class="card-footer d-flex justify-content-center"><%== nav %></div>
-      <% end %>
+      <div>
+        <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
+      </div>
     </div>
+
+    <% if (nav = pagination_nav) %>
+      <div class="d-flex justify-content-center py-2 border-bottom">
+        <%== nav %>
+      </div>
+    <% end %>
+
+    <div class="table-responsive mb-4">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
+            <th scope="col" class="border-top-0"><%= t("basics.email") %></th>
+
+            <th scope="col" class="border-top-0">
+              <%= t("roster.columns.groups") %>
+            </th>
+
+            <th scope="col" class="border-top-0 text-end">
+              <%= t("basics.actions") %>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if participants.empty? %>
+            <tr>
+              <td
+                colspan="4"
+                class="text-center py-4 text-muted border-bottom-0"
+              >
+                <%= t("roster.details.empty") %>
+              </td>
+            </tr>
+          <% else %>
+            <% participants.each do |membership| %>
+              <% user = membership.user %>
+
+              <tr data-cy="participant-row-<%= user.id %>">
+                <td><%= user.tutorial_name %></td>
+                <td><%= user.email %></td>
+
+                <td>
+                  <% groups = participant_groups(user) %>
+
+                  <% if groups.any? %>
+                    <% groups.each do |group| %>
+                      <%= helpers.roster_group_badge(group, group_type) %>
+                    <% end %>
+                  <% else %>
+                    <span class="text-muted small">
+                      <%= t("roster.stats.status_unassigned") %>
+                    </span>
+                  <% end %>
+                </td>
+
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <%= button_to helpers.remove_member_lecture_path(lecture, user),
+                                  method: :delete,
+                                  params: { source: :participants,
+                                            group_type: group_type,
+                                            page: @pagy.page },
+                                  class: "btn btn-sm btn-outline-danger",
+                                  title: t('roster.tooltips.kick_from_lecture'),
+                                  data: { bs_toggle: "tooltip",
+                                          turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (nav = pagination_nav) %>
+      <div class="d-flex justify-content-center pb-3">
+        <%== nav %>
+      </div>
+    <% end %>
   </div>
 </div>
