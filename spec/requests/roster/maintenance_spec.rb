@@ -279,39 +279,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     end
   end
 
-  describe "POST /lectures/:id/roster/add_to_group" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
-    let(:new_student) { create(:confirmed_user) }
-
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "adds the user to the specified group" do
-        expect do
-          post(lecture_roster_add_to_group_path(lecture),
-               params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
-        end.to change { tutorial.members.count }.by(1)
-      end
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects to root (unauthorized)" do
-        post lecture_roster_add_to_group_path(lecture),
-             params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" }
-        expect(response).to redirect_to(root_path)
-      end
-
-      it "does not add the user" do
-        expect do
-          post(lecture_roster_add_to_group_path(lecture),
-               params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
-        end.not_to(change { tutorial.members.count })
-      end
-    end
-  end
-
   describe "POST /lectures/:id/roster/members" do
     let(:new_student) { create(:confirmed_user) }
 

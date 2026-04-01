@@ -205,6 +205,12 @@ module Registration
                                                             src: view_context.lecture_roster_path(
                                                               lecture, group_type: group_type
                                                             ),
+                                                            loading: "lazy")),
+          turbo_stream.replace("roster_participants_panel",
+                               view_context.turbo_frame_tag("roster_participants_panel",
+                                                            src: view_context.lecture_roster_participants_path(
+                                                              lecture
+                                                            ),
                                                             loading: "lazy"))
         ]
       end

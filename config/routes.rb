@@ -279,7 +279,7 @@ Rails.application.routes.draw do
   resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
-      post "roster/add_to_group", to: "roster/maintenance#enroll", as: :roster_add_to_group
+      get "roster/participants", to: "roster/maintenance#participants"
 
       member do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do

@@ -5,7 +5,7 @@ module Roster
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
-    before_action :set_lecture, only: [:index, :enroll]
+    before_action :set_lecture, only: [:index, :participants]
     before_action :set_rosterable,
                   only: [:show, :add_member, :remove_member, :move_member,
                          :update_self_materialization]
@@ -48,19 +48,15 @@ module Roster
       setup_participants
     end
 
-    def enroll
-      set_rosterable_from_composite_id
-      return unless @rosterable
+    # GET /lectures/:lecture_id/roster/participants
+    def participants
+      @group_type = if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type]&.to_sym || :all
+      end
 
-      ensure_rosterable_unlocked!
-
-      user = find_user
-      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
-
-      flash.now[:notice] = t("roster.messages.user_added_to", group: @rosterable.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
-
-      render_roster_update(roster_tab: :enrollment)
+      setup_participants
     end
 
     def show
@@ -335,27 +331,6 @@ module Roster
 
       def ensure_rosterable_unlocked!
         raise(RosterLockedError) if @rosterable.locked?
-      end
-
-      def set_rosterable_from_composite_id
-        type, id = params[:rosterable_id].split("-")
-
-        unless Rosters::Rosterable::TYPES.include?(type)
-          respond_with_error(t("roster.errors.invalid_type"))
-          return
-        end
-
-        klass = type.constantize
-        @rosterable = if klass == Cohort
-          klass.find_by(id: id, context: @lecture)
-        else
-          klass.find_by(id: id, lecture: @lecture)
-        end
-
-        return if @rosterable
-
-        respond_with_error(t("roster.errors.rosterable_not_found"))
-        nil
       end
 
       def fallback_path

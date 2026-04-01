@@ -88,23 +88,48 @@ module Registration
       end
 
       def respond_with_success(message)
+        lecture = @campaign.campaignable
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
+            streams = [
               turbo_stream.update("campaigns_container",
                                   partial: "registration/campaigns/card_body_index",
                                   locals: {
-                                    lecture: @campaign.campaignable,
+                                    lecture: lecture,
                                     expanded_campaign_id: @campaign.id
                                   }),
               stream_flash
             ]
+            streams += refresh_roster_streams(lecture)
+            render turbo_stream: streams.compact
           end
         end
+      end
+
+      def refresh_roster_streams(lecture)
+        return [] unless lecture
+
+        group_type = view_context.roster_group_types(lecture)
+        frame_id = view_context.roster_maintenance_frame_id(group_type)
+
+        [
+          turbo_stream.replace(frame_id,
+                               view_context.turbo_frame_tag(frame_id,
+                                                            src: view_context.lecture_roster_path(
+                                                              lecture, group_type: group_type
+                                                            ),
+                                                            loading: "lazy")),
+          turbo_stream.replace("roster_participants_panel",
+                               view_context.turbo_frame_tag("roster_participants_panel",
+                                                            src: view_context.lecture_roster_participants_path(
+                                                              lecture
+                                                            ),
+                                                            loading: "lazy"))
+        ]
       end
 
       def respond_with_error(message, redirect_path: nil)

@@ -1,0 +1,13 @@
+<%= turbo_frame_tag "roster_participants_panel" do %>
+  <%= render RosterParticipantsComponent.new(
+        lecture: @lecture,
+        group_type: @group_type,
+        participants: @participants,
+        pagy: @pagy,
+        filter_mode: @participants_filter,
+        counts: {
+          total: @total_participants_count,
+          unassigned: @unassigned_participants_count
+        }
+      ) %>
+<% end %>

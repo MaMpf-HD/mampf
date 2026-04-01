@@ -3275,6 +3275,7 @@ en:
     select: 'Select'
     confirm: 'Are you sure?'
     basics: 'Basics'
+    participants: 'Participants'
     action: 'Action'
     actions: 'Actions'
     post_processing: 'Post process...'

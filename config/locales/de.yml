@@ -3482,6 +3482,7 @@ de:
     select: 'auswählen'
     confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
+    participants: 'Teilnehmende'
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
