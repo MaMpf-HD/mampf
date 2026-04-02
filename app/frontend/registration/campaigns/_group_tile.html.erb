@@ -1,19 +1,27 @@
 <% registerable = local_assigns[:tutorial] || local_assigns[:item]&.registerable %>
 <% is_tutorial = registerable.is_a?(Tutorial) %>
 <% is_cohort = registerable.is_a?(Cohort) %>
-<% is_panel_registerable = is_tutorial || is_cohort %>
+<% is_talk = registerable.is_a?(Talk) %>
+<% is_panel_registerable = is_tutorial || is_cohort || is_talk %>
 <% is_cohort_without_enrollment = is_cohort && !registerable.propagate_to_lecture? %>
 
 <% sm_mode = registerable.try(:self_materialization_mode) || "disabled" %>
 <% sm_active = sm_mode != "disabled" %>
 
-<% tutors_text = registerable.respond_to?(:tutor_names) ?
-   (registerable.tutor_names.presence || t("basics.tba")) : t("basics.tba") %>
+<% tutors_text = if registerable.respond_to?(:tutor_names)
+     registerable.tutor_names.presence || t("basics.tba")
+   elsif is_talk && registerable.speakers.any?
+     registerable.speakers.map(&:tutorial_name).join(", ")
+   else
+     t("basics.tba")
+   end %>
 
 <% type_text = if is_cohort
   t("roster.group_category.flexible_group")
 elsif local_assigns[:item]
   item_display_type(item)
+elsif is_talk
+  Talk.model_name.human
 else
   t("registration.item.types.tutorial")
 end %>
@@ -24,6 +32,8 @@ end %>
   tutorial_roster_path(registerable, source: :panel, format: :turbo_stream)
 elsif is_cohort
   cohort_roster_path(registerable, source: :panel, format: :turbo_stream)
+elsif is_talk
+  talk_roster_path(registerable, source: :panel, format: :turbo_stream)
 end %>
 
 <% if local_assigns[:item] && item.registration_campaign.open? %>
@@ -39,6 +49,8 @@ end %>
   edit_tutorial_path(registerable, group_type: :tutorials)
 elsif is_cohort
   edit_cohort_path(registerable, group_type: :cohorts)
+elsif is_talk
+  edit_talk_path(registerable)
 end %>
 
 <% delete_path = if local_assigns[:item]
@@ -47,6 +59,8 @@ elsif is_tutorial
   tutorial_path(registerable, group_type: :tutorials)
 elsif is_cohort
   cohort_path(registerable, group_type: :cohorts)
+elsif is_talk
+  talk_path(registerable)
 end %>
 
 <% delete_data = if local_assigns[:item]
