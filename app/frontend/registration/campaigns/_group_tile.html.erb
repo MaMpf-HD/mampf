@@ -113,6 +113,7 @@ end %>
               class="btn btn-sm p-0 border-0 <%= sm_active ? "text-success" : "text-muted" %>"
               type="button"
               data-bs-toggle="dropdown"
+              data-bs-boundary="window"
               aria-expanded="false"
               title="<%= t("roster.self_materialization.label", default: "Self-Enrollment") %>: <%= t("roster.self_materialization.modes.#{sm_mode}", default: sm_mode.humanize) %>"
             >
@@ -163,6 +164,17 @@ end %>
                   </li>
                 <% end %>
               <% end %>
+
+              <li><hr class="dropdown-divider"></li>
+
+              <li>
+                <% bulk_path = roster_bulk_update_self_materialization_lecture_path(@lecture || registerable.try(:lecture) || registerable.try(:context), mode: sm_mode) %>
+
+                <%= link_to bulk_path, class: "dropdown-item", data: { turbo_method: :patch, turbo_confirm: t("roster.self_materialization.confirm_bulk_update", default: "Dies ändert den Selbsteinschreibungsmodus für alle Gruppen ohne Anmeldeverfahren in dieser Veranstaltung auf '%{mode}'. Fortfahren?", mode: t(sm_mode, scope: "roster.self_materialization.modes", default: sm_mode.titleize)) } do %>
+                  <i class="bi bi-check2-all me-2"></i>
+                  <%= t("roster.self_materialization.apply_to_all_free_groups", default: "Für alle Gruppen übernehmen") %>
+                <% end %>
+              </li>
             </ul>
           </div>
         <% end %>

@@ -285,6 +285,8 @@ Rails.application.routes.draw do
         scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
           patch "self_materialization", action: :update_self_materialization,
                                         as: :roster_update_self_materialization
+          patch "bulk_self_materialization", action: :bulk_update_self_materialization,
+                                             as: :roster_bulk_update_self_materialization
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member

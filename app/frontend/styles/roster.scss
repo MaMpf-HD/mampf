@@ -360,6 +360,12 @@
 
 .registration-group-tile-col {
   max-width: 13rem;
+  position: relative; // Needed for z-index stacking context
+  z-index: 1;         // Base stacking context
+
+  &:hover, &:focus-within {
+    z-index: 10;
+  }
 
   @include media-breakpoint-down(md) {
     max-width: none;
@@ -383,8 +389,9 @@
   transition: transform 0.12s ease, box-shadow 0.12s ease,
               border-color 0.12s ease;
 
-  &:hover {
+  &:hover, &:focus-within {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+    z-index: 10;
 
     .tutorial-gtile-actions {
       opacity: 1;
@@ -652,3 +659,4 @@ span.tutorial-gtile--selected.unassigned-warning-trigger {
     background: rgba(0, 0, 0, 0.3);
   }
 }
+.tutorial-gtile:hover, .tutorial-gtile:focus-within { z-index: 10; }

@@ -8,7 +8,7 @@ module Roster
     before_action :set_lecture, only: [:index, :participants]
     before_action :set_rosterable,
                   only: [:show, :add_member, :remove_member, :move_member,
-                         :update_self_materialization]
+                         :update_self_materialization, :bulk_update_self_materialization]
     before_action :authorize_lecture
     before_action :use_lecture_locale
 
@@ -142,6 +142,22 @@ module Roster
       else
         respond_with_error(@rosterable.errors.full_messages.to_sentence)
       end
+    end
+
+    def bulk_update_self_materialization
+      mode = params[:mode]
+
+      registerables = view_context.no_campaign_registerables(@lecture)
+
+      ActiveRecord::Base.transaction do
+        registerables.each do |r|
+          r.update!(self_materialization_mode: mode) if r.respond_to?(:self_materialization_mode=)
+        end
+      end
+
+      render turbo_stream: refresh_campaigns_index_stream(@lecture)
+    rescue StandardError => e
+      respond_with_error(e.message)
     end
 
     private
