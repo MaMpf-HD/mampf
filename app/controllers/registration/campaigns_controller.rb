@@ -49,14 +49,11 @@ module Registration
 
       render turbo_stream: turbo_stream.replace(
         "tutorial-roster-side-panel",
-        partial: "registration/campaigns/tutorial_roster_side_panel",
-        locals: {
+        html: RosterSidePanelComponent.new(
           campaign: @campaign,
           students: @unassigned_users,
-          lecture: @campaign.campaignable,
-          is_unassigned: true,
-          registerable: nil
-        }
+          is_unassigned: true
+        ).render_in(view_context)
       )
     end
 

@@ -23,9 +23,10 @@
     </div>
   <% else %>
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 registration-group-grid">
-      <%= render partial: "registration/campaigns/group_tile",
-                   collection: campaign.registration_items,
-                   as: :item %>
+      <% campaign.registration_items.each do |item| %>
+        <%= render GroupTileComponent.new(
+              registerable: item.registerable, item: item) %>
+      <% end %>
 
       <% if can_add_groups %>
         <div class="col registration-group-tile-col">

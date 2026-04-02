@@ -44,15 +44,19 @@ module Registration
                                        embedded: embedded
                                      }),
                 turbo_stream.replace(@item,
-                                     partial: "registration/campaigns/group_tile",
-                                     locals: { item: @item }),
+                                     html: GroupTileComponent.new(
+                                       registerable: @item.registerable,
+                                       item: @item
+                                     ).render_in(view_context)),
                 stream_flash
               ]
             else
               [
                 turbo_stream.replace(@item,
-                                     partial: "registration/campaigns/group_tile",
-                                     locals: { item: @item }),
+                                     html: GroupTileComponent.new(
+                                       registerable: @item.registerable,
+                                       item: @item
+                                     ).render_in(view_context)),
                 stream_flash
               ]
             end
@@ -86,12 +90,11 @@ module Registration
 
       render turbo_stream: turbo_stream.replace(
         "tutorial-roster-side-panel",
-        partial: "registration/campaigns/tutorial_roster_side_panel",
-        locals: {
+        html: RosterSidePanelComponent.new(
           registerable: @item.registerable,
           students: students,
           read_only: true
-        }
+        ).render_in(view_context)
       )
     end
 

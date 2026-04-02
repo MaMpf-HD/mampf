@@ -1,69 +1,20 @@
-<% registerable = local_assigns[:registerable] %>
-<% students = local_assigns[:students] || [] %>
-<% read_only = local_assigns[:read_only] || false %>
-<% is_unassigned = local_assigns[:is_unassigned] || false %>
-<% campaign = local_assigns[:campaign] %>
-<% is_tutorial = registerable.is_a?(Tutorial) if registerable %>
-<% is_cohort = registerable.is_a?(Cohort) if registerable %>
-<% is_talk = registerable.is_a?(Talk) if registerable %>
-
-<% tutors_text = if registerable&.respond_to?(:tutor_names)
-  registerable.tutor_names.presence || t("basics.tba")
-elsif is_talk && registerable.speakers.any?
-  registerable.speakers.map(&:tutorial_name).join(", ")
-else
-  t("basics.tba")
-end %>
-
-<% add_member_path = if is_tutorial
-  add_member_tutorial_path(registerable, source: :panel)
-elsif is_cohort
-  add_member_cohort_path(registerable, source: :panel)
-elsif is_talk
-  add_member_talk_path(registerable, source: :panel)
-end %>
-
-<% move_member_path_template = if is_tutorial
-  move_member_tutorial_path(registerable, "__USER_ID__")
-elsif is_cohort
-  move_member_cohort_path(registerable, "__USER_ID__")
-elsif is_talk
-  move_member_talk_path(registerable, "__USER_ID__")
-end %>
-
 <aside
   id="tutorial-roster-side-panel"
   class="card tutorial-roster-side-panel"
   data-tutorial-roster-panel-target="panelCard"
-  <% unless read_only %>
-    <% if is_unassigned && campaign %>
-      data-controller="roster-drag"
-      data-roster-drag-source-type-value="unassigned"
-      data-roster-drag-source-id-value="<%= campaign.id %>"
-      data-roster-drag-move-path-value=""
-      data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
-    <% elsif registerable %>
-      data-controller="roster-drag"
-      data-roster-drag-source-type-value="<%= registerable.class.name.downcase %>"
-      data-roster-drag-source-id-value="<%= registerable.id %>"
-      data-roster-drag-move-path-value="<%= move_member_path_template %>"
-      data-roster-drag-overbooking-warning-value="<%= t('roster.warnings.confirm_overbooking') %>"
-    <% end %>
+  <% if drag_controller? %>
+    data-controller="roster-drag"
+    data-roster-drag-source-type-value="<%= drag_source_type %>"
+    data-roster-drag-source-id-value="<%= drag_source_id %>"
+    data-roster-drag-move-path-value="<%= move_member_path_template unless unassigned? %>"
+    data-roster-drag-overbooking-warning-value="<%= overbooking_warning %>"
   <% end %>
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
-      <h5 class="mb-1">
-        <%= if is_unassigned
-          t("roster.candidates.title")
-        elsif read_only
-          t("registration.user_registration.index.title", default: "Registrations")
-        else
-          t("roster.details.participants")
-        end %>
-      </h5>
+      <h5 class="mb-1"><%= panel_title %></h5>
 
-      <% if is_unassigned && campaign %>
+      <% if unassigned? && campaign %>
         <div class="text-muted small">
           <span>
             <%= campaign.description.presence || "Campaign ##{campaign.id}" %>
@@ -98,14 +49,14 @@ end %>
   </div>
 
   <div class="card-body border-0">
-    <% if registerable || is_unassigned %>
-      <% unless read_only || is_unassigned %>
+    <% if registerable || unassigned? %>
+      <% if show_add_form? %>
         <div class="mb-3">
           <%= form_with url: add_member_path,
                         method: :post,
                         data: {
                           turbo: true,
-                          turbo_confirm: (t("roster.warnings.confirm_overbooking") if registerable.full?)
+                          turbo_confirm: (overbooking_warning if registerable.full?)
                         },
                         class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
             <%= f.label :email,
@@ -146,13 +97,9 @@ end %>
         data-roster-drag-target="studentList"
       >
         <% students.each do |student| %>
-          <% student_name = student.name.presence ||
-                            student.try(:tutorial_name).presence ||
-                            student.email %>
-
           <div
             class="tutorial-roster-student card rounded-3"
-            data-student-search="<%= "#{student_name} #{student.email}".downcase %>"
+            data-student-search="<%= "#{student_display_name(student)} #{student.email}".downcase %>"
             data-user-id="<%= student.id %>"
           >
             <div
@@ -162,48 +109,46 @@ end %>
               "
             >
               <div>
-                <div class="fw-semibold"><%= student_name %></div>
+                <div class="fw-semibold">
+                  <%= student_display_name(student) %>
+                </div>
 
                 <div class="text-muted small">
                   <i class="bi bi-envelope me-1"></i>
                   <%= student.email %>
                 </div>
 
-                <% if is_unassigned && campaign %>
-                  <% relevant_regs = student.user_registrations.select { |r| r.registration_campaign_id == campaign.id } %>
-                  <% if relevant_regs.any? %>
-                    <div
-                      class="small text-truncate mt-1 text-secondary"
-                      style="max-width: 250px;"
-                    >
-                      <% wishes = relevant_regs.sort_by { |r| r.preference_rank || 999 }.map { |r| r.registration_item.registerable.title }.join(", ") %>
-                      <%= t('roster.columns.preferences') %>: <%= wishes %>
-                    </div>
-                  <% end %>
+                <% if show_campaign_wishes?(student) %>
+                  <div
+                    class="
+                      small text-truncate mt-1 text-secondary
+                      tutorial-roster-wishes
+                    "
+                  >
+                    <%= t("roster.columns.preferences") %>:
+                    <%= campaign_wishes(student) %>
+                  </div>
                 <% end %>
               </div>
 
-              <% remove_member_path = if is_tutorial
-                remove_member_tutorial_path(registerable, student, source: :panel)
-              elsif is_cohort
-                remove_member_cohort_path(registerable, student, source: :panel)
-              end %>
-
-              <% unless read_only || is_unassigned %>
-                <%= button_to remove_member_path,
-                              method: :delete,
-                              class: "btn btn-sm btn-outline-danger " \
-                                     "tutorial-roster-student-remove",
-                              form: {
-                                class: "mb-0 d-flex h-100
-                                        position-absolute top-50 end-0 translate-middle-y
-                                        ",
-                                data: {
-                                  turbo_confirm:
-                                    t("roster.warnings.confirm_kick_from_group")
-                                }
-                              } do %>
-                  <i class="bi bi-trash"></i>
+              <% if show_remove_button? %>
+                <% path = remove_member_path(student) %>
+                <% if path %>
+                  <%= button_to path,
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger " \
+                                       "tutorial-roster-student-remove",
+                                form: {
+                                  class: "mb-0 d-flex h-100
+                                          position-absolute top-50 end-0
+                                          translate-middle-y",
+                                  data: {
+                                    turbo_confirm:
+                                      t("roster.warnings.confirm_kick_from_group")
+                                  }
+                                } do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
                 <% end %>
               <% end %>
             </div>
@@ -219,19 +164,12 @@ end %>
     <% else %>
       <div class="tutorial-roster-empty">
         <i class="bi bi-info-circle me-1"></i>
-
-        <%= if read_only
-          t("roster.details.select_group",
-            default: "Select a group to inspect registrations")
-        else
-          t("roster.details.select_group",
-            default: "Select a group to inspect and manage participants")
-        end %>
+        <%= empty_state_text %>
       </div>
     <% end %>
   </div>
 
-  <% unless read_only || registerable.nil? %>
+  <% unless read_only? || registerable.nil? %>
     <dialog
       class="roster-drag-choice-dialog"
       data-roster-drag-target="choiceDialog"

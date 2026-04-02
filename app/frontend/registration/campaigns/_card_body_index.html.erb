@@ -61,9 +61,8 @@
           <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
         "
       >
-        <%= render partial: "registration/campaigns/group_tile",
-                   collection: no_campaign_groups,
-                   as: :tutorial %>
+        <%= render GroupTileComponent.with_collection(
+                   no_campaign_groups) %>
 
         <div class="col registration-group-tile-col">
           <%= render "registration/campaigns/add_group_tile",

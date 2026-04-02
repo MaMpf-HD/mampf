@@ -136,8 +136,9 @@ module Roster
       if @rosterable.update(self_materialization_mode: mode)
         render turbo_stream: turbo_stream.replace(
           @rosterable,
-          partial: "registration/campaigns/group_tile",
-          locals: { tutorial: @rosterable }
+          html: GroupTileComponent.new(
+            registerable: @rosterable
+          ).render_in(view_context)
         )
       else
         respond_with_error(@rosterable.errors.full_messages.to_sentence)
@@ -254,14 +255,11 @@ module Roster
           # Re-render the unassigned side panel
           streams << turbo_stream.replace(
             "tutorial-roster-side-panel",
-            partial: "registration/campaigns/tutorial_roster_side_panel",
-            locals: {
+            html: RosterSidePanelComponent.new(
               campaign: @campaign,
               students: @unassigned_users,
-              lecture: @campaign.campaignable,
-              is_unassigned: true,
-              registerable: nil
-            }
+              is_unassigned: true
+            ).render_in(view_context)
           )
         end
 
@@ -278,11 +276,10 @@ module Roster
         if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort) || @rosterable.is_a?(Talk)
           streams << turbo_stream.replace(
             "tutorial-roster-side-panel",
-            partial: "registration/campaigns/tutorial_roster_side_panel",
-            locals: {
+            html: RosterSidePanelComponent.new(
               registerable: @rosterable,
               students: @rosterable.members.order(:name)
-            }
+            ).render_in(view_context)
           )
         end
 
@@ -301,11 +298,10 @@ module Roster
 
         streams << turbo_stream.replace(
           "tutorial-roster-side-panel",
-          partial: "registration/campaigns/tutorial_roster_side_panel",
-          locals: {
+          html: RosterSidePanelComponent.new(
             registerable: @rosterable,
             students: @rosterable.members.order(:name)
-          }
+          ).render_in(view_context)
         )
 
         streams << stream_flash if flash.present?
@@ -317,15 +313,17 @@ module Roster
         Registration::Item.where(registerable: rosterable).find_each do |item|
           streams << turbo_stream.replace(
             view_context.dom_id(item),
-            partial: "registration/campaigns/group_tile",
-            locals: { item: item }
+            html: GroupTileComponent.new(
+              registerable: item.registerable, item: item
+            ).render_in(view_context)
           )
         end
 
         streams << turbo_stream.replace(
           view_context.dom_id(rosterable),
-          partial: "registration/campaigns/group_tile",
-          locals: { tutorial: rosterable }
+          html: GroupTileComponent.new(
+            registerable: rosterable
+          ).render_in(view_context)
         )
       end
 
