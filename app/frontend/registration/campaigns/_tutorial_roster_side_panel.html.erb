@@ -5,10 +5,13 @@
 <% campaign = local_assigns[:campaign] %>
 <% is_tutorial = registerable.is_a?(Tutorial) if registerable %>
 <% is_cohort = registerable.is_a?(Cohort) if registerable %>
+<% is_talk = registerable.is_a?(Talk) if registerable %>
 
 <% tutors_text = if registerable&.respond_to?(:tutor_names)
   registerable.tutor_names.presence || t("basics.tba")
-elsif registerable
+elsif is_talk && registerable.speakers.any?
+  registerable.speakers.map(&:tutorial_name).join(", ")
+else
   t("basics.tba")
 end %>
 
@@ -16,12 +19,16 @@ end %>
   add_member_tutorial_path(registerable, source: :panel)
 elsif is_cohort
   add_member_cohort_path(registerable, source: :panel)
+elsif is_talk
+  add_member_talk_path(registerable, source: :panel)
 end %>
 
 <% move_member_path_template = if is_tutorial
   move_member_tutorial_path(registerable, "__USER_ID__")
 elsif is_cohort
   move_member_cohort_path(registerable, "__USER_ID__")
+elsif is_talk
+  move_member_talk_path(registerable, "__USER_ID__")
 end %>
 
 <aside

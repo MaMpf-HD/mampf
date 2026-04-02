@@ -275,7 +275,7 @@ module Roster
         streams = []
         tile_replacements_for(@rosterable, streams) if update_tiles
 
-        if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort)
+        if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort) || @rosterable.is_a?(Talk)
           streams << turbo_stream.replace(
             "tutorial-roster-side-panel",
             partial: "registration/campaigns/tutorial_roster_side_panel",
@@ -309,6 +309,7 @@ module Roster
         )
 
         streams << stream_flash if flash.present?
+
         render turbo_stream: streams.compact
       end
 

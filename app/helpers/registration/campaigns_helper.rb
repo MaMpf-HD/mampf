@@ -116,16 +116,27 @@ module Registration
                              .where(registerable_type: "Cohort")
                              .select(:registerable_id)
 
+      talk_ids_in_active = Registration::Item
+                           .where(registration_campaign_id: active_campaign_ids)
+                           .where(registerable_type: "Talk")
+                           .select(:registerable_id)
+
       tutorials = lecture.tutorials.includes(:tutors).where(
         "skip_campaigns = ? OR tutorials.id NOT IN (?)",
         true,
         tutorial_ids_in_active
       )
 
+      talks = lecture.talks.includes(:speakers).where(
+        "skip_campaigns = ? OR talks.id NOT IN (?)",
+        true,
+        talk_ids_in_active
+      )
+
       cohorts = lecture.cohorts
                        .where.not(id: cohort_ids_in_active)
 
-      (tutorials.to_a + cohorts.to_a)
+      (tutorials.to_a + cohorts.to_a + talks.to_a)
         .sort_by { |r| r.title.to_s.downcase }
     end
 

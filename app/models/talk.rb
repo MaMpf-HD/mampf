@@ -123,6 +123,10 @@ class Talk < ApplicationRecord
     speakers << speaker unless speaker.in?(speakers)
   end
 
+  def members
+    speakers
+  end
+
   def roster_entries
     speaker_talk_joins
   end
