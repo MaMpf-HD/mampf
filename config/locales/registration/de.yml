@@ -42,7 +42,7 @@ de:
           opens_at: "Registrierungsbeginn"
           deadline: "Registrierungsende"
           status: "Status"
-          registrations: "Anzahl Registierungen"
+          registrations: "Anzahl Registrierungen"
       new:
         title: "Neues Anmeldeverfahren"
       edit:
