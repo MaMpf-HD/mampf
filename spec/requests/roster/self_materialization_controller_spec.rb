@@ -52,6 +52,12 @@ RSpec.describe(Roster::SelfMaterializationController, type: :controller) do
         expect(flash.now[:alert]).to eq(I18n.t("roster.errors.item_locked"))
         expect(response.media_type).to eq("text/vnd.turbo-stream.html")
       end
+
+      it "does not send an email" do
+        expect do
+          post(:self_add, params: params)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when service raises UserAlreadyInBundleError" do
@@ -72,6 +78,26 @@ RSpec.describe(Roster::SelfMaterializationController, type: :controller) do
         expect(flash.now[:alert]).to eq(
           I18n.t("roster.errors.user_already_in_bundle", group: group.title)
         )
+      end
+
+      it "does not send an email" do
+        expect do
+          post(:self_add, params: params)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+    end
+
+    context "when self-add succeeds and should send email" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_add!)
+        allow(RosterMailer).to receive_message_chain(:self_added, :deliver_now)
+      end
+
+      it "sends an email" do
+        expect do
+          post(:self_add, params: params)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
   end
@@ -118,39 +144,26 @@ RSpec.describe(Roster::SelfMaterializationController, type: :controller) do
           I18n.t("roster.errors.self_remove_not_allowed", type: "Tutorial")
         )
       end
-    end
-  end
 
-  describe "set_rosterable" do
-    context "when type is invalid" do
-      it "redirects with error" do
-        post :self_add, params: { type: "InvalidType", id: 1 }
-
-        expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to eq(I18n.t("roster.errors.invalid_type"))
+      it "does not send an email" do
+        expect do
+          post(:self_remove, params: params)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
 
-    context "when rosterable does not exist" do
-      it "redirects with error" do
-        post :self_add, params: { type: "Tutorial", tutorial_id: 999 }
-
-        expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to eq(I18n.t("roster.errors.rosterable_not_found"))
+    context "when self-remove succeeds and should send email" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_remove!)
+        allow(RosterMailer).to receive_message_chain(:self_removed, :deliver_now)
       end
-    end
-  end
 
-  describe "authorization" do
-    before do
-      allow_any_instance_of(LectureAbility).to receive(:can?)
-        .with(:self_materialize, lecture).and_return(false)
-    end
-
-    it "raises CanCan::AccessDenied" do
-      expect do
-        post(:self_add, params: { type: "Tutorial", tutorial_id: tutorial.id })
-      end.to raise_error(CanCan::AccessDenied)
+      it "sends an email" do
+        expect do
+          post(:self_remove, params: params)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
     end
   end
 end

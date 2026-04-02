@@ -305,6 +305,72 @@ en:
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
       user_removed: "Student removed successfully."
+    cohorts:
+      with_lecture_enrollment_title: "With Lecture Enrollment"
+      with_lecture_enrollment_help: "Members of these groups are automatically enrolled in the lecture."
+      without_lecture_enrollment_title: "Without Lecture Enrollment"
+      without_lecture_enrollment_help: "Members of these groups are not automatically enrolled in the lecture. These groups represent isolated lists (e.g. waitlists)."
+      with_lecture_enrollment: "With Lecture Enrollment"
+      without_lecture_enrollment: "Without Lecture Enrollment"
+      propagate_to_lecture: "With automatic lecture enrollment"
+      propagates_short: "Enrollment"
+      propagates_hint: "Members of this cohort serve as lecture participants"
+      lecture_enrollment: "Lecture Enrollment"
+    mailer:
+      end_mail: |
+        <p>With kind regards,<br>Your MaMpf-Team</p>
+      link_text: |
+        <p>You can access your new group here: %{rosterable_link}</p>
+      roster_added_to_group_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to the %{rosterable_type} group
+          <strong>%{rosterable_title}</strong>.
+        </p>
+        <p>
+          This grant you access to the corresponding lecture %{lecture_title} and its materials.
+        </p>
+      roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
+      roster_removed_from_group_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the %{rosterable_type} group
+          <strong>%{rosterable_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title}'
+      roster_moved_between_groups_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been moved from the %{old_rosterable_type} group
+          <strong>%{old_rosterable_title}</strong>
+          to the %{new_rosterable_type} group
+          <strong>%{new_rosterable_title}</strong>.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title}'
+      roster_removed_from_lecture_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          This means you no longer have access to the lecture materials and are not enrolled in the lecture.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
     self_enrollment:
       campaign_enrollment:
          title: "Enrollment via Registration Campaigns"

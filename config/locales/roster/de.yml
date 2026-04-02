@@ -309,6 +309,68 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
+    cohorts:
+      with_lecture_enrollment_title: "Mit Veranstaltungseinschreibung"
+      with_lecture_enrollment_help: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben."
+      without_lecture_enrollment_title: "Ohne Veranstaltungseinschreibung"
+      without_lecture_enrollment_help: "Mitglieder dieser Sondergruppen werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Sondergruppen stellen von der Veranstaltung isolierte Listen dar (z.B. Wartelisten)."
+      propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
+      with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
+      without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
+      propagates_short: "Einschreibung"
+      propagates_hint: "Mitglieder dieser Sondergruppe gelten als Teilnehmende der Veranstaltung"
+      lecture_enrollment: "Veranstaltungseinschreibung"
+    mailer:
+      end_mail: |
+        <p>Mit freundlichen Grüßen,<br>Ihr MaMpf-Team</p>
+      link_text: |
+        <p>Sie können Ihre neue Gruppe hier aufrufen: %{rosterable_link}</p>
+      roster_added_to_group_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden der %{rosterable_type}-Gruppe
+          <strong>%{rosterable_title}</strong> hinzugefügt.
+        </p>
+        <p>
+          Dies gewährt Ihnen Zugriff auf die entsprechende Vorlesung %{lecture_title} und deren Materialien.
+        </p>
+      roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
+      roster_removed_from_group_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden aus der %{rosterable_type}-Gruppe
+          <strong>%{rosterable_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
+          wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
+        </p>
+        <p>
+          Ihre Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
+      roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
+      roster_moved_between_groups_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden von der %{old_rosterable_type}-Gruppe
+          <strong>%{old_rosterable_title}</strong>
+          in die %{new_rosterable_type}-Gruppe
+          <strong>%{new_rosterable_title}</strong> verschoben.
+        </p>
+        <p>
+          Ihre Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
+      roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'
+      roster_removed_from_lecture_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden aus der Veranstaltung %{lecture_title} entfernt.
+        </p>
+        <p>
+          Falls Sie glauben, dass dies ein Fehler war oder wenn Sie Fragen haben,
+          wenden Sie sich bitte an Ihre Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
     self_enrollment:
       campaign_enrollment:
         title: "Einschreibung durch Anmeldeverfahren"

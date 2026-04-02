@@ -3145,7 +3145,7 @@ en:
     submission_destruction_lecture_text_html: >
       For GDPR reasons, all submissions and corrections of the lecture
       %{lecture} with deletion date %{deletion_date} that were stored in MaMpf
-      have been automatically deleted.
+      have been automatically deleted.    
     hash_mail_subject: Email address verification
     hash_mail_body: >
       Hello, %{name}!

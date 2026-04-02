@@ -13,7 +13,7 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
 
-    def add_user!(user, rosterable, force: false)
+    def add_user!(user, rosterable, force: false, notify: true)
       return if user_in_roster?(user, rosterable)
 
       ensure_uniqueness!(user, rosterable)
@@ -25,19 +25,26 @@ module Rosters
 
       rosterable.add_user_to_roster!(user)
       propagate_to_lecture!(user, rosterable)
+      RosterNotificationMailer.added(user, rosterable) if notify
       update_registration_materialization(user, rosterable)
     end
 
-    def remove_user!(user, rosterable)
+    def remove_user!(user, rosterable, notify: true)
       rosterable.remove_user_from_roster!(user)
       cascade_removal_from_subgroups!(user, rosterable)
+      return unless notify
+
+      RosterNotificationMailer.removed(user, rosterable) if notify
     end
 
-    def move_user!(user, from_rosterable, to_rosterable, force: false)
+    def move_user!(user, from_rosterable, to_rosterable, force: false, notify: true)
       ActiveRecord::Base.transaction do
-        remove_user!(user, from_rosterable)
-        add_user!(user, to_rosterable, force: force)
+        remove_user!(user, from_rosterable, notify: false)
+        add_user!(user, to_rosterable, force: force, notify: false)
       end
+      return unless notify
+
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if notify
     end
 
     private
