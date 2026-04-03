@@ -185,6 +185,11 @@ de:
         capacity: "Kapazität"
         registrations: "Anmeldungen"
         first_choice: "1. Wahl"
+      badge:
+        first_choice: "Erste Wahl"
+        second_choice: "Zweite Wahl"
+        third_choice: "Dritte Wahl"
+        other_choices: "Sonstige"
       groups:
         tutorials: "Tutorien"
         talks: "Vorträge"
@@ -225,6 +230,7 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
+        first_choice_title: "Erstwahl-Anmeldungen"
       status:
         pending: "Ausstehend"
         confirmed: "Bestätigt"

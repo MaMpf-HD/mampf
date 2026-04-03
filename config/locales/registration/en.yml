@@ -185,6 +185,11 @@ en:
         capacity: "Capacity"
         registrations: "Registrations"
         first_choice: "1st Choice"
+      badge:
+        first_choice: "First Choice"
+        second_choice: "2nd Choice"
+        third_choice: "3rd Choice"
+        other_choices: "Other"
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
@@ -225,6 +230,7 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        first_choice_title: "1st Choice Registrations"
       status:
         pending: "Pending"
         confirmed: "Confirmed"

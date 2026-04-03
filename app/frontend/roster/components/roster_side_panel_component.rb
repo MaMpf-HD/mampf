@@ -1,15 +1,16 @@
 # Missing top-level docstring, please formulate one yourself 😁
 class RosterSidePanelComponent < ViewComponent::Base
-  attr_reader :registerable, :students, :campaign
+  attr_reader :registerable, :students, :campaign, :item
 
   def initialize(registerable: nil, students: [], read_only: false,
-                 is_unassigned: false, campaign: nil)
+                 is_unassigned: false, campaign: nil, item: nil)
     super()
     @registerable = registerable
     @students = students
     @read_only = read_only
     @is_unassigned = is_unassigned
     @campaign = campaign
+    @item = item
   end
 
   def read_only?
@@ -23,12 +24,45 @@ class RosterSidePanelComponent < ViewComponent::Base
   def panel_title
     if unassigned?
       t("roster.candidates.title")
+    elsif read_only? && preference_based_campaign?
+      t("registration.user_registration.index.first_choice_title",
+        default: "1st Choice Registrations")
     elsif read_only?
       t("registration.user_registration.index.title",
         default: "Registrations")
     else
       t("roster.details.participants")
     end
+  end
+
+  def preference_based_campaign?
+    item&.registration_campaign&.preference_based?
+  end
+
+  def further_choice_summary
+    return unless preference_based_campaign?
+
+    second = item.user_registrations.where(preference_rank: 2).count
+    third = item.user_registrations.where(preference_rank: 3).count
+    rest = item.user_registrations.where("preference_rank > 3").count
+
+    parts = []
+    if second > 0
+      parts << ("#{second} " +
+               t("registration.item.badge.second_choice",
+                 default: "2nd Choice"))
+    end
+    if third > 0
+      parts << ("#{third} " +
+               t("registration.item.badge.third_choice",
+                 default: "3rd Choice"))
+    end
+    if rest > 0
+      parts << ("#{rest} " +
+               t("registration.item.badge.other_choices",
+                 default: "Other"))
+    end
+    parts.join(", ")
   end
 
   def tutors_text

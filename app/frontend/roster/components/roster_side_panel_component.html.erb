@@ -33,9 +33,22 @@
           <span><%= tutors_text %></span>
 
           <span class="badge text-bg-secondary ms-2">
-            <%= "#{students.size} students" %>
+            <% if preference_based_campaign? %>
+              <%= "#{students.size} " +
+                  t("registration.item.badge.first_choice",
+                    default: "First Choice") %>
+            <% else %>
+              <%= "#{students.size} " +
+                  t("registration.item.columns.registrations",
+                    default: "Registrations") %>
+            <% end %>
           </span>
         </div>
+        <% if preference_based_campaign? %>
+          <div class="text-muted small mt-1">
+            <%= further_choice_summary %>
+          </div>
+        <% end %>
       <% end %>
     </div>
 

@@ -85,8 +85,15 @@
       </div>
 
       <div class="small text-muted">
-        <%= registerable.roster_entries.count %> /
-        <%= registerable.capacity || "∞" %>
+        <% if item %>
+          <%= registration_count %>
+          /
+          <%= registerable.capacity || "∞" %>
+        <% else %>
+          <%= registerable.roster_entries.count %>
+          /
+          <%= registerable.capacity || "∞" %>
+        <% end %>
       </div>
 
       <div

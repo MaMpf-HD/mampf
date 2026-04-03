@@ -93,7 +93,8 @@ module Registration
         html: RosterSidePanelComponent.new(
           registerable: @item.registerable,
           students: students,
-          read_only: true
+          read_only: true,
+          item: @item
         ).render_in(view_context)
       )
     end

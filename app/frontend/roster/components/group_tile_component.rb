@@ -69,6 +69,17 @@ class GroupTileComponent < ViewComponent::Base
     end
   end
 
+  def registration_count
+    return unless item
+
+    campaign = item.registration_campaign
+    if campaign.first_come_first_served?
+      item.user_registrations.count
+    else
+      item.first_choice_count
+    end
+  end
+
   def tutors_text
     helpers.roster_tutors_text(registerable)
   end
