@@ -3662,7 +3662,7 @@ de:
     room: "Raum"
     confirmed: "Bestätigt"
     rejected: Abgelehnt
-    pending: Pending
+    pending: "Ausstehend"
     assigned: "Zugewiesen"
     dismissed: "Abgelehnt"
     unlimited: unbegrenzt

@@ -256,6 +256,11 @@ module RosterHelper
     end
   end
 
+  def format_date(time)
+    return "" if time.nil?
+
+    time.strftime("%b %d, %H:%M")
+  end
   SELF_ROSTER_TABLE_CONFIG = {
     "Tutorial" => [
       { header: "basics.tutor",

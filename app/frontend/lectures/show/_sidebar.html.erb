@@ -44,7 +44,7 @@
   </li>
 
   <%# Enrollment %>
-  <% if lecture %>
+  <% if lecture && Flipper.enabled?(:registration_campaigns) %>
     <% project_name = 'enrollment' %>
     <% fullpath = lecture_campaign_registrations_path(lecture) %>
     <% active_class = get_class_for_project(project_name) %>

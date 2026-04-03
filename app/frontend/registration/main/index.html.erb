@@ -16,84 +16,93 @@
 <% end %>
 
 <!-- campaign list -->
-<div class="mb-3">
-  <h5 class="fw-semibold">
-    <%= t("roster.self_enrollment.campaign_enrollment.title") %>
-  </h5>
-
-  <p class="text-muted small">
-    <%= t("roster.self_enrollment.campaign_enrollment.description") %>
-  </p>
-</div>
-<div class="campaign-list d-flex flex-column gap-4">
-  <% if @campaigns_details.any? %>
-    <% uncompleted_campaigns = @campaigns_details.select { |cd| !(cd.campaign.status == "completed") } %>
-    <% completed_campaigns = @campaigns_details - uncompleted_campaigns %>
-    <!-- Active campaigns -->
-    <% uncompleted_campaigns.each do |campaign_details| %>
-      <div>
-        <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
-          <%= render partial: 'registration/main/campaign_card',
-                  locals: {
-                    details: campaign_details,
-                    campaign: campaign_details.campaign
-                  } %>
-        <% end %>
-      </div>
-    <% end %>
-    <!-- Collapsible section for completed campaigns -->
-    <div
-      style="cursor: pointer;font-weight: 600;padding: 10px 0;
-        display: flex;justify-content: space-between;
-        align-items: center;border-bottom: 1px solid #dee2e6;"
-      data-bs-toggle="collapse"
-      data-bs-target="#collapseStudentRegistrationCompletedCampaigns"
-      onclick="
-        const icon = this.querySelector('span:last-child');
-        icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';"
-    >
-      <span><%= t("registration.campaign.completed_campaign_title") %></span>
-      <span style="transition: transform 0.2s ease;"> &#9660;</span>
-    </div>
-    <div
-      class="collapse mt-2"
-      id="collapseStudentRegistrationCompletedCampaigns"
-    >
-      <div class="card card-body">
-        <% completed_campaigns.each do |campaign_details| %>
-          <div>
-            <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
-              <%= render partial: 'registration/main/campaign_card',
-                      locals: {
-                        details: campaign_details,
-                        campaign: campaign_details.campaign
-                      } %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  <% else %>
-    <p>No available campaigns.</p>
-  <% end %>
-</div>
-
-<% if Flipper.enabled?(:roster_maintenance) %>
+<div>
   <div class="mb-3">
     <h5 class="fw-semibold">
-      <%= t("roster.self_enrollment.direct_enrollment.title") %>
+      <%= t("roster.self_enrollment.campaign_enrollment.title") %>
     </h5>
 
     <p class="text-muted small">
-      <%= t("roster.self_enrollment.direct_enrollment.description") %>
+      <%= t("roster.self_enrollment.campaign_enrollment.description") %>
     </p>
   </div>
+
   <div class="campaign-list d-flex flex-column gap-4">
-    <% if @self_rosterables&.rosterables&.any? %>
-      <%= turbo_frame_tag "self_roster_options_zone" do %>
-        <%= render partial: 'roster/self_roster/options_zone', 
-      locals: { self_rosterables: @self_rosterables } %>
+    <% if @campaigns_details.any? %>
+      <% uncompleted_campaigns = @campaigns_details.select { |cd| !(cd.campaign.status == "completed") } %>
+      <% completed_campaigns = @campaigns_details - uncompleted_campaigns %>
+      <!-- Active campaigns -->
+      <% uncompleted_campaigns.each do |campaign_details| %>
+        <div>
+          <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+            <%= render partial: 'registration/main/campaign_card',
+                    locals: {
+                      details: campaign_details,
+                      campaign: campaign_details.campaign
+                    } %>
+          <% end %>
+        </div>
       <% end %>
+
+      <!-- Collapsible section for completed campaigns -->
+      <% if completed_campaigns.any? %>
+        <div
+          style="cursor: pointer;font-weight: 600;padding: 10px 0;
+            display: flex;justify-content: space-between;
+            align-items: center;border-bottom: 1px solid #dee2e6;"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseStudentRegistrationCompletedCampaigns"
+          onclick="
+            const icon = this.querySelector('span:last-child');
+            icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';"
+        >
+          <span><%= t("registration.campaign.completed_campaign_title") %></span>
+          <span style="transition: transform 0.2s ease;"> &#9660;</span>
+        </div>
+        <div
+          class="collapse mt-2"
+          id="collapseStudentRegistrationCompletedCampaigns"
+        >
+          <div class="card card-body">
+            <% completed_campaigns.each do |campaign_details| %>
+              <div>
+                <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+                  <%= render partial: 'registration/main/campaign_card',
+                          locals: {
+                            details: campaign_details,
+                            campaign: campaign_details.campaign
+                          } %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p>No available campaigns.</p>
     <% end %>
+  </div>
+</div>
+
+<% if Flipper.enabled?(:roster_maintenance) %>
+  <div>
+    <div class="mb-3">
+      <h5 class="fw-semibold">
+        <%= t("roster.self_enrollment.direct_enrollment.title") %>
+      </h5>
+
+      <p class="text-muted small">
+        <%= t("roster.self_enrollment.direct_enrollment.description") %>
+      </p>
+    </div>
+
+    <div class="campaign-list d-flex flex-column gap-4">
+      <% if @self_rosterables&.rosterables&.any? %>
+        <%= turbo_frame_tag "self_roster_options_zone" do %>
+          <%= render partial: 'roster/self_roster/options_zone', 
+      locals: { self_rosterables: @self_rosterables } %>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 <% end %>

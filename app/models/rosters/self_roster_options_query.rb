@@ -20,7 +20,6 @@ module Rosters
       rosterables.select do |rosterable|
         rosterable.self_materialization_mode in ["add_only", "remove_only", "add_and_remove"]
       end
-      rosterables
     end
   end
 end

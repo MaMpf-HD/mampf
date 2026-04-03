@@ -70,7 +70,7 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
   end
 
   describe "#get_details_render_type_policy_kind" do
-    it { expect(helper.get_details_render_type_policy_kind("prerequisite_campaign")).to eq("link") }
+    it { expect(helper.get_details_render_type_policy_kind("prerequisite_campaign")).to eq("text") }
     it { expect(helper.get_details_render_type_policy_kind("other")).to eq("text") }
   end
 

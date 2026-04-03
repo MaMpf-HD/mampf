@@ -15,7 +15,7 @@ module Roster
       respond_with_error(t("roster.errors.capacity_exceeded"))
     end
 
-    rescue_from "Rosters::MaintenanceService::LectureHasOtherRosterEntryError" do
+    rescue_from "Rosters::SelfMaterializationService::LectureHasOtherRosterEntryError" do
       respond_with_error(t("roster.errors.lecture_has_other_roster_entry"))
     end
 

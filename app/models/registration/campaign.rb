@@ -63,10 +63,6 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
-    def evaluate_full_trace_for(user, phase: :registration)
-      Registration::PolicyEngine.new(self).full_trace_for(user, phase: phase)
-    end
-
     def open_for_registrations?
       open? && registration_deadline > Time.current
     end
