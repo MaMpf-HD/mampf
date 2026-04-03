@@ -29,7 +29,7 @@ export default class extends Controller {
       this.activateTile(tile);
       this.openPanel();
       this.requestPanel(tile.dataset.rosterPanelPath);
-      
+
       params.delete("open_roster");
       const newSearch = params.toString();
       const newUrl = window.location.pathname + (newSearch ? "?" + newSearch : "") + window.location.hash;
@@ -46,6 +46,12 @@ export default class extends Controller {
     }
 
     this.activateTile(tile);
+  }
+
+  tileTargetDisconnected(tile) {
+    if (tile === this.activeTile) {
+      this.close();
+    }
   }
 
   openFromTile(event) {

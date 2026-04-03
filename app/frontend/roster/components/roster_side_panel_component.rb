@@ -1,7 +1,9 @@
-# Missing top-level docstring, please formulate one yourself 😁
+# Renders the side panel in the roster view, showing either unassigned candidates
+# or members of a group.
 class RosterSidePanelComponent < ViewComponent::Base
   attr_reader :registerable, :students, :campaign, :item
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(registerable: nil, students: [], read_only: false,
                  is_unassigned: false, campaign: nil, item: nil,
                  allocated: false, preference_ranks: {})
@@ -15,6 +17,7 @@ class RosterSidePanelComponent < ViewComponent::Base
     @allocated = allocated
     @preference_ranks = preference_ranks
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def read_only?
     @read_only
@@ -107,17 +110,17 @@ class RosterSidePanelComponent < ViewComponent::Base
     rest = item.user_registrations.where("preference_rank > 3").count
 
     parts = []
-    if second > 0
+    if second.positive?
       parts << ("#{second} " +
                t("registration.item.badge.second_choice",
                  default: "2nd Choice"))
     end
-    if third > 0
+    if third.positive?
       parts << ("#{third} " +
                t("registration.item.badge.third_choice",
                  default: "3rd Choice"))
     end
-    if rest > 0
+    if rest.positive?
       parts << ("#{rest} " +
                t("registration.item.badge.other_choices",
                  default: "Other"))
