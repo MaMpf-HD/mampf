@@ -11,6 +11,7 @@
       <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
       — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
+
       <% grouped = dashboard.policy_violations.group_by { |v| v[:user_id] } %>
       <% policy_counts = dashboard.policy_violations
            .group_by { |v| v[:policy] }
@@ -18,12 +19,15 @@
 
       <p class="mt-2 mb-2">
         <strong><%= grouped.size %></strong>
+
         <%= t("registration.allocation.errors.policy_violation_count",
               count: grouped.size) %>
+
         <small class="text-muted ms-1">
-          (<% policy_counts.each_with_index do |(kind, count), i| %>
-            <%= t("registration.policy.kinds.#{kind}") %>:
-            <%= count %><%= ", " unless i == policy_counts.size - 1 %>
+          (
+          <% policy_counts.each_with_index do |(kind, count), i| %>
+            <%= t("registration.policy.kinds.#{kind}") %>: <%= count %>
+            <%= ", " unless i == policy_counts.size - 1 %>
           <% end %>)
         </small>
       </p>
@@ -34,9 +38,16 @@
           <% if policy.kind == "institutional_email" %>
             <div class="mb-1">
               <i class="bi bi-envelope me-1"></i>
-              <strong><%= t("registration.policy.kinds.institutional_email") %>:</strong>
+
+              <strong>
+                <%= t("registration.policy.kinds.institutional_email") %>:
+              </strong>
+
               <%= t("registration.allocation.policy_summary.required_domain") %>
-              <code>@<%= Array(policy.config["allowed_domains"]).join(", @") %></code>
+
+              <code>
+                @<%= Array(policy.config["allowed_domains"]).join(", @") %>
+              </code>
             </div>
           <% end %>
         <% end %>
@@ -45,11 +56,13 @@
       <ul class="mt-0 mb-2">
         <% grouped.each do |user_id, violations| %>
           <% first = violations.first %>
+
           <li class="mb-1">
             <strong><%= first[:name] %></strong> (<%= first[:email] %>)
             <% violations.each do |v| %>
               <span class="badge bg-danger-subtle text-danger ms-1">
                 <%= t("registration.policy.kinds.#{v[:policy]}") %>
+
                 <% if v[:policy] == "institutional_email" %>
                   <span class="fw-normal">
                     @<%= first[:email].split("@").last %>
@@ -233,9 +246,20 @@
       <tbody>
         <% dashboard.stats.item_stats.each do |data| %>
           <% percentage = data[:percentage] || 0 %>
+          <% item = data[:item] %>
+          <% registerable = item.registerable %>
 
-          <tr>
-            <td><%= data[:item].title %></td>
+          <tr
+            class="allocation-item-row"
+            data-tutorial-roster-panel-target="tile"
+            data-action="click->tutorial-roster-panel#openFromTile"
+            data-roster-key="<%= "#{registerable.class.name}-#{registerable.id}" %>"
+            data-roster-panel-path="<%= roster_registration_campaign_item_path(campaign, item, source: :panel, format: :turbo_stream) %>"
+            data-roster-type="<%= registerable.class.name.underscore %>"
+            data-roster-id="<%= registerable.id %>"
+            data-roster-title="<%= registerable.title %>"
+          >
+            <td><%= item.title %></td>
 
             <td class="text-end">
               <span><%= data[:count] %> / <%= data[:capacity] || "∞" %></span>

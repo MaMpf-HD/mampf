@@ -33,7 +33,11 @@
           <span><%= tutors_text %></span>
 
           <span class="badge text-bg-secondary ms-2">
-            <% if preference_based_campaign? %>
+            <% if allocated? %>
+              <%= "#{students.size} " +
+                  t("registration.user_registration.index.allocated_count",
+                    default: "allocated") %>
+            <% elsif preference_based_campaign? %>
               <%= "#{students.size} " +
                   t("registration.item.badge.first_choice",
                     default: "First Choice") %>
@@ -44,7 +48,18 @@
             <% end %>
           </span>
         </div>
-        <% if preference_based_campaign? %>
+        <% if allocated? && allocated_choice_pills.any? %>
+          <div class="d-flex flex-wrap gap-1 mt-1">
+            <% allocated_choice_pills.each do |pill| %>
+              <span
+                class="badge <%= pill[:color] %>"
+                style="font-size: 0.75em;"
+              >
+                <%= pill[:count] %>× <%= pill[:label] %>
+              </span>
+            <% end %>
+          </div>
+        <% elsif preference_based_campaign? && !allocated? %>
           <div class="text-muted small mt-1">
             <%= further_choice_summary %>
           </div>
@@ -122,8 +137,20 @@
               "
             >
               <div>
-                <div class="fw-semibold">
-                  <%= student_display_name(student) %>
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="fw-semibold">
+                    <%= student_display_name(student) %>
+                  </div>
+
+                  <% if allocated? %>
+                    <% rank = preference_rank_for(student) %>
+                    <span
+                      class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0"
+                      style="font-size: 0.7em;"
+                    >
+                      <%= rank_badge_label(rank) %>
+                    </span>
+                  <% end %>
                 </div>
 
                 <div class="text-muted small">

@@ -87,6 +87,8 @@ module Registration
       end
 
       students = panel_students_for(@item)
+      allocated = @campaign.last_allocation_calculated_at.present?
+      preference_ranks = allocated ? preference_ranks_for(@item) : {}
 
       render turbo_stream: turbo_stream.replace(
         "tutorial-roster-side-panel",
@@ -94,7 +96,9 @@ module Registration
           registerable: @item.registerable,
           students: students,
           read_only: true,
-          item: @item
+          item: @item,
+          allocated: allocated,
+          preference_ranks: preference_ranks
         ).render_in(view_context)
       )
     end
@@ -184,7 +188,9 @@ module Registration
       end
 
       def panel_students_for(item)
-        registrations = if @campaign.first_come_first_served?
+        registrations = if @campaign.last_allocation_calculated_at.present?
+          item.user_registrations.confirmed
+        elsif @campaign.first_come_first_served?
           item.user_registrations
         else
           item.user_registrations.where(preference_rank: 1)
@@ -194,6 +200,17 @@ module Registration
                      .filter_map(&:user)
                      .uniq(&:id)
                      .sort_by { |user| [user.name.to_s.downcase, user.email.to_s.downcase] }
+      end
+
+      def preference_ranks_for(item)
+        item.registration_campaign
+            .user_registrations
+            .where(
+              user_id: item.user_registrations.confirmed.select(:user_id),
+              registration_item_id: item.id
+            )
+            .pluck(:user_id, :preference_rank)
+            .to_h
       end
   end
 end

@@ -234,6 +234,8 @@ de:
       index:
         title: "Anmeldungen"
         first_choice_title: "Erstwahl-Anmeldungen"
+        allocated_title: "Zugeteilte Studierende"
+        allocated_count: "zugeteilt"
       status:
         pending: "Ausstehend"
         confirmed: "Bestätigt"
@@ -278,6 +280,7 @@ de:
         percentage: "Prozent"
         rank_label: "Wahl #%{rank}"
         forced: "Zwangszuweisung"
+        forced_short: "Zugewiesen"
         capacity: "Kapazität"
         utilization: "Auslastung"
       errors:

@@ -234,6 +234,8 @@ en:
       index:
         title: "Registrations"
         first_choice_title: "1st Choice Registrations"
+        allocated_title: "Allocated Students"
+        allocated_count: "allocated"
       status:
         pending: "Pending"
         confirmed: "Confirmed"
@@ -278,6 +280,7 @@ en:
         percentage: "Percentage"
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
+        forced_short: "Assigned"
         capacity: "Capacity"
         utilization: "Utilization"
       errors:

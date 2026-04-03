@@ -3,7 +3,8 @@ class RosterSidePanelComponent < ViewComponent::Base
   attr_reader :registerable, :students, :campaign, :item
 
   def initialize(registerable: nil, students: [], read_only: false,
-                 is_unassigned: false, campaign: nil, item: nil)
+                 is_unassigned: false, campaign: nil, item: nil,
+                 allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
     @students = students
@@ -11,6 +12,8 @@ class RosterSidePanelComponent < ViewComponent::Base
     @is_unassigned = is_unassigned
     @campaign = campaign
     @item = item
+    @allocated = allocated
+    @preference_ranks = preference_ranks
   end
 
   def read_only?
@@ -21,9 +24,66 @@ class RosterSidePanelComponent < ViewComponent::Base
     @is_unassigned
   end
 
+  def allocated?
+    @allocated
+  end
+
+  def preference_rank_for(student)
+    @preference_ranks[student.id]
+  end
+
+  def rank_badge_color(rank)
+    case rank
+    when 1 then "bg-success"
+    when 2 then "bg-primary"
+    when 3 then "bg-warning text-dark"
+    else "bg-secondary"
+    end
+  end
+
+  def rank_badge_label(rank)
+    if rank.nil?
+      t("registration.allocation.stats.forced_short",
+        default: "Assigned")
+    else
+      t("registration.allocation.stats.rank_label", rank: rank)
+    end
+  end
+
+  def allocated_choice_pills
+    return [] unless allocated? && @preference_ranks.any?
+
+    counts = @preference_ranks.values.tally
+    pills = []
+    (1..3).each do |rank|
+      next unless counts[rank]&.positive?
+
+      pills << { count: counts[rank],
+                 label: rank_badge_label(rank),
+                 color: rank_badge_color(rank) }
+    end
+    rest = counts.select { |r, _| r.is_a?(Integer) && r > 3 }.values.sum
+    if rest.positive?
+      pills << { count: rest,
+                 label: t("registration.item.badge.other_choices",
+                          default: "Other"),
+                 color: "bg-secondary" }
+    end
+    forced = counts[nil] || 0
+    if forced.positive?
+      pills << { count: forced,
+                 label: rank_badge_label(nil),
+                 color: "bg-secondary" }
+    end
+    pills
+  end
+
   def panel_title
     if unassigned?
       t("roster.candidates.title")
+    elsif allocated?
+      t("registration.user_registration.index.allocated_title",
+        default: "Allocated Students")
     elsif read_only? && preference_based_campaign?
       t("registration.user_registration.index.first_choice_title",
         default: "1st Choice Registrations")
