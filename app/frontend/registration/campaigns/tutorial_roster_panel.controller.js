@@ -49,9 +49,29 @@ export default class extends Controller {
   }
 
   tileTargetDisconnected(tile) {
-    if (tile === this.activeTile) {
-      this.close();
+    if (tile !== this.activeTile) {
+      return;
     }
+
+    const rosterKey = this.activeRosterKey;
+    this.activeTile = null;
+
+    requestAnimationFrame(() => {
+      if (!this.isOpen || !rosterKey) {
+        return;
+      }
+
+      const replacementTile = this.tileTargets.find(
+        candidate => candidate.dataset.rosterKey === rosterKey,
+      );
+
+      if (replacementTile) {
+        this.activateTile(replacementTile);
+        return;
+      }
+
+      this.close();
+    });
   }
 
   openFromTile(event) {

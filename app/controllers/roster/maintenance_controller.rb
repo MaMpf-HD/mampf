@@ -9,6 +9,7 @@ module Roster
     before_action :set_rosterable,
                   only: [:show, :add_member, :remove_member, :move_member,
                          :update_self_materialization, :bulk_update_self_materialization]
+    before_action :build_maintenance_params
     before_action :authorize_lecture
     before_action :use_lecture_locale
 
@@ -39,29 +40,19 @@ module Roster
 
     # GET /lectures/:lecture_id/roster
     def index
-      @group_type = if params[:group_type].is_a?(Array)
-        params[:group_type].map(&:to_sym)
-      else
-        params[:group_type]&.to_sym || :all
-      end
-
+      @group_type = @mparams.group_type
       setup_participants
     end
 
     # GET /lectures/:lecture_id/roster/participants
     def participants
-      @group_type = if params[:group_type].is_a?(Array)
-        params[:group_type].map(&:to_sym)
-      else
-        params[:group_type]&.to_sym || :all
-      end
-
+      @group_type = @mparams.group_type
       setup_participants
     end
 
     def show
-      if panel_source?
-        render_panel_update(update_tiles: false)
+      if @mparams.panel?
+        render_with_streams(stream_builder.streams(update_tiles: false))
       else
         redirect_to lecture_roster_path(@lecture)
       end
@@ -76,13 +67,7 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      if unassigned_source?
-        render_unassigned_update
-      elsif panel_source?
-        render_panel_update
-      else
-        render_roster_update
-      end
+      render_with_streams(stream_builder.streams)
     end
 
     def remove_member
@@ -93,20 +78,19 @@ module Roster
 
       flash.now[:notice] = t("roster.messages.user_removed")
 
-      if participants_source?
-        render_participants_update
-      elsif panel_source?
-        render_panel_update
-      else
-        render_roster_update
-      end
+      render_with_streams(stream_builder.streams)
     end
 
     def move_member
       ensure_rosterable_unlocked!
 
       user = find_user
-      target = find_target_rosterable(params[:target_id])
+      target = Rosters::RosterableResolver.find_target(
+        @mparams.target_id,
+        type: @mparams.target_type,
+        lecture: @lecture,
+        default_type: @rosterable.class.name
+      )
 
       if target.nil?
         respond_with_error(t("roster.errors.target_not_found"))
@@ -123,15 +107,17 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
-      if panel_source?
-        render_move_panel_update(target)
+      if @mparams.panel?
+        render_with_streams(
+          stream_builder(target: target).streams(variant: :move_panel)
+        )
       else
-        render_roster_update
+        render_with_streams(stream_builder.streams)
       end
     end
 
     def update_self_materialization
-      mode = params[:mode]
+      mode = @mparams.mode
 
       if @rosterable.update(self_materialization_mode: mode)
         render turbo_stream: turbo_stream.replace(
@@ -146,9 +132,8 @@ module Roster
     end
 
     def bulk_update_self_materialization
-      mode = params[:mode]
-
-      registerables = view_context.no_campaign_registerables(@lecture)
+      mode = @mparams.mode
+      registerables = Rosters::NoCampaignRegisterablesQuery.new(@lecture).call
 
       ActiveRecord::Base.transaction do
         registerables.each do |r|
@@ -169,7 +154,7 @@ module Roster
         @participants_filter = query.filter_mode
         @total_participants_count = query.total_count
         @unassigned_participants_count = query.unassigned_count
-        @search_string = params[:search]
+        @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
       end
@@ -178,268 +163,53 @@ module Roster
         authorize! :edit, @lecture
       end
 
-      def unassigned_source?
-        params[:source] == "unassigned" && params[:source_id].present?
-      end
-
-      def panel_source?
-        params[:source] == "panel"
-      end
-
-      def participants_source?
-        params[:source] == "participants"
-      end
-
-      def render_participants_update
-        @group_type = if params[:group_type].is_a?(Array)
-          params[:group_type].map(&:to_sym)
-        else
-          params[:group_type]&.to_sym || :all
-        end
-
-        @lecture = eager_load_lecture(@lecture.id)
-        setup_participants
-
-        component_counts = {
-          total: @total_participants_count,
-          unassigned: @unassigned_participants_count
-        }
-
+      def render_with_streams(streams)
         respond_to do |format|
           format.turbo_stream do
-            streams = [
-              turbo_stream.update(
-                "roster_participants_panel",
-                RosterParticipantsComponent.new(lecture: @lecture,
-                                                group_type: @group_type,
-                                                participants: @participants,
-                                                pagy: @pagy,
-                                                filter_mode: @participants_filter,
-                                                search_string: @search_string,
-                                                counts: component_counts)
-              )
-            ]
             streams << stream_flash if flash.present?
             render turbo_stream: streams
           end
           format.html do
-            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
+            if @mparams.panel? || @mparams.unassigned? || @mparams.participants?
+              streams << stream_flash if flash.present?
+              render turbo_stream: streams
+            else
+              redirect_back_or_to fallback_path,
+                                  notice: flash.now[:notice],
+                                  alert: flash.now[:alert]
+            end
           end
         end
       end
 
-      def render_unassigned_update
-        @campaign = Registration::Campaign.find_by(id: params[:source_id])
-        @rosterable.reload
-
-        streams = []
-
-        # Update Target tile
-        tile_replacements_for(@rosterable, streams)
-
-        if @campaign
-          lecture_roster_ids = @campaign.campaignable.allocated_user_ids
-          @unassigned_users = @campaign.unassigned_users
-                                       .where.not(id: lecture_roster_ids)
-                                       .includes(user_registrations: [:registration_campaign,
-                                                                      { registration_item: :registerable }])
-                                       .order(:name, :email)
-
-          # Re-render dissolved footnote
-          streams << turbo_stream.replace(
-            "dissolved_campaign_#{@campaign.id}",
-            partial: "registration/campaigns/dissolved_footnote",
-            locals: { campaign: @campaign }
-          )
-
-          # Re-render the unassigned side panel
-          streams << turbo_stream.replace(
-            "tutorial-roster-side-panel",
-            html: RosterSidePanelComponent.new(
-              campaign: @campaign,
-              students: @unassigned_users,
-              is_unassigned: true
-            ).render_in(view_context)
-          )
-        end
-
-        streams << stream_flash if flash.present?
-        render turbo_stream: streams.compact
-      end
-
-      def render_panel_update(update_tiles: true)
-        @rosterable.reload
-
-        streams = []
-        tile_replacements_for(@rosterable, streams) if update_tiles
-
-        if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort) || @rosterable.is_a?(Talk)
-          streams << turbo_stream.replace(
-            "tutorial-roster-side-panel",
-            html: RosterSidePanelComponent.new(
-              registerable: @rosterable,
-              students: @rosterable.members.order(:name)
-            ).render_in(view_context)
-          )
-        end
-
-        streams << stream_flash if flash.present?
-        render turbo_stream: streams.compact
-      end
-
-      def render_move_panel_update(target)
-        @rosterable.reload
-        target.reload
-
-        streams = []
-
-        tile_replacements_for(@rosterable, streams)
-        tile_replacements_for(target, streams)
-
-        streams << turbo_stream.replace(
-          "tutorial-roster-side-panel",
-          html: RosterSidePanelComponent.new(
-            registerable: @rosterable,
-            students: @rosterable.members.order(:name)
-          ).render_in(view_context)
+      def stream_builder(target: nil)
+        Rosters::StreamBuilder.new(
+          view_context: view_context,
+          turbo_stream: turbo_stream,
+          lecture: @lecture,
+          rosterable: @rosterable,
+          mparams: @mparams,
+          target: target,
+          roster_tab: @mparams.roster_tab,
+          participants_state: {
+            participants: @participants,
+            pagy: @pagy,
+            filter_mode: @participants_filter,
+            search_string: @search_string,
+            total_count: @total_participants_count,
+            unassigned_count: @unassigned_participants_count
+          },
+          refresh_campaigns_stream: lambda do |lecture|
+            refresh_campaigns_index_stream(lecture)
+          end
         )
-
-        streams << stream_flash if flash.present?
-
-        render turbo_stream: streams.compact
-      end
-
-      def tile_replacements_for(rosterable, streams)
-        Registration::Item.where(registerable: rosterable).find_each do |item|
-          streams << turbo_stream.replace(
-            view_context.dom_id(item),
-            html: GroupTileComponent.new(
-              registerable: item.registerable, item: item
-            ).render_in(view_context)
-          )
-        end
-
-        streams << turbo_stream.replace(
-          view_context.dom_id(rosterable),
-          html: GroupTileComponent.new(
-            registerable: rosterable
-          ).render_in(view_context)
-        )
-      end
-
-      def render_roster_update(roster_tab: nil, rosterable: @rosterable)
-        @lecture = eager_load_lecture(@lecture.id)
-        rosterable = reload_rosterable_from_lecture(rosterable)
-        setup_participants
-
-        roster_tab = infer_roster_tab(roster_tab, rosterable)
-        target_rosterable = determine_target_rosterable(roster_tab, rosterable)
-        group_type = normalize_group_type
-        frame_id = resolve_frame_id(group_type)
-        component_counts = build_component_counts
-
-        respond_to do |format|
-          format.turbo_stream do
-            streams = [
-              turbo_stream.update(
-                frame_id,
-                RosterOverviewComponent.new(lecture: @lecture,
-                                            group_type: group_type,
-                                            roster_tab: roster_tab,
-                                            rosterable: target_rosterable,
-                                            participants: @participants,
-                                            pagy: @pagy,
-                                            filter_mode: @participants_filter,
-                                            counts: component_counts)
-              ),
-              refresh_campaigns_index_stream(@lecture)
-            ]
-            streams << stream_flash if flash.present?
-            render turbo_stream: streams
-          end
-          format.html do
-            redirect_back_or_to fallback_path, notice: flash.now[:notice], alert: flash.now[:alert]
-          end
-        end
-      end
-
-      def reload_rosterable_from_lecture(rosterable)
-        return rosterable if rosterable.nil? || rosterable.is_a?(Lecture)
-
-        collection = case rosterable
-                     when Tutorial then @lecture.tutorials
-                     when Talk then @lecture.talks
-                     when Cohort then @lecture.cohorts
-        end
-        collection&.find { |r| r.id == rosterable.id } || rosterable
-      end
-
-      def determine_target_rosterable(roster_tab, rosterable)
-        return nil if roster_tab == :enrollment
-        return nil if roster_tab == :participants
-        return nil if rosterable.is_a?(Lecture)
-
-        rosterable
-      end
-
-      def infer_roster_tab(roster_tab, rosterable)
-        if roster_tab
-          tab = roster_tab.to_sym
-          return :enrollment if tab == :participants
-
-          return tab
-        end
-
-        rosterable.is_a?(Lecture) ? :enrollment : :lanes
-      end
-
-      def normalize_group_type
-        group_type = if params[:group_type].is_a?(Array)
-          params[:group_type].map(&:to_sym)
-        else
-          fallback = if @rosterable.is_a?(Lecture)
-            :all
-          else
-            @rosterable&.roster_group_type || :all
-          end
-          params[:group_type]&.to_sym || fallback
-        end
-
-        group_type.is_a?(Array) ? group_type : group_type&.to_sym
-      end
-
-      def resolve_frame_id(group_type)
-        expected_frame_id = view_context.roster_maintenance_frame_id(group_type)
-        allowed_frame_ids = allowed_roster_frame_ids
-
-        allowed_frame_ids.include?(expected_frame_id) ? expected_frame_id : allowed_frame_ids.first
-      end
-
-      def build_component_counts
-        {
-          total: @total_participants_count,
-          unassigned: @unassigned_participants_count
-        }
-      end
-
-      def allowed_roster_frame_ids
-        group_types = [
-          :all,
-          *RosterOverviewComponent::SUPPORTED_TYPES.keys,
-          view_context.roster_group_types(@lecture)
-        ].uniq
-
-        frame_ids = group_types.map { |t| view_context.roster_maintenance_frame_id(t) }
-        raise("No valid roster frame IDs generated") if frame_ids.empty?
-
-        frame_ids
       end
 
       def find_user
-        user = if params[:user_id]
-          User.find_by(id: params[:user_id])
+        user = if @mparams.user_id
+          User.find_by(id: @mparams.user_id)
         else
-          User.find_by(email: params[:email])
+          User.find_by(email: @mparams.email)
         end
         raise(UserNotFoundError) unless user
 
@@ -454,25 +224,8 @@ module Roster
         lecture_roster_path(@lecture, group_type: @rosterable&.roster_group_type || :all)
       end
 
-      def find_target_rosterable(id)
-        target_type = params[:target_type]
-
-        return nil if target_type.present? && Rosters::Rosterable::TYPES.exclude?(target_type)
-
-        target_type ||= @rosterable.class.name
-        klass = target_type.constantize
-
-        # Scope the search to the same type as the current group to avoid ID collisions
-        # between Tutorials and Talks.
-        if klass == Cohort
-          klass.find_by(id: id, context: @lecture)
-        else
-          klass.find_by(id: id, lecture: @lecture)
-        end
-      end
-
       def set_lecture
-        @lecture = eager_load_lecture(params[:lecture_id])
+        @lecture = Rosters::RosterableResolver.eager_load_lecture(params[:lecture_id])
         return if @lecture
 
         redirect_to root_path, alert: t("roster.errors.lecture_not_found")
@@ -484,35 +237,33 @@ module Roster
           return
         end
 
-        klass = params[:type].constantize
-        param_key = "#{params[:type].underscore}_id"
-        id = params[param_key] || params[:id]
-        rosterable = klass.find_by(id: id)
-
-        if rosterable&.lecture
-          @lecture = eager_load_lecture(rosterable.lecture.id)
-
-          if @lecture
-            if rosterable.is_a?(Lecture)
-              @rosterable = @lecture
-            else
-              collection = case rosterable
-                           when Tutorial then @lecture.tutorials
-                           when Talk then @lecture.talks
-                           when Cohort then @lecture.cohorts
-              end
-              @rosterable = collection&.find { |r| r.id == rosterable.id } || rosterable
-            end
-          else
-            @rosterable = rosterable
-          end
-        else
-          @rosterable = rosterable
+        @rosterable = Rosters::RosterableResolver.resolve(params)
+        unless @rosterable
+          redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
+          return
         end
+
+        lecture_id = if @rosterable.is_a?(Lecture)
+          @rosterable.id
+        elsif @rosterable.respond_to?(:lecture_id) && @rosterable.lecture_id
+          @rosterable.lecture_id
+        elsif @rosterable.is_a?(Cohort)
+          @rosterable.context_id
+        end
+
+        @lecture = Rosters::RosterableResolver.eager_load_lecture(lecture_id)
+        @rosterable = Rosters::RosterableResolver.reload(
+          @rosterable,
+          lecture: @lecture
+        )
 
         return if @rosterable && @lecture
 
         redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
+      end
+
+      def build_maintenance_params
+        @mparams = Rosters::MaintenanceParams.new(params, lecture: @lecture)
       end
 
       def respond_with_error(message)
@@ -523,19 +274,6 @@ module Roster
           end
           format.html { redirect_back_or_to fallback_path, alert: message }
         end
-      end
-
-      def eager_load_lecture(id)
-        Lecture.includes(
-          { registration_campaigns: [:user_registrations, :registration_items,
-                                     :registration_policies] },
-          tutorials: [:tutors, :tutorial_memberships,
-                      { registration_items: { registration_campaign: :registration_policies } }],
-          cohorts: [:cohort_memberships,
-                    { registration_items: { registration_campaign: :registration_policies } }],
-          talks: [:speakers, :speaker_talk_joins,
-                  { registration_items: { registration_campaign: :registration_policies } }]
-        ).find_by(id: id)
       end
 
       def use_lecture_locale
