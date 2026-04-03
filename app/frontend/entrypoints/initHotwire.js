@@ -65,14 +65,8 @@ window.Stimulus.register("row-click", RowClickController);
 import DatetimepickerController from "~/controllers/datetimepicker_controller.js";
 window.Stimulus.register("datetimepicker", DatetimepickerController);
 
-import RosterEnrollmentController from "~/roster/roster_enrollment_controller.js";
-window.Stimulus.register("roster-enrollment", RosterEnrollmentController);
-
 import CapacityGuardController from "~/roster/capacity_guard_controller.js";
 window.Stimulus.register("capacity-guard", CapacityGuardController);
-
-import RosterFilterController from "~/roster/roster_filter.controller.js";
-window.Stimulus.register("roster-filter", RosterFilterController);
 
 import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
 window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
