@@ -76,6 +76,9 @@ en:
         view_allocation: "View Allocation"
         review_and_finalize: "Review & Finalize"
         complete_planning: "Complete Planning"
+      reopen_form:
+        new_deadline: "New registration deadline"
+        submit: "Reopen"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
@@ -257,7 +260,14 @@ en:
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g. too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
         workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
-        item_capacities: "Tutorial Capacities"
+        item_capacities: "Group Capacities"
+      demand:
+        title: "Registration Demand"
+        info: "This overview shows the registration demand per item before allocation. Review the first-choice demand against capacities, then click 'Run Allocation' to compute the assignment. Rows highlighted in yellow have more first-choice registrations than available capacity."
+        items_count: "Items"
+        first_choice: "1st Choice"
+        second_choice: "2nd Choice"
+        third_plus: "3rd+"
       stats:
         total_registrations: "Total Registrations"
         assigned: "Assigned"

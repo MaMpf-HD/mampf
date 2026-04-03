@@ -32,6 +32,14 @@ module Registration
         @campaign.registration_policies.active.for_phase(:finalization)
     end
 
+    def allocation_run?
+      @campaign.last_allocation_calculated_at.present?
+    end
+
+    def demand_per_item
+      @demand_per_item ||= calculate_demand_per_item
+    end
+
     def conflicting_registrations
       @conflicting_registrations ||= calculate_conflicts
     end
@@ -59,6 +67,35 @@ module Registration
             user: m.user,
             tutorial: m.tutorial,
             registration: registrations_by_user[m.user_id]
+          }
+        end
+      end
+
+      def calculate_demand_per_item
+        counts = @campaign.user_registrations
+                          .group(:registration_item_id, :preference_rank)
+                          .count
+
+        items = @campaign.registration_items
+                         .includes(:registerable)
+                         .sort_by { |i| i.title.to_s }
+
+        items.map do |item|
+          rank_counts = counts.select { |k, _| k[0] == item.id }
+                              .transform_keys { |k| k[1] }
+          first  = rank_counts[1] || 0
+          second = rank_counts[2] || 0
+          third  = rank_counts[3] || 0
+          rest   = rank_counts.select { |r, _| r.is_a?(Integer) && r > 3 }
+                              .values.sum
+          {
+            item: item,
+            first: first,
+            second: second,
+            third: third,
+            rest: rest,
+            total: first + second + third + rest,
+            capacity: item.capacity
           }
         end
       end

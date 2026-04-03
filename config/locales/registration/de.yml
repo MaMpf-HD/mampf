@@ -76,6 +76,9 @@ de:
         view_allocation: "Zuteilung ansehen"
         review_and_finalize: "Prüfen & Abschließen"
         complete_planning: "Planung abschließen"
+      reopen_form:
+        new_deadline: "Neue Anmeldefrist"
+        submit: "Erneut öffnen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
@@ -258,6 +261,13 @@ de:
         workflow_info_fcfs: "Überprüfen Sie die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen."
         workflow_info_planning: "Überprüfen Sie die Statistiken. Da dies ein Nur-Planungs-Verfahren ist, werden keine Änderungen an Teilnehmerlisten vorgenommen. Wenn Sie zufrieden sind, klicken Sie auf 'Planung abschließen', um den aktuellen Stand zu speichern."
         item_capacities: "Auslastung"
+      demand:
+        title: "Anmeldenachfrage"
+        info: "Diese Übersicht zeigt die Nachfrage pro Gruppe vor der Zuteilung. Prüfen Sie die Erstwahl-Nachfrage im Verhältnis zu den Kapazitäten und klicken Sie dann auf 'Zuteilung berechnen'. Gelb markierte Zeilen haben mehr Erstwahl-Anmeldungen als verfügbare Plätze."
+        items_count: "Gruppen"
+        first_choice: "Erste Wahl"
+        second_choice: "Zweite Wahl"
+        third_plus: "Dritte+"
       stats:
         total_registrations: "Anmeldungen gesamt"
         assigned: "Zugewiesen"

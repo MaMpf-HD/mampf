@@ -10,10 +10,17 @@
            campaign: campaign, has_violators: has_violators %>
 
 <% if show_allocation_dashboard %>
-  <%= render "registration/allocations/dashboard",
+  <% if campaign.preference_based? && !dashboard.allocation_run? %>
+    <%= render "registration/allocations/pre_allocation_demand",
                campaign: campaign,
                dashboard: dashboard,
                embedded: true %>
+  <% else %>
+    <%= render "registration/allocations/dashboard",
+                 campaign: campaign,
+                 dashboard: dashboard,
+                 embedded: true %>
+  <% end %>
 <% else %>
   <%= render "registration/campaigns/card_body_items", campaign: campaign %>
 <% end %>

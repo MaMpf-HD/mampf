@@ -1,1 +1,6 @@
-<%= render partial: "registration/allocations/dashboard" %>
+<% if @campaign.preference_based? && !@dashboard.allocation_run? %>
+  <%= render partial: "registration/allocations/pre_allocation_demand",
+             locals: { campaign: @campaign, dashboard: @dashboard } %>
+<% else %>
+  <%= render partial: "registration/allocations/dashboard" %>
+<% end %>

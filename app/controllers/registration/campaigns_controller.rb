@@ -137,7 +137,16 @@ module Registration
         return
       end
 
-      update_status(:open, t("registration.campaign.reopened"))
+      attributes = { status: :open }
+      if params[:registration_deadline].present?
+        attributes[:registration_deadline] = params[:registration_deadline]
+      end
+
+      if @campaign.update(attributes)
+        respond_with_success(t("registration.campaign.reopened"))
+      else
+        respond_with_error(@campaign.errors.full_messages.join(", "))
+      end
     end
 
     def check_unlimited_items

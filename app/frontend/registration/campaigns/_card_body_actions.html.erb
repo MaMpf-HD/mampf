@@ -35,22 +35,29 @@
                       },
                       class: "btn btn-warning w-100" %>
       <% elsif campaign.closed? %>
-        <%= button_to t("registration.campaign.actions.reopen"),
-                      reopen_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: {
-                        confirm: t("registration.campaign.confirmations.reopen"),
-                        turbo_stream: true
-                      },
-                      class: "btn btn-success w-100" %>
+        <div data-controller="collapse">
+          <button
+            type="button"
+            class="btn btn-success"
+            data-action="collapse#toggle"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <%= t("registration.campaign.actions.reopen") %>
+          </button>
+
+          <div class="collapse mt-2" data-collapse-target="content">
+            <%= render "registration/campaigns/reopen_form",
+                       campaign: campaign %>
+          </div>
+        </div>
         <% if campaign.preference_based? %>
-          <%= allocate_campaign_button(campaign, size: "w-100") %>
+          <%= allocate_campaign_button(campaign) %>
           <% if campaign.last_allocation_calculated_at.present? %>
-            <%= finalize_campaign_button(campaign, size: "w-100",
+            <%= finalize_campaign_button(campaign,
                                          disabled: has_violators) %>
           <% end %>
         <% else %>
-          <%= finalize_campaign_button(campaign, size: "w-100",
+          <%= finalize_campaign_button(campaign,
                                        disabled: has_violators) %>
         <% end %>
       <% elsif campaign.processing? %>
