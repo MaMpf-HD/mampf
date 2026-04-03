@@ -313,8 +313,10 @@ de:
       campaign_enrollment:
         title: "Einschreibung durch Anmeldeverfahren"
         description: "Sie können sich über das aktive Anmeldeverfahren für diese Veranstaltung einschreiben."
+        no_active_campaign: "Derzeit gibt es kein aktives Anmeldeverfahren für diese Veranstaltung."
       direct_enrollment:
         title: "Optionen für Selbsteinschreibung"
         description: >
           Sie können direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft und aktualisieren Ihren offiziellen Roster. 
           Dies ist separat von Anmeldeverfahren.
+        no_active_self_rosterables: "Derzeit gibt es keine Gruppen, denen Sie direkt beitreten oder die Sie verlassen können."

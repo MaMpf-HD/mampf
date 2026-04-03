@@ -309,8 +309,10 @@ en:
       campaign_enrollment:
          title: "Enrollment via Registration Campaigns"
          description: "You can register for this lecture through the active registration campaign."
+         no_active_campaign: "There are currently no active registration campaigns for this lecture."
       direct_enrollment:
         title: "Direct Enrollment Options"
         description: >
           You can directly join or leave available groups for this lecture (depending on configuration). Changes take effect immediately and update your official roster. 
           This is separate from registration campaigns.
+        no_active_self_rosterables: "There are currently no groups available for direct joining or leaving."

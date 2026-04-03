@@ -32,16 +32,20 @@
       <% uncompleted_campaigns = @campaigns_details.select { |cd| !(cd.campaign.status == "completed") } %>
       <% completed_campaigns = @campaigns_details - uncompleted_campaigns %>
       <!-- Active campaigns -->
-      <% uncompleted_campaigns.each do |campaign_details| %>
-        <div>
-          <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
-            <%= render partial: 'registration/main/campaign_card',
-                    locals: {
-                      details: campaign_details,
-                      campaign: campaign_details.campaign
-                    } %>
-          <% end %>
-        </div>
+      <% if uncompleted_campaigns.any? %>
+        <% uncompleted_campaigns.each do |campaign_details| %>
+          <div>
+            <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+              <%= render partial: 'registration/main/campaign_card',
+                      locals: {
+                        details: campaign_details,
+                        campaign: campaign_details.campaign
+                      } %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <p><%= t("roster.self_enrollment.campaign_enrollment.no_active_campaign") %></p>
       <% end %>
 
       <!-- Collapsible section for completed campaigns -->
@@ -79,7 +83,7 @@
         </div>
       <% end %>
     <% else %>
-      <p>No available campaigns.</p>
+      <%= t("roster.self_enrollment.campaign_enrollment.no_active_campaign") %>
     <% end %>
   </div>
 </div>
@@ -102,6 +106,8 @@
           <%= render partial: 'roster/self_roster/options_zone', 
       locals: { self_rosterables: @self_rosterables } %>
         <% end %>
+      <% else %>
+        <p><%= t("roster.self_enrollment.direct_enrollment.no_active_self_rosterables") %></p>
       <% end %>
     </div>
   </div>
