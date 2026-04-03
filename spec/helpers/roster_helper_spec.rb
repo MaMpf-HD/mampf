@@ -72,7 +72,7 @@ RSpec.describe(RosterHelper, type: :helper) do
 
   describe "#roster_manage_button" do
     let(:lecture) { create(:lecture) }
-    let(:component) { double("RosterOverviewComponent", lecture: lecture) }
+    let(:component) { double("RosterComponent", lecture: lecture) }
     let(:item) { create(:tutorial, lecture: lecture) }
     let(:campaign) { nil }
 

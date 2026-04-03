@@ -1,7 +1,11 @@
 module Rosters
-  # Builds the appropriate Turbo Stream responses for roster maintenance actions,
-  # based on the type of action being performed and the current state of the roster.
+  # Builds the appropriate Turbo Stream responses for various roster maintenance actions,
+  # such as adding/removing users, moving users between groups, and updating the roster overview.
+  # Centralizes the logic for determining which parts of the UI need to be updated in
+  # response to different actions taken in the roster maintenance interface.
   class StreamBuilder
+    GROUP_TYPE_KEYS = [:tutorials, :talks, :cohorts].freeze
+
     # rubocop:disable Metrics/ParameterLists
     def initialize(view_context:, turbo_stream:, lecture:, rosterable:, mparams:,
                    participants_state: {}, target: nil, roster_tab: nil,
@@ -127,26 +131,14 @@ module Rosters
 
       def roster_streams
         lecture = Rosters::RosterableResolver.eager_load_lecture(@lecture.id) || @lecture
-        rosterable = Rosters::RosterableResolver.reload(@rosterable, lecture: lecture)
-
-        roster_tab = infer_roster_tab(rosterable)
-        target_rosterable = determine_target_rosterable(roster_tab, rosterable)
-        group_type = normalize_group_type(rosterable)
+        group_type = normalize_group_type
         frame_id = resolve_frame_id(group_type, lecture)
 
         streams = [
           @turbo_stream.update(
             frame_id,
-            RosterOverviewComponent.new(
-              lecture: lecture,
-              group_type: group_type,
-              roster_tab: roster_tab,
-              rosterable: target_rosterable,
-              participants: participants,
-              pagy: pagy,
-              filter_mode: filter_mode,
-              counts: component_counts
-            )
+            partial: "registration/campaigns/index",
+            locals: { lecture: lecture }
           )
         ]
 
@@ -174,29 +166,11 @@ module Rosters
         )
       end
 
-      def infer_roster_tab(rosterable)
-        if @roster_tab
-          return :enrollment if @roster_tab == :participants
-
-          return @roster_tab
-        end
-
-        rosterable.is_a?(Lecture) ? :enrollment : :lanes
-      end
-
-      def determine_target_rosterable(roster_tab, rosterable)
-        return nil if roster_tab == :enrollment
-        return nil if roster_tab == :participants
-        return nil if rosterable.is_a?(Lecture)
-
-        rosterable
-      end
-
-      def normalize_group_type(rosterable)
-        fallback = if rosterable.is_a?(Lecture)
+      def normalize_group_type
+        fallback = if @rosterable.is_a?(Lecture)
           :all
         else
-          rosterable&.roster_group_type || :all
+          @rosterable&.roster_group_type || :all
         end
 
         @mparams.normalized_group_type(fallback: fallback)
@@ -216,7 +190,7 @@ module Rosters
       def allowed_roster_frame_ids(lecture)
         group_types = [
           :all,
-          *RosterOverviewComponent::SUPPORTED_TYPES.keys,
+          *GROUP_TYPE_KEYS,
           @view_context.roster_group_types(lecture)
         ].uniq
 
