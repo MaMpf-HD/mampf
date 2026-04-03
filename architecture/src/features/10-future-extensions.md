@@ -159,6 +159,25 @@ Requires conditional UI logic to show the "Add Policy" button but restrict the f
 - Automatic load balancing (heuristic-based)
 - Enhanced change history UI
 
+### Monotonic Unassigned Count on Dissolved Campaign Pills
+
+**Current State:** After finalization, the dissolved campaign pill shows the number of unassigned registrants via `Campaign#unassigned_users`. This is a live query: it checks which campaign registrants (including rejected ones, intentionally — teachers need to see students who didn't get a spot) are currently not on any roster of the relevant type lecture-wide. The count can go up if a teacher removes a student from a group and doesn't place them elsewhere.
+
+**Desired Behavior:** Once a teacher acts on an unassigned student (e.g. manually placing them into a group via the panel), that student should be considered "handled" permanently. Later roster moves (removing the student again, transferring to a different group) should not re-increase the unassigned count. The count should only ever decrease.
+
+**Proposed Implementation:** Add an `ever_rostered` boolean column (default `false`) to `registration_user_registrations`. Set it to `true`:
+- During `finalize!` for all confirmed registrations (the materializer already places them on rosters).
+- Via callback on roster entry creation (`TutorialMembership`, `SpeakerTalkJoin`, etc.) when the user has registrations in completed campaigns.
+
+Change `Campaign#unassigned_users` to filter out users whose registrations all have `ever_rostered = true`.
+
+**Trade-offs:**
+- Introduces cross-domain coupling: roster layer must update registration records.
+- Write-once flag (false → true) minimizes consistency risk.
+- Migration is small: one boolean column + index.
+
+**Complexity:** Low-Medium.
+
 ### Generic Registration Groups (Lightweight Rosterables)
 
 **Problem:** Currently, `Tutorial` is the primary unit for registration. This forces users to create "fake tutorials" for simple use cases like "Lecture Admission" (where no tutorials exist) or "Event Registration" (e.g., Faculty Barbecue).

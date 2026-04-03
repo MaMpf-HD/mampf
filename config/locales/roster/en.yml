@@ -189,9 +189,9 @@ en:
       empty: 'No participants in this group.'
       empty_filtered: 'No students match the current filter.'
     candidates:
-      title: 'Unallocated Registrations'
+      title: 'Unplaced Registrations'
       help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
-      empty: 'No unallocated registrations found.'
+      empty: 'No unplaced registrations found.'
       no_prefs: 'No preferences'
     manual_enrollment:
       title: 'Manual Enrollment'
