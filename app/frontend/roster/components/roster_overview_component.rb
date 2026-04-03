@@ -1,4 +1,8 @@
-# Missing top-level docstring, please formulate one yourself 😁
+# Renders the overview of the roster, which includes grouping participants into
+# their respective tutorials, talks, and cohorts. It organizes these groups into
+# sections based on whether they are part of the official roster (propagate_to_lecture = true)
+# or are sidecars/waitlists (propagate_to_lecture = false). The component also handles
+# sorting and presentation logic for these groups in the UI.
 class RosterOverviewComponent < ViewComponent::Base
   SUPPORTED_TYPES = {
     tutorials: { model: "Tutorial", association: :tutorial_memberships, includes: :tutors },
@@ -42,7 +46,7 @@ class RosterOverviewComponent < ViewComponent::Base
 
     result = []
 
-    # 1. Main Roster Section
+    # Main Roster Section
     if on_roster.any? || primary_type_enabled?
       result << {
         title: primary_section_title,
@@ -50,7 +54,7 @@ class RosterOverviewComponent < ViewComponent::Base
       }
     end
 
-    # 2. Isolated Section
+    # Isolated Section
     if off_roster.any? || cohorts_enabled?
       result << {
         title: I18n.t("roster.cohorts.without_lecture_enrollment_title"),

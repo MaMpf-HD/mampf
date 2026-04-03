@@ -170,19 +170,16 @@ module Roster
             render turbo_stream: streams
           end
           format.html do
-            if @mparams.panel? || @mparams.unassigned? || @mparams.participants?
-              streams << stream_flash if flash.present?
-              render turbo_stream: streams
-            else
-              redirect_back_or_to fallback_path,
-                                  notice: flash.now[:notice],
-                                  alert: flash.now[:alert]
-            end
+            redirect_back_or_to fallback_path,
+                                notice: flash.now[:notice],
+                                alert: flash.now[:alert]
           end
         end
       end
 
       def stream_builder(target: nil)
+        ensure_participants_state!
+
         Rosters::StreamBuilder.new(
           view_context: view_context,
           turbo_stream: turbo_stream,
@@ -203,6 +200,13 @@ module Roster
             refresh_campaigns_index_stream(lecture)
           end
         )
+      end
+
+      def ensure_participants_state!
+        return if @participants
+
+        @group_type ||= @mparams.group_type
+        setup_participants
       end
 
       def find_user
