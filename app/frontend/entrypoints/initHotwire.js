@@ -77,6 +77,9 @@ window.Stimulus.register("roster-filter", RosterFilterController);
 import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
 window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
 
+import CampaignDissolveController from "~/registration/campaigns/campaign_dissolve.controller.js";
+window.Stimulus.register("campaign-dissolve", CampaignDissolveController);
+
 import RosterDragController from "~/roster/roster_drag.controller.js";
 window.Stimulus.register("roster-drag", RosterDragController);
 

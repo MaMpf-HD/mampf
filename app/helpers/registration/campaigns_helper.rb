@@ -146,9 +146,17 @@ module Registration
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
                 method: :patch,
-                data: {
-                  confirm: t("registration.campaign.confirmations.finalize"),
-                  turbo_stream: true
+                form: {
+                  data: {
+                    controller: "campaign-dissolve",
+                    "campaign-dissolve-confirm-message-value":
+                      t("registration.campaign.confirmations.finalize"),
+                    "campaign-dissolve-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    "campaign-dissolve-campaign-id-value": campaign.id,
+                    action: "submit->campaign-dissolve#submit",
+                    turbo_stream: true
+                  }
                 },
                 class: classes,
                 disabled: disabled)
