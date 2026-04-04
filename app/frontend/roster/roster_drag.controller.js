@@ -108,19 +108,21 @@ export default class extends Controller {
     const targetId = tile.dataset.rosterId;
     const targetFull = tile.dataset.rosterFull === "true";
     const targetTitle = tile.dataset.rosterTitle;
+    const targetAddPath = tile.dataset.rosterAddMemberPath;
 
     if (this.sourceTypeValue === "unassigned") {
       if (targetFull && !confirm(this.overbookingWarningValue)) {
         return;
       }
-      this.submitAdd(userId, targetId, targetType);
+      this.submitAdd(userId, targetAddPath);
       return;
     }
 
     const isCohortTarget = targetType === "cohort";
 
     if (isCohortTarget) {
-      this.showChoiceDialog(userId, targetId, targetType, targetFull, targetTitle);
+      this.showChoiceDialog(userId, targetId, targetType, targetFull,
+        targetTitle, targetAddPath);
     }
     else {
       if (targetFull) {
@@ -130,13 +132,15 @@ export default class extends Controller {
     }
   }
 
-  showChoiceDialog(userId, targetId, targetType, targetFull, targetTitle) {
+  showChoiceDialog(userId, targetId, targetType, targetFull,
+    targetTitle, targetAddPath) {
     if (!this.hasChoiceDialogTarget) {
       this.submitMove(userId, targetId, targetType);
       return;
     }
 
-    this.pendingDrop = { userId, targetId, targetType, targetFull, targetTitle };
+    this.pendingDrop = { userId, targetId, targetType, targetFull,
+      targetTitle, targetAddPath };
 
     const dialog = this.choiceDialogTarget;
     const titleEl = dialog.querySelector("[data-role='target-name']");
@@ -156,11 +160,11 @@ export default class extends Controller {
 
   chooseAdd() {
     if (!this.pendingDrop) return;
-    const { userId, targetId, targetType, targetFull } = this.pendingDrop;
+    const { userId, targetFull, targetAddPath } = this.pendingDrop;
 
     this.closeDialog();
     if (targetFull && !confirm(this.overbookingWarningValue)) return;
-    this.submitAdd(userId, targetId, targetType);
+    this.submitAdd(userId, targetAddPath);
   }
 
   cancelChoice() {
@@ -184,11 +188,7 @@ export default class extends Controller {
     });
   }
 
-  submitAdd(userId, targetId, targetType) {
-    const plural = targetType + "s";
-    const path = `/${plural}/${targetId}/roster/members`;
-
-    // Determine the source type to instruct the backend how to render the panel updates
+  submitAdd(userId, targetAddPath) {
     const sourceParams = this.sourceTypeValue === "unassigned"
       ? {
           source: "unassigned",
@@ -198,7 +198,7 @@ export default class extends Controller {
           source: "panel",
         };
 
-    this.submitAction(path, "POST", {
+    this.submitAction(targetAddPath, "POST", {
       user_id: userId,
       ...sourceParams,
     });

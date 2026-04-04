@@ -27,6 +27,17 @@ module Registration
       end
     end
 
+    def violations_by_user
+      @violations_by_user ||= policy_violations.group_by { |v| v[:user_id] }
+    end
+
+    def violation_counts_by_policy
+      @violation_counts_by_policy ||=
+        policy_violations
+        .group_by { |v| v[:policy] }
+        .transform_values(&:size)
+    end
+
     def finalization_policies
       @finalization_policies ||=
         @campaign.registration_policies.active.for_phase(:finalization)

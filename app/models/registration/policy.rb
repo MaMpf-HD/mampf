@@ -42,6 +42,10 @@ module Registration
       Array(val).join(", ")
     end
 
+    def allowed_domains_display
+      Array(config&.fetch("allowed_domains", [])).join(", @")
+    end
+
     def allowed_domains=(value)
       self.config ||= {}
       self.config["allowed_domains"] = value

@@ -1,5 +1,7 @@
 module Registration
   class AllocationsController < ApplicationController
+    include Registration::RosterStreamRefreshable
+
     before_action :set_campaign
     before_action :set_locale
 
@@ -56,9 +58,11 @@ module Registration
     def finalize
       authorize! :finalize, @campaign
 
+      force = params[:force] == "true"
+      authorize!(:force_finalize, @campaign) if force
+
       guard = Registration::FinalizationGuard.new(@campaign)
-      # Allow skipping policies if 'force' param is present
-      result = guard.check(ignore_policies: params[:force] == "true")
+      result = guard.check(ignore_policies: force)
 
       unless result.success?
         # Redirect to dashboard to show errors
@@ -108,28 +112,6 @@ module Registration
             render turbo_stream: streams.compact
           end
         end
-      end
-
-      def refresh_roster_streams(lecture)
-        return [] unless lecture
-
-        group_type = view_context.roster_group_types(lecture)
-        frame_id = view_context.roster_maintenance_frame_id(group_type)
-
-        [
-          turbo_stream.replace(frame_id,
-                               view_context.turbo_frame_tag(frame_id,
-                                                            src: view_context.lecture_roster_path(
-                                                              lecture, group_type: group_type
-                                                            ),
-                                                            loading: "lazy")),
-          turbo_stream.replace("roster_participants_panel",
-                               view_context.turbo_frame_tag("roster_participants_panel",
-                                                            src: view_context.lecture_roster_participants_path(
-                                                              lecture
-                                                            ),
-                                                            loading: "lazy"))
-        ]
       end
 
       def respond_with_error(message, redirect_path: nil)

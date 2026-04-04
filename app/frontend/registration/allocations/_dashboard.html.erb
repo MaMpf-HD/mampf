@@ -12,10 +12,8 @@
       — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
 
-      <% grouped = dashboard.policy_violations.group_by { |v| v[:user_id] } %>
-      <% policy_counts = dashboard.policy_violations
-           .group_by { |v| v[:policy] }
-           .transform_values(&:size) %>
+      <% grouped = dashboard.violations_by_user %>
+      <% policy_counts = dashboard.violation_counts_by_policy %>
 
       <p class="mt-2 mb-2">
         <strong><%= grouped.size %></strong>
@@ -45,9 +43,7 @@
 
               <%= t("registration.allocation.policy_summary.required_domain") %>
 
-              <code>
-                @<%= Array(policy.config["allowed_domains"]).join(", @") %>
-              </code>
+              <code>@<%= policy.allowed_domains_display %></code>
             </div>
           <% end %>
         <% end %>
@@ -65,7 +61,7 @@
 
                 <% if v[:policy] == "institutional_email" %>
                   <span class="fw-normal">
-                    @<%= first[:email].split("@").last %>
+                    @<%= email_domain(first[:email]) %>
                   </span>
                 <% end %>
               </span>

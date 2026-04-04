@@ -48,6 +48,10 @@ class GroupTileComponent < ViewComponent::Base
     end
   end
 
+  def add_member_path
+    helpers.roster_add_member_path(registerable)
+  end
+
   def delete_data
     confirm_key = if item
       "registration.item.confirm_remove"

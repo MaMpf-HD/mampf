@@ -1,5 +1,9 @@
 module Registration
   module CampaignsHelper
+    def email_domain(email)
+      email.to_s.split("@").last
+    end
+
     def campaign_badge_color(campaign)
       {
         draft: "secondary",
@@ -67,16 +71,6 @@ module Registration
         t("registration.allocation.stats.forced")
       else
         t("registration.allocation.stats.rank_label", rank: rank)
-      end
-    end
-
-    def utilization_bar_class(percentage)
-      if percentage >= 100
-        "bg-danger"
-      elsif percentage >= 80
-        "bg-warning"
-      else
-        "bg-success"
       end
     end
 
@@ -194,17 +188,5 @@ module Registration
                         turbo_stream: true },
                 class: "btn btn-success")
     end
-
-    private
-
-      def utilization_color(percentage)
-        if percentage >= 100
-          "bg-danger"
-        elsif percentage >= 80
-          "bg-warning"
-        else
-          "bg-success"
-        end
-      end
   end
 end
