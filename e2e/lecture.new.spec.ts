@@ -46,10 +46,16 @@ async function testCreateNewLecture(
 ) {
   const button = "new-lecture-button-admin-index";
 
+  const lectureNewPromise = isCoursePrefilled
+    ? page.waitForResponse(
+        response => response.url().includes("/lectures/new") && response.status() === 200,
+      )
+    : null;
+
   await page.getByTestId(button).click();
 
-  if (isCoursePrefilled) {
-    await page.waitForResponse(response => response.url().includes("/lectures/new") && response.status() === 200);
+  if (lectureNewPromise) {
+    await lectureNewPromise;
   }
 
   if (!isCoursePrefilled) {
