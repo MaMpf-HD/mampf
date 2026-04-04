@@ -1,9 +1,5 @@
 module Registration
   module ItemsHelper
-    def registration_items_service(campaign)
-      Registration::AvailableItemsService.new(campaign)
-    end
-
     def item_display_type(item)
       case item.registerable_type
       when "Tutorial"
@@ -23,14 +19,6 @@ module Registration
                                bs_title: t("registration.item.hints.no_propagation") })
           safe_join([base_type, " ", icon])
         end
-      end
-    end
-
-    def format_capacity(capacity)
-      if capacity.nil?
-        t("basics.unlimited")
-      else
-        "#{capacity} #{t("basics.seats")}"
       end
     end
   end
