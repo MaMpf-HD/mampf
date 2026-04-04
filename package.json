@@ -24,7 +24,7 @@
     "@types/bootstrap": "^5.2.10",
     "@types/node": "^24.10.0",
     "bootstrap": "^5.3.7",
-    "eslint": "^9.33.0",
+    "eslint": "^10.2.0",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^17.4.0",
