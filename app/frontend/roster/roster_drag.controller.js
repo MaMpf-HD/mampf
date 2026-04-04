@@ -118,17 +118,15 @@ export default class extends Controller {
       return;
     }
 
-    const isCohortTarget = targetType === "cohort";
+    const alwaysMove = targetType === "tutorial";
 
-    if (isCohortTarget) {
-      this.showChoiceDialog(userId, targetId, targetType, targetFull,
-        targetTitle, targetAddPath);
+    if (alwaysMove) {
+      if (targetFull && !confirm(this.overbookingWarningValue)) return;
+      this.submitMove(userId, targetId, targetType);
     }
     else {
-      if (targetFull) {
-        if (!confirm(this.overbookingWarningValue)) return;
-      }
-      this.submitMove(userId, targetId, targetType);
+      this.showChoiceDialog(userId, targetId, targetType, targetFull,
+        targetTitle, targetAddPath);
     }
   }
 
