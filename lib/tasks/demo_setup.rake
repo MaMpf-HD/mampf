@@ -1,6 +1,8 @@
 namespace :demo do
   desc "Enable feature flags and create all demo campaigns with registrations"
   task setup: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "=== Demo Setup ==="
     puts ""
 

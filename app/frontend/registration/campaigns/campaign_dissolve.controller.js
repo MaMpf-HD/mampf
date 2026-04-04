@@ -1,59 +1,20 @@
-import { Controller } from "@hotwired/stimulus";
+import CampaignConfirmBase from "../campaign_confirm_base.controller";
 
-export default class extends Controller {
-  static values = {
-    confirmMessage: String,
-    warningMessage: String,
-    campaignId: String,
-  };
-
-  confirmed = false;
-
-  connect() {
-    this.confirmed = false;
-  }
-
+export default class extends CampaignConfirmBase {
   async submit(event) {
-    if (this.confirmed) {
-      return;
-    }
+    if (this.confirmed) return;
 
     event.preventDefault();
 
-    let message = this.confirmMessageValue;
+    const message = await this.buildMessage();
 
-    try {
-      const response = await fetch(
-        `/campaigns/${this.campaignIdValue}/check_unlimited_items`,
-        { headers: { Accept: "application/json" } },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.has_unlimited_items) {
-          message += "\n\n" + this.warningMessageValue;
-        }
-      }
-    }
-    catch {
-      // Proceed without the warning
-    }
-
-    if (!confirm(message)) {
-      return;
-    }
+    if (!confirm(message)) return;
 
     const card = this.element.closest(".registration-campaign-card");
     if (!card) {
-      this.confirmed = true;
-      this.element.requestSubmit();
+      this.submitForm();
       return;
     }
-
-    const submitForm = () => {
-      this.confirmed = true;
-      this.element.requestSubmit();
-    };
 
     card.classList.add("campaign-dissolving");
 
@@ -62,10 +23,12 @@ export default class extends Controller {
     ).matches;
 
     if (reduced) {
-      submitForm();
+      this.submitForm();
     }
     else {
-      card.addEventListener("animationend", submitForm, { once: true });
+      card.addEventListener(
+        "animationend", () => this.submitForm(), { once: true },
+      );
     }
   }
 }

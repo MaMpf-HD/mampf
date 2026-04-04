@@ -19,6 +19,8 @@ module Registration
                       t("registration.item.types.planning_survey")
                     when :general
                       t("registration.item.types.other_group")
+                    else
+                      cohort.purpose.to_s.humanize
         end
 
         if cohort.propagate_to_lecture

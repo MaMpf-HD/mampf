@@ -1,6 +1,8 @@
 namespace :solver do
   desc "Generate a tutorial campaign with specific capacities"
   task create_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating solver campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -73,6 +75,8 @@ namespace :solver do
 
   desc "Generate user registrations for the solver campaign"
   task create_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Solver Test Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_campaign first."
@@ -131,6 +135,8 @@ namespace :solver do
 
   desc "Generate a friendly campaign with ample capacity"
   task create_friendly_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating friendly solver campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -198,6 +204,8 @@ namespace :solver do
 
   desc "Generate friendly registrations for the friendly campaign"
   task create_friendly_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Friendly Solver Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_friendly_campaign first."
@@ -247,6 +255,8 @@ namespace :solver do
 
   desc "Generate a mixed FCFS campaign (tutorials + cohorts) with email policy"
   task create_mixed_fcfs_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating Mixed FCFS campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -361,6 +371,8 @@ namespace :solver do
 
   desc "Generate registrations for mixed FCFS campaign"
   task create_mixed_fcfs_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Cohort FCFS Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_mixed_fcfs_campaign first."
@@ -458,6 +470,8 @@ namespace :solver do
 
   desc "Generate a two-stage seminar campaign (Planning -> Allocation)"
   task create_two_stage_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating two-stage seminar campaign..."
 
     teacher = User.find_by(email: "teacher@mampf.edu")
@@ -726,6 +740,8 @@ namespace :solver do
 
   desc "Generate an overbooked preference-based campaign for cohorts"
   task create_cohort_preference_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating Cohort Preference campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -782,6 +798,8 @@ namespace :solver do
 
   desc "Generate registrations for Cohort Preference campaign"
   task create_cohort_preference_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Cohort Preference Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_cohort_preference_campaign first."
