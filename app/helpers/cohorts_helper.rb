@@ -7,8 +7,4 @@ module CohortsHelper
       propagate_flag != "false"
     end
   end
-
-  def show_enrollment_warning?(cohort, propagates)
-    propagates && (cohort.context.tutorials.exists? || cohort.context.talks.exists?)
-  end
 end

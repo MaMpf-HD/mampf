@@ -40,37 +40,4 @@ RSpec.describe(CohortsHelper, type: :helper) do
       end
     end
   end
-
-  describe "#show_enrollment_warning?" do
-    let(:lecture) { create(:lecture) }
-    let(:cohort) { create(:cohort, context: lecture) }
-
-    context "when propagates is true" do
-      it "returns true when tutorials exist" do
-        create(:tutorial, lecture: lecture)
-        expect(helper.show_enrollment_warning?(cohort, true)).to be(true)
-      end
-
-      it "returns false when no tutorials or talks exist" do
-        expect(helper.show_enrollment_warning?(cohort, true)).to be(false)
-      end
-    end
-
-    context "when propagates is false" do
-      it "returns false even when tutorials exist" do
-        create(:tutorial, lecture: lecture)
-        expect(helper.show_enrollment_warning?(cohort, false)).to be(false)
-      end
-    end
-
-    context "with seminar" do
-      let(:seminar) { create(:seminar) }
-      let(:cohort) { create(:cohort, context: seminar) }
-
-      it "returns true when propagates and talks exist" do
-        create(:talk, lecture: seminar)
-        expect(helper.show_enrollment_warning?(cohort, true)).to be(true)
-      end
-    end
-  end
 end

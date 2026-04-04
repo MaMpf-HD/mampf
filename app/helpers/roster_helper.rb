@@ -76,15 +76,6 @@ module RosterHelper
 
   public
 
-  def group_title_with_capacity(group)
-    count = if group.respond_to?(:roster_entries_count)
-      group.roster_entries_count
-    else
-      group.roster_entries.count
-    end
-    "#{group.title} (#{count}/#{group.capacity || "∞"})"
-  end
-
   def roster_group_types(lecture)
     if lecture.seminar?
       [:talks, :cohorts]
