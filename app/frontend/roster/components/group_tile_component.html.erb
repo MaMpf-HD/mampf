@@ -84,6 +84,13 @@
         <%= tutors_text %>
       </div>
 
+      <% if location_text.present? %>
+        <div class="text-muted small">
+          <i class="bi bi-geo-alt me-1"></i>
+          <%= location_text %>
+        </div>
+      <% end %>
+
       <div class="small text-muted">
         <% if item %>
           <%= registration_count %>

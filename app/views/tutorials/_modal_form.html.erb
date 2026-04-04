@@ -42,6 +42,13 @@
             placeholder: "∞",
             data: { capacity_guard_target: "input" } %>
     </div>
+
+    <div class="mb-3">
+      <%= f.label :location, t('basics.location'), class: "form-label" %>
+      <%= f.text_field :location,
+            class: "form-control",
+            placeholder: t('basics.location') %>
+    </div>
   </div>
   <div class="modal-footer">
     <%= f.submit t('buttons.save'), class: "btn btn-primary" %>

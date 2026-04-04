@@ -88,6 +88,10 @@ class GroupTileComponent < ViewComponent::Base
     helpers.roster_tutors_text(registerable)
   end
 
+  def location_text
+    registerable.try(:location)
+  end
+
   def type_text
     helpers.roster_type_text(registerable, item: item)
   end

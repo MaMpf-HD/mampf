@@ -31,6 +31,15 @@ RSpec.describe(Tutorial, type: :model) do
     expect(new_tutorial).to be_invalid
   end
 
+  it "is valid without a location" do
+    expect(FactoryBot.build(:tutorial, location: nil)).to be_valid
+  end
+
+  it "persists location" do
+    tutorial = FactoryBot.create(:tutorial, location: "INF 205")
+    expect(tutorial.reload.location).to eq("INF 205")
+  end
+
   it "is invalid if lecture is a seminar" do
     lecture = FactoryBot.create(:seminar)
     tutorial = FactoryBot.build(:tutorial, lecture: lecture)

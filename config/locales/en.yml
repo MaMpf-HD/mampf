@@ -3239,6 +3239,7 @@ en:
     close: "Close"
     capacity: 'Capacity'
     division: 'Division'
+    location: 'Location'
     error: Error
     edit: "Edit"
     course: 'Course'

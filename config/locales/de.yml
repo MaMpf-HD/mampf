@@ -3446,6 +3446,7 @@ de:
     close: "Schließen"
     capacity: 'Kapazität'
     division: 'Teilbereich'
+    location: 'Ort'
     error: Fehler
     edit: "Bearbeiten"
     course: 'Modul'

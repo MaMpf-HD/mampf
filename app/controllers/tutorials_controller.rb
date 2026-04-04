@@ -274,7 +274,8 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, :capacity, { tutor_ids: [] }])
+      params.expect(tutorial: [:title, :lecture_id, :capacity, :location,
+                               { tutor_ids: [] }])
     end
 
     def bulk_params
