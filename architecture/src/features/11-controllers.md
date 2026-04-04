@@ -17,19 +17,17 @@ service objects to the right endpoints.
 |-------------|----------------------------------------------------|---------------------------|
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
-| Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
+| Assessment  | Assessments, Grading, Participations, GradeSchemes | Teacher/Editor UI, Tutor UI |
 | StudentPerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
 | Exam        | Exams                                              | Teacher/Editor UI         |
-| GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
 Controllers are grouped into the following namespaces:
 - Registration: Campaign setup, student registration, allocation
 - Roster: Post-allocation roster maintenance
-- Assessment: Assessment setup, grading, result viewing
+- Assessment: Assessment setup, grading, result viewing, grade scheme configuration
 - StudentPerformance: Performance records, teacher certification, evaluator proposals
 - Exam: Exam management
-- GradeScheme: Grading scheme configuration
 - Dashboard: Student and teacher/editor views
 
 ```admonish tip "Turbo responses"
@@ -433,9 +431,35 @@ Generate eligibility proposals using the Evaluator service.
 - **Does not create Certifications** - only generates proposals for teacher review
 ```
 
+### `StudentPerformance::RulesController`
+
+```admonish info "Purpose"
+Display and manage eligibility rules for a lecture (PR 10.3: read-only, PR 10.4: edit/update).
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| StudentPerformance::RulesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action | Purpose | PR |
+|--------|---------|-----|
+| show   | Display current eligibility rules (read-only) | 10.3 |
+| edit   | Rule editing form | 10.4 |
+| update | Save modified rules, trigger re-evaluation preview | 10.4 |
+
+```admonish example "Responsibilities"
+- Render current rule configuration for a lecture
+- Show which assignments count, thresholds, bonus rules
+- (PR 10.4) Provide editing form for rule parameters
+- (PR 10.4) Validate rule changes and save
+- (PR 10.4) Integrate with EvaluatorController preview on rule change
+```
+
 ## Grade Scheme Controllers
 
-### `GradeScheme::SchemesController`
+### `Assessment::GradeSchemesController`
 
 ```admonish info "Purpose"
 Configure grading schemes for courses.
@@ -443,7 +467,7 @@ Configure grading schemes for courses.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| GradeScheme::SchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| Assessment::GradeSchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
