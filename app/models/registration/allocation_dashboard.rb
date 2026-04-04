@@ -87,18 +87,22 @@ module Registration
                           .group(:registration_item_id, :preference_rank)
                           .count
 
+        grouped = counts.each_with_object(Hash.new do |h, k|
+          h[k] = {}
+        end) do |((item_id, rank), cnt), acc|
+          acc[item_id][rank] = cnt
+        end
+
         items = @campaign.registration_items
                          .includes(:registerable)
                          .sort_by { |i| i.title.to_s }
 
         items.map do |item|
-          rank_counts = counts.select { |k, _| k[0] == item.id }
-                              .transform_keys { |k| k[1] }
+          rank_counts = grouped[item.id] || {}
           first  = rank_counts[1] || 0
           second = rank_counts[2] || 0
           third  = rank_counts[3] || 0
-          rest   = rank_counts.select { |r, _| r.is_a?(Integer) && r > 3 }
-                              .values.sum
+          rest   = rank_counts.sum { |r, c| r.is_a?(Integer) && r > 3 ? c : 0 }
           {
             item: item,
             first: first,
