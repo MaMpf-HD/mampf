@@ -9,6 +9,10 @@ export default class extends Controller {
 
   confirmed = false;
 
+  connect() {
+    this.confirmed = false;
+  }
+
   async confirm(event) {
     // If already confirmed, allow the form to submit
     if (this.confirmed) {

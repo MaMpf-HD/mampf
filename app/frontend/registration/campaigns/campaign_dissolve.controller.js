@@ -9,6 +9,10 @@ export default class extends Controller {
 
   confirmed = false;
 
+  connect() {
+    this.confirmed = false;
+  }
+
   async submit(event) {
     if (this.confirmed) {
       return;

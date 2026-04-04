@@ -221,8 +221,10 @@ export default class extends Controller {
     }
 
     document.body.appendChild(form);
+    form.addEventListener(
+      "turbo:submit-end", () => form.remove(), { once: true },
+    );
     form.requestSubmit();
-    form.remove();
   }
 
   hiddenInput(name, value) {

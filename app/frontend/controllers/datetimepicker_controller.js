@@ -8,6 +8,12 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this.focusInput && this.boundShowPicker) {
+      ["click", "focusin"].forEach((event) => {
+        this.focusInput.removeEventListener(event, this.boundShowPicker);
+      });
+    }
+
     if (this.picker) {
       this.picker.dispose();
     }
@@ -75,12 +81,11 @@ export default class extends Controller {
   }
 
   registerFocusHandlers() {
-    const input = this.element.querySelector(".td-input");
-    if (input) {
+    this.focusInput = this.element.querySelector(".td-input");
+    if (this.focusInput) {
+      this.boundShowPicker = () => this.picker.show();
       ["click", "focusin"].forEach((event) => {
-        input.addEventListener(event, () => {
-          this.picker.show();
-        });
+        this.focusInput.addEventListener(event, this.boundShowPicker);
       });
     }
   }
