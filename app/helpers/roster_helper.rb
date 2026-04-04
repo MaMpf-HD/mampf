@@ -1,68 +1,43 @@
 module RosterHelper
   def roster_panel_path(registerable)
-    case registerable
-    when Tutorial
-      tutorial_roster_path(registerable, source: :panel,
-                                         format: :turbo_stream)
-    when Cohort
-      cohort_roster_path(registerable, source: :panel,
-                                       format: :turbo_stream)
-    when Talk
-      talk_roster_path(registerable, source: :panel,
-                                     format: :turbo_stream)
-    end
+    public_send(
+      "#{registerable.model_name.singular}_roster_path",
+      registerable, source: :panel, format: :turbo_stream
+    )
   end
 
   def roster_edit_group_path(registerable)
-    case registerable
-    when Tutorial then edit_tutorial_path(registerable, group_type: :tutorials)
-    when Cohort   then edit_cohort_path(registerable, group_type: :cohorts)
-    when Talk     then edit_talk_path(registerable)
-    end
+    opts = roster_group_type_param(registerable)
+    public_send("edit_#{registerable.model_name.singular}_path",
+                registerable, **opts)
   end
 
   def roster_delete_group_path(registerable)
-    case registerable
-    when Tutorial then tutorial_path(registerable, group_type: :tutorials)
-    when Cohort   then cohort_path(registerable, group_type: :cohorts)
-    when Talk     then talk_path(registerable)
-    end
+    opts = roster_group_type_param(registerable)
+    public_send("#{registerable.model_name.singular}_path",
+                registerable, **opts)
   end
 
   def roster_add_member_path(registerable, **)
-    case registerable
-    when Tutorial then add_member_tutorial_path(registerable, **)
-    when Cohort   then add_member_cohort_path(registerable, **)
-    when Talk     then add_member_talk_path(registerable, **)
-    end
+    public_send("add_member_#{registerable.model_name.singular}_path",
+                registerable, **)
   end
 
   def roster_move_member_path_template(registerable)
-    case registerable
-    when Tutorial then move_member_tutorial_path(registerable, "__USER_ID__")
-    when Cohort   then move_member_cohort_path(registerable, "__USER_ID__")
-    when Talk     then move_member_talk_path(registerable, "__USER_ID__")
-    end
+    public_send("move_member_#{registerable.model_name.singular}_path",
+                registerable, "__USER_ID__")
   end
 
   def roster_remove_member_path(registerable, user, **)
-    case registerable
-    when Tutorial
-      remove_member_tutorial_path(registerable, user, **)
-    when Cohort
-      remove_member_cohort_path(registerable, user, **)
-    end
+    public_send("remove_member_#{registerable.model_name.singular}_path",
+                registerable, user, **)
   end
 
   def roster_update_self_materialization_path(registerable, mode:)
-    case registerable
-    when Tutorial
-      update_self_materialization_tutorial_path(registerable, mode: mode)
-    when Cohort
-      update_self_materialization_cohort_path(registerable, mode: mode)
-    when Talk
-      update_self_materialization_talk_path(registerable, mode: mode)
-    end
+    public_send(
+      "update_self_materialization_#{registerable.model_name.singular}_path",
+      registerable, mode: mode
+    )
   end
 
   def roster_bulk_sm_path(registerable, mode:)
@@ -91,6 +66,15 @@ module RosterHelper
       I18n.t("registration.item.types.tutorial")
     end
   end
+
+  private
+
+    def roster_group_type_param(registerable)
+      gt = registerable.roster_group_type
+      gt == :talks ? {} : { group_type: gt }
+    end
+
+  public
 
   def group_title_with_capacity(group)
     count = if group.respond_to?(:roster_entries_count)

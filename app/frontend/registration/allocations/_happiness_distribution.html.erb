@@ -1,0 +1,53 @@
+<% dashboard = local_assigns[:dashboard] %>
+<% campaign = local_assigns[:campaign] %>
+
+<% return if campaign.first_come_first_served? %>
+
+<h6 class="text-muted fw-semibold small text-uppercase mb-2">
+  <%= t("registration.allocation.stats.happiness_distribution") %>
+</h6>
+
+<div class="table-responsive mb-4">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th><%= t("registration.allocation.stats.rank") %></th>
+
+        <th class="text-end">
+          <%= t("registration.allocation.stats.count") %>
+        </th>
+
+        <th style="width: 40%">
+          <%= t("registration.allocation.stats.percentage") %>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% sorted_preference_counts(dashboard.stats).each do |rank, count| %>
+        <% percentage = dashboard.stats.percentage_of_assigned(count) %>
+
+        <tr>
+          <td><%= rank_label(rank) %></td>
+          <td class="text-end"><%= count %></td>
+
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1">
+                <%= progress_bar(count, dashboard.stats.assigned_users,
+                                 classification: rank_color(rank),
+                                 height: "10px",
+                                 show_label: false,
+                                 container_class: "progress") %>
+              </div>
+
+              <div class="ms-2 text-end" style="width: 3.5rem;">
+                <%= number_to_percentage(percentage, precision: 0) %>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

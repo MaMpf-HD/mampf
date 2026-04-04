@@ -133,11 +133,11 @@ module Roster
 
     def bulk_update_self_materialization
       mode = @mparams.mode
-      registerables = Rosters::NoCampaignRegisterablesQuery.new(@lecture).call
+      query = Rosters::NoCampaignRegisterablesQuery.new(@lecture)
 
       ActiveRecord::Base.transaction do
-        registerables.each do |r|
-          r.update!(self_materialization_mode: mode) if r.respond_to?(:self_materialization_mode=)
+        query.scopes_by_type.each do |scope|
+          scope.update_all(self_materialization_mode: mode)
         end
       end
 

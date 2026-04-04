@@ -1,0 +1,32 @@
+<% dashboard = local_assigns[:dashboard] %>
+<% campaign = local_assigns[:campaign] %>
+<% allocation_source = local_assigns[:allocation_source] %>
+
+<% return unless dashboard.conflicting_registrations.present? %>
+
+<div class="alert alert-warning">
+  <i class="bi bi-exclamation-circle-fill me-1"></i>
+  <strong><%= t("registration.allocation.conflicts.title") %></strong> —
+  <%= t("registration.allocation.conflicts.desc") %>
+
+
+  <ul class="mt-2 mb-0">
+    <% dashboard.conflicting_registrations.each do |conflict| %>
+      <li class="mb-1">
+        <strong><%= conflict[:user].name %></strong>
+        (<%= conflict[:user].email %>) —
+        <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
+        <% if conflict[:registration] %>
+          <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: conflict[:user].id, source: allocation_source),
+                        method: :delete,
+                        class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                        data: { confirm: t("basics.confirm") },
+                        form: { style: "display:inline-block;" },
+                        title: t("registration.user_registration.actions.remove_user") do %>
+            <i class="bi bi-trash"></i>
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

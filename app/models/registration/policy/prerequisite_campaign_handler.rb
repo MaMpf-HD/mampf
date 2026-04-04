@@ -1,7 +1,5 @@
 module Registration
   class Policy
-    # Handles the "Prerequisite Campaign" policy.
-    # Checks if the user has a confirmed registration in a specific other campaign.
     class PrerequisiteCampaignHandler < Handler
       def evaluate(user)
         if campaign_id.blank?
@@ -13,11 +11,28 @@ module Registration
                              "Prerequisite campaign missing")
         end
 
-        if campaign.user_registration_confirmed?(user)
+        confirmed = if @confirmed_user_ids
+          @confirmed_user_ids.include?(user.id)
+        else
+          campaign.user_registration_confirmed?(user)
+        end
+
+        if confirmed
           pass_result(:prerequisite_met)
         else
-          fail_result(:prerequisite_not_met, "Prerequisite campaign not completed")
+          fail_result(:prerequisite_not_met,
+                      "Prerequisite campaign not completed")
         end
+      end
+
+      def batch_prepare(user_ids)
+        return if campaign_id.blank? || campaign.nil?
+
+        @confirmed_user_ids = campaign
+          .user_registrations
+          .where(status: :confirmed, user_id: user_ids)
+          .pluck(:user_id)
+          .to_set
       end
 
       def validate

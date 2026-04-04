@@ -41,12 +41,21 @@ module Registration
     private
 
       def check_policies
-        policies = @campaign.registration_policies.active.for_phase(:finalization)
+        policies = @campaign.registration_policies
+                            .active.for_phase(:finalization)
         return [] if policies.empty?
+
+        registrations = @campaign.user_registrations
+                                 .confirmed.includes(:user)
+        user_ids = registrations.pluck(:user_id)
+
+        policies.each do |policy|
+          policy.handler.batch_prepare(user_ids)
+        end
 
         violations = []
 
-        @campaign.user_registrations.confirmed.includes(:user).find_each do |reg|
+        registrations.find_each do |reg|
           user = reg.user
           policies.each do |policy|
             result = policy.evaluate(user)
@@ -59,7 +68,9 @@ module Registration
               email: user.email,
               policy: policy.kind,
               policy_config: policy.config,
-              evaluate_data: result.except(:pass, :reason_code, :message)
+              evaluate_data: result.except(:pass,
+                                           :reason_code,
+                                           :message)
             }
           end
         end

@@ -1,0 +1,218 @@
+:root {
+  --roster-tile-border: #d1d5db;
+  --roster-tile-bg: #fafbfc;
+  --roster-tile-hover-shadow: rgba(0, 0, 0, 0.12);
+
+  --cohort-gradient-start: #faf7f0;
+  --cohort-gradient-end: #f2ede3;
+  --cohort-border: #ddd6c8;
+  --cohort-progress-bg: #d9d3c5;
+  --cohort-progress-border: #c4bdb0;
+
+  --section-header-gradient-start: #d4e4f7;
+  --section-header-gradient-mid: #e8f0fa;
+  --section-header-gradient-end: #f5f9fd;
+  --section-header-border: #a8c5e6;
+  --section-card-bg: #eef4f9;
+}
+
+.roster-tile {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--roster-tile-border);
+  background: var(--roster-tile-bg);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem var(--roster-tile-hover-shadow);
+    border-color: var(--bs-primary);
+    z-index: 10;
+
+    .tile-actions {
+      opacity: 1;
+    }
+  }
+
+  &.cohort {
+    background: linear-gradient(135deg, var(--cohort-gradient-start) 0%,
+                var(--cohort-gradient-end) 100%);
+    border-color: var(--cohort-border);
+
+    .progress {
+      background-color: var(--cohort-progress-bg);
+      border: 1px solid var(--cohort-progress-border);
+    }
+  }
+
+  .tile-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+}
+
+@media (hover: none) {
+  .roster-tile .tile-actions {
+    opacity: 1;
+  }
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.section-header {
+  background: linear-gradient(135deg, var(--section-header-gradient-start) 0%,
+              var(--section-header-gradient-mid) 50%,
+              var(--section-header-gradient-end) 100%);
+  border-bottom: 2px solid var(--mampf-blue);
+  padding: 1.5rem;
+}
+
+.campaign-section {
+  border: 1.5px solid transparent;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--bs-body-bg), var(--bs-body-bg)) padding-box,
+    linear-gradient(145deg, mampf-blue(0.7), mampf-blue(0.35)) border-box;
+  box-shadow: 0 0.3rem 0.9rem rgba(34, 62, 98, 0.08);
+}
+
+.card.section-card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background-color: var(--section-card-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.add-group-tile {
+  min-height: 9.5rem;
+  border: 2px dashed var(--bs-gray-400);
+  background-color: var(--bs-gray-100);
+  transition: border-color 0.18s ease, border-style 0.18s ease,
+              box-shadow 0.18s ease, transform 0.18s ease,
+              background-color 0.18s ease;
+
+  .add-group-tile-title {
+    color: var(--bs-gray-700);
+    font-weight: 600;
+  }
+
+  &:hover {
+    border-style: solid;
+    border-color: var(--bs-gray-600);
+    background-color: var(--bs-gray-200);
+    box-shadow: 0 0.35rem 0.85rem rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.registration-group-tile-col {
+  max-width: 13rem;
+  position: relative;
+  z-index: 1;
+
+  &:hover, &:focus-within {
+    z-index: 10;
+  }
+
+  @include media-breakpoint-down(md) {
+    max-width: none;
+  }
+
+  & .card {
+    height: auto !important;
+
+    @include media-breakpoint-up(md) {
+      aspect-ratio: 1 / 1;
+    }
+  }
+}
+
+.tutorial-gtile {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+              border-color 0.12s ease;
+
+  &:hover, &:focus-within {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+    z-index: 10;
+
+    .tutorial-gtile-actions {
+      opacity: 1;
+    }
+  }
+}
+
+.tutorial-gtile--without-enrollment {
+  border-left: 2px dashed var(--bs-border-color);
+}
+
+.tutorial-gtile--selected {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2),
+              0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+.tutorial-gtile-top-bar {
+  height: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tutorial-gtile-top-bar--campaign {
+  background: var(--bs-primary);
+}
+
+.tutorial-gtile-top-bar--self-enrollment {
+  background: var(--bs-success);
+}
+
+.tutorial-gtile-top-bar--free {
+  background: var(--bs-secondary);
+}
+
+.tutorial-gtile-type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-gray-500);
+  font-weight: 600;
+}
+
+.tutorial-gtile-name {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+.tutorial-gtile-sm-dropdown {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.tutorial-gtile-sm-menu {
+  font-size: 0.875rem;
+}
+
+.tutorial-roster-wishes {
+  max-width: 250px;
+}
+
+.tutorial-gtile-actions {
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+@media (hover: none) {
+  .tutorial-gtile-actions {
+    opacity: 1;
+  }
+}

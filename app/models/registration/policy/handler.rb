@@ -1,7 +1,5 @@
 module Registration
   class Policy
-    # Base class for policy handlers.
-    # Encapsulates logic for validation, evaluation, and summary of a specific policy kind.
     class Handler
       attr_reader :policy
 
@@ -13,8 +11,9 @@ module Registration
         raise(NotImplementedError)
       end
 
+      def batch_prepare(_user_ids); end
+
       def validate
-        # Default no-op
       end
 
       def summary
