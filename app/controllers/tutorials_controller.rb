@@ -143,7 +143,7 @@ class TutorialsController < ApplicationController
                           "TutorialsController#update")
       end
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
 
         if @tutorial.errors.empty?
@@ -174,7 +174,7 @@ class TutorialsController < ApplicationController
                           "TutorialsController#destroy")
       end
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@tutorial.lecture)
@@ -317,7 +317,7 @@ class TutorialsController < ApplicationController
       end
     end
 
-    def create_turbo_streams(group_type)
+    def create_turbo_streams(_group_type)
       streams = []
 
       if @tutorial.persisted?

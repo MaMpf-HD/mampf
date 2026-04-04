@@ -29,10 +29,10 @@ module Registration
         return if campaign_id.blank? || campaign.nil?
 
         @confirmed_user_ids = campaign
-          .user_registrations
-          .where(status: :confirmed, user_id: user_ids)
-          .pluck(:user_id)
-          .to_set
+                              .user_registrations
+                              .where(status: :confirmed, user_id: user_ids)
+                              .pluck(:user_id)
+                              .to_set
       end
 
       def validate

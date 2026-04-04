@@ -45,8 +45,12 @@ module Registration
 
       @unassigned_users = @campaign.unassigned_users
                                    .where.not(id: lecture_roster_ids)
-                                   .includes(user_registrations: [:registration_campaign,
-                                                                  { registration_item: :registerable }])
+                                   .includes(
+                                     user_registrations: [
+                                       :registration_campaign,
+                                       { registration_item: :registerable }
+                                     ]
+                                   )
                                    .order(:name, :email)
 
       render turbo_stream: turbo_stream.replace(
@@ -152,7 +156,7 @@ module Registration
     end
 
     def check_unlimited_items
-      has_unlimited = @campaign.registration_items.where(capacity: nil).exists?
+      has_unlimited = @campaign.registration_items.exists?(capacity: nil)
 
       respond_to do |format|
         format.json { render json: { has_unlimited_items: has_unlimited } }

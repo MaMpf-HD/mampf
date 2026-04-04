@@ -105,7 +105,7 @@ class TalksController < ApplicationController
       respond_to do |format|
         format.html { redirect_to edit_talk_path(@talk) }
         format.turbo_stream do
-          group_type = parse_group_type
+          parse_group_type
           streams = []
           streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@talk.lecture)
@@ -144,7 +144,7 @@ class TalksController < ApplicationController
         redirect_to edit_lecture_path(lecture)
       end
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(lecture)
@@ -207,7 +207,7 @@ class TalksController < ApplicationController
       end
     end
 
-    def create_turbo_streams(group_type, saved)
+    def create_turbo_streams(_group_type, saved)
       streams = []
 
       if saved

@@ -106,7 +106,7 @@ module RosterHelper
     end
   end
 
-  def roster_group_badge(group, group_type)
+  def roster_group_badge(group, _group_type)
     isolating = group.is_a?(Cohort) && !group.propagate_to_lecture?
     # Use secondary (gray) for normal propagating groups to reduce visual noise.
     # Use light/border (ghost) for isolating groups to differentiate them.

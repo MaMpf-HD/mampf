@@ -45,7 +45,7 @@ module RegistrationCampaignContext
       campaign = campaign_id.present? ? scope.find_by(id: campaign_id) : scope.first
       return campaign if campaign
 
-      return nil unless campaign_id.present?
+      return nil if campaign_id.blank?
 
       error_target.errors.add(:base, t("registration.campaign.not_found"))
       nil

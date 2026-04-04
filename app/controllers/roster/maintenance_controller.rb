@@ -137,7 +137,7 @@ module Roster
 
       ActiveRecord::Base.transaction do
         query.scopes_by_type.each do |scope|
-          scope.update_all(self_materialization_mode: mode)
+          scope.update_all(self_materialization_mode: mode) # rubocop:disable Rails/SkipsModelValidations
         end
       end
 

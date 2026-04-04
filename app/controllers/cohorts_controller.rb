@@ -87,7 +87,7 @@ class CohortsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
 
         if @cohort.errors.empty?
@@ -115,7 +115,7 @@ class CohortsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@cohort.lecture)
@@ -174,7 +174,7 @@ class CohortsController < ApplicationController
       attributes
     end
 
-    def create_turbo_streams(group_type)
+    def create_turbo_streams(_group_type)
       streams = []
 
       if @cohort.persisted?

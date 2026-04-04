@@ -11,7 +11,8 @@ module Registration
         raise(NotImplementedError)
       end
 
-      def batch_prepare(_user_ids); end
+      def batch_prepare(_user_ids)
+      end
 
       def validate
       end
