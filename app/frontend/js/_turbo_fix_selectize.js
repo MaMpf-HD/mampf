@@ -153,7 +153,9 @@ $(document).on("turbo:load", function () {
   }));
 });
 
-// Re-initialize TomSelect in updated Turbo Frames
+/**
+ * Re-initializes TomSelect in updated Turbo Frames.
+ */
 $(document).on("turbo:frame-load", function (event) {
   const frame = event.target;
   fillOptionsByAjax($(frame).find(".selectize").filter(function () {
@@ -161,7 +163,9 @@ $(document).on("turbo:frame-load", function (event) {
   }));
 });
 
-// Intercept Turbo Streams to re-initialize TomSelect
+/**
+ * Intercepts Turbo Stream render events to re-initialize TomSelect on updated elements.
+ */
 document.addEventListener("turbo:before-stream-render", function (event) {
   const stream = event.target;
   const originalRender = event.detail.render;
