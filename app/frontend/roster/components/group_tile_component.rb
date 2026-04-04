@@ -1,4 +1,5 @@
-# Missing top-level docstring, please formulate one yourself 😁
+# This component renders a tile for a roster group (tutorial, talk or cohort).
+require "view_component/base"
 class GroupTileComponent < ViewComponent::Base
   with_collection_parameter :registerable
 

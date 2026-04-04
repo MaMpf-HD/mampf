@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# Missing top-level docstring, please formulate one yourself 😁
 RSpec.describe(Registration::ItemsHelper, type: :helper) do
   describe "#item_display_type" do
     let(:campaign) { create(:registration_campaign) }
