@@ -51,9 +51,7 @@
         <% if allocated? && allocated_choice_pills.any? %>
           <div class="d-flex flex-wrap gap-1 mt-1">
             <% allocated_choice_pills.each do |pill| %>
-              <span
-                class="badge <%= pill[:color] %> roster-badge-sm"
-              >
+              <span class="badge <%= pill[:color] %> roster-badge-sm">
                 <%= pill[:count] %>× <%= pill[:label] %>
               </span>
             <% end %>
@@ -143,9 +141,7 @@
 
                   <% if allocated? %>
                     <% rank = preference_rank_for(student) %>
-                    <span
-                      class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0 roster-badge-sm"
-                    >
+                    <span class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0 roster-badge-sm">
                       <%= rank_badge_label(rank) %>
                     </span>
                   <% end %>
