@@ -1,9 +1,7 @@
 module Registration
   module ItemsHelper
     def registration_items_service(campaign)
-      @registration_items_services ||= {}
-      @registration_items_services[campaign.id] ||=
-        Registration::AvailableItemsService.new(campaign)
+      Registration::AvailableItemsService.new(campaign)
     end
 
     def item_display_type(item)
