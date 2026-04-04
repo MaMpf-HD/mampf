@@ -18,10 +18,10 @@ gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
-gem "connection_pool", "< 3.0" # ActiveSupport currently breaks with connection_pool 3.x
+gem "connection_pool", "~> 3.0"
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
-gem "dalli", "~> 3.2" # caching to memcached in production
+gem "dalli", "~> 5.0"
 gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
@@ -41,7 +41,7 @@ gem "pg", "~> 1.5"
 gem "pg_search", "~> 2.3"
 gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
-gem "puma", "~> 6.4" # app server
+gem "puma", "~> 7.2"
 gem "rack", "~> 3.1"
 gem "rails", "~> 8.0.2"
 gem "rails-i18n", "~> 8.0"
@@ -91,9 +91,9 @@ end
 group :development, :test do
   gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
-  gem "i18n-tasks", "~> 1.0.15"
-  gem "rspec-github", "~> 2.4"
-  gem "rspec-rails", "~> 6.1"
+  gem "i18n-tasks", "~> 1.1"
+  gem "rspec-github", "~> 3.0"
+  gem "rspec-rails", "~> 8.0"
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
   gem "simplecov-cobertura", "~> 3.1"
 end
