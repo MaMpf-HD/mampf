@@ -3984,11 +3984,6 @@ de:
               blank: 'Es muss ein Titel angegeben werden.'
         cohort:
           attributes:
-            purpose:
-              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
-              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
-        course:
-          attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
               taken: 'Dieser Titel ist bereits vergeben.'

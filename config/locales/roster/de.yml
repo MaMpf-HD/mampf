@@ -148,11 +148,6 @@ de:
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
-      purpose_label: "Zweck"
-      purposes:
-        enrollment: "Sammelgruppe"
-        planning: "Planung"
-        general: "Allgemein"
       with_lecture_enrollment_title: "Mit Einschreibung"
       with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
       without_lecture_enrollment_title: "Ohne Einschreibung"
@@ -175,8 +170,6 @@ de:
         with_enrollment_label: "Mit Einschreibung?"
         with_enrollment_explanation: "Wenn aktiviert, werden Mitglieder automatisch in die Veranstaltung eingeschrieben. Deaktivieren Sie dies für Wartelisten oder Planungsgruppen."
         with_enrollment_checkbox: "Automatische Veranstaltungseinschreibung aktivieren"
-        semantic_purpose_label: "Semantischer Zweck (optional)"
-        semantic_purpose_explanation: "Dies dient nur zur besseren Organisation und Filterung. Die Funktionalität der Gruppe ändert sich nicht."
         enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
         planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
         general_with_enrollment: "Z.B. für Sonderprojekte oder Ergänzungsgruppen."
@@ -264,7 +257,6 @@ de:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
-      purpose_change_constrained_by_propagate: "Die verfügbaren Typen hängen davon ab, ob Studierende in die Teilnehmerliste übernommen werden. Diese Einstellung kann nicht geändert werden."
       cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
       cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
       cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."

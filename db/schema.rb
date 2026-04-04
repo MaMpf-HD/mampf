@@ -158,17 +158,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000011) do
     t.integer "capacity"
     t.string "context_type", null: false
     t.bigint "context_id", null: false
-    t.integer "purpose", default: 0, null: false
     t.boolean "propagate_to_lecture", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "skip_campaigns", default: false, null: false
     t.integer "self_materialization_mode", default: 0, null: false
-    t.index ["context_type", "context_id", "purpose"], name: "index_cohorts_on_context_type_and_context_id_and_purpose"
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
     t.index ["self_materialization_mode"], name: "index_cohorts_on_self_materialization_mode"
-    t.check_constraint "NOT (purpose = 1 AND propagate_to_lecture = false)", name: "enrollment_cohorts_must_propagate"
-    t.check_constraint "NOT (purpose = 2 AND propagate_to_lecture = true)", name: "planning_cohorts_must_not_propagate"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -683,6 +679,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000011) do
     t.uuid "source_campaign_id"
     t.index ["source_campaign_id"], name: "index_speaker_talk_joins_on_source_campaign_id"
     t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
+    t.index ["talk_id", "speaker_id"], name: "index_speaker_talk_joins_on_talk_id_and_speaker_id", unique: true
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 

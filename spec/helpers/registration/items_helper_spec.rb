@@ -34,63 +34,31 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
     end
 
     context "for Cohort" do
-      context "with enrollment purpose and propagation" do
+      context "with propagation" do
         let(:cohort) do
           create(:cohort, context: campaign.campaignable,
-                          purpose: :enrollment, propagate_to_lecture: true)
+                          propagate_to_lecture: true)
         end
         let(:item) do
           create(:registration_item, registration_campaign: campaign, registerable: cohort)
         end
 
-        it "returns enrollment group label without icon" do
-          expect(helper.item_display_type(item))
-            .to eq(I18n.t("registration.item.types.enrollment_group"))
-        end
-      end
-
-      context "with planning purpose (no propagation)" do
-        let(:cohort) do
-          create(:cohort, context: campaign.campaignable,
-                          purpose: :planning, propagate_to_lecture: false)
-        end
-        let(:item) do
-          create(:registration_item, registration_campaign: campaign, registerable: cohort)
-        end
-
-        it "returns planning survey label with no-propagation icon" do
-          result = helper.item_display_type(item)
-          expect(result).to include(I18n.t("registration.item.types.planning_survey"))
-          expect(result).to include("bi-person-x")
-          expect(result).to include(I18n.t("registration.item.hints.no_propagation"))
-        end
-      end
-
-      context "with general purpose and propagation" do
-        let(:cohort) do
-          create(:cohort, context: campaign.campaignable,
-                          purpose: :general, propagate_to_lecture: true)
-        end
-        let(:item) do
-          create(:registration_item, registration_campaign: campaign, registerable: cohort)
-        end
-
-        it "returns other group label without icon" do
+        it "returns group label without icon" do
           expect(helper.item_display_type(item))
             .to eq(I18n.t("registration.item.types.other_group"))
         end
       end
 
-      context "with general purpose without propagation" do
+      context "without propagation" do
         let(:cohort) do
           create(:cohort, context: campaign.campaignable,
-                          purpose: :general, propagate_to_lecture: false)
+                          propagate_to_lecture: false)
         end
         let(:item) do
           create(:registration_item, registration_campaign: campaign, registerable: cohort)
         end
 
-        it "returns other group label with no-propagation icon" do
+        it "returns group label with no-propagation icon" do
           result = helper.item_display_type(item)
           expect(result).to include(I18n.t("registration.item.types.other_group"))
           expect(result).to include("bi-person-x")

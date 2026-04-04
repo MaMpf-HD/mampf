@@ -35,5 +35,6 @@ class CreateRosterTables < ActiveRecord::Migration[8.0]
     add_reference :speaker_talk_joins, :source_campaign,
                   type: :uuid,
                   foreign_key: { to_table: :registration_campaigns }
+    add_index :speaker_talk_joins, [:talk_id, :speaker_id], unique: true
   end
 end

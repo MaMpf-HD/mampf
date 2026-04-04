@@ -41,41 +41,6 @@ RSpec.describe(CohortsHelper, type: :helper) do
     end
   end
 
-  describe "#cohort_special_purpose_type" do
-    it "returns 'enrollment' when propagates is true" do
-      expect(helper.cohort_special_purpose_type(true)).to eq("enrollment")
-    end
-
-    it "returns 'planning' when propagates is false" do
-      expect(helper.cohort_special_purpose_type(false)).to eq("planning")
-    end
-  end
-
-  describe "#cohort_has_special_purpose?" do
-    let(:lecture) { create(:lecture) }
-
-    it "returns true when cohort purpose matches special purpose" do
-      cohort = create(:cohort, context: lecture, purpose: :enrollment,
-                               propagate_to_lecture: true)
-      expect(helper.cohort_has_special_purpose?(cohort, "enrollment")).to be(true)
-    end
-
-    it "returns false when cohort purpose does not match" do
-      cohort = create(:cohort, context: lecture, purpose: :general)
-      expect(helper.cohort_has_special_purpose?(cohort, "enrollment")).to be(false)
-    end
-
-    it "returns false when cohort has general purpose" do
-      cohort = create(:cohort, context: lecture, purpose: :general)
-      expect(helper.cohort_has_special_purpose?(cohort, "planning")).to be(false)
-    end
-
-    it "returns true when cohort purpose is general and checking general" do
-      cohort = build(:cohort, context: lecture, purpose: :general)
-      expect(helper.cohort_has_special_purpose?(cohort, "general")).to be(true)
-    end
-  end
-
   describe "#show_enrollment_warning?" do
     let(:lecture) { create(:lecture) }
     let(:cohort) { create(:cohort, context: lecture) }

@@ -328,8 +328,7 @@ namespace :solver do
                                     context: lecture,
                                     title: repeaters_title,
                                     capacity: 15,
-                                    propagate_to_lecture: true,
-                                    purpose: :general)
+                                    propagate_to_lecture: true)
       puts "Created #{repeaters_title} cohort (propagates to lecture)"
     end
 
@@ -351,8 +350,7 @@ namespace :solver do
                                    context: lecture,
                                    title: waitlist_title,
                                    capacity: 20,
-                                   propagate_to_lecture: false,
-                                   purpose: :general)
+                                   propagate_to_lecture: false)
       puts "Created #{waitlist_title} cohort (does NOT propagate to lecture)"
     end
 
@@ -517,11 +515,9 @@ namespace :solver do
                                     description: "Stage 1: Planning",
                                     registration_deadline: 1.week.ago)
 
-      # Create a planning cohort (purpose: planning, propagate_to_lecture: false)
       planning_cohort = FactoryBot.create(:cohort,
                                           context: seminar,
                                           title: "Interest Survey",
-                                          purpose: :planning,
                                           propagate_to_lecture: false,
                                           capacity: nil)
 

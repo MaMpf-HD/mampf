@@ -12,16 +12,7 @@ module Registration
         t("registration.item.types.talk")
       when "Cohort"
         cohort = item.registerable
-        base_type = case cohort.purpose.to_sym
-                    when :enrollment
-                      t("registration.item.types.enrollment_group")
-                    when :planning
-                      t("registration.item.types.planning_survey")
-                    when :general
-                      t("registration.item.types.other_group")
-                    else
-                      cohort.purpose.to_s.humanize
-        end
+        base_type = t("registration.item.types.other_group")
 
         if cohort.propagate_to_lecture
           base_type
