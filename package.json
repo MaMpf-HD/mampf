@@ -25,6 +25,7 @@
     "@types/node": "^24.10.0",
     "bootstrap": "^5.3.7",
     "eslint": "^10.2.0",
+    "@eslint/js": "^10.0.1",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^17.4.0",
