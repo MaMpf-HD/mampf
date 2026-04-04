@@ -30,10 +30,9 @@ module Rosters
       end
 
       def tutorials_scope(active_items)
-        @lecture.tutorials.includes(:tutors).where(
-          skip_campaigns: true
-        ).or(
-          @lecture.tutorials.where.not(
+        base = @lecture.tutorials.includes(:tutors)
+        base.where(skip_campaigns: true).or(
+          base.where.not(
             id: active_items
               .where(registerable_type: "Tutorial")
               .select(:registerable_id)
@@ -42,10 +41,9 @@ module Rosters
       end
 
       def talks_scope(active_items)
-        @lecture.talks.includes(:speakers).where(
-          skip_campaigns: true
-        ).or(
-          @lecture.talks.where.not(
+        base = @lecture.talks.includes(:speakers)
+        base.where(skip_campaigns: true).or(
+          base.where.not(
             id: active_items
               .where(registerable_type: "Talk")
               .select(:registerable_id)
