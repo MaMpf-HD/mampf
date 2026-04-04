@@ -152,7 +152,7 @@ module Registration
     end
 
     def check_unlimited_items
-      has_unlimited = @campaign.registration_items.any? { |i| i.capacity.nil? }
+      has_unlimited = @campaign.registration_items.where(capacity: nil).exists?
 
       respond_to do |format|
         format.json { render json: { has_unlimited_items: has_unlimited } }

@@ -28,3 +28,19 @@
 .allocation-item-row.tutorial-gtile--selected > td {
     background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
 }
+
+.allocation-pct-label {
+    width: 3.5rem;
+}
+
+.allocation-bar-col {
+    width: 40%;
+}
+
+.allocation-capacity-input {
+    width: 4.5rem;
+}
+
+.allocation-check-icon {
+    font-size: 1.5rem;
+}

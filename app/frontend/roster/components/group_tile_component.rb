@@ -131,12 +131,7 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def sm_icon_class
-    case sm_mode
-    when "add_only"       then "bi-box-arrow-in-right"
-    when "remove_only"    then "bi-box-arrow-right"
-    when "add_and_remove" then "bi-arrow-left-right"
-    else "bi-person-slash"
-    end
+    sm_icon_for(sm_mode)
   end
 
   def sm_icon_for(mode)
@@ -179,9 +174,6 @@ class GroupTileComponent < ViewComponent::Base
                    scope: "roster.self_materialization.modes",
                    default: sm_mode.titleize)
     t("roster.self_materialization.confirm_bulk_update",
-      default: "Dies ändert den Selbsteinschreibungsmodus für alle " \
-               "Gruppen ohne Anmeldeverfahren in dieser Veranstaltung " \
-               "auf '%<mode>s'. Fortfahren?",
       mode: mode_label)
   end
 end

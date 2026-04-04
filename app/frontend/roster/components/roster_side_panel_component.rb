@@ -105,25 +105,26 @@ class RosterSidePanelComponent < ViewComponent::Base
   def further_choice_summary
     return unless preference_based_campaign?
 
-    second = item.user_registrations.where(preference_rank: 2).count
-    third = item.user_registrations.where(preference_rank: 3).count
-    rest = item.user_registrations.where("preference_rank > 3").count
+    counts = item.user_registrations
+                 .where("preference_rank >= 2")
+                 .group(:preference_rank).count
+
+    second = counts[2] || 0
+    third = counts[3] || 0
+    rest = counts.select { |r, _| r > 3 }.values.sum
 
     parts = []
     if second.positive?
       parts << ("#{second} " +
-               t("registration.item.badge.second_choice",
-                 default: "2nd Choice"))
+               t("registration.item.badge.second_choice"))
     end
     if third.positive?
       parts << ("#{third} " +
-               t("registration.item.badge.third_choice",
-                 default: "3rd Choice"))
+               t("registration.item.badge.third_choice"))
     end
     if rest.positive?
       parts << ("#{rest} " +
-               t("registration.item.badge.other_choices",
-                 default: "Other"))
+               t("registration.item.badge.other_choices"))
     end
     parts.join(", ")
   end

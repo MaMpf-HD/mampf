@@ -139,6 +139,7 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'
+      filter_placeholder: 'Nach Name oder E-Mail filtern'
     details:
       select_group: 'Gruppe auswählen'
     drag:
@@ -220,6 +221,11 @@ de:
         remove_only: 'Nur Austragen'
         add_and_remove: 'Ein- & Austragen'
       label: 'Selbsteinschreibung'
+      apply_to_all_free_groups: 'Für alle Gruppen übernehmen'
+      confirm_bulk_update: >-
+        Dies ändert den Selbsteinschreibungsmodus für alle
+        Gruppen ohne Anmeldeverfahren in dieser Veranstaltung
+        auf '%{mode}'. Fortfahren?
     policy_bypass_warning:
       title: "Warnung zur Richtlinienumgehung"
       message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."

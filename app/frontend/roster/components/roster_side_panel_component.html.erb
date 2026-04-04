@@ -52,8 +52,7 @@
           <div class="d-flex flex-wrap gap-1 mt-1">
             <% allocated_choice_pills.each do |pill| %>
               <span
-                class="badge <%= pill[:color] %>"
-                style="font-size: 0.75em;"
+                class="badge <%= pill[:color] %> roster-badge-sm"
               >
                 <%= pill[:count] %>× <%= pill[:label] %>
               </span>
@@ -114,7 +113,7 @@
           id="tutorial-roster-filter"
           type="text"
           class="form-control form-control-sm"
-          placeholder="Filter by name or email"
+          placeholder="<%= t('roster.actions.filter_placeholder') %>"
           data-action="input->tutorial-roster-panel#filter"
           data-tutorial-roster-panel-target="filterInput"
         >
@@ -145,8 +144,7 @@
                   <% if allocated? %>
                     <% rank = preference_rank_for(student) %>
                     <span
-                      class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0"
-                      style="font-size: 0.7em;"
+                      class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0 roster-badge-sm"
                     >
                       <%= rank_badge_label(rank) %>
                     </span>

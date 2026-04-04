@@ -138,6 +138,7 @@ en:
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
       search: 'Search'
+      filter_placeholder: 'Filter by name or email'
     details:
       select_group: 'Select Group'
     drag:
@@ -218,6 +219,11 @@ en:
         remove_only: 'Leave Only'
         add_and_remove: 'Join & Leave'
       label: 'Self-Enrollment'
+      apply_to_all_free_groups: 'Apply to all groups'
+      confirm_bulk_update: >-
+        This changes the self-enrollment mode for all groups
+        without a campaign in this lecture to '%{mode}'.
+        Continue?
     policy_bypass_warning:
       title: "Policy Bypass Warning"
       message: "The last campaign '%{campaign_name}' had a registration policy '%{policy_name}'. Enabling self-enrollment will allow students to join without meeting those requirements."

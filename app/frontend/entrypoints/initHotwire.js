@@ -80,6 +80,9 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import DetailsEditorController from "~/registration/allocations/details_editor.controller.js";
+window.Stimulus.register("details-editor", DetailsEditorController);
+
 import SelectizeController from "~/controllers/selectize_controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 

@@ -17,7 +17,7 @@
           <%= t("registration.allocation.stats.capacity") %>
         </th>
 
-        <th style="width: 40%">
+        <th class="allocation-bar-col">
           <%= t("registration.allocation.stats.utilization") %>
         </th>
       </tr>
@@ -47,7 +47,8 @@
             <% if data[:item].registerable_type == "Tutorial" %>
               <details
                 class="allocation-capacity-editor d-inline-block ms-1"
-                ontoggle="if (this.open) { const input = this.querySelector('input[type=number]'); if (input) { input.focus(); input.select(); } }"
+                data-controller="details-editor"
+                data-action="toggle->details-editor#toggle"
               >
                 <summary class="btn btn-sm btn-link text-secondary p-0 align-baseline">
                   <i class="bi bi-pencil"></i>
@@ -61,8 +62,9 @@
 
                   <%= f.number_field :capacity,
                                      value: data[:capacity],
-                                     class: "form-control form-control-sm",
-                                     style: "width: 4.5rem;" %>
+                                     class: "form-control form-control-sm
+                                             allocation-capacity-input",
+                                     data: { details_editor_target: "input" } %>
 
                   <button
                     type="submit"
@@ -74,7 +76,7 @@
                   <button
                     type="button"
                     class="btn btn-sm btn-outline-secondary p-1"
-                    onclick="this.closest('details').removeAttribute('open')"
+                    data-action="click->details-editor#close"
                   >
                     <i class="bi bi-x-lg"></i>
                   </button>
@@ -94,7 +96,7 @@
                                    container_class: "progress") %>
                 </div>
 
-                <div class="ms-2 text-end" style="width: 3.5rem;">
+                <div class="ms-2 text-end allocation-pct-label">
                   <%= number_to_percentage(percentage, precision: 0) %>
                 </div>
               </div>

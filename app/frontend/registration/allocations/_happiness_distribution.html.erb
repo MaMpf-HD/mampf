@@ -17,7 +17,7 @@
           <%= t("registration.allocation.stats.count") %>
         </th>
 
-        <th style="width: 40%">
+        <th class="allocation-bar-col">
           <%= t("registration.allocation.stats.percentage") %>
         </th>
       </tr>
@@ -41,7 +41,7 @@
                                  container_class: "progress") %>
               </div>
 
-              <div class="ms-2 text-end" style="width: 3.5rem;">
+              <div class="ms-2 text-end allocation-pct-label">
                 <%= number_to_percentage(percentage, precision: 0) %>
               </div>
             </div>
