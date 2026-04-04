@@ -179,9 +179,8 @@ module Registration
 
       def after_action_path
         if @campaign.campaignable.is_a?(Lecture)
-          lecture_roster_path(@campaign.campaignable,
-                              group_type: view_context.roster_group_types(@campaign.campaignable),
-                              tab: "enrollment")
+          edit_lecture_path(@campaign.campaignable,
+                            tab: "campaigns")
         else
           registration_campaign_path(@campaign)
         end

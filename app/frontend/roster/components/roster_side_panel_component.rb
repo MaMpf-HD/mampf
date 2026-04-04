@@ -205,13 +205,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def empty_state_text
-    if read_only?
-      t("roster.details.select_group",
-        default: "Select a group to inspect registrations")
-    else
-      t("roster.details.select_group",
-        default: "Select a group to inspect and manage participants")
-    end
+    t("roster.details.select_group")
   end
 
   private

@@ -139,8 +139,6 @@ en:
       enable_campaign_management: 'Campaign Management'
       search: 'Search'
       filter_placeholder: 'Filter by name or email'
-    details:
-      select_group: 'Select Group'
     drag:
       choice_title: 'Drop action for'
       move: 'Move'
@@ -186,6 +184,7 @@ en:
         planning_short: "Needs assessment before semester begins."
         enrollment_warning: "⚠️ This course already has tutorials/talks."
     details:
+      select_group: 'Select a group to inspect and manage participants'
       participants: 'Participants'
       empty: 'No participants in this group.'
       empty_filtered: 'No students match the current filter.'

@@ -140,8 +140,6 @@ de:
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'
       filter_placeholder: 'Nach Name oder E-Mail filtern'
-    details:
-      select_group: 'Gruppe auswählen'
     drag:
       choice_title: 'Aktion für'
       move: 'Verschieben'
@@ -187,6 +185,7 @@ de:
         planning_short: "Bedarfserhebung vor Semesterbeginn."
         enrollment_warning: "⚠️ Diese Veranstaltung hat bereits Tutorien/Vorträge."
     details:
+      select_group: 'Gruppe auswählen, um Teilnehmende zu verwalten'
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
       empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
