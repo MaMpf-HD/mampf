@@ -1,4 +1,4 @@
-version: 0.8.10
+version: 0.9.4
 
 # Unfortunately, the global "files:" configuration does not work as expected
 # and we have to duplicate the "exclude:" configuration for both linter
