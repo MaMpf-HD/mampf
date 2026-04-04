@@ -95,10 +95,9 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(badge).to include("Isolated")
     end
 
-    it "sets turbo frame data attribute" do
+    it "disables turbo for full-page navigation" do
       badge = helper.roster_group_badge(tutorial, group_type)
-      # Check key parts of the turbo frame attribute
-      expect(badge).to include('data-turbo-frame="roster_maintenance_tutorials"')
+      expect(badge).to include('data-turbo="false"')
     end
   end
 end

@@ -78,8 +78,12 @@ module Registration
         @policy = @campaign.registration_policies.find_by(id: params[:id])
         return if @policy
 
-        respond_with_error(t("registration.policy.not_found"),
-                           redirect_path: registration_campaign_path(@campaign))
+        respond_with_error(
+          t("registration.policy.not_found"),
+          redirect_path: registration_campaign_path(
+            @campaign, anchor: "policies-tab"
+          )
+        )
       end
 
       def set_locale
@@ -99,8 +103,9 @@ module Registration
       def respond_with_success(message)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign),
-                        notice: message
+            redirect_to registration_campaign_path(
+              @campaign, anchor: "policies-tab"
+            ), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message if message
@@ -120,7 +125,10 @@ module Registration
       def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            path = redirect_path || registration_campaign_path(@campaign)
+            path = redirect_path ||
+                   registration_campaign_path(
+                     @campaign, anchor: "policies-tab"
+                   )
             redirect_to path, alert: message
           end
           format.turbo_stream do

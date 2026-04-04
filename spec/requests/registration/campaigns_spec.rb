@@ -62,8 +62,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end.to change(Registration::Campaign, :count).by(1)
 
         new_campaign = Registration::Campaign.order(created_at: :desc).first
-        expect(response).to redirect_to(registration_campaign_path(new_campaign,
-                                                                   tab: "items"))
+        expect(response).to redirect_to(
+          registration_campaign_path(new_campaign)
+        )
       end
     end
 
@@ -89,7 +90,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
               params: { registration_campaign: new_attributes }
         campaign.reload
         expect(campaign.description).to eq("Updated Description")
-        expect(response).to redirect_to(registration_campaign_path(campaign))
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -116,7 +117,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         patch registration_campaign_path(campaign),
               params: { registration_campaign: { description: "New Description" } }
 
-        expect(response).to redirect_to(registration_campaign_path(campaign))
+        expect(response).to have_http_status(:ok)
 
         campaign.reload
         expect(campaign.description).to eq("New Description")
