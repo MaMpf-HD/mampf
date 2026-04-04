@@ -33,27 +33,30 @@ export default class extends Controller {
       }
       else {
         console.error("Failed to load modal content:", response.statusText);
-        this.showErrorMessage(modalEl);
+        this.showModalLoadingErrorMessage(modalEl);
       }
     }
     catch (error) {
       console.error("Network error loading modal content:", error);
-      this.showErrorMessage(modalEl);
+      this.showModalLoadingErrorMessage(modalEl);
     }
   }
 
-  showErrorMessage(modalEl) {
+  showModalLoadingErrorMessage(modalEl) {
     const body = modalEl.querySelector(".modal-body");
-    if (body) {
-      const alert = document.createElement("div");
-      alert.className = "alert alert-danger";
-      alert.setAttribute("role", "alert");
-
-      const meta = document.querySelector('meta[name="turbo-modal-error-message"]');
-      const message = meta?.content || "An error occurred.";
-
-      alert.textContent = message;
-      body.replaceChildren(alert);
+    if (!body) {
+      console.error("Modal body element not found.");
+      return;
     }
+
+    const alert = document.createElement("div");
+    alert.className = "alert alert-danger";
+    alert.setAttribute("role", "alert");
+
+    const meta = document.querySelector('meta[name="turbo-modal-error-message"]');
+    const message = meta?.content || "An error occurred.";
+
+    alert.textContent = message;
+    body.replaceChildren(alert);
   }
 }
