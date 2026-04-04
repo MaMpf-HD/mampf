@@ -16,11 +16,11 @@ async function searchForUserInTomSelect(
   const container = page.getByTestId(containerSelector);
   const input = container.locator("input:not([type='hidden'])").first();
 
+  const fillPromise = waitForAjax
+    ? page.waitForResponse(resp => resp.url().includes("/users/fill_user_select"))
+    : null;
   await input.fill(user.email);
-
-  if (waitForAjax) {
-    await page.waitForResponse(resp => resp.url().includes("/users/fill_user_select"));
-  }
+  if (fillPromise) await fillPromise;
 }
 
 async function expectUsersInDropdown(
@@ -205,8 +205,12 @@ test.describe("Import Media", () => {
     await page.getByRole("button", { name: "Import Media" }).click();
     await page.getByRole("combobox", { name: "Types" }).fill("Les");
     await page.locator("#search_media_types-opt-1").click();
+
+    const searchPromise = page.waitForResponse(
+      resp => resp.url().includes("/media/search") && resp.status() === 200,
+    );
     await page.getByRole("button", { name: "Search" }).click();
-    await page.waitForResponse(resp => resp.url().includes("/media/search") && resp.status() === 200);
+    await searchPromise;
 
     await page.locator("#mediaTable").getByText(sourceMedium1.description).click();
     await page.getByRole("button", { name: "Reset" }).click();

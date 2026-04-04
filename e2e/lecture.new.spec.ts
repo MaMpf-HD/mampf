@@ -51,12 +51,8 @@ async function testCreateNewLecture(
         response => response.url().includes("/lectures/new") && response.status() === 200,
       )
     : null;
-
   await page.getByTestId(button).click();
-
-  if (lectureNewPromise) {
-    await lectureNewPromise;
-  }
+  if (lectureNewPromise) await lectureNewPromise;
 
   if (!isCoursePrefilled) {
     const selectDiv = page.getByTestId("new-lecture-course-select");
