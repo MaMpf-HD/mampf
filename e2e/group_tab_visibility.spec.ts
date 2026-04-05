@@ -3,9 +3,9 @@ import { enableFeature, disableFeature } from "./_support/backend";
 import { LectureEditPage } from "./page-objects/lecture_edit_page";
 
 /**
- * Integration test for the visibility of the registration campaign tab.
+ * Integration test for the visibility of the group tab.
  */
-test("Registration campaign tab visibility toggles with feature flag", async ({
+test("Group tab visibility toggles with feature flag", async ({
   request,
   factory,
   teacher: { page, user },
@@ -15,17 +15,17 @@ test("Registration campaign tab visibility toggles with feature flag", async ({
   const lectureEditPage = new LectureEditPage(page, lecture.id);
 
   // 1. Feature disabled
-  await disableFeature(request, "registration_campaigns");
+  await disableFeature(request, "roster_maintenance");
   await lectureEditPage.goto();
-  await expect(lectureEditPage.campaignsTab).not.toBeVisible();
+  await expect(lectureEditPage.groupsTab).not.toBeVisible();
 
   // 2. Enable feature
-  await enableFeature(request, "registration_campaigns");
+  await enableFeature(request, "roster_maintenance");
   await page.reload();
-  await expect(lectureEditPage.campaignsTab).toBeVisible();
+  await expect(lectureEditPage.groupsTab).toBeVisible();
 
   // 3. Disable feature
-  await disableFeature(request, "registration_campaigns");
+  await disableFeature(request, "roster_maintenance");
   await page.reload();
-  await expect(lectureEditPage.campaignsTab).not.toBeVisible();
+  await expect(lectureEditPage.groupsTab).not.toBeVisible();
 });
