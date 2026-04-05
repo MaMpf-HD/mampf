@@ -1,9 +1,9 @@
-<%= form_with(model: [@campaign, @policy],
-              url: @policy.persisted? ? registration_campaign_policy_path(@campaign, @policy) : registration_campaign_policies_path(@campaign),
+<%= form_with(model: [campaign, policy],
+              url: policy.persisted? ? registration_campaign_policy_path(campaign, policy) : registration_campaign_policies_path(campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
-  <% if @policy.errors[:base].present? %>
+  <% if policy.errors[:base].present? %>
     <div class="alert alert-danger">
-      <%= @policy.errors[:base].join(", ") %>
+      <%= policy.errors[:base].join(", ") %>
     </div>
   <% end %>
 
@@ -63,7 +63,7 @@
         <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
 
         <%= f.collection_select :prerequisite_campaign_id,
-                                  Registration::Campaign.where.not(id: @campaign.id),
+                                  Registration::Campaign.where.not(id: campaign.id),
                                   :id,
                                   :description,
                                   { include_blank: true },
@@ -83,7 +83,7 @@
         </label>
 
         <%= select_tag "registration_policy[config][lecture_id]",
-                         options_from_collection_for_select(Lecture.all, :id, :title, @policy.config&.fetch("lecture_id", nil)),
+                         options_from_collection_for_select(Lecture.all, :id, :title, policy.config&.fetch("lecture_id", nil)),
                          include_blank: true,
                          class: "form-select" %>
       </div>
@@ -93,7 +93,7 @@
   <%= f.submit t("buttons.save"), class: "btn btn-sm btn-primary" %>
 
   <%= link_to t("buttons.cancel"),
-                registration_campaign_path(@campaign),
+                registration_campaign_path(campaign),
                 class: "btn btn-sm btn-secondary",
                 data: { turbo_stream: true } %>
 <% end %>

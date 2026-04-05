@@ -2,5 +2,6 @@
   <%= render partial: "registration/allocations/pre_allocation_demand",
              locals: { campaign: @campaign, dashboard: @dashboard } %>
 <% else %>
-  <%= render partial: "registration/allocations/dashboard" %>
+  <%= render partial: "registration/allocations/dashboard",
+             locals: { campaign: @campaign, dashboard: @dashboard } %>
 <% end %>

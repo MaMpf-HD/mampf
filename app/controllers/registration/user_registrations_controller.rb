@@ -46,7 +46,11 @@ module Registration
             )
           else
             streams << turbo_stream.replace("allocation-dashboard",
-                                            partial: "registration/allocations/dashboard")
+                                            partial: "registration/allocations/dashboard",
+                                            locals: {
+                                              campaign: @campaign,
+                                              dashboard: @dashboard
+                                            })
           end
         end
 

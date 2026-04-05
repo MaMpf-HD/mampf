@@ -26,10 +26,6 @@ module Registration
       "policy_form_#{campaign.id}"
     end
 
-    def campaign_policies_list_frame_id(campaign)
-      "policies_list_#{campaign.id}"
-    end
-
     def policy_kinds_summary(campaign)
       kinds = campaign.registration_policies.order(:position).map do |p|
         t("registration.policy.kinds.#{p.kind}")

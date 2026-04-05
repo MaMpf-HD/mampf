@@ -1,5 +1,3 @@
-<% campaign = local_assigns[:campaign] || @campaign %>
-<% dashboard = local_assigns[:dashboard] || @dashboard || Registration::AllocationDashboard.new(campaign) %>
 <% embedded = local_assigns.fetch(:embedded, false) %>
 <% allocation_source = embedded ? "allocation_embedded" : "allocation" %>
 <% partial_locals = { dashboard: dashboard, campaign: campaign, allocation_source: allocation_source } %>

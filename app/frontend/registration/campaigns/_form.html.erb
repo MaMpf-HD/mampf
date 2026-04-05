@@ -69,15 +69,13 @@
                            autocomplete: "off",
                            disabled: campaign.completed? %>
 
-            <span
-              class="input-group-text td-picker-button"
-              role="button"
-              data-td-target="#<%= picker_id %>"
-              data-td-toggle="datetimepicker"
-              <%= "disabled" if campaign.completed? %>
-            >
+            <%= tag.span class: "input-group-text td-picker-button",
+                        role: "button",
+                        data: { td_target: "##{picker_id}",
+                                td_toggle: "datetimepicker" },
+                        disabled: campaign.completed? || nil do %>
               <i class="bi bi-calendar-fill"></i>
-            </span>
+            <% end %>
 
             <div
               class="invalid-feedback td-error"
