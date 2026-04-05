@@ -124,7 +124,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     context "should display result with completed campaign" do
       let(:campaign) do
         FactoryBot.create(:registration_campaign, :first_come_first_served,
-                          :completed_after_policies, campaignable: seminar, description: "Solver Test Campaign")
+                          :completed_after_policies,
+                          campaignable: seminar,
+                          description: "Solver Test Campaign")
       end
       it "return success response" do
         get lecture_campaign_registrations_path(lecture_id: seminar.id)

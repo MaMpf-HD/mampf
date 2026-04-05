@@ -43,7 +43,8 @@ module Registration
       result = Registration::UserRegistration::LectureFcfsEditService
                .new(@campaign, current_user).register!(@item)
       respond_to_student_registration(result,
-                                      I18n.t("registration.user_registration.messages.registration_success"))
+                                      I18n.t("registration.user_registration.messages." \
+                                             "registration_success"))
     end
 
     def update
@@ -52,7 +53,8 @@ module Registration
       result = Registration::UserRegistration::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
       respond_to_student_registration(result,
-                                      I18n.t("registration.user_registration.messages.registration_success"))
+                                      I18n.t("registration.user_registration.messages." \
+                                             "registration_success"))
     end
 
     def destroy
@@ -157,9 +159,10 @@ module Registration
                                             partial: "registration/allocations/dashboard")
           end
         elsif params[:source] == "registrations"
-          streams << turbo_stream.replace(view_context.campaign_user_registrations_list_id(@campaign),
-                                          partial: "registration/user_registrations/index",
-                                          locals: { campaign: @campaign })
+          streams << turbo_stream
+                     .replace(view_context.campaign_user_registrations_list_id(@campaign),
+                              partial: "registration/user_registrations/index",
+                              locals: { campaign: @campaign })
         end
 
         render turbo_stream: streams

@@ -14,13 +14,14 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("campaigns_container",
-                                                   partial: "registration/campaigns/card_body_index",
-                                                   locals: {
-                                                     lecture: @campaign.campaignable,
-                                                     expanded_campaign_id: @campaign.id,
-                                                     tab: "registrations"
-                                                   })
+          render turbo_stream:
+          turbo_stream.update("campaigns_container",
+                              partial: "registration/campaigns/card_body_index",
+                              locals: {
+                                lecture: @campaign.campaignable,
+                                expanded_campaign_id: @campaign.id,
+                                tab: "registrations"
+                              })
         end
       end
     end

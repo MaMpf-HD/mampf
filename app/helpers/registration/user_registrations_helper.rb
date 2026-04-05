@@ -47,16 +47,9 @@ module Registration
     end
 
     def get_details_render_type_policy_kind(kind)
-      case kind
-      when "prerequisite_campaign"
-        "text"
-      when "institutional_email"
-        "text"
-      when "lecture_performance"
-        "badge"
-      else
-        "text"
-      end
+      return "badge" if kind == "student_performance"
+
+      "text"
     end
 
     def single_mode?(registerable_type)
@@ -165,6 +158,7 @@ module Registration
       progress_bar(1, 100, classification: classification, label: label, height: height,
                            show_label: show_label, container_class: container_class, style: style)
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def status_campaign_style(status)
       case status

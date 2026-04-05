@@ -1,6 +1,6 @@
 module Registration
   class UserRegistration
-    # Service for handling user registration and withdrawal in lecture based registration campaign 
+    # Service for handling user registration and withdrawal in lecture based registration campaign
     # with preference policy.
     class LecturePreferenceEditService < UserRegistration::Handler
       def update!(pref_items)

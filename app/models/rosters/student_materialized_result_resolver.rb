@@ -35,7 +35,7 @@ module Rosters
       name = []
       if registerables.any?
         registerables.each do |registerable|
-          name << (registerable.class.name.humanize + " " + registerable.title)
+          name << "#{registerable.class.name.humanize} #{registerable.title}"
         end
       end
       name.any? ? name.join(", ") : nil
