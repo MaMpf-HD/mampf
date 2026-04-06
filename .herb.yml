@@ -28,7 +28,6 @@ linter:
     - "app/frontend/vignettes/**/*.html.erb"
     # not excluded on purpose, since we want to try out herb on these files:
     # - app/frontend/registration/**/*.html.erb
-    - "!app/frontend/roster/components/roster_overview_component.html.erb"
 
 
 formatter:
