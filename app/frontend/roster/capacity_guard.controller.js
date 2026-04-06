@@ -14,9 +14,8 @@ export default class extends Controller {
     if (isNaN(newCapacity)) return;
 
     const originalCapacity = parseInt(this.originalCapacityValue, 10);
-    if (isNaN(originalCapacity)) return;
-
-    const capacityChanged = newCapacity !== originalCapacity;
+    const wasUnlimited = isNaN(originalCapacity);
+    const capacityChanged = wasUnlimited || newCapacity !== originalCapacity;
     const isBelowMemberCount = newCapacity < this.currentCountValue;
 
     if (capacityChanged && isBelowMemberCount) {
