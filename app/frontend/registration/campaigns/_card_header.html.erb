@@ -14,8 +14,7 @@
                       method: :delete,
                       form: { class: "d-inline" },
                       data: {
-                        confirm: t("registration.campaign.confirm_delete",
-                                   default: "Are you sure?"),
+                        turbo_confirm: t("registration.campaign.confirm_delete"),
                         turbo_stream: true
                       },
                       class: "btn btn-sm btn-outline-danger",
@@ -136,7 +135,7 @@
                               method: :delete,
                               class: "policy-badge-action text-danger",
                               form: { class: "d-inline" },
-                              data: { confirm: t("confirmation.generic"), turbo_stream: true },
+                              data: { turbo_confirm: t("confirmation.generic"), turbo_stream: true },
                               title: t("buttons.delete") do %>
                   <i class="bi bi-x-circle-fill"></i>
                 <% end %>

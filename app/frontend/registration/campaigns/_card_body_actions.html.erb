@@ -30,7 +30,7 @@
                       close_registration_campaign_path(campaign),
                       method: :patch,
                       data: {
-                        confirm: campaign_close_confirmation(campaign),
+                        turbo_confirm: campaign_close_confirmation(campaign),
                         turbo_stream: true
                       },
                       class: "btn btn-warning w-100" %>

@@ -76,8 +76,11 @@ module Registration
         return
       end
 
-      @item.destroy
-      respond_with_success(t("registration.item.destroyed"))
+      if @item.destroy
+        respond_with_success(t("registration.item.destroyed"))
+      else
+        respond_with_error(@item.errors.full_messages.to_sentence)
+      end
     end
 
     def roster

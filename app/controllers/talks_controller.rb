@@ -228,7 +228,7 @@ class TalksController < ApplicationController
         streams << refresh_campaigns_index_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
       else
-        streams << turbo_stream.replace(view_context.dom_id(@talk, "form"),
+        streams << turbo_stream.replace(view_context.dom_id(Talk.new, "form"),
                                         partial: "talks/roster_modal_form",
                                         locals: { talk: @talk })
         streams << stream_flash if flash.present?
