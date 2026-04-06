@@ -23,7 +23,9 @@
           <span class="mx-1">·</span>
 
           <span>
-            <%= "#{students.size} " + t("basics.participants").downcase %>
+            <%= "#{students.size} " +
+                t("registration.item.columns.registrations",
+                  default: "Registrations") %>
           </span>
         </div>
       <% elsif registerable %>
@@ -41,10 +43,13 @@
               <%= "#{students.size} " +
                   t("registration.item.badge.first_choice",
                     default: "First Choice") %>
-            <% else %>
+            <% elsif campaign %>
               <%= "#{students.size} " +
                   t("registration.item.columns.registrations",
                     default: "Registrations") %>
+            <% else %>
+              <%= "#{students.size} " +
+                  t("basics.participants") %>
             <% end %>
           </span>
         </div>
