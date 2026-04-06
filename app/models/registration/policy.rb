@@ -43,7 +43,9 @@ module Registration
     end
 
     def allowed_domains_display
-      Array(config&.fetch("allowed_domains", [])).join(", @")
+      raw = config&.fetch("allowed_domains", nil)
+      list = raw.is_a?(String) ? raw.split(",") : Array(raw)
+      list.filter_map { |d| d&.strip&.presence }.join(", @")
     end
 
     def allowed_domains=(value)
