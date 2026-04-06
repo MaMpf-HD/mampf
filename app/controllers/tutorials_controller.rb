@@ -122,8 +122,8 @@ class TutorialsController < ApplicationController
       format.turbo_stream do
         group_type = parse_group_type
 
-        streams = create_turbo_streams(group_type)
-        render turbo_stream: streams, status: @tutorial.persisted? ? :ok : :unprocessable_content
+        streams = create_turbo_streams(group_type, persisted)
+        render turbo_stream: streams, status: persisted ? :ok : :unprocessable_content
       end
     end
   end
@@ -318,10 +318,10 @@ class TutorialsController < ApplicationController
       end
     end
 
-    def create_turbo_streams(_group_type)
+    def create_turbo_streams(_group_type, saved)
       streams = []
 
-      if @tutorial.persisted?
+      if saved
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
