@@ -53,6 +53,24 @@ class GroupTileComponent < ViewComponent::Base
     helpers.roster_add_member_path(registerable)
   end
 
+  def delete_disabled?
+    if item
+      !item.registration_campaign.draft?
+    else
+      !registerable.destructible?
+    end
+  end
+
+  def delete_disabled_title
+    if item
+      t("registration.item.cannot_destroy")
+    elsif registerable.in_campaign?
+      t("roster.errors.cannot_delete_in_campaign")
+    else
+      t("roster.errors.cannot_delete_not_empty")
+    end
+  end
+
   def delete_data
     confirm_key = if item
       "registration.item.confirm_remove"

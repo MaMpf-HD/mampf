@@ -230,4 +230,33 @@ RSpec.describe(GroupTileComponent, type: :component) do
       )
     end
   end
+
+  describe "#delete_disabled?" do
+    context "without an item (no-campaign group)" do
+      it "is false when registerable is destructible" do
+        allow(tutorial).to receive(:destructible?).and_return(true)
+        expect(component.delete_disabled?).to be(false)
+      end
+
+      it "is true when registerable is not destructible" do
+        allow(tutorial).to receive(:destructible?).and_return(false)
+        expect(component.delete_disabled?).to be(true)
+      end
+    end
+
+    context "with a campaign item" do
+      let(:campaign) { double("campaign") }
+      let(:item) { double("item", registration_campaign: campaign) }
+
+      it "is false when campaign is draft" do
+        allow(campaign).to receive(:draft?).and_return(true)
+        expect(component.delete_disabled?).to be(false)
+      end
+
+      it "is true when campaign is not draft" do
+        allow(campaign).to receive(:draft?).and_return(false)
+        expect(component.delete_disabled?).to be(true)
+      end
+    end
+  end
 end

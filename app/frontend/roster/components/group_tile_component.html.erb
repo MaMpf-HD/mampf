@@ -118,7 +118,18 @@
           <% end %>
         <% end %>
 
-        <% if delete_path %>
+        <% if delete_path && delete_disabled? %>
+          <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
+            <button
+              class="btn btn-sm btn-outline-danger opacity-50"
+              type="button"
+              style="cursor: not-allowed;"
+              disabled
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </span>
+        <% elsif delete_path %>
           <%= link_to delete_path,
                     class: "btn btn-sm btn-danger",
                     title: delete_title,
