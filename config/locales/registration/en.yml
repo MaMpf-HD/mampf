@@ -12,7 +12,7 @@ en:
       closed: "Campaign closed."
       reopened: "Campaign reopened."
       finalized: "Campaign finalized successfully."
-      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      cannot_reopen_completed: "Cannot reopen campaign because it has already been finalized."
       not_found: "Registration campaign not found."
       completed_title: "Campaign Completed"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
@@ -265,7 +265,7 @@ en:
         last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g. too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards. You can also 'Reopen Registration' to accept new sign-ups, let students update their preferences, or modify capacities and groups before re-running the allocation."
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups, let students update their preferences, or modify capacities and groups, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
       demand:

@@ -12,7 +12,7 @@ de:
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
-      cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
+      cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
@@ -265,7 +265,7 @@ de:
         last_updated: "Stand: %{time}"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
-        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist (z.B. zu viele nicht zugewiesene Studierende), passen Sie die Kapazitäten in den Kampagnen-Einstellungen an und starten Sie die Zuteilung erneut. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden. Sie können auch die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren, Studierenden die Anpassung ihrer Präferenzen zu ermöglichen oder Kapazitäten und Gruppen zu ändern, bevor Sie die Zuteilung wiederholen."
+        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist, können Sie die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren, Studierenden die Anpassung ihrer Präferenzen zu ermöglichen oder Kapazitäten und Gruppen zu ändern, und anschließend die Zuteilung erneut berechnen. Sie können die Zuteilung auch direkt neu berechnen. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
         workflow_info_fcfs: "Überprüfen Sie die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Sie können auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Sie abschließen."
         item_capacities: "Auslastung"
       demand:

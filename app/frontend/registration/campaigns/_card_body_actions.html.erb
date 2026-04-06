@@ -61,6 +61,21 @@
                                        disabled: has_violators) %>
         <% end %>
       <% elsif campaign.processing? %>
+        <div data-controller="collapse">
+          <button
+            type="button"
+            class="btn btn-success"
+            data-action="collapse#toggle"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <%= t("registration.campaign.actions.reopen") %>
+          </button>
+
+          <div class="collapse mt-2" data-collapse-target="content">
+            <%= render "registration/campaigns/reopen_form",
+                       campaign: campaign %>
+          </div>
+        </div>
         <% if campaign.preference_based? %>
           <%= allocate_campaign_button(campaign, size: "w-100") %>
           <% if campaign.last_allocation_calculated_at.present? %>

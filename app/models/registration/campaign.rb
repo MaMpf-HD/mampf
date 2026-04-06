@@ -116,18 +116,44 @@ module Registration
     end
 
     def finalize!
-      # Protect against concurrent finalization attempts via locking
       with_lock do
         return if completed?
 
         Registration::AllocationMaterializer.new(self).materialize!
 
-        # Reject all remaining pending registrations so the state is explicit
         # rubocop:disable Rails/SkipsModelValidations
         user_registrations.pending.update_all(status: :rejected)
         # rubocop:enable Rails/SkipsModelValidations
 
         update!(status: :completed)
+      end
+    end
+
+    def reset_allocation_results!
+      transaction do
+        subquery = Registration::UserRegistration
+                   .select(:user_id)
+                   .where(registration_campaign_id: id)
+                   .group(:user_id)
+                   .having("count(*) > 1")
+
+        user_registrations
+          .where(preference_rank: nil)
+          .where(user_id: subquery)
+          .delete_all
+
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.update_all(
+          status: :pending, updated_at: Time.current
+        )
+
+        registration_items.update_all(
+          confirmed_registrations_count: 0,
+          updated_at: Time.current
+        )
+
+        update_columns(last_allocation_calculated_at: nil)
+        # rubocop:enable Rails/SkipsModelValidations
       end
     end
 

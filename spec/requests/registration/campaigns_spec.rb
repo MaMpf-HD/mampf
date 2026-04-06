@@ -323,6 +323,37 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           expect(flash[:alert]).to be_present
         end
       end
+
+      context "when campaign is processing" do
+        before do
+          campaign.update!(status: :processing,
+                           last_allocation_calculated_at: 1.hour.ago)
+        end
+
+        it "reopens the campaign to open" do
+          patch reopen_registration_campaign_path(campaign),
+                params: { registration_deadline: 1.week.from_now }
+
+          campaign.reload
+          expect(campaign).to be_open
+        end
+
+        it "resets allocation results" do
+          item = campaign.registration_items.first
+          user = create(:confirmed_user)
+          create(:registration_user_registration,
+                 registration_campaign: campaign, registration_item: item,
+                 user: user, status: :confirmed)
+
+          patch reopen_registration_campaign_path(campaign),
+                params: { registration_deadline: 1.week.from_now }
+
+          campaign.reload
+          expect(campaign.last_allocation_calculated_at).to be_nil
+          expect(campaign.user_registrations.confirmed).to be_empty
+          expect(campaign.user_registrations.pending.count).to eq(1)
+        end
+      end
     end
 
     context "as a student" do

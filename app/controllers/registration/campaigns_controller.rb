@@ -138,10 +138,12 @@ module Registration
     end
 
     def reopen
-      if @campaign.processing? || @campaign.completed?
-        respond_with_error(t("registration.campaign.cannot_reopen_allocated"))
+      if @campaign.completed?
+        respond_with_error(t("registration.campaign.cannot_reopen_completed"))
         return
       end
+
+      was_processing = @campaign.processing?
 
       attributes = { status: :open }
       if params[:registration_deadline].present?
@@ -149,6 +151,7 @@ module Registration
       end
 
       if @campaign.update(attributes)
+        @campaign.reset_allocation_results! if was_processing
         respond_with_success(t("registration.campaign.reopened"))
       else
         respond_with_error(@campaign.errors.full_messages.join(", "))
