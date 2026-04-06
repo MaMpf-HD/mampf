@@ -5,8 +5,7 @@ module Rosters
     end
 
     def call
-      scopes_by_type.flat_map(&:to_a)
-                    .sort_by { |r| r.title.to_s.downcase }
+      RegisterableOrdering.sort(scopes_by_type.flat_map(&:to_a))
     end
 
     def scopes_by_type
