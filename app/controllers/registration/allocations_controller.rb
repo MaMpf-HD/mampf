@@ -30,30 +30,37 @@ module Registration
 
     def create
       authorize! :allocate, @campaign
-      if @campaign.closed? || @campaign.processing?
-        Registration::AllocationService.new(@campaign).allocate!
-        @dashboard = Registration::AllocationDashboard.new(@campaign)
 
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_allocation_path(@campaign),
-                        notice: t("registration.allocation.started")
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.allocation.started")
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: {
-                                    lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id
-                                  }),
-              stream_flash
-            ]
-          end
-        end
-      else
+      if @campaign.processing?
+        respond_with_error(t("registration.allocation.errors.already_processing"))
+        return
+      end
+
+      unless @campaign.closed?
         respond_with_error(t("registration.allocation.errors.wrong_status"))
+        return
+      end
+
+      Registration::AllocationService.new(@campaign).allocate!
+      @dashboard = Registration::AllocationDashboard.new(@campaign)
+
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_allocation_path(@campaign),
+                      notice: t("registration.allocation.started")
+        end
+        format.turbo_stream do
+          flash.now[:notice] = t("registration.allocation.started")
+          render turbo_stream: [
+            turbo_stream.update("campaigns_container",
+                                partial: "registration/campaigns/card_body_index",
+                                locals: {
+                                  lecture: @campaign.campaignable,
+                                  expanded_campaign_id: @campaign.id
+                                }),
+            stream_flash
+          ]
+        end
       end
     end
 
