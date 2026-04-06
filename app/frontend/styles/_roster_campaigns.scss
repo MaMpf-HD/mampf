@@ -194,16 +194,14 @@
   font-size: 0.74rem;
   color: var(--bs-gray-600);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  animation: dissolved-pill-appear 0.8s ease both;
-  animation-delay: 0.3s;
 }
 
-.dissolved-campaign-ambient .registration-group-tile-col {
+.dissolved-campaign-settling .registration-group-tile-col {
   animation: dissolved-tile-settle 0.7s ease both;
 }
 
 @for $i from 1 through 12 {
-  .dissolved-campaign-ambient .registration-group-tile-col:nth-child(#{$i}) {
+  .dissolved-campaign-settling .registration-group-tile-col:nth-child(#{$i}) {
     animation-delay: #{500 + $i * 150}ms;
   }
 }
@@ -211,7 +209,7 @@
 @media (prefers-reduced-motion: reduce) {
   .campaign-dissolving,
   .dissolved-campaign-pill,
-  .dissolved-campaign-ambient .registration-group-tile-col {
+  .dissolved-campaign-settling .registration-group-tile-col {
     animation: none;
   }
 }
