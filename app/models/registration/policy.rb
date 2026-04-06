@@ -71,15 +71,15 @@ module Registration
     def handler
       return Registration::Policy::Handler.new(self) if kind.blank?
 
-      @handler ||= case kind.to_sym
-                   when :institutional_email
-                     Registration::Policy::InstitutionalEmailHandler.new(self)
-                   when :prerequisite_campaign
-                     Registration::Policy::PrerequisiteCampaignHandler.new(self)
-                   when :student_performance
-                     Registration::Policy::Handler.new(self)
-                   else
-                     raise(ArgumentError, "Unknown policy kind: #{kind}")
+      case kind.to_sym
+      when :institutional_email
+        Registration::Policy::InstitutionalEmailHandler.new(self)
+      when :prerequisite_campaign
+        Registration::Policy::PrerequisiteCampaignHandler.new(self)
+      when :student_performance
+        Registration::Policy::Handler.new(self)
+      else
+        raise(ArgumentError, "Unknown policy kind: #{kind}")
       end
     end
 
