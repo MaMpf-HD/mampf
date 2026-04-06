@@ -50,16 +50,16 @@ window.Stimulus.register("campaign-action", CampaignActionController);
 import CollapseController from "~/registration/collapse.controller.js";
 window.Stimulus.register("collapse", CollapseController);
 
-import BsPopoverController from "~/controllers/bs_popover_controller.js";
+import BsPopoverController from "~/controllers/bs_popover.controller.js";
 window.Stimulus.register("bs-popover", BsPopoverController);
 
 import RowClickController from "~/controllers/row_click.controller.js";
 window.Stimulus.register("row-click", RowClickController);
 
-import DatetimepickerController from "~/controllers/datetimepicker_controller.js";
+import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
 window.Stimulus.register("datetimepicker", DatetimepickerController);
 
-import CapacityGuardController from "~/roster/capacity_guard_controller.js";
+import CapacityGuardController from "~/roster/capacity_guard.controller.js";
 window.Stimulus.register("capacity-guard", CapacityGuardController);
 
 import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
@@ -71,13 +71,13 @@ window.Stimulus.register("campaign-dissolve", CampaignDissolveController);
 import RosterDragController from "~/roster/roster_drag.controller.js";
 window.Stimulus.register("roster-drag", RosterDragController);
 
-import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
+import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
 import DetailsEditorController from "~/registration/allocations/details_editor.controller.js";
 window.Stimulus.register("details-editor", DetailsEditorController);
 
-import SelectizeController from "~/controllers/selectize_controller.js";
+import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
 // Hotwire: Turbo
