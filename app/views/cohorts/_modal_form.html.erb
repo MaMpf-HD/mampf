@@ -10,6 +10,9 @@
               } do |f| %>
   <%= f.hidden_field :lecture_id, value: cohort.context.id %>
   <%= hidden_group_type_field(params[:group_type]) %>
+  <%= hidden_field_tag :registration_section, params[:registration_section] %>
+  <%= hidden_field_tag :registration_campaign_id,
+                       params[:registration_campaign_id] %>
   <div class="modal-body">
     <% propagates = cohort_propagates?(cohort, params) %>
 
