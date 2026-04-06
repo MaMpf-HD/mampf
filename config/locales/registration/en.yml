@@ -285,7 +285,7 @@ en:
         percentage: "Percentage"
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
-        forced_short: "Assigned"
+        forced_short: "Not preferred"
         capacity: "Capacity"
         utilization: "Utilization"
       errors:

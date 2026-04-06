@@ -285,7 +285,7 @@ de:
         percentage: "Prozent"
         rank_label: "Wahl #%{rank}"
         forced: "Zwangszuweisung"
-        forced_short: "Zugewiesen"
+        forced_short: "Nicht präferiert"
         capacity: "Kapazität"
         utilization: "Auslastung"
       errors:
