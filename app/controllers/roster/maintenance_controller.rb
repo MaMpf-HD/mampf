@@ -73,7 +73,15 @@ module Roster
       flash.now[:notice] = t("roster.messages.user_added")
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
-      render_with_streams(stream_builder.streams)
+      source = find_panel_source
+      if source
+        render_with_streams(
+          stream_builder(rosterable: source, target: @rosterable)
+            .streams(variant: :move_panel)
+        )
+      else
+        render_with_streams(stream_builder.streams)
+      end
     end
 
     def remove_member
@@ -183,14 +191,14 @@ module Roster
         end
       end
 
-      def stream_builder(target: nil)
+      def stream_builder(target: nil, rosterable: nil)
         ensure_participants_state!
 
         Rosters::StreamBuilder.new(
           view_context: view_context,
           turbo_stream: turbo_stream,
           lecture: @lecture,
-          rosterable: @rosterable,
+          rosterable: rosterable || @rosterable,
           mparams: @mparams,
           target: target,
           roster_tab: @mparams.roster_tab,
@@ -224,6 +232,21 @@ module Roster
         raise(UserNotFoundError) unless user
 
         user
+      end
+
+      def find_panel_source
+        return unless @mparams.panel?
+        return unless @mparams.source_type.present?
+        return unless @mparams.source_id.present?
+
+        source = Rosters::RosterableResolver.find_target(
+          @mparams.source_id,
+          type: @mparams.source_type,
+          lecture: @lecture,
+          default_type: @rosterable.class.name
+        )
+
+        source if source && source != @rosterable
       end
 
       def ensure_rosterable_unlocked!

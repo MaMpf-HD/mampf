@@ -194,6 +194,8 @@ export default class extends Controller {
         }
       : {
           source: "panel",
+          source_type: this.classNameFor(this.sourceTypeValue),
+          source_id: this.sourceIdValue,
         };
 
     this.submitAction(targetAddPath, "POST", {

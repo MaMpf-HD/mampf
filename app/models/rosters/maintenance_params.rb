@@ -5,14 +5,14 @@ module Rosters
   class MaintenanceParams
     SOURCE_TYPES = ["panel", "unassigned", "participants"].freeze
 
-    attr_reader :group_type, :source, :source_id, :target_id,
+    attr_reader :group_type, :source, :source_id, :source_type, :target_id,
                 :target_type, :user_id, :email, :mode, :search,
                 :roster_tab
 
     def initialize(params, lecture: nil)
       @group_type_given = params.key?(:group_type)
       permitted = params.permit(
-        :group_type, :source, :source_id, :target_id,
+        :group_type, :source, :source_id, :source_type, :target_id,
         :target_type, :user_id, :email, :type, :mode,
         :search, :tab, :id,
         group_type: []
@@ -20,6 +20,7 @@ module Rosters
 
       @group_type = normalize_group_type(permitted)
       @source = normalize_source(permitted[:source])
+      @source_type = validate_type(permitted[:source_type])
       @source_id = validate_source_id(permitted[:source_id], lecture)
       @target_id = permitted[:target_id]
       @target_type = validate_type(permitted[:target_type])
@@ -72,6 +73,7 @@ module Rosters
       def validate_source_id(raw, lecture)
         return nil if raw.blank?
         return raw unless lecture
+        return raw if @source == "panel"
 
         exists = lecture.registration_campaigns.exists?(id: raw)
         exists ? raw : nil
