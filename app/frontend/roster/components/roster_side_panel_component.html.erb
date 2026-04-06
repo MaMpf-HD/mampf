@@ -31,8 +31,11 @@
       <% elsif registerable %>
         <div class="text-muted small">
           <span><%= registerable.title %></span>
-          <span class="mx-1">·</span>
-          <span><%= tutors_text %></span>
+
+          <% unless registerable.is_a?(Talk) %>
+            <span class="mx-1">·</span>
+            <span><%= tutors_text %></span>
+          <% end %>
 
           <span class="badge text-bg-secondary ms-2">
             <% if allocated? %>
