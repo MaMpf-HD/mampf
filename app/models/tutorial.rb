@@ -63,8 +63,10 @@ class Tutorial < ApplicationRecord
   end
 
   def materialize_allocation!(user_ids:, campaign:)
-    enforce_lecture_uniqueness!(user_ids)
-    super
+    transaction do
+      enforce_lecture_uniqueness!(user_ids)
+      super
+    end
   end
 
   private

@@ -58,8 +58,10 @@ module Registration
       policy_ids = params[:policy_ids]
       return head(:bad_request) unless policy_ids.is_a?(Array)
 
-      policy_ids.each_with_index do |id, index|
-        @campaign.registration_policies.find(id).set_list_position(index + 1)
+      Registration::Policy.transaction do
+        policy_ids.each_with_index do |id, index|
+          @campaign.registration_policies.find(id).set_list_position(index + 1)
+        end
       end
       respond_with_success(nil)
     end

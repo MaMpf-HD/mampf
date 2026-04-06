@@ -95,11 +95,14 @@ module Registration
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
       classes = ["btn", "btn-primary", size].compact.join(" ")
 
+      form_data = { turbo_stream: true }
+      form_data[:turbo_confirm] = confirm if confirm
+
       button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
                 class: classes,
-                data: { confirm: confirm, turbo_stream: true })
+                form: { data: form_data })
     end
   end
 end

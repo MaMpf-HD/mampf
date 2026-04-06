@@ -9,9 +9,9 @@ module Registration
                              I18n.t("registration.policy.errors.no_allowed_domains_configured"))
         end
 
-        email = user.email.to_s.downcase
-        allowed = domains.any? do |domain|
-          email.end_with?("@#{domain}", ".#{domain}")
+        email_domain = user.email.to_s.strip.downcase.split("@", 2).last
+        allowed = email_domain.present? && domains.any? do |domain|
+          email_domain == domain || email_domain.end_with?(".#{domain}")
         end
 
         if allowed
