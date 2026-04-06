@@ -78,7 +78,7 @@ de:
         complete_planning: "Planung abschließen"
       reopen_form:
         new_deadline: "Neue Anmeldefrist"
-        submit: "Erneut öffnen"
+        submit: "Bestätigen"
       confirmations:
         open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
         close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."

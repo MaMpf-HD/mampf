@@ -78,7 +78,7 @@ en:
         complete_planning: "Complete Planning"
       reopen_form:
         new_deadline: "New registration deadline"
-        submit: "Reopen"
+        submit: "Confirm"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
