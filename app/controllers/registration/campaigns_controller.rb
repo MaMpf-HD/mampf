@@ -150,12 +150,14 @@ module Registration
         attributes[:registration_deadline] = params[:registration_deadline]
       end
 
-      if @campaign.update(attributes)
+      @campaign.transaction do
+        @campaign.update!(attributes)
         @campaign.reset_allocation_results! if was_processing
-        respond_with_success(t("registration.campaign.reopened"))
-      else
-        respond_with_error(@campaign.errors.full_messages.join(", "))
       end
+
+      respond_with_success(t("registration.campaign.reopened"))
+    rescue ActiveRecord::RecordInvalid
+      respond_with_error(@campaign.errors.full_messages.join(", "))
     end
 
     def check_unlimited_items
