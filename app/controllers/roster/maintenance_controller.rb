@@ -236,8 +236,8 @@ module Roster
 
       def find_panel_source
         return unless @mparams.panel?
-        return unless @mparams.source_type.present?
-        return unless @mparams.source_id.present?
+        return if @mparams.source_type.blank?
+        return if @mparams.source_id.blank?
 
         source = Rosters::RosterableResolver.find_target(
           @mparams.source_id,

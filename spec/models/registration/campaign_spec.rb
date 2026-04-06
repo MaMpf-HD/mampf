@@ -486,8 +486,10 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "zeroes out confirmed_registrations_count on all items" do
+      # rubocop:disable Rails/SkipsModelValidations
       item1.update_columns(confirmed_registrations_count: 5)
       item2.update_columns(confirmed_registrations_count: 3)
+      # rubocop:enable Rails/SkipsModelValidations
 
       campaign.reset_allocation_results!
 
