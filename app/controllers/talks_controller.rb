@@ -1,5 +1,7 @@
 # TalksController
 class TalksController < ApplicationController
+  include ::RegistrationCampaignContext
+
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
@@ -50,6 +52,7 @@ class TalksController < ApplicationController
 
   def create
     @talk = Talk.new(talk_params)
+    @talk.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @talk
 
     dates = parse_talk_dates(params[:talk][:dates])
@@ -59,11 +62,20 @@ class TalksController < ApplicationController
                   current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
 
-    saved = if position.present?
-      @talk.insert_at(position.to_i + 1)
-      @talk.valid?
-    else
-      @talk.save
+    saved = false
+    Talk.transaction do
+      saved = if position.present?
+        @talk.insert_at(position.to_i + 1)
+        @talk.valid?
+      else
+        @talk.save
+      end
+      raise(ActiveRecord::Rollback) unless saved
+
+      saved = apply_registration_context(registerable: @talk,
+                                         lecture: @talk.lecture,
+                                         error_target: @talk)
+      raise(ActiveRecord::Rollback) unless saved
     end
 
     respond_to do |format|
@@ -223,5 +235,9 @@ class TalksController < ApplicationController
       end
 
       streams
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

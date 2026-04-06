@@ -181,6 +181,7 @@ en:
         title: "Add Groups"
         group: "Add group"
         tutorial: "Add Tutorial"
+        talk: "Add Talk"
         flexible_group: "Add flexible group"
         existing: "Add Existing"
         new: "Create New"
