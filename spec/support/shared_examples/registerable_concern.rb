@@ -30,7 +30,7 @@ RSpec.shared_examples("a registerable model") do
 
   describe "capacity validation via items" do
     let(:registerable) { create(described_class.name.underscore.to_sym) }
-    let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
+    let(:campaign) { create(:registration_campaign, :first_come_first_served) }
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
     end

@@ -78,7 +78,7 @@ RSpec.describe(Rosters::RegisterableOrdering) do
 
   describe ".sort_items" do
     it "sorts items by their registerable ordering" do
-      campaign = create(:registration_campaign, :draft, campaignable: lecture)
+      campaign = create(:registration_campaign, campaignable: lecture)
       t1 = create(:tutorial, lecture: lecture, title: "Alpha")
       t2 = create(:tutorial, lecture: lecture, title: "Beta")
       cohort = create(:cohort, :enrollment, context: lecture, title: "Gamma")
@@ -102,7 +102,7 @@ RSpec.describe(Rosters::RegisterableOrdering) do
   describe ".item_sort_key" do
     it "returns an array usable for comparison" do
       tutorial = create(:tutorial, lecture: lecture, title: "Hello")
-      campaign = create(:registration_campaign, :draft, campaignable: lecture)
+      campaign = create(:registration_campaign, campaignable: lecture)
       item = create(:registration_item,
                     registration_campaign: campaign,
                     registerable: tutorial)
