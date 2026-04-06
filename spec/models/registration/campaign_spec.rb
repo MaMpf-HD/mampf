@@ -92,8 +92,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "validates prerequisites are not draft if open" do
-      prereq = create(:registration_campaign, :draft)
-      campaign = create(:registration_campaign, :draft)
+      prereq = create(:registration_campaign)
+      campaign = create(:registration_campaign)
       create(:registration_policy, :prerequisite_campaign,
              registration_campaign: campaign,
              config: { "prerequisite_campaign_id" => prereq.id })
@@ -159,8 +159,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "prevents deletion if referenced as prerequisite" do
-      prereq = create(:registration_campaign, :draft)
-      dependent = create(:registration_campaign, :draft)
+      prereq = create(:registration_campaign)
+      dependent = create(:registration_campaign)
       create(:registration_policy, :prerequisite_campaign,
              registration_campaign: dependent,
              config: { "prerequisite_campaign_id" => prereq.id })
@@ -187,7 +187,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "allows changing allocation_mode if draft" do
-      draft_campaign = create(:registration_campaign, :draft)
+      draft_campaign = create(:registration_campaign)
       draft_campaign.allocation_mode = :preference_based
       expect(draft_campaign).to be_valid
     end
