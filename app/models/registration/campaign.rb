@@ -186,7 +186,7 @@ module Registration
     private
 
       def ensure_editable
-        return unless completed?
+        return unless status_was == "completed"
         return unless changed?
 
         errors.add(:base, :already_finalized) unless status_changed?
