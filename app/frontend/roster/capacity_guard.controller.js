@@ -5,18 +5,18 @@ export default class extends Controller {
   static values = {
     currentCount: Number,
     confirmMessage: String,
-    originalCapacity: Number,
+    originalCapacity: String,
   };
 
   submit(event) {
     const newCapacity = parseInt(this.inputTarget.value, 10);
 
-    // If capacity is empty or not a number, we assume it's infinite/valid for now
-    // or let server-side validation handle it.
     if (isNaN(newCapacity)) return;
 
-    // Only show warning if capacity actually changed and is now below member count
-    const capacityChanged = newCapacity !== this.originalCapacityValue;
+    const originalCapacity = parseInt(this.originalCapacityValue, 10);
+    if (isNaN(originalCapacity)) return;
+
+    const capacityChanged = newCapacity !== originalCapacity;
     const isBelowMemberCount = newCapacity < this.currentCountValue;
 
     if (capacityChanged && isBelowMemberCount) {
