@@ -61,7 +61,7 @@ module RosterHelper
     elsif item
       item_display_type(item)
     elsif registerable.is_a?(Talk)
-      Talk.model_name.human
+      "#{Talk.model_name.human} #{registerable.position}"
     else
       I18n.t("registration.item.types.tutorial")
     end

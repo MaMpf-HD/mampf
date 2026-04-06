@@ -5,7 +5,7 @@ module Registration
       when "Tutorial"
         t("registration.item.types.tutorial")
       when "Talk"
-        t("registration.item.types.talk")
+        "#{t("registration.item.types.talk")} #{item.registerable.position}"
       when "Cohort"
         cohort = item.registerable
         base_type = t("registration.item.types.other_group")

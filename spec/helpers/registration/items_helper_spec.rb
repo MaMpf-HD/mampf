@@ -16,9 +16,10 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
     context "for Talk" do
       let(:item) { create(:registration_item, :for_talk) }
 
-      it "returns talk type label" do
+      it "returns talk type label with position" do
+        position = item.registerable.position
         expect(helper.item_display_type(item))
-          .to eq(I18n.t("registration.item.types.talk"))
+          .to eq("#{I18n.t("registration.item.types.talk")} #{position}")
       end
     end
 
