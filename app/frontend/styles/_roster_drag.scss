@@ -21,6 +21,12 @@ span.tutorial-gtile--selected.unassigned-warning-trigger {
 
 .tutorial-roster-student[data-user-id] {
   cursor: grab;
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.015);
+  }
 }
 
 .roster-drag-choice-dialog {
