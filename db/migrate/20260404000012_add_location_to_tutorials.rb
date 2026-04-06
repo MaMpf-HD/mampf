@@ -1,4 +1,4 @@
-class AddLocationToTutorials < ActiveRecord::Migration[7.2]
+class AddLocationToTutorials < ActiveRecord::Migration[8.0]
   def change
     add_column :tutorials, :location, :string
   end
