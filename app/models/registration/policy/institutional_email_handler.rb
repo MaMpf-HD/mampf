@@ -4,7 +4,10 @@ module Registration
     # Checks if the user's email address ends with one of the allowed domains.
     class InstitutionalEmailHandler < Handler
       def evaluate(user)
-        return fail_result(:configuration_error, "No allowed domains configured") if domains.empty?
+        if domains.empty?
+          return fail_result(:configuration_error,
+                             I18n.t("registration.policy.errors.no_allowed_domains_configured"))
+        end
 
         email = user.email.to_s.downcase
         allowed = domains.any? do |domain|
@@ -14,7 +17,8 @@ module Registration
         if allowed
           pass_result(:domain_ok)
         else
-          fail_result(:institutional_email_mismatch, "Email domain not allowed",
+          fail_result(:institutional_email_mismatch,
+                      I18n.t("registration.policy.errors.email_domain_not_allowed"),
                       allowed_domains: domains)
         end
       end

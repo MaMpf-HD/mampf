@@ -152,6 +152,11 @@ de:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
+        no_allowed_domains_configured: "Keine erlaubten Domains konfiguriert."
+        email_domain_not_allowed: "E-Mail-Domain nicht erlaubt."
+        prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
+        prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
+        prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"

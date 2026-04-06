@@ -4,11 +4,11 @@ module Registration
       def evaluate(user)
         if campaign_id.blank?
           return fail_result(:configuration_error,
-                             "Prerequisite campaign not configured")
+                             I18n.t("registration.policy.errors.prerequisite_not_configured"))
         end
         unless campaign
           return fail_result(:prerequisite_campaign_not_found,
-                             "Prerequisite campaign missing")
+                             I18n.t("registration.policy.errors.prerequisite_missing"))
         end
 
         confirmed = if @confirmed_user_ids
@@ -21,7 +21,7 @@ module Registration
           pass_result(:prerequisite_met)
         else
           fail_result(:prerequisite_not_met,
-                      "Prerequisite campaign not completed")
+                      I18n.t("registration.policy.errors.prerequisite_not_met"))
         end
       end
 
