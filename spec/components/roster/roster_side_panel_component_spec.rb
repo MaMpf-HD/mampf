@@ -434,12 +434,12 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         preference_rank: nil,
         registration_item: double(registerable: double(title: "Default"))
       )
-      reg_1 = double(
+      reg1 = double(
         registration_campaign_id: 1,
         preference_rank: 1,
         registration_item: double(registerable: double(title: "First"))
       )
-      student = double(user_registrations: [reg_nil, reg_1])
+      student = double(user_registrations: [reg_nil, reg1])
       c = described_class.new(campaign: double(id: 1))
       expect(c.campaign_wishes(student)).to eq("First, Default")
     end

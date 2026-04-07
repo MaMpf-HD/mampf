@@ -89,33 +89,37 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
   describe "#violations_by_user" do
     it "groups violations by user_id" do
       allow(dashboard).to receive(:policy_violations).and_return([
-        { user_id: 1, policy: "A" },
-        { user_id: 1, policy: "B" },
-        { user_id: 2, policy: "A" }
-      ])
+                                                                   { user_id: 1, policy: "A" },
+                                                                   { user_id: 1, policy: "B" },
+                                                                   { user_id: 2, policy: "A" }
+                                                                 ])
       expect(dashboard.violations_by_user).to eq({
-        1 => [{ user_id: 1, policy: "A" }, { user_id: 1, policy: "B" }],
-        2 => [{ user_id: 2, policy: "A" }]
-      })
+                                                   1 => [{ user_id: 1, policy: "A" },
+                                                         { user_id: 1, policy: "B" }],
+                                                   2 => [{ user_id: 2, policy: "A" }]
+                                                 })
     end
   end
 
   describe "#violation_counts_by_policy" do
     it "counts violations per policy" do
       allow(dashboard).to receive(:policy_violations).and_return([
-        { user_id: 1, policy: "A" },
-        { user_id: 1, policy: "B" },
-        { user_id: 2, policy: "A" }
-      ])
+                                                                   { user_id: 1, policy: "A" },
+                                                                   { user_id: 1, policy: "B" },
+                                                                   { user_id: 2, policy: "A" }
+                                                                 ])
       expect(dashboard.violation_counts_by_policy).to eq({ "A" => 2, "B" => 1 })
     end
   end
 
   describe "#finalization_policies" do
     it "returns active finalization policies for the campaign" do
-      policy = create(:registration_policy, registration_campaign: campaign, active: true, phase: :finalization)
-      create(:registration_policy, registration_campaign: campaign, active: false, phase: :finalization)
-      create(:registration_policy, registration_campaign: campaign, active: true, phase: :registration)
+      policy = create(:registration_policy, registration_campaign: campaign,
+                                            active: true, phase: :finalization)
+      create(:registration_policy, registration_campaign: campaign, active: false,
+                                   phase: :finalization)
+      create(:registration_policy, registration_campaign: campaign, active: true,
+                                   phase: :registration)
       expect(dashboard.finalization_policies).to eq([policy])
     end
   end
@@ -138,13 +142,19 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     let(:item2) { create(:registration_item, registration_campaign: campaign) }
 
     before do
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item1, preference_rank: 1)
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item1, preference_rank: 2)
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item1, preference_rank: 3)
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item1, preference_rank: 4)
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item1, preference_rank: 5)
-      
-      create(:registration_user_registration, registration_campaign: campaign, registration_item: item2, preference_rank: 1)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 1)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 2)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 3)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 4)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 5)
+
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item2, preference_rank: 1)
     end
 
     it "calculates demand correctly" do
