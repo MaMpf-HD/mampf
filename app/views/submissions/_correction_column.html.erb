@@ -1,6 +1,7 @@
 <% if submission.in_time? || submission.accepted %>
-  <%= render partial: 'submissions/correction',
-            locals: { submission: submission } %>
+  <%= turbo_frame_tag "correction-#{submission.id}" do %>
+    <%= render partial: "submissions/correction", locals: { submission: submission } %>
+  <% end %>
 <% elsif submission.accepted == false %>
   <span class="badge bg-danger">
     <%= t('submission.rejected') %>

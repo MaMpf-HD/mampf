@@ -197,33 +197,50 @@ class SubmissionsController < ApplicationController
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
+    @submission.assign_attributes(correction_params)
 
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    @errors = @submission.check_file_properties_any(
+      @submission.correction&.metadata,
+      :correction
+    )
+
+    if @errors.present?
+      return render partial: "submissions/correction",
+                    locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    send_correction_upload_email(@submission.users) if @submission.save
+
+    render partial: "submissions/correction", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
+    render partial: "submissions/correction", locals: { submission: @submission }
   end
 
   def select_tutorial
@@ -280,6 +297,10 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+    def correction_params
+      params.require(:submission).permit(:correction)
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])

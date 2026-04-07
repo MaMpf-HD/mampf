@@ -9,17 +9,10 @@
     </div>
   </div>
   <div id="tutorial-table">
-    <% if gradding_enabled?(@assignment) %>
-      <%= render partial: 'tutorials/table_2',
+    <%= render partial: 'tutorials/table_2',
                locals: { assignment: @assignment,
                          tutorial: @tutorial,
                          stack: @stack } %>
-    <% else %>
-      <%= render partial: 'tutorials/table',
-               locals: { assignment: @assignment,
-                         tutorial: @tutorial,
-                         stack: @stack } %>
-    <% end %>
   </div>
 </div>
 <% else %>
