@@ -106,8 +106,8 @@ RSpec.describe(Rosters::RosterSupersetChecker) do
         subject.check_all_lectures!
       end
 
-      it "correctly identifies planning cohorts as non-propagating" do
-        cohort = create(:cohort, context: lecture, purpose: :planning,
+      it "correctly identifies non-propagating cohorts" do
+        cohort = create(:cohort, context: lecture,
                                  propagate_to_lecture: false)
         user = create(:user)
 

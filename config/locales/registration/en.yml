@@ -7,8 +7,6 @@ en:
         already_finalized: "Campaign is already finalized."
       created: "Campaign created successfully."
       create_failed: "Campaign could not be created."
-      updated: "Campaign updated successfully."
-      update_failed: "Campaign could not be updated."
       destroyed: "Campaign deleted successfully."
       cannot_delete: "Campaign cannot be deleted."
       confirm_delete: "Are you sure you want to delete this campaign?"
@@ -16,12 +14,14 @@ en:
       closed: "Campaign closed."
       reopened: "Campaign reopened."
       finalized: "Campaign finalized successfully."
-      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      cannot_reopen_completed: "Cannot reopen campaign because it has already been finalized."
       not_found: "Registration campaign not found."
       completed_title: "Campaign Completed"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
       go_to_roster: "Go to Roster"
+      dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
+      default_description: "Registration"
       helpdesk:
         campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
         description: "A short description of the registration campaign (max. 100 characters). This will be displayed in overviews and tables."
@@ -34,14 +34,17 @@ en:
         card_title: "Registration Campaigns"
         new_campaign: "New Campaign"
         none: "No campaigns found."
+        sections:
+          registration: "Registration Campaign"
+          no_campaign: "No Campaign"
         columns:
           description: "Short description"
           type: "Type"
           mode: "Allocation Mode"
           opens_at: "Opens At"
-          deadline: "Deadline"
+          deadline: "Registration Deadline"
           status: "Status"
-          registrations: "Registrations"
+          registrations: "Registration Count"
       new:
         title: "New Campaign"
       edit:
@@ -77,6 +80,9 @@ en:
         view_allocation: "View Allocation"
         review_and_finalize: "Review & Finalize"
         complete_planning: "Complete Planning"
+      reopen_form:
+        new_deadline: "New registration deadline"
+        submit: "Confirm"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
@@ -131,6 +137,9 @@ en:
         title: "Policies"
         add: "Add Policy"
         none: "No policies configured."
+      hint:
+        add_after_creation: "Policies (e.g. email restrictions) can be added after creation."
+        locked: "Policies can only be edited while the campaign is in draft."
       new:
         title: "New Policy"
       edit:
@@ -147,6 +156,11 @@ en:
         missing_domains: "At least one allowed domain must be specified."
         missing_prerequisite_campaign: "A prerequisite campaign must be selected."
         prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."
+        no_allowed_domains_configured: "No allowed domains configured."
+        email_domain_not_allowed: "Email domain not allowed."
+        prerequisite_not_configured: "Prerequisite campaign not configured."
+        prerequisite_missing: "Prerequisite campaign missing."
+        prerequisite_not_met: "Prerequisite campaign not completed."
         missing_lecture: "A lecture must be selected."
         lecture_not_found: "The selected lecture does not exist."
       configs:
@@ -171,6 +185,10 @@ en:
         none: "No groups added yet."
       add:
         title: "Add Groups"
+        group: "Add group"
+        tutorial: "Add Tutorial"
+        talk: "Add Talk"
+        flexible_group: "Add flexible group"
         existing: "Add Existing"
         new: "Create New"
         none_available: "No groups available to add."
@@ -182,6 +200,11 @@ en:
         capacity: "Capacity"
         registrations: "Registrations"
         first_choice: "1st Choice"
+      badge:
+        first_choice: "First Choice"
+        second_choice: "2nd Choice"
+        third_choice: "3rd Choice"
+        other_choices: "Other"
       groups:
         tutorials: "Tutorials"
         talks: "Talks"
@@ -224,6 +247,9 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        first_choice_title: "1st Choice Registrations"
+        allocated_title: "Allocated Students"
+        allocated_count: "allocated"
       status:
         pending: "Pending"
         confirmed: "Confirmed"
@@ -243,14 +269,20 @@ en:
         desc: "The following students are already assigned to a group of this type in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
         currently_in: "currently in %{group}"
       dashboard:
-        title: "Allocation Dashboard"
+        title: "Allocation"
         last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
-        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
-        workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
-        item_capacities: "Tutorial Capacities"
+        workflow_info: "Review the allocation statistics below. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups, let students update their preferences, or modify capacities and groups, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
+        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        item_capacities: "Group Capacities"
+      demand:
+        title: "Registration Demand"
+        info: "This overview shows the registration demand per item before allocation. Review the first-choice demand against capacities, then click 'Run Allocation' to compute the assignment. Rows highlighted in yellow have more first-choice registrations than available capacity. You can also 'Reopen Registration' to accept new sign-ups, let students adjust their preferences, or modify capacities and groups."
+        items_count: "Items"
+        first_choice: "1st Choice"
+        second_choice: "2nd Choice"
+        third_plus: "3rd+"
       stats:
         total_registrations: "Total Registrations"
         assigned: "Assigned"
@@ -261,10 +293,12 @@ en:
         percentage: "Percentage"
         rank_label: "Choice #%{rank}"
         forced: "Forced Assignment"
+        forced_short: "Not preferred"
         capacity: "Capacity"
         utilization: "Utilization"
       errors:
         already_completed: "Campaign is already completed."
+        already_processing: "Allocation is already in progress."
         wrong_status: "Campaign has wrong status for this action."
         certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Policy violations detected. Please review details below."
@@ -273,6 +307,8 @@ en:
         policy_violation_count:
           one: "student affected"
           other: "students affected"
+      policy_summary:
+        required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
       policy_summary:
         required_domain: "Required domain:"

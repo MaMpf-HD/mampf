@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groups &amp; Campaigns – Finalize &amp; Dissolve Animation (concept)</title>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --c1: #4f72c4;
+    --c1l: #eef2fb;
+    --c1m: #c5d0f0;
+  }
+
+  body { background: #f4f5f8; font-size: .9rem; }
+
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: .75rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .page-header h5 { margin: 0; font-weight: 600; }
+  .page-header .subtitle { color: #6c757d; font-size: .8rem; }
+
+  /* playback controls */
+  .demo-bar {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: .55rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+    font-size: .82rem;
+    position: sticky; top: 58px; z-index: 99;
+  }
+  .demo-bar .phase-label {
+    font-weight: 700; min-width: 200px;
+  }
+  .demo-bar .phase-desc {
+    color: #6c757d; flex: 1;
+  }
+  .progress-dots {
+    display: flex; gap: .35rem;
+  }
+  .progress-dots .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #dee2e6; transition: background .3s;
+  }
+  .progress-dots .dot.active { background: var(--c1); }
+  .progress-dots .dot.done   { background: #adb5bd; }
+
+  .canvas-root {
+    padding: 1.25rem 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 900px;
+  }
+
+  /* ── campaign zone ───────────────────────────────────────────── */
+  .zone {
+    border-radius: 14px;
+    border: 2px solid transparent;
+    overflow: hidden; position: relative;
+  }
+
+  /* "closed" state — muted blue, no action possible on items */
+  .zone-closed {
+    background: var(--c1l);
+    border-color: var(--c1m);
+    opacity: .92;
+  }
+  .zone-closed .zone-header { background: rgba(79,114,196,.10); }
+  .zone-closed .zone-dot    { background: #8a9dc8; }
+  .zone-closed .gtile-top-bar { background: #8a9dc8; }
+
+  .zone-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .75rem 1rem .5rem;
+    border-radius: 12px 12px 0 0;
+  }
+  .zone-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .zone-title { font-weight: 700; font-size: .92rem; flex: 1; }
+  .zone-meta  { font-size: .75rem; color: #6c757d; }
+
+  .zone-body {
+    padding: .75rem 1rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .85rem;
+    align-items: flex-start;
+  }
+
+  /* ── dissolve animation for the zone ───────────────────────── */
+  /*
+   * Phase 1: tiles fly out (CSS class applied per-tile)
+   * Phase 2: zone body height collapses
+   * Phase 3: zone fades out and shrinks to the footnote pill
+   */
+  .zone-dissolving .zone-body {
+    overflow: hidden;
+    transition: max-height .55s cubic-bezier(.4,0,.2,1),
+                opacity     .55s ease,
+                padding     .55s ease;
+    max-height: var(--zone-body-height, 200px);
+    opacity: 1;
+  }
+  .zone-dissolving.collapse-body .zone-body {
+    max-height: 0 !important;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .zone-dissolving .zone-header {
+    transition: opacity .35s ease .1s;
+    opacity: 1;
+  }
+  .zone-dissolving.fade-header .zone-header {
+    opacity: 0;
+  }
+
+  /* the whole zone card shrinks to nothing after collapse */
+  .zone-wrap {
+    transition: max-height .4s cubic-bezier(.4,0,.2,1) .7s,
+                opacity     .35s ease .75s,
+                margin      .4s ease .7s;
+    max-height: 320px;
+    overflow: hidden;
+  }
+  .zone-wrap.shrink {
+    max-height: 0;
+    opacity: 0;
+    margin-top: -1.25rem;
+  }
+
+  /* ── tile fly-out animation ──────────────────────────────────── */
+  @keyframes tileEject {
+    0%   { opacity: 1; transform: none; }
+    30%  { opacity: 1; transform: translateY(-8px) scale(1.04); }
+    100% { opacity: 0;
+           transform: translateY(60px) scale(.9); }
+  }
+
+  .gtile.ejecting {
+    animation: tileEject .45s ease forwards;
+  }
+
+  /* stagger helper classes (assigned in JS) */
+  .gtile.eject-delay-0 { animation-delay:   0ms; }
+  .gtile.eject-delay-1 { animation-delay:  60ms; }
+  .gtile.eject-delay-2 { animation-delay: 120ms; }
+  .gtile.eject-delay-3 { animation-delay: 180ms; }
+  .gtile.eject-delay-4 { animation-delay: 240ms; }
+  .gtile.eject-delay-5 { animation-delay: 300ms; }
+
+  /* ── tile settle-in animation (appear in ambient) ────────────── */
+  @keyframes tileSettle {
+    0%   { opacity: 0; transform: translateY(-20px) scale(.92); }
+    70%  { opacity: 1; transform: translateY(2px)   scale(1.01); }
+    100% { opacity: 1; transform: none; }
+  }
+  .gtile.settling {
+    animation: tileSettle .4s ease forwards;
+  }
+  .gtile.settle-delay-0 { animation-delay:   0ms; }
+  .gtile.settle-delay-1 { animation-delay:  55ms; }
+  .gtile.settle-delay-2 { animation-delay: 110ms; }
+  .gtile.settle-delay-3 { animation-delay: 165ms; }
+  .gtile.settle-delay-4 { animation-delay: 220ms; }
+  .gtile.settle-delay-5 { animation-delay: 275ms; }
+
+  /* ── footnote pill appear ────────────────────────────────────── */
+  @keyframes pillAppear {
+    from { opacity: 0; transform: translateY(-6px) scale(.9); }
+    to   { opacity: 1; transform: none; }
+  }
+  .dissolved-footnote {
+    display: flex; align-items: center;
+    gap: .5rem; padding: .3rem .65rem;
+    background: #fff; border: 1px solid #dee2e6;
+    border-radius: 999px; font-size: .74rem; color: #6c757d;
+    width: fit-content;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    opacity: 0;
+  }
+  .dissolved-footnote.visible {
+    animation: pillAppear .4s ease forwards;
+  }
+  .dissolved-footnote .pill-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #adb5bd; flex-shrink: 0;
+  }
+  .dissolved-footnote .pill-name { font-weight: 600; color: #495057; }
+  .dissolved-footnote .pill-sep  { color: #ced4da; }
+  .dissolved-footnote .pill-reopen {
+    color: var(--c1); font-weight: 600;
+    cursor: pointer; white-space: nowrap; text-decoration: none;
+  }
+  .dissolved-footnote .pill-reopen:hover { text-decoration: underline; }
+
+  /* container row for pills — no height until pill appears */
+  .dissolved-bar {
+    display: flex; align-items: center;
+    gap: .75rem; flex-wrap: wrap; min-height: 0;
+  }
+
+  /* ── ambient area (no-campaign ground) ──────────────────────── */
+  /*
+   * Matches groups_campaigns_canvas_ambient.html exactly:
+   * no card, no border — tiles sit on the page background.
+   * Faint uppercase label floats above.
+   */
+  .ambient-section {
+    display: flex; flex-direction: column; gap: .4rem;
+  }
+  .ambient-label {
+    font-size: .72rem; text-transform: uppercase;
+    letter-spacing: .06em; color: #adb5bd; font-weight: 600;
+    padding: .1rem .25rem 0; user-select: none;
+    display: flex; align-items: center; gap: .45rem;
+  }
+  .ambient-label i { font-size: .85rem; }
+  .ambient-area {
+    display: flex; flex-wrap: wrap;
+    gap: .85rem; padding: .35rem .25rem .75rem;
+    min-height: 80px; align-items: flex-start;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: border-color .2s, background .2s;
+  }
+
+  /* ── tiles ──────────────────────────────────────────────────── */
+  .gtile {
+    width: 130px; border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.10);
+    cursor: default;
+    user-select: none; position: relative; overflow: hidden;
+  }
+  .gtile:hover { box-shadow: 0 4px 16px rgba(0,0,0,.16); }
+
+  /* tiles inside ambient area always get the grey top-bar */
+  .ambient-area .gtile .gtile-top-bar { background: #ced4da !important; }
+
+  .gtile-top-bar { height: 5px; border-radius: 10px 10px 0 0; }
+  .gtile-body    { padding: .5rem .6rem .55rem; }
+  .gtile-type {
+    font-size: .67rem; text-transform: uppercase;
+    letter-spacing: .04em; color: #8a8fa8; font-weight: 600;
+  }
+  .gtile-name { font-weight: 700; font-size: .84rem; line-height: 1.2; }
+  .gtile-slots { font-size: .75rem; color: #495057; margin-top: .3rem; }
+  .fill-bar-bg {
+    height: 4px; border-radius: 2px;
+    background: #e9ecef; margin-top: .35rem;
+  }
+  .fill-bar { height: 4px; border-radius: 2px; }
+  .fill-ok { background: #27a06b; }
+  .gtile-footer {
+    font-size: .7rem; color: #6c757d;
+    padding: 0 .6rem .45rem;
+    display: flex; justify-content: space-between;
+  }
+
+  /* propagation strip */
+  .propagation-strip {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; border-radius: 10px 0 0 10px;
+  }
+  .propagation-strip.off-roster {
+    background: repeating-linear-gradient(
+      to bottom,
+      #adb5bd 0, #adb5bd 4px,
+      transparent 4px, transparent 8px
+    );
+  }
+  .roster-chip {
+    display: inline-flex; align-items: center; gap: .15rem;
+    font-size: .62rem; font-weight: 700;
+    padding: .1rem .28rem; border-radius: 999px; white-space: nowrap;
+  }
+  .roster-chip.off {
+    background: #f0f1f4; color: #6c757d;
+    outline: 1px dashed #adb5bd;
+  }
+
+  /* annotation */
+  .mockup-annotation {
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 10px; padding: .65rem 1rem;
+    font-size: .78rem; color: #664d00;
+    display: flex; align-items: flex-start; gap: .6rem;
+  }
+  .mockup-annotation i { color: #997000; flex-shrink: 0; margin-top: .1rem; }
+
+  /* finalize button pulse highlight */
+  #finalizeBtn { transition: box-shadow .3s; }
+  #finalizeBtn.highlight {
+    box-shadow: 0 0 0 3px rgba(25,135,84,.4);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="subtitle">Lecture</div>
+    <h5>Analysis I &mdash; SS 2025/26</h5>
+  </div>
+</div>
+
+<!-- demo step bar -->
+<div class="demo-bar" id="demoBar">
+  <div class="progress-dots" id="progressDots">
+    <div class="dot active"
+         title="Initial — campaign closed, ready to finalize"></div>
+    <div class="dot" title="Materializing — tiles ejecting"></div>
+    <div class="dot" title="Zone card collapsing"></div>
+    <div class="dot" title="Tiles settling in ambient area"></div>
+    <div class="dot" title="Done — campaign dissolved"></div>
+  </div>
+  <div class="phase-label" id="phaseLabel">Campaign closed</div>
+  <div class="phase-desc"  id="phaseDesc">
+    Click &ldquo;Finalize &amp; Materialize&rdquo; to watch the
+    dissolution sequence.
+  </div>
+  <button class="btn btn-sm btn-outline-secondary ms-auto"
+          id="resetBtn" onclick="resetDemo()" disabled>
+    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+  </button>
+</div>
+
+
+<div class="canvas-root" id="canvasRoot">
+
+  <!-- annotation -->
+  <div class="mockup-annotation">
+    <i class="bi bi-info-circle-fill"></i>
+    <div>
+      <strong>Dissolution animation demo &mdash; finalize &amp;
+      materialize step.</strong>
+      The campaign is already <em>closed</em> (intake locked).
+      &ldquo;Fri 16&ndash;18&rdquo; was opted out and sits in the
+      ambient area. Click <em>Finalize &amp; Materialize</em> in the
+      campaign header: roster materialization writes confirmed
+      assignments &rarr; campaign zone dissolves &rarr; remaining tiles
+      join the ambient area &rarr; historical footnote remains.
+      Hit <em>Reset</em> to replay.
+    </div>
+  </div>
+
+
+  <!-- ── CAMPAIGN ZONE (closed state, awaiting finalize) ─────── -->
+  <div id="zoneWrap" class="zone-wrap">
+    <div class="zone zone-closed" id="zone-c1">
+      <div class="zone-header">
+        <span class="zone-dot"></span>
+        <span class="zone-title">Tutorial Registration SS 2025/26</span>
+        <span class="badge text-bg-secondary ms-1" id="c1-badge">
+          Closed
+        </span>
+        <span class="zone-meta ms-2" id="c1-meta">
+          &middot; closed <strong>Mar 15</strong>
+          &nbsp;&middot;&nbsp; 69 / 72 registered
+        </span>
+        <button class="btn btn-sm btn-outline-success ms-auto"
+          id="finalizeBtn"
+          style="font-size:.72rem;padding:.15rem .5rem"
+          onclick="startFinalize()">
+          <i class="bi bi-check2-circle me-1"></i>Finalize &amp; Materialize
+        </button>
+      </div>
+
+      <div class="zone-body" id="zbody-c1">
+
+        <div class="gtile" id="tile-mon">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Mon 10&ndash;12</div>
+            <div class="gtile-slots">24 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>Dr. Huber</span>
+            <span class="text-muted">full</span>
+          </div>
+        </div>
+
+        <div class="gtile" id="tile-wed">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Wed 14&ndash;16</div>
+            <div class="gtile-slots">24 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>M. Müller</span>
+            <span class="text-muted">full</span>
+          </div>
+        </div>
+
+        <div class="gtile" id="tile-thu">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Tutorial</div>
+            <div class="gtile-name">Thu 12&ndash;14</div>
+            <div class="gtile-slots">21 / 24</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:87%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>S. Klein</span>
+            <span class="text-muted">87 %</span>
+          </div>
+        </div>
+
+        <div class="gtile" id="tile-repeaters">
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body">
+            <div class="gtile-type">Cohort</div>
+            <div class="gtile-name">Repeaters</div>
+            <div class="gtile-slots">7 enrolled</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer">
+            <span>Auto-assign</span>
+            <span class="text-muted">7</span>
+          </div>
+        </div>
+
+        <div class="gtile" id="tile-planning">
+          <div class="propagation-strip off-roster"
+               title="propagate_to_lecture: false"></div>
+          <div class="gtile-top-bar"></div>
+          <div class="gtile-body" style="padding-left:.8rem">
+            <div class="gtile-type">Cohort</div>
+            <div class="gtile-name">Planning Cohort</div>
+            <div class="gtile-slots">0 enrolled</div>
+            <div class="fill-bar-bg">
+              <div class="fill-bar fill-ok" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="gtile-footer" style="padding-left:.8rem">
+            <span class="roster-chip off">
+              <i class="bi bi-person-slash"></i>off roster
+            </span>
+            <span class="text-muted">—</span>
+          </div>
+        </div>
+
+      </div><!-- zone-body -->
+    </div><!-- zone-c1 -->
+  </div><!-- zoneWrap -->
+
+
+  <!-- ── AMBIENT SECTION ───────────────────────────────────────── -->
+  <!--
+    Visible from page load — matches groups_campaigns_canvas_ambient.html.
+    No card, no border. The ambient-area IS the page background.
+    "Fri 16–18" is already here: it was opted out of the campaign
+    before finalization. Footnote pill injected by JS after dissolve.
+  -->
+  <div class="ambient-section" id="ambientSection">
+
+    <!-- dissolved-bar: empty at start; JS appends pill after finalize -->
+    <div class="dissolved-bar" id="dissolvedBar"></div>
+
+    <div class="ambient-label">
+      <i class="bi bi-layers"></i>
+      No campaign &mdash; self-enrollment
+      <span style="font-weight:400;text-transform:none;
+                   letter-spacing:0;font-size:.7rem;color:#c0c4d0">
+        (groups opted out of campaign)
+      </span>
+    </div>
+
+    <div class="ambient-area" id="ambientTiles">
+
+      <!-- Fri 16–18: already opted out before finalization -->
+      <div class="gtile" id="tile-fri">
+        <div class="gtile-top-bar"></div>
+        <div class="gtile-body">
+          <div class="gtile-type">Tutorial</div>
+          <div class="gtile-name">Fri 16&ndash;18</div>
+          <div class="gtile-slots">18 / 24</div>
+          <div class="fill-bar-bg">
+            <div class="fill-bar fill-ok" style="width:75%"></div>
+          </div>
+        </div>
+        <div class="gtile-footer">
+          <span>L. Bauer</span>
+          <span class="text-muted">75 %</span>
+        </div>
+      </div>
+
+    </div><!-- ambient-area -->
+  </div><!-- ambientSection -->
+
+</div><!-- canvas-root -->
+
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+/*
+ * Finalize & Dissolve sequence — 5 phases:
+ *
+ *  0  Initial: campaign closed (intake locked), one tile already ambient
+ *  1  "Finalize & Materialize" clicked → brief "Materializing…" beat
+ *  2  Tiles eject from zone (staggered)
+ *  3  Zone body collapses; zone card wrapper shrinks away
+ *  4  Tiles settle in ambient area; footnote pill appears; done
+ */
+
+const TILE_IDS = [
+  "tile-mon", "tile-wed", "tile-thu",
+  "tile-repeaters", "tile-planning"
+];
+
+let phase = 0;
+
+function setPhase(n, label, desc) {
+  phase = n;
+  document.getElementById("phaseLabel").textContent = label;
+  document.getElementById("phaseDesc").textContent  = desc;
+  const dots = document.querySelectorAll(".progress-dots .dot");
+  dots.forEach((d, i) => {
+    d.classList.remove("active", "done");
+    if (i < n)  d.classList.add("done");
+    if (i === n) d.classList.add("active");
+  });
+}
+
+function startFinalize() {
+  if (phase !== 0) return;
+  document.getElementById("finalizeBtn").disabled = true;
+  document.getElementById("resetBtn").disabled    = false;
+
+  setPhase(1, "Materializing…",
+    "Confirmed assignments are being written to domain rosters.");
+
+  /* brief visual beat: badge → "Materializing…", button highlight */
+  const badge = document.getElementById("c1-badge");
+  badge.textContent = "Materializing…";
+  badge.className   = "badge text-bg-warning ms-1";
+  document.getElementById("c1-meta").textContent =
+    "· writing confirmed assignments to rosters…";
+  document.getElementById("finalizeBtn").classList.add("highlight");
+
+  setTimeout(ejectTiles, 650);
+}
+
+function ejectTiles() {
+  setPhase(2, "Dissolving",
+    "Materialization complete — campaign tiles releasing to ambient area.");
+
+  document.getElementById("finalizeBtn").classList.remove("highlight");
+
+  const zone = document.getElementById("zone-c1");
+  const body = document.getElementById("zbody-c1");
+  zone.classList.add("zone-dissolving");
+
+  const bodyH = body.getBoundingClientRect().height;
+  zone.style.setProperty("--zone-body-height", bodyH + "px");
+
+  TILE_IDS.forEach((id, i) => {
+    document.getElementById(id)
+      .classList.add("ejecting", `eject-delay-${i}`);
+  });
+
+  /* last stagger delay (4 × 55ms) + animation duration (440ms) */
+  setTimeout(collapseZone, 220 + 440 - 80);
+}
+
+function collapseZone() {
+  setPhase(3, "Zone collapsing",
+    "Campaign card folding away — roster data is preserved.");
+
+  const zone = document.getElementById("zone-c1");
+  zone.classList.add("collapse-body");
+  setTimeout(() => zone.classList.add("fade-header"), 120);
+
+  setTimeout(() => {
+    document.getElementById("zoneWrap").classList.add("shrink");
+    setTimeout(settleInAmbient, 480);
+  }, 580);
+}
+
+function settleInAmbient() {
+  setPhase(4, "Settling",
+    "Tiles re-appear in the ambient area; campaign now a footnote.");
+
+  const tilesArea = document.getElementById("ambientTiles");
+
+  TILE_IDS.forEach((id, i) => {
+    const tile = document.getElementById(id);
+    tile.classList.remove("ejecting");
+    for (let k = 0; k < 6; k++) tile.classList.remove(`eject-delay-${k}`);
+    tile.style.opacity = "0";
+    tilesArea.appendChild(tile);
+
+    setTimeout(() => {
+      tile.style.opacity = "";
+      tile.classList.add("settling", `settle-delay-${i}`);
+    }, 30);
+  });
+
+  const lastSettle = 220 + 400;
+  setTimeout(showFootnote, lastSettle - 150);
+  setTimeout(finalize,     lastSettle + 50);
+}
+
+function showFootnote() {
+  const bar  = document.getElementById("dissolvedBar");
+  const pill = document.createElement("span");
+  pill.className = "dissolved-footnote";
+  pill.innerHTML =
+    `<span class="pill-dot"></span>` +
+    `<span class="pill-name">Tutorial Registration SS 2025/26</span>` +
+    `<span class="pill-sep">&middot;</span>` +
+    `<span>closed Mar 15</span>` +
+    `<span class="pill-sep">&middot;</span>` +
+    `<span>69 / 72 enrolled</span>` +
+    `<span class="pill-sep">&middot;</span>` +
+    `<a class="pill-reopen" onclick="showReopen()" href="#">` +
+      `&#8617; Reopen</a>`;
+  bar.appendChild(pill);
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => pill.classList.add("visible"))
+  );
+}
+
+function finalize() {
+  setPhase(4, "Done — dissolved",
+    "Campaign finalized & dissolved. Data preserved; tiles are self-enrolled.");
+
+  TILE_IDS.forEach(id => {
+    const tile = document.getElementById(id);
+    tile.classList.remove("settling");
+    for (let k = 0; k < 6; k++) tile.classList.remove(`settle-delay-${k}`);
+  });
+
+  const wrap = document.getElementById("zoneWrap");
+  if (wrap) wrap.remove();
+}
+
+function resetDemo() { window.location.reload(); }
+
+function showReopen() {
+  alert("Reopen campaign — not wired in this mockup.\n\n" +
+        "Would restore the campaign zone card and allow the teacher\n" +
+        "to reopen registration (e.g. to correct an assignment error).");
+}
+</script>
+</body>
+</html>

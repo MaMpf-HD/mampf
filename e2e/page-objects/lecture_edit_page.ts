@@ -16,7 +16,7 @@ export class LectureEditPage {
     await this.page.goto(this.link);
   }
 
-  get campaignsTab() {
-    return this.page.getByRole("tab", { name: "Registrations" });
+  get groupsTab() {
+    return this.page.getByRole("tab", { name: "Groups" });
   }
 }

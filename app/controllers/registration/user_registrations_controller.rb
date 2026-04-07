@@ -26,18 +26,32 @@ module Registration
       def render_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
 
-        streams << turbo_stream.update("registrations-tab-count",
-                                       @campaign.user_registrations.distinct.count(:user_id))
-
-        if params[:source] == "allocation"
+        if ["allocation", "allocation_embedded"].include?(params[:source])
           load_allocation_data
-          streams << turbo_stream.replace("allocation-dashboard",
-                                          partial: "registration/allocations/dashboard",
-                                          locals: { frame_id: params[:frame_id] })
-        elsif params[:source] == "registrations"
-          streams << turbo_stream.replace("user-registrations-list",
-                                          partial: "registration/user_registrations/index",
-                                          locals: { campaign: @campaign })
+          if params[:source] == "allocation_embedded"
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard",
+                                            locals: {
+                                              campaign: @campaign,
+                                              dashboard: @dashboard,
+                                              embedded: true
+                                            })
+            streams << turbo_stream.replace(
+              helpers.campaign_actions_id(@campaign),
+              partial: "registration/campaigns/card_body_actions",
+              locals: {
+                campaign: @campaign,
+                has_violators: @dashboard.policy_violations.present?
+              }
+            )
+          else
+            streams << turbo_stream.replace("allocation-dashboard",
+                                            partial: "registration/allocations/dashboard",
+                                            locals: {
+                                              campaign: @campaign,
+                                              dashboard: @dashboard
+                                            })
+          end
         end
 
         render turbo_stream: streams

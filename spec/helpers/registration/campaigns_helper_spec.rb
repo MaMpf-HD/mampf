@@ -16,74 +16,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#item_stats_label" do
-    it "returns registrations for FCFS" do
-      campaign = build(:registration_campaign, :first_come_first_served)
-      expect(helper.item_stats_label(campaign))
-        .to eq(I18n.t("registration.item.columns.registrations"))
-    end
-
-    it "returns registrations for processing" do
-      campaign = build(:registration_campaign, :processing)
-      expect(helper.item_stats_label(campaign))
-        .to eq(I18n.t("registration.item.columns.registrations"))
-    end
-
-    it "returns registrations for completed" do
-      campaign = build(:registration_campaign, :completed)
-      expect(helper.item_stats_label(campaign))
-        .to eq(I18n.t("registration.item.columns.registrations"))
-    end
-
-    it "returns first choice for preference based open/closed" do
-      campaign = build(:registration_campaign, :preference_based, status: :open)
-      expect(helper.item_stats_label(campaign))
-        .to eq(I18n.t("registration.item.columns.first_choice"))
-    end
-  end
-
-  describe "#item_stats_count" do
-    let(:item) { create(:registration_item) }
-    let(:campaign) { item.registration_campaign }
-
-    context "when campaign is FCFS" do
-      before do
-        campaign.update(allocation_mode: "first_come_first_served")
-        allow(item).to receive(:confirmed_registrations_count).and_return(5)
-      end
-
-      it "returns confirmed registrations count" do
-        expect(helper.item_stats_count(item)).to eq(5)
-      end
-    end
-
-    context "when campaign is preference based" do
-      before { campaign.update(allocation_mode: "preference_based") }
-
-      context "when status is open" do
-        before do
-          campaign.update(status: "open")
-          allow(item).to receive(:first_choice_count).and_return(3)
-        end
-
-        it "returns first choice count" do
-          expect(helper.item_stats_count(item)).to eq(3)
-        end
-      end
-
-      context "when status is completed" do
-        before do
-          campaign.update(status: "completed")
-          allow(item).to receive(:confirmed_registrations_count).and_return(7)
-        end
-
-        it "returns confirmed registrations count" do
-          expect(helper.item_stats_count(item)).to eq(7)
-        end
-      end
-    end
-  end
-
   describe "#sorted_preference_counts" do
     it "sorts ranks correctly with forced last" do
       stats = double(preference_counts: { 2 => 10, :forced => 5, 1 => 20 })
@@ -101,25 +33,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#show_item_capacity_progress?" do
-    let(:campaign) { build(:registration_campaign, :first_come_first_served) }
-    let(:item) { build(:registration_item, registration_campaign: campaign, capacity: 10) }
-
-    it "returns true for FCFS with capacity" do
-      expect(helper.show_item_capacity_progress?(item)).to be(true)
-    end
-
-    it "returns false for FCFS without capacity" do
-      item.capacity = 0
-      expect(helper.show_item_capacity_progress?(item)).to be(false)
-    end
-
-    it "returns false for preference based" do
-      campaign.allocation_mode = :preference_based
-      expect(helper.show_item_capacity_progress?(item)).to be(false)
-    end
-  end
-
   describe "#campaign_close_confirmation" do
     it "returns the correct confirmation message" do
       campaign = build(:registration_campaign, registration_deadline: 1.day.from_now)
@@ -129,6 +42,63 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       campaign.registration_deadline = 1.day.ago
       expect(helper.campaign_close_confirmation(campaign))
         .to eq(I18n.t("registration.campaign.confirmations.close"))
+    end
+  end
+
+  describe "#no_campaign_registerables" do
+    let(:lecture) { create(:lecture) }
+
+    it "includes cohorts regardless of skip_campaigns" do
+      cohort_included = create(:cohort, context: lecture, title: "A cohort")
+      cohort_excluded_before = create(:cohort,
+                                      context: lecture,
+                                      title: "B cohort",
+                                      skip_campaigns: false)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(cohort_included)
+      expect(result).to include(cohort_excluded_before)
+    end
+
+    it "keeps tutorials filtered by skip_campaigns" do
+      tutorial_visible = create(:tutorial,
+                                lecture: lecture,
+                                title: "A tutorial",
+                                skip_campaigns: true)
+      tutorial_in_campaign = create(:tutorial,
+                                    lecture: lecture,
+                                    title: "B tutorial",
+                                    skip_campaigns: false)
+      campaign = create(:registration_campaign,
+                        :open,
+                        campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial_in_campaign)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(tutorial_visible)
+      expect(result).not_to include(tutorial_in_campaign)
+      expect(result.count { |entry| entry.is_a?(Tutorial) }).to eq(1)
+    end
+
+    it "includes tutorials from completed campaigns" do
+      tutorial = create(:tutorial,
+                        lecture: lecture,
+                        title: "C tutorial",
+                        skip_campaigns: false)
+      campaign = create(:registration_campaign,
+                        :completed,
+                        campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+
+      result = helper.no_campaign_registerables(lecture)
+
+      expect(result).to include(tutorial)
     end
   end
 

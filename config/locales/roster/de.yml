@@ -1,7 +1,6 @@
 de:
   roster:
     title: 'Teilnehmende'
-    participants: 'Teilnehmende'
     status: 'Status'
     group_category:
       tutorial: "Tutorium"
@@ -69,24 +68,6 @@ de:
         title: "Verwaltung"
         description_html: "Verwalten Sie Ihre Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
         link_text: "Verwaltung"
-    management_help:
-      title: "Verwaltung"
-      toggle: "Verwaltung"
-      intro: "Informationen zu Sperrzeiten und flexiblen Gruppeneinstellungen."
-      phase1:
-        title: "Sperrzeiten"
-        with_campaign: "Mit Anmeldeverfahren"
-        without_campaign: "Ohne Anmeldeverfahren"
-        campaigns_during: "Studierende hinzufügen/entfernen: Während Verfahren gesperrt"
-        campaigns_after: "Studierende hinzufügen/entfernen: Nach Abschluss entsperrt"
-        direct_always: "Studierende hinzufügen/entfernen: Immer möglich"
-      phase2:
-        title: "Einstellungen & Ausnahmen"
-        description: "Nach Abschluss der Verfahren haben beide Wege dieselben Optionen:"
-        options:
-          - "Manuelle Anpassungen: Einzelne Studierende hinzufügen oder entfernen"
-          - "Selbsteinschreibung: Studierende wählen eigene Gruppe aus verfügbaren Plätzen"
-          - "Zuteilungen nach Bedarf feinabstimmen"
     roster_help:
       title: "Einschreibemethoden"
       toggle: "Einschreibemethoden"
@@ -157,15 +138,16 @@ de:
       confirm_remove: 'Sind Sie sicher, dass Sie diesen Studierenden entfernen möchten?'
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
+      search: 'Suchen'
+      filter_placeholder: 'Nach Name oder E-Mail filtern'
+    drag:
+      choice_title: 'Aktion für'
+      move: 'Verschieben'
+      add_only: 'Hinzufügen'
     cohorts:
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
-      purpose_label: "Zweck"
-      purposes:
-        enrollment: "Sammelgruppe"
-        planning: "Planung"
-        general: "Allgemein"
       with_lecture_enrollment_title: "Mit Einschreibung"
       with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
       without_lecture_enrollment_title: "Ohne Einschreibung"
@@ -185,8 +167,9 @@ de:
         other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Sie bestimmen, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktivieren Sie dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
         propagate_readonly_warning: "⚠️ Diese Einstellung kann nach der Erstellung nicht mehr geändert werden."
-        semantic_purpose_label: "Semantischer Zweck (optional)"
-        semantic_purpose_explanation: "Dies dient nur zur besseren Organisation und Filterung. Die Funktionalität der Gruppe ändert sich nicht."
+        with_enrollment_label: "Mit Einschreibung?"
+        with_enrollment_explanation: "Wenn aktiviert, werden Mitglieder automatisch in die Veranstaltung eingeschrieben. Deaktivieren Sie dies für Wartelisten oder Planungsgruppen."
+        with_enrollment_checkbox: "Automatische Veranstaltungseinschreibung aktivieren"
         enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
         planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
         general_with_enrollment: "Z.B. für Sonderprojekte oder Ergänzungsgruppen."
@@ -195,8 +178,10 @@ de:
         planning_short: "Bedarfserhebung vor Semesterbeginn."
         enrollment_warning: "⚠️ Diese Veranstaltung hat bereits Tutorien/Vorträge."
     details:
+      select_group: 'Gruppe auswählen, um Teilnehmende zu verwalten'
       participants: 'Teilnehmende'
       empty: 'Keine Teilnehmenden in dieser Gruppe.'
+      empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
     candidates:
       title: 'Unzugeteilte Anmeldungen'
       help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
@@ -228,6 +213,11 @@ de:
         remove_only: 'Nur Austragen'
         add_and_remove: 'Ein- & Austragen'
       label: 'Selbsteinschreibung'
+      apply_to_all_free_groups: 'Für alle Gruppen übernehmen'
+      confirm_bulk_update: >-
+        Dies ändert den Selbsteinschreibungsmodus für alle
+        Gruppen ohne Anmeldeverfahren in dieser Veranstaltung
+        auf '%{mode}'. Fortfahren?
     policy_bypass_warning:
       title: "Warnung zur Richtlinienumgehung"
       message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
@@ -267,7 +257,6 @@ de:
       talk_content_html: "Nutzen Sie den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Sie können sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
-      purpose_change_constrained_by_propagate: "Die verfügbaren Typen hängen davon ab, ob Studierende in die Teilnehmerliste übernommen werden. Diese Einstellung kann nicht geändert werden."
       cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
       cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
       cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."

@@ -1,5 +1,7 @@
 # TutorialsController
 class TutorialsController < ApplicationController
+  include ::RegistrationCampaignContext
+
   helper RosterHelper
 
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
@@ -93,10 +95,23 @@ class TutorialsController < ApplicationController
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
+    @tutorial.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
     set_tutorial_locale
-    flash.now[:notice] = t("controllers.tutorials.created") if @tutorial.save
+
+    persisted = false
+    Tutorial.transaction do
+      persisted = @tutorial.save
+      raise(ActiveRecord::Rollback) unless persisted
+
+      persisted = apply_registration_context(registerable: @tutorial,
+                                             lecture: @lecture,
+                                             error_target: @tutorial)
+      raise(ActiveRecord::Rollback) unless persisted
+    end
+
+    flash.now[:notice] = t("controllers.tutorials.created") if persisted
     @errors = @tutorial.errors
 
     respond_to do |format|
@@ -107,8 +122,8 @@ class TutorialsController < ApplicationController
       format.turbo_stream do
         group_type = parse_group_type
 
-        streams = create_turbo_streams(group_type)
-        render turbo_stream: streams, status: @tutorial.persisted? ? :ok : :unprocessable_content
+        streams = create_turbo_streams(group_type, persisted)
+        render turbo_stream: streams, status: persisted ? :ok : :unprocessable_content
       end
     end
   end
@@ -128,12 +143,11 @@ class TutorialsController < ApplicationController
                           "TutorialsController#update")
       end
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
 
         if @tutorial.errors.empty?
-          streams.concat(Rosters::StreamService.new(@lecture, view_context)
-          .item_updated(@tutorial, group_type: group_type, flash: flash))
+          streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@tutorial.lecture)
         else
           streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
@@ -160,10 +174,9 @@ class TutorialsController < ApplicationController
                           "TutorialsController#destroy")
       end
       format.turbo_stream do
-        group_type = parse_group_type
-        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
-          group_type: group_type, flash: flash
-        )
+        parse_group_type
+        streams = []
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@tutorial.lecture)
 
         render turbo_stream: streams
@@ -261,7 +274,8 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, :capacity, { tutor_ids: [] }])
+      params.expect(tutorial: [:title, :lecture_id, :capacity, :location,
+                               { tutor_ids: [] }])
     end
 
     def bulk_params
@@ -304,12 +318,11 @@ class TutorialsController < ApplicationController
       end
     end
 
-    def create_turbo_streams(group_type)
+    def create_turbo_streams(_group_type, saved)
       streams = []
-      service = Rosters::StreamService.new(@lecture, view_context)
 
-      if @tutorial.persisted?
-        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
+      if saved
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
@@ -320,5 +333,9 @@ class TutorialsController < ApplicationController
       end
 
       streams
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

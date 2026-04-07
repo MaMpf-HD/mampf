@@ -1,6 +1,8 @@
 namespace :solver do
   desc "Generate a tutorial campaign with specific capacities"
   task create_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating solver campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -73,6 +75,8 @@ namespace :solver do
 
   desc "Generate user registrations for the solver campaign"
   task create_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Solver Test Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_campaign first."
@@ -131,6 +135,8 @@ namespace :solver do
 
   desc "Generate a friendly campaign with ample capacity"
   task create_friendly_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating friendly solver campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -198,6 +204,8 @@ namespace :solver do
 
   desc "Generate friendly registrations for the friendly campaign"
   task create_friendly_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Friendly Solver Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_friendly_campaign first."
@@ -247,6 +255,8 @@ namespace :solver do
 
   desc "Generate a mixed FCFS campaign (tutorials + cohorts) with email policy"
   task create_mixed_fcfs_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating Mixed FCFS campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -277,8 +287,8 @@ namespace :solver do
                         registration_campaign: campaign,
                         kind: :institutional_email,
                         config: { "allowed_domains" => "example.com" },
-                        phase: :both)
-      puts "Added institutional email policy (example.com)"
+                        phase: :finalization)
+      puts "Added institutional email policy (example.com, finalization only)"
     end
 
     # Create FCFS Tutorials (disjoint from other campaigns)
@@ -318,8 +328,7 @@ namespace :solver do
                                     context: lecture,
                                     title: repeaters_title,
                                     capacity: 15,
-                                    propagate_to_lecture: true,
-                                    purpose: :general)
+                                    propagate_to_lecture: true)
       puts "Created #{repeaters_title} cohort (propagates to lecture)"
     end
 
@@ -341,8 +350,7 @@ namespace :solver do
                                    context: lecture,
                                    title: waitlist_title,
                                    capacity: 20,
-                                   propagate_to_lecture: false,
-                                   purpose: :general)
+                                   propagate_to_lecture: false)
       puts "Created #{waitlist_title} cohort (does NOT propagate to lecture)"
     end
 
@@ -361,7 +369,9 @@ namespace :solver do
 
   desc "Generate registrations for mixed FCFS campaign"
   task create_mixed_fcfs_registrations: :environment do
-    campaign = Registration::Campaign.where(description: "FCFS Campaign").last
+    abort "Cannot run in production!" if Rails.env.production?
+
+    campaign = Registration::Campaign.where(description: "Cohort FCFS Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_mixed_fcfs_campaign first."
       exit
@@ -407,8 +417,11 @@ namespace :solver do
     repeaters_count = 0
     waitlist_count = 0
 
+    violator_indices = [2, 7, 14, 19, 33].to_set
+
     num_users.times do |i|
-      email = "cohort_user_#{i}@example.com"
+      domain = violator_indices.include?(i) ? "external.org" : "example.com"
+      email = "cohort_user_#{i}@#{domain}"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user, email: email, name: "Cohort User #{i}")
 
@@ -455,6 +468,8 @@ namespace :solver do
 
   desc "Generate a two-stage seminar campaign (Planning -> Allocation)"
   task create_two_stage_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating two-stage seminar campaign..."
 
     teacher = User.find_by(email: "teacher@mampf.edu")
@@ -500,11 +515,9 @@ namespace :solver do
                                     description: "Stage 1: Planning",
                                     registration_deadline: 1.week.ago)
 
-      # Create a planning cohort (purpose: planning, propagate_to_lecture: false)
       planning_cohort = FactoryBot.create(:cohort,
                                           context: seminar,
                                           title: "Interest Survey",
-                                          purpose: :planning,
                                           propagate_to_lecture: false,
                                           capacity: nil)
 
@@ -723,6 +736,8 @@ namespace :solver do
 
   desc "Generate an overbooked preference-based campaign for cohorts"
   task create_cohort_preference_campaign: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     puts "Creating Cohort Preference campaign..."
 
     lecture = Lecture.find_by(id: 1)
@@ -779,6 +794,8 @@ namespace :solver do
 
   desc "Generate registrations for Cohort Preference campaign"
   task create_cohort_preference_registrations: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
     campaign = Registration::Campaign.where(description: "Cohort Preference Campaign").last
     unless campaign
       puts "Campaign not found. Run solver:create_cohort_preference_campaign first."

@@ -282,12 +282,6 @@ RSpec.describe(Talk, type: :model) do
     end
   end
 
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:valid_talk) }
-
-    it_behaves_like "a registerable model"
-  end
-
   describe "#materialize_allocation!" do
     let(:lecture) { create(:seminar) }
     let(:talk) { create(:talk, lecture: lecture) }

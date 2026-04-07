@@ -6,7 +6,7 @@ class CampaignStatusWorker
     Registration::Campaign.where(status: :open)
                           .where(registration_deadline: ..Time.current)
                           .find_each do |campaign|
-      campaign.update(status: :closed)
+      campaign.update!(status: :closed)
     end
   end
 end

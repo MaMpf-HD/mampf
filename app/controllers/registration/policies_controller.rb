@@ -3,7 +3,8 @@ module Registration
     before_action :set_campaign
     before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
-    authorize_resource class: "Registration::Policy", except: [:new, :create]
+    authorize_resource class: "Registration::Policy",
+                       except: [:new, :create, :reorder]
 
     def current_ability
       @current_ability ||= RegistrationPolicyAbility.new(current_user)
@@ -52,6 +53,19 @@ module Registration
       move(:lower)
     end
 
+    def reorder
+      authorize! :update, @campaign.registration_policies.build
+      policy_ids = params[:policy_ids]
+      return head(:bad_request) unless policy_ids.is_a?(Array)
+
+      Registration::Policy.transaction do
+        policy_ids.each_with_index do |id, index|
+          @campaign.registration_policies.find(id).set_list_position(index + 1)
+        end
+      end
+      respond_with_success(nil)
+    end
+
     private
 
       def set_campaign
@@ -66,9 +80,12 @@ module Registration
         @policy = @campaign.registration_policies.find_by(id: params[:id])
         return if @policy
 
-        respond_with_error(t("registration.policy.not_found"),
-                           redirect_path: registration_campaign_path(@campaign,
-                                                                     anchor: "policies-tab"))
+        respond_with_error(
+          t("registration.policy.not_found"),
+          redirect_path: registration_campaign_path(
+            @campaign, anchor: "policies-tab"
+          )
+        )
       end
 
       def set_locale
@@ -91,8 +108,7 @@ module Registration
           format.html do
             redirect_to registration_campaign_path(
               @campaign, anchor: "policies-tab"
-            ),
-                        notice: message
+            ), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message if message
@@ -100,16 +116,16 @@ module Registration
               render_exam_update("exams/policies")
             else
               render turbo_stream: [
-                turbo_stream.update(
-                  target_frame_id,
-                  partial:
-                    "registration/campaigns/card_body_show",
-                  locals: { campaign: @campaign,
-                            tab: "policies" }
-                ),
+                turbo_stream.update("campaigns_container",
+                                    partial: "registration/campaigns/card_body_index",
+                                    locals: {
+                                      lecture: @campaign.campaignable,
+                                      expanded_campaign_id: @campaign.id
+                                    }),
                 stream_flash
               ].compact
             end
+
           end
         end
       end
@@ -117,8 +133,10 @@ module Registration
       def respond_with_error(message, redirect_path: nil)
         respond_to do |format|
           format.html do
-            path = redirect_path || registration_campaign_path(@campaign,
-                                                               anchor: "policies-tab")
+            path = redirect_path ||
+                   registration_campaign_path(
+                     @campaign, anchor: "policies-tab"
+                   )
             redirect_to path, alert: message
           end
           format.turbo_stream do

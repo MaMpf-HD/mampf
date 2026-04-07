@@ -42,7 +42,9 @@ module Registration
         }
       end
 
-      mapped_items.sort_by { |data| data[:item].title }
+      mapped_items.sort_by do |data|
+        Rosters::RegisterableOrdering.item_sort_key(data[:item])
+      end
     end
 
     private

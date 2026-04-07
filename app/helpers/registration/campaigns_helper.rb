@@ -1,5 +1,9 @@
 module Registration
   module CampaignsHelper
+    def email_domain(email)
+      email.to_s.split("@").last
+    end
+
     def campaign_badge_color(campaign)
       {
         draft: "secondary",
@@ -10,21 +14,38 @@ module Registration
       }[campaign.status.to_sym]
     end
 
-    def campaign_type_badge(campaign)
-      return unless campaign.exam_campaign?
-
-      content_tag(:span, class: "badge bg-info ms-2") do
-        content_tag(:i, "", class: "bi bi-clipboard-check me-1") +
-          t("registration.campaign.type.exam")
-      end
+    def campaign_header_frame_id(campaign)
+      "campaign_header_frame_#{campaign.id}"
     end
 
-    def item_stats_label(campaign)
-      if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
-        t("registration.item.columns.registrations")
-      else
-        t("registration.item.columns.first_choice")
+    def campaign_actions_id(campaign)
+      "campaign_actions_#{campaign.id}"
+    end
+
+    def campaign_policy_form_frame_id(campaign)
+      "policy_form_#{campaign.id}"
+    end
+
+    def policy_kinds_summary(campaign)
+      kinds = campaign.registration_policies.order(:position).map do |p|
+        t("registration.policy.kinds.#{p.kind}")
+    def campaign_header_frame_id(campaign)
+      "campaign_header_frame_#{campaign.id}"
+    end
+
+    def campaign_actions_id(campaign)
+      "campaign_actions_#{campaign.id}"
+    end
+
+    def campaign_policy_form_frame_id(campaign)
+      "policy_form_#{campaign.id}"
+    end
+
+    def policy_kinds_summary(campaign)
+      kinds = campaign.registration_policies.order(:position).map do |p|
+        t("registration.policy.kinds.#{p.kind}")
       end
+      kinds.join(", ")
     end
 
     def sorted_preference_counts(stats)
@@ -48,47 +69,66 @@ module Registration
       end
     end
 
-    def utilization_bar_class(percentage)
-      if percentage >= 100
-        "bg-danger"
-      elsif percentage >= 80
-        "bg-warning"
-      else
-        "bg-success"
-      end
-    end
-
-    def item_stats_count(item)
-      campaign = item.registration_campaign
-      if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
-        item.confirmed_registrations_count
-      else
-        item.first_choice_count
-      end
-    end
-
-    def show_item_capacity_progress?(item)
-      campaign = item.registration_campaign
-      return false unless item.capacity.to_i.positive?
-
-      campaign.first_come_first_served? || campaign.completed?
-    end
-
     def campaign_close_confirmation(campaign)
       key = campaign.registration_deadline > Time.current ? "close_early" : "close"
       t("registration.campaign.confirmations.#{key}")
     end
 
-    def finalize_campaign_button(campaign, params: {})
+    def no_campaign_registerables(lecture)
+      Rosters::NoCampaignRegisterablesQuery.new(lecture).call
+    end
+
+    def finalize_campaign_button(campaign, size: nil, disabled: false, params: {})
+      classes = ["btn", "btn-danger", size].compact.join(" ")
+
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
                 method: :patch,
                 params: params,
-                data: { confirm: t("registration.campaign.confirmations.finalize") },
-                class: "btn btn-danger")
+                form: {
+                  data: {
+                    controller: "campaign-dissolve",
+                    "campaign-dissolve-confirm-message-value":
+                      t("registration.campaign.confirmations.finalize"),
+                    "campaign-dissolve-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    "campaign-dissolve-campaign-id-value": campaign.id,
+                    action: "submit->campaign-dissolve#submit",
+                    turbo_stream: true
+                  }
+                },
+                class: classes,
+                disabled: disabled)
     end
 
-    def allocate_campaign_button(campaign, params: {})
+    def allocate_campaign_button(campaign, size: nil, params: {})
+    def no_campaign_registerables(lecture)
+      Rosters::NoCampaignRegisterablesQuery.new(lecture).call
+    end
+
+    def finalize_campaign_button(campaign, size: nil, disabled: false)
+      classes = ["btn", "btn-danger", size].compact.join(" ")
+
+      button_to(t("registration.campaign.actions.finalize"),
+                finalize_registration_campaign_allocation_path(campaign),
+                method: :patch,
+                form: {
+                  data: {
+                    controller: "campaign-dissolve",
+                    "campaign-dissolve-confirm-message-value":
+                      t("registration.campaign.confirmations.finalize"),
+                    "campaign-dissolve-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    "campaign-dissolve-campaign-id-value": campaign.id,
+                    action: "submit->campaign-dissolve#submit",
+                    turbo_stream: true
+                  }
+                },
+                class: classes,
+                disabled: disabled)
+    end
+
+    def allocate_campaign_button(campaign, size: nil)
       has_allocation = campaign.last_allocation_calculated_at.present?
       label = if has_allocation
         t("registration.campaign.actions.reallocate")
@@ -96,10 +136,15 @@ module Registration
         t("registration.campaign.actions.allocate")
       end
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
+      classes = ["btn", "btn-primary", size].compact.join(" ")
+
+      form_data = { turbo_stream: true }
+      form_data[:turbo_confirm] = confirm if confirm
 
       button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
+<<<<<<< HEAD
                 params: params,
                 class: "btn btn-primary",
                 data: { confirm: confirm, turbo_stream: true })
@@ -170,5 +215,9 @@ module Registration
           "bg-success"
         end
       end
+=======
+                class: classes,
+                form: { data: form_data })
+    end
   end
 end

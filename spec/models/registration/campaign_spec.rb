@@ -92,8 +92,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "validates prerequisites are not draft if open" do
-      prereq = create(:registration_campaign, :draft)
-      campaign = create(:registration_campaign, :draft)
+      prereq = create(:registration_campaign)
+      campaign = create(:registration_campaign)
       create(:registration_policy, :prerequisite_campaign,
              registration_campaign: campaign,
              config: { "prerequisite_campaign_id" => prereq.id })
@@ -159,8 +159,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "prevents deletion if referenced as prerequisite" do
-      prereq = create(:registration_campaign, :draft)
-      dependent = create(:registration_campaign, :draft)
+      prereq = create(:registration_campaign)
+      dependent = create(:registration_campaign)
       create(:registration_policy, :prerequisite_campaign,
              registration_campaign: dependent,
              config: { "prerequisite_campaign_id" => prereq.id })
@@ -187,7 +187,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "allows changing allocation_mode if draft" do
-      draft_campaign = create(:registration_campaign, :draft)
+      draft_campaign = create(:registration_campaign)
       draft_campaign.allocation_mode = :preference_based
       expect(draft_campaign).to be_valid
     end
@@ -424,6 +424,85 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
         campaign.finalize!
       end
+    end
+  end
+
+  describe "#reset_allocation_results!" do
+    let(:campaign) do
+      create(:registration_campaign, :with_items, :preference_based,
+             status: :processing, last_allocation_calculated_at: 1.hour.ago)
+    end
+    let(:item1) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+    let(:user) { create(:confirmed_user) }
+
+    it "resets all registration statuses to pending" do
+      create(:registration_user_registration,
+             registration_campaign: campaign, registration_item: item1,
+             user: user, status: :confirmed, preference_rank: 1)
+
+      campaign.reset_allocation_results!
+
+      expect(campaign.user_registrations.reload).to all(be_pending)
+    end
+
+    it "deletes forced assignment records (rank nil) when user has other registrations" do
+      create(:registration_user_registration,
+             registration_campaign: campaign, registration_item: item1,
+             user: user, status: :confirmed, preference_rank: 1)
+      forced = create(:registration_user_registration,
+                      registration_campaign: campaign, registration_item: item2,
+                      user: user, status: :confirmed, preference_rank: nil)
+
+      campaign.reset_allocation_results!
+
+      expect(Registration::UserRegistration.exists?(forced.id)).to be(false)
+      expect(campaign.user_registrations.reload.count).to eq(1)
+    end
+
+    it "preserves manual single-assignments (rank nil, only registration)" do
+      create(:registration_user_registration,
+             registration_campaign: campaign, registration_item: item1,
+             user: user, status: :confirmed, preference_rank: nil)
+
+      campaign.reset_allocation_results!
+
+      expect(campaign.user_registrations.reload.count).to eq(1)
+    end
+
+    it "preserves preference ranks on remaining registrations" do
+      create(:registration_user_registration,
+             registration_campaign: campaign, registration_item: item1,
+             user: user, status: :confirmed, preference_rank: 1)
+      create(:registration_user_registration,
+             registration_campaign: campaign, registration_item: item2,
+             user: user, status: :rejected, preference_rank: 2)
+
+      campaign.reset_allocation_results!
+
+      ranks = campaign.user_registrations.reload.order(:preference_rank)
+                      .pluck(:preference_rank)
+      expect(ranks).to eq([1, 2])
+    end
+
+    it "zeroes out confirmed_registrations_count on all items" do
+      # rubocop:disable Rails/SkipsModelValidations
+      item1.update_columns(confirmed_registrations_count: 5)
+      item2.update_columns(confirmed_registrations_count: 3)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      campaign.reset_allocation_results!
+
+      expect(item1.reload.confirmed_registrations_count).to eq(0)
+      expect(item2.reload.confirmed_registrations_count).to eq(0)
+    end
+
+    it "clears last_allocation_calculated_at" do
+      expect(campaign.last_allocation_calculated_at).to be_present
+
+      campaign.reset_allocation_results!
+
+      expect(campaign.reload.last_allocation_calculated_at).to be_nil
     end
   end
 

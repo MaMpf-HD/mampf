@@ -42,6 +42,12 @@ module Registration
       Array(val).join(", ")
     end
 
+    def allowed_domains_display
+      raw = config&.fetch("allowed_domains", nil)
+      list = raw.is_a?(String) ? raw.split(",") : Array(raw)
+      list.filter_map { |d| d&.strip&.presence }.join(", @")
+    end
+
     def allowed_domains=(value)
       self.config ||= {}
       self.config["allowed_domains"] = value
@@ -74,15 +80,15 @@ module Registration
     def handler
       return Registration::Policy::Handler.new(self) if kind.blank?
 
-      @handler ||= case kind.to_sym
-                   when :institutional_email
-                     Registration::Policy::InstitutionalEmailHandler.new(self)
-                   when :prerequisite_campaign
-                     Registration::Policy::PrerequisiteCampaignHandler.new(self)
-                   when :student_performance
-                     Registration::Policy::StudentPerformanceHandler.new(self)
-                   else
-                     raise(ArgumentError, "Unknown policy kind: #{kind}")
+      case kind.to_sym
+      when :institutional_email
+        Registration::Policy::InstitutionalEmailHandler.new(self)
+      when :prerequisite_campaign
+        Registration::Policy::PrerequisiteCampaignHandler.new(self)
+      when :student_performance
+        Registration::Policy::StudentPerformanceHandler.new(self)
+      else
+        raise(ArgumentError, "Unknown policy kind: #{kind}")
       end
     end
 

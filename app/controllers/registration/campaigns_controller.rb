@@ -1,5 +1,7 @@
 module Registration
   class CampaignsController < ApplicationController
+    include Registration::RosterStreamRefreshable
+
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :set_campaign, except: [:index, :new, :create]
     before_action :set_locale
@@ -18,8 +20,8 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_index",
-                           lecture: @lecture, campaigns: @campaigns)
+          render_campaigns_index_turbo(lecture: @lecture)
+
         end
       end
     end
@@ -31,11 +33,41 @@ module Registration
           if exam_campaign_context?
             render_exam_update("exams/registration")
           else
-            render_card_body("registration/campaigns/card_body_show",
-                             campaign: @campaign)
+            render_campaigns_index_turbo(lecture: @campaign.campaignable,
+                                         expanded_campaign_id: @campaign.id)
           end
+
         end
       end
+    end
+
+    def unassigned
+      unless params[:source] == "panel"
+        redirect_to edit_lecture_path(@campaign.campaignable, tab: "groups")
+        return
+      end
+
+      # Exclude any users already on the lecture roster
+      lecture_roster_ids = @campaign.campaignable.allocated_user_ids
+
+      @unassigned_users = @campaign.unassigned_users
+                                   .where.not(id: lecture_roster_ids)
+                                   .includes(
+                                     user_registrations: [
+                                       :registration_campaign,
+                                       { registration_item: :registerable }
+                                     ]
+                                   )
+                                   .order(:name, :email)
+
+      render turbo_stream: turbo_stream.replace(
+        "tutorial-roster-side-panel",
+        html: RosterSidePanelComponent.new(
+          campaign: @campaign,
+          students: @unassigned_users,
+          is_unassigned: true
+        ).render_in(view_context)
+      )
     end
 
     def new
@@ -46,20 +78,16 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_form",
-                           campaign: @campaign, lecture: @lecture)
+          render_campaigns_index_turbo(lecture: @lecture,
+                                       new_campaign: @campaign)
         end
       end
     end
 
     def edit
-      respond_to do |format|
-        format.html
-        format.turbo_stream do
-          render_card_body("registration/campaigns/card_body_form",
-                           campaign: @campaign, lecture: @campaign.campaignable)
-        end
-      end
+      render partial: "registration/campaigns/form",
+             locals: { campaign: @campaign,
+                       lecture: @campaign.campaignable }
     end
 
     def create
@@ -67,7 +95,7 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_with_success(t("registration.campaign.created"), tab: "items")
+        respond_with_success(t("registration.campaign.created"))
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
@@ -75,9 +103,13 @@ module Registration
 
     def update
       if @campaign.update(campaign_params)
-        respond_with_success(t("registration.campaign.updated"))
+        render partial: "registration/campaigns/card_header",
+               locals: { campaign: @campaign }
       else
-        respond_with_form_error(t("registration.campaign.update_failed"), :edit)
+        render partial: "registration/campaigns/form",
+               locals: { campaign: @campaign,
+                         lecture: @campaign.campaignable },
+               status: :unprocessable_content
       end
     end
 
@@ -114,12 +146,26 @@ module Registration
     end
 
     def reopen
-      if @campaign.processing? || @campaign.completed?
-        respond_with_error(t("registration.campaign.cannot_reopen_allocated"))
+      if @campaign.completed?
+        respond_with_error(t("registration.campaign.cannot_reopen_completed"))
         return
       end
 
-      update_status(:open, t("registration.campaign.reopened"))
+      was_processing = @campaign.processing?
+
+      attributes = { status: :open }
+      if params[:registration_deadline].present?
+        attributes[:registration_deadline] = params[:registration_deadline]
+      end
+
+      @campaign.transaction do
+        @campaign.update!(attributes)
+        @campaign.reset_allocation_results! if was_processing
+      end
+
+      respond_with_success(t("registration.campaign.reopened"))
+    rescue ActiveRecord::RecordInvalid
+      respond_with_error(@campaign.errors.full_messages.join(", "))
     end
 
     def check_unlimited_items
@@ -169,54 +215,54 @@ module Registration
         end
       end
 
-      def render_card_body(partial, locals)
-        render turbo_stream: turbo_stream.update(target_frame_id,
-                                                 partial: partial,
-                                                 locals: locals)
+      def render_campaigns_index_turbo(lecture:, expanded_campaign_id: nil,
+                                       new_campaign: nil)
+        render turbo_stream: turbo_stream.update(
+          "campaigns_container",
+          partial: "registration/campaigns/card_body_index",
+          locals: {
+            lecture: lecture,
+            expanded_campaign_id: expanded_campaign_id,
+            new_campaign: new_campaign
+          }
+        )
+
       end
 
-      def render_turbo_update(partial, locals)
-        lecture = locals[:lecture] || @lecture || @campaign&.campaignable
+      def render_turbo_update(lecture:, expanded_campaign_id: nil,
+                              new_campaign: nil)
         streams = [
-          turbo_stream.update(target_frame_id, partial: partial, locals: locals),
+          turbo_stream.update(
+            "campaigns_container",
+            partial: "registration/campaigns/card_body_index",
+            locals: {
+              lecture: lecture,
+              expanded_campaign_id: expanded_campaign_id,
+              new_campaign: new_campaign
+            }
+          ),
+
           stream_flash
         ]
         streams += refresh_roster_streams(lecture)
         render turbo_stream: streams.compact
       end
 
-      def refresh_roster_streams(lecture)
-        return [] unless lecture
-
-        group_type = view_context.roster_group_types(lecture)
-        frame_id = view_context.roster_maintenance_frame_id(group_type)
-
-        [
-          turbo_stream.replace(frame_id,
-                               view_context.turbo_frame_tag(frame_id,
-                                                            src: view_context.lecture_roster_path(
-                                                              lecture, group_type: group_type
-                                                            ),
-                                                            loading: "lazy"))
-        ]
-      end
-
-      def respond_with_success(message, tab: nil)
+      def respond_with_success(message)
+        lecture = @campaign.campaignable
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign, tab: tab),
-                        notice: message
+            redirect_to registration_campaign_path(@campaign), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
             if exam_campaign_context?
               render_exam_update("exams/registration")
             else
-              render_turbo_update(
-                "registration/campaigns/card_body_show",
-                campaign: @campaign, tab: tab
-              )
+              render_turbo_update(lecture: lecture,
+                                  expanded_campaign_id: @campaign.id)
             end
+
           end
         end
       end
@@ -230,22 +276,22 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render_turbo_update("registration/campaigns/card_body_index",
-                                lecture: lecture,
-                                campaigns: lecture.registration_campaigns
-                                                  .non_exam)
+            render_turbo_update(lecture: lecture)
+
           end
         end
       end
 
-      def respond_with_form_error(message, action)
+      def respond_with_form_error(_message, action)
         respond_to do |format|
           format.html { render action, status: :unprocessable_content }
           format.turbo_stream do
-            flash.now[:alert] = message
-            render_turbo_update("registration/campaigns/card_body_form",
-                                campaign: @campaign,
-                                lecture: @campaign.campaignable)
+            render turbo_stream: turbo_stream.replace(
+              "new_campaign_form",
+              partial: "registration/campaigns/form",
+              locals: { campaign: @campaign,
+                        lecture: @campaign.campaignable }
+            ), status: :unprocessable_content
           end
         end
       end

@@ -61,6 +61,8 @@ export default tseslint.config(
       ...ignoreCypressArchivedTests,
       "spec/cypress/**",
       "architecture/src/js/mermaid.min.js",
+      "architecture/book/**",
+      "app/frontend/js/mampf_routes.js"
     ],
   },
   {

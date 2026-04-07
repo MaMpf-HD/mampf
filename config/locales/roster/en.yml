@@ -1,6 +1,6 @@
 en:
   roster:
-    title: 'Participants'
+    title: "Participants/Groups"
     participants: 'Participants'
     status: 'Status'
     group_category:
@@ -69,24 +69,6 @@ en:
         title: "Management"
         description_html: "Manage your rosters manually throughout the semester. See %{link} for details."
         link_text: "Management"
-    management_help:
-      title: "Management"
-      toggle: "Management"
-      intro: "Information about lock periods and flexible group settings."
-      phase1:
-        title: "Lock Periods"
-        with_campaign: "With Registration Campaign"
-        without_campaign: "Without Registration Campaign"
-        campaigns_during: "Add/Remove Students: Locked during campaign"
-        campaigns_after: "Add/Remove Students: Unlocked after completion"
-        direct_always: "Add/Remove Students: Always possible"
-      phase2:
-        title: "Settings & Exceptions"
-        description: "After campaigns complete, both paths offer the same options:"
-        options:
-          - "Manual Adjustments: Add or remove individual students"
-          - "Self-Enrollment: Students choose their own group from available spots"
-          - "Fine-tune allocations as needed"
     roster_help:
       title: "Enrollment Strategies"
       toggle: "Enrollment Strategies"
@@ -156,15 +138,16 @@ en:
       confirm_remove: 'Are you sure you want to remove this student?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
+      search: 'Search'
+      filter_placeholder: 'Filter by name or email'
+    drag:
+      choice_title: 'Drop action for'
+      move: 'Move'
+      add_only: 'Add'
     cohorts:
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
-      purpose_label: "Purpose"
-      purposes:
-        enrollment: "Collection Group"
-        planning: "Planning"
-        general: "General"
       with_lecture_enrollment_title: "With Enrollment"
       with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups ('repeaters'), or enrollment groups (for courses without tutorials/talks)."
       without_lecture_enrollment_title: "Without Enrollment"
@@ -184,8 +167,9 @@ en:
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
         propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
-        semantic_purpose_label: "Semantic Purpose (optional)"
-        semantic_purpose_explanation: "This is only for better organization and filtering. The group's functionality does not change."
+        with_enrollment_label: "With enrollment?"
+        with_enrollment_explanation: "If enabled, members are automatically enrolled in the lecture. Disable this for waitlists or planning groups."
+        with_enrollment_checkbox: "Enable automatic lecture enrollment"
         enrollment_checkbox_label: "Collection group: For courses without tutorials/talks, to collect all students in a single group"
         planning_checkbox_label: "Planning group: For needs assessment and planning"
         general_with_enrollment: "E.g. for special projects or supplementary groups."
@@ -194,12 +178,14 @@ en:
         planning_short: "Needs assessment before semester begins."
         enrollment_warning: "⚠️ This course already has tutorials/talks."
     details:
+      select_group: 'Select a group to inspect and manage participants'
       participants: 'Participants'
       empty: 'No participants in this group.'
+      empty_filtered: 'No students match the current filter.'
     candidates:
-      title: 'Unallocated Registrations'
+      title: 'Unplaced Registrations'
       help: 'Students who registered in campaigns but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
-      empty: 'No unallocated registrations found.'
+      empty: 'No unplaced registrations found.'
       no_prefs: 'No preferences'
     manual_enrollment:
       title: 'Manual Enrollment'
@@ -226,6 +212,11 @@ en:
         remove_only: 'Leave Only'
         add_and_remove: 'Join & Leave'
       label: 'Self-Enrollment'
+      apply_to_all_free_groups: 'Apply to all groups'
+      confirm_bulk_update: >-
+        This changes the self-enrollment mode for all groups
+        without a campaign in this lecture to '%{mode}'.
+        Continue?
     policy_bypass_warning:
       title: "Policy Bypass Warning"
       message: "The last campaign '%{campaign_name}' had a registration policy '%{policy_name}'. Enabling self-enrollment will allow students to join without meeting those requirements."
@@ -263,7 +254,6 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
-      purpose_change_constrained_by_propagate: "The available types depend on whether students are added to the course roster. This setting cannot be changed."
       cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."

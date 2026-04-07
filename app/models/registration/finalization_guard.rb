@@ -105,62 +105,27 @@ module Registration
       end
 
       def check_policies
+        # Check policies that apply to finalization phase (or both)
         policies = @campaign.registration_policies.active.for_phase(:finalization)
         return [] if policies.empty?
 
-        violations = []
+        invalid_users = []
 
-        @campaign.user_registrations.confirmed.includes(:user).find_each do |reg|
-          user = reg.user
+        @campaign.user_registrations.confirmed.includes(:user).find_each do |registration|
+          user = registration.user
           policies.each do |policy|
             result = policy.evaluate(user)
             next if result[:pass]
 
-            violations << {
-              user_id: user.id,
-              registration_id: reg.id,
-              name: user.name,
-              email: user.email,
-              policy: policy.kind,
-              policy_config: policy.config,
-              evaluate_data: result.except(:pass, :reason_code, :message)
-            }
+            invalid_users << { user_id: user.id,
+                               registration_id: registration.id,
+                               name: user.name,
+                               email: user.email,
+                               policy: policy.kind }
           end
         end
 
-        enrich_performance_violations!(violations)
-        violations
-      end
-
-      def enrich_performance_violations!(violations)
-        perf_violations = violations.select { |v| v[:policy] == "student_performance" }
-        return if perf_violations.empty?
-
-        user_ids = perf_violations.map { |v| v[:user_id] }.uniq
-        lecture_ids = perf_violations.filter_map do |v|
-          v[:policy_config]&.dig("lecture_id")
-        end.uniq
-
-        certs = StudentPerformance::Certification
-                .where(user_id: user_ids, lecture_id: lecture_ids)
-                .index_by { |c| [c.lecture_id, c.user_id] }
-
-        records = StudentPerformance::Record
-                  .where(user_id: user_ids, lecture_id: lecture_ids)
-                  .index_by { |r| [r.lecture_id, r.user_id] }
-
-        perf_violations.each do |v|
-          lid = v[:policy_config]&.dig("lecture_id")
-          cert = certs[[lid, v[:user_id]]]
-          record = records[[lid, v[:user_id]]]
-
-          v[:cert_id] = cert&.id
-          v[:cert_status] = cert&.status&.to_sym || :missing
-          v[:cert_note] = cert&.note
-          v[:percentage] = record&.percentage_materialized
-          v[:achievements_met_ids] = record&.achievements_met_ids || []
-          v[:achievements_ungraded_ids] = record&.achievements_ungraded_ids || []
-        end
+        invalid_users
       end
 
       def success

@@ -1,5 +1,7 @@
 module Registration
   class AllocationsController < ApplicationController
+    include Registration::RosterStreamRefreshable
+
     before_action :set_campaign
     before_action :set_locale
 
@@ -14,44 +16,65 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update(target_frame_id,
-                                                   partial: "registration/allocations/dashboard",
-                                                   locals: { frame_id: target_frame_id })
+          render turbo_stream: turbo_stream.update(
+            "campaigns_container",
+            partial: "registration/campaigns/card_body_index",
+            locals: {
+              lecture: @campaign.campaignable,
+              expanded_campaign_id: @campaign.id
+            }
+          )
+
         end
       end
     end
 
     def create
       authorize! :allocate, @campaign
-      if @campaign.closed? || @campaign.processing?
-        Registration::AllocationService.new(@campaign).allocate!
-        @dashboard = Registration::AllocationDashboard.new(@campaign)
 
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_allocation_path(@campaign),
-                        notice: t("registration.allocation.started")
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.allocation.started")
-            render turbo_stream: [
-              turbo_stream.update(target_frame_id,
-                                  partial: "registration/allocations/dashboard",
-                                  locals: { frame_id: target_frame_id }),
-              stream_flash
-            ]
-          end
-        end
-      else
+      if @campaign.processing?
+        respond_with_error(t("registration.allocation.errors.already_processing"))
+        return
+      end
+
+      unless @campaign.closed?
+
         respond_with_error(t("registration.allocation.errors.wrong_status"))
+        return
+      end
+
+      Registration::AllocationService.new(@campaign).allocate!
+      @dashboard = Registration::AllocationDashboard.new(@campaign)
+
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_allocation_path(@campaign),
+                      notice: t("registration.allocation.started")
+        end
+        format.turbo_stream do
+          flash.now[:notice] = t("registration.allocation.started")
+          render turbo_stream: [
+            turbo_stream.update("campaigns_container",
+                                partial: "registration/campaigns/card_body_index",
+                                locals: {
+                                  lecture: @campaign.campaignable,
+                                  expanded_campaign_id: @campaign.id
+                                }),
+            stream_flash
+          ]
+        end
       end
     end
 
     def finalize
       authorize! :finalize, @campaign
 
+      force = params[:force] == "true"
+      authorize!(:force_finalize, @campaign) if force
+
       guard = Registration::FinalizationGuard.new(@campaign)
-      result = guard.check(ignore_policies: params[:force] == "true")
+      result = guard.check(ignore_policies: force)
+
 
       unless result.success?
         respond_to do |format|
@@ -94,6 +117,7 @@ module Registration
       end
 
       def respond_with_success(message)
+        lecture = @campaign.campaignable
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign), notice: message
@@ -103,13 +127,19 @@ module Registration
             if exam_campaign_context?
               render_exam_update("exams/registration")
             else
-              render turbo_stream: [
-                turbo_stream.update(target_frame_id,
-                                    partial: "registration/campaigns/card_body_show",
-                                    locals: { campaign: @campaign }),
+              streams = [
+                turbo_stream.update("campaigns_container",
+                                    partial: "registration/campaigns/card_body_index",
+                                    locals: {
+                                      lecture: lecture,
+                                      expanded_campaign_id: @campaign.id
+                                    }),
                 stream_flash
               ]
+              streams += refresh_roster_streams(lecture)
+              render turbo_stream: streams.compact
             end
+
           end
         end
       end

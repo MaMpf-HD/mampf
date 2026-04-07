@@ -46,6 +46,17 @@ RSpec.describe("Cohorts", type: :request) do
           end.to change(Cohort, :count).by(1)
         end
 
+        it "marks cohort as skip_campaigns in no_campaign section" do
+          post(cohorts_path,
+               params: {
+                 cohort: valid_attributes,
+                 registration_section: "no_campaign"
+               },
+               as: :turbo_stream)
+
+          expect(Cohort.order(:id).last.skip_campaigns).to be(true)
+        end
+
         it "renders a successful response" do
           post cohorts_path,
                params: { cohort: valid_attributes },

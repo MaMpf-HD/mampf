@@ -29,7 +29,6 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
     let fill_path = "";
     let courseId = 0;
     let loaded = false;
-    let locale = null;
 
     if (this.dataset.drag === "true") {
       plugins = ["remove_button", "drag_drop"];
@@ -45,9 +44,8 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       send_data = false;
       loaded = false;
       if (this.dataset.model === "tag") {
-        locale = this.dataset.locale;
         fill_path = Routes.fill_tag_select_path({
-          locale: locale,
+          locale: this.dataset.locale,
         });
         send_data = true;
       }

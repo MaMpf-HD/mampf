@@ -1,50 +1,15 @@
-import { Controller } from "@hotwired/stimulus";
+import CampaignConfirmBase from "./campaign_confirm_base.controller";
 
-export default class extends Controller {
-  static values = {
-    confirmMessage: String,
-    warningMessage: String,
-    campaignId: String,
-  };
-
-  confirmed = false;
-
+export default class extends CampaignConfirmBase {
   async confirm(event) {
-    // If already confirmed, allow the form to submit
-    if (this.confirmed) {
-      return;
-    }
+    if (this.confirmed) return;
 
     event.preventDefault();
 
-    let message = this.confirmMessageValue;
-
-    // Check if there are any items with unlimited capacity
-    try {
-      const response = await fetch(
-        `/campaigns/${this.campaignIdValue}/check_unlimited_items`,
-        {
-          headers: {
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.has_unlimited_items) {
-          message += "\n\n" + this.warningMessageValue;
-        }
-      }
-    }
-    catch (error) {
-      console.error("Failed to check unlimited items:", error);
-    }
+    const message = await this.buildMessage();
 
     if (confirm(message)) {
-      // Set flag and submit the form
-      this.confirmed = true;
-      this.element.requestSubmit();
+      this.submitForm();
     }
   }
 }

@@ -28,7 +28,7 @@ RSpec.describe(Registration::Item, type: :model) do
     subject { create(:registration_item) }
 
     describe "#validate_capacity_reduction" do
-      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
+      let(:campaign) { create(:registration_campaign, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
 
       context "when campaign is open (FCFS)" do
@@ -71,7 +71,7 @@ RSpec.describe(Registration::Item, type: :model) do
       end
 
       context "when campaign is preference based" do
-        let(:campaign) { create(:registration_campaign, :draft, :preference_based) }
+        let(:campaign) { create(:registration_campaign, :preference_based) }
 
         before do
           item
@@ -115,7 +115,7 @@ RSpec.describe(Registration::Item, type: :model) do
     end
 
     describe "#validate_capacity_change_from_registerable!" do
-      let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
+      let(:campaign) { create(:registration_campaign, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
 
       context "when capacity change is valid" do
@@ -147,7 +147,7 @@ RSpec.describe(Registration::Item, type: :model) do
         let(:item) { create(:registration_item, registration_campaign: campaign) }
 
         context "when campaign is draft" do
-          let(:campaign) { create(:registration_campaign, :draft) }
+          let(:campaign) { create(:registration_campaign) }
 
           it "allows destruction" do
             item # ensure item exists
@@ -156,7 +156,7 @@ RSpec.describe(Registration::Item, type: :model) do
         end
 
         context "when campaign is open" do
-          let(:campaign) { create(:registration_campaign, :draft) }
+          let(:campaign) { create(:registration_campaign) }
 
           before do
             item # ensure item exists

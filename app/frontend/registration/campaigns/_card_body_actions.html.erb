@@ -1,0 +1,92 @@
+<% has_violators = local_assigns.fetch(:has_violators, false) %>
+
+<% show_top_actions = (campaign.draft? && campaign.registration_items.any?) ||
+  campaign.open? || campaign.closed? || campaign.processing? %>
+
+<div id="<%= campaign_actions_id(campaign) %>">
+  <% if show_top_actions %>
+    <div class="d-flex flex-wrap gap-2 mb-3 registration-campaign-actions">
+      <% if campaign.draft? && campaign.registration_items.any? %>
+        <%= button_to open_registration_campaign_path(campaign),
+                      method: :patch,
+                      form: {
+                        data: {
+                          controller: "campaign-action",
+                          "campaign-action-campaign-id-value": campaign.id,
+                          "campaign-action-confirm-message-value":
+                            t("registration.campaign.confirmations.open"),
+                          "campaign-action-warning-message-value":
+                            t("registration.campaign.warnings.unlimited_items"),
+                          action: "submit->campaign-action#confirm",
+                          turbo_stream: true
+                        }
+                      },
+                      class: "btn w-100 registration-campaign-start-btn" do %>
+          <i class="bi bi-play-fill"></i>
+          <%= t("registration.campaign.actions.open") %>
+        <% end %>
+      <% elsif campaign.open? %>
+        <%= button_to t("registration.campaign.actions.close"),
+                      close_registration_campaign_path(campaign),
+                      method: :patch,
+                      data: {
+                        turbo_confirm: campaign_close_confirmation(campaign),
+                        turbo_stream: true
+                      },
+                      class: "btn btn-warning w-100" %>
+      <% elsif campaign.closed? %>
+        <div data-controller="collapse">
+          <button
+            type="button"
+            class="btn btn-success"
+            data-action="collapse#toggle"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <%= t("registration.campaign.actions.reopen") %>
+          </button>
+
+          <div class="collapse mt-2" data-collapse-target="content">
+            <%= render "registration/campaigns/reopen_form",
+                       campaign: campaign %>
+          </div>
+        </div>
+        <% if campaign.preference_based? %>
+          <%= allocate_campaign_button(campaign) %>
+          <% if campaign.last_allocation_calculated_at.present? %>
+            <%= finalize_campaign_button(campaign,
+                                         disabled: has_violators) %>
+          <% end %>
+        <% else %>
+          <%= finalize_campaign_button(campaign,
+                                       disabled: has_violators) %>
+        <% end %>
+      <% elsif campaign.processing? %>
+        <div data-controller="collapse">
+          <button
+            type="button"
+            class="btn btn-success"
+            data-action="collapse#toggle"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            <%= t("registration.campaign.actions.reopen") %>
+          </button>
+
+          <div class="collapse mt-2" data-collapse-target="content">
+            <%= render "registration/campaigns/reopen_form",
+                       campaign: campaign %>
+          </div>
+        </div>
+        <% if campaign.preference_based? %>
+          <%= allocate_campaign_button(campaign, size: "w-100") %>
+          <% if campaign.last_allocation_calculated_at.present? %>
+            <%= finalize_campaign_button(campaign, size: "w-100",
+                                         disabled: has_violators) %>
+          <% end %>
+        <% else %>
+          <%= finalize_campaign_button(campaign, size: "w-100",
+                                       disabled: has_violators) %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

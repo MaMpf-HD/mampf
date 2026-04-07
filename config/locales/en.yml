@@ -2674,6 +2674,10 @@ en:
   announcements: 'Announcements'
   main:
     media_platform: Mathematical Media Platform of Heidelberg University
+    non_mampf_login_notice_html: >
+      This is a MaMpf test environment.
+      Your login credentials will not work here.
+      Please refer to the real MaMpf app instead: %{app_link}
   math:
     number: 'number'
     complex_number: 'complex number'
@@ -3251,9 +3255,12 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    close: "Close"
     capacity: 'Capacity'
     division: 'Division'
+    location: 'Location'
     error: Error
+    edit: "Edit"
     course: 'Course'
     courses: 'Courses'
     term: 'Term'
@@ -3296,6 +3303,7 @@ en:
     select: 'Select'
     confirm: 'Are you sure?'
     basics: 'Basics'
+    participants: 'Participants'
     action: 'Action'
     actions: 'Actions'
     post_processing: 'Post process...'
@@ -3796,11 +3804,6 @@ en:
             title:
               blank: 'You need to give a title.'
         cohort:
-          attributes:
-            purpose:
-              enrollment_must_propagate: "Enrollment groups must propagate to lecture"
-              planning_cannot_propagate: "Planning surveys cannot propagate to lecture"
-        course:
           attributes:
             title:
               blank: 'You need to give a title.'

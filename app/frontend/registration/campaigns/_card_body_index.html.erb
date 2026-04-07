@@ -1,63 +1,75 @@
-<% campaigns = local_assigns.fetch(:campaigns) { lecture.registration_campaigns } %>
-
-<% if campaigns.any? %>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th><%= t("registration.campaign.index.columns.description") %></th>
-        <th><%= t("registration.campaign.index.columns.mode") %></th>
-        <th><%= t("registration.campaign.index.columns.registrations") %></th>
-        <th><%= t("registration.campaign.index.columns.deadline") %></th>
-        <th><%= t("basics.status") %></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% campaigns.order(created_at: :desc).each do |campaign| %>
-        <tr
-          data-controller="row-click"
-          data-action="click->row-click#visit"
-          style="cursor: pointer;"
-        >
-          <td>
-            <%= link_to registration_campaign_path(campaign),
-                          class: "text-decoration-none text-reset",
-                          data: { turbo_stream: true, row_link: true } do %>
-              <% if campaign.description.present? %>
-                <%= campaign.description %>
-              <% else %>
-                <span class="text-muted">&mdash;</span>
-              <% end %>
-
-              <%= campaign_type_badge(campaign) %>
-            <% end %>
-          </td>
-
-          <td>
-            <%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %>
-          </td>
-
-          <td>
-            <% if campaign.draft? %>
-              <span class="text-muted">&mdash;</span>
-            <% else %>
-              <%= campaign.total_registrations_count %>
-            <% end %>
-          </td>
-
-          <td>
-            <%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %>
-          </td>
-
-          <td>
-            <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-              <%= t("registration.campaign.status.#{campaign.status}") %>
-            </span>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<% if local_assigns[:new_campaign] %>
+  <%= render "registration/campaigns/card_body_form",
+             campaign: new_campaign,
+             lecture: lecture %>
 <% else %>
-  <p class="text-muted"><%= t("registration.campaign.index.none") %></p>
+  <% campaigns = lecture.registration_campaigns.non_exam.order(created_at: :desc) %>
+  <% active_campaigns = campaigns.reject(&:completed?) %>
+  <% completed_campaigns = campaigns.select(&:completed?) %>
+  <% no_campaign_groups = no_campaign_registerables(lecture) %>
+  <div class="d-flex flex-column gap-2">
+    <section>
+      <% if campaigns.any? %>
+        <div class="d-flex justify-content-end mb-2">
+          <%= link_to new_lecture_registration_campaign_path(lecture),
+                      class: "btn btn-sm btn-outline-primary",
+                      data: { turbo_stream: true } do %>
+            <i class="bi bi-plus-circle"></i>
+            <%= t("registration.campaign.index.new_campaign") %>
+          <% end %>
+        </div>
+        <% active_campaigns.each do |campaign| %>
+          <div class="card mb-3 campaign-section registration-campaign-card">
+            <%= render "registration/campaigns/card_header",
+                       campaign: campaign %>
+
+            <div class="card-body">
+              <%= render "registration/campaigns/card_body_show",
+                         campaign: campaign %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="registration-campaign-ghost-zone rounded p-3 mb-3">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="registration-campaign-ghost-label text-muted fw-semibold">
+              <%= t("registration.campaign.index.sections.registration") %>
+            </span>
+          </div>
+
+          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+            <div class="col registration-group-tile-col">
+              <%= render "registration/campaigns/add_group_tile",
+                         lecture: lecture,
+                         section: :campaign %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </section>
+
+    <section>
+      <% completed_campaigns.each do |campaign| %>
+        <%= render "registration/campaigns/dissolved_footnote",
+                   campaign: campaign %>
+      <% end %>
+
+      <div
+        class="
+          row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
+          registration-group-grid
+          <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
+        "
+      >
+        <%= render GroupTileComponent.with_collection(
+                   no_campaign_groups) %>
+
+        <div class="col registration-group-tile-col">
+          <%= render "registration/campaigns/add_group_tile",
+                     lecture: lecture,
+                     section: :no_campaign %>
+        </div>
+      </div>
+    </section>
+  </div>
 <% end %>
