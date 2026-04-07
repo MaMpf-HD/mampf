@@ -41,7 +41,7 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
-    @submission.tutorial_id = current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
+    @submission.tutorial_id = tutorial_id_current_user
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
@@ -84,7 +84,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.tutorial_id = current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
+    @submission.tutorial_id = tutorial_id_current_user
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -201,7 +201,7 @@ class SubmissionsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
           "correction-#{@submission.id}",
-          partial: "submissions/correction_edit",
+          partial: "submissions/correction_edit_wrap",
           locals: { submission: @submission }
         )
       end
@@ -213,7 +213,7 @@ class SubmissionsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
           "correction-#{@submission.id}",
-          partial: "submissions/correction",
+          partial: "submissions/correction_wrap",
           locals: { submission: @submission }
         )
       end
@@ -229,18 +229,18 @@ class SubmissionsController < ApplicationController
     )
 
     if @errors.present?
-      return render partial: "submissions/correction",
+      return render partial: "submissions/correction_wrap",
                     locals: { submission: @submission }
     end
 
     send_correction_upload_email(@submission.users) if @submission.save
 
-    render partial: "submissions/correction", locals: { submission: @submission }
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render partial: "submissions/correction", locals: { submission: @submission }
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def select_tutorial
@@ -298,8 +298,18 @@ class SubmissionsController < ApplicationController
 
   private
 
+    def tutorial_id_current_user
+      rosterized_enabled = Flipper.enabled?(:assessment_grading) && current_user.tutorial_rosterized(@submission.assignment.lecture)
+
+      if rosterized_enabled
+        current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
+      else
+        params[:submission][:tutorial_id]
+      end
+    end
+
     def correction_params
-      params.require(:submission).permit(:correction)
+      params.expect(submission: [:correction])
     end
 
     def set_submission
@@ -355,10 +365,6 @@ class SubmissionsController < ApplicationController
 
     def invitation_params
       params.expect(submission: [invitee_ids: []])
-    end
-
-    def correction_params
-      params.expect(submission: [:correction])
     end
 
     def move_params

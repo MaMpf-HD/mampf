@@ -22,8 +22,9 @@
     <% end %>
   </td>
 
-  <!-- batch of columns A.1: grade zone -->
+  
   <% if gradding_enabled?(assignment) %>
+    <!-- batch of columns A.1: grade zone -->
     <!-- support point by task -->
     <% for assessment_task in assignment.assessment.tasks %>
       <td>
@@ -38,49 +39,48 @@
               class="form-control">
       </td>
     <% end %>
-  <% end %>
 
-  <!-- Column A.2: Save and refresh -->
-  <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment)  %>
-    <td class="text-center task-col" data-id="<%= submission.id %>">
-      <!-- Hidden form for this row to submit-->
-      <%= form_with url: grade_submission_path(submission),
-                    method: :patch,
-                    data: { turbo: true, submission_row_target: "form" },
-                    html: { style: "display:none;" } do %>
-        <input type="hidden" name="task_points" data-submission-row-target="payload">
-      <% end %>
-      <!-- Save row -->
-      <button type="button"
-              class="text-success material-icons me-2"
-              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
-              data-bs-toggle="tooltip",
-              title="<%= t('buttons.save')%>",
-              data-action="click->submission-row#saveRow">
-        save
-      </button>
+    <!-- Column A.2: Save and refresh -->
+    <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment)  %>
+      <td class="text-center task-col" data-id="<%= submission.id %>">
+        <!-- Hidden form for this row to submit-->
+        <%= form_with url: grade_submission_path(submission),
+                      method: :patch,
+                      data: { turbo: true, submission_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+          <input type="hidden" name="task_points" data-submission-row-target="payload">
+        <% end %>
+        <!-- Save row -->
+        <button type="button"
+                class="text-success material-icons me-2"
+                style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+                data-bs-toggle="tooltip",
+                title="<%= t('buttons.save')%>",
+                data-action="click->submission-row#saveRow">
+          save
+        </button>
 
-      <!-- Refresh row -->
-      <button type="button"
-              class="text-primary material-icons"
-              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
-              data-action="click->submission-row#refreshRow"
-              data-bs-toggle="tooltip"
-              title="<%= t('buttons.refresh') %>">
-        refresh
-      </button>
-        </td>
-  <% end %>
+        <!-- Refresh row -->
+        <button type="button"
+                class="text-primary material-icons"
+                style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+                data-action="click->submission-row#refreshRow"
+                data-bs-toggle="tooltip"
+                title="<%= t('buttons.refresh') %>">
+          refresh
+        </button>
+          </td>
+    <% end %>
 
-  <!-- Column A.3: Status -->
-  <% if gradding_enabled?(assignment) %>
+    <!-- Column A.3: Status -->
     <td class="text-center task-col">
-      <% status = submission&.representative_participation&.status%>
+      <% status = submission&.representative_participation&.status %>
       <span class="badge bg-<%= badge_status_participation_color(status) %>">
         <%= status %>
       </span>
     </td>
   <% end %>
+
 
   <!-- Column 2: Download / Show buttons -->
   <td class="text-center task-col">

@@ -5,10 +5,19 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <% if current_user.tutorial_rosterized(lecture) %>
+        <% if Flipper.enabled?(:assessment_grading) && current_user.tutorial_rosterized(lecture) %>
           <p class="form-control-plaintext">
             <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
           </p>
+        <% else %>
+          <%= f.select :tutorial_id,
+                     options_for_select(tutorials_selection(lecture),
+                                        submission.tutorial&.id ||
+                                          submission
+                                            .preceding_tutorial(current_user)
+                                           &.id),
+                     {},
+                     {} %>
         <% end %>
         </div>
         <%= f.hidden_field :lecture_id,

@@ -5,7 +5,7 @@
         <th class="sticky-col first-col">
           <%= t('basics.team') %>
         </th>
-        <% if assignment.assessable? %>
+        <% if gradding_enabled?(assignment) %>
           <!-- support point by task -->
           <% for assessment_task in assignment.assessment.tasks %>
             <th class="text-center task-col">
@@ -16,10 +16,16 @@
                 </small>
             </th>
           <% end %>
+
+          <th class="text-center task-col">
+            <%= t('buttons.save') %>
+          </th>
+
+          <th class="text-center task-col">
+            Status
+          </th>
         <% end %>
-        <th class="text-center task-col">
-          <%= t('buttons.save') %>
-        </th>
+        
         <th class="text-center task-col">
           <%= t('basics.submission') %>
           <small class="text-muted">

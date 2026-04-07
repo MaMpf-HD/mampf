@@ -1,30 +1,28 @@
-<div class="correction-upload"
-      data-controller="correction-upload"
-      data-correction-upload-submission-id-value="<%= @submission.id %>">
+<%= form_with url: add_correction_path(submission),
+              scope: 'submission',
+              html: { multipart: true, class: 'correction-upload' } do |f| %>
 
-  <%= render "submissions/correction_upload",
-              submission: @submission %>
-
-  <input type="file"
-          id="upload-correction-<%= @submission.id %>"
-          class="d-none">
-
-  <button id="correction-uploadButton-button-<%= @submission.id %>"
-          class="btn btn-outline-secondary">
-    <%= t("buttons.upload") %>
-  </button>
-
-  <div id="upload-correction-informer-<%= @submission.id %>"></div>
-  <div id="upload-correction-statusBar-<%= @submission.id %>"></div>
+  <div class="row">
+    <div class="col-12">
+      <%= f.file_field :correction,
+            class: "form-control-file",
+            id: "upload-correction-#{submission.id}" %>
+    </div>
+  </div>
 
   <input type="hidden"
-          id="upload-correction-hidden-<%= @submission.id %>">
+          id="upload-correction-hidden-<%= submission.id %>">
 
-  <div id="upload-correction-metadata-<%= @submission.id %>"></div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
 
-  <button id="correction-uploadButton-button-actual-<%= @submission.id %>"
-          class="btn btn-primary d-none">
-    Confirm Upload
-  </button>
+      <%= link_to t('buttons.cancel'),
+                  cancel_edit_correction_path(submission),
+                  class: 'btn btn-sm btn-secondary',
+                  data: { turbo_stream: true } %>
+    </div>
+  </div>
 
-</div>
+<% end %>
