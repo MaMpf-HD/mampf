@@ -160,14 +160,6 @@ module Registration
       respond_with_error(@campaign.errors.full_messages.join(", "))
     end
 
-    def check_unlimited_items
-      has_unlimited = @campaign.registration_items.any? { |i| i.capacity.nil? }
-
-      respond_to do |format|
-        format.json { render json: { has_unlimited_items: has_unlimited } }
-      end
-    end
-
     private
 
       def set_lecture

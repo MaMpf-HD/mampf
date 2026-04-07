@@ -11,13 +11,7 @@
                       method: :patch,
                       form: {
                         data: {
-                          controller: "campaign-action",
-                          "campaign-action-campaign-id-value": campaign.id,
-                          "campaign-action-confirm-message-value":
-                            t("registration.campaign.confirmations.open"),
-                          "campaign-action-warning-message-value":
-                            t("registration.campaign.warnings.unlimited_items"),
-                          action: "submit->campaign-action#confirm",
+                          turbo_confirm: campaign_open_confirmation(campaign),
                           turbo_stream: true
                         }
                       },

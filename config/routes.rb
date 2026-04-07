@@ -311,7 +311,6 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
-        get :check_unlimited_items
         get :unassigned
       end
       resource :allocation,

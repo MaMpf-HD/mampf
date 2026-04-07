@@ -44,9 +44,6 @@ window.Stimulus.register("sortable-policies", SortablePoliciesController);
 import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
 window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
 
-import CampaignActionController from "~/registration/campaign_action.controller.js";
-window.Stimulus.register("campaign-action", CampaignActionController);
-
 import CollapseController from "~/registration/collapse.controller.js";
 window.Stimulus.register("collapse", CollapseController);
 

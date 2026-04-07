@@ -63,46 +63,12 @@ module Registration
       Rosters::NoCampaignRegisterablesQuery.new(lecture).call
     end
 
-    def finalize_campaign_button(campaign, size: nil, disabled: false)
-      classes = ["btn", "btn-danger", size].compact.join(" ")
-
-      button_to(t("registration.campaign.actions.finalize"),
-                finalize_registration_campaign_allocation_path(campaign),
-                method: :patch,
-                form: {
-                  data: {
-                    controller: "campaign-dissolve",
-                    "campaign-dissolve-confirm-message-value":
-                      t("registration.campaign.confirmations.finalize"),
-                    "campaign-dissolve-warning-message-value":
-                      t("registration.campaign.warnings.unlimited_items"),
-                    "campaign-dissolve-campaign-id-value": campaign.id,
-                    action: "submit->campaign-dissolve#submit",
-                    turbo_stream: true
-                  }
-                },
-                class: classes,
-                disabled: disabled)
-    end
-
-    def allocate_campaign_button(campaign, size: nil)
-      has_allocation = campaign.last_allocation_calculated_at.present?
-      label = if has_allocation
-        t("registration.campaign.actions.reallocate")
-      else
-        t("registration.campaign.actions.allocate")
+    def campaign_open_confirmation(campaign)
+      msg = t("registration.campaign.confirmations.open")
+      if campaign.registration_items.any? { |i| i.capacity.nil? }
+        msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
-      confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
-      classes = ["btn", "btn-primary", size].compact.join(" ")
-
-      form_data = { turbo_stream: true }
-      form_data[:turbo_confirm] = confirm if confirm
-
-      button_to(label,
-                registration_campaign_allocation_path(campaign),
-                method: :post,
-                class: classes,
-                form: { data: form_data })
+      msg
     end
   end
 end
