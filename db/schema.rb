@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_07_000018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -524,7 +524,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "self_materialization_mode", default: 0
+    t.integer "self_materialization_mode", default: 0, null: false
     t.date "submission_deletion_date", null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
@@ -1342,7 +1342,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
-
+  
   create_table "vignettes_questions", force: :cascade do |t|
     t.string "type"
     t.text "question_text"
