@@ -15,4 +15,17 @@ module TutorialsHelper
   def tutorials_selection(lecture)
     lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
   end
+
+  def gradding_enabled?(assignment)
+    Flipper.enabled?(:assessment_grading) && assignment.assessable?
+  end
+
+  def badge_status_participation_color(status)
+    {
+      pending: "warning",
+      reviewed: "success",
+      exempt: "info",
+      absent: "info"
+    }[status.to_sym]
+  end
 end

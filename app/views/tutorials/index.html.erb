@@ -1,4 +1,5 @@
 <% if @assignments.present? %>
+<div data-controller="submission-table">
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
@@ -8,11 +9,12 @@
     </div>
   </div>
   <div id="tutorial-table">
-    <%= render partial: 'tutorials/table',
+    <%= render partial: 'tutorials/table_2',
                locals: { assignment: @assignment,
                          tutorial: @tutorial,
                          stack: @stack } %>
   </div>
+</div>
 <% else %>
   <div class="jumbotron">
     <%= t('assignment.nothing_yet_in_lecture') %>

@@ -752,10 +752,6 @@ Rails.application.routes.draw do
       to: "submissions#select_tutorial",
       as: "select_tutorial"
 
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
   get "submissions/:id/cancel_action",
       to: "submissions#cancel_action",
       as: "cancel_submission_action"
@@ -771,6 +767,14 @@ Rails.application.routes.draw do
   patch "submissions/:id/reject",
         to: "submissions#reject",
         as: "reject_submission"
+
+  patch "submissions/:id/grade_submission",
+        to: "submissions#grade_submission",
+        as: "grade_submission"
+
+  patch "submissions/grade_multi_submissions",
+        to: "submissions#grade_multi_submissions",
+        as: "grade_multi_submissions"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",

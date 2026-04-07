@@ -65,3 +65,57 @@
     outline:none;
     box-shadow:none;
 }
+
+/* Highlight dirty submission rows */
+.row-dirty,
+.row-dirty td {
+  background-color: #ffffa5 !important;
+}
+table.table tbody tr.row-dirty,
+table.table tbody tr.row-dirty td {
+    background-color: #ffffa5 !important;
+}
+
+.sticky-col {
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: white;
+}
+
+.first-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  left: 0px;
+}
+
+.second-col {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  left: 200px;
+}
+
+.last-col {
+  width: 120px;
+  max-width: 120px;
+  min-width: 120px;
+  right: 0px;
+  background-color: white;
+  z-index: 2;
+}
+
+.second-to-last-col {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  right: 120px;
+  background-color: white;
+  z-index: 1;
+}
+
+.table-overflow {
+  overflow-x: scroll;
+  overflow-y: visible;
+  width: 100%;
+}
