@@ -400,6 +400,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    # Tutorial, Cohorts and Talks have an index on `self_materialization_mode`,
+    # but Lectures not. This is by design since lectures as rosterables need
+    # the column but the value is always 0 (disabled), so indexing is not useful.
+    # See also migration `AddSelfMaterializationModeToRosterables`.
     t.integer "self_materialization_mode", default: 0, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
