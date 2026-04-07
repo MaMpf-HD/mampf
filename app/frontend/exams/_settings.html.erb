@@ -1,10 +1,90 @@
 <div id="exam-settings">
+  <% unless exam.new_record? %>
+    <div
+      class="
+        d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
+        bg-info-subtle rounded border text-muted small
+      "
+    >
+      <span>
+        <i class="bi bi-calendar-event me-1"></i>
+
+        <% if exam.date %>
+          <%= l(exam.date, format: :long) %>
+        <% else %>
+          <%= t('basics.not_specified') %>
+        <% end %>
+      </span>
+
+      <span class="text-black-50">·</span>
+
+      <span>
+        <i class="bi bi-geo-alt me-1"></i>
+        <%= exam.location.presence || t('basics.not_specified') %>
+      </span>
+
+      <span class="text-black-50">·</span>
+
+      <span>
+        <i class="bi bi-people me-1"></i>
+
+        <% campaign = exam.registration_campaign if Flipper.enabled?(:registration_campaigns)
+          in_registration = campaign && !campaign.completed?
+
+          if in_registration
+            count = campaign.total_registrations_count
+            label = t("assessment.info_bar.registered")
+          else
+            count = exam.roster_entries_count
+            label = t("assessment.info_bar.participants")
+          end %>
+
+        <% if exam.capacity %>
+          <%= count %>
+          /
+          <%= exam.capacity %>
+          <%= label %>
+        <% else %>
+          <%= count %>
+          <%= label %>
+        <% end %>
+      </span>
+
+      <% if campaign&.draft? %>
+        <span class="text-black-50">·</span>
+        <span class="badge bg-warning text-dark">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          <%= t("assessment.info_bar.registration_not_open") %>
+        </span>
+        <%= link_to t("assessment.info_bar.go_to_registration"),
+                    exam_path(exam, tab: "registration"),
+                    data: { turbo_stream: true } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if exam.new_record? %>
+    <div class="mb-3">
+      <%= link_to exams_path(lecture_id: exam.lecture_id),
+                  class: "btn btn-sm btn-outline-secondary",
+                  role: "button",
+                  data: { turbo_stream: true } do %>
+        <i class="bi bi-arrow-left"></i> <%= t("back") %>
+      <% end %>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3><%= t("assessment.new_exam") %></h3>
+    </div>
+  <% end %>
+
   <div class="row">
     <div class="col-12">
-      <%= render "exams/delete_button", exam: exam %>
+      <%= render "exams/delete_button", exam: exam unless exam.new_record? %>
+
+      <% form_url = exam.new_record? ? exams_path : exam_path(exam, tab: 'settings') %>
 
       <%= form_with model: exam,
-                    url: exam_path(exam, tab: 'settings'),
+                    url: form_url,
                     html: { id: 'exam-form' },
                     data: { turbo: true, controller: "exams--form" } do |f| %>
         <%= render "exams/form_fields", f: f, exam: exam %>

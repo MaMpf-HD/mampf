@@ -2,7 +2,8 @@ class ExamsController < ApplicationController
   include Flash
 
   before_action :set_lecture, only: [:index, :new]
-  before_action :set_exam, only: [:show, :edit, :update, :destroy]
+  before_action :set_exam, only: [:show, :edit, :update, :destroy,
+                                  :add_participant, :remove_participant]
   authorize_resource except: :index
 
   def current_ability
@@ -26,7 +27,7 @@ class ExamsController < ApplicationController
 
   def show
     authorize! :show, @exam
-    @active_tab = params[:tab] || "overview"
+    @active_tab = params[:tab] || "settings"
     set_exam_locale
 
     respond_to do |format|
@@ -49,7 +50,7 @@ class ExamsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update("exams_container",
-                                                 partial: "exams/form",
+                                                 partial: "exams/settings",
                                                  locals: { exam: @exam,
                                                            lecture: @lecture })
       end
@@ -79,24 +80,18 @@ class ExamsController < ApplicationController
       if @exam.save
         format.turbo_stream do
           flash[:success] = t("assessment.exam_created")
+          @active_tab = "settings"
           streams = [
             turbo_stream.update("exams_container",
-                                partial: "exams/list",
-                                locals: { lecture: @lecture,
-                                          exams: @lecture.exams.order(date: :asc) }),
+                                build_dashboard_component),
             stream_flash
           ]
-          if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
-            streams << turbo_stream.append("exams_container",
-                                           partial: "exams/campaign_cta",
-                                           locals: { exam: @exam })
-          end
           render turbo_stream: streams
         end
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("exams_container",
-                                                   partial: "exams/form",
+                                                   partial: "exams/settings",
                                                    locals: { exam: @exam,
                                                              lecture: @lecture }),
                  status: :unprocessable_content
@@ -128,11 +123,6 @@ class ExamsController < ApplicationController
                                             exams: @lecture.exams.order(date: :asc) }),
               stream_flash
             ]
-            if @exam.needs_campaign? && Flipper.enabled?(:registration_campaigns)
-              streams << turbo_stream.append("exams_container",
-                                             partial: "exams/campaign_cta",
-                                             locals: { exam: @exam })
-            end
             render turbo_stream: streams
           end
         end
@@ -184,6 +174,51 @@ class ExamsController < ApplicationController
     end
   end
 
+  def add_participant
+    authorize! :add_participant, @exam
+    user = User.find_by(email: params[:email]&.strip)
+
+    respond_to do |format|
+      format.turbo_stream do
+        if user.nil?
+          flash.now[:error] = t("assessment.registration_tab.user_not_found")
+        else
+          service = Rosters::MaintenanceService.new
+          begin
+            service.add_user!(user, @exam, force: true)
+            flash.now[:success] = t("assessment.registration_tab.participant_added",
+                                    name: user.tutorial_name.presence || user.email)
+          rescue ActiveRecord::RecordInvalid
+            flash.now[:error] = t("assessment.registration_tab.already_registered")
+          end
+        end
+        @active_tab = "registration"
+        render turbo_stream: [
+          turbo_stream.update("exams_container", build_dashboard_component),
+          stream_flash
+        ]
+      end
+    end
+  end
+
+  def remove_participant
+    authorize! :remove_participant, @exam
+    user = User.find(params[:user_id])
+    Rosters::MaintenanceService.new.remove_user!(user, @exam)
+
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:success] = t("assessment.registration_tab.participant_removed",
+                                name: user.tutorial_name.presence || user.email)
+        @active_tab = "registration"
+        render turbo_stream: [
+          turbo_stream.update("exams_container", build_dashboard_component),
+          stream_flash
+        ]
+      end
+    end
+  end
+
   private
 
     def set_exam
@@ -207,6 +242,7 @@ class ExamsController < ApplicationController
     def exam_params
       params.expect(exam: [:title, :date, :location, :capacity,
                            :description, :skip_campaigns,
+                           :registration_deadline,
                            :lecture_id])
     end
 

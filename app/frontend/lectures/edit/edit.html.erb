@@ -84,7 +84,7 @@
       <% if Flipper.enabled?(:assessment_grading) %>
         <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
           <div class="container medium-width lecture-pane">
-            <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id), loading: "lazy" do %>
+            <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id, tab: params[:assessment_tab]), loading: "lazy" do %>
               <div class="text-center my-4">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden"><%= t('basics.loading') %></span>
@@ -107,14 +107,6 @@
         <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
           <div class="container small-width lecture-pane">
             <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
-          </div>
-        <% end %>
-      <% end %>
-
-      <% if Flipper.enabled?(:registration_campaigns) %>
-        <% component.with_tab(name: "campaigns", label: t("registration.campaign.index.title")) do %>
-          <div class="container small-width lecture-pane">
-            <%= render partial: "registration/campaigns/index", locals: { lecture: @lecture, campaign: @campaign, new_campaign: @new_campaign } %>
           </div>
         <% end %>
       <% end %>

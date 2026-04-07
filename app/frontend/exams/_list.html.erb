@@ -28,33 +28,41 @@
           <th><%= t('basics.location') %></th>
           <th><%= t('basics.capacity') %></th>
           <th><%= t('roster.participants') %></th>
-          <th><%= t('assessment.campaign_status.title') %></th>
+          <th><%= t('assessment.exam_status.title') %></th>
         </tr>
       </thead>
+
       <tbody>
         <% exams.each do |exam| %>
-          <tr id="exam-row-<%= exam.id %>"
-              data-controller="row-click"
-              data-action="click->row-click#visit"
-              style="cursor: pointer;">
+          <tr
+            id="exam-row-<%= exam.id %>"
+            data-controller="row-click"
+            data-action="click->row-click#visit"
+            style="cursor: pointer;"
+          >
             <td>
               <%= link_to exam.title,
                           exam_path(exam),
                           class: "text-decoration-none",
                           data: { turbo_stream: true, row_link: true } %>
             </td>
+
             <td>
               <%= exam.date ? l(exam.date, format: :short) : t('basics.not_specified') %>
             </td>
+
             <td>
               <%= exam.location.presence || t('basics.not_specified') %>
             </td>
+
             <td>
               <%= exam.capacity || t('basics.unlimited') %>
             </td>
+
             <td>
               <%= exam.roster_entries_count %>
             </td>
+
             <td>
               <%= render "exams/campaign_status", exam: exam %>
             </td>

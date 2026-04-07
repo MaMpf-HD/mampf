@@ -23,6 +23,19 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get lecture_registration_campaigns_path(lecture)
         expect(response).to have_http_status(:success)
       end
+
+      it "excludes exam-linked campaigns from the list" do
+        exam = create(:exam, lecture: lecture)
+        exam_campaign = exam.registration_campaign
+
+        get lecture_registration_campaigns_path(lecture), as: :turbo_stream
+        expect(response.body).to include(
+          registration_campaign_path(campaign)
+        )
+        expect(response.body).not_to include(
+          registration_campaign_path(exam_campaign)
+        )
+      end
     end
 
     context "as a student" do
@@ -385,6 +398,53 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get check_unlimited_items_registration_campaign_path(campaign), as: :json
         expect(response).to redirect_to(root_path)
       end
+    end
+  end
+
+  describe "exam campaign context" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_campaign) { exam.registration_campaign }
+    let(:frame_id) { "exam_#{exam.id}_registration" }
+
+    before { sign_in editor }
+
+    it "renders exam-specific partial on open with frame_id" do
+      patch open_registration_campaign_path(exam_campaign),
+            params: { frame_id: frame_id },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(frame_id)
+    end
+
+    it "renders default partial on open without frame_id" do
+      patch open_registration_campaign_path(exam_campaign),
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("campaigns_container")
+    end
+
+    it "renders exam-specific partial on close with frame_id" do
+      exam_campaign.update!(status: :open)
+
+      patch close_registration_campaign_path(exam_campaign),
+            params: { frame_id: frame_id },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(frame_id)
+    end
+
+    it "renders exam-specific partial on reopen with frame_id" do
+      exam_campaign.update!(status: :closed)
+
+      patch reopen_registration_campaign_path(exam_campaign),
+            params: { frame_id: frame_id },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(frame_id)
     end
   end
 end

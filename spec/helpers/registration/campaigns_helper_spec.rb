@@ -142,4 +142,67 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
                                                 rank: 1))
     end
   end
+
+  describe "button helpers with params" do
+    let(:campaign) do
+      create(:registration_campaign, :open,
+             registration_deadline: 1.week.from_now)
+    end
+    let(:frame_params) { { frame_id: "exam_1_registration" } }
+
+    describe "#open_campaign_button" do
+      it "renders a button_to with params embedded in hidden fields" do
+        html = helper.open_campaign_button(campaign, params: frame_params)
+        expect(html).to include('name="frame_id"')
+        expect(html).to include('value="exam_1_registration"')
+      end
+    end
+
+    describe "#close_campaign_button" do
+      it "renders a button_to with params embedded in hidden fields" do
+        html = helper.close_campaign_button(campaign, params: frame_params)
+        expect(html).to include('name="frame_id"')
+        expect(html).to include('value="exam_1_registration"')
+      end
+    end
+
+    describe "#reopen_campaign_button" do
+      it "renders a button_to with params embedded in hidden fields" do
+        html = helper.reopen_campaign_button(campaign, params: frame_params)
+        expect(html).to include('name="frame_id"')
+        expect(html).to include('value="exam_1_registration"')
+      end
+    end
+
+    describe "#finalize_campaign_button" do
+      it "renders a button_to with params embedded in hidden fields" do
+        html = helper.finalize_campaign_button(campaign, params: frame_params)
+        expect(html).to include('name="frame_id"')
+        expect(html).to include('value="exam_1_registration"')
+      end
+    end
+
+    describe "#allocate_campaign_button" do
+      it "renders a button_to with params embedded in hidden fields" do
+        html = helper.allocate_campaign_button(campaign, params: frame_params)
+        expect(html).to include('name="frame_id"')
+        expect(html).to include('value="exam_1_registration"')
+      end
+    end
+
+    describe "#view_allocation_button" do
+      it "includes params in the URL" do
+        html = helper.view_allocation_button(campaign, params: frame_params)
+        expect(html).to include("frame_id=exam_1_registration")
+      end
+    end
+
+    describe "#review_and_finalize_button" do
+      it "includes params in the URL" do
+        html = helper.review_and_finalize_button(campaign,
+                                                 params: frame_params)
+        expect(html).to include("frame_id=exam_1_registration")
+      end
+    end
+  end
 end

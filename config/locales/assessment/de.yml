@@ -75,7 +75,7 @@ de:
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
     exam_not_destructible:
       roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
-      in_campaign: 'Löschen nicht möglich: Prüfung ist Teil eines Anmeldeverfahrens'
+      in_campaign: 'Löschen nicht möglich: Anmeldung wurde bereits geöffnet oder abgeschlossen'
     form:
       submit: 'Speichern'
     task:
@@ -130,17 +130,55 @@ de:
     exam_capacity_hint: 'Leer lassen für unbegrenzte Kapazität'
     exam_capacity_placeholder: 'Anzahl der Plätze'
     exam_description_placeholder: 'Optionale Hinweise zur Prüfung'
-    skip_campaigns_label: 'Anmeldesystem überspringen (manuelle Verwaltung)'
-    skip_campaigns_hint: 'Nur aktivieren, wenn diese Prüfung noch nie Teil eines Anmeldeverfahrens war'
+    skip_campaigns_label: 'Keine Anmeldung erforderlich (Teilnehmer manuell verwalten)'
+    skip_campaigns_hint: 'Aktivieren, wenn sich Studierende nicht für diese Prüfung anmelden müssen'
+    registration_deadline_label: 'Anmeldefrist'
+    registration_deadline_hint: 'Wird auf 3 Tage vor dem Prüfungsdatum gesetzt, wenn leer gelassen'
+    registration_deadline_locked_hint: 'Anmeldung ist abgeschlossen'
+    info_bar:
+      participants: 'Teilnehmende'
+      registered: 'angemeldet'
+      registration_not_open: 'Anmeldung noch nicht geöffnet.'
+      go_to_registration: 'Zur Anmeldung →'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
       direct: 'Manuelle Verwaltung'
       create: 'Verfahren erstellen'
       go_to_campaign: 'Zum Anmeldeverfahren'
+    exam_status:
+      title: 'Status'
+      draft: 'Entwurf'
+      registration_open: 'Anmeldung offen'
+      registration_closed: 'Anmeldung geschlossen'
+      finalized: 'Finalisiert'
+      conducted: 'Durchgeführt'
+      grading: 'Korrektur'
+      graded: 'Benotet'
     campaign_cta:
       message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
       create: 'Jetzt Verfahren erstellen'
+    registration_tab:
+      skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet.'
+      no_campaign: 'Kein Anmeldeverfahren für diese Prüfung gefunden.'
+      participants_heading: 'Teilnehmende'
+      registered_count:
+        zero: 'Noch keine Anmeldungen'
+        one: '%{count} angemeldet'
+        other: '%{count} angemeldet'
+      registered_count_label: 'angemeldet'
+      capacity_label: 'Kapazität: %{capacity}'
+      unlimited_capacity: 'unbegrenzt'
+      filter_placeholder: 'Nach Name oder E-Mail filtern'
+      no_filter_results: 'Keine passenden Studierenden'
+      add_placeholder: 'E-Mail-Adresse'
+      add_button: 'Hinzufügen'
+      participant_added: '%{name} wurde hinzugefügt.'
+      participant_removed: '%{name} wurde entfernt.'
+      user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
+      already_registered: 'Diese Person ist bereits angemeldet.'
+      finalized_on: 'Finalisiert am %{date}'
+      rejected_heading: 'Abgelehnte Anmeldungen'
     no_talks_yet: 'Noch keine Vorträge erstellt.'
     no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
@@ -169,6 +207,8 @@ de:
         grading_phase: 'Geschlossen vor %{time} — Bewertungsphase'
     overview: 'Übersicht'
     settings: 'Einstellungen'
+    registration: 'Teilnehmende'
+    policies: 'Richtlinien'
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     grade_scheme:
@@ -317,3 +357,8 @@ de:
               immutable_when_applied: "Angewandte Notenschemata können nicht geändert werden."
             assessment:
               must_be_pointable_and_gradable: "muss sowohl punktebasiert als auch benotbar sein (z.B. Klausur)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"
+              must_be_in_future: "muss in der Zukunft liegen"

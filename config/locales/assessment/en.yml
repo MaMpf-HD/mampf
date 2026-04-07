@@ -75,7 +75,7 @@ en:
       has_grading_data: 'Cannot delete: Grading data exists'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
-      in_campaign: 'Cannot delete: Exam is part of a registration campaign'
+      in_campaign: 'Cannot delete: Registration is already open or completed'
     form:
       submit: 'Save'
     task:
@@ -130,17 +130,55 @@ en:
     exam_capacity_hint: 'Leave empty for unlimited capacity'
     exam_capacity_placeholder: 'Number of seats'
     exam_description_placeholder: 'Optional notes about the exam'
-    skip_campaigns_label: 'Skip registration system (manual management)'
-    skip_campaigns_hint: 'Only enable if this exam has never been part of a registration campaign'
+    skip_campaigns_label: 'No registration required (manage roster manually)'
+    skip_campaigns_hint: 'Enable if students do not need to register for this exam'
+    registration_deadline_label: 'Registration deadline'
+    registration_deadline_hint: 'Defaults to 3 days before the exam date if left empty'
+    registration_deadline_locked_hint: 'Registration is completed'
+    info_bar:
+      participants: 'participants'
+      registered: 'registered'
+      registration_not_open: 'Registration not yet open.'
+      go_to_registration: 'Go to Registration →'
     campaign_status:
-      title: 'Campaign'
-      none: 'No campaign'
+      title: 'Registration'
+      none: 'No registration'
       direct: 'Direct management'
       create: 'Create campaign'
       go_to_campaign: 'Go to campaign'
+    exam_status:
+      title: 'Status'
+      draft: 'Draft'
+      registration_open: 'Registration open'
+      registration_closed: 'Registration closed'
+      finalized: 'Finalized'
+      conducted: 'Conducted'
+      grading: 'Grading'
+      graded: 'Graded'
     campaign_cta:
       message: 'This exam has no registration campaign. Students cannot register yet.'
       create: 'Create campaign now'
+    registration_tab:
+      skip_campaigns_info: 'Registration is managed manually for this exam.'
+      no_campaign: 'No registration campaign found for this exam.'
+      participants_heading: 'Participants'
+      registered_count:
+        zero: 'No registrations yet'
+        one: '%{count} registered'
+        other: '%{count} registered'
+      registered_count_label: 'registered'
+      capacity_label: 'Capacity: %{capacity}'
+      unlimited_capacity: 'unlimited'
+      filter_placeholder: 'Filter by name or email'
+      no_filter_results: 'No matching students'
+      add_placeholder: 'Email address'
+      add_button: 'Add'
+      participant_added: '%{name} has been added.'
+      participant_removed: '%{name} has been removed.'
+      user_not_found: 'No user found with this email address.'
+      already_registered: 'This user is already registered.'
+      finalized_on: 'Finalized on %{date}'
+      rejected_heading: 'Rejected registrations'
     no_talks_yet: 'No talks created yet.'
     no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assessables_yet: 'No assessments created yet.'
@@ -169,6 +207,8 @@ en:
         grading_phase: 'Closed %{time} ago — Grading phase'
     overview: 'Overview'
     settings: 'Settings'
+    registration: 'Participants'
+    policies: 'Policies'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
     no_points_yet: 'No points have been entered yet.'
@@ -317,3 +357,8 @@ en:
               immutable_when_applied: "Applied grade schemes cannot be modified."
             assessment:
               must_be_pointable_and_gradable: "must be both pointable and gradable (e.g. Exam)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "must be before the exam date"
+              must_be_in_future: "must be in the future"

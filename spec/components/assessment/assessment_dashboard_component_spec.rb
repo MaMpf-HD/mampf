@@ -135,22 +135,36 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     end
 
     include_examples "common header"
-    include_examples "visible tab", "overview"
     include_examples "visible tab", "settings"
     include_examples "visible tab", "tasks"
     include_examples "visible tab", "points"
     include_examples "visible tab", "grades"
     include_examples "visible tab", "grade_scheme"
-    include_examples "visible tab", "roster"
     include_examples "visible tab", "statistics"
+    include_examples "hidden tab", "overview"
+    include_examples "hidden tab", "roster"
 
     describe "#tabs" do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["overview", "settings", "tasks", "points", "grades",
-           "grade_scheme", "roster", "statistics"]
+          ["settings", "tasks", "points", "grades",
+           "grade_scheme", "statistics"]
         )
+      end
+
+      context "when registration_campaigns is enabled" do
+        before { Flipper.enable(:registration_campaigns) }
+        after { Flipper.disable(:registration_campaigns) }
+
+        it "includes registration and policies tabs" do
+          keys = component.tabs.map(&:key)
+          expect(keys).to eq(
+            ["settings", "registration", "policies",
+             "tasks", "points", "grades",
+             "grade_scheme", "statistics"]
+          )
+        end
       end
     end
 
@@ -160,8 +174,8 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     end
 
     describe "#default_tab" do
-      it 'returns "overview"' do
-        expect(component.default_tab).to eq("overview")
+      it 'returns "settings"' do
+        expect(component.default_tab).to eq("settings")
       end
     end
 
@@ -183,10 +197,10 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       end
     end
 
-    it "activates the overview tab by default" do
+    it "activates the settings tab by default" do
       render_inline(component)
       expect(rendered_content).to match(
-        /nav-link\s+active[^>]*data-bs-target="#[^"]*-overview"/m
+        /nav-link\s+active[^>]*data-bs-target="#[^"]*-settings"/m
       )
     end
   end

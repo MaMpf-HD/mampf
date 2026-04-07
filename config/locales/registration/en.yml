@@ -240,19 +240,19 @@ en:
       started: "Allocation has been calculated."
       conflicts:
         title: "Conflicting Registrations"
-        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
-        currently_in: "currently in %{tutorial}"
+        desc: "The following students are already assigned to a group of this type in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{group}"
       dashboard:
         title: "Allocation Dashboard"
         last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. If the results are unsatisfactory (e.g., too many unassigned students), adjust the capacities in the campaign settings and run the allocation again. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups via roster management afterwards."
-        workflow_info_fcfs: "Review the list of registered students. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
+        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster."
         workflow_info_planning: "Review the statistics. Since this is a planning-only campaign, no changes will be made to course rosters. Once satisfied, click 'Complete Planning' to save the current state."
         item_capacities: "Tutorial Capacities"
       stats:
-        total_registrations: "Total Applicants"
+        total_registrations: "Total Registrations"
         assigned: "Assigned"
         unassigned: "Unassigned"
         happiness_distribution: "Preference Distribution"
@@ -266,10 +266,34 @@ en:
       errors:
         already_completed: "Campaign is already completed."
         wrong_status: "Campaign has wrong status for this action."
+        certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
         policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation_count:
+          one: "student affected"
+          other: "students affected"
         failed: "Allocation failed: %{error}"
+      policy_summary:
+        required_domain: "Required domain:"
+        of_total_points: "of total points"
+        points_absolute: "points (absolute)"
+        no_rule: "No active rule configured"
+      violations_table:
+        override_pass: "Override to passed"
+      cert_incomplete:
+        title: "Certifications Incomplete"
+        desc:
+          one: "%{count} registered student does not have a decided performance certificate. Certifications must be resolved before finalization."
+          other: "%{count} registered students do not have decided performance certificates. Certifications must be resolved before finalization."
+        missing_label:
+          one: "%{count} student not yet certified"
+          other: "%{count} students not yet certified"
+        pending_label:
+          one: "%{count} student with pending certificate"
+          other: "%{count} students with pending certificates"
+        go_to_certs: "Go to Certifications"
+        policy_reason: "This registration campaign has a finalization policy that requires decided certifications."
   activerecord:
     errors:
       models:

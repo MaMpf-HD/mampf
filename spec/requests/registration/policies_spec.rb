@@ -317,4 +317,43 @@ RSpec.describe("Registration::Policies", type: :request) do
       end
     end
   end
+
+  describe "exam campaign context" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_campaign) { exam.registration_campaign }
+    let(:frame_id) { "exam_#{exam.id}_policies" }
+
+    before { sign_in editor }
+
+    it "renders exam-specific partial on create with frame_id" do
+      post registration_campaign_policies_path(exam_campaign),
+           params: {
+             registration_policy: {
+               kind: "institutional_email",
+               phase: "registration",
+               allowed_domains: "example.com"
+             },
+             frame_id: frame_id
+           },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(frame_id)
+    end
+
+    it "renders default partial without frame_id" do
+      post registration_campaign_policies_path(exam_campaign),
+           params: {
+             registration_policy: {
+               kind: "institutional_email",
+               phase: "registration",
+               allowed_domains: "example.com"
+             }
+           },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("campaigns_container")
+    end
+  end
 end

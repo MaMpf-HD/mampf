@@ -62,9 +62,10 @@ namespace :assessment do
 
       assignment = lecture.assignments.create!(
         title: attrs[:title],
-        deadline: attrs[:deadline],
+        deadline: 1.year.from_now,
         accepted_file_type: ".pdf"
       )
+      assignment.update_column(:deadline, attrs[:deadline])
       puts "  ✓ Created: #{assignment.title} (deadline: #{assignment.deadline})"
     end
 

@@ -107,6 +107,9 @@ window.Stimulus.register("sortable", SortableController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

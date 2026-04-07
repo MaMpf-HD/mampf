@@ -1,36 +1,5 @@
-<% if exam.skip_campaigns %>
-  <span class="badge bg-secondary">
-    <i class="bi bi-person-gear me-1"></i><%= t("assessment.campaign_status.direct") %>
-  </span>
-<% elsif exam.in_campaign? %>
-  <% campaign = exam.registration_campaign %>
-  <% if campaign %>
-    <span class="badge bg-<%= campaign_badge_color(campaign) %>">
-      <%= t("registration.campaign.status.#{campaign.status}") %>
-    </span>
-    <% if Flipper.enabled?(:registration_campaigns) %>
-      <%= link_to edit_lecture_path(exam.lecture,
-                    tab: "campaigns",
-                    campaign_id: campaign.id),
-                  class: "btn btn-sm btn-outline-secondary ms-1",
-                  title: t("assessment.campaign_status.go_to_campaign"),
-                  data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-        <i class="bi bi-calendar-event"></i>
-      <% end %>
-    <% end %>
-  <% end %>
-<% else %>
-  <span class="badge bg-warning text-dark">
-    <i class="bi bi-exclamation-triangle me-1"></i><%= t("assessment.campaign_status.none") %>
-  </span>
-  <% if Flipper.enabled?(:registration_campaigns) %>
-    <%= link_to edit_lecture_path(exam.lecture,
-                  tab: "campaigns",
-                  new_campaign: true),
-                class: "btn btn-sm btn-outline-secondary ms-1",
-                title: t("assessment.campaign_status.create"),
-                data: { turbo_frame: "_top", bs_toggle: "tooltip" } do %>
-      <i class="bi bi-calendar-plus"></i>
-    <% end %>
-  <% end %>
-<% end %>
+<% phase = exam.status_phase %>
+
+<span class="<%= "badge bg-#{Exam::STATUS_PHASE_BADGE[phase]}" %>">
+  <%= t("assessment.exam_status.#{phase}") %>
+</span>
