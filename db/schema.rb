@@ -604,6 +604,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
+    # unique index here means: a registerable can only appear in one campaign ever
+    # (might want to loosen this in case we want to introduce item-level capacities later,
+    # e.g. same tutorial in two campaigns with split capacity: 20 seats for computer science students,
+    # 10 seats for physics students).
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
