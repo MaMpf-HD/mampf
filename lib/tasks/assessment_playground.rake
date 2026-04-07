@@ -65,7 +65,9 @@ namespace :assessment do
         deadline: 1.year.from_now,
         accepted_file_type: ".pdf"
       )
+      # rubocop:disable Rails/SkipsModelValidations
       assignment.update_column(:deadline, attrs[:deadline])
+      # rubocop:enable Rails/SkipsModelValidations
       puts "  ✓ Created: #{assignment.title} (deadline: #{assignment.deadline})"
     end
 

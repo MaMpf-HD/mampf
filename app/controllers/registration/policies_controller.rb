@@ -125,7 +125,6 @@ module Registration
                 stream_flash
               ].compact
             end
-
           end
         end
       end

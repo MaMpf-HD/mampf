@@ -24,7 +24,6 @@ module Registration
               expanded_campaign_id: @campaign.id
             }
           )
-
         end
       end
     end
@@ -74,7 +73,6 @@ module Registration
 
       guard = Registration::FinalizationGuard.new(@campaign)
       result = guard.check(ignore_policies: force)
-
 
       unless result.success?
         respond_to do |format|
@@ -139,7 +137,6 @@ module Registration
               streams += refresh_roster_streams(lecture)
               render turbo_stream: streams.compact
             end
-
           end
         end
       end

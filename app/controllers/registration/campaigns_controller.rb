@@ -21,7 +21,6 @@ module Registration
         format.html
         format.turbo_stream do
           render_campaigns_index_turbo(lecture: @lecture)
-
         end
       end
     end
@@ -36,7 +35,6 @@ module Registration
             render_campaigns_index_turbo(lecture: @campaign.campaignable,
                                          expanded_campaign_id: @campaign.id)
           end
-
         end
       end
     end
@@ -226,7 +224,6 @@ module Registration
             new_campaign: new_campaign
           }
         )
-
       end
 
       def render_turbo_update(lecture:, expanded_campaign_id: nil,
@@ -262,7 +259,6 @@ module Registration
               render_turbo_update(lecture: lecture,
                                   expanded_campaign_id: @campaign.id)
             end
-
           end
         end
       end
@@ -277,7 +273,6 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message
             render_turbo_update(lecture: lecture)
-
           end
         end
       end

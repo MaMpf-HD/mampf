@@ -255,7 +255,9 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     end
 
     context "when deadline passed less than 24 hours ago" do
+      # rubocop:disable Rails/SkipsModelValidations
       before { assignment.update_column(:deadline, 6.hours.ago) }
+      # rubocop:enable Rails/SkipsModelValidations
 
       it "returns just_closed phase" do
         expect(component.deadline_status[:phase]).to eq(:just_closed)
@@ -264,7 +266,9 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     end
 
     context "when deadline passed more than 24 hours ago" do
+      # rubocop:disable Rails/SkipsModelValidations
       before { assignment.update_column(:deadline, 3.days.ago) }
+      # rubocop:enable Rails/SkipsModelValidations
 
       it "returns grading phase" do
         expect(component.deadline_status[:phase]).to eq(:grading)

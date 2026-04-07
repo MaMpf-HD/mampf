@@ -78,11 +78,6 @@ module Registration
         .transform_values(&:size)
     end
 
-    def finalization_policies
-      @finalization_policies ||=
-        @campaign.registration_policies.active.for_phase(:finalization)
-    end
-
     def allocation_run?
       @campaign.last_allocation_calculated_at.present?
     end

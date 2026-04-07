@@ -1,7 +1,7 @@
 namespace :exam_policy do
-  EXAM_TITLE = "Policy Exam - Finalization Scenario".freeze
-  EMAIL_DOMAIN = "example.com".freeze
-  NUM_OUTSIDERS = 5
+  def exam_title = "Policy Exam - Finalization Scenario"
+  def email_domain = "example.com"
+  def num_outsiders = 5
 
   desc "Full setup: exam + policies + registrations + certifications"
   task setup: :environment do
@@ -24,20 +24,20 @@ namespace :exam_policy do
     Flipper.enable(:registration_campaigns)
 
     lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
 
     if exam
-      puts "✓ Exam already exists: #{EXAM_TITLE} (ID: #{exam.id})"
+      puts "✓ Exam already exists: #{exam_title} (ID: #{exam.id})"
     else
       exam = Exam.create!(
         lecture: lecture,
-        title: EXAM_TITLE,
+        title: exam_title,
         date: 4.weeks.from_now,
         location: "Exam Hall C",
         capacity: 100,
         description: "Exam with email + performance policies for finalization testing."
       )
-      puts "✓ Created exam: #{EXAM_TITLE} (ID: #{exam.id})"
+      puts "✓ Created exam: #{exam_title} (ID: #{exam.id})"
     end
   end
 
@@ -66,9 +66,9 @@ namespace :exam_policy do
       kind: :institutional_email,
       phase: :both,
       active: true,
-      config: { "allowed_domains" => EMAIL_DOMAIN }
+      config: { "allowed_domains" => email_domain }
     )
-    puts "✓ Added email policy: @#{EMAIL_DOMAIN} (checked on both phases)"
+    puts "✓ Added email policy: @#{email_domain} (checked on both phases)"
 
     lecture = exam.lecture
     Registration::Policy.create!(
@@ -116,10 +116,10 @@ namespace :exam_policy do
                         status: :confirmed)
       registered += 1
     end
-    puts "✓ Registered #{registered} tutorial members (@#{EMAIL_DOMAIN})"
+    puts "✓ Registered #{registered} tutorial members (@#{email_domain})"
 
     outsider_count = 0
-    NUM_OUTSIDERS.times do |i|
+    num_outsiders.times do |i|
       email = "outsider_#{i + 1}@other-university.de"
       user = User.find_by(email: email)
       user ||= FactoryBot.create(:confirmed_user,
@@ -183,11 +183,11 @@ namespace :exam_policy do
                                  .pluck(:user_id).uniq
 
     example_com_ids = User.where(id: confirmed_user_ids)
-                          .where("email LIKE ?", "%@#{EMAIL_DOMAIN}")
+                          .where("email LIKE ?", "%@#{email_domain}")
                           .pluck(:id)
 
     if example_com_ids.empty?
-      puts "⚠ No @#{EMAIL_DOMAIN} registrations found. Skipping."
+      puts "⚠ No @#{email_domain} registrations found. Skipping."
       next
     end
 
@@ -253,20 +253,20 @@ namespace :exam_policy do
   desc "Reset: destroy exam + campaign + outsiders + certifications"
   task reset: :environment do
     lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
 
     if exam
       campaign = exam.registration_campaign
       if campaign
         campaign.user_registrations.destroy_all
-        campaign.registration_policies.each { |p| p.delete }
+        campaign.registration_policies.each(&:delete)
         campaign.registration_items.destroy_all
         campaign.destroy!
         puts "✓ Destroyed campaign + registrations"
       end
       exam.exam_rosters.destroy_all
       exam.destroy!
-      puts "✓ Destroyed exam: #{EXAM_TITLE}"
+      puts "✓ Destroyed exam: #{exam_title}"
     else
       puts "No exam found."
     end
@@ -288,8 +288,8 @@ namespace :exam_policy do
 
   def find_exam!
     lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
-    abort("Exam '#{EXAM_TITLE}' not found. Run exam_policy:create_exam first.") unless exam
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
+    abort("Exam '#{exam_title}' not found. Run exam_policy:create_exam first.") unless exam
     exam
   end
 
@@ -302,7 +302,7 @@ namespace :exam_policy do
     policies = campaign&.registration_policies&.count || 0
     example_regs = campaign&.user_registrations
                            &.joins(:user)
-                           &.where("users.email LIKE ?", "%@#{EMAIL_DOMAIN}")
+                           &.where("users.email LIKE ?", "%@#{email_domain}")
                            &.count || 0
     outsider_regs = campaign&.user_registrations
                             &.joins(:user)
@@ -320,7 +320,7 @@ namespace :exam_policy do
     puts "  Campaign:   #{campaign&.status || "none"}"
     puts "  Policies:   #{policies}"
     puts "  Registrations: #{regs} total"
-    puts "    @#{EMAIL_DOMAIN}: #{example_regs}"
+    puts "    @#{email_domain}: #{example_regs}"
     puts "    @other-university.de: #{outsider_regs} (will fail email policy)"
     puts "  Certifications: #{certs.passed.count} passed, " \
          "#{certs.failed.count} failed " \
@@ -332,7 +332,7 @@ namespace :exam_policy do
     puts "    3. Click 'Review & Finalize'"
     puts "    4. The guard will show policy violations:"
     puts "       - Outsiders failing the email policy"
-    puts "       - @#{EMAIL_DOMAIN} students who failed performance"
+    puts "       - @#{email_domain} students who failed performance"
     puts "    5. Choose to force-finalize or go back and fix"
     puts "=" * 60
   end

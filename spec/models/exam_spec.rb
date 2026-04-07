@@ -73,7 +73,7 @@ RSpec.describe(Exam, type: :model) do
           allow(Flipper).to receive(:enabled?)
             .with(:registration_campaigns).and_return(true)
           campaign = exam.registration_campaign
-          campaign.update!(status: :open) if campaign
+          campaign&.update!(status: :open)
         end
 
         it "is invalid when deadline is changed to the past" do
@@ -95,12 +95,12 @@ RSpec.describe(Exam, type: :model) do
           allow(Flipper).to receive(:enabled?)
             .with(:registration_campaigns).and_return(true)
           campaign = exam.registration_campaign
-          if campaign
-            campaign.update_column(
-              :status,
-              Registration::Campaign.statuses[:completed]
-            )
-          end
+          # rubocop:disable Rails/SkipsModelValidations
+          campaign&.update_column(
+            :status,
+            Registration::Campaign.statuses[:completed]
+          )
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
         it "allows a past deadline (campaign already finished)" do
@@ -222,8 +222,10 @@ RSpec.describe(Exam, type: :model) do
         allow(Flipper).to receive(:enabled?).and_call_original
         allow(Flipper).to receive(:enabled?)
           .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
         exam.registration_campaign
             .update_column(:status, Registration::Campaign.statuses[:closed])
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       it "returns :registration_closed" do
@@ -238,8 +240,10 @@ RSpec.describe(Exam, type: :model) do
         allow(Flipper).to receive(:enabled?).and_call_original
         allow(Flipper).to receive(:enabled?)
           .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
         exam.registration_campaign
             .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       it "returns :finalized" do
@@ -254,8 +258,10 @@ RSpec.describe(Exam, type: :model) do
         allow(Flipper).to receive(:enabled?).and_call_original
         allow(Flipper).to receive(:enabled?)
           .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
         exam.registration_campaign
             .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       it "returns :conducted" do
@@ -272,8 +278,10 @@ RSpec.describe(Exam, type: :model) do
           .with(:assessment_grading).and_return(true)
         allow(Flipper).to receive(:enabled?)
           .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
         exam.registration_campaign
             .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
         user = create(:confirmed_user)
         exam.assessment.assessment_participations
             .create!(user: user, status: :reviewed)
@@ -293,8 +301,10 @@ RSpec.describe(Exam, type: :model) do
           .with(:assessment_grading).and_return(true)
         allow(Flipper).to receive(:enabled?)
           .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
         exam.registration_campaign
             .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
         exam.assessment.update!(results_published_at: Time.current)
       end
 
@@ -314,7 +324,9 @@ RSpec.describe(Exam, type: :model) do
       end
 
       it "returns :conducted when date is in the past" do
+        #  rubocop:disable Rails/SkipsModelValidations
         exam.update_column(:date, 1.week.ago)
+        # rubocop:enable Rails/SkipsModelValidations
         expect(exam.status_phase).to eq(:conducted)
       end
     end
@@ -538,7 +550,9 @@ RSpec.describe(Exam, type: :model) do
                           registration_deadline: 2.weeks.ago)
         create(:registration_item, registerable: exam,
                                    registration_campaign: campaign)
+        # rubocop:disable Rails/SkipsModelValidations
         campaign.update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       it "is not destructible" do

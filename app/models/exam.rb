@@ -93,7 +93,11 @@ class Exam < ApplicationRecord
     def registration_deadline_before_exam_date
       return if registration_deadline.blank? || date.blank?
 
-      parsed = registration_deadline.is_a?(String) ? Time.zone.parse(registration_deadline) : registration_deadline
+      parsed = if registration_deadline.is_a?(String)
+        Time.zone.parse(registration_deadline)
+      else
+        registration_deadline
+      end
       return if parsed.blank? || parsed < date
 
       errors.add(:registration_deadline, :must_be_before_exam_date)
@@ -105,7 +109,11 @@ class Exam < ApplicationRecord
       campaign = registration_campaign unless new_record?
       return if campaign && (campaign.closed? || campaign.completed?)
 
-      parsed = registration_deadline.is_a?(String) ? Time.zone.parse(registration_deadline) : registration_deadline
+      parsed = if registration_deadline.is_a?(String)
+        Time.zone.parse(registration_deadline)
+      else
+        registration_deadline
+      end
       return if parsed.blank? || parsed > Time.current
 
       errors.add(:registration_deadline, :must_be_in_future)
@@ -135,7 +143,7 @@ class Exam < ApplicationRecord
 
     def any_grading_started?
       assessment&.assessment_participations
-                &.where(status: :reviewed)&.exists? || false
+                &.exists?(status: :reviewed) || false
     end
 
     def destroy_draft_campaign

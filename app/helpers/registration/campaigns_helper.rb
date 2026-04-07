@@ -29,21 +29,6 @@ module Registration
     def policy_kinds_summary(campaign)
       kinds = campaign.registration_policies.order(:position).map do |p|
         t("registration.policy.kinds.#{p.kind}")
-    def campaign_header_frame_id(campaign)
-      "campaign_header_frame_#{campaign.id}"
-    end
-
-    def campaign_actions_id(campaign)
-      "campaign_actions_#{campaign.id}"
-    end
-
-    def campaign_policy_form_frame_id(campaign)
-      "policy_form_#{campaign.id}"
-    end
-
-    def policy_kinds_summary(campaign)
-      kinds = campaign.registration_policies.order(:position).map do |p|
-        t("registration.policy.kinds.#{p.kind}")
       end
       kinds.join(", ")
     end
@@ -102,33 +87,6 @@ module Registration
     end
 
     def allocate_campaign_button(campaign, size: nil, params: {})
-    def no_campaign_registerables(lecture)
-      Rosters::NoCampaignRegisterablesQuery.new(lecture).call
-    end
-
-    def finalize_campaign_button(campaign, size: nil, disabled: false)
-      classes = ["btn", "btn-danger", size].compact.join(" ")
-
-      button_to(t("registration.campaign.actions.finalize"),
-                finalize_registration_campaign_allocation_path(campaign),
-                method: :patch,
-                form: {
-                  data: {
-                    controller: "campaign-dissolve",
-                    "campaign-dissolve-confirm-message-value":
-                      t("registration.campaign.confirmations.finalize"),
-                    "campaign-dissolve-warning-message-value":
-                      t("registration.campaign.warnings.unlimited_items"),
-                    "campaign-dissolve-campaign-id-value": campaign.id,
-                    action: "submit->campaign-dissolve#submit",
-                    turbo_stream: true
-                  }
-                },
-                class: classes,
-                disabled: disabled)
-    end
-
-    def allocate_campaign_button(campaign, size: nil)
       has_allocation = campaign.last_allocation_calculated_at.present?
       label = if has_allocation
         t("registration.campaign.actions.reallocate")
@@ -144,10 +102,9 @@ module Registration
       button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
-<<<<<<< HEAD
                 params: params,
-                class: "btn btn-primary",
-                data: { confirm: confirm, turbo_stream: true })
+                class: classes,
+                form: { data: form_data })
     end
 
     def view_allocation_button(campaign, params: {})
@@ -215,9 +172,5 @@ module Registration
           "bg-success"
         end
       end
-=======
-                class: classes,
-                form: { data: form_data })
-    end
   end
 end
