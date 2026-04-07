@@ -1,6 +1,6 @@
 ENV["RAILS_ENV"] ||= "test"
 
-if ENV["CI"]
+if ENV["COVERAGE"]
   # locally, Ruby LSP is used instead of SimpleCov to also track code coverage
   require "simplecov"
   require "simplecov-cobertura"
