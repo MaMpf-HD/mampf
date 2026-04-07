@@ -23,6 +23,7 @@ module RegistrationCampaignContext
       campaign = existing_registration_campaign(lecture: lecture,
                                                 error_target: error_target)
       return campaign if campaign
+      return nil if error_target.errors.any?
 
       campaign = lecture.registration_campaigns.build(
         description: t("registration.campaign.default_description"),
