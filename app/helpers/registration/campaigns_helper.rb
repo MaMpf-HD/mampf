@@ -70,5 +70,47 @@ module Registration
       end
       msg
     end
+
+    def campaign_finalize_confirmation
+      t("registration.campaign.confirmations.finalize")
+    end
+
+    def finalize_campaign_button(campaign, size: nil, disabled: false)
+      classes = ["btn", "btn-danger", size].compact.join(" ")
+
+      button_to(t("registration.campaign.actions.finalize"),
+                finalize_registration_campaign_allocation_path(campaign),
+                method: :patch,
+                form: {
+                  data: {
+                    controller: "campaign-dissolve",
+                    "campaign-dissolve-confirm-message-value": campaign_finalize_confirmation,
+                    action: "submit->campaign-dissolve#submit",
+                    turbo_stream: true
+                  }
+                },
+                class: classes,
+                disabled: disabled)
+    end
+
+    def allocate_campaign_button(campaign, size: nil)
+      has_allocation = campaign.last_allocation_calculated_at.present?
+      label = if has_allocation
+        t("registration.campaign.actions.reallocate")
+      else
+        t("registration.campaign.actions.allocate")
+      end
+      confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
+      classes = ["btn", "btn-primary", size].compact.join(" ")
+
+      form_data = { turbo_stream: true }
+      form_data[:turbo_confirm] = confirm if confirm
+
+      button_to(label,
+                registration_campaign_allocation_path(campaign),
+                method: :post,
+                class: classes,
+                form: { data: form_data })
+    end
   end
 end

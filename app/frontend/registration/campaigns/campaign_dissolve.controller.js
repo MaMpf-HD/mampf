@@ -1,12 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static values = {
+    confirmMessage: String,
+  };
+
   submit(event) {
     if (this.confirmed) return; // base condition to prevent loops
 
-    // Pause the form submission that Turbo is about to process.
-    // data-turbo-confirm has already asked the user at this point.
     event.preventDefault();
+
+    if (!confirm(this.confirmMessageValue)) return;
 
     const card = this.element.closest(".registration-campaign-card");
     if (!card) {
