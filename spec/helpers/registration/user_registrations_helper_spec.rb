@@ -42,9 +42,9 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
   end
 
   describe "#get_policy_config_info" do
-    context "lecture_performance" do
+    context "student_performance" do
       let(:policy) do
-        { kind: "lecture_performance", config: { "certification_status" => "pending" } }
+        { kind: "student_performance", config: { "certification_status" => "pending" } }
       end
       it { expect(helper.get_policy_config_info(policy)).to eq("Pending") }
     end

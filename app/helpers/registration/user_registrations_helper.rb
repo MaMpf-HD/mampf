@@ -13,7 +13,7 @@ module Registration
     end
 
     # Examples of policy config:
-    # lecture_performance -> config: { certification_status: :pending }
+    # student_performance -> config: { certification_status: :pending }
     # institutional_email	-> config:	{ allowed_domains: ["uni-heidelberg.de "] }
     # prerequisite_campaign	-> config:	{ prerequisite_campaign_id: 42 }
     #
@@ -21,7 +21,7 @@ module Registration
     # policy here is also hash, not policy object
     def get_policy_config_info(policy)
       case policy[:kind]
-      when "lecture_performance"
+      when "student_performance"
         cert_status = policy[:config]["certification_status"]
         cert_status.capitalize
       when "institutional_email"
