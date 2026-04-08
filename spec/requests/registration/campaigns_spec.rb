@@ -311,8 +311,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
       context "when destroy fails internally" do
         before do
-          allow_any_instance_of(Registration::Campaign).to receive(:destroy).and_return(false)
-          allow_any_instance_of(Registration::Campaign).to receive(:can_be_deleted?).and_return(true)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:destroy).and_return(false)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:can_be_deleted?).and_return(true)
         end
 
         it "responds with error" do
