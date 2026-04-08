@@ -82,6 +82,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
           post registration_campaign_allocation_path(campaign)
           expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
           expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to include("calculated")
         end
       end
 
@@ -93,6 +94,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
           post registration_campaign_allocation_path(campaign)
           expect(response).to redirect_to(registration_campaign_path(campaign))
           expect(flash[:alert]).to be_present
+        end
+      end
+
+      context "when campaign is processing and preference based" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :processing,
+                 :preference_based,
+                 campaignable: lecture)
+        end
+
+        it "allows recalculation" do
+          expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
+
+          post registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to include("calculated")
         end
       end
 

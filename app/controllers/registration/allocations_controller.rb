@@ -39,12 +39,7 @@ module Registration
         return
       end
 
-      if @campaign.processing?
-        respond_with_error(t("registration.allocation.errors.already_processing"))
-        return
-      end
-
-      unless @campaign.closed?
+      unless @campaign.closed? || @campaign.processing?
         respond_with_error(t("registration.allocation.errors.wrong_status"))
         return
       end
