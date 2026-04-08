@@ -54,6 +54,22 @@
                 <%= t('main.media_platform') %>
               </p>
 
+              <% mampf_name = "mampf" %>
+              <% instance_name = ENV.fetch("INSTANCE_NAME", mampf_name) %>
+              <% if instance_name != mampf_name %>
+                 <div class="alert w-100 mt-2" role="alert"
+                   style="background-color: rgba(80, 0, 0, 0.35);
+                   border: 2px solid rgba(255, 255, 255, 0.12);">
+                  <%= t(
+                    "main.non_mampf_login_notice_html",
+                    app_link: link_to(
+                      "https://mampf.mathi.uni-heidelberg.de",
+                      "https://mampf.mathi.uni-heidelberg.de",
+                    )
+                  ) %>
+                </div>
+              <% end %>
+
               <div class="alert alert-danger" id="js-messages" role="alert"
                   style="display: none;">
               </div>

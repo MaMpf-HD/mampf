@@ -110,6 +110,23 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(policy.allowed_domains).to eq("example.com, test.org")
       end
 
+      it "formats allowed_domains_display from a comma-separated string" do
+        policy = build(:registration_policy)
+        policy.allowed_domains = "uni-heidelberg.de, example.com"
+        expect(policy.allowed_domains_display).to eq("uni-heidelberg.de, @example.com")
+      end
+
+      it "formats allowed_domains_display from an array" do
+        policy = build(:registration_policy,
+                       config: { "allowed_domains" => ["uni-heidelberg.de", "example.com"] })
+        expect(policy.allowed_domains_display).to eq("uni-heidelberg.de, @example.com")
+      end
+
+      it "returns empty string for allowed_domains_display when config is nil" do
+        policy = build(:registration_policy, config: nil)
+        expect(policy.allowed_domains_display).to eq("")
+      end
+
       it "handles prerequisite_campaign_id" do
         policy = build(:registration_policy)
         policy.prerequisite_campaign_id = 123

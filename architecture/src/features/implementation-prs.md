@@ -502,29 +502,28 @@ Exams — Step 9: Grade Schemes (Exam-Specific Layer)
 ```
 
 ```admonish example "PR-9.1 — Grade scheme schema"
-- Scope: Create `grade_schemes` and `grade_scheme_thresholds`.
-- Migrations:
-  - `20251110000001_create_grade_schemes.rb`
-  - `20251110000002_create_grade_scheme_thresholds.rb`
-- Refs: [GradeScheme models](05b-grading-schemes.md#grading-scheme-models)
-- Acceptance: Migrations run; models have correct validations; percentage-based thresholds supported.
+- Scope: Create `assessment_grade_schemes` table; `Assessment::GradeScheme` model with factory and spec.
+- Design decision: bands are stored as JSONB in `config` (no separate thresholds table). Bands are always read/written as a unit, JSONB keeps versioning via `version_hash` atomic, and the schema stays flexible for future `kind` values.
+- Migration: `20260220000000_create_grade_schemes.rb`
+- Refs: [Assessment::GradeScheme](05b-grading-schemes.md#assessmentgradescheme-activerecord-model)
+- Acceptance: Migration runs; `Assessment::GradeScheme` model has correct associations, validations, `applied?`, `compute_hash`, and `config_matches_kind`; factory covers absolute-points, percentage, and applied traits; spec covers all validations and uniqueness of active scheme per assessment.
 ```
 
 ```admonish example "PR-9.2 — Grade scheme applier (service)"
-- Scope: `GradeScheme::Applier` for converting exam points to grades.
+- Scope: `Assessment::GradeSchemeApplier` for converting exam points to grades.
 - Implementation: Supports absolute points and percentage-based bands; idempotent application via version_hash; respects manual overrides
-- Refs: [GradeScheme applier](05b-grading-schemes.md#gradeschemesapplier-service-object)
+- Refs: [Assessment::GradeSchemeApplier](05b-grading-schemes.md#assessmentgradeschemeapplier-service-object)
 - Acceptance: Service computes grades from points; handles both absolute and percentage schemes; version_hash prevents duplicate applications.
 ```
 
 ```admonish example "PR-9.3 — Grade scheme UI + distribution analysis"
 - Scope: UI for grade scheme configuration and application (layers on top of PR-8.4 point grid).
-- Controllers: `GradeScheme::SchemesController` (configuration, preview, apply)
+- Controllers: `Assessment::GradeSchemesController` (configuration, preview, apply)
 - UI:
   - Distribution analysis (histogram, statistics) based on entered points
   - Scheme configuration (two-point auto-generation + manual adjustment)
   - Grade preview showing how scheme maps to students
-  - Apply action (runs GradeScheme::Applier)
+  - Apply action (runs Assessment::GradeSchemeApplier)
 - Integration: Uses existing read-only point grid from PR-8.4; adds grade scheme layer
 - Refs: [Exam grading workflow](12-views.md#exam-grading-workflow)
 - Acceptance: Teachers can create and apply grade schemes; preview grade distribution; apply action creates final grades; publication uses existing PR-8.10 toggle; feature flag gates UI.
@@ -539,6 +538,18 @@ Step 10 was promoted ahead of Activity Tracking (now Step 12) because
 student performance and exam eligibility are MVP-critical: the system
 cannot gate exam registration without certifications. Achievement
 tracking is a nice-to-have enhancement that can follow later.
+```
+
+```admonish tip
+Step 10 was consolidated from 7 PRs to 4. The original split had
+several very small PRs (pure service objects, thin controllers, tiny
+background jobs) that are better reviewed together:
+- Old 10.2 (ComputationService) + 10.3 (Evaluator) + 10.7 (jobs) →
+  new **PR-10.2** (all backend services + jobs, no UI)
+- Old 10.4 (RecordsController) + 10.6 (EvaluatorController) →
+  new **PR-10.3** (all read-only/proposal UI)
+- Old 10.5 (CertificationsController) → new **PR-10.4** (unchanged,
+  the main write-heavy decision UI deserves isolated review)
 ```
 
 ```admonish example "PR-10.1 — Performance schema (Record, Rule, Achievement stub, Certification)"
@@ -562,54 +573,78 @@ tracking is a nice-to-have enhancement that can follow later.
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications; Achievement model exists but has no controller or UI.
 ```
 
-```admonish example "PR-10.2 — Computation service (materialize Records)"
-- Scope: `StudentPerformance::ComputationService` to aggregate performance data.
-- Implementation: Reads from `assessment_participations` and
-  `assessment_task_points`; writes to `student_performance_records`.
-  When no achievements are configured on a rule, treats achievement
-  criteria as met.
-- Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service)
-- Acceptance: Service computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements).
+```admonish example "PR-10.2 — Services & jobs (ComputationService, Evaluator, background jobs)"
+- Scope: All backend service objects and background jobs for the
+  student performance pipeline — no controllers or UI.
+- Services:
+  - `StudentPerformance::ComputationService`: reads from
+    `assessment_participations` and `assessment_task_points`; upserts
+    `student_performance_records`. When no achievements are configured
+    on a rule, treats achievement criteria as met.
+  - `StudentPerformance::Evaluator`: reads Records and Rules; returns
+    proposed status (passed/failed) per student. Generates bulk
+    proposals for the teacher certification UI. Does NOT create
+    Certifications.
+- Jobs:
+  - `PerformanceRecordUpdateJob`: recomputes Records after grade
+    changes (thin wrapper around `ComputationService`).
+  - `CertificationStaleCheckJob`: flags stale certifications when
+    Records change.
+- Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service),
+  [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator),
+  [Background jobs](09-integrity-and-invariants.md#recommended-background-jobs)
+- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. Jobs run on schedule; recomputed Records are accurate; stale certifications flagged for teacher review.
 ```
 
-```admonish example "PR-10.3 — Evaluator (proposal generator)"
-- Scope: `StudentPerformance::Evaluator` to generate certification proposals.
-- Implementation: Reads Records and Rules; returns proposed status
-  (passed/failed) per student.
-- Refs: [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator)
-- Acceptance: Evaluator generates proposals; does NOT create Certifications; used for bulk UI only.
+```admonish example "PR-10.3 — Read-only UI (Records + Evaluator + Rules read-only)"
+- Scope: All read-only and proposal-generating UI for student
+  performance — everything teachers see *before* making certification
+  decisions. Adds the Assessments overview subtab navigation
+  (`AssessmentsOverviewComponent`) with three subtabs: Assessments,
+  Performance, and Rules (read-only).
+- Controllers:
+  - `StudentPerformance::RecordsController`: index/show actions for
+    factual performance data.
+  - `StudentPerformance::EvaluatorController`: `bulk_proposals`,
+    `preview_rule_change`, `single_proposal`.
+  - `StudentPerformance::RulesController`: `show` action (read-only
+    display of the active rule and its criteria).
+- UI:
+  - `AssessmentsOverviewComponent` with subtab navigation
+    (Assessments | Performance | Rules), feature-flag gated.
+  - Records table view with points, achievements, `computed_at`
+    timestamp.
+  - Evaluator proposal list (bulk proposals for all students).
+  - Modal for rule change preview showing diff of affected students.
+  - Rules subtab: read-only display of the active rule (thresholds,
+    linked achievements). Info alert: "Rule editing available in a
+    future update."
+- Refs: [RecordsController](11-controllers.md#lectureperformancerecordscontroller),
+  [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller),
+  [RulesController](11-controllers.md#lectureperformancerulescontroller)
+- Acceptance: Teachers can view Records; teachers can generate proposals; preview rule changes; Rules subtab shows current criteria read-only; does NOT create Certifications automatically; feature flag gates access.
 ```
 
-```admonish example "PR-10.4 — Records controller (factual data display)"
-- Scope: `StudentPerformance::RecordsController` for viewing performance data.
-- Controllers: Index/show actions for Records.
-- UI: Table view with points, achievements, computed_at timestamp.
-- Refs: [RecordsController](11-controllers.md#lectureperformancerecordscontroller)
-- Acceptance: Teachers can view Records; no decision-making UI; feature flag gates access.
-```
-
-```admonish example "PR-10.5 — Certifications controller (teacher workflow)"
-- Scope: `StudentPerformance::CertificationsController` for teacher certification.
-- Controllers: Index (dashboard), create (bulk), update (override),
-  bulk_accept.
-- UI: Certification dashboard with proposals; bulk accept/reject; manual override with notes.
-- Refs: [CertificationsController](11-controllers.md#lectureperformancecertificationscontroller)
-- Acceptance: Teachers can review proposals; bulk accept; override with manual status; remediation workflow for stale certifications.
-```
-
-```admonish example "PR-10.6 — Evaluator controller (proposal endpoints)"
-- Scope: `StudentPerformance::EvaluatorController` for proposal generation.
-- Controllers: `bulk_proposals`, `preview_rule_change`, `single_proposal`.
-- UI: Modal for rule change preview showing diff of affected students.
-- Refs: [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller)
-- Acceptance: Teachers can generate proposals; preview rule changes; does NOT create Certifications automatically.
-```
-
-```admonish example "PR-10.7 — Background jobs (performance/certification)"
-- Scope: Background jobs to keep performance data current.
-- Jobs: `PerformanceRecordUpdateJob` (recompute Records after grade changes), `CertificationStaleCheckJob` (flag stale certifications when Records change).
-- Refs: [Background jobs](09-integrity-and-invariants.md#recommended-background-jobs)
-- Acceptance: Jobs run on schedule; recomputed Records are accurate; stale certifications flagged for teacher review.
+```admonish example "PR-10.4 — Certifications controller + Rules edit (teacher workflow)"
+- Scope: `StudentPerformance::CertificationsController` for teacher
+  certification — the write-heavy decision-making UI. Also adds
+  write-side Rules (edit/update) and the Certifications subtab to
+  `AssessmentsOverviewComponent`.
+- Controllers:
+  - `StudentPerformance::CertificationsController`: index (dashboard),
+    create (bulk), update (override), bulk_accept.
+  - `StudentPerformance::RulesController`: `edit`, `update` actions
+    (criteria editing with rule change preview).
+- UI:
+  - Certifications subtab added to `AssessmentsOverviewComponent`
+    (Assessments | Performance | Rules | Certifications).
+  - Certification dashboard with proposals; bulk accept/reject;
+    manual override with notes.
+  - Rules subtab upgraded from read-only to editable: inline form
+    for thresholds, achievement checkboxes, preview + save.
+- Refs: [CertificationsController](11-controllers.md#lectureperformancecertificationscontroller),
+  [RulesController](11-controllers.md#lectureperformancerulescontroller)
+- Acceptance: Teachers can review proposals; bulk accept; override with manual status; edit rules with preview; Certifications subtab visible; remediation workflow for stale certifications.
 ```
 
 ```admonish abstract

@@ -1,0 +1,52 @@
+<% picker_id = "reopen-deadline-picker-#{campaign.id}" %>
+
+<%= form_with(url: reopen_registration_campaign_path(campaign),
+              method: :patch,
+              data: { turbo_stream: true },
+              class: "d-flex flex-column gap-2") do |f| %>
+  <label class="form-label small text-muted mb-0">
+    <%= t("registration.campaign.reopen_form.new_deadline") %>
+  </label>
+
+  <div
+    class="input-group td-picker"
+    id="<%= picker_id %>"
+    data-controller="datetimepicker"
+    data-td-target-input="nearest"
+    data-td-target-toggle="nearest"
+  >
+    <%= f.text_field :registration_deadline,
+                     name: "registration_deadline",
+                     class: "form-control td-input",
+                     data: { td_target: "##{picker_id}" },
+                     value: 1.week.from_now.strftime("%Y-%m-%d %H:%M"),
+                     autocomplete: "off" %>
+
+    <span
+      class="input-group-text td-picker-button"
+      role="button"
+      data-td-target="#<%= picker_id %>"
+      data-td-toggle="datetimepicker"
+    >
+      <i class="bi bi-calendar-fill"></i>
+    </span>
+
+    <div
+      class="invalid-feedback td-error"
+      data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>"
+    ></div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit t("registration.campaign.reopen_form.submit"),
+                 class: "btn btn-success flex-grow-1" %>
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      data-action="collapse#toggle"
+    >
+      <%= t("buttons.cancel") %>
+    </button>
+  </div>
+<% end %>
