@@ -86,6 +86,24 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:alert]).to be_present
         end
       end
+
+      context "when campaign is closed and first come first served" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :closed,
+                 :first_come_first_served,
+                 campaignable: lecture)
+        end
+
+        it "rejects allocation and keeps the campaign closed" do
+          post registration_campaign_allocation_path(campaign)
+
+          campaign.reload
+          expect(campaign).to be_closed
+          expect(response).to redirect_to(registration_campaign_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.wrong_status"))
+        end
+      end
     end
 
     context "as a student" do
