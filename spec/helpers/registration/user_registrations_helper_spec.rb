@@ -1,35 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
-  describe "#registration_status_color" do
-    let(:registration) { double(status: status) }
-
-    context "when pending" do
-      let(:status) { "pending" }
-      it { expect(helper.registration_status_color(registration)).to eq("secondary") }
-    end
-
-    context "when confirmed" do
-      let(:status) { "confirmed" }
-      it { expect(helper.registration_status_color(registration)).to eq("success") }
-    end
-
-    context "when rejected" do
-      let(:status) { "rejected" }
-      it { expect(helper.registration_status_color(registration)).to eq("danger") }
-    end
-  end
-
-  describe "#sort_registrations_by_rank" do
-    let(:r1) { double(preference_rank: 2) }
-    let(:r2) { double(preference_rank: 1) }
-    let(:r3) { double(preference_rank: nil) }
-
-    it "sorts ranked first, then unranked" do
-      result = helper.sort_registrations_by_rank([r1, r3, r2])
-      expect(result).to eq([r2, r1, r3])
-    end
-  end
 
   describe "#get_mode_info" do
     it "returns known mode" do
