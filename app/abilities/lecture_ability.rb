@@ -36,7 +36,7 @@ class LectureAbility
     end
 
     can :self_materialize, Lecture do |lecture|
-      !user.in?(lecture.tutors) && (user != lecture.teacher)
+      !user.in?(lecture.tutors) && (user != lecture.teacher) && !user.can_edit?(lecture)
     end
   end
 end

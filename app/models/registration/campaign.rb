@@ -75,7 +75,7 @@ module Registration
       registration_items.exists? &&
         registration_items.size == 1 &&
         registration_items.first.registerable_type == "Cohort" &&
-        registration_items.first.registerable.purpose.to_sym == :planning
+        registration_items.first.registerable.propagate_to_lecture == false
     end
 
     def user_registrations_confirmed(user)

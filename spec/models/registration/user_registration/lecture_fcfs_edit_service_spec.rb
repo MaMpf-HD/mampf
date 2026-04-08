@@ -17,7 +17,6 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     let(:planning_cohort) do
       create(:cohort,
              context: seminar,
-             purpose: :planning,
              propagate_to_lecture: false,
              capacity: nil)
     end
@@ -70,6 +69,21 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
+    context "given preference based campaign" do
+      let(:campaign_pb) do
+        create(:registration_campaign, :open, allocation_mode: :preference_based)
+      end
+
+      it "raises error if campaign is in preference based mode" do
+        service = described_class.new(campaign_pb, user)
+        result = service.withdraw!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.not_fcfs_mode")
+        )
+      end
+    end
+
     context "invalid cases" do
       it "raises error if campaign is closed" do
         service = described_class.new(campaign_draft, user)
@@ -113,6 +127,21 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
     let(:item) { campaign.registration_items.first }
     let(:item2) { campaign.registration_items.second }
+
+    context "given preference based campaign" do
+      let(:campaign_pb) do
+        create(:registration_campaign, :open, allocation_mode: :preference_based)
+      end
+
+      it "raises error if campaign is in preference based mode" do
+        service = described_class.new(campaign_pb, user)
+        result = service.withdraw!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.not_fcfs_mode")
+        )
+      end
+    end
 
     context "registered item" do
       before do
@@ -206,8 +235,7 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     let(:cohort) do
       create(:cohort,
              context: seminar,
-             purpose: :general,
-             propagate_to_lecture: false,
+             propagate_to_lecture: true,
              capacity: nil)
     end
 

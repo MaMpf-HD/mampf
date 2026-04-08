@@ -41,8 +41,10 @@ module Registration
         # 2. Check if item still has capacity
         # 3. Check if user satisfies all policies (phase: registration and both)
         # 4. Check if items are valid for this campaign
+        # 5. Check if campaign is in FCFS mode
         def validate_register(item)
           [
+            check_fcfs_mode,
             check_campaign_open_for_registrations,
             check_already_registered_current_type(item),
             check_capacity(item),
@@ -54,11 +56,19 @@ module Registration
         # Validation for withdrawing registration in lecture based registration
         # 0. Check open to withdraw
         # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
+        # 2. Check if campaign is in FCFS mode
         def validate_withdraw
           [
+            check_fcfs_mode,
             check_campaign_open_for_withdraw,
             check_not_referenced_as_prerequisite
           ].compact
+        end
+
+        def check_fcfs_mode
+          return if @campaign.allocation_mode == :first_come_first_served
+
+          I18n.t("registration.user_registration.messages.not_fcfs_mode")
         end
     end
   end

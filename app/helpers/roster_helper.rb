@@ -118,18 +118,12 @@ module RosterHelper
     when "Tutorial"
       t("registration.item.types.tutorial")
     when "Talk"
-      t("registration.item.types.talk")
+      "#{t("registration.item.types.talk")} #{item.registerable.position}"
     when "Cohort"
-      base_type = case rosterable.purpose.to_sym
-                  when :enrollment
-                    t("registration.item.types.enrollment_group")
-                  when :planning
-                    t("registration.item.types.planning_survey")
-                  when :general
-                    t("registration.item.types.other_group")
-      end
+      cohort = item.registerable
+      base_type = t("registration.item.types.other_group")
 
-      if rosterable.propagate_to_lecture
+      if cohort.propagate_to_lecture
         base_type
       else
         icon = tag.i(class: "bi bi-person-x ms-1",

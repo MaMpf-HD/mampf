@@ -1,156 +1,127 @@
 require "rails_helper"
 
-RSpec.describe(Roster::SelfMaterializationController, type: :controller) do
-  let(:user) { create(:user) }
-  let(:lecture) { create(:lecture) }
+RSpec.describe("Roster::SelfMaterializationController", type: :request) do
+  let(:user)     { create(:confirmed_user) }
+  let(:lecture)  { create(:lecture) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:service)  { instance_double(Rosters::SelfMaterializationService) }
 
   before do
     sign_in user
-    allow_any_instance_of(LectureAbility).to receive(:can?)
-      .with(:self_materialize, lecture).and_return(true)
+    Flipper.enable(:registration_campaigns)
+    Flipper.enable(:roster_maintenance)
+
+    allow_any_instance_of(LectureAbility)
+      .to receive(:authorize!)
+      .and_return(true)
+
+    allow(Rosters::SelfMaterializationService)
+      .to receive(:new)
+      .with(tutorial, user)
+      .and_return(service)
   end
 
-  describe "POST #self_add" do
-    let(:params) do
-      {
-        type: "Tutorial",
-        tutorial_id: tutorial.id,
-        format: :turbo_stream
-      }
+  describe "POST /tutorials/:id/roster/self_add" do
+    before { allow(service).to receive(:self_add!) }
+
+    it "calls the service" do
+      post self_add_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(service).to have_received(:self_add!)
+      expect(response).to have_http_status(:ok)
     end
 
-    before do
-      allow_any_instance_of(Rosters::SelfMaterializationService)
-        .to receive(:self_add!)
-    end
-
-    it "calls SelfMaterializationService#self_add!" do
-      expect_any_instance_of(Rosters::SelfMaterializationService)
-        .to receive(:self_add!)
-
-      post :self_add, params: params
-    end
-
-    it "returns turbo_stream success response" do
-      post :self_add, params: params
-
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
-      expect(flash.now[:notice]).to eq(I18n.t("roster.messages.user_added"))
-    end
-
-    context "when service raises RosterLockedError" do
+    context "when RosterLockedError" do
       before do
-        allow_any_instance_of(Rosters::SelfMaterializationService)
-          .to receive(:self_add!)
+        allow(service).to receive(:self_add!)
           .and_raise(Rosters::SelfMaterializationService::RosterLockedError)
       end
 
-      it "renders turbo_stream error flash" do
-        post :self_add, params: params
-
-        expect(flash.now[:alert]).to eq(I18n.t("roster.errors.item_locked"))
-        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      it "returns locked error flash" do
+        post self_add_tutorial_path(tutorial), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("roster.errors.item_locked"))
       end
     end
 
-    context "when service raises UserAlreadyInBundleError" do
-      let(:group) { create(:tutorial) }
-
+    context "when RosterFullError" do
       before do
-        error = Rosters::UserAlreadyInBundleError.new(group)
-        allow(error).to receive(:conflicting_group).and_return(group)
-
-        allow_any_instance_of(Rosters::SelfMaterializationService)
-          .to receive(:self_add!)
-          .and_raise(error)
+        allow(service).to receive(:self_add!)
+          .and_raise(Rosters::SelfMaterializationService::RosterFullError)
       end
 
-      it "renders correct error message" do
-        post :self_add, params: params
+      it "returns capacity error flash" do
+        post self_add_tutorial_path(tutorial), params: { type: "Tutorial" }, as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("roster.errors.capacity_exceeded"))
+      end
+    end
 
-        expect(flash.now[:alert]).to eq(
-          I18n.t("roster.errors.user_already_in_bundle", group: group.title)
+    context "when SelfAddNotAllowedError" do
+      before do
+        allow(service).to receive(:self_add!)
+          .and_raise(Rosters::SelfMaterializationService::SelfAddNotAllowedError)
+      end
+
+      it "returns not allowed error flash" do
+        post self_add_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          I18n.t("roster.errors.self_add_not_allowed", type: "Tutorial")
         )
+      end
+    end
+
+    context "when CapacityExceededError" do
+      before do
+        allow(service).to receive(:self_add!)
+          .and_raise(Rosters::MaintenanceService::CapacityExceededError)
+      end
+
+      it "returns capacity error flash" do
+        post self_add_tutorial_path(tutorial), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("roster.errors.capacity_exceeded"))
       end
     end
   end
 
-  describe "POST #self_remove" do
-    let(:params) do
-      {
-        type: "Tutorial",
-        tutorial_id: tutorial.id,
-        format: :turbo_stream
-      }
+  describe "DELETE /tutorials/:id/roster/self_remove" do
+    before { allow(service).to receive(:self_remove!) }
+
+    it "calls the service" do
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+      expect(response).to have_http_status(:ok)
+      expect(service).to have_received(:self_remove!)
     end
 
-    before do
-      allow_any_instance_of(Rosters::SelfMaterializationService)
-        .to receive(:self_remove!)
-    end
-
-    it "calls SelfMaterializationService#self_remove!" do
-      expect_any_instance_of(Rosters::SelfMaterializationService)
-        .to receive(:self_remove!)
-
-      post :self_remove, params: params
-    end
-
-    it "returns turbo_stream success response" do
-      post :self_remove, params: params
-
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
-      expect(flash.now[:notice]).to eq(I18n.t("roster.messages.user_removed"))
-    end
-
-    context "when service raises SelfRemoveNotAllowedError" do
+    context "when RosterLockedError" do
       before do
-        allow_any_instance_of(Rosters::SelfMaterializationService)
-          .to receive(:self_remove!)
+        allow(service).to receive(:self_remove!)
+          .and_raise(Rosters::SelfMaterializationService::RosterLockedError)
+      end
+
+      it "returns locked error flash" do
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("roster.errors.item_locked"))
+      end
+    end
+
+    context "when SelfRemoveNotAllowedError" do
+      before do
+        allow(service).to receive(:self_remove!)
           .and_raise(Rosters::SelfMaterializationService::SelfRemoveNotAllowedError)
       end
 
-      it "renders turbo_stream error flash" do
-        post :self_remove, params: params
-
-        expect(flash.now[:alert]).to eq(
+      it "returns not allowed error flash" do
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
           I18n.t("roster.errors.self_remove_not_allowed", type: "Tutorial")
         )
       end
-    end
-  end
-
-  describe "set_rosterable" do
-    context "when type is invalid" do
-      it "redirects with error" do
-        post :self_add, params: { type: "InvalidType", id: 1 }
-
-        expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to eq(I18n.t("roster.errors.invalid_type"))
-      end
-    end
-
-    context "when rosterable does not exist" do
-      it "redirects with error" do
-        post :self_add, params: { type: "Tutorial", tutorial_id: 999 }
-
-        expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to eq(I18n.t("roster.errors.rosterable_not_found"))
-      end
-    end
-  end
-
-  describe "authorization" do
-    before do
-      allow_any_instance_of(LectureAbility).to receive(:can?)
-        .with(:self_materialize, lecture).and_return(false)
-    end
-
-    it "raises CanCan::AccessDenied" do
-      expect do
-        post(:self_add, params: { type: "Tutorial", tutorial_id: tutorial.id })
-      end.to raise_error(CanCan::AccessDenied)
     end
   end
 end

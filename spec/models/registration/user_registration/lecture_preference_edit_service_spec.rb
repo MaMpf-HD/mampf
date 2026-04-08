@@ -74,8 +74,7 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
     let(:cohort) do
       FactoryBot.create(:cohort,
                         context: lecture,
-                        purpose: :general,
-                        propagate_to_lecture: false,
+                        propagate_to_lecture: true,
                         capacity: nil)
     end
     let!(:item) do

@@ -67,10 +67,6 @@ module Registration
                                       I18n.t("registration.user_registration.messages.withdrawn"))
     end
 
-    def render_not_found(exception)
-      render json: { error: exception.message }, status: :unprocessable_content
-    end
-
     def up
       locals = handle_preference_action(:up)
       rerender_preferences(locals)
@@ -98,6 +94,10 @@ module Registration
     end
 
     private
+
+      def render_not_found(exception)
+        render json: { error: exception.message }, status: :unprocessable_content
+      end
 
       def respond_to_student_registration(result, success_message)
         if result.success?
