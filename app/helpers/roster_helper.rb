@@ -135,28 +135,6 @@ module RosterHelper
     end
   end
 
-  def self_add_path
-    case type
-    when "Tutorial"
-      Rails.application.routes.url_helpers.self_add_tutorial_path(id)
-    when "Talk"
-      Rails.application.routes.url_helpers.self_add_talk_path(id)
-    when "Cohort"
-      Rails.application.routes.url_helpers.self_add_cohort_path(id)
-    end
-  end
-
-  def self_remove_path
-    case type
-    when "Tutorial"
-      Rails.application.routes.url_helpers.self_remove_tutorial_path(id)
-    when "Talk"
-      Rails.application.routes.url_helpers.self_remove_talk_path(id)
-    when "Cohort"
-      Rails.application.routes.url_helpers.self_remove_cohort_path(id)
-    end
-  end
-
   def format_date(time)
     return "" if time.nil?
 
