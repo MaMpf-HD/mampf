@@ -31,6 +31,14 @@ module Registration
     def create
       authorize! :allocate, @campaign
 
+      unless @campaign.preference_based?
+        respond_with_error(
+          "Allocation can only be triggered for preference-based campaigns. " \
+          "As a user, you should never see this error, please contact the MaMpf team."
+        )
+        return
+      end
+
       if @campaign.processing?
         respond_with_error(t("registration.allocation.errors.already_processing"))
         return

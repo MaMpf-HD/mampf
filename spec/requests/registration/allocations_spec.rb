@@ -69,11 +69,20 @@ RSpec.describe("Registration::Allocations", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "triggers allocation service" do
-        expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
-        post registration_campaign_allocation_path(campaign)
-        expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
-        expect(flash[:notice]).to be_present
+      context "when campaign is closed and preference based" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :closed,
+                 :preference_based,
+                 campaignable: lecture)
+        end
+
+        it "triggers allocation service" do
+          expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
+          post registration_campaign_allocation_path(campaign)
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:notice]).to be_present
+        end
       end
 
       context "when campaign is open" do
@@ -87,7 +96,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
         end
       end
 
-      context "when campaign is closed and first come first served" do
+      context "when campaign is first come first served" do
         let!(:campaign) do
           create(:registration_campaign,
                  :closed,
@@ -101,7 +110,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
           campaign.reload
           expect(campaign).to be_closed
           expect(response).to redirect_to(registration_campaign_path(campaign))
-          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.wrong_status"))
+          expect(flash[:alert]).to include("preference-based campaigns")
         end
       end
     end
