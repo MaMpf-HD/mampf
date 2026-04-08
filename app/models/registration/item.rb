@@ -45,7 +45,7 @@ module Registration
       confirmed_registrations_count
     end
 
-    def capacity_remained
+    def remaining_capacity
       return nil if capacity.nil?
 
       capacity - item_capacity_used
@@ -54,7 +54,7 @@ module Registration
     def still_has_capacity?
       return true if capacity.nil?
 
-      capacity_remained.positive?
+      remaining_capacity.positive?
     end
 
     def user_registered?(user)

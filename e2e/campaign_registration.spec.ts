@@ -149,7 +149,7 @@ test.describe("open fcfs tutorial campaign", () => {
       const registrationLink = student.page.getByRole("button", { name: "Subscribe event series" });
       await expect(registrationLink).toBeVisible();
       await registrationLink.click();
-      const campaign = await factory.create("registration_campaign", ["open", "no_capacity_remained_first_item", "first_come_first_served"], { capacity: 100, campaignable_type: "Lecture", campaignable_id: lecture.id });
+      const campaign = await factory.create("registration_campaign", ["open", "no_remaining_capacity_first_item", "first_come_first_served"], { capacity: 100, campaignable_type: "Lecture", campaignable_id: lecture.id });
       const page = new CampaignRegistrationPage(student.page, lecture.id);
       await page.goto();
       const buttons = student.page.locator('button:has-text("Register now"):disabled');

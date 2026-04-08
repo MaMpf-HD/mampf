@@ -103,7 +103,7 @@ FactoryBot.define do
       allocation_mode { :first_come_first_served }
     end
 
-    trait :no_capacity_remained_first_item do
+    trait :no_remaining_capacity_first_item do
       after(:create) do |campaign|
         campaign.registration_items.first.registerable.update!(capacity: 0)
       end

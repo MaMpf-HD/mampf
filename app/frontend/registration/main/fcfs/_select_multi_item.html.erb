@@ -76,7 +76,7 @@
 
                 <div class="d-flex gap-1">
                   <span class="fw-medium"><%= t("registration.user_registration.fcfs_columns.seats") %>:</span>
-                  <span><%= "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}" %></span>
+                  <span><%= item.item_capacity_used %> / <%= nullable_capacity_display(item.capacity) %></span>
                 </div>
               </div>
 
@@ -93,7 +93,7 @@
                     <%= button_to t("registration.user_registration.register_now"),
                                   register_item_path(campaign.id, item.id),
                                   method: :post,
-                                  disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.capacity_remained),
+                                  disabled: !campaign.open_for_registrations? || !nil_or_positive_integer?(item.remaining_capacity),
                                   class: "btn btn-primary btn-sm" %>
                   <% end %>
                 <% else %>
