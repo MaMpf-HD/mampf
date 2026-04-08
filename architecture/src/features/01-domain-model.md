@@ -52,8 +52,8 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| GradeScheme::Scheme | ActiveRecord | Versioned configuration for converting assessment points to final grades |
-| GradeScheme::Applier | Service | Applies scheme to compute and persist final grades for all participations |
+| Assessment::GradeScheme | ActiveRecord | Versioned configuration for converting assessment points to final grades |
+| Assessment::GradeSchemeApplier | Service | Applies scheme to compute and persist final grades for all participations |
 
 ## Allocation Algorithm
 

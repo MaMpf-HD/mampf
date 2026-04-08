@@ -14,6 +14,9 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.tabButtonTargets.forEach((tabButton) => {
+      tabButton.removeEventListener("shown.bs.tab", this.onTabFocus);
+    });
     document.removeEventListener("click", this.boundHandleHelpButtonClick);
   }
 

@@ -1,0 +1,143 @@
+<div class="col registration-group-tile-col" id="<%= dom_id(dom_target) %>">
+  <div
+    class="card h-100 tutorial-gtile <%= gtile_type_class %> <%= "tutorial-gtile--without-enrollment" if cohort_without_enrollment? %>"
+    data-tutorial-roster-panel-target="tile"
+    data-action="click->tutorial-roster-panel#openFromTile"
+    data-roster-key="<%= roster_key %>"
+    data-roster-panel-path="<%= panel_path %>"
+    data-roster-type="<%= registerable.class.name.underscore %>"
+    data-roster-id="<%= registerable.id %>"
+    data-roster-full="<%= registerable.full? %>"
+    data-roster-title="<%= registerable.title %>"
+    data-roster-add-member-path="<%= add_member_path %>"
+  >
+    <div class="tutorial-gtile-top-bar <%= top_bar_class %>"></div>
+
+    <div class="card-body d-flex flex-column position-relative">
+      <% if show_self_enrollment_dropdown? %>
+        <div class="dropdown position-absolute tutorial-gtile-sm-dropdown">
+          <button
+            class="btn btn-sm p-0 border-0 <%= sm_button_class %>"
+            type="button"
+            data-bs-toggle="dropdown"
+            data-bs-boundary="window"
+            aria-expanded="false"
+            title="<%= sm_tooltip %>"
+          >
+            <i class="bi <%= sm_icon_class %>"></i>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm tutorial-gtile-sm-menu">
+            <li>
+              <h6 class="dropdown-header">
+                <%= t("roster.self_materialization.label",
+                      default: "Self-Enrollment") %>
+              </h6>
+            </li>
+
+            <% sm_modes.each do |mode| %>
+              <% path = sm_update_path(mode) %>
+              <% next unless path %>
+
+              <li>
+                <%= link_to path,
+                      class: "dropdown-item #{'active' if sm_mode == mode}",
+                      data: { turbo_method: :patch } do %>
+                  <i class="bi <%= sm_icon_for(mode) %> me-2"></i>
+
+                  <%= t(mode,
+                        scope: "roster.self_materialization.modes",
+                        default: mode.titleize) %>
+                <% end %>
+              </li>
+            <% end %>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <%= link_to bulk_sm_path,
+                    class: "dropdown-item",
+                    data: {
+                      turbo_method: :patch,
+                      turbo_confirm: bulk_sm_confirm
+                    } do %>
+                <i class="bi bi-check2-all me-2"></i>
+
+                <%= t("roster.self_materialization.apply_to_all_free_groups") %>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="tutorial-gtile-type pe-4"><%= type_text %></div>
+
+      <h6
+        class="tutorial-gtile-name text-truncate"
+        title="<%= registerable.title %>"
+      >
+        <%= registerable.title %>
+      </h6>
+
+      <div class="text-muted mt-2 flex-grow-1">
+        <i class="bi bi-person me-1"></i>
+        <%= tutors_text %>
+      </div>
+
+      <% if location_text.present? %>
+        <div class="text-muted small">
+          <i class="bi bi-geo-alt me-1"></i>
+          <%= location_text %>
+        </div>
+      <% end %>
+
+      <div class="small text-muted">
+        <% if item %>
+          <%= registration_count %>
+          /
+          <%= registerable.capacity || "∞" %>
+        <% else %>
+          <%= registerable.roster_entries.count %>
+          /
+          <%= registerable.capacity || "∞" %>
+        <% end %>
+      </div>
+
+      <div
+        class="
+          tutorial-gtile-actions mt-3 pt-2 border-top d-flex gap-2
+          justify-content-end
+        "
+      >
+        <% if edit_path %>
+          <%= link_to edit_path,
+                    class: "btn btn-sm btn-primary",
+                    title: t("roster.tooltips.edit_settings"),
+                    data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+            <i class="bi bi-pencil"></i>
+          <% end %>
+        <% end %>
+
+        <% if delete_path && delete_disabled? %>
+          <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
+            <button
+              class="btn btn-sm btn-outline-danger opacity-50"
+              type="button"
+              style="cursor: not-allowed;"
+              disabled
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </span>
+        <% elsif delete_path %>
+          <%= link_to delete_path,
+                    class: "btn btn-sm btn-danger",
+                    title: delete_title,
+                    data: delete_data do %>
+            <i class="bi bi-trash"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

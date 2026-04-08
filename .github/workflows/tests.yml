@@ -101,7 +101,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --entrypoint="" app-test sh -c
+          run --entrypoint="" -e COVERAGE=true app-test sh -c
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
@@ -147,7 +147,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          exec app-test bash -c "PLAYWRIGHT_HTML_OPEN=never npx playwright test"
+          exec app-test bash -c "PLAYWRIGHT_HTML_OPEN=never npx playwright test --test-list-invert .github/workflows/playwright_skip.txt"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5

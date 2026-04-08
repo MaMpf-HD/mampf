@@ -7,7 +7,7 @@
 
 <%= turbo_frame_tag(campaign.persisted? ? campaign_header_frame_id(campaign) :
                     "new_campaign_form") do %>
-  <div class="fs-6 fw-normal p-4 bg-light">
+  <div class="fs-6 fw-normal <%= campaign.persisted? ? 'p-4 bg-light' : '' %>">
     <%= form_with(model: [lecture, campaign].compact,
                 url: campaign.persisted? ? registration_campaign_path(campaign) :
                   lecture_registration_campaigns_path(lecture)) do |f| %>
@@ -69,15 +69,13 @@
                            autocomplete: "off",
                            disabled: campaign.completed? %>
 
-            <span
-              class="input-group-text td-picker-button"
-              role="button"
-              data-td-target="#<%= picker_id %>"
-              data-td-toggle="datetimepicker"
-              <%= "disabled" if campaign.completed? %>
-            >
+            <%= tag.span class: "input-group-text td-picker-button",
+                        role: "button",
+                        data: { td_target: "##{picker_id}",
+                                td_toggle: "datetimepicker" },
+                        disabled: campaign.completed? || nil do %>
               <i class="bi bi-calendar-fill"></i>
-            </span>
+            <% end %>
 
             <div
               class="invalid-feedback td-error"
@@ -96,6 +94,13 @@
                   role: "button",
                   data: cancel_data %>
       </div>
+
+      <% unless campaign.persisted? %>
+        <small class="d-block text-muted mt-2">
+          <i class="bi bi-info-circle me-1"></i>
+          <%= t("registration.policy.hint.add_after_creation") %>
+        </small>
+      <% end %>
     <% end %>
   </div>
 <% end %>

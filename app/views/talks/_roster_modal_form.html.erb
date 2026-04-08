@@ -4,11 +4,14 @@
                 turbo: true,
                 controller: "capacity-guard",
                 action: "submit->capacity-guard#submit",
-                capacity_guard_current_count_value: talk.speakers.count,                capacity_guard_original_capacity_value: talk.capacity || 0,                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
+                capacity_guard_current_count_value: talk.speakers.count,                capacity_guard_original_capacity_value: talk.capacity || "",                capacity_guard_confirm_message_value: t("roster.warnings.capacity_reduction")
               } do |f| %>
   <div class="modal-body">
     <%= f.hidden_field :lecture_id %>
     <%= hidden_group_type_field(params[:group_type]) %>
+    <%= hidden_field_tag :registration_section, params[:registration_section] %>
+    <%= hidden_field_tag :registration_campaign_id,
+                         params[:registration_campaign_id] %>
 
     <div class="mb-3">
       <%= f.label :title, t('basics.title'), class: "form-label" %>
@@ -69,21 +72,23 @@
       </div>
     <% end %>
 
-    <% if talk.persisted? %>
-      <div class="alert alert-info mt-3 mb-0 small">
+    <div class="alert alert-info mt-3 mb-0 small">
+      <% if talk.persisted? %>
+
         <i class="fas fa-info-circle me-2"></i>
         <%= t('roster.hints.talk_content_html',
               link: link_to(t('roster.buttons.full_editor'),
                             edit_talk_path(talk),
                             class: "alert-link",
                             data: { turbo: false })) %>
-      </div>
-    <% else %>
-      <div class="alert alert-info mt-3 mb-0 small">
+
+      <% else %>
+
         <i class="fas fa-info-circle me-2"></i>
         <%= t('roster.hints.talk_content_new') %>
-      </div>
-    <% end %>
+
+      <% end %>
+    </div>
 
   </div>
   <div class="modal-footer">

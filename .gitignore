@@ -1,6 +1,10 @@
 # Ignore generated JS routes
 app/frontend/js/mampf_routes.js
 
+**/*.env
+# this is just a dummy file
+!docker/production/docker.env
+
 # Ignore bundler config.
 /.bundle
 

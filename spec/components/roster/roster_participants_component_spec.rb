@@ -140,21 +140,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
-  describe "#group_path" do
-    let(:helpers) { double("helpers") }
-
-    before do
-      allow(component).to receive(:helpers).and_return(helpers)
-    end
-
-    it "returns tutorial roster path for a Tutorial" do
-      tutorial = create(:tutorial, lecture: lecture)
-      allow(helpers).to receive(:tutorial_roster_path)
-        .with(tutorial).and_return("/tutorials/#{tutorial.id}/roster")
-      expect(component.group_path(tutorial)).to eq("/tutorials/#{tutorial.id}/roster")
-    end
-  end
-
   describe "#pagination_nav" do
     let(:pagy) do
       # Use a double because Pagy.new behavior is inconsistent in this environment
@@ -181,29 +166,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       end
     end
 
-    context "when there are multiple pages" do
-      it "returns pagination HTML with preserved params" do
-        # Verify that the component calls series_nav with the correct querify logic
-        expect(pagy).to receive(:series_nav).at_least(:once) do |_style, **kwargs|
-          querify = kwargs[:querify]
-          expect(querify).to be_a(Proc)
-
-          # Test the lambda logic: it should inject our params into the hash
-          params = {}
-          querify.call(params)
-          expect(params["tab"]).to eq("participants")
-          expect(params["group_type"]).to eq("tutorials")
-          expect(params["filter"]).to eq("all")
-
-          "mocked_pagination_html"
-        end
-
-        # We use render_inline to ensure the component helpers are setup correctly
-        html = render_inline(component).to_html
-        expect(html).to include("mocked_pagination_html")
-      end
-    end
-
     context "when there is only one page" do
       let(:pagy) { double("Pagy", pages: 1) }
 
@@ -225,78 +187,100 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       end
     end
   end
-
-  describe "#available_transfer_targets_for" do
-    let(:user) { create(:user) }
-
-    context "when there are tutorials and cohorts" do
-      let!(:tutorial_a) do
-        create(:tutorial, lecture: lecture, title: "A Tutorial", skip_campaigns: true)
-      end
-      let(:tutorial2) do
-        create(:tutorial, lecture: lecture, title: "B Tutorial", skip_campaigns: true)
-      end
-      let(:cohort) do
-        create(:cohort, context: lecture, title: "A Cohort", skip_campaigns: true)
-      end
-
-      before do
-        # Enroll user in lecture so they are eligible
-        create(:lecture_membership, lecture: lecture, user: user)
-        # We mock the group retrieval to ensure we work with the exact instances
-        # created above. This isolates the test from DB/Association caching issues
-        # and allows stubbing methods on instances.
-        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial2,
-                                                                        cohort])
-      end
-
-      it "groups and sorts correctly: Tutorials (1) then Cohorts (2)" do
-        targets = component.available_transfer_targets_for(user)
-
-        # Expect 2 groups: Tutorials and Cohorts
-        expect(targets.size).to eq(2)
-
-        # Check first group (Tutorials)
-        expect(targets[0][:groups]).to match_array([tutorial_a, tutorial2])
-        # Check internal sorting (A before B)
-        expect(targets[0][:groups]).to eq([tutorial_a, tutorial2])
-
-        # Check second group (Cohorts)
-        expect(targets[1][:groups]).to match_array([cohort])
-      end
-
-      it "excludes locked groups" do
-        locked_tut = create(:tutorial, lecture: lecture, title: "Locked Tutorial")
-
-        # Update the mock to include the locked tutorial
-        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a, tutorial2,
-                                                                        cohort, locked_tut])
-        allow(locked_tut).to receive(:locked?).and_return(true)
-
-        targets = component.available_transfer_targets_for(user)
-
-        # Find the group section containing the tutorials
-        tutorial_group = targets.find { |t| t[:groups].first.is_a?(Tutorial) }
-        expect(tutorial_group[:groups]).not_to include(locked_tut)
-        expect(tutorial_group[:groups]).to include(tutorial_a)
-      end
+  describe "#pagination_nav" do
+    it "returns nil if no pagy" do
+      expect(described_class.new(lecture: lecture, group_type: "tutorial", pagy: nil).pagination_nav).to be_nil
     end
 
-    context "when user is already in a tutorial" do
-      let!(:tutorial_a) { create(:tutorial, lecture: lecture, title: "A Tutorial") }
+    it "returns nil if pagy has 1 or fewer pages" do
+      pagy = double("Pagy", pages: 1)
+      expect(described_class.new(lecture: lecture, group_type: "tutorial", pagy: pagy).pagination_nav).to be_nil
+    end
 
-      before do
-        create(:lecture_membership, lecture: lecture, user: user)
-        create(:tutorial_membership, tutorial: tutorial_a, user: user)
-        # Mocking to resolve any association/caching issues
-        allow(component).to receive(:all_assignable_groups).and_return([tutorial_a])
+    it "calls helpers.pagy_series_nav and constructs querify correctly" do
+      pagy = double("Pagy", pages: 2)
+      c = described_class.new(lecture: lecture, group_type: ["t1", "t2"], filter_mode: "unassigned", search_string: "foo", pagy: pagy)
+      
+      helpers_mock = double("helpers")
+      allow(c).to receive(:helpers).and_return(helpers_mock)
+      allow(helpers_mock).to receive(:lecture_roster_participants_path).with(lecture).and_return("/path")
+      
+      expect(helpers_mock).to receive(:pagy_series_nav).with(pagy, path: "/path", querify: kind_of(Proc)) do |_, options|
+        querify = options[:querify]
+        
+        # Test the lambda querify inside
+        mock_params = {}
+        querify.call(mock_params)
+        
+        expect(mock_params["filter"]).to eq("unassigned")
+        expect(mock_params["search"]).to eq("foo")
+        expect(mock_params["group_type"]).to eq(["t1", "t2"])
+        
+        "HTML"
       end
 
-      it "excludes current group from available targets" do
-        targets = component.available_transfer_targets_for(user)
-        # Should return only cohorts or empty if no other groups
-        expect(targets).to be_empty
+      expect(c.pagination_nav).to eq("HTML")
+    end
+
+    it "constructs string group_type for querify" do
+      pagy = double("Pagy", pages: 2)
+      c = described_class.new(lecture: lecture, group_type: :tutorial, pagy: pagy)
+      
+      helpers_mock = double("helpers")
+      allow(c).to receive(:helpers).and_return(helpers_mock)
+      allow(helpers_mock).to receive(:lecture_roster_participants_path).with(lecture).and_return("/path")
+      
+      expect(helpers_mock).to receive(:pagy_series_nav).with(pagy, path: "/path", querify: kind_of(Proc)) do |_, options|
+        querify = options[:querify]
+        mock_params = {}
+        querify.call(mock_params)
+        
+        expect(mock_params["group_type"]).to eq("tutorial")
+        "HTML"
       end
+
+      c.pagination_nav
+    end
+  end
+
+  describe "#user_memberships edge cases" do
+    it "handles talks successfully" do
+      user = create(:confirmed_user)
+      seminar = create(:lecture, term: create(:term), sort: "seminar")
+      talk = create(:talk, lecture: seminar)
+      create(:speaker_talk_join, speaker: user, talk: talk)
+      
+      c = described_class.new(lecture: seminar, group_type: "talk", participants: [double(user_id: user.id)])
+      
+      # force internal calculation and lookup talk mapping
+      expect(c.send(:user_memberships)[user.id]).to include("Talk-#{talk.id}")
+    end
+
+    it "handles cohorts successfully" do
+      user = create(:confirmed_user)
+      cohort = create(:cohort, context: lecture)
+      create(:cohort_membership, user: user, cohort: cohort)
+      
+      c = described_class.new(lecture: lecture, group_type: "tutorial", participants: [double(user_id: user.id)])
+      
+      expect(c.send(:user_memberships)[user.id]).to include("Cohort-#{cohort.id}")
+    end
+  end
+
+  describe "#participant_groups" do
+    it "returns the groups the user is part of" do
+      user = create(:confirmed_user)
+      tutorial = create(:tutorial, lecture: lecture)
+      cohort = create(:cohort, context: lecture)
+      
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+      create(:cohort_membership, user: user, cohort: cohort)
+      
+      c = described_class.new(lecture: lecture, group_type: "tutorial", participants: [double(user_id: user.id, user: user)])
+      
+      groups = c.participant_groups(user)
+      
+      expect(groups).to match_array([tutorial, cohort])
     end
   end
 end

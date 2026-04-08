@@ -53,6 +53,7 @@ module ApplicationHelper
                    height: "1.5rem", show_label: true,
                    container_class: "progress mb-2", style: nil)
     # rubocop:enable Metrics/ParameterLists
+    clamped_value = value.to_i.clamp(0, max.to_i)
     percentage = max.to_i.positive? ? (value.to_f / max * 100).clamp(0, 100) : 0
 
     color_class = case classification
@@ -70,7 +71,7 @@ module ApplicationHelper
       tag.div(class: "progress-bar #{color_class}",
               role: "progressbar",
               style: "width: #{percentage}%",
-              "aria-valuenow": value,
+              "aria-valuenow": clamped_value,
               "aria-valuemin": 0,
               "aria-valuemax": max) do
         label || "#{percentage.round}%" if show_label

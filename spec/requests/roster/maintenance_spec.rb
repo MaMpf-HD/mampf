@@ -61,7 +61,10 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           end
 
           it "only returns unassigned participants" do
-            get lecture_roster_path(lecture, tab: "participants", filter: "unassigned")
+            get lecture_roster_path(lecture, tab: "participants",
+                                             filter: "unassigned")
+            expect(response).to have_http_status(:redirect)
+            follow_redirect!
             expect(response).to have_http_status(:success)
             expect(response.body).to include(unassigned_user.email)
             expect(response.body).not_to include(assigned_user.email)
@@ -86,59 +89,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "returns http success" do
+      it "redirects to lecture roster without panel source" do
         get tutorial_roster_path(tutorial)
+        expect(response).to redirect_to(lecture_roster_path(lecture))
+      end
+
+      it "returns http success for panel source" do
+        get tutorial_roster_path(tutorial, source: "panel"), as: :turbo_stream
         expect(response).to have_http_status(:success)
-      end
-
-      it "includes participants data for component" do
-        get tutorial_roster_path(tutorial)
-        expect(controller.instance_variable_get(:@participants)).not_to be_nil
-        expect(controller.instance_variable_get(:@pagy)).not_to be_nil
-        expect(response.body).to include('id="participants-tab"')
-      end
-    end
-  end
-
-  describe "PATCH /tutorials/:id/roster" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
-
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "updates the skip_campaigns flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
-        expect(tutorial.reload.skip_campaigns).to be(true)
-      end
-
-      it "redirects to the roster index" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
-        expect(response).to redirect_to(lecture_roster_path(lecture, group_type: :tutorials))
-      end
-
-      context "with turbo stream" do
-        it "returns turbo stream response" do
-          patch tutorial_roster_path(tutorial),
-                params: { rosterable: { skip_campaigns: true } },
-                as: :turbo_stream
-          expect(response.media_type).to eq(Mime[:turbo_stream])
-          expect(response.body)
-            .to include('turbo-stream action="update" target="roster_maintenance_tutorials"')
-        end
-      end
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects to root (unauthorized)" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
-        expect(response).to redirect_to(root_path)
-      end
-
-      it "does not update the skip_campaigns flag" do
-        patch tutorial_roster_path(tutorial), params: { rosterable: { skip_campaigns: true } }
-        expect(tutorial.reload.skip_campaigns).to be(false)
       end
     end
   end
@@ -320,39 +278,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.not_to(change { source.members.count })
         expect(target.members.count).to eq(0)
-      end
-    end
-  end
-
-  describe "POST /lectures/:id/roster/add_to_group" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
-    let(:new_student) { create(:confirmed_user) }
-
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "adds the user to the specified group" do
-        expect do
-          post(lecture_roster_add_to_group_path(lecture),
-               params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
-        end.to change { tutorial.members.count }.by(1)
-      end
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects to root (unauthorized)" do
-        post lecture_roster_add_to_group_path(lecture),
-             params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" }
-        expect(response).to redirect_to(root_path)
-      end
-
-      it "does not add the user" do
-        expect do
-          post(lecture_roster_add_to_group_path(lecture),
-               params: { email: new_student.email, rosterable_id: "Tutorial-#{tutorial.id}" })
-        end.not_to(change { tutorial.members.count })
       end
     end
   end
@@ -623,41 +548,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.not_to(change { source.members.count })
         expect(target.members.count).to eq(0)
-      end
-    end
-  end
-
-  describe "PATCH /tutorials/:id/roster/self_materialization" do
-    let(:tutorial) { create(:tutorial, lecture: lecture, self_materialization_mode: :disabled) }
-
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "updates the self_materialization_mode" do
-        patch tutorial_update_self_materialization_path(tutorial),
-              params: { self_materialization_mode: "add_only" }
-        expect(tutorial.reload.self_materialization_mode).to eq("add_only")
-      end
-
-      it "returns turbo stream response" do
-        patch tutorial_update_self_materialization_path(tutorial),
-              params: { self_materialization_mode: "add_only" },
-              as: :turbo_stream
-
-        expect(response).to have_http_status(:success)
-        expect(response.content_type).to include("text/vnd.turbo-stream.html")
-        expect(response.body).to include('action="replace"')
-        expect(response.body).to include("actions_tutorial_#{tutorial.id}")
-      end
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects to root (unauthorized)" do
-        patch tutorial_update_self_materialization_path(tutorial),
-              params: { self_materialization_mode: "add_only" }
-        expect(response).to redirect_to(root_path)
       end
     end
   end

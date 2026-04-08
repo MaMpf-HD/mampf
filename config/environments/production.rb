@@ -100,8 +100,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.after_initialize do
-    production_name = ENV.fetch("PRODUCTION_NAME", nil)
-    Rails.logger.info("PRODUCTION_NAME: #{production_name}")
+    instance_name = ENV.fetch("INSTANCE_NAME", nil)
+    Rails.logger.info("INSTANCE_NAME: #{instance_name}")
   end
 
   # See https://github.com/rails/rails/issues/52728

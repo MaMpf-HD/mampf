@@ -2840,6 +2840,10 @@ de:
   announcements: 'Ankündigungen'
   main:
     media_platform: Mathematische Medienplattform der Universität Heidelberg
+    non_mampf_login_notice_html: >
+      Dies ist eine Testumgebung von MaMpf.
+      Deine Login-Daten funktionieren hier nicht.
+      Bitte nutze stattdessen die echte MaMpf-Website: %{app_link}
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -3442,8 +3446,10 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    close: "Schließen"
     capacity: 'Kapazität'
     division: 'Teilbereich'
+    location: 'Ort'
     error: Fehler
     edit: "Bearbeiten"
     course: 'Modul'
@@ -3485,6 +3491,7 @@ de:
     select: 'auswählen'
     confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
+    participants: 'Teilnehmende'
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
@@ -4003,11 +4010,6 @@ de:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
         cohort:
-          attributes:
-            purpose:
-              enrollment_must_propagate: "Einschreibungsgruppen müssen zur Vorlesung propagiert werden"
-              planning_cannot_propagate: "Planungsumfragen dürfen nicht zur Vorlesung propagiert werden"
-        course:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'

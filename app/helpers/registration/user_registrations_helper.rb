@@ -1,17 +1,5 @@
 module Registration
   module UserRegistrationsHelper
-    def registration_status_color(registration)
-      {
-        pending: "secondary",
-        confirmed: "success",
-        rejected: "danger"
-      }[registration.status.to_sym]
-    end
-
-    def sort_registrations_by_rank(registrations)
-      ranked, unranked = registrations.partition(&:preference_rank)
-      ranked.sort_by(&:preference_rank) + unranked
-    end
     MODE_MAP = {
       -1 => { mode_name: "Unknown", abbr: "UNK",
               badge_class: "bg-grey-lighten-4 text-grey" },

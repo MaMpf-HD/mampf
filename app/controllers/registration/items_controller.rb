@@ -3,7 +3,7 @@ module Registration
     helper RosterHelper
     before_action :set_campaign
     before_action :set_locale
-    before_action :set_item, only: [:destroy, :update]
+    before_action :set_item, only: [:destroy, :update, :roster]
     authorize_resource class: "Registration::Item", except: [:create]
 
     def current_ability
@@ -32,14 +32,33 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
-            streams = [
-              turbo_stream.replace(@item, partial: "registration/items/item",
-                                          locals: { item: @item }),
-              stream_flash
-            ]
-            if @campaign.campaignable.is_a?(Lecture)
-              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
-                                                        view_context).roster_changed(flash: nil))
+            streams = if ["allocation", "allocation_embedded"].include?(params[:source])
+              embedded = params[:source] == "allocation_embedded"
+              dashboard = Registration::AllocationDashboard.new(@campaign)
+              [
+                turbo_stream.replace("allocation-dashboard",
+                                     partial: "registration/allocations/dashboard",
+                                     locals: {
+                                       campaign: @campaign,
+                                       dashboard: dashboard,
+                                       embedded: embedded
+                                     }),
+                turbo_stream.replace(@item,
+                                     html: GroupTileComponent.new(
+                                       registerable: @item.registerable,
+                                       item: @item
+                                     ).render_in(view_context)),
+                stream_flash
+              ]
+            else
+              [
+                turbo_stream.replace(@item,
+                                     html: GroupTileComponent.new(
+                                       registerable: @item.registerable,
+                                       item: @item
+                                     ).render_in(view_context)),
+                stream_flash
+              ]
             end
             render turbo_stream: streams
           end
@@ -57,8 +76,34 @@ module Registration
         return
       end
 
-      @item.destroy
-      respond_with_success(t("registration.item.destroyed"))
+      if @item.destroy
+        respond_with_success(t("registration.item.destroyed"))
+      else
+        respond_with_error(@item.errors.full_messages.to_sentence)
+      end
+    end
+
+    def roster
+      unless params[:source] == "panel"
+        redirect_to after_action_path
+        return
+      end
+
+      students = panel_students_for(@item)
+      allocated = @campaign.last_allocation_calculated_at.present?
+      preference_ranks = allocated ? preference_ranks_for(@item) : {}
+
+      render turbo_stream: turbo_stream.replace(
+        "tutorial-roster-side-panel",
+        html: RosterSidePanelComponent.new(
+          registerable: @item.registerable,
+          students: students,
+          read_only: true,
+          item: @item,
+          allocated: allocated,
+          preference_ranks: preference_ranks
+        ).render_in(view_context)
+      )
     end
 
     private
@@ -87,15 +132,10 @@ module Registration
                                   partial: "registration/campaigns/card_body_index",
                                   locals: {
                                     lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id,
-                                    tab: "items"
+                                    expanded_campaign_id: @campaign.id
                                   }),
               stream_flash
             ]
-            if @campaign.campaignable.is_a?(Lecture)
-              streams.concat(Rosters::StreamService.new(@campaign.campaignable,
-                                                        view_context).roster_changed(flash: nil))
-            end
             render turbo_stream: streams
           end
         end
@@ -142,23 +182,37 @@ module Registration
 
       def after_action_path
         if @campaign.campaignable.is_a?(Lecture)
-          edit_lecture_path(@campaign.campaignable, tab: "campaigns")
+          edit_lecture_path(@campaign.campaignable,
+                            tab: "campaigns")
         else
-          registration_campaign_path(@campaign, tab: "items")
+          registration_campaign_path(@campaign)
         end
       end
 
-      def refresh_roster_groups_list_stream(lecture, group_type = :all)
-        return nil unless lecture
+      def panel_students_for(item)
+        registrations = if @campaign.last_allocation_calculated_at.present?
+          item.user_registrations.confirmed
+        elsif @campaign.first_come_first_served?
+          item.user_registrations
+        else
+          item.user_registrations.where(preference_rank: 1)
+        end
 
-        component = RosterOverviewComponent.new(lecture: lecture,
-                                                group_type: group_type)
-        turbo_stream.update("roster_groups_list",
-                            partial: "roster/components/groups_tab",
-                            locals: {
-                              group_type: group_type,
-                              component: component
-                            })
+        registrations.includes(:user)
+                     .filter_map(&:user)
+                     .uniq(&:id)
+                     .sort_by { |user| [user.name.to_s.downcase, user.email.to_s.downcase] }
+      end
+
+      def preference_ranks_for(item)
+        item.registration_campaign
+            .user_registrations
+            .where(
+              user_id: item.user_registrations.confirmed.select(:user_id),
+              registration_item_id: item.id
+            )
+            .pluck(:user_id, :preference_rank)
+            .to_h
       end
   end
 end

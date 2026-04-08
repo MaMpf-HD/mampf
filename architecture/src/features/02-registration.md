@@ -1052,7 +1052,6 @@ The "secretary" that takes the list of confirmed attendees from the registration
 ```ruby
 module Registration
   class AllocationMaterializer
-    # Missing top-level docstring, please formulate one yourself 😁
     def initialize(campaign)
       @campaign = campaign
     end

@@ -1,4 +1,4 @@
-version: 0.8.10
+version: 0.9.4
 
 # Unfortunately, the global "files:" configuration does not work as expected
 # and we have to duplicate the "exclude:" configuration for both linter
@@ -23,7 +23,6 @@ linter:
     - "app/frontend/login/**/*.html.erb"
     - "app/frontend/media/**/*.html.erb"
     - "app/frontend/modal/**/*.html.erb"
-    - "app/frontend/roster/**/*.html.erb"
     - "app/frontend/search/**/*.html.erb"
     - "app/frontend/spinner/**/*.html.erb"
     - "app/frontend/vignettes/**/*.html.erb"
@@ -51,7 +50,6 @@ formatter:
     - "app/frontend/login/**/*.html.erb"
     - "app/frontend/media/**/*.html.erb"
     - "app/frontend/modal/**/*.html.erb"
-    - "app/frontend/roster/**/*.html.erb"
     - "app/frontend/search/**/*.html.erb"
     - "app/frontend/spinner/**/*.html.erb"
     - "app/frontend/vignettes/**/*.html.erb"

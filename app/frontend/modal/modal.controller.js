@@ -8,7 +8,10 @@ export default class extends Controller {
 
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
-    this.element.addEventListener("turbo:submit-end", event => this.hideModalOnSuccess(event));
+    this.boundHideModalOnSuccess = this.hideModalOnSuccess.bind(this);
+    this.element.addEventListener(
+      "turbo:submit-end", this.boundHideModalOnSuccess,
+    );
 
     if (this.showOnConnectValue) {
       this.modal.show();
@@ -16,6 +19,10 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.element.removeEventListener(
+      "turbo:submit-end", this.boundHideModalOnSuccess,
+    );
+
     if (this.modal) {
       try {
         const backdrop = document.querySelector(".modal-backdrop");

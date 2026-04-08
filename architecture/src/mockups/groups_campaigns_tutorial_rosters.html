@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groups & Campaigns – Tutorial Rosters (concept)</title>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root {
+    --c1: #4f72c4;
+    --c1l: #eef2fb;
+    --c1m: #c5d0f0;
+  }
+
+  body { background: #f4f5f8; font-size: .9rem; }
+
+  .page-header {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: .75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+  .page-header h5 { margin: 0; font-weight: 600; }
+  .page-header .subtitle { color: #6c757d; font-size: .8rem; }
+
+  .mockup-root {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1rem;
+    padding: 1rem;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+  }
+
+  .main-canvas {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .canvas-head {
+    padding: .8rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  .canvas-body {
+    overflow: auto;
+    padding: 1rem;
+  }
+
+  .tutorial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: .85rem;
+  }
+
+  .tutorial-card {
+    border: 1px solid #d9dfef;
+    border-radius: 12px;
+    background: var(--c1l);
+    overflow: hidden;
+  }
+
+  .tutorial-top {
+    height: 5px;
+    background: var(--c1);
+  }
+
+  .tutorial-body { padding: .75rem .85rem .85rem; }
+
+  .tutorial-type {
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6f7ea5;
+    font-weight: 700;
+  }
+
+  .tutorial-name {
+    font-size: .92rem;
+    font-weight: 700;
+    color: #2f3f68;
+    margin-top: .1rem;
+  }
+
+  .tutorial-meta {
+    color: #4e5d7f;
+    font-size: .8rem;
+    margin-top: .35rem;
+    display: flex;
+    justify-content: space-between;
+    gap: .4rem;
+  }
+
+  .tutorial-actions {
+    margin-top: .7rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .45rem;
+  }
+
+  .idea-panel {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .idea-head {
+    padding: .85rem .95rem .75rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .idea-head-title {
+    font-weight: 700;
+    margin-bottom: .2rem;
+  }
+
+  .idea-head-sub {
+    color: #6c757d;
+    font-size: .79rem;
+  }
+
+  .roster-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .roster-toolbar {
+    padding: .7rem .95rem;
+    border-bottom: 1px solid #e9ecef;
+    display: grid;
+    gap: .5rem;
+  }
+
+  .roster-list {
+    overflow: auto;
+    padding: .7rem .95rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .student-row {
+    border: 1px solid #e0e4ea;
+    border-radius: 10px;
+    padding: .52rem .6rem;
+    background: #fff;
+  }
+
+  .student-row-top {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    align-items: baseline;
+  }
+
+  .student-name { font-weight: 600; font-size: .84rem; }
+
+  .student-email {
+    font-size: .76rem;
+    color: #5f6d80;
+    margin-top: .15rem;
+    word-break: break-all;
+  }
+
+  .mail-pill {
+    font-size: .64rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-radius: 999px;
+    padding: .12rem .38rem;
+    border: 1px solid #ced4da;
+    color: #6c757d;
+    background: #f8f9fa;
+    white-space: nowrap;
+  }
+
+  .mode-chip {
+    font-size: .72rem;
+    border: 1px solid #ced4da;
+    border-radius: 999px;
+    padding: .2rem .45rem;
+    background: #fff;
+    color: #6c757d;
+  }
+
+  .empty-inline {
+    margin: .9rem .95rem;
+    border: 1px dashed #c7cfdf;
+    border-radius: 10px;
+    background: #f8faff;
+    padding: .9rem;
+    font-size: .8rem;
+    color: #6880b4;
+    display: flex;
+    gap: .5rem;
+  }
+
+  #rosterToast {
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 9999;
+    min-width: 260px;
+  }
+
+  @media (max-width: 1100px) {
+    .mockup-root {
+      grid-template-columns: 1fr;
+      height: auto;
+      min-height: calc(100vh - 58px);
+    }
+    .idea-panel { min-height: 420px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div>
+    <div class="subtitle">Lecture</div>
+    <h5>Analysis I — Tutorial Rosters</h5>
+  </div>
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <span class="mode-chip">
+      <i class="bi bi-layout-sidebar-inset me-1"></i>inline roster panel
+    </span>
+    <span class="mode-chip">
+      <i class="bi bi-window me-1"></i>quick modal preview
+    </span>
+  </div>
+</div>
+
+<div class="mockup-root">
+  <section class="main-canvas">
+    <div class="canvas-head">
+      <div class="fw-semibold">Tutorials in Registration SS 2025/26</div>
+      <span class="badge text-bg-light border">Idea: each card offers inline + modal access</span>
+    </div>
+    <div class="canvas-body">
+      <div class="tutorial-grid" id="tutorialGrid"></div>
+    </div>
+  </section>
+
+  <aside class="idea-panel">
+    <div class="idea-head">
+      <div class="idea-head-title">Inline Idea: Sticky Roster Panel</div>
+      <div class="idea-head-sub">
+        Keep this panel open while browsing tutorial cards. Great for triage and quick email checks.
+      </div>
+    </div>
+    <div class="roster-panel">
+      <div class="roster-toolbar">
+        <div class="d-flex align-items-center justify-content-between gap-2">
+          <div class="fw-semibold" id="inlineTitle">Select a tutorial</div>
+          <span class="badge text-bg-secondary" id="inlineCount">0 students</span>
+        </div>
+        <input id="studentFilter" class="form-control form-control-sm"
+          placeholder="Filter students by name or email">
+        <div class="d-grid gap-2" style="grid-template-columns: 1fr 1fr; display:grid;">
+          <button class="btn btn-sm btn-outline-primary" id="copyEmailsBtn" disabled>
+            <i class="bi bi-clipboard me-1"></i>Copy emails
+          </button>
+          <a class="btn btn-sm btn-outline-secondary disabled" id="composeBtn" href="#">
+            <i class="bi bi-envelope me-1"></i>Compose
+          </a>
+        </div>
+      </div>
+      <div id="inlineEmpty" class="empty-inline">
+        <i class="bi bi-arrow-left-circle"></i>
+        <div>Click “Inline panel” on a tutorial card to inspect students here.</div>
+      </div>
+      <div class="roster-list" id="inlineList" style="display:none"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="modal fade" id="studentsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <div class="text-muted" style="font-size:.75rem">Modal Idea: focused pop-up</div>
+          <h5 class="modal-title mb-0" id="modalTitle">Students</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
+          <div class="small text-muted" id="modalMeta">0 students</div>
+          <button class="btn btn-sm btn-outline-primary" id="modalCopyBtn">
+            <i class="bi bi-clipboard me-1"></i>Copy visible emails
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="modalTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast align-items-center text-bg-success border-0"
+  id="rosterToast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      Copied emails to clipboard
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+      data-bs-dismiss="toast"></button>
+  </div>
+</div>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+const tutorials = [
+  {
+    id: "mon",
+    name: "Mon 10–12",
+    tutor: "Dr. Huber",
+    seats: "18 / 24",
+    students: [
+      { name: "Alice Mayer", email: "alice.mayer@uni-example.de", status: "confirmed" },
+      { name: "Ben Schuster", email: "ben.schuster@uni-example.de", status: "confirmed" },
+      { name: "Carla Jung", email: "carla.jung@uni-example.de", status: "waiting" },
+      { name: "David Koch", email: "david.koch@uni-example.de", status: "confirmed" }
+    ]
+  },
+  {
+    id: "wed",
+    name: "Wed 14–16",
+    tutor: "M. Müller",
+    seats: "24 / 24",
+    students: [
+      { name: "Elena Vogt", email: "elena.vogt@uni-example.de", status: "confirmed" },
+      { name: "Felix Hahn", email: "felix.hahn@uni-example.de", status: "confirmed" },
+      { name: "Greta Neumann", email: "greta.neumann@uni-example.de", status: "confirmed" },
+      { name: "Hassan Kaya", email: "hassan.kaya@uni-example.de", status: "waiting" },
+      { name: "Ina Wolf", email: "ina.wolf@uni-example.de", status: "confirmed" }
+    ]
+  },
+  {
+    id: "thu",
+    name: "Thu 12–14",
+    tutor: "S. Klein",
+    seats: "11 / 24",
+    students: [
+      { name: "Jakob Reiter", email: "jakob.reiter@uni-example.de", status: "confirmed" },
+      { name: "Katja Brandt", email: "katja.brandt@uni-example.de", status: "confirmed" },
+      { name: "Lena Stark", email: "lena.stark@uni-example.de", status: "confirmed" }
+    ]
+  },
+  {
+    id: "fri",
+    name: "Fri 16–18",
+    tutor: "L. Bauer",
+    seats: "7 / 24",
+    students: [
+      { name: "Marius Otto", email: "marius.otto@uni-example.de", status: "confirmed" },
+      { name: "Nina Berger", email: "nina.berger@uni-example.de", status: "confirmed" }
+    ]
+  }
+];
+
+let activeInlineTutorialId = null;
+let activeModalTutorialId = null;
+
+const tutorialGrid = document.getElementById("tutorialGrid");
+const inlineTitle = document.getElementById("inlineTitle");
+const inlineCount = document.getElementById("inlineCount");
+const inlineList = document.getElementById("inlineList");
+const inlineEmpty = document.getElementById("inlineEmpty");
+const studentFilter = document.getElementById("studentFilter");
+const copyEmailsBtn = document.getElementById("copyEmailsBtn");
+const composeBtn = document.getElementById("composeBtn");
+
+const modalTitle = document.getElementById("modalTitle");
+const modalMeta = document.getElementById("modalMeta");
+const modalTableBody = document.getElementById("modalTableBody");
+const modalCopyBtn = document.getElementById("modalCopyBtn");
+
+function statusBadge(status) {
+  if (status === "waiting") {
+    return "<span class='badge text-bg-warning'>waiting</span>";
+  }
+  return "<span class='badge text-bg-success'>confirmed</span>";
+}
+
+function getTutorialById(id) {
+  return tutorials.find(t => t.id === id);
+}
+
+function renderTutorialCards() {
+  tutorialGrid.innerHTML = tutorials.map(tutorial => `
+    <div class="tutorial-card">
+      <div class="tutorial-top"></div>
+      <div class="tutorial-body">
+        <div class="tutorial-type">Tutorial</div>
+        <div class="tutorial-name">${tutorial.name}</div>
+        <div class="tutorial-meta">
+          <span><i class="bi bi-person-badge me-1"></i>${tutorial.tutor}</span>
+          <span><i class="bi bi-people me-1"></i>${tutorial.students.length} listed</span>
+        </div>
+        <div class="tutorial-meta">
+          <span class="text-muted">Capacity</span>
+          <span>${tutorial.seats}</span>
+        </div>
+        <div class="tutorial-actions">
+          <button class="btn btn-sm btn-outline-primary"
+            onclick="openInlineRoster('${tutorial.id}')">
+            <i class="bi bi-layout-sidebar-inset me-1"></i>Inline panel
+          </button>
+          <button class="btn btn-sm btn-outline-secondary"
+            onclick="openModalRoster('${tutorial.id}')">
+            <i class="bi bi-window me-1"></i>Modal
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderInlineRoster() {
+  const tutorial = getTutorialById(activeInlineTutorialId);
+  if (!tutorial) {
+    inlineTitle.textContent = "Select a tutorial";
+    inlineCount.textContent = "0 students";
+    inlineEmpty.style.display = "flex";
+    inlineList.style.display = "none";
+    copyEmailsBtn.disabled = true;
+    composeBtn.classList.add("disabled");
+    composeBtn.setAttribute("href", "#");
+    return;
+  }
+
+  const query = studentFilter.value.trim().toLowerCase();
+  const filtered = tutorial.students.filter(student => (
+    student.name.toLowerCase().includes(query) ||
+    student.email.toLowerCase().includes(query)
+  ));
+
+  inlineTitle.textContent = `${tutorial.name} · ${tutorial.tutor}`;
+  inlineCount.textContent = `${filtered.length} students`;
+  inlineEmpty.style.display = "none";
+  inlineList.style.display = "flex";
+
+  inlineList.innerHTML = filtered.map(student => `
+    <div class="student-row">
+      <div class="student-row-top">
+        <div class="student-name">${student.name}</div>
+        <div class="mail-pill">${student.status}</div>
+      </div>
+      <div class="student-email">
+        <i class="bi bi-envelope me-1"></i>${student.email}
+      </div>
+    </div>
+  `).join("");
+
+  const emails = filtered.map(student => student.email);
+  const mailto = `mailto:?bcc=${encodeURIComponent(emails.join(","))}`;
+  copyEmailsBtn.disabled = emails.length === 0;
+  composeBtn.classList.toggle("disabled", emails.length === 0);
+  composeBtn.setAttribute("href", emails.length ? mailto : "#");
+}
+
+function renderModalRoster() {
+  const tutorial = getTutorialById(activeModalTutorialId);
+  if (!tutorial) {
+    modalTitle.textContent = "Students";
+    modalMeta.textContent = "0 students";
+    modalTableBody.innerHTML = "";
+    return;
+  }
+
+  modalTitle.textContent = `${tutorial.name} · ${tutorial.tutor}`;
+  modalMeta.textContent = `${tutorial.students.length} students`;
+
+  modalTableBody.innerHTML = tutorial.students.map(student => `
+    <tr>
+      <td>${student.name}</td>
+      <td><a href="mailto:${student.email}">${student.email}</a></td>
+      <td>${statusBadge(student.status)}</td>
+    </tr>
+  `).join("");
+}
+
+function currentInlineEmails() {
+  const tutorial = getTutorialById(activeInlineTutorialId);
+  if (!tutorial) return [];
+
+  const query = studentFilter.value.trim().toLowerCase();
+  return tutorial.students
+    .filter(student => (
+      student.name.toLowerCase().includes(query) ||
+      student.email.toLowerCase().includes(query)
+    ))
+    .map(student => student.email);
+}
+
+async function copyEmailsToClipboard(emails) {
+  if (!emails.length) return;
+  try {
+    await navigator.clipboard.writeText(emails.join("; "));
+    new bootstrap.Toast(
+      document.getElementById("rosterToast"), { delay: 2600 }).show();
+  } catch (error) {
+    alert("Clipboard unavailable in this browser context.");
+  }
+}
+
+function openInlineRoster(id) {
+  activeInlineTutorialId = id;
+  renderInlineRoster();
+}
+
+function openModalRoster(id) {
+  activeModalTutorialId = id;
+  renderModalRoster();
+  bootstrap.Modal.getOrCreateInstance(
+    document.getElementById("studentsModal")).show();
+}
+
+studentFilter.addEventListener("input", renderInlineRoster);
+copyEmailsBtn.addEventListener("click", () => copyEmailsToClipboard(currentInlineEmails()));
+modalCopyBtn.addEventListener("click", async () => {
+  const tutorial = getTutorialById(activeModalTutorialId);
+  if (!tutorial) return;
+  const emails = tutorial.students.map(student => student.email);
+  await copyEmailsToClipboard(emails);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderTutorialCards();
+  openInlineRoster("wed");
+});
+</script>
+</body>
+</html>

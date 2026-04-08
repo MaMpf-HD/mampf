@@ -1,4 +1,6 @@
 class CohortsController < ApplicationController
+  include ::RegistrationCampaignContext
+
   helper RosterHelper
 
   before_action :set_lecture, only: [:new, :create]
@@ -40,35 +42,39 @@ class CohortsController < ApplicationController
   end
 
   def create
-    cohort_attributes = cohort_params
-    cohort_attributes = parse_special_purpose_checkbox(cohort_attributes)
-
-    @cohort = Cohort.new(cohort_attributes)
+    @cohort = Cohort.new(cohort_params)
+    @cohort.skip_campaigns = true if registration_section_no_campaign?
     @cohort.context = @lecture
     authorize! :create, @cohort
     set_cohort_locale
 
-    if @cohort.save
-      flash.now[:notice] = t("controllers.cohorts.created")
-    else
-      @errors = @cohort.errors
+    persisted = false
+    Cohort.transaction do
+      persisted = @cohort.save
+      raise(ActiveRecord::Rollback) unless persisted
+
+      persisted = apply_registration_context(registerable: @cohort,
+                                             lecture: @lecture,
+                                             error_target: @cohort)
+      raise(ActiveRecord::Rollback) unless persisted
     end
+
+    flash.now[:notice] = t("controllers.cohorts.created") if persisted
+    @errors = @cohort.errors
 
     respond_to do |format|
       format.turbo_stream do
         group_type = parse_group_type
-        streams = create_turbo_streams(group_type)
-        render turbo_stream: streams, status: @cohort.persisted? ? :ok : :unprocessable_content
+        streams = create_turbo_streams(group_type, persisted)
+        render turbo_stream: streams, status: persisted ? :ok : :unprocessable_content
       end
     end
   end
 
   def update
     set_cohort_locale
-    updated_attributes = cohort_params
-    updated_attributes = parse_special_purpose_checkbox(updated_attributes)
 
-    if @cohort.update(updated_attributes)
+    if @cohort.update(cohort_params)
       flash.now[:notice] = t("controllers.cohorts.updated")
     else
       @errors = @cohort.errors
@@ -76,13 +82,11 @@ class CohortsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        group_type = parse_group_type
+        parse_group_type
         streams = []
 
         if @cohort.errors.empty?
-          streams.concat(Rosters::StreamService.new(@lecture, view_context)
-          .item_updated(@cohort,
-                        group_type: group_type, flash: flash))
+          streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@cohort.lecture)
           streams << turbo_stream.update("modal-container", "")
         else
@@ -106,10 +110,9 @@ class CohortsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
-        group_type = parse_group_type
-        streams = Rosters::StreamService.new(@lecture, view_context).roster_changed(
-          group_type: group_type, flash: flash
-        )
+        parse_group_type
+        streams = []
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@cohort.lecture)
         render turbo_stream: streams
       end
@@ -143,33 +146,16 @@ class CohortsController < ApplicationController
     end
 
     def cohort_params
-      permitted = [:title, :capacity, :description, :purpose]
+      permitted = [:title, :capacity, :description]
       permitted << :propagate_to_lecture unless @cohort&.persisted?
       params.expect(cohort: permitted)
     end
 
-    def parse_special_purpose_checkbox(attributes)
-      propagate_value = if @cohort&.persisted?
-        @cohort.propagate_to_lecture?
-      else
-        attributes[:propagate_to_lecture] == "true"
-      end
-
-      attributes[:purpose] = if params[:has_special_purpose] == "1"
-        propagate_value ? :enrollment : :planning
-      else
-        :general
-      end
-
-      attributes
-    end
-
-    def create_turbo_streams(group_type)
+    def create_turbo_streams(_group_type, saved)
       streams = []
-      service = Rosters::StreamService.new(@lecture, view_context)
 
-      if @cohort.persisted?
-        streams.concat(service.roster_changed(group_type: group_type, flash: flash))
+      if saved
+        streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@lecture)
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
@@ -185,5 +171,9 @@ class CohortsController < ApplicationController
       else
         params[:group_type].presence&.to_sym || :cohorts
       end
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

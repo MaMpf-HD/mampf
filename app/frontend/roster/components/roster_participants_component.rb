@@ -4,18 +4,19 @@
 class RosterParticipantsComponent < ViewComponent::Base
   # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 counts: {})
+                 search_string: nil, counts: {})
     super()
     @lecture = lecture
     @group_type = group_type
     @participants = participants
     @pagy = pagy
     @filter_mode = filter_mode
+    @search_string = search_string
     @counts = counts
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :counts
+  attr_reader :lecture, :group_type, :pagy, :filter_mode, :search_string, :counts
 
   # Returns the officially enrolled participants (Lecture Superset).
   def participants
@@ -54,116 +55,16 @@ class RosterParticipantsComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
-  # Returns groups compatible for assignment for a specific user
-  # Logic: (All Groups) - (Locked Groups) - (User's Current Groups)
-  def available_groups_for(user)
-    reserved_ids = user_memberships[user.id]
-
-    all_assignable_groups.reject do |g|
-      g.locked? || reserved_ids.include?(group_key(g))
-    end
-  end
-
-  def available_transfer_targets_for(user)
-    available = available_groups_for(user)
-    return [] unless available.any?
-
-    grouped = available.group_by(&:class)
-    sorted_groups = grouped.sort_by { |klass, _| klass.name == "Cohort" ? 2 : 1 }
-
-    sorted_groups.map do |klass, groups|
-      {
-        title: I18n.t("registration.item.groups.#{klass.name.underscore.pluralize}"),
-        groups: groups.sort_by(&:title)
-      }
-    end
-  end
-
-  # Returns all available actions (Add and/or Switch) for a target group
-  def assignment_actions(user, target_group)
-    actions = []
-    current_of_type = participant_groups(user).select { |g| g.instance_of?(target_group.class) }
-
-    # Only Tutorial is a partition type (mutually exclusive)
-    # Talk and Cohort allow multiple memberships
-    is_partition_type = target_group.is_a?(Tutorial)
-
-    if is_partition_type
-      # For partition types: Only offer "Switch" if already in a group, otherwise "Add"
-      if current_of_type.any?
-        current_of_type.each do |source|
-          actions << {
-            url: helpers.public_send("move_member_#{source.class.name.underscore}_path",
-                                     source, user),
-            method: :patch,
-            params: {
-              target_id: target_group.id,
-              target_type: target_group.class.name
-            },
-            label: t("roster.actions.switch_from_to",
-                     from: source.title,
-                     to: target_group.title),
-            icon: "arrow-left-right"
-          }
-        end
-      else
-        actions << {
-          url: helpers.public_send("add_member_#{target_group.model_name.singular_route_key}_path",
-                                   target_group),
-          method: :post,
-          params: { email: user.email },
-          label: t("roster.actions.add_to", to: target_group.title),
-          icon: "plus-circle"
-        }
-      end
-    else
-      # For multi-membership types: Offer both "Add" and "Switch" options
-      actions << {
-        url: helpers.public_send("add_member_#{target_group.model_name.singular_route_key}_path",
-                                 target_group),
-        method: :post,
-        params: { email: user.email },
-        label: t("roster.actions.add_to", to: target_group.title),
-        icon: "plus-circle"
-      }
-
-      current_of_type.each do |source|
-        actions << {
-          url: helpers.public_send("move_member_#{source.class.name.underscore}_path",
-                                   source, user),
-          method: :patch,
-          params: {
-            target_id: target_group.id,
-            target_type: target_group.class.name
-          },
-          label: t("roster.actions.switch_from_to",
-                   from: source.title,
-                   to: target_group.title),
-          icon: "arrow-left-right"
-        }
-      end
-    end
-
-    actions
-  end
-
-  # Helper to generate the correct polymorphic path
-  # Copied from RosterOverviewComponent as it is needed for links here.
-  def group_path(item)
-    method_name = "#{item.model_name.singular_route_key}_roster_path"
-    Rails.application.routes.url_helpers.public_send(method_name, item)
-  end
-
   # Returns the HTML for the pagination navigation (top and bottom)
   # Uses Pagy with custom querify logic to preserve tabs and filters.
   def pagination_nav
     return unless @pagy && @pagy.pages > 1
 
     helpers.pagy_series_nav(@pagy,
-                            path: helpers.lecture_roster_path(@lecture),
+                            path: helpers.lecture_roster_participants_path(@lecture),
                             querify: lambda { |p|
-                              p["tab"] = "participants"
                               p["filter"] = @filter_mode
+                              p["search"] = @search_string if @search_string.present?
                               p["group_type"] =
                                 if @group_type.is_a?(Array)
                                   @group_type.map(&:to_s)
