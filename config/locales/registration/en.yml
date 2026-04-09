@@ -15,7 +15,7 @@ en:
       cannot_reopen_completed: "Cannot reopen campaign because it has already been finalized."
       not_found: "Registration campaign not found."
       completed_title: "Campaign Completed"
-      completed_description: "The registration period has ended and allocations have been finalized. Please use the Roster to manage student groups."
+      completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
       dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
