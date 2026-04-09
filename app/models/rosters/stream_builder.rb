@@ -39,20 +39,23 @@ module Rosters
     private
 
       def participants_streams
-        [
-          @turbo_stream.update(
-            "roster_participants_panel",
-            RosterParticipantsComponent.new(
-              lecture: @lecture,
-              group_type: @mparams.group_type,
-              participants: participants,
-              pagy: pagy,
-              filter_mode: filter_mode,
-              search_string: search_string,
-              counts: component_counts
-            )
+        @rosterable.reload
+        streams = roster_streams
+
+        streams << @turbo_stream.update(
+          "roster_participants_panel",
+          RosterParticipantsComponent.new(
+            lecture: @lecture,
+            group_type: @mparams.group_type,
+            participants: participants,
+            pagy: pagy,
+            filter_mode: filter_mode,
+            search_string: search_string,
+            counts: component_counts
           )
-        ]
+        )
+
+        streams
       end
 
       def unassigned_streams
