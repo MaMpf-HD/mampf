@@ -15,6 +15,7 @@
     "name": "MaMpf",
     "dockerComposeFile": [
         "../docker/development/compose.yml",
+        "../docker/monitoring/docker-compose.yml",
         "compose.devcontainer.yml"
     ],
     "service": "app",
@@ -37,13 +38,11 @@
     "containerEnv": {
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
+
         "SHELL": "/bin/bash",
-        "VNC_RESOLUTION": "1920x1080x24",
-        "VNC_DPI": "144"
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to network with other containers or the host.
-    // see the portsAttributes below for details
     "forwardPorts": [
         3000,
         3145,
