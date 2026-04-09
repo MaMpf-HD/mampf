@@ -73,7 +73,8 @@ module Registration
     def destroy
       unless @campaign.draft?
         respond_with_flash(:alert,
-                           t("activerecord.errors.models.registration/item.attributes.base.frozen"), redirect_path: after_action_path)
+                           t("activerecord.errors.models.registration/item.attributes.base.frozen"),
+                           redirect_path: after_action_path)
         return
       end
 

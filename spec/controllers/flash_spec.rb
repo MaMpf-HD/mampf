@@ -31,7 +31,7 @@ RSpec.describe(Flash, type: :controller) do
     end
 
     def test_render_flash_with_message
-      flash.now[:notice] = "Hello"
+      flash.now[:notice] = "Hello" # rubocop:disable Rails/I18nLocaleTexts
       render_flash
     end
 
