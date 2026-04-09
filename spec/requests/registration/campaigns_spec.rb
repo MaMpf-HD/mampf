@@ -388,6 +388,30 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           expect(response).to have_http_status(:ok)
           assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
         end
+
+        context "when a student remains on the lecture roster after losing their group" do
+          let!(:campaign) do
+            create(:registration_campaign, :completed, campaignable: lecture)
+          end
+          let(:sticky_student) { create(:confirmed_user, name: "Sticky Student") }
+          let(:item) { campaign.registration_items.first }
+
+          before do
+            create(:registration_user_registration, :confirmed,
+                   registration_campaign: campaign,
+                   registration_item: item,
+                   user: sticky_student)
+            create(:lecture_membership, lecture: lecture, user: sticky_student)
+          end
+
+          it "still lists the student as unassigned" do
+            get unassigned_registration_campaign_path(campaign),
+                params: { source: "panel" }, as: :turbo_stream
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to include("Sticky Student")
+          end
+        end
       end
     end
   end
