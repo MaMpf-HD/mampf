@@ -1,3 +1,5 @@
+<div class="bg-green-lighten-4 p-3 mb-3 rounded"
+  data-controller="administration--index--create-buttons">
 <div class="row">
   <div class="col-12">
     <h6>
@@ -6,27 +8,25 @@
   </div>
 </div>
 <%= form_with model: course,
-              html: { id: 'new-course-form' } do |f| %>
+              html: { id: 'new-course-form' },
+        data: { turbo: true,
+          action: 'turbo:submit-end->administration--index--create-buttons#submitEnd' },
+              local: true do |f| %>
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
-      <%= f.text_field :title, { class: 'form-control',
-                                 id: 'new_course_title' } %>
-      <div class="invalid-feedback"
-           id="new-course-title-error">
-      </div>
+      <%= f.text_field :title, { class: "form-control",
+                                id: 'new_course_title' } %>
+      
     </div>
     <div class="col-12 mb-3">
       <%= f.label :short_title, t('basics.short_title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
-      <%= f.text_field :short_title, { class: 'form-control',
-                                 id: 'new_course_short_title' } %>
-      <div class="invalid-feedback"
-           id="new-course-short-title-error">
-      </div>
+      <%= f.text_field :short_title, { class: "form-control",
+                                id: 'new_course_short_title' } %>
     </div>
     <div class="col-12 mb-3">
       <%= f.label :editor_ids,
@@ -75,10 +75,13 @@
   <div class="row">
     <div class="col-12 text-center">
       <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
-      <button type="button" id="cancel-new-course"
-              class="btn btn-secondary">
-        <%= t('buttons.cancel') %>
-      </button>
+      <%= link_to t('buttons.cancel'),
+                  administration_path,
+                  class: 'btn btn-secondary',
+                  data: { turbo_frame: dom_id(Course.new),
+                          role: 'button',
+                          action: 'click->administration--index--create-buttons#cancel' } %>
     </div>
   </div>
 <% end %>
+</div>

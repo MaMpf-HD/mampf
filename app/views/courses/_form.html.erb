@@ -1,36 +1,42 @@
-<%= form_with model: course, html: { id: 'course-form' } do |f| %>
-  <div class="row p-2 mb-3">
-    <div class="col-3">
-      <h4 class="ps-2">
-        <span class="badge bg-secondary">
-          <%= t('basics.course') %>
-        </span>
-        <%= course.title %>
-      </h4>
-    </div>
-    <div class="col-6">
-      <div id="course-basics-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'),
-                     class: "btn btn-sm btn-primary" %>
-        <button type="button"
-                class="btn btn-sm btn-secondary ms-2"
-                id="course-basics-cancel"
-                data-id="<%= course.id %>">
-          <%= t('buttons.discard') %>
-        </button>
+<%= turbo_frame_tag "course_form" do %>
+  <%= form_with model: course,
+          html: { id: 'course-form',
+            data: { controller: 'courses-edit',
+              action: 'change->courses-edit#onFormChange',
+              'courses-edit-target': 'form' } } do |f| %>
+    <div class="row p-2 mb-3">
+      <div class="col-3">
+        <h4 class="ps-2">
+          <span class="badge bg-secondary">
+            <%= t('basics.course') %>
+          </span>
+          <%= course.title %>
+        </h4>
+      </div>
+      <div class="col-6">
+        <div id="course-basics-warning"
+          data-courses-edit-target="warning">
+          <%= t('warnings.unsaved_changes') %>
+          <%= f.submit t('buttons.save'),
+                      class: "btn btn-sm btn-primary" %>
+          <%= link_to t('buttons.discard'),
+                      request.fullpath,
+                      class: "btn btn-sm btn-secondary ms-2", role: "button",
+                      id: "course-basics-cancel",
+                      data: { turbo_action: "replace" } %>
+        </div>
+      </div>
+      <div class="col-3 text-center">
+        <% if course.irrelevant? && current_user.admin %>
+          <%= link_to t('buttons.delete'),
+                      course_path,
+                      method: :delete,
+                      data: { confirm: t('confirmation.generic') },
+                      class: 'btn btn-sm btn-danger' %>
+        <% end %>
       </div>
     </div>
-    <div class="col-3 text-center">
-      <% if course.irrelevant? && current_user.admin %>
-        <%= link_to t('buttons.delete'),
-                    course_path,
-                    method: :delete,
-                    data: { confirm: t('confirmation.generic') },
-                    class: 'btn btn-sm btn-danger' %>
-      <% end %>
-    </div>
-  </div>
-  <%= render partial: 'courses/data',
-             locals: { course: course, f: f } %>
+    <%= render partial: 'courses/data',
+              locals: { course: course, f: f } %>
+  <% end %>
 <% end %>

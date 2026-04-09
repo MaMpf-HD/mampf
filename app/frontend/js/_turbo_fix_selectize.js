@@ -145,6 +145,36 @@ $(document).on("turbo:before-cache", function () {
   $(".tomselected").each(resetSelectized);
 });
 
+function uninitializedSelectize($root) {
+  return $root.find(".selectize").filter(function () {
+    return !this.tomselect;
+  });
+}
+
 $(document).on("turbo:load", function () {
-  fillOptionsByAjax($(".selectize"));
+  fillOptionsByAjax($(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
+});
+
+$(document).on("turbo:frame-load", function (event) {
+  const frame = event.target;
+  fillOptionsByAjax(uninitializedSelectize($(frame)));
+});
+
+document.addEventListener("turbo:before-stream-render", function (event) {
+  const stream = event.target;
+  const originalRender = event.detail.render;
+
+  event.detail.render = function (currentElement) {
+    originalRender(currentElement);
+
+    const targetId = stream.getAttribute("target");
+    if (!targetId) return;
+
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    fillOptionsByAjax(uninitializedSelectize($(target)));
+  };
 });

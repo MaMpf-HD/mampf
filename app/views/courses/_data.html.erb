@@ -39,12 +39,14 @@
                 </h5>
               </div>
               <div class="col-8 text-end">
-                <a class="fas fa-plus-circle fa-lg clickable text-dark"
-                   id="new-tag-button"
-                   data-bs-toggle="tooltip"
-                   title="<%= t('buttons.create_tag') %>"
-                   data-course="<%= course.id %>"
-                   data-from="course">
+                <a href="#"
+                  class="fas fa-plus-circle fa-lg clickable text-dark"
+                  id="new-tag-button"
+                  data-courses-edit-target="newTagButton"
+                  data-bs-toggle="tooltip"
+                  title="<%= t('buttons.create_tag') %>"
+                  data-course="<%= course.id %>"
+                  data-from="course">
                 </a>
               </div>
             </div>

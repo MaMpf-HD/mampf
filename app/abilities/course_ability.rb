@@ -4,7 +4,7 @@ class CourseAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:create, :destroy], Course do
+    can [:new, :create, :destroy], Course do
       user.admin?
     end
 

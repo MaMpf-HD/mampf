@@ -33,7 +33,8 @@
             <%= image_tag(course.image_url_with_host.presence ||
                             "/no_course_information.png",
                           class: 'img-fluid',
-                          id: 'image-preview') %>
+                          id: 'image-preview',
+                          data: { 'courses-edit-target': 'imagePreview' }) %>
           </div>
           <div class="col-12 mt-2" id="image-none">
             <% unless course.image %>
@@ -45,16 +46,19 @@
                  data-choosefiles="<%= t('basics.file') %>">
               <%= f.hidden_field :image,
                                  value: course.cached_image_data,
-                                 id: 'upload-image-hidden' %>
+                                 id: 'upload-image-hidden',
+                                 data: { 'courses-edit-target': 'uploadImageHidden' } %>
               <%= f.file_field :image,
                                id: 'upload-image' %>
-              <%= f.hidden_field :detach_image, value: false %>
+              <%= f.hidden_field :detach_image,
+                                 value: false,
+                                 data: { 'courses-edit-target': 'detachImageInput' } %>
               <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
               <button id="image-uploadButton-button-actual"
                     data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    data-tr-failure="<%= t('submission.upload_failure') %>"
+                    data-tr-post-processing="<%= t('basics.post_processing') %>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent') %>"
                     class="btn btn-sm btn-outline-secondary"
                     >
               <%= t('buttons.upload') %>

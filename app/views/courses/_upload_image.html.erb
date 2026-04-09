@@ -14,9 +14,10 @@
     </div>
   </div>
   <div class="row p-2">
-    <div id="image-meta"
-         class="col-12 meta rounded"
-         style="display:<%= show(course.image.present?) %>">
+            <div id="image-meta"
+              class="col-12 meta rounded"
+              data-courses-edit-target="imageMeta"
+          style="display:<%= show(course.image.present?) %>">
       <div class="row">
         <div class="col-11">
           <%= t('basics.file') %>:
@@ -25,7 +26,11 @@
           </span>
         </div>
         <div class="col-1 text-end">
-          <button type="button" class="btn-close" aria-label="Close" id="detach-image"></button>
+              <button type="button"
+                class="btn-close"
+                aria-label="Close"
+                id="detach-image"
+                data-action="click->courses-edit#detachImage"></button>
         </div>
       </div>
       <div class="row">

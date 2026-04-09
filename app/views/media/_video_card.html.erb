@@ -18,7 +18,7 @@
                 play_arrow
               </i>
             </a>
-            <div class="download-button">
+            <div class="download-button d-none d-md-block">
               <a href="<%= medium.video_download_url %>"
                  download="<%= video_download_file(medium) %>"
                  class="triggerDownload"
@@ -41,9 +41,10 @@
     <% if medium.screenshot.present? %>
       <a href="<%= play_medium_path(medium) %>"
          target="_blank">
-         <img id="screenshot-preview"
-              class="card-img-top video-thumbnail"
-              src="<%= medium.screenshot_url_with_host %>">
+         <%= image_tag medium.screenshot_url_with_host,
+                       id: "screenshot-preview",
+                       alt: t('basics.screenshot'),
+                       class: "card-img-top video-thumbnail" %>
       </a>
     <% end %>
     <div class="card-body">

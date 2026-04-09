@@ -1,10 +1,12 @@
 <%= form_with url: url,
               scope: scope,
               method: method,
-              remote: remote,
+              data: { 
+                turbo_frame: "#{context}-search-results",
+                controller: "search-form"
+              },
               html: { 
-                role: "search",
-                data: { controller: "search-form" } } do |f| %>
+                role: "search" } do |f| %>
   <div class="<%= container_class %>">
     <% fields.each do |field| %>
       <%= render field.with_form(f) %>

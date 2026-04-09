@@ -1,7 +1,7 @@
 import { Popover } from "bootstrap";
 
-$(document).on("turbo:load", () => {
-  // Initialize Bootstrap popovers on page load
+$(document).on("turbo:load turbo:stream-render", () => {
+  // Initialize Bootstrap popovers on page load and after Turbo Stream renders
   initBootstrapPopovers();
 });
 

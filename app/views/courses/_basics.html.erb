@@ -13,16 +13,12 @@
                 class: "form-label" %>
     <%= helpdesk(t('admin.course.info.title'), false) %>
     <%= f.text_field :title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-title-error">
-    </div>
   </div>
   <div class="mb-3">
     <%= f.label :short_title, t('basics.short_title'),
                 class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.short_title'), false) %>
     <%= f.text_field :short_title, { class: 'form-control' } %>
-    <div class="invalid-feedback" id="course-short-title-error">
-    </div>
   </div>
   <div class="mb-3">
     <%= t('basics.language') %>
@@ -87,14 +83,15 @@
       <%= helpdesk(t('admin.course.info.lectures'), false) %>
       <% unless course.term_independent && course.lectures.any? %>
         <%= link_to '',
-                    new_lecture_path(params: { from: 'course',
-                                               course: course.id }),
-                    class: 'fas fa-plus-circle text-dark',
-                    id: 'new-lecture-button',
-                    data: { remote: true,
-                            toggle: 'tooltip',
-                            cy: 'new-lecture-button-admin-index' },
-                    title: t('buttons.create_lecture') %>
+              new_lecture_path(params: { from: 'course',
+                       course: course.id }),
+              class: 'fas fa-plus-circle text-dark',
+              id: 'new-lecture-button',
+              data: { remote: true,
+                toggle: 'tooltip',
+                cy: 'new-lecture-button-admin-index',
+                'courses-edit-target': 'newLectureButton' },
+              title: t('buttons.create_lecture') %>
       <% end %>
     </div>
     <div class="col-12">

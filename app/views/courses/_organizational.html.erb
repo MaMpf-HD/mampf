@@ -40,9 +40,10 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <%= f.trix_editor :organizational_concept,
-                              id: 'course-concept-trix',
-                              data: { content: course.organizational_concept} %>
+                    <%= f.trix_editor :organizational_concept,
+                          id: 'course-concept-trix',
+                          data: { content: course.organizational_concept,
+                            'courses-edit-target': 'trixEditor' } %>
           </div>
         </div>
       </div>

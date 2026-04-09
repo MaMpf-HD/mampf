@@ -3,36 +3,34 @@
     <div class="row">
       <div class="col-8">
         <%= t('admin.main.my_courses') %>
-        (<%= current_user.edited_courses.size  %>)
+        (<%= current_user.edited_courses.size %>)
         <%= helpdesk(t('admin.main.info.course_definition'), true) %>
       </div>
       <div class="col-4 text-end">
         <% if current_user.admin? %>
-          <i class="fas fa-plus-circle text-light admin-index-button clickable",
-             id="new-course-button"
-             data-bs-toggle="tooltip"
-             title="<%= t('admin.main.create_course') %>">
-          </i>
+          <%= link_to '',
+                      new_course_path,
+                      class: 'fas fa-plus-circle text-light admin-index-button clickable',
+                      id: 'new-course-button',
+                      data: { turbo_stream: true, bs_toggle: 'tooltip', turbo_prefetch: false},
+                      title: t('admin.main.create_course') %>
         <% end %>
       </div>
     </div>
   </div>
   <div class="card-body scrollable">
     <% if current_user.admin? %>
-      <div id="new-course-area"
-           class="bg-green-lighten-4 p-3 mb-3 rounded"
-           style="display: none;">
-        <%= render partial: 'courses/new',
-                   locals: { course: Course.new } %>
-      </div>
+        <%= turbo_frame_tag Course.new %>
     <% end %>
-    <% if current_user.edited_courses.any? %>
-      <%= render partial: 'administration/index/courses_card',
-                 locals: { courses:
-                             current_user.edited_courses
-                                         .natural_sort_by(&:title) } %>
-    <% else %>
-      <%= t('admin.main.no_edited_courses') %>
+    <%= turbo_frame_tag "courses" do %>
+      <% if current_user.edited_courses.any? %>
+        <%= render partial: 'administration/index/courses_card',
+                  locals: { courses:
+                              current_user.edited_courses
+                                          .natural_sort_by(&:title) } %>
+      <% else %>
+        <%= t('admin.main.no_edited_courses') %>
+      <% end %>
     <% end %>
   </div>
 </div>

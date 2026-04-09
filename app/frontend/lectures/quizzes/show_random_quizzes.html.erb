@@ -37,15 +37,18 @@
                      { multiple: true,
                        id: 'search_course_tag_ids',
                        class: 'selectize',
-                       data: { ajax: true,
+                             data: { ajax: true,
+                               controller: 'question-counter',
+                               action: 'change->question-counter#selectionChanged',
+                               question_counter_target: 'select',
+                               question_counter_url: render_question_counter_path(@course),
                                filled: false,
                                model: 'course_tag',
                                course: @course.id,
                                placeholder: t('basics.enter_two_letters'),
                                no_results: t('basics.no_results') } } %>
       <% end %>
-      <div id="questionCounter">
-      </div>
+      <%= turbo_frame_tag "question_counter" %>
       <div class="row">
         <div class="col-12 text-center">
           <%= f.submit t('test.start'),

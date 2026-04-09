@@ -8,7 +8,7 @@
   </div>
   <% courses.each do |c| %>
     <a href="<%= edit_course_path(c) %>"
-       class="list-group-item list-group-item-action">
+       class="list-group-item list-group-item-action" data-turbo-frame="_top">
       <div class="row">
         <div class="col-12">
           <%= c.title %>

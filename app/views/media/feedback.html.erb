@@ -30,7 +30,7 @@
                 <!-- JavaScript inserts markers here -->
               </span>
               <input type="range" id="seek-bar"
-                     min="0" max="100" step="0.1" value="0">
+                     min="0" max="100" step="0.1" value="0" autocomplete="off">
               <span id="max-time">
                 0:00:00
               </span>
@@ -41,24 +41,24 @@
               <div class="form-check form-switch" id="abc">
                 <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-mistake-switch"
                 value="mistake"
-                title="<%= t('admin.annotation.toggle.mistake')%> (Q)" checked>
+                title="<%= t('admin.annotation.toggle.mistake') %> (Q)" checked>
               </div>
              
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-content-switch"
                 value="content"
-                title="<%= t('admin.annotation.toggle.content')%> (W)" checked>
+                title="<%= t('admin.annotation.toggle.content') %> (W)" checked>
               </div>
 
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-presentation-switch"
-                  value="presentation" title="<%= t('admin.annotation.toggle.presentation')%> (E)" checked>
+                  value="presentation" title="<%= t('admin.annotation.toggle.presentation') %> (E)" checked>
               </div>
 
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-note-switch"
                 value="note"
-                title="<%= t('admin.annotation.toggle.note')%> (R)" checked>
+                title="<%= t('admin.annotation.toggle.note') %> (R)" checked>
               </div>
             </div>
 
@@ -75,7 +75,8 @@
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>
-              <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
+              <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1" 
+                autocomplete="off">
             </div>
 
           </div>
