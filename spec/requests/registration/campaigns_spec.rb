@@ -195,7 +195,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           it "responds with error" do
             patch open_registration_campaign_path(campaign), as: :turbo_stream
             expect(response).to have_http_status(:ok)
-            expect(response.media_type).to eq(Mime[:turbo_stream])
+            assert_flash_error
           end
         end
       end
@@ -250,7 +250,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           it "responds with error turbo stream" do
             patch close_registration_campaign_path(campaign), as: :turbo_stream
             expect(response).to have_http_status(:ok)
-            expect(response.media_type).to eq(Mime[:turbo_stream])
+            assert_flash_error
           end
         end
       end
@@ -308,7 +308,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         it "responds with error" do
           delete registration_campaign_path(campaign), as: :turbo_stream
           expect(response).to have_http_status(:ok)
-          expect(response.media_type).to eq(Mime[:turbo_stream])
+          assert_flash_error
         end
       end
 
@@ -323,7 +323,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         it "responds with error" do
           delete registration_campaign_path(campaign), as: :turbo_stream
           expect(response).to have_http_status(:ok)
-          expect(response.media_type).to eq(Mime[:turbo_stream])
+          assert_flash_error
         end
       end
     end
@@ -510,7 +510,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         it "rescues and responds with error stream" do
           patch reopen_registration_campaign_path(campaign), as: :turbo_stream
           expect(response).to have_http_status(:ok)
-          expect(response.media_type).to eq(Mime[:turbo_stream])
+          assert_flash_error
         end
       end
     end
