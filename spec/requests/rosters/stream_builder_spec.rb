@@ -77,6 +77,30 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       expect(response.body).to include("dissolved_campaign_#{campaign.id}")
       expect(response.body).to include("tutorial-roster-side-panel")
     end
+
+    it "keeps lecture members in the unassigned panel after removing a group assignment" do
+      create(:registration_user_registration,
+             :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: new_student)
+      create(:lecture_membership, lecture: lecture, user: new_student)
+      create(:tutorial_membership, tutorial: campaign_tutorial, user: new_student)
+
+      delete remove_member_tutorial_path(campaign_tutorial, user_id: new_student.id),
+             params: {
+               source: "unassigned",
+               source_id: campaign.id.to_s
+             },
+             as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      # the student name is expected to appear in the response since the turbo stream
+      # re-renders the side panel with all unassigned users, which should still
+      # include the removed student (since they are still a lecture member,
+      # just not assigned to a tutorial anymore)
+      expect(response.body).to include(new_student.name)
+    end
   end
 
   describe "stream dispatch default (roster overview)" do

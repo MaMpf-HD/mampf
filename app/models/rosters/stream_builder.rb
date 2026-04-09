@@ -66,14 +66,9 @@ module Rosters
         tile_replacements_for(@rosterable, streams)
 
         if campaign
-          lecture_roster_ids = campaign.campaignable.allocated_user_ids
-          unassigned_users = campaign.unassigned_users
-                                     .where.not(id: lecture_roster_ids)
-                                     .includes(user_registrations: [
-                                                 :registration_campaign,
-                                                 { registration_item: :registerable }
-                                               ])
-                                     .order(:name, :email)
+          unassigned_users = campaign.unassigned_users(
+            preload_registrations: true
+          )
 
           streams << @turbo_stream.replace(
             "dissolved_campaign_#{campaign.id}",

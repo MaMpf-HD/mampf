@@ -40,24 +40,13 @@ module Registration
         return
       end
 
-      # Exclude any users already on the lecture roster
-      lecture_roster_ids = @campaign.campaignable.allocated_user_ids
-
-      @unassigned_users = @campaign.unassigned_users
-                                   .where.not(id: lecture_roster_ids)
-                                   .includes(
-                                     user_registrations: [
-                                       :registration_campaign,
-                                       { registration_item: :registerable }
-                                     ]
-                                   )
-                                   .order(:name, :email)
+      unassigned_users = @campaign.unassigned_users(preload_registrations: true)
 
       render turbo_stream: turbo_stream.replace(
         "tutorial-roster-side-panel",
         html: RosterSidePanelComponent.new(
           campaign: @campaign,
-          students: @unassigned_users,
+          students: unassigned_users,
           is_unassigned: true
         ).render_in(view_context)
       )
