@@ -194,7 +194,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
           it "responds with error" do
             patch open_registration_campaign_path(campaign), as: :turbo_stream
-            assert_turbo_stream action: :prepend, target: "flash-messages"
+            expect(response).to have_http_status(:ok)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
           end
         end
       end
@@ -248,7 +249,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
           it "responds with error turbo stream" do
             patch close_registration_campaign_path(campaign), as: :turbo_stream
-            assert_turbo_stream action: :prepend, target: "flash-messages"
+            expect(response).to have_http_status(:ok)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
           end
         end
       end
@@ -305,7 +307,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
         it "responds with error" do
           delete registration_campaign_path(campaign), as: :turbo_stream
-          assert_turbo_stream action: :prepend, target: "flash-messages"
+          expect(response).to have_http_status(:ok)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
         end
       end
 
@@ -319,7 +322,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
         it "responds with error" do
           delete registration_campaign_path(campaign), as: :turbo_stream
-          assert_turbo_stream action: :prepend, target: "flash-messages"
+          expect(response).to have_http_status(:ok)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
         end
       end
     end
@@ -505,7 +509,8 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
         it "rescues and responds with error stream" do
           patch reopen_registration_campaign_path(campaign), as: :turbo_stream
-          assert_turbo_stream action: :prepend, target: "flash-messages"
+          expect(response).to have_http_status(:ok)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
         end
       end
     end

@@ -23,7 +23,12 @@ module Registration
       authorize! :create, @policy
 
       if @policy.save
-        respond_with_success(t("registration.policy.created"))
+        respond_with_flash(:notice, t("registration.policy.created"),
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           )) do
+          render_campaigns_container
+        end
       else
         render :new, status: :unprocessable_content
       end
@@ -31,7 +36,12 @@ module Registration
 
     def update
       if @policy.update(policy_params)
-        respond_with_success(t("registration.policy.updated"))
+        respond_with_flash(:notice, t("registration.policy.updated"),
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           )) do
+          render_campaigns_container
+        end
       else
         render :edit, status: :unprocessable_content
       end
@@ -39,9 +49,17 @@ module Registration
 
     def destroy
       if @policy.destroy
-        respond_with_success(t("registration.policy.destroyed"))
+        respond_with_flash(:notice, t("registration.policy.destroyed"),
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           )) do
+          render_campaigns_container
+        end
       else
-        respond_with_error(@policy.errors.full_messages.join(", "))
+        respond_with_flash(:alert, @policy.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           ))
       end
     end
 
@@ -63,7 +81,12 @@ module Registration
           @campaign.registration_policies.find(id).set_list_position(index + 1)
         end
       end
-      respond_with_success(nil)
+      respond_with_flash(:notice, nil,
+                         redirect_path: registration_campaign_path(
+                           @campaign, anchor: "policies-tab"
+                         )) do
+        render_campaigns_container
+      end
     end
 
     private
@@ -72,7 +95,7 @@ module Registration
         @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
         return if @campaign
 
-        respond_with_error(t("registration.campaign.not_found"),
+        respond_with_flash(:alert, t("registration.campaign.not_found"),
                            redirect_path: root_path)
       end
 
@@ -80,12 +103,11 @@ module Registration
         @policy = @campaign.registration_policies.find_by(id: params[:id])
         return if @policy
 
-        respond_with_error(
-          t("registration.policy.not_found"),
-          redirect_path: registration_campaign_path(
-            @campaign, anchor: "policies-tab"
-          )
-        )
+        respond_with_flash(:alert,
+                           t("registration.policy.not_found"),
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           ))
       end
 
       def set_locale
@@ -99,44 +121,11 @@ module Registration
 
       def move(direction)
         @policy.public_send("move_#{direction}")
-        respond_with_success(nil)
-      end
-
-      def respond_with_success(message)
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(
-              @campaign, anchor: "policies-tab"
-            ), notice: message
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message if message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: {
-                                    lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id
-                                  }),
-              stream_flash
-            ].compact
-          end
-        end
-      end
-
-      def respond_with_error(message, redirect_path: nil)
-        respond_to do |format|
-          format.html do
-            path = redirect_path ||
-                   registration_campaign_path(
-                     @campaign, anchor: "policies-tab"
-                   )
-            redirect_to path, alert: message
-          end
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
-          end
+        respond_with_flash(:notice, nil,
+                           redirect_path: registration_campaign_path(
+                             @campaign, anchor: "policies-tab"
+                           )) do
+          render_campaigns_container
         end
       end
   end
