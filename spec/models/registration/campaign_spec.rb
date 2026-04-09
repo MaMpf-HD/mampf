@@ -127,10 +127,11 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
       end
 
-      it "allows updates if status is changing (re-opening)" do
+      it "prevents updates on completed campaign (re-opening)" do
         campaign.status = :open
         campaign.registration_deadline = 1.day.from_now
-        expect(campaign).to be_valid
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
       end
 
       it "allows updates if status is changing (finalizing)" do

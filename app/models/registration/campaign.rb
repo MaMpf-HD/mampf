@@ -203,7 +203,7 @@ module Registration
         return unless status_was == "completed"
         return unless changed?
 
-        errors.add(:base, :already_finalized) unless status_changed?
+        errors.add(:base, :already_finalized)
       end
 
       def prerequisites_not_draft
