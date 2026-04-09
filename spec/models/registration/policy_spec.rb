@@ -39,6 +39,25 @@ RSpec.describe(Registration::Policy, type: :model) do
       end
     end
 
+    describe ".default_allowed_domains" do
+      it "returns the configured default domain" do
+        stub_const("ENV", ENV.to_hash.merge(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN" =>
+                                                 "uni-heidelberg.de"
+                          ))
+
+        expect(described_class.default_allowed_domains).to eq("uni-heidelberg.de")
+      end
+
+      it "returns empty string when env var is missing" do
+        stub_const("ENV", ENV.to_hash.except(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN"
+                          ))
+
+        expect(described_class.default_allowed_domains).to eq("")
+      end
+    end
+
     describe "validation" do
       it "validates institutional_email config" do
         policy = build(:registration_policy, :institutional_email, config: {})
