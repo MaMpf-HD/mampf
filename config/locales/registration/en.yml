@@ -312,6 +312,7 @@ en:
         not_fcfs_mode: "This registration campaign is not in first-come-first-served mode. Direct registrations cannot be made here."
         cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
         course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
+        campaign_not_found: "Registration campaign not found."
     allocation:
       started: "Allocation has been calculated."
       conflicts:

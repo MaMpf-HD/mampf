@@ -265,7 +265,7 @@ de:
       eligibility_title: "Berechtigung"
       preferences_title: Ihre ausgewählten Einstellungen
       success_preferences_title: Ihre erfolgreichen Einstellungen
-      option_title: "Verfügbare Optionen"
+      options_title: "Verfügbare Optionen"
       eligible: "Berechtigt"
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
@@ -312,6 +312,7 @@ de:
         not_fcfs_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
         cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
+        campaign_not_found: "Anmeldeverfahren nicht gefunden."
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
