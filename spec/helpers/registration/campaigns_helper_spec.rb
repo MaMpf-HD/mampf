@@ -51,7 +51,7 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
       expect(helper.policy_kinds_summary(campaign))
         .to eq(
-          "#{I18n.t("registration.policy.kinds.student_performance")}," \
+          "#{I18n.t("registration.policy.kinds.student_performance")}, " \
           "#{I18n.t("registration.policy.kinds.institutional_email")}"
         )
     end
