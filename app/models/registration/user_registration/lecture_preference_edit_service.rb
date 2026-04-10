@@ -42,7 +42,7 @@ module Registration
         end
 
         def check_preference_based_mode
-          return if @campaign.allocation_mode == :preference_based
+          return if @campaign.preference_based?
 
           I18n.t("registration.user_registration.messages.not_preference_based_mode")
         end

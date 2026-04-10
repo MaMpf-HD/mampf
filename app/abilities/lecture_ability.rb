@@ -35,7 +35,7 @@ class LectureAbility
       lecture.published? || user.active_teachable_editor?
     end
 
-    can :self_materialize, Lecture do |lecture|
+    can [:self_materialize, :enroll], Lecture do |lecture|
       !user.in?(lecture.tutors) && (user != lecture.teacher) && !user.can_edit?(lecture)
     end
   end

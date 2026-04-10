@@ -50,13 +50,21 @@ module Registration
         { header: "basics.tutor",
           cell_class: "text-start fw-semibold",
           icon: "person",
-          field: ->(item) { item.registerable.tutor_names } }
+          field: ->(item) { item.registerable.tutor_names } },
+        { header: "basics.location",
+          cell_class: "text-start fw-semibold",
+          icon: "location",
+          field: ->(item) { item.registerable.location } }
       ],
       "Talk" => [
         { header: "basics.position",
           cell_class: "text-end",
           icon: "looks_one",
           field: ->(item) { item.registerable.position } },
+        { header: "basics.description",
+          icon: "description",
+          cell_class: "text-center",
+          field: ->(item) { item.registerable.description } },
         { header: "basics.date",
           icon: "event",
           field: lambda { |item|

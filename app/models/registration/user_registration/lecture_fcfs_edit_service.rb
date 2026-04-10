@@ -66,7 +66,7 @@ module Registration
         end
 
         def check_fcfs_mode
-          return if @campaign.allocation_mode == :first_come_first_served
+          return if @campaign.first_come_first_served?
 
           I18n.t("registration.user_registration.messages.not_fcfs_mode")
         end

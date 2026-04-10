@@ -145,13 +145,21 @@ module RosterHelper
       { header: "basics.tutor",
         cell_class: "text-start fw-semibold",
         icon: "person",
-        field: ->(rosterable) { rosterable.tutor_names } }
+        field: ->(rosterable) { rosterable.tutor_names } },
+      { header: "basics.location",
+        cell_class: "text-start fw-semibold",
+        icon: "location",
+        field: ->(rosterable) { rosterable.location } }
     ],
     "Talk" => [
       { header: "basics.position",
         cell_class: "text-end",
         icon: "looks_one",
         field: ->(rosterable) { rosterable.position } },
+      { header: "basics.description",
+        icon: "description",
+        cell_class: "text-center",
+        field: ->(rosterable) { rosterable.description } },
       { header: "basics.date",
         icon: "event",
         field: lambda { |rosterable|

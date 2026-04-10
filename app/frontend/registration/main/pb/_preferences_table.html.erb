@@ -2,7 +2,7 @@
   <div class="fw-semibold mt-2 mb-2 text-muted">
     <% if campaign.open_for_registrations? %>
       <%= t('registration.user_registration.preferences_title') %>
-    <%else%>
+    <% else %>
       <%= t('registration.user_registration.success_preferences_title') %>
     <% end %>
   </div>
@@ -19,7 +19,7 @@
 
           <!-- Left: Title + Type -->
           <div class="d-flex align-items-baseline gap-1">
-            <div class="fw-semibold"><%= item.title %></div>
+            <div class="fw-semibold"><%= item.registerable.title %></div>
             <div class="small text-muted">(<%= item_display_type(item) %>)</div>
           </div>
 
@@ -51,7 +51,7 @@
           <!-- Move Up -->
           <button type="submit" name="up_<%= campaign.id %>"
                   class="material-icons clickable arrow_upward border-0 bg-transparent p-0"
-                  <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %>
+                  <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= preference_up_path(item.id) %>">
             arrow_upward
           </button>
@@ -59,7 +59,7 @@
           <!-- Move Down -->
           <button type="submit" name="down_<%= campaign.id %>"
                   class="material-icons clickable arrow_downward border-0 bg-transparent p-0"
-                  <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %>
+                  <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= preference_down_path(item.id) %>">
             arrow_downward
           </button>
@@ -67,7 +67,7 @@
           <!-- Remove -->
           <button type="submit" name="remove_<%= campaign.id %>"
                   class="material-icons clickable playlist_remove border-0 bg-transparent text-danger p-0"
-                  <%= "disabled" if !campaign.open_for_registrations? %>
+                  <%= "disabled" if !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= remove_preference_path(item.id) %>">
             playlist_remove
           </button>
