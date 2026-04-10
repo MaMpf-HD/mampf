@@ -189,4 +189,18 @@ RSpec.describe(User, type: :model) do
       expect(user.registration_campaigns).to include(campaign)
     end
   end
+
+  describe "#subscribe_lecture!" do
+    it "creates at most one join under concurrent calls" do
+      user = create(:confirmed_user)
+      lecture = create(:lecture)
+
+      values = run_concurrently do
+        User.find(user.id).subscribe_lecture!(Lecture.find(lecture.id))
+      end
+
+      expect(values).to contain_exactly(true, false)
+      expect(LectureUserJoin.where(user: user, lecture: lecture).count).to eq(1)
+    end
+  end
 end

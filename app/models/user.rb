@@ -594,11 +594,9 @@ class User < ApplicationRecord
 
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
-    return false if lecture.in?(lectures)
 
-    lectures << lecture
-
-    true
+    lecture_user_joins.create_or_find_by(lecture: lecture)
+                      .previously_new_record?
   end
 
   def unsubscribe_lecture!(lecture)
