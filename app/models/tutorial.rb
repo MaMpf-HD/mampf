@@ -55,8 +55,7 @@ class Tutorial < ApplicationRecord
   end
 
   def add_tutor(tutor)
-    tutor_tutorial_joins.create_or_find_by(tutor: tutor)
-                        .previously_new_record?
+    tutors << tutor unless tutors.include?(tutor)
   end
 
   def roster_entries
