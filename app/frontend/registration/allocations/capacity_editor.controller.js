@@ -8,7 +8,8 @@ export default class extends Controller {
 
     if (isOpen) {
       this.close();
-    } else {
+    }
+    else {
       this.open();
     }
   }
