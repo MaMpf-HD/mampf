@@ -41,7 +41,6 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get lecture_registration_campaigns_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:ok)
       end
-      end
     end
 
     context "as a student" do
