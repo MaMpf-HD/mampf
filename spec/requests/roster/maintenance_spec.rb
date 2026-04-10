@@ -42,6 +42,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
       end
 
+      it "returns turbo stream updates for participants sections" do
+        get lecture_roster_participants_path(lecture), as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('target="roster_participants_top_nav"')
+        expect(response.body).to include('target="roster_participants_header_controls"')
+        expect(response.body).to include('target="roster_participants_results"')
+      end
+
       context "with existing groups" do
         let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
