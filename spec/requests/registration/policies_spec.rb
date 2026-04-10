@@ -21,6 +21,36 @@ RSpec.describe("Registration::Policies", type: :request) do
         get new_registration_campaign_policy_path(campaign)
         expect(response).to have_http_status(:success)
       end
+
+      it "prefills allowed domains from env" do
+        stub_const("ENV", ENV.to_hash.merge(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN" =>
+                                                 "uni-heidelberg.de"
+                          ))
+
+        get new_registration_campaign_policy_path(campaign)
+
+        expect(response.body).to include("allowed_domains")
+        expect(response.body).to include('value="uni-heidelberg.de"')
+      end
+
+      it "uses policy value when allowed domains are already set" do
+        stub_const("ENV", ENV.to_hash.merge(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN" =>
+                                                 "uni-heidelberg.de"
+                          ))
+
+        post(registration_campaign_policies_path(campaign),
+             params: { registration_policy: { kind: "institutional_email",
+                                              phase: "registration",
+                                              allowed_domains: "other.example" } })
+
+        policy = campaign.registration_policies.order(:created_at).last
+        get edit_registration_campaign_policy_path(campaign, policy)
+
+        expect(response.body).to include("allowed_domains")
+        expect(response.body).to include('value="other.example"')
+      end
     end
 
     context "as a student" do

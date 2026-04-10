@@ -1,7 +1,7 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";
-@import 'branding';
+@import '~/styles/branding';
 
 .tutorial-roster-layout {
   --tutorial-roster-panel-width: 24rem;
@@ -175,5 +175,24 @@
   .tutorial-roster-side-panel {
     height: auto;
     max-height: calc(100vh - 8rem);
+  }
+}
+
+.roster-search-group {
+  min-width: 14rem;
+
+  &:focus-within {
+    .input-group-text,
+    .roster-search-clear {
+      border-color: $input-focus-border-color;
+    }
+  }
+
+  .roster-search-clear {
+    border-color: $input-border-color;
+
+    &:hover i {
+      color: var(--bs-danger) !important;
+    }
   }
 }

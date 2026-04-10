@@ -22,7 +22,7 @@
             <%= f.hidden_field :group_type, value: @group_type %>
           <% end %>
 
-          <div class="input-group input-group-sm">
+          <div class="input-group input-group-sm roster-search-group">
             <span class="input-group-text bg-white border-end-0 pe-1">
               <i class="bi bi-search text-muted"></i>
             </span>
@@ -30,8 +30,21 @@
             <%= f.text_field :search,
                              value: @search_string,
                              placeholder: t("basics.search"),
-                             class: "form-control border-start-0 ps-1 focus-ring-0 shadow-none",
-                             data: { action: "input->auto-submit-form#debouncedSubmit" } %>
+                             class: "form-control border-start-0 ps-1 focus-ring-0 shadow-none #{@search_string.present? ? "border-end-0" : "rounded-end"}",
+                             data: {
+                               action: "input->auto-submit-form#debouncedSubmit",
+                               auto_submit_form_target: "searchInput"
+                             } %>
+
+            <button
+              type="button"
+              class="btn bg-white border-start-0 roster-search-clear <%= "d-none" unless @search_string.present? %>"
+              data-auto-submit-form-target="clearButton"
+              data-action="auto-submit-form#clear"
+              title="<%= t("basics.clear") %>"
+            >
+              <i class="bi bi-x text-muted"></i>
+            </button>
           </div>
         <% end %>
 

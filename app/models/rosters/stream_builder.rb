@@ -39,20 +39,23 @@ module Rosters
     private
 
       def participants_streams
-        [
-          @turbo_stream.update(
-            "roster_participants_panel",
-            RosterParticipantsComponent.new(
-              lecture: @lecture,
-              group_type: @mparams.group_type,
-              participants: participants,
-              pagy: pagy,
-              filter_mode: filter_mode,
-              search_string: search_string,
-              counts: component_counts
-            )
+        @rosterable.reload
+        streams = roster_streams
+
+        streams << @turbo_stream.update(
+          "roster_participants_panel",
+          RosterParticipantsComponent.new(
+            lecture: @lecture,
+            group_type: @mparams.group_type,
+            participants: participants,
+            pagy: pagy,
+            filter_mode: filter_mode,
+            search_string: search_string,
+            counts: component_counts
           )
-        ]
+        )
+
+        streams
       end
 
       def unassigned_streams
@@ -63,14 +66,9 @@ module Rosters
         tile_replacements_for(@rosterable, streams)
 
         if campaign
-          lecture_roster_ids = campaign.campaignable.allocated_user_ids
-          unassigned_users = campaign.unassigned_users
-                                     .where.not(id: lecture_roster_ids)
-                                     .includes(user_registrations: [
-                                                 :registration_campaign,
-                                                 { registration_item: :registerable }
-                                               ])
-                                     .order(:name, :email)
+          unassigned_users = campaign.unassigned_users(
+            preload_registrations: true
+          )
 
           streams << @turbo_stream.replace(
             "dissolved_campaign_#{campaign.id}",

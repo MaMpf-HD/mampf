@@ -66,20 +66,26 @@ module Registration
       else
         messages = @item.errors.map(&:message)
         messages += @item.registerable.errors.map(&:message) if @item.registerable&.errors&.any?
-        respond_with_error(messages.uniq.to_sentence)
+        respond_with_flash(:alert, messages.uniq.to_sentence, redirect_path: after_action_path)
       end
     end
 
     def destroy
       unless @campaign.draft?
-        respond_with_error(t("activerecord.errors.models.registration/item.attributes.base.frozen"))
+        respond_with_flash(:alert,
+                           t("activerecord.errors.models.registration/item.attributes.base.frozen"),
+                           redirect_path: after_action_path)
         return
       end
 
       if @item.destroy
-        respond_with_success(t("registration.item.destroyed"))
+        respond_with_flash(:notice, t("registration.item.destroyed"),
+                           redirect_path: after_action_path) do
+          render_campaigns_container
+        end
       else
-        respond_with_error(@item.errors.full_messages.to_sentence)
+        respond_with_flash(:alert, @item.errors.full_messages.to_sentence,
+                           redirect_path: after_action_path)
       end
     end
 
@@ -113,52 +119,31 @@ module Registration
         authorize! :create, @item
 
         if @item.save
-          respond_with_success(t("registration.item.created"))
+          respond_with_flash(:notice, t("registration.item.created"),
+                             redirect_path: after_action_path) do
+            render_campaigns_container
+          end
         else
-          respond_with_error(@item.errors.map(&:message).uniq.to_sentence)
+          respond_with_flash(:alert, @item.errors.map(&:message).uniq.to_sentence,
+                             redirect_path: after_action_path)
         end
       end
 
-      def respond_with_success(message)
+      def render_campaigns_container
         @campaign.reload
-        respond_to do |format|
-          format.html do
-            redirect_to after_action_path, notice: message
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message
-            streams = [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: {
-                                    lecture: @campaign.campaignable,
-                                    expanded_campaign_id: @campaign.id
-                                  }),
-              stream_flash
-            ]
-            render turbo_stream: streams
-          end
-        end
-      end
-
-      def respond_with_error(message, redirect_path: nil)
-        respond_to do |format|
-          format.html do
-            path = redirect_path || after_action_path
-            redirect_to path, alert: message
-          end
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
-          end
-        end
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
       end
 
       def set_campaign
         @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
         return if @campaign
 
-        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
+        respond_with_flash(:alert, t("registration.campaign.not_found"), redirect_path: root_path)
       end
 
       def set_locale
@@ -169,7 +154,8 @@ module Registration
         @item = @campaign.registration_items.find_by(id: params[:id])
         return if @item
 
-        respond_with_error(t("registration.item.not_found"))
+        respond_with_flash(:alert, t("registration.item.not_found"),
+                           redirect_path: after_action_path)
       end
 
       def item_params

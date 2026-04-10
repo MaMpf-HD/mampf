@@ -3258,6 +3258,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    clear: "Clear"
     close: "Close"
     capacity: 'Capacity'
     division: 'Division'
@@ -3487,8 +3488,8 @@ en:
   buttons:
     create_tutorial: 'Create Tutorial'
     edit_tutorial: 'Edit Tutorial'
-    create_cohort: 'Create Cohort'
-    edit_cohort: 'Edit Cohort'
+    create_cohort: 'Create Group'
+    edit_cohort: 'Edit Group'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3600,6 +3601,7 @@ en:
     edit_exam: 'Edit Exam'
   confirmation:
     generic: 'Are you sure?'
+    delete_talk: 'Are you sure you want to delete this talk?'
     delete_graph: >
       Are you sure? Note: Only the quiz graph will be deleted,
       not the medium.#
@@ -3698,7 +3700,7 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
-    no_cohort: 'There is no cohort with this id.'
+    no_cohort: 'There is no group with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
@@ -3734,10 +3736,10 @@ en:
       errors:
         cannot_delete_with_submissions: 'Cannot be deleted because there are submissions.'
     cohorts:
-      created: 'Cohort successfully created.'
-      updated: 'Cohort successfully updated.'
-      destroyed: 'Cohort successfully deleted.'
-      destruction_failed: 'Cohort could not be deleted.'
+      created: 'Group successfully created.'
+      updated: 'Group successfully updated.'
+      destroyed: 'Group successfully deleted.'
+      destruction_failed: 'Group could not be deleted.'
     talks:
       created: 'Talk successfully created.'
       updated: 'Talk successfully updated.'

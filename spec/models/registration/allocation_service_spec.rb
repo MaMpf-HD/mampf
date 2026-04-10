@@ -12,6 +12,21 @@ RSpec.describe(Registration::AllocationService) do
   let(:service) { described_class.new(campaign) }
 
   describe "#allocate!" do
+    context "with a first come first served campaign" do
+      let(:campaign) do
+        create(:registration_campaign,
+               :closed,
+               :first_come_first_served,
+               campaignable: lecture)
+      end
+
+      it "raises an ArgumentError" do
+        expect do
+          described_class.new(campaign).allocate!
+        end.to raise_error(ArgumentError, /preference-based campaigns/)
+      end
+    end
+
     context "with locking" do
       let(:tutorial1) { create(:tutorial, lecture: lecture, capacity: 10) }
       let(:tutorial2) { create(:tutorial, lecture: lecture, capacity: 10) }

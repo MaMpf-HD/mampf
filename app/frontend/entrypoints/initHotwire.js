@@ -44,9 +44,6 @@ window.Stimulus.register("sortable-policies", SortablePoliciesController);
 import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
 window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
 
-import CampaignActionController from "~/registration/campaign_action.controller.js";
-window.Stimulus.register("campaign-action", CampaignActionController);
-
 import CollapseController from "~/registration/collapse.controller.js";
 window.Stimulus.register("collapse", CollapseController);
 
@@ -74,8 +71,8 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
-import DetailsEditorController from "~/registration/allocations/details_editor.controller.js";
-window.Stimulus.register("details-editor", DetailsEditorController);
+import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
+window.Stimulus.register("capacity-editor", CapacityEditorController);
 
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);

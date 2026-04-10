@@ -1,18 +1,20 @@
-import CampaignConfirmBase from "../campaign_confirm_base.controller";
+import { Controller } from "@hotwired/stimulus";
 
-export default class extends CampaignConfirmBase {
-  async submit(event) {
-    if (this.confirmed) return;
+export default class extends Controller {
+  static values = {
+    confirmMessage: String,
+  };
+
+  submit(event) {
+    if (this.confirmed) return; // base condition to prevent loops
 
     event.preventDefault();
 
-    const message = await this.buildMessage();
-
-    if (!confirm(message)) return;
+    if (!confirm(this.confirmMessageValue)) return;
 
     const card = this.element.closest(".registration-campaign-card");
     if (!card) {
-      this.submitForm();
+      this.resume();
       return;
     }
 
@@ -23,12 +25,17 @@ export default class extends CampaignConfirmBase {
     ).matches;
 
     if (reduced) {
-      this.submitForm();
+      this.resume();
     }
     else {
       card.addEventListener(
-        "animationend", () => this.submitForm(), { once: true },
+        "animationend", () => this.resume(), { once: true },
       );
     }
+  }
+
+  resume() {
+    this.confirmed = true;
+    this.element.requestSubmit();
   }
 }

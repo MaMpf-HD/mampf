@@ -46,7 +46,12 @@
       <div class="mb-3">
         <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
         <%= helpdesk(t("registration.policy.helpdesk.allowed_domains"), false) %>
-        <%= f.text_field :allowed_domains, class: "form-control" %>
+        <% default_allowed_domains =
+             policy.new_record? ? Registration::Policy.default_allowed_domains : nil %>
+        <%= f.text_field :allowed_domains,
+                         class: "form-control",
+                         value: policy.allowed_domains.presence ||
+                                default_allowed_domains %>
 
         <div class="form-text">
           <%= t("registration.policy.hints.allowed_domains") %>

@@ -187,4 +187,112 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       end
     end
   end
+  describe "#pagination_nav" do
+    it "returns nil if no pagy" do
+      expect(described_class.new(lecture: lecture, group_type: "tutorial",
+                                 pagy: nil).pagination_nav).to be_nil
+    end
+
+    it "returns nil if pagy has 1 or fewer pages" do
+      pagy = double("Pagy", pages: 1)
+      expect(described_class.new(lecture: lecture, group_type: "tutorial",
+                                 pagy: pagy).pagination_nav).to be_nil
+    end
+
+    it "calls helpers.pagy_series_nav and constructs querify correctly" do
+      pagy = double("Pagy", pages: 2)
+      c = described_class.new(lecture: lecture, group_type: ["t1", "t2"],
+                              filter_mode: "unassigned", search_string: "foo", pagy: pagy)
+
+      helpers_mock = double("helpers")
+      allow(c).to receive(:helpers).and_return(helpers_mock)
+      allow(helpers_mock).to receive(:lecture_roster_participants_path)
+        .with(lecture).and_return("/path")
+
+      expect(helpers_mock).to receive(:pagy_series_nav)
+        .with(pagy, path: "/path",
+                    querify: kind_of(Proc)) do |_, options|
+        querify = options[:querify]
+
+        # Test the lambda querify inside
+        mock_params = {}
+        querify.call(mock_params)
+
+        expect(mock_params["filter"]).to eq("unassigned")
+        expect(mock_params["search"]).to eq("foo")
+        expect(mock_params["group_type"]).to eq(["t1", "t2"])
+
+        "HTML"
+      end
+
+      expect(c.pagination_nav).to eq("HTML")
+    end
+
+    it "constructs string group_type for querify" do
+      pagy = double("Pagy", pages: 2)
+      c = described_class.new(lecture: lecture, group_type: :tutorial, pagy: pagy)
+
+      helpers_mock = double("helpers")
+      allow(c).to receive(:helpers).and_return(helpers_mock)
+      allow(helpers_mock).to receive(:lecture_roster_participants_path)
+        .with(lecture).and_return("/path")
+
+      expect(helpers_mock).to receive(:pagy_series_nav)
+        .with(pagy, path: "/path",
+                    querify: kind_of(Proc)) do |_, options|
+        querify = options[:querify]
+        mock_params = {}
+        querify.call(mock_params)
+
+        expect(mock_params["group_type"]).to eq("tutorial")
+        "HTML"
+      end
+
+      c.pagination_nav
+    end
+  end
+
+  describe "#user_memberships edge cases" do
+    it "handles talks successfully" do
+      user = create(:confirmed_user)
+      seminar = create(:lecture, term: create(:term), sort: "seminar")
+      talk = create(:talk, lecture: seminar)
+      create(:speaker_talk_join, speaker: user, talk: talk)
+
+      c = described_class.new(lecture: seminar, group_type: "talk",
+                              participants: [double(user_id: user.id)])
+
+      # force internal calculation and lookup talk mapping
+      expect(c.send(:user_memberships)[user.id]).to include("Talk-#{talk.id}")
+    end
+
+    it "handles cohorts successfully" do
+      user = create(:confirmed_user)
+      cohort = create(:cohort, context: lecture)
+      create(:cohort_membership, user: user, cohort: cohort)
+
+      c = described_class.new(lecture: lecture, group_type: "tutorial",
+                              participants: [double(user_id: user.id)])
+
+      expect(c.send(:user_memberships)[user.id]).to include("Cohort-#{cohort.id}")
+    end
+  end
+
+  describe "#participant_groups" do
+    it "returns the groups the user is part of" do
+      user = create(:confirmed_user)
+      tutorial = create(:tutorial, lecture: lecture)
+      cohort = create(:cohort, context: lecture)
+
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+      create(:cohort_membership, user: user, cohort: cohort)
+
+      c = described_class.new(lecture: lecture, group_type: "tutorial",
+                              participants: [double(user_id: user.id, user: user)])
+
+      groups = c.participant_groups(user)
+
+      expect(groups).to match_array([tutorial, cohort])
+    end
+  end
 end

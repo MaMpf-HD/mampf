@@ -434,6 +434,48 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     end
   end
 
+  describe "PATCH /lectures/:id/roster/bulk_self_materialization" do
+    let!(:free_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+    let!(:campaign_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+    let!(:campaign) { create(:registration_campaign, campaignable: lecture, status: :draft) }
+
+    before do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: campaign_tutorial)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "enables self-materialization through validated model updates" do
+        patch roster_bulk_update_self_materialization_lecture_path(
+          lecture,
+          mode: :add_only
+        ), as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(free_tutorial.reload.self_materialization_mode).to eq("add_only")
+        expect(free_tutorial.skip_campaigns).to be(true)
+        expect(campaign_tutorial.reload.self_materialization_mode).to eq("disabled")
+        expect(campaign_tutorial.skip_campaigns).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch roster_bulk_update_self_materialization_lecture_path(
+          lecture,
+          mode: :add_only
+        ), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
   describe "POST /cohorts/:id/roster/add_member" do
     let(:cohort) { create(:cohort, context: lecture, skip_campaigns: true) }
     let(:new_student) { create(:confirmed_user) }

@@ -31,37 +31,36 @@ module Registration
     def create
       authorize! :allocate, @campaign
 
-      if @campaign.processing?
-        respond_with_error(t("registration.allocation.errors.already_processing"))
+      unless @campaign.preference_based?
+        respond_with_flash(
+          :alert,
+          "Allocation can only be triggered for preference-based campaigns. " \
+          "As a user, you should never see this error, please contact the MaMpf team.",
+          redirect_path: registration_campaign_path(@campaign)
+        )
         return
       end
 
-      unless @campaign.closed?
-
-        respond_with_error(t("registration.allocation.errors.wrong_status"))
+      unless @campaign.closed? || @campaign.processing?
+        respond_with_flash(:alert, t("registration.allocation.errors.wrong_status"),
+                           redirect_path: registration_campaign_path(@campaign))
         return
       end
 
       Registration::AllocationService.new(@campaign).allocate!
       @dashboard = Registration::AllocationDashboard.new(@campaign)
 
-      respond_to do |format|
-        format.html do
-          redirect_to registration_campaign_allocation_path(@campaign),
-                      notice: t("registration.allocation.started")
-        end
-        format.turbo_stream do
-          flash.now[:notice] = t("registration.allocation.started")
-          render turbo_stream: [
-            turbo_stream.update("campaigns_container",
-                                partial: "registration/campaigns/card_body_index",
-                                locals: {
-                                  lecture: @campaign.campaignable,
-                                  expanded_campaign_id: @campaign.id
-                                }),
-            stream_flash
-          ]
-        end
+      respond_with_flash(
+        :notice,
+        t("registration.allocation.started"),
+        redirect_path: registration_campaign_allocation_path(@campaign)
+      ) do
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
       end
     end
 
@@ -95,9 +94,22 @@ module Registration
       end
 
       if @campaign.finalize!
-        respond_with_success(t("registration.campaign.finalized"))
+        lecture = @campaign.campaignable
+        respond_with_flash(:notice, t("registration.campaign.finalized"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          [
+            turbo_stream.update("campaigns_container",
+                                partial: "registration/campaigns/card_body_index",
+                                locals: {
+                                  lecture: lecture,
+                                  expanded_campaign_id: @campaign.id
+                                }),
+            *refresh_roster_streams(lecture)
+          ]
+        end
       else
-        respond_with_error(@campaign.errors.full_messages.join(", "))
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
       end
     end
 
@@ -107,51 +119,11 @@ module Registration
         @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
         return if @campaign
 
-        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
+        respond_with_flash(:alert, t("registration.campaign.not_found"), redirect_path: root_path)
       end
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
-      end
-
-      def respond_with_success(message)
-        lecture = @campaign.campaignable
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign), notice: message
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message
-            if exam_campaign_context?
-              render_exam_update("exams/registration")
-            else
-              streams = [
-                turbo_stream.update("campaigns_container",
-                                    partial: "registration/campaigns/card_body_index",
-                                    locals: {
-                                      lecture: lecture,
-                                      expanded_campaign_id: @campaign.id
-                                    }),
-                stream_flash
-              ]
-              streams += refresh_roster_streams(lecture)
-              render turbo_stream: streams.compact
-            end
-          end
-        end
-      end
-
-      def respond_with_error(message, redirect_path: nil)
-        respond_to do |format|
-          format.html do
-            path = redirect_path || registration_campaign_path(@campaign)
-            redirect_to path, alert: message
-          end
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
-          end
-        end
       end
 
       def target_frame_id

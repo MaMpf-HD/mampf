@@ -3,6 +3,10 @@ module Registration
   # Acts as a gatekeeper (e.g. "Must have passed Exam X") that can be applied
   # at different phases (registration or finalization).
   class Policy < ApplicationRecord
+    def self.default_allowed_domains
+      ENV.fetch("MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN", "").strip
+    end
+
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
                inverse_of: :registration_policies

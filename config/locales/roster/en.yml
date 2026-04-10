@@ -27,7 +27,7 @@ en:
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
       enforced_policies: "Campaign enforced: %{policies}"
-    participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or cohort with lecture enrollment</li></ul>"
+    participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or flexible group with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
       talk_maintenance: 'Coursework'
@@ -136,6 +136,7 @@ en:
       add_student_label: 'Student Email'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Are you sure you want to remove this student?'
+      confirm_delete_group: 'Are you sure you want to delete this group?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
       search: 'Search'
@@ -156,16 +157,16 @@ en:
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
       propagates_short: "Enrollment"
-      propagates_hint: "Members of this cohort serve as lecture participants"
+      propagates_hint: "Members of this group serve as lecture participants"
       lecture_enrollment: "Lecture Enrollment"
       can_enable_propagate: "You can enable this to upgrade the group to automatically enroll students in the course."
       attributes:
         propagate_to_lecture: "Students are automatically enrolled in the course"
       help:
-        enrollment: "If the course has no tutorials or talks, a registration cohort can be used. Students are automatically enrolled in the course."
+        enrollment: "If the course has no tutorials or talks, a registration group can be used. Students are automatically enrolled in the course."
         planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
-        propagate_to_lecture: "If enabled, students in this cohort are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
+        propagate_to_lecture: "If enabled, students in this group are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
         with_enrollment_label: "With enrollment?"
         with_enrollment_explanation: "If enabled, members are automatically enrolled in the lecture. Disable this for waitlists or planning groups."
@@ -235,7 +236,7 @@ en:
     overbooked: 'Overbooked'
     empty_hint: 'Use registration campaigns to enroll participants. While a campaign is active, manual assignment to groups is locked.'
     tooltips:
-      kick_from_lecture: "Removes lecture enrollment and all tutorial and (cohort with enrollment) memberships"
+      kick_from_lecture: "Removes lecture enrollment and all memberships in tutorials and groups (that have enrollment enabled)"
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
       locked_manage: "Roster is locked during active campaign"
@@ -253,10 +254,10 @@ en:
       superset_exists: "Your course already involves tutorials or talks, so students are enrolled automatically. A separate enrollment group is usually not needed."
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
-      cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the cohort."
-      cohort_propagate_to_lecture: "If checked, members of this cohort are automatically enrolled in the lecture. If unchecked, this cohort is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
-      cohort_already_propagating: "Members of this cohort are automatically enrolled in the lecture. This setting cannot be changed."
-      cohort_is_isolated: "Members of this cohort are not automatically enrolled in the lecture. This setting cannot be changed."
+      cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the group."
+      cohort_propagate_to_lecture: "If checked, members of this group are automatically enrolled in the lecture. If unchecked, this group is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
+      cohort_already_propagating: "Members of this group are automatically enrolled in the lecture. This setting cannot be changed."
+      cohort_is_isolated: "Members of this group are not automatically enrolled in the lecture. This setting cannot be changed."
     empty_state_help: "No groups created yet. Use the 'Add' button to create one."
     empty_state_links_html: "Need help? Read the %{workflow_link} or learn about %{group_types_link}."
     buttons:
@@ -281,7 +282,7 @@ en:
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to campaign mode. Please disable self-enrollment first or keep skip campaigns enabled."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in cohorts without lecture enrollment remain unaffected. Continue?'
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in groups without lecture enrollment remain unaffected. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'

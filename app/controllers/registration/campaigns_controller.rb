@@ -45,24 +45,13 @@ module Registration
         return
       end
 
-      # Exclude any users already on the lecture roster
-      lecture_roster_ids = @campaign.campaignable.allocated_user_ids
-
-      @unassigned_users = @campaign.unassigned_users
-                                   .where.not(id: lecture_roster_ids)
-                                   .includes(
-                                     user_registrations: [
-                                       :registration_campaign,
-                                       { registration_item: :registerable }
-                                     ]
-                                   )
-                                   .order(:name, :email)
+      unassigned_users = @campaign.unassigned_users(preload_registrations: true)
 
       render turbo_stream: turbo_stream.replace(
         "tutorial-roster-side-panel",
         html: RosterSidePanelComponent.new(
           campaign: @campaign,
-          students: @unassigned_users,
+          students: unassigned_users,
           is_unassigned: true
         ).render_in(view_context)
       )
@@ -93,7 +82,11 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_with_success(t("registration.campaign.created"))
+        respond_with_flash(:notice, t("registration.campaign.created"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                        expanded_campaign_id: @campaign.id)
+        end
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
@@ -113,16 +106,21 @@ module Registration
 
     def destroy
       unless @campaign.can_be_deleted?
-        respond_with_error(t("registration.campaign.cannot_delete"))
+        respond_with_flash(:alert, t("registration.campaign.cannot_delete"),
+                           redirect_path: registration_campaign_path(@campaign))
         return
       end
 
       lecture = @campaign.campaignable
 
       if @campaign.destroy
-        respond_with_destroy_success(lecture)
+        respond_with_flash(:notice, t("registration.campaign.destroyed"),
+                           redirect_path: lecture_registration_campaigns_path(lecture)) do
+          evaluate_turbo_update_streams(lecture: lecture)
+        end
       else
-        respond_with_error(@campaign.errors.full_messages.join(", "))
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
       end
     end
 
@@ -137,15 +135,21 @@ module Registration
       end
 
       if @campaign.update(attributes)
-        respond_with_success(t("registration.campaign.closed"))
+        respond_with_flash(:notice, t("registration.campaign.closed"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                        expanded_campaign_id: @campaign.id)
+        end
       else
-        respond_with_error(@campaign.errors.full_messages.join(", "))
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
       end
     end
 
     def reopen
       if @campaign.completed?
-        respond_with_error(t("registration.campaign.cannot_reopen_completed"))
+        respond_with_flash(:alert, t("registration.campaign.cannot_reopen_completed"),
+                           redirect_path: registration_campaign_path(@campaign))
         return
       end
 
@@ -161,17 +165,14 @@ module Registration
         @campaign.reset_allocation_results! if was_processing
       end
 
-      respond_with_success(t("registration.campaign.reopened"))
-    rescue ActiveRecord::RecordInvalid
-      respond_with_error(@campaign.errors.full_messages.join(", "))
-    end
-
-    def check_unlimited_items
-      has_unlimited = @campaign.registration_items.any? { |i| i.capacity.nil? }
-
-      respond_to do |format|
-        format.json { render json: { has_unlimited_items: has_unlimited } }
+      respond_with_flash(:notice, t("registration.campaign.reopened"),
+                         redirect_path: registration_campaign_path(@campaign)) do
+        evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                      expanded_campaign_id: @campaign.id)
       end
+    rescue ActiveRecord::RecordInvalid
+      respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                         redirect_path: registration_campaign_path(@campaign))
     end
 
     private
@@ -180,7 +181,7 @@ module Registration
         @lecture = Lecture.find_by(id: params[:lecture_id])
         return if @lecture
 
-        respond_with_error(t("registration.campaign.lecture_not_found"),
+        respond_with_flash(:alert, t("registration.campaign.lecture_not_found"),
                            redirect_path: root_path)
       end
 
@@ -188,7 +189,7 @@ module Registration
         @campaign = Registration::Campaign.find_by(id: params[:id])
         return if @campaign
 
-        respond_with_error(t("registration.campaign.not_found"),
+        respond_with_flash(:alert, t("registration.campaign.not_found"),
                            redirect_path: root_path)
       end
 
@@ -207,9 +208,14 @@ module Registration
 
       def update_status(status, success_message)
         if @campaign.update(status: status)
-          respond_with_success(success_message)
+          respond_with_flash(:notice, success_message,
+                             redirect_path: registration_campaign_path(@campaign)) do
+            evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                          expanded_campaign_id: @campaign.id)
+          end
         else
-          respond_with_error(@campaign.errors.full_messages.join(", "))
+          respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                             redirect_path: registration_campaign_path(@campaign))
         end
       end
 
@@ -226,8 +232,8 @@ module Registration
         )
       end
 
-      def render_turbo_update(lecture:, expanded_campaign_id: nil,
-                              new_campaign: nil)
+      def evaluate_turbo_update_streams(lecture:, expanded_campaign_id: nil,
+                                        new_campaign: nil)
         streams = [
           turbo_stream.update(
             "campaigns_container",
@@ -237,44 +243,10 @@ module Registration
               expanded_campaign_id: expanded_campaign_id,
               new_campaign: new_campaign
             }
-          ),
-
-          stream_flash
+          )
         ]
         streams += refresh_roster_streams(lecture)
-        render turbo_stream: streams.compact
-      end
-
-      def respond_with_success(message)
-        lecture = @campaign.campaignable
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign), notice: message
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message
-            if exam_campaign_context?
-              render_exam_update("exams/registration")
-            else
-              render_turbo_update(lecture: lecture,
-                                  expanded_campaign_id: @campaign.id)
-            end
-          end
-        end
-      end
-
-      def respond_with_destroy_success(lecture)
-        message = t("registration.campaign.destroyed")
-        respond_to do |format|
-          format.html do
-            redirect_to lecture_registration_campaigns_path(lecture),
-                        notice: message
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message
-            render_turbo_update(lecture: lecture)
-          end
-        end
+        streams.compact
       end
 
       def respond_with_form_error(_message, action)
@@ -287,19 +259,6 @@ module Registration
               locals: { campaign: @campaign,
                         lecture: @campaign.campaignable }
             ), status: :unprocessable_content
-          end
-        end
-      end
-
-      def respond_with_error(message, redirect_path: nil)
-        respond_to do |format|
-          format.html do
-            path = redirect_path || registration_campaign_path(@campaign)
-            redirect_to path, alert: message
-          end
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
           end
         end
       end

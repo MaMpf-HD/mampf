@@ -495,6 +495,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_07_000018) do
     t.bigint "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
     t.index ["lecture_id"], name: "index_lecture_user_joins_on_lecture_id"
     t.index ["user_id"], name: "index_lecture_user_joins_on_user_id"
   end
@@ -1178,6 +1179,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_07_000018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tutor_id"], name: "index_tutor_tutorial_joins_on_tutor_id"
+    t.index ["tutorial_id", "tutor_id"], name: "index_tutor_tutorial_joins_on_tutorial_id_and_tutor_id", unique: true
     t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
   end
 
@@ -1342,7 +1344,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_07_000018) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
-  
+
   create_table "vignettes_questions", force: :cascade do |t|
     t.string "type"
     t.text "question_text"

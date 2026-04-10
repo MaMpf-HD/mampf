@@ -75,7 +75,7 @@ class GroupTileComponent < ViewComponent::Base
     confirm_key = if item
       "registration.item.confirm_remove"
     else
-      "confirmation.generic"
+      "roster.actions.confirm_delete_group"
     end
     {
       turbo_method: :delete,

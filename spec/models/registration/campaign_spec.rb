@@ -127,10 +127,11 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
       end
 
-      it "allows updates if status is changing (re-opening)" do
+      it "prevents updates on completed campaign (re-opening)" do
         campaign.status = :open
         campaign.registration_deadline = 1.day.from_now
-        expect(campaign).to be_valid
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
       end
 
       it "allows updates if status is changing (finalizing)" do
@@ -609,6 +610,60 @@ RSpec.describe(Registration::Campaign, type: :model) do
       it "returns users who are registered but not assigned to any cohort in the lecture" do
         expect(campaign.unassigned_users).to include(unassigned_user)
         expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+    end
+  end
+
+  describe "#unassigned_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) do
+      create(:registration_campaign, :completed, campaignable: lecture)
+    end
+
+    context "when a lecture roster member lost their group assignment" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:sticky_student) { create(:user, name: "Sticky Student") }
+
+      before do
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: sticky_student)
+        create(:lecture_membership, lecture: lecture, user: sticky_student)
+      end
+
+      it "keeps lecture roster members who lost their group assignment" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .to include(sticky_student)
+      end
+    end
+
+    context "when a student is unassigned in another campaign for the same lecture" do
+      let(:other_campaign) do
+        create(:registration_campaign, :completed, campaignable: lecture)
+      end
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+      let(:other_student) { create(:user, name: "Other Student") }
+
+      before do
+        create(:registration_item,
+               registration_campaign: other_campaign,
+               registerable: other_tutorial)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: other_campaign,
+               registration_item: other_campaign.registration_items.first,
+               user: other_student)
+        create(:lecture_membership, lecture: lecture, user: other_student)
+      end
+
+      it "does not include unassigned students from another campaign" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .not_to include(other_student)
       end
     end
   end
