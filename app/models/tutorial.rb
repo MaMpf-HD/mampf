@@ -42,7 +42,8 @@ class Tutorial < ApplicationRecord
   end
 
   def add_tutor(tutor)
-    tutors << tutor unless tutors.include?(tutor)
+    tutor_tutorial_joins.create_or_find_by(tutor: tutor)
+                        .previously_new_record?
   end
 
   private
