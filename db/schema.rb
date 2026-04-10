@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -316,6 +316,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.bigint "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
     t.index ["lecture_id"], name: "index_lecture_user_joins_on_lecture_id"
     t.index ["user_id"], name: "index_lecture_user_joins_on_user_id"
   end
@@ -932,6 +933,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tutor_id"], name: "index_tutor_tutorial_joins_on_tutor_id"
+    t.index ["tutorial_id", "tutor_id"], name: "index_tutor_tutorial_joins_on_tutorial_id_and_tutor_id", unique: true
     t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
   end
 
