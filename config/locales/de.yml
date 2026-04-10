@@ -3443,6 +3443,7 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    clear: "Löschen"
     close: "Schließen"
     capacity: 'Kapazität'
     division: 'Teilbereich'

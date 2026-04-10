@@ -3236,6 +3236,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    clear: "Clear"
     close: "Close"
     capacity: 'Capacity'
     division: 'Division'

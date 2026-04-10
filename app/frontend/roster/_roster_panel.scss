@@ -177,3 +177,22 @@
     max-height: calc(100vh - 8rem);
   }
 }
+
+.roster-search-group {
+  min-width: 14rem;
+
+  &:focus-within {
+    .input-group-text,
+    .roster-search-clear {
+      border-color: $input-focus-border-color;
+    }
+  }
+
+  .roster-search-clear {
+    border-color: $input-border-color;
+
+    &:hover i {
+      color: var(--bs-danger) !important;
+    }
+  }
+}
