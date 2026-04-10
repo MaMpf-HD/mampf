@@ -68,7 +68,7 @@ module Registration
     end
 
     def open_for_withdrawals?
-      open? && registration_deadline > Time.current
+      open_for_registrations?
     end
 
     def only_planning_cohort?

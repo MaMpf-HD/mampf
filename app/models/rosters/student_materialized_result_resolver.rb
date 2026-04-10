@@ -25,20 +25,27 @@ module Rosters
     end
 
     def all_rosterized_for_lecture(lecture)
-      tutorials = lecture.tutorials.includes(:tutorial_memberships)
-                         .where(tutorial_memberships: { user_id: @user.id })
-      cohorts = lecture.cohorts.includes(:cohort_memberships)
-                       .where(cohort_memberships: { user_id: @user.id })
-      talks = lecture.talks.includes(:speaker_talk_joins)
-                     .where(speaker_talk_joins: { speaker_id: @user.id })
-      registerables = tutorials + cohorts + talks
-      name = []
-      if registerables.any?
-        registerables.each do |registerable|
-          name << "#{registerable.class.name.humanize} #{registerable.title}"
-        end
-      end
-      name.any? ? name.join(", ") : nil
+      names =
+        lecture.tutorials
+               .joins(:tutorial_memberships)
+               .where(tutorial_memberships: { user_id: @user.id })
+               .map { |tutorial| rosterable_label(tutorial) } +
+        lecture.cohorts
+               .joins(:cohort_memberships)
+               .where(cohort_memberships: { user_id: @user.id })
+               .map { |cohort| rosterable_label(cohort) } +
+        lecture.talks
+               .joins(:speaker_talk_joins)
+               .where(speaker_talk_joins: { speaker_id: @user.id })
+               .map { |talk| rosterable_label(talk) }
+
+      names.presence&.join(", ")
     end
+
+    private
+
+      def rosterable_label(rosterable)
+        "#{rosterable.class.model_name.human} #{rosterable.title}"
+      end
   end
 end

@@ -18,7 +18,7 @@ module Rosters
       rosterables.concat(@lecture.cohorts)
       # filter rosterables that allow self add or self remove
       rosterables.select do |rosterable|
-        rosterable.self_materialization_mode in ["add_only", "remove_only", "add_and_remove"]
+        rosterable.config_allow_self_add? || rosterable.config_allow_self_remove?
       end
     end
   end

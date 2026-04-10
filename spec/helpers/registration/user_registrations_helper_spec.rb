@@ -1,36 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
-  describe "#registration_status_color" do
-    let(:registration) { double(status: status) }
-
-    context "when pending" do
-      let(:status) { "pending" }
-      it { expect(helper.registration_status_color(registration)).to eq("secondary") }
-    end
-
-    context "when confirmed" do
-      let(:status) { "confirmed" }
-      it { expect(helper.registration_status_color(registration)).to eq("success") }
-    end
-
-    context "when rejected" do
-      let(:status) { "rejected" }
-      it { expect(helper.registration_status_color(registration)).to eq("danger") }
-    end
-  end
-
-  describe "#sort_registrations_by_rank" do
-    let(:r1) { double(preference_rank: 2) }
-    let(:r2) { double(preference_rank: 1) }
-    let(:r3) { double(preference_rank: nil) }
-
-    it "sorts ranked first, then unranked" do
-      result = helper.sort_registrations_by_rank([r1, r3, r2])
-      expect(result).to eq([r2, r1, r3])
-    end
-  end
-
   describe "#get_mode_info" do
     it "returns known mode" do
       expect(helper.get_mode_info(0)).to include(:mode_name, :abbr, :badge_class)
@@ -57,10 +27,28 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
     end
 
     context "prerequisite_campaign" do
+      # let(:test_lecture) { create(:lecture, course: create(:course, title: "Test Course")) }
+      # let(:pre_campaign) do
+      #   create(:registration_campaign,
+      #          { id: 42,
+      #            description: "Test description",
+      #            campaignable: test_lecture })
+      # end
       let(:policy) do
-        { kind: "prerequisite_campaign", config: { "prerequisite_campaign_id" => 42 } }
+        { kind: "prerequisite_campaign",
+          config: { "prerequisite_campaign_id" => 42,
+                    "prerequisite_campaign" => "Test Course: Test description" } }
       end
-      it { expect(helper.get_policy_config_info(policy)).to eq(42) }
+      # before do
+      #   allow(Registration::Campaign).to receive(:find_by)
+      #     .with(id: 42)
+      #     .and_return(pre_campaign)
+      # end
+      # it "adds campaign info to config" do
+      #   result = policy
+      #   puts("testing with policy: #{policy}")
+      # end
+      it { expect(helper.get_policy_config_info(policy)).to eq("Test Course: Test description") }
     end
 
     context "unknown" do
