@@ -8,8 +8,18 @@ class RosterParticipantsComponent < ViewComponent::Base
     results: "roster_participants_results"
   }.freeze
 
+  SECTION_PARTIALS = {
+    top_nav: "roster/components/roster_participants_top_nav",
+    header_controls: "roster/components/roster_participants_header_controls",
+    results: "roster/components/roster_participants_results"
+  }.freeze
+
   def self.section_targets
     SECTION_TARGETS
+  end
+
+  def self.section_partials
+    SECTION_PARTIALS
   end
 
   # rubocop:disable Metrics/ParameterLists
@@ -96,6 +106,10 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   def section_component(next_section)
     self.class.new(**section_kwargs, section: next_section)
+  end
+
+  def section_partial
+    self.class.section_partials.fetch(section)
   end
 
   private
