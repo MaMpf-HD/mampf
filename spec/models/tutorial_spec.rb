@@ -110,4 +110,18 @@ RSpec.describe(Tutorial, type: :model) do
       end
     end
   end
+
+  describe "#add_tutor" do
+    it "creates at most one join under concurrent calls" do
+      tutorial = create(:tutorial)
+      tutor = create(:confirmed_user)
+
+      values = run_concurrently do
+        Tutorial.find(tutorial.id).add_tutor(User.find(tutor.id))
+      end
+
+      expect(values).to contain_exactly(true, false)
+      expect(TutorTutorialJoin.where(tutorial: tutorial, tutor: tutor).count).to eq(1)
+    end
+  end
 end
