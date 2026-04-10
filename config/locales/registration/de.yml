@@ -88,6 +88,7 @@ de:
         force_finalize: "Bist Du sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
+        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
