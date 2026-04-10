@@ -147,6 +147,7 @@ en:
       created: "Policy created successfully."
       updated: "Policy updated successfully."
       destroyed: "Policy deleted successfully."
+      confirm_delete: "Are you sure you want to delete this policy?"
       not_found: "Registration policy not found."
       errors:
         missing_domains: "At least one allowed domain must be specified."

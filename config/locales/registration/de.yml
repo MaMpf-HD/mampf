@@ -147,6 +147,7 @@ de:
       created: "Richtlinie erfolgreich erstellt."
       updated: "Richtlinie erfolgreich aktualisiert."
       destroyed: "Richtlinie erfolgreich gelöscht."
+      confirm_delete: "Bist Du sicher, dass Du diese Richtlinie löschen möchtest?"
       not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."

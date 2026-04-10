@@ -136,6 +136,7 @@ de:
       add_student_label: 'E-Mail des Studierenden'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Bist Du sicher, dass Du diesen Studierenden entfernen möchtest?'
+      confirm_delete_group: 'Bist Du sicher, dass Du diese Gruppe löschen möchtest?'
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'

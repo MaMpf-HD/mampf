@@ -3776,6 +3776,7 @@ de:
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
     generic: 'Bist Du sicher?'
+    delete_talk: 'Bist Du sicher, dass Du diesen Vortrag löschen möchtest?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.

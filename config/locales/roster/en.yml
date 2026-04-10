@@ -135,6 +135,7 @@ en:
       add_student_label: 'Student Email'
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Are you sure you want to remove this student?'
+      confirm_delete_group: 'Are you sure you want to delete this group?'
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Campaign Management'
       search: 'Search'
