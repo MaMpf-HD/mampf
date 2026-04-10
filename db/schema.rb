@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -367,8 +367,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
   end
 
   create_table "lecture_user_joins", force: :cascade do |t|
-    t.bigint "lecture_id"
-    t.bigint "user_id"
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
