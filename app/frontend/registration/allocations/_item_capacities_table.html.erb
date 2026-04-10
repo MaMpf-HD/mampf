@@ -45,43 +45,51 @@
             <span><%= data[:count] %> / <%= data[:capacity] || "∞" %></span>
 
             <% if data[:item].registerable_type == "Tutorial" %>
-              <details
+              <span
                 class="allocation-capacity-editor d-inline-block ms-1"
-                data-controller="details-editor"
-                data-action="toggle->details-editor#toggle"
+                data-controller="capacity-editor"
               >
-                <summary class="btn btn-sm btn-link text-secondary p-0 align-baseline">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link text-secondary p-0 align-baseline"
+                  aria-expanded="false"
+                  data-capacity-editor-target="toggle"
+                  data-action="click->capacity-editor#toggle:stop"
+                >
                   <i class="bi bi-pencil"></i>
-                </summary>
+                </button>
 
-                <%= form_with url: registration_campaign_item_path(campaign, data[:item]),
-                              method: :patch,
-                              scope: :registration_item,
-                              class: "d-inline-flex align-items-center gap-1 ms-1" do |f| %>
-                  <%= hidden_field_tag :source, allocation_source %>
+                <span class="d-none" data-capacity-editor-target="editor">
+                  <%= form_with url: registration_campaign_item_path(campaign, data[:item]),
+                                method: :patch,
+                                scope: :registration_item,
+                                class: "d-inline-flex align-items-center gap-1 ms-1" do |f| %>
+                    <%= hidden_field_tag :source, allocation_source %>
 
-                  <%= f.number_field :capacity,
-                                     value: data[:capacity],
-                                     class: "form-control form-control-sm
-                                             allocation-capacity-input",
-                                     data: { details_editor_target: "input" } %>
+                    <%= f.number_field :capacity,
+                                       value: data[:capacity],
+                                       class: "form-control form-control-sm
+                                               allocation-capacity-input",
+                                       data: { capacity_editor_target: "input" } %>
 
-                  <button
-                    type="submit"
-                    class="btn btn-sm btn-outline-primary p-1"
-                  >
-                    <i class="bi bi-check-lg"></i>
-                  </button>
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-outline-primary p-1"
+                      data-action="click->capacity-editor#toggle:stop"
+                    >
+                      <i class="bi bi-check-lg"></i>
+                    </button>
 
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary p-1"
-                    data-action="click->details-editor#close"
-                  >
-                    <i class="bi bi-x-lg"></i>
-                  </button>
-                <% end %>
-              </details>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary p-1"
+                      data-action="click->capacity-editor#close:stop"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  <% end %>
+                </span>
+              </span>
             <% end %>
           </td>
 
