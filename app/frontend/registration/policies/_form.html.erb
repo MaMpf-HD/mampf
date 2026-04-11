@@ -13,7 +13,8 @@
       <%= helpdesk(t("registration.policy.helpdesk.kind"), false) %>
 
       <%= f.select :kind,
-                   Registration::Policy.kinds.keys.map { |k| [t("registration.policy.kinds.#{k}"), k] },
+                   Registration::Policy.kinds.except("student_performance").keys
+                     .map { |k| [t("registration.policy.kinds.#{k}"), k] },
                    {},
                    class: "form-select",
                    data: { action: "registration-policy-form#changeKind", registration_policy_form_target: "kindSelect" } %>
@@ -45,8 +46,10 @@
       <div class="mb-3">
         <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
         <%= helpdesk(t("registration.policy.helpdesk.allowed_domains"), false) %>
+
         <% default_allowed_domains =
              policy.new_record? ? Registration::Policy.default_allowed_domains : nil %>
+
         <%= f.text_field :allowed_domains,
                          class: "form-control",
                          value: policy.allowed_domains.presence ||
