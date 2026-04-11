@@ -42,6 +42,17 @@ RSpec.describe(Rosters::Rosterable) do
           expect(rosterable.locked?).to(be(false))
         end
       end
+
+      context "when a completed campaign item is created after first check" do
+        it "reflects the new completed campaign state" do
+          expect(rosterable.locked?).to(be(true))
+
+          campaign = create(:registration_campaign, status: :completed)
+          create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+
+          expect(rosterable.locked?).to(be(false))
+        end
+      end
     end
   end
 
@@ -384,6 +395,17 @@ RSpec.describe(Rosters::Rosterable) do
       end
 
       it "returns false" do
+        expect(rosterable.destructible?).to(be(false))
+      end
+    end
+
+    context "when a campaign item is created after first check" do
+      it "reflects the new campaign membership" do
+        expect(rosterable.destructible?).to(be(true))
+
+        campaign = create(:registration_campaign, status: :draft)
+        create(:registration_item, registration_campaign: campaign, registerable: rosterable)
+
         expect(rosterable.destructible?).to(be(false))
       end
     end
