@@ -84,9 +84,17 @@ class Tutorial < ApplicationRecord
     end
 
     def check_destructibility
-      return unless Submission.where(tutorial: self).proper.any?
+      return if destructible?
 
-      errors.add(:base, I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
+      if submissions.proper.exists?
+        errors.add(:base,
+                   I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
+      elsif in_campaign?
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
+      elsif !roster_empty?
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+      end
+
       throw(:abort)
     end
 
