@@ -259,7 +259,7 @@ de:
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
-        title: "Konfligierende Registrierungen"
+        title: "Konflikte bei Registrierungen"
         desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Du die Zuteilung durchführst, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
         currently_in: "aktuell in %{tutorial}"
       dashboard:

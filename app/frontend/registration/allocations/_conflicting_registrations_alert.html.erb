@@ -23,7 +23,7 @@
                         data: {
                           confirm:
                           t("registration.campaign.confirmations.user_registration_conflict_remove",
-                          email: first[:email])
+                          email: conflict[:user].email)
                         },
                         form: { class: "d-inline-block" },
                         title: t("registration.user_registration.actions.remove_user") do %>
