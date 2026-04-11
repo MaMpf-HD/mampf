@@ -15,12 +15,17 @@ FactoryBot.define do
 
     trait :prerequisite_campaign do
       kind { :prerequisite_campaign }
+
       after(:build) do |policy|
-        unless policy.config && policy.config["prerequisite_campaign_id"]
-          prereq = create(:registration_campaign, :completed)
-          policy.config ||= {}
-          policy.config["prerequisite_campaign_id"] = prereq.id
-        end
+        policy.config ||= {}
+      end
+
+      before(:create) do |policy|
+        next if policy.config && policy.config["prerequisite_campaign_id"]
+
+        prereq = create(:registration_campaign, :completed)
+        policy.config ||= {}
+        policy.config["prerequisite_campaign_id"] = prereq.id
       end
     end
 
