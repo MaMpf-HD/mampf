@@ -14,9 +14,7 @@ module Rosters
     class CapacityExceededError < StandardError; end
 
     def add_user!(user, rosterable, force: false)
-      ActiveRecord::Base.transaction do
-        rosterable.lock!
-
+      rosterable.with_lock do
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
@@ -33,7 +31,7 @@ module Rosters
     end
 
     def remove_user!(user, rosterable)
-      ActiveRecord::Base.transaction do
+      rosterable.with_lock do
         rosterable.remove_user_from_roster!(user)
         cascade_removal_from_subgroups!(user, rosterable)
       end
