@@ -1,0 +1,17 @@
+<div class="registration-campaign-ghost-zone rounded p-3 mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <span class="registration-campaign-ghost-title fw-semibold">
+      <%= t("registration.campaign.index.new_campaign") %>
+    </span>
+
+    <%= link_to lecture_registration_campaigns_path(lecture),
+                class: "btn btn-sm btn-outline-secondary",
+                role: "button",
+                data: { turbo_stream: true } do %>
+      <i class="bi bi-arrow-left"></i>
+      <%= t("back") %>
+    <% end %>
+  </div>
+
+  <%= render "registration/campaigns/form", campaign: campaign, lecture: lecture %>
+</div>

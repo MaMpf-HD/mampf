@@ -27,6 +27,133 @@ RSpec.describe(Registration::Policy, type: :model) do
       expect(policy.kind).to eq("prerequisite_campaign")
     end
 
+    describe "handlers" do
+      it "uses InstitutionalEmailHandler for institutional_email kind" do
+        policy = build(:registration_policy, :institutional_email)
+        expect(policy.handler).to be_a(Registration::Policy::InstitutionalEmailHandler)
+      end
+
+      it "uses PrerequisiteCampaignHandler for prerequisite_campaign kind" do
+        policy = build(:registration_policy, :prerequisite_campaign)
+        expect(policy.handler).to be_a(Registration::Policy::PrerequisiteCampaignHandler)
+      end
+    end
+
+    describe ".default_allowed_domains" do
+      it "returns the configured default domain" do
+        stub_const("ENV", ENV.to_hash.merge(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN" =>
+                                                 "uni-heidelberg.de"
+                          ))
+
+        expect(described_class.default_allowed_domains).to eq("uni-heidelberg.de")
+      end
+
+      it "returns empty string when env var is missing" do
+        stub_const("ENV", ENV.to_hash.except(
+                            "MUESLI_CAMPAIGN_REGISTRATION_DEFAULT_ALLOWED_DOMAIN"
+                          ))
+
+        expect(described_class.default_allowed_domains).to eq("")
+      end
+    end
+
+    describe "validation" do
+      it "validates institutional_email config" do
+        policy = build(:registration_policy, :institutional_email, config: {})
+        expect(policy).not_to be_valid
+        expect(policy.errors[:allowed_domains])
+          .to include(I18n.t("registration.policy.errors.missing_domains"))
+      end
+
+      it "validates prerequisite_campaign config" do
+        policy = build(:registration_policy, :prerequisite_campaign)
+        policy.config = {}
+        expect(policy).not_to be_valid
+        expect(policy.errors[:prerequisite_campaign_id])
+          .to include(I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
+      end
+
+      it "validates prerequisite_campaign exists" do
+        policy = build(:registration_policy, :prerequisite_campaign,
+                       config: { "prerequisite_campaign_id" => 99_999 })
+        expect(policy).not_to be_valid
+        expect(policy.errors[:prerequisite_campaign_id])
+          .to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
+      end
+    end
+
+    describe "ordering" do
+      let(:campaign) { create(:registration_campaign) }
+      let!(:policy1) { create(:registration_policy, registration_campaign: campaign) }
+      let!(:policy2) { create(:registration_policy, registration_campaign: campaign) }
+
+      it "orders policies by position" do
+        expect(policy1.position).to eq(1)
+        expect(policy2.position).to eq(2)
+      end
+    end
+
+    describe "freezing" do
+      let(:open_campaign) { create(:registration_campaign, :open) }
+
+      it "prevents creating policy if campaign is not draft" do
+        policy = build(:registration_policy, registration_campaign: open_campaign)
+        expect(policy).not_to be_valid
+        expect(policy.errors.added?(:base, :frozen)).to be(true)
+      end
+
+      it "prevents updating policy if campaign is not draft" do
+        policy = create(:registration_policy) # created on draft campaign
+        policy.registration_campaign.update(status: :open)
+
+        policy.active = false
+        expect(policy).not_to be_valid
+        expect(policy.errors.added?(:base, :frozen)).to be(true)
+      end
+
+      it "prevents destroying policy if campaign is not draft" do
+        policy = create(:registration_policy) # created on draft campaign
+        policy.registration_campaign.update(status: :open)
+
+        expect { policy.destroy }.not_to change(Registration::Policy, :count)
+        expect(policy.errors.added?(:base, :frozen)).to be(true)
+      end
+    end
+
+    describe "virtual attributes" do
+      it "handles allowed_domains" do
+        policy = build(:registration_policy)
+        policy.allowed_domains = "example.com, test.org"
+        expect(policy.config["allowed_domains"]).to eq("example.com, test.org")
+        expect(policy.allowed_domains).to eq("example.com, test.org")
+      end
+
+      it "formats allowed_domains_display from a comma-separated string" do
+        policy = build(:registration_policy)
+        policy.allowed_domains = "uni-heidelberg.de, example.com"
+        expect(policy.allowed_domains_display).to eq("uni-heidelberg.de, @example.com")
+      end
+
+      it "formats allowed_domains_display from an array" do
+        policy = build(:registration_policy,
+                       config: { "allowed_domains" => ["uni-heidelberg.de", "example.com"] })
+        expect(policy.allowed_domains_display).to eq("uni-heidelberg.de, @example.com")
+      end
+
+      it "returns empty string for allowed_domains_display when config is nil" do
+        policy = build(:registration_policy, config: nil)
+        expect(policy.allowed_domains_display).to eq("")
+      end
+
+      it "handles prerequisite_campaign_id" do
+        policy = build(:registration_policy)
+        policy.prerequisite_campaign_id = 123
+        expect(policy.config["prerequisite_campaign_id"]).to eq(123)
+        expect(policy.prerequisite_campaign_id).to eq(123)
+      end
+    end
+
     describe "#evaluate" do
       let(:user) { FactoryBot.create(:confirmed_user, email: "student@uni.example") }
 
@@ -119,9 +246,9 @@ RSpec.describe(Registration::Policy, type: :model) do
       it "fails prerequisite_campaign when config is missing" do
         policy = FactoryBot.build(
           :registration_policy,
-          :prerequisite_campaign,
-          config: {}
+          :prerequisite_campaign
         )
+        policy.config = {}
 
         result = policy.evaluate(user)
 

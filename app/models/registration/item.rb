@@ -22,15 +22,85 @@ module Registration
                class_name: "Registration::Campaign",
                inverse_of: :registration_items
 
-    belongs_to :registerable, polymorphic: true
+    belongs_to :registerable, polymorphic: true, autosave: true
+
+    delegate :capacity, :capacity=, to: :registerable, allow_nil: true
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
-             dependent: :destroy
+             foreign_key: :registration_item_id,
+             dependent: :destroy,
+             inverse_of: :registration_item
 
     validates :registerable_id,
               uniqueness: {
-                scope: [:registration_campaign_id, :registerable_type]
+                scope: :registerable_type
               }
+
+    validate :validate_registerable_allows_campaigns, on: :create
+    validate :validate_capacity_reduction, on: :update
+    before_destroy :ensure_campaign_is_draft
+
+    def title
+      registerable&.registration_title || registerable&.title
+    end
+
+    def confirmed_user_ids
+      user_registrations.confirmed.pluck(:user_id)
+    end
+
+    # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
+    # in the tutorial GUI) is permissible under the current campaign rules.
+    def validate_capacity_change_from_registerable!(new_capacity)
+      unless valid_capacity_reduction?(new_capacity)
+        confirmed_count = user_registrations.confirmed.count
+        return [:base, :capacity_too_low, { count: confirmed_count }]
+      end
+
+      nil
+    end
+
+    def first_choice_count
+      user_registrations.where(preference_rank: 1).count
+    end
+
+    private
+
+      def valid_capacity_reduction?(new_capacity)
+        return true if registration_campaign.draft?
+        # After completion, we trust the user (teacher) to manage capacity vs roster size.
+        return true if registration_campaign.completed?
+        return true unless registration_campaign.first_come_first_served?
+        return true if new_capacity.nil?
+
+        confirmed_count = user_registrations.confirmed.count
+        new_capacity >= confirmed_count
+      end
+
+      def validate_capacity_reduction
+        return unless registerable&.will_save_change_to_capacity?
+
+        return if valid_capacity_reduction?(capacity)
+
+        confirmed_count = user_registrations.confirmed.count
+        errors.add(:base, :capacity_too_low, count: confirmed_count)
+      end
+
+      def ensure_campaign_is_draft
+        return if registration_campaign.draft?
+
+        errors.add(:base, :frozen)
+        throw(:abort)
+      end
+
+      # Registerables that have the skip_campaigns flag set are excluded from
+      # becoming items in campaigns.
+      def validate_registerable_allows_campaigns
+        return unless registerable
+        return unless registerable.respond_to?(:skip_campaigns?)
+        return unless registerable.skip_campaigns?
+
+        errors.add(:base, :registerable_not_managed_by_campaign)
+      end
   end
 end

@@ -1,0 +1,57 @@
+<div id="dissolved_campaign_<%= campaign.id %>">
+  <div class="dissolved-campaign-bar mb-2">
+    <span
+      class="dissolved-campaign-pill"
+      title="<%= t("registration.campaign.completed_description") %>"
+    >
+      <span class="dissolved-campaign-pill-dot"></span>
+
+      <span class="dissolved-campaign-pill-name">
+        <%= campaign.description.presence || t("registration.campaign.default_description") %>
+      </span>
+
+      <span class="dissolved-campaign-pill-sep">&middot;</span>
+
+      <span>
+        <%= t("registration.campaign.status.completed") %>
+        <%= l(campaign.updated_at, format: :short) %>
+      </span>
+
+      <span class="dissolved-campaign-pill-sep">&middot;</span>
+
+      <span>
+        <%= campaign.confirmed_count %> /
+        <%= campaign.total_registrations_count %>
+        <%= t("registration.campaign.dissolved_enrolled") %>
+      </span>
+
+      <% summary = policy_kinds_summary(campaign) %>
+
+      <% if summary.present? %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <span><%= summary %></span>
+      <% end %>
+
+      <% unassigned = campaign.unassigned_users.count %>
+
+      <% if unassigned > 0 %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <span
+          role="button"
+          tabindex="0"
+          class="
+            p-0 text-decoration-none text-reset unassigned-warning-trigger
+            d-inline-flex align-items-center gap-1
+          "
+          data-tutorial-roster-panel-target="tile"
+          data-roster-key="campaign_<%= campaign.id %>_unassigned"
+          data-action="click->tutorial-roster-panel#openFromTile"
+          data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
+        >
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+          <span><%= unassigned %> <%= t('roster.candidates.title') %></span>
+        </span>
+      <% end %>
+    </span>
+  </div>
+</div>

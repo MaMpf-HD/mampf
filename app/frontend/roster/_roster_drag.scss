@@ -1,0 +1,44 @@
+.tutorial-gtile--drop-target {
+  border-color: var(--bs-success) !important;
+  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.25);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+span.tutorial-gtile--selected.unassigned-warning-trigger {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  text-decoration: underline !important;
+}
+
+.roster-drag-ghost {
+  opacity: 0.5;
+}
+
+.roster-drag-chosen {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  cursor: grabbing;
+}
+
+.tutorial-roster-student[data-user-id] {
+  cursor: grab;
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.015);
+  }
+}
+
+.roster-drag-choice-dialog {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  max-width: 24rem;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.tutorial-gtile:hover, .tutorial-gtile:focus-within { z-index: 10; }

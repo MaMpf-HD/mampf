@@ -3236,8 +3236,13 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    clear: "Clear"
+    close: "Close"
+    capacity: 'Capacity'
     division: 'Division'
+    location: 'Location'
     error: Error
+    edit: "Edit"
     course: 'Course'
     courses: 'Courses'
     term: 'Term'
@@ -3257,10 +3262,13 @@ en:
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
     mail_noun: 'email'
+    name: 'Name'
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    seats: 'Seats'
+    add: 'Add'
     section: 'Section'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
@@ -3272,7 +3280,9 @@ en:
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'
+    confirm: 'Are you sure?'
     basics: 'Basics'
+    participants: 'Participants'
     action: 'Action'
     actions: 'Actions'
     post_processing: 'Post process...'
@@ -3360,6 +3370,8 @@ en:
     solution: 'Solution'
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
+    details: 'Details'
+    settings: 'Settings'
     status: 'Status'
     sponsors: 'Funded by'
     since: 'since'
@@ -3427,6 +3439,8 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    unlimited: unlimited
+    personnel: Personnel
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3440,6 +3454,10 @@ en:
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
+    create_tutorial: 'Create Tutorial'
+    edit_tutorial: 'Edit Tutorial'
+    create_cohort: 'Create Group'
+    edit_cohort: 'Edit Group'
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
@@ -3447,6 +3465,8 @@ en:
     save_changes: "Save Changes"
     discard_changes: "Discard Changes"
     delete: 'Delete'
+    move_up: 'Move Up'
+    move_down: 'Move Down'
     publish: 'Publish'
     parent_course: 'Parent Course'
     parent_lecture: 'Parent Event Series'
@@ -3545,6 +3565,7 @@ en:
     invalidate: 'Invalidate'
   confirmation:
     generic: 'Are you sure?'
+    delete_talk: 'Are you sure you want to delete this talk?'
     delete_graph: >
       Are you sure? Note: Only the quiz graph will be deleted,
       not the medium.#
@@ -3643,6 +3664,7 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
+    no_cohort: 'There is no group with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
@@ -3667,11 +3689,26 @@ en:
     become_speaker_success: >
       Your speaker status has been updated.
     tutorials:
+      created: 'Tutorial successfully created.'
+      updated: 'Tutorial successfully updated.'
+      destroyed: 'Tutorial successfully deleted.'
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
         submissions for it that include uploaded files.
       bulk_download_failed: >
         An error happened in the creation of the zip archive: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Cannot be deleted because there are submissions.'
+    cohorts:
+      created: 'Group successfully created.'
+      updated: 'Group successfully updated.'
+      destroyed: 'Group successfully deleted.'
+      destruction_failed: 'Group could not be deleted.'
+    talks:
+      created: 'Talk successfully created.'
+      updated: 'Talk successfully updated.'
+      destroyed: 'Talk successfully deleted.'
+      destruction_failed: 'Talk could not be deleted.'
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
@@ -3698,6 +3735,16 @@ en:
       The MaMpf Team has been notified about this bug, we will try to fix it as
       soon as possible.
   activerecord:
+    models:
+      tutorial:
+        one: Tutorial
+        other: Tutorials
+      talk:
+        one: Talk
+        other: Talks
+      cohort:
+        one: Group
+        other: Groups
     errors:
       no_valid_url: 'This is not a valid URL.'
       models:
@@ -3720,7 +3767,7 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
-        course:
+        cohort:
           attributes:
             title:
               blank: 'You need to give a title.'
@@ -3846,6 +3893,8 @@ en:
               invalid: 'The input is invalid.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Talks can only be created for seminars."
             title:
               blank: You need to give a title.
         term:
@@ -3857,10 +3906,18 @@ en:
               taken: 'This term already exists.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorials cannot be created for seminars."
             title:
               taken: >
                 This tutorium title is already taken for this event series.
               blank: You need to giv a title.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                There is already a tutorial membership for this user in this
+                lecture.
         user:
           attributes:
             courses:

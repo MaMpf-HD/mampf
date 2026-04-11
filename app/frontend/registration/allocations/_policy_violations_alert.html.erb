@@ -1,0 +1,87 @@
+<% dashboard = local_assigns[:dashboard] %>
+<% campaign = local_assigns[:campaign] %>
+<% allocation_source = local_assigns[:allocation_source] %>
+
+<% return unless dashboard.policy_violations.present? %>
+
+<div class="alert alert-danger">
+  <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+  <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
+  — <%= t("registration.allocation.errors.policy_violation_desc") %>
+
+
+  <% grouped = dashboard.violations_by_user %>
+  <% policy_counts = dashboard.violation_counts_by_policy %>
+
+  <p class="mt-2 mb-2">
+    <strong><%= grouped.size %></strong>
+
+    <%= t("registration.allocation.errors.policy_violation_count",
+          count: grouped.size) %>
+
+    <small class="text-muted ms-1">
+      (
+      <% policy_counts.each_with_index do |(kind, count), i| %>
+        <%= t("registration.policy.kinds.#{kind}") %>: <%= count %>
+        <%= ", " unless i == policy_counts.size - 1 %>
+      <% end %>)
+    </small>
+  </p>
+
+  <%# Policy requirement summaries %>
+  <div class="small mb-2">
+    <% dashboard.finalization_policies.each do |policy| %>
+      <% if policy.kind == "institutional_email" %>
+        <div class="mb-1">
+          <i class="bi bi-envelope me-1"></i>
+
+          <strong>
+            <%= t("registration.policy.kinds.institutional_email") %>:
+          </strong>
+
+          <%= t("registration.allocation.policy_summary.required_domain") %>
+
+          <code>@<%= policy.allowed_domains_display %></code>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <ul class="mt-0 mb-2">
+    <% grouped.each do |user_id, violations| %>
+      <% first = violations.first %>
+
+      <li class="mb-1">
+        <strong><%= first[:name] %></strong> (<%= first[:email] %>)
+        <% violations.each do |v| %>
+          <span class="badge bg-danger-subtle text-danger ms-1">
+            <%= t("registration.policy.kinds.#{v[:policy]}") %>
+
+            <% if v[:policy] == "institutional_email" %>
+              <span class="fw-normal">@<%= email_domain(first[:email]) %></span>
+            <% end %>
+          </span>
+        <% end %>
+        <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user_id, source: allocation_source),
+                      method: :delete,
+                      class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                      data: {
+                        turbo_confirm:
+                        t("registration.campaign.confirmations.user_registration_conflict_remove",
+                        email: first[:email])
+                      },
+                      form: { class: "d-inline-block" },
+                      title: t("registration.user_registration.actions.remove_user") do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <%= button_to t("registration.campaign.actions.force_finalize"),
+                finalize_registration_campaign_allocation_path(campaign, force: true),
+                method: :patch,
+                data: { turbo_confirm: t("registration.campaign.confirmations.force_finalize") },
+                class: "btn btn-sm btn-danger" %>
+</div>

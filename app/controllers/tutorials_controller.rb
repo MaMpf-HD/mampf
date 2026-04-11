@@ -1,5 +1,9 @@
 # TutorialsController
 class TutorialsController < ApplicationController
+  include ::RegistrationCampaignContext
+
+  helper RosterHelper
+
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
                                       :bulk_download_submissions,
                                       :bulk_download_corrections,
@@ -55,28 +59,129 @@ class TutorialsController < ApplicationController
     set_tutorial_locale
     @tutorial.lecture = @lecture
     authorize! :new, @tutorial
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#new")
+      end
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def edit
+    authorize! :edit, @tutorial
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#edit")
+      end
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "tutorials/modal",
+          locals: { tutorial: @tutorial }
+        )
+      end
+    end
   end
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
+    @tutorial.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
     set_tutorial_locale
-    @tutorial.save
+
+    persisted = false
+    Tutorial.transaction do
+      persisted = @tutorial.save
+      raise(ActiveRecord::Rollback) unless persisted
+
+      persisted = apply_registration_context(registerable: @tutorial,
+                                             lecture: @lecture,
+                                             error_target: @tutorial)
+      raise(ActiveRecord::Rollback) unless persisted
+    end
+
+    flash.now[:notice] = t("controllers.tutorials.created") if persisted
     @errors = @tutorial.errors
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#create")
+      end
+      format.turbo_stream do
+        group_type = parse_group_type
+
+        streams = create_turbo_streams(group_type, persisted)
+        render turbo_stream: streams, status: persisted ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def update
-    @tutorial.update(tutorial_params)
-    @errors = @tutorial.errors
-    nil if @errors.present?
+    authorize! :update, @tutorial
+
+    if @tutorial.update(tutorial_params)
+      flash.now[:notice] = t("controllers.tutorials.updated")
+    else
+      @errors = @tutorial.errors
+    end
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#update")
+      end
+      format.turbo_stream do
+        parse_group_type
+        streams = []
+
+        if @tutorial.errors.empty?
+          streams << stream_flash if flash.present?
+          streams << refresh_campaigns_index_stream(@tutorial.lecture)
+        else
+          streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                          partial: "tutorials/modal_form",
+                                          locals: { tutorial: @tutorial })
+          streams << stream_flash if flash.present?
+        end
+
+        render turbo_stream: streams, status: @tutorial.errors.empty? ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def destroy
-    @tutorial.destroy
+    if @tutorial.destroy
+      flash.now[:notice] = t("controllers.tutorials.destroyed")
+    else
+      flash.now[:alert] = t("controllers.tutorials.destruction_failed")
+    end
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TutorialsController#destroy")
+      end
+      format.turbo_stream do
+        parse_group_type
+        streams = []
+        streams << stream_flash if flash.present?
+        streams << refresh_campaigns_index_stream(@tutorial.lecture)
+
+        render turbo_stream: streams
+      end
+    end
   end
 
   def cancel_edit
@@ -169,7 +274,8 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, { tutor_ids: [] }])
+      params.expect(tutorial: [:title, :lecture_id, :capacity, :location,
+                               { tutor_ids: [] }])
     end
 
     def bulk_params
@@ -202,5 +308,34 @@ class TutorialsController < ApplicationController
                             .correction_upload_email.deliver_later
         end
       end
+    end
+
+    def parse_group_type
+      if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type].presence&.to_sym || :tutorials
+      end
+    end
+
+    def create_turbo_streams(_group_type, saved)
+      streams = []
+
+      if saved
+        streams << stream_flash if flash.present?
+        streams << refresh_campaigns_index_stream(@lecture)
+        streams << turbo_stream.update("modal-container", "")
+      else
+        streams << turbo_stream.replace(view_context.dom_id(@tutorial, "form"),
+                                        partial: "tutorials/modal_form",
+                                        locals: { tutorial: @tutorial })
+        streams << stream_flash if flash.present?
+      end
+
+      streams
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

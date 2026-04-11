@@ -203,4 +203,16 @@ RSpec.describe(User, type: :model) do
       expect(LectureUserJoin.where(user: user, lecture: lecture).count).to eq(1)
     end
   end
+
+  describe "Roster associations" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    it "has many enrolled_lectures" do
+      expect(user).to respond_to(:enrolled_lectures)
+    end
+
+    it "has many enrolled_tutorials" do
+      expect(user).to respond_to(:enrolled_tutorials)
+    end
+  end
 end

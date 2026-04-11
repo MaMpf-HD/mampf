@@ -1,0 +1,4 @@
+<%= turbo_frame_tag "registration_campaigns_content" do %>
+  <h5 class="card-title mb-3"><%= t("registration.campaign.edit.title") %></h5>
+  <%= render "form", lecture: @campaign.campaignable, campaign: @campaign %>
+<% end %>

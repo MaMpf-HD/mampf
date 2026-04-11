@@ -104,12 +104,30 @@ RSpec.describe(Voucher, type: :model) do
 
   describe "class methods" do
     describe ".roles_for_lecture" do
-      it "returns all roles if the lecture is a seminar" do
-        expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys)
+      context "when lecture is a seminar" do
+        after { Flipper.disable(:roster_maintenance) }
+
+        context "when roster_maintenance is enabled" do
+          before { Flipper.enable(:roster_maintenance) }
+
+          it "returns all roles except :tutor" do
+            expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys - [:tutor])
+          end
+        end
+
+        context "when roster_maintenance is disabled" do
+          before { Flipper.disable(:roster_maintenance) }
+
+          it "returns all roles" do
+            expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys)
+          end
+        end
       end
 
-      it "returns all sorts except :speaker if the lecture is not a seminar" do
-        expect(Voucher.roles_for_lecture(lecture)).to eq(Voucher::ROLE_HASH.keys - [:speaker])
+      context "when lecture is not a seminar" do
+        it "returns all roles except :speaker" do
+          expect(Voucher.roles_for_lecture(lecture)).to eq(Voucher::ROLE_HASH.keys - [:speaker])
+        end
       end
     end
   end

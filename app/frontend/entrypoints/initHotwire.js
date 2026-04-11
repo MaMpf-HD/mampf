@@ -35,6 +35,48 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
+import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
+window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
+
+import SortablePoliciesController from "~/registration/policies/sortable_policies.controller.js";
+window.Stimulus.register("sortable-policies", SortablePoliciesController);
+
+import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
+window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
+
+import CollapseController from "~/registration/collapse.controller.js";
+window.Stimulus.register("collapse", CollapseController);
+
+import BsPopoverController from "~/controllers/bs_popover.controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
+
+import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
+window.Stimulus.register("datetimepicker", DatetimepickerController);
+
+import CapacityGuardController from "~/roster/capacity_guard.controller.js";
+window.Stimulus.register("capacity-guard", CapacityGuardController);
+
+import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
+window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
+
+import CampaignDissolveController from "~/registration/campaigns/campaign_dissolve.controller.js";
+window.Stimulus.register("campaign-dissolve", CampaignDissolveController);
+
+import RosterDragController from "~/roster/roster_drag.controller.js";
+window.Stimulus.register("roster-drag", RosterDragController);
+
+import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
+window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
+window.Stimulus.register("capacity-editor", CapacityEditorController);
+
+import SelectizeController from "~/controllers/selectize.controller.js";
+window.Stimulus.register("selectize", SelectizeController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

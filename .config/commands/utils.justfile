@@ -79,5 +79,12 @@ erd:
         exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
         only="Registration::Campaign,Registration::Item,Registration::UserRegistration,Registration::Policy,Lecture,Tutorial,Talk,User"
 
+    # 🌟 Rosters
+    bundle exec rake erd warn=false \
+        title="Rosters" filename=/workspaces/mampf/tmp/erd/mampf-erd-rosters \
+        inheritance=true polymorphism=true indirect=true attributes=content \
+        exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
+        only="Lecture,Tutorial,Talk,Cohort,User,LectureMembership,TutorialMembership,SpeakerTalkJoin,CohortMembership"
+
     echo "📂 Diagrams are ready for you in the folder {{justfile_directory()}}/tmp/erd/"
     echo "🔀 For the meanings of the arrows, refer to https://voormedia.github.io/rails-erd/gallery.html#notations"

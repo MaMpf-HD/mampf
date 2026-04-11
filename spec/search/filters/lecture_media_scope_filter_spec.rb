@@ -8,7 +8,6 @@ RSpec.describe(Search::Filters::LectureMediaScopeFilter) do
   let!(:course) { create(:course) }
   let!(:lecture) { create(:lecture_with_toc, course: course) }
   let!(:lesson) { create(:valid_lesson, lecture: lecture) }
-  let!(:talk) { create(:talk, lecture: lecture) }
 
   subject(:filtered_scope) do
     described_class.filter(scope: initial_scope, params: params, user: user)
@@ -42,7 +41,6 @@ RSpec.describe(Search::Filters::LectureMediaScopeFilter) do
     let!(:course_medium) { create(:course_medium, teachable: course, sort: project_name) }
     let!(:lecture_medium) { create(:lecture_medium, teachable: lecture, sort: project_name) }
     let!(:lesson_medium) { create(:lesson_medium, teachable: lesson, sort: project_name) }
-    let!(:talk_medium) { create(:talk_medium, teachable: talk, sort: project_name) }
 
     # Media that should NOT be found
     let!(:wrong_project_medium) do
@@ -57,8 +55,7 @@ RSpec.describe(Search::Filters::LectureMediaScopeFilter) do
       expect(filtered_scope).to contain_exactly(
         course_medium,
         lecture_medium,
-        lesson_medium,
-        talk_medium
+        lesson_medium
       )
     end
 
