@@ -130,7 +130,7 @@ module Registration
     end
 
     def reset_allocation_results!
-      transaction do
+      with_lock do
         subquery = Registration::UserRegistration
                    .select(:user_id)
                    .where(registration_campaign_id: id)
