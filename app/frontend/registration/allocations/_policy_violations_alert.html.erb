@@ -67,7 +67,7 @@
                       method: :delete,
                       class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
                       data: {
-                        confirm:
+                        turbo_confirm:
                         t("registration.campaign.confirmations.user_registration_conflict_remove",
                         email: first[:email])
                       },
@@ -82,6 +82,6 @@
   <%= button_to t("registration.campaign.actions.force_finalize"),
                 finalize_registration_campaign_allocation_path(campaign, force: true),
                 method: :patch,
-                data: { confirm: t("registration.campaign.confirmations.force_finalize") },
+                data: { turbo_confirm: t("registration.campaign.confirmations.force_finalize") },
                 class: "btn btn-sm btn-danger" %>
 </div>
