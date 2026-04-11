@@ -23,11 +23,7 @@
       <div class="modal-body" id="section-content-modal-content">
         <h3 class="lecture-pane-header">
         <%= t('admin.lecture.imported_media') %>
-        <span id="importMedia" data-lecture="<%= lecture.id %>">
-            <span id="importedMediaCount">
-            ( <%= lecture.imported_media.size %>)
-            </span>
-        </span>
+        <%= import_media_badge(lecture) %>
         </h3>
 
       <div id="importedMediaTable"

@@ -1,5 +1,7 @@
 de:
   mampf: 'MaMpf'
+  modals:
+    load_error: 'Der Inhalt konnte nicht geladen werden.'
   views:
     pagination:
       first: "&laquo; Erste"

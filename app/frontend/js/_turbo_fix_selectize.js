@@ -146,5 +146,41 @@ $(document).on("turbo:before-cache", function () {
 });
 
 $(document).on("turbo:load", function () {
-  fillOptionsByAjax($(".selectize"));
+  fillOptionsByAjax($(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
+});
+
+/**
+ * Re-initializes TomSelect in updated Turbo Frames.
+ */
+$(document).on("turbo:frame-load", function (event) {
+  const frame = event.target;
+  fillOptionsByAjax($(frame).find(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
+});
+
+/**
+ * Intercepts Turbo Stream render events to re-initialize TomSelect on updated elements.
+ */
+document.addEventListener("turbo:before-stream-render", function (event) {
+  const stream = event.target;
+  const originalRender = event.detail.render;
+
+  // Initialize immediately after render to prevent FOUC (Flash of Unstyled Content)
+  // Since this happens in the same execution tick, the browser won't paint the unstyled element
+  event.detail.render = function (currentElement) {
+    originalRender(currentElement);
+
+    const targetId = stream.getAttribute("target");
+    if (!targetId) return;
+
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    fillOptionsByAjax($(target).find(".selectize").filter(function () {
+      return !this.tomselect;
+    }));
+  };
 });

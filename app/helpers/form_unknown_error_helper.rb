@@ -20,12 +20,11 @@ module FormUnknownErrorHelper
     # Adds a general form error message if the form object has errors but
     # no field-specific error markup is present.
     def add_whole_form_error_message(form_object, form_html)
-      if !form_object.respond_to?(:errors) || form_object.errors.empty? \
-        || form_html.include?('class="invalid-feedback"')
-        return form_html
-      end
+      return form_html if !form_object.respond_to?(:errors) || form_object.errors.empty?
 
       doc = Nokogiri::HTML::DocumentFragment.parse(form_html)
+      return form_html if doc.css(".invalid-feedback").any?
+
       submit_buttons = doc.css('button[type="submit"],input[type="submit"]')
       return form_html unless submit_buttons.any?
 

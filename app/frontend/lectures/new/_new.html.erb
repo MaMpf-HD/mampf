@@ -1,85 +1,99 @@
-<% unless from == 'course' %>
-  <div class="row">
-    <div class="col-12">
-      <h6>
-        <%= t('admin.lecture.new_lecture') %>
-      </h6>
-    </div>
-  </div>
-<% end %>
-<% if Course.count == 0 %>
-  <%= t('admin.lecture.no_courses_yet') %>
-<% elsif Term.count == 0 %>
-  <%= t('admin.lecture.no_terms_yet') %>
-<% else %>
-  <%= form_with model: lecture do |f| %>
-    <% term_independent = (from != 'course' && first_course_independent?) ||
-                            (from == 'course' && lecture.course.term_independent) %>
+<% wrapper_attributes = from == 'course' ? {} : {
+     id: 'new-lecture-area',
+     class: 'bg-green-lighten-4 p-3 mb-3 rounded'
+   } %>
+<%= content_tag :div, **wrapper_attributes do %>
+  <% unless from == 'course' %>
     <div class="row">
-      <div class="col-8" data-cy="new-lecture-course-select-div">
-        <%= f.label :course_id, t('basics.course'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.course'), false) %>
-        <%= f.select :course_id,
-                     options_for_select(current_user
-                                          .select_administrated_courses
-                                          .natural_sort_by(&:first),
-                                        lecture.course&.id),
-                     {},
-                     { class: 'selectize',
-                       disabled: from == 'course',
-                       required: true,
-                       data: { terminfo: Course.pluck(:id, :term_independent) } } %>
-        <% if from == 'course' %>
-          <%= f.hidden_field :course_id, value: lecture.course.id %>
-        <% end %>
-        <div class="invalid-feedback"
-             id="new-lecture-course-error">
-        </div>
-      </div>
-      <div class="col-4" id="newLectureTerm"
-           style="<%= term_independent ? 'display: none;' : '' %>">
-        <%= f.label :term_id,
-                    t('basics.term'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.term'), false) %>
-        <%= f.select :term_id,
-                     options_for_select(Term.select_terms),
-                     {},
-                     { class: 'form-select',
-                       disabled: term_independent } %>
-        <div class="invalid-feedback"
-             id="new-lecture-term-error">
-        </div>
-      </div>
-      <div class="col-12 mt-4">
-        <%= teacher_select(f, is_new_lecture=true) %>
-      </div>
-      <div class="col-12" id="newLectureSort"
-           style="<%= term_independent ? 'display: none;' : '' %>">
-        <%= f.label :sort,
-                    t('basics.type'),
-                    class: "form-label" %>
-        <%= f.select :sort,
-                     options_for_select(Lecture.sort_localized.invert.to_a,
-                                        lecture.sort),
-                     {},
-                     { class: "form-select"} %>
+      <div class="col-12">
+        <h6>
+          <%= t('admin.lecture.new_lecture') %>
+        </h6>
       </div>
     </div>
-    <div class="row mt-4">
-      <div class="col-12 text-center">
-        <%= f.submit t('buttons.save'),
-              class: 'btn btn-primary',
-              "data-cy": 'new-lecture-submit' %>
-        <button type="button"
-                id="cancel-new-lecture"
-                class="btn btn-secondary">
-          <%= t('buttons.cancel') %>
-        </button>
+  <% end %>
+  <% if Course.count == 0 %>
+    <%= t('admin.lecture.no_courses_yet') %>
+  <% elsif Term.count == 0 %>
+    <%= t('admin.lecture.no_terms_yet') %>
+  <% else %>
+    <%= form_with model: lecture,
+                  data: { controller: 'lectures-new-form',
+                          action: 'turbo:submit-end->lectures-new-form#submitEnd' } do |f| %>
+      <% term_independent = (from != 'course' && first_course_independent?) ||
+                              (from == 'course' && lecture.course.term_independent) %>
+      <div class="row">
+        <div class="col-8" data-cy="new-lecture-course-select-div">
+          <%= f.label :course_id, t('basics.course'),
+                      class: "form-label" %>
+          <%= helpdesk(t('admin.lecture.info.course'), false) %>
+          <%= f.select :course_id,
+                      options_for_select(current_user
+                                            .select_administrated_courses
+                                            .natural_sort_by(&:first),
+                                          lecture.course&.id),
+                      {},
+                      { class: "selectize form-select",
+                        disabled: from == 'course',
+                        required: true,
+                        data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) } 
+                        } %>
+          <% if from == 'course' %>
+            <%= f.hidden_field :course_id, value: lecture.course.id %>
+          <% end %>
+        </div>
+        <div class="col-4" id="newLectureTerm"  
+            style="<%= term_independent ? 'display: none;' : '' %>">
+          <%= f.label :term_id,
+                      t('basics.term'),
+                      class: "form-label" %>
+          <%= helpdesk(t('admin.lecture.info.term'), false) %>
+          <%= f.select :term_id,
+                      options_for_select(Term.select_terms, lecture.term_id),
+                      {},
+                      { class: "form-select",
+                        disabled: term_independent } %>
+        </div>
+        <div class="col-12 mt-4">
+          <%= teacher_select(f, is_new_lecture=true) %>
+        </div>
+        <div class="col-12" id="newLectureSort"
+            style="<%= term_independent ? 'display: none;' : '' %>">
+          <%= f.label :sort,
+                      t('basics.type'),
+                      class: "form-label" %>
+          <%= f.select :sort,
+                      options_for_select(Lecture.sort_localized.invert.to_a,
+                                          lecture.sort),
+                      {},
+                      { class: "form-select"} %>
+        </div>
       </div>
-    </div>
-    <%= f.hidden_field :from, value: from %>
-    <%= f.hidden_field :content_mode, value: 'video' %>
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <%= f.submit t('buttons.save'),
+                class: 'btn btn-primary',
+                "data-cy": 'new-lecture-submit', 
+                "data-testid": 'new-lecture-submit' %>
+          <% if from == 'course' %>
+            <button type="button"
+                    id="cancel-new-lecture"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+              <%= t('buttons.cancel') %>
+            </button>
+          <% else %>
+            <button type="button"
+                    id="cancel-new-lecture"
+                    class="btn btn-secondary"
+                data-action="click->administration-index-create-buttons#cancel">
+              <%= t('buttons.cancel') %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+      <%= f.hidden_field :from, value: from %>
+      <%= f.hidden_field :content_mode, value: 'video' %>
+    <% end %>
   <% end %>
 <% end %>

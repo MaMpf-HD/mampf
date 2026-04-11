@@ -143,12 +143,14 @@ module LecturesHelper
 
       preselection = if is_new_lecture
         options_for_select([[current_user.info, current_user.id]], current_user.id)
-      else
+      elsif lecture.teacher
         options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id)
+      else
+        []
       end
 
       # TODO: Rubocop bug when trying to break the last object on a new line
-      select = form.select(:teacher_id, preselection, {}, { class: "selectize",
+      select = form.select(:teacher_id, preselection, {}, { class: "selectize form-select",
                                                             data: {
                                                               ajax: true,
                                                               filled: false,
@@ -156,12 +158,10 @@ module LecturesHelper
                                                               placeholder: t("basics.enter_two_letters"), # rubocop:disable Layout/LineLength
                                                               no_results: t("basics.no_results"),
                                                               modal: true,
-                                                              cy: "teacher-admin-select"
+                                                              testid: "teacher-admin-select"
                                                             } })
 
-      error_div = content_tag(:div, "", class: "invalid-feedback", id: "lecture-teacher-error")
-
-      return label + help_desk + select + error_div
+      return label + help_desk + select
     end
 
     # Non-admin cases
@@ -177,7 +177,7 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher.info, "data-cy": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "", "data-testid": "teacher-info")
     end
 
     p1 + p2
@@ -204,8 +204,17 @@ module LecturesHelper
                   multiple: true,
                   data: {
                     cy: "lecture-editors-select",
+                    testid: "lecture-editors-select",
                     no_results: t("basics.no_results_editor")
                   })
+    end
+  end
+
+  def import_media_badge(lecture)
+    content_tag(:span, id: "importMedia",
+                       data: { lecture: lecture.id, selected: "[]" }) do
+      content_tag(:span, "(#{lecture.imported_media.size})",
+                  id: "importedMediaCount")
     end
   end
 end

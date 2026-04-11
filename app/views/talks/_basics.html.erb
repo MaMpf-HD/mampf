@@ -48,7 +48,7 @@
     </div>
 
     <div class="row">
-      <div class="col-12 mb-3" data-cy="speaker-select-div">
+      <div class="col-12 mb-3" data-testid="speaker-select-div">
         <%= speaker_select(f, talk, with_preselection=true) %>
       </div>
     </div>
@@ -89,7 +89,8 @@
       <%= f.label :tag_ids, t('basics.related_tags'),
                    class: "form-label" %>
       <%= helpdesk(t('admin.talk.info.tags'), false) %>
-      <a class="fas fa-plus-circle clickable text-dark"
+      <a href="#"
+         class="fas fa-plus-circle clickable text-dark"
          id="new-tag-button"
          data-bs-toggle="tooltip"
          title="Tag anlegen"

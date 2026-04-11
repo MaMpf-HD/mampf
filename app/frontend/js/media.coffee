@@ -241,12 +241,11 @@ $(document).on 'turbo:load', ->
       lectureId = importTab.dataset.lecture
       $.ajax Routes.lecture_import_media_path(lectureId),
         type: 'POST'
-        dataType: 'script'
-        data: {
-          media_ids: selected
-        }
-        error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")
+        contentType: 'application/json'
+        headers: { 'Accept': 'text/vnd.turbo-stream.html' }
+        data: JSON.stringify(media_ids: selected)
+        success: (response) -> Turbo.renderStreamMessage(response)
+        error: (xhr) -> console.log("Turbo Import Error: #{xhr.status}")
     else if $(this).data('purpose') == 'quiz'
       quizId = $('#new_vertex').data('quiz')
       $.ajax Routes.quiz_vertices_path(quiz_id: quizId),
