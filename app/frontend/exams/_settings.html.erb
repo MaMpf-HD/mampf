@@ -81,6 +81,36 @@
     <div class="col-12">
       <%= render "exams/delete_button", exam: exam unless exam.new_record? %>
 
+      <% if Flipper.enabled?(:registration_campaigns) %>
+        <div class="row mb-3">
+          <div class="col-md-2">
+            <label class="col-form-label">
+              <%= t("registration.policy.index.title") %>
+            </label>
+          </div>
+
+          <div class="col-md-9 d-flex align-items-center flex-wrap">
+            <% if exam.new_record? %>
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                <%= t("registration.policy.hint.add_after_creation") %>
+              </small>
+            <% else %>
+              <% campaign = exam.registration_campaign %>
+              <% if campaign %>
+                <%= render "registration/policies/inline_badges",
+                           campaign: campaign,
+                           frame_id: "exam-settings" %>
+              <% else %>
+                <small class="text-muted">
+                  <%= t("registration.policy.index.none") %>
+                </small>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <% form_url = exam.new_record? ? exams_path : exam_path(exam, tab: 'settings') %>
 
       <%= form_with model: exam,

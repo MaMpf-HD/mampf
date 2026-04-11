@@ -1,8 +1,11 @@
 <%= form_with(model: [campaign, policy],
               url: policy.persisted? ? registration_campaign_policy_path(campaign, policy) : registration_campaign_policies_path(campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
-  <% if policy.errors[:base].present? %>
+  <% if params[:frame_id].present? %>
+    <%= hidden_field_tag :frame_id, params[:frame_id] %>
+  <% end %>
 
+  <% if policy.errors[:base].present? %>
     <div class="alert alert-danger">
       <%= policy.errors[:base].join(", ") %>
     </div>
@@ -46,8 +49,10 @@
       <div class="mb-3">
         <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
         <%= helpdesk(t("registration.policy.helpdesk.allowed_domains"), false) %>
+
         <% default_allowed_domains =
              policy.new_record? ? Registration::Policy.default_allowed_domains : nil %>
+
         <%= f.text_field :allowed_domains,
                          class: "form-control",
                          value: policy.allowed_domains.presence ||
@@ -55,7 +60,6 @@
 
         <div class="form-text">
           <%= t("registration.policy.hints.allowed_domains") %>
-
         </div>
       </div>
     </div>
@@ -94,15 +98,24 @@
                                 Lecture.all, :id, :title,
                                 { include_blank: true, selected: policy.lecture_id },
                                 { class: "form-select" } %>
-
       </div>
     </div>
   </div>
 
   <%= f.submit t("buttons.save"), class: "btn btn-sm btn-primary" %>
 
-  <%= link_to t("buttons.cancel"),
-                registration_campaign_path(campaign),
-                class: "btn btn-sm btn-secondary",
-                data: { turbo_stream: true } %>
+  <% if params[:frame_id].present? %>
+    <button
+      type="button"
+      class="btn btn-sm btn-secondary"
+      onclick="this.closest('turbo-frame').innerHTML = ''"
+    >
+      <%= t("buttons.cancel") %>
+    </button>
+  <% else %>
+    <%= link_to t("buttons.cancel"),
+                  registration_campaign_path(campaign),
+                  class: "btn btn-sm btn-secondary",
+                  data: { turbo_stream: true } %>
+  <% end %>
 <% end %>
