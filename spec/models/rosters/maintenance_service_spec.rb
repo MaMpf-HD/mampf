@@ -151,5 +151,26 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         expect(full_tutorial.members).not_to include(user)
       end
     end
+
+    it "locks source and target in deterministic order" do
+      lock_order = []
+
+      allow(subject).to receive(:remove_user_without_lock!)
+      allow(subject).to receive(:add_user_without_lock!)
+
+      allow(tutorial).to receive(:with_lock) do |_args, &block|
+        lock_order << [tutorial.class.name, tutorial.id]
+        block.call
+      end
+      allow(other_tutorial).to receive(:with_lock) do |_args, &block|
+        lock_order << [other_tutorial.class.name, other_tutorial.id]
+        block.call
+      end
+
+      subject.move_user!(user, other_tutorial, tutorial)
+
+      expect(lock_order).to eq([["Tutorial", tutorial.id],
+                                ["Tutorial", other_tutorial.id]])
+    end
   end
 end
