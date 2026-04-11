@@ -10,12 +10,23 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry.watchlist = @watchlist
     @medium = Medium.find_by(id: params[:watchlist_entry][:medium_id])
     @watchlist_entry.medium = @medium
+
     authorize! :create, @watchlist_entry
-    @success = @watchlist_entry.save
-    flash[:notice] = I18n.t("watchlist_entry.add_success") if @success
-    respond_to do |format|
-      format.js
+
+    unless @watchlist_entry.valid?
+      return render turbo_stream: turbo_stream.update("watchlist_form_add",
+                                                      partial: "watchlists/add_form"),
+                    status: :unprocessable_content
     end
+
+    @watchlist_entry.save
+
+    flash.now[:notice] = I18n.t("watchlist_entry.add_success")
+    render turbo_stream: [turbo_stream.prepend("flash-messages",
+                                               partial: "flash/message"),
+                          turbo_stream.update("watchlist_header_#{@medium.id}",
+                                              partial: "media/medium/watchlist_header",
+                                              locals: { medium: @medium, from: nil })]
   end
 
   def destroy

@@ -1,0 +1,43 @@
+<% watchlist = local_assigns[:watchlist] || @watchlist || Watchlist.new %>
+<% medium = local_assigns[:medium] || @medium %>
+<% is_edit = watchlist.persisted? %>
+
+<%= form_with model: watchlist,
+              id: 'watchlistForm' do |f| %>
+  <% if medium.present? %>
+    <%= f.hidden_field :medium_id, value: medium.id %>
+  <% end %>
+  <div class="mb-3 row">
+    <%= f.label :name,
+                t('watchlist.name'),
+                class: "form-label" %>
+    <div class="input-group">
+      <div class="flex-grow-1">
+      <%= f.text_field :name,
+                      placeholder: t('watchlist.enter_name'),
+                      class: 'form-control',
+                      id: 'watchlistNameField',
+                      required: true %>
+      </div>
+      <% if !is_edit && medium.present? %>
+        <div class="input-group-append">
+          <%= f.submit t('watchlist.create'),
+                      class: 'btn btn-primary',
+                      id: 'createWatchlistBtn' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <%= f.label :description,
+                t('watchlist.description'),
+                class: "form-label" %>
+    <div class="input-group mb-3">
+      <%= f.text_area :description,
+                      placeholder: t('watchlist.enter_description'),
+                      class: 'form-control',
+                      id: 'watchlistDescriptionField',
+                      rows: 5 %>
+    </div>
+  </div>
+<% end %>

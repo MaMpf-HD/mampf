@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe(Watchlist, type: :model) do
   it "has a valid factory" do
-    expect(FactoryBot.build(:watchlist, :with_user)).to be_valid
+    expect(FactoryBot.create(:watchlist, :with_user)).to be_valid
   end
 
   it "must have a name" do

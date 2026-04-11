@@ -2,15 +2,23 @@ import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
 export default class extends Controller {
+  static values = { preventEventListener: Boolean };
+
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
-    this.element.addEventListener("turbo:submit-end", event => this.hideModalOnSuccess(event));
+    if (!this.preventEventListenerValue) {
+      this.element.addEventListener("turbo:submit-end", event => this.hideModalOnSuccess(event));
+    }
   }
 
   disconnect() {
     if (this.modal) {
       this.modal.dispose();
     }
+  }
+
+  open() {
+    this.modal.show();
   }
 
   hideModalOnSuccess(event) {

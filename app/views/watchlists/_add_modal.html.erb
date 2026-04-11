@@ -1,5 +1,7 @@
 <div class="modal fade"
-     id="watchlistModal"
+     id="addWatchlistModal"
+     data-controller="modal"
+     data-modal-prevent-event-listener-value="true"
      tabindex="-1"
      role="dialog"
      aria-labelledby="watchlistModalLabel" aria-hidden="true"
@@ -8,27 +10,23 @@
        role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-            id="watchlistModalTitle">
+        <h5 class="modal-title">
           <%= t('watchlist.add') %>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body"
-           id="watchlistModalBody">
-        <div id="watchlist-select-form">
-          <%= render partial: 'watchlists/select_form' %>
-        </div>
-        <div class="collapse" id="collapseNewWatchlist">
-          <%= render partial: 'watchlists/new_form' %>
-        </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag "watchlist_form_add", data: { action: "turbo:frame-load->modal#open"} do %>
+          <%= render partial: "spinner/loading" %>
+        <% end %>
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary"
                 id="watchlistEntrySubmitButton"
                 type="submit"
-                form="watchlistSelectForm"
-                <%= "disabled" if Watchlist.where(user: current_user).empty? %>><%= t('watchlist.add') %></button>
+                form="watchlistSelectForm">
+                  <%= t('watchlist.add') %>
+                </button>
         <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
       </div>
     </div>

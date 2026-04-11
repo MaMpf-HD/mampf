@@ -1,0 +1,38 @@
+<% watchlist = local_assigns[:watchlist] || @watchlist %>
+<% medium = local_assigns[:medium] || @medium %>
+<% context = (local_assigns[:context] || (watchlist&.persisted? ? :edit : :new)).to_sym %>
+<% is_edit = context == :edit %>
+
+<div class="modal fade"
+     id="<%= "#{context}WatchlistModal" %>"
+     data-controller="modal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="watchlistModalLabel" aria-hidden="true"
+     data-keyboard="true">
+  <div class="modal-dialog modal-sm"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <%= is_edit ? t('watchlist.change') : t('watchlist.create') %>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag "watchlist_form_#{context}", data: { action: "turbo:frame-load->modal#open"}  do %>
+          <%= render partial: "spinner/loading" %>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <div class="container text-center">
+          <button class="btn btn-primary"
+                  id="<%= is_edit ? 'confirmChangeWatchlistButton' : 'newWatchlistButton' %>"
+                  type="submit"
+                  form="watchlistForm"><%= is_edit ? t('watchlist.save_change') : t('watchlist.create') %></button>
+          <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

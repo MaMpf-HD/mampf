@@ -7,24 +7,24 @@
             data-bs-toggle="dropdown"
             type="button"
             id="watchlistButton"
-            data-id=<%= @watchlist.id %>
-            data-owned=<%= @watchlist.owned_by?(current_user) %>>
+            data-id="<%= @watchlist.id %>"
+            data-owned="<%= @watchlist.owned_by?(current_user) %>">
         <%= @watchlist.name %>
         </button>
         <div class="dropdown-menu">
         <% (@watchlists - [@watchlist]).each do |w| %>
           <%= link_to w.name,
                 watchlist_path(w),
-                class: 'dropdown-item' %>
+                class: 'dropdown-item', data: {turbo_frame: '_top'} %>
         <% end %>
         </div>
       </span>
-    <% elsif @watchlists.size == 1%>
+    <% elsif @watchlists.size == 1 %>
       <button class="btn btn-secondary"
           disabled
           id="watchlistButton"
-          data-id=<%= @watchlist.id %>
-          data-owned=<%= @watchlist.owned_by?(current_user) %>>
+          data-id="<%= @watchlist.id %>"
+          data-owned="<%= @watchlist.owned_by?(current_user) %>">
         <%= @watchlist.name %>
       </button>
     <% else %>
@@ -33,30 +33,35 @@
       </button>
     <% end %>
     <div class="input-group-append">
-      <%= link_to raw("<i class=\"fa fa-plus\"></i>"),
-                  new_watchlist_path,
-                  class: "btn btn-outline-secondary",
-                  id: "openNewWatchlistForm",
-                  remote: true %>
+      <%= link_to new_watchlist_path,
+                  class: 'btn btn-outline-secondary',
+                  id: 'openNewWatchlistForm',
+                  title: t('watchlist.new'),
+                  aria: { label: t('watchlist.new') },
+                  role: 'button',
+                  data: { turbo_frame: 'watchlist_form_new' } do %>
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      <% end %>
     </div>
   </div>
 </li>
-<%# Description%>
+<%# Description %>
 <% if @watchlist.present? && @watchlist.description.present? %>
   <li class="nav-item ps-2">
-    <a class="nav-link btn btn-sm bg-grey-lighten-4"
-       id="descriptionButton"
-       data-bs-toggle="collapse"
-       data-bs-target="#collapseDescription"
-       role="button"
-       aria-expanded="false"
-       aria-controls="collapseDescription">
+    <a href="#"
+      class="nav-link btn btn-sm bg-grey-lighten-4"
+      id="descriptionButton"
+      data-bs-toggle="collapse"
+      data-bs-target="#collapseDescription"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseDescription">
       <%= t('watchlist.description') %>
     </a>
   </li>
 <% end %>
 <% if @watchlist_entries %>
-  <%# Reverse order button%>
+  <%# Reverse order button %>
   <li class="nav-item ps-2 pr-1">
     <%= link_to t('reverse_order'),
           watchlist_path(@watchlist, params: { reverse: !params[:reverse],
@@ -67,7 +72,7 @@
           data: { reverse: params[:reverse] } %>
   </li>
   <%= helpdesk(t('watchlist.order_help'), false) %>
-  <%# All button%>
+  <%# All button %>
   <% unless @pagy.pages == 1 || params[:all] %>
     <li class="nav-item ps-2 pr-1">
       <%= link_to t('all'),

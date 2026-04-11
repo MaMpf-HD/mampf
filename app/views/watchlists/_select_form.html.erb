@@ -1,8 +1,7 @@
 <%= form_with model: WatchlistEntry.new,
-              remote: true,
               id: "watchlistSelectForm",
-              html: { class: "needs-validation",
-                      novalidate: true } do |f| %>
+              data: { action: "turbo:submit-end->modal#hideModalOnSuccess" },
+              html: { class: "needs-validation" } do |f| %>
 	<div class="mb-3 row">
     <%= f.label :watchlist, t('watchlist.select'),
                 class: "form-label" %>
@@ -10,40 +9,29 @@
       <%= f.hidden_field :medium_id, value: @medium.id %>
     <% end %>
     <div class="input-group mb-3">
-      <% if !Watchlist.where(user: current_user).empty? %>
-        <% if !@watchlist.present? %>
-          <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
-            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                         {}, { class: 'form-select is-invalid', id: 'watchlistSelect' } %>
-          <% else %>
-            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                         {}, { class: 'form-select', id: 'watchlistSelect' } %>
-          <% end %>
-        <% else %>
-          <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
-            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
-                         {}, { class: 'form-select is-invalid', id: 'watchlistSelect' } %>
-          <% else %>
-            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
-                         {}, { class: 'form-select', id: 'watchlistSelect' } %>
-          <% end %>
-        <% end %>
+      <% has_errors = @watchlist_entry.present? && @watchlist_entry.errors.any? %>
+      <% select_class = has_errors ? 'form-select is-invalid' : 'form-select' %>
+
+      <% if Watchlist.where(user: current_user).exists? %>
+        <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist&.id),
+                     {}, { class: select_class, id: 'watchlistSelect' } %>
       <% else %>
         <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                     { prompt: t('watchlist.none')}, { class: 'form-select', disabled: true } %>
+                     { prompt: t('watchlist.none')}, { class: select_class, disabled: true } %>
       <% end %>
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseNewWatchlist"
-            aria-expanded="false"
-            aria-controls="collapseNewWatchlist"
-            id="openNewWatchlistForm">
+
+        <%= link_to new_watchlist_path(medium_id: @medium&.id),
+          data: { turbo_frame: 'watchlist_form_new', turbo_prefetch: 'false' },
+          class: 'btn btn-outline-secondary',
+          id: 'openNewWatchlistForm',
+          type: 'button' do %>
           <i class="fa fa-plus"></i>
-        </button>
+        <% end %>
+
       </div>
-      <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
+
+      <% if has_errors %>
         <div class="invalid-feedback">
           <% @watchlist_entry.errors.full_messages.each do |msg| %>
             <%= msg %>
