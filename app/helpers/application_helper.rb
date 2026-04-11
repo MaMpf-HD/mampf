@@ -54,7 +54,9 @@ module ApplicationHelper
                    container_class: "progress mb-2", style: nil)
     # rubocop:enable Metrics/ParameterLists
     clamped_value = value.to_i.clamp(0, max.to_i)
-    percentage = max.to_i.positive? ? (value.to_f / max * 100).clamp(0, 100) : 0
+    # rubocop:disable Style/FloatDivision
+    percentage = max.to_i.positive? ? (value.to_f / max.to_f * 100).clamp(0, 100) : 0
+    # rubocop:enable Style/FloatDivision
 
     color_class = case classification
                   when :utilization
