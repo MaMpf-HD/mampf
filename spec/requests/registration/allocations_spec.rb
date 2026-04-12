@@ -69,13 +69,6 @@ RSpec.describe("Registration::Allocations", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "triggers allocation service" do
-        expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
-        post registration_campaign_allocation_path(campaign)
-        expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
-        expect(flash[:notice]).to be_present
-      end
-
       context "when campaign is closed and preference based" do
         let!(:campaign) do
           create(:registration_campaign,

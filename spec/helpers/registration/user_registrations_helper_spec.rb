@@ -67,17 +67,6 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
     it { expect(helper.single_mode?("Tutorial")).to eq(false) }
   end
 
-  describe "#format_date" do
-    it "formats time" do
-      time = Time.zone.local(2024, 1, 1, 14, 30)
-      expect(Registration::UserRegistrationsHelper.format_date(time)).to eq("Jan 01, 14:30")
-    end
-
-    it "returns empty string for nil" do
-      expect(Registration::UserRegistrationsHelper.format_date(nil)).to eq("")
-    end
-  end
-
   describe "#get_outcome_info" do
     it "returns the pass outcome" do
       expect(helper.get_outcome_info(pass: true))

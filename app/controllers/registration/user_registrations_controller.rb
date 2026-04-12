@@ -1,6 +1,5 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
     before_action :set_campaign, only: [:create, :reset_preferences,
@@ -95,10 +94,6 @@ module Registration
 
     private
 
-      def render_not_found(exception)
-        render json: { error: exception.message }, status: :unprocessable_content
-      end
-
       def respond_to_student_registration(result, success_message)
         if result.success?
           flash.now[:notice] = success_message
@@ -137,8 +132,6 @@ module Registration
           locals: locals
         )
       end
-
-    private
 
       def evaluate_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
@@ -191,19 +184,6 @@ module Registration
         I18n.locale = @campaign&.campaignable&.locale_with_inheritance || I18n.locale
       end
 
-      def respond_with_error(message, redirect_path: nil)
-        respond_to do |format|
-          format.html do
-            path = redirect_path || registration_campaign_path(@campaign)
-            redirect_back_or_to(path, alert: message)
-          end
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
-          end
-        end
-      end
-
       def campaign_completed?
         return false unless @campaign.completed?
 
@@ -239,6 +219,10 @@ module Registration
 
       def set_item
         @item = Registration::Item.find(params[:item_id])
+        return if @item
+
+        respond_with_flash(:alert, t("registration.item.not_found"),
+                           fallback_location: root_path)
       end
 
       def set_lecture
@@ -246,7 +230,8 @@ module Registration
         @lecture = Lecture.find_by(id: lecture_id)
         return if @lecture
 
-        respond_with_error(t("registration.lecture.not_found"), redirect_path: root_path)
+        respond_with_flash(:alert, t("registration.lecture.not_found"),
+                           fallback_location: root_path)
       end
 
       def handle_preference_action(action)

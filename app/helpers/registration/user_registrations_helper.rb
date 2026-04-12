@@ -69,7 +69,7 @@ module Registration
           icon: "event",
           field: lambda { |item|
             item.registerable.dates&.map do |d|
-              format_date(d)
+              d.nil? ? "" : d.strftime("%b %d, %H:%M")
             end&.join(", ")
           } }
       ],
@@ -86,7 +86,6 @@ module Registration
 
       time.strftime("%b %d, %H:%M")
     end
-    module_function :format_date
 
     OUTCOME_MAP = {
       true => { text: "basics.passed",

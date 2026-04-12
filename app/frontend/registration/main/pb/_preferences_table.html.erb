@@ -68,7 +68,7 @@
           </button>
 
           <!-- Remove -->
-          <button type="submit" name="remove_<%= campaign.id %>" 
+          <button type="submit" name="remove_<%= campaign.id %>"
                   title="<%= t('registration.user_registration.actions.remove_option') %>"
                   class="material-icons clickable playlist_remove border-0 bg-transparent text-danger p-0"
                   <%= "disabled" if !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>

@@ -1,5 +1,5 @@
 <%= form_with method: :post,
-              data: { turbo_frame: "preferences_workspace",
+              data: { turbo_frame: dom_id(campaign, :preferences_workspace),
                       controller: "touched-check",
                       action: "submit->touched-check#handleMarkState"
               } do %>

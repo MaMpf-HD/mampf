@@ -74,9 +74,6 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
-import DetailsEditorController from "~/registration/allocations/details_editor.controller.js";
-window.Stimulus.register("details-editor", DetailsEditorController);
-
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 

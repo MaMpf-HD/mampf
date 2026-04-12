@@ -118,9 +118,9 @@ module RosterHelper
     when "Tutorial"
       t("registration.item.types.tutorial")
     when "Talk"
-      "#{t("registration.item.types.talk")} #{item.registerable.position}"
+      "#{t("registration.item.types.talk")} #{rosterable.position}"
     when "Cohort"
-      cohort = item.registerable
+      cohort = rosterable
       base_type = t("registration.item.types.other_group")
 
       if cohort.propagate_to_lecture
@@ -135,11 +135,6 @@ module RosterHelper
     end
   end
 
-  def format_date(time)
-    return "" if time.nil?
-
-    time.strftime("%b %d, %H:%M")
-  end
   SELF_ROSTER_TABLE_CONFIG = {
     "Tutorial" => [
       { header: "basics.tutor",
@@ -164,7 +159,7 @@ module RosterHelper
         icon: "event",
         field: lambda { |rosterable|
           rosterable.dates&.map do |d|
-            format_date(d)
+            d.nil? ? "" : d.strftime("%b %d, %H:%M")
           end&.join(", ")
         } }
     ],
