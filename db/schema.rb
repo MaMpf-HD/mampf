@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_04_000012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -367,8 +367,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
   end
 
   create_table "lecture_user_joins", force: :cascade do |t|
-    t.bigint "lecture_id"
-    t.bigint "user_id"
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
@@ -401,10 +401,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    # Tutorial, Cohorts and Talks have an index on `self_materialization_mode`,
-    # but Lectures not. This is by design since lectures as rosterables need
-    # the column but the value is always 0 (disabled), so indexing is not useful.
-    # See also migration `AddSelfMaterializationModeToRosterables`.
     t.integer "self_materialization_mode", default: 0, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
@@ -605,10 +601,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_000013) do
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
     t.integer "confirmed_registrations_count", default: 0, null: false
-    # unique index here means: a registerable can only appear in one campaign ever
-    # (might want to loosen this in case we want to introduce item-level capacities later,
-    # e.g. same tutorial in two campaigns with split capacity: 20 seats for computer science students,
-    # 10 seats for physics students).
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end

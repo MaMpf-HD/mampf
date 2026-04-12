@@ -28,20 +28,10 @@ FactoryBot.define do
       with_items
     end
 
-    trait :closed_only do
-      status { :closed }
-      registration_deadline { 1.day.ago }
-    end
-
     trait :processing do
       status { :processing }
       registration_deadline { 1.day.ago }
       with_items
-    end
-
-    trait :processing_only do
-      status { :processing }
-      registration_deadline { 1.day.ago }
     end
 
     trait :completed do

@@ -138,7 +138,9 @@ module Registration
         )
       end
 
-      def render_turbo_stream_response
+    private
+
+      def evaluate_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
 
         if ["allocation", "allocation_embedded"].include?(params[:source])
@@ -169,7 +171,7 @@ module Registration
           end
         end
 
-        render turbo_stream: streams
+        streams
       end
 
       def load_allocation_data
@@ -181,7 +183,8 @@ module Registration
         @campaign = Registration::Campaign.find_by(id: id)
         return if @campaign
 
-        respond_with_error(t("registration.campaign.not_found"), redirect_path: root_path)
+        respond_with_flash(:alert, t("registration.campaign.not_found"),
+                           fallback_location: root_path)
       end
 
       def set_locale
@@ -204,7 +207,9 @@ module Registration
       def campaign_completed?
         return false unless @campaign.completed?
 
-        respond_with_error(t("registration.campaign.errors.already_finalized"))
+        respond_with_flash(:alert, t("registration.campaign.errors.already_finalized"),
+                           fallback_location: registration_campaign_path(@campaign))
+
         true
       end
 
@@ -220,23 +225,15 @@ module Registration
         count = registrations.count
 
         if registrations.destroy_all
-          respond_with_destroy_success(count)
+          respond_with_flash(:notice,
+                             t("registration.user_registration.destroyed_all_for_user",
+                               count: count),
+                             fallback_location: registration_campaign_path(@campaign)) do
+            evaluate_turbo_stream_response
+          end
         else
-          respond_with_error(t("registration.user_registration.destroy_failed"))
-        end
-      end
-
-      def respond_with_destroy_success(count)
-        message = t("registration.user_registration.destroyed_all_for_user", count: count)
-        respond_to do |format|
-          format.html do
-            redirect_back_or_to(registration_campaign_path(@campaign),
-                                notice: message)
-          end
-          format.turbo_stream do
-            flash.now[:notice] = message
-            render_turbo_stream_response
-          end
+          respond_with_flash(:alert, t("registration.user_registration.destroy_failed"),
+                             fallback_location: registration_campaign_path(@campaign))
         end
       end
 

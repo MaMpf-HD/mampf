@@ -42,6 +42,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
       end
 
+      it "returns turbo stream updates for participants sections" do
+        get lecture_roster_participants_path(lecture), as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('target="roster_participants_top_nav"')
+        expect(response.body).to include('target="roster_participants_header_controls"')
+        expect(response.body).to include('target="roster_participants_results"')
+      end
+
       context "with existing groups" do
         let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
@@ -430,6 +439,48 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           patch(move_member_lecture_path(lecture, user_id: member.id),
                 params: { target_id: target_tutorial.id, target_type: "Tutorial" })
         end.not_to(change { tutorial.members.count })
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:id/roster/bulk_self_materialization" do
+    let!(:free_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+    let!(:campaign_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+    let!(:campaign) { create(:registration_campaign, campaignable: lecture, status: :draft) }
+
+    before do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: campaign_tutorial)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "enables self-materialization through validated model updates" do
+        patch roster_bulk_update_self_materialization_lecture_path(
+          lecture,
+          mode: :add_only
+        ), as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(free_tutorial.reload.self_materialization_mode).to eq("add_only")
+        expect(free_tutorial.skip_campaigns).to be(true)
+        expect(campaign_tutorial.reload.self_materialization_mode).to eq("disabled")
+        expect(campaign_tutorial.skip_campaigns).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch roster_bulk_update_self_materialization_lecture_path(
+          lecture,
+          mode: :add_only
+        ), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
       end
     end
   end

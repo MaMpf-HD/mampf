@@ -155,7 +155,7 @@ module Registration
     end
 
     def reset_allocation_results!
-      transaction do
+      with_lock do
         subquery = Registration::UserRegistration
                    .select(:user_id)
                    .where(registration_campaign_id: id)
@@ -182,21 +182,35 @@ module Registration
       end
     end
 
-    # Returns users registered in this campaign who are not assigned to any group
-    # of the same type within the campaignable (Lecture).
-    # This respects the materialization logic: if a user is assigned via another campaign
-    # (or manually), they are considered "assigned" and thus not a candidate here.
-    def unassigned_users
+    # Returns users registered in this campaign who are not currently allocated
+    # to any matching registerable within the campaignable.
+    #
+    # Lecture roster membership alone does not affect this query. A user is only
+    # considered assigned once they appear in the allocated user IDs of the
+    # relevant tutorials, talks, or cohorts, whether that happened manually or
+    # through another campaign. A user is considered unassigned if they haven't
+    # secured a spot in any of the campaign's registerables, even if they are
+    # members of the lecture roster.
+    #
+    # When preload_registrations is true, the returned relation also eager-loads
+    # the registration data needed by the "unassigned side panel" and orders by
+    # name and email.
+    def unassigned_users(preload_registrations: false)
       return User.none if draft?
 
       allocated_ids = registerable_types.flat_map do |type|
         allocated_user_ids_for_type(type)
       end.uniq
 
-      # Return registered users who are not in the allocated list
-      # We look at all users who have at least one registration entry in this campaign
-      # (regardless of status, as they are "candidates" until assigned elsewhere)
-      users.where.not(id: allocated_ids)
+      relation = users.where.not(id: allocated_ids)
+      return relation unless preload_registrations
+
+      relation.includes(
+        user_registrations: [
+          :registration_campaign,
+          { registration_item: :registerable }
+        ]
+      ).order(:name, :email)
     end
 
     def roster_group_type
@@ -214,7 +228,7 @@ module Registration
         return unless status_was == "completed"
         return unless changed?
 
-        errors.add(:base, :already_finalized) unless status_changed?
+        errors.add(:base, :already_finalized)
       end
 
       def prerequisites_not_draft

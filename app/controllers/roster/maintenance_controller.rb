@@ -14,20 +14,23 @@ module Roster
     before_action :use_lecture_locale
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
-      respond_with_error(t("roster.errors.user_already_in_bundle",
-                           group: e.conflicting_group.title))
+      respond_with_flash(:alert, t("roster.errors.user_already_in_bundle",
+                                   group: e.conflicting_group.title),
+                         fallback_location: fallback_path)
     end
 
     rescue_from "Rosters::MaintenanceService::CapacityExceededError" do
-      respond_with_error(t("roster.errors.capacity_exceeded"))
+      respond_with_flash(:alert, t("roster.errors.capacity_exceeded"),
+                         fallback_location: fallback_path)
     end
 
     rescue_from RosterLockedError do
-      respond_with_error(t("roster.errors.item_locked"))
+      respond_with_flash(:alert, t("roster.errors.item_locked"), fallback_location: fallback_path)
     end
 
     rescue_from UserNotFoundError do
-      respond_with_error(t("roster.errors.user_not_found"))
+      respond_with_flash(:alert, t("roster.errors.user_not_found"),
+                         fallback_location: fallback_path)
     end
 
     rescue_from CanCan::AccessDenied do |exception|
@@ -54,6 +57,11 @@ module Roster
     def participants
       @group_type = @mparams.group_type
       setup_participants
+
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: participants_streams }
+        format.html
+      end
     end
 
     def show
@@ -107,12 +115,14 @@ module Roster
       )
 
       if target.nil?
-        respond_with_error(t("roster.errors.target_not_found"))
+        respond_with_flash(:alert, t("roster.errors.target_not_found"),
+                           fallback_location: fallback_path)
         return
       end
 
       if target.locked?
-        respond_with_error(t("roster.errors.target_locked"))
+        respond_with_flash(:alert, t("roster.errors.target_locked"),
+                           fallback_location: fallback_path)
         return
       end
 
@@ -141,7 +151,8 @@ module Roster
           ).render_in(view_context)
         )
       else
-        respond_with_error(@rosterable.errors.full_messages.to_sentence)
+        respond_with_flash(:alert, @rosterable.errors.full_messages.to_sentence,
+                           fallback_location: fallback_path)
       end
     end
 
@@ -151,13 +162,15 @@ module Roster
 
       ActiveRecord::Base.transaction do
         query.scopes_by_type.each do |scope|
-          scope.update_all(self_materialization_mode: mode) # rubocop:disable Rails/SkipsModelValidations
+          scope.find_each do |registerable|
+            registerable.update!(self_materialization_mode: mode)
+          end
         end
       end
 
       render turbo_stream: refresh_campaigns_index_stream(@lecture)
     rescue StandardError => e
-      respond_with_error(e.message)
+      respond_with_flash(:alert, e.message, fallback_location: fallback_path)
     end
 
     private
@@ -171,6 +184,39 @@ module Roster
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
+        @participants_component_args = participants_component_args
+      end
+
+      def participants_component(section: :full)
+        RosterParticipantsComponent.new(**participants_component_args,
+                                        section: section)
+      end
+
+      def participants_component_args
+        {
+          lecture: @lecture,
+          group_type: @group_type,
+          participants: @participants,
+          pagy: @pagy,
+          filter_mode: @participants_filter,
+          search_string: @search_string,
+          counts: participants_counts
+        }
+      end
+
+      def participants_counts
+        {
+          total: @total_participants_count,
+          unassigned: @unassigned_participants_count
+        }
+      end
+
+      # Renders turbo stream to refresh all participant-related sections.
+      def participants_streams
+        RosterParticipantsComponent.section_targets.map do |section, target_id|
+          component = participants_component(section: section)
+          turbo_stream.update(target_id, component.render_in(view_context))
+        end
       end
 
       def authorize_lecture
@@ -297,16 +343,6 @@ module Roster
 
       def build_maintenance_params
         @mparams = Rosters::MaintenanceParams.new(params, lecture: @lecture)
-      end
-
-      def respond_with_error(message)
-        respond_to do |format|
-          format.turbo_stream do
-            flash.now[:alert] = message
-            render turbo_stream: stream_flash
-          end
-          format.html { redirect_back_or_to fallback_path, alert: message }
-        end
       end
 
       def use_lecture_locale

@@ -1,141 +1,88 @@
-<div class="row">
-  <div class="col-12">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="d-flex align-items-center">
-        <% if (nav = pagination_nav) %>
-          <%== nav %>
+<% if section?(:full) %>
+  <div class="row">
+    <div class="col-12">
+      <div
+        class="
+          d-flex flex-wrap justify-content-between align-items-start gap-3
+          mb-3
+        "
+      >
+        <%= helpers.turbo_frame_tag section_target(:top_nav),
+                                    class: "d-flex align-items-center" do %>
+          <%= render section_component(:top_nav) %>
         <% end %>
-      </div>
 
-      <div class="d-flex align-items-center gap-3">
-        <!-- Search filter -->
-        <%= form_with url: lecture_roster_participants_path(@lecture),
-                      method: :get,
-                      html: { data: { controller: "auto-submit-form", turbo_frame: "roster_participants_panel" }, class: "m-0" } do |f| %>
-          <%= f.hidden_field :filter, value: @filter_mode %>
+        <div
+          class="d-flex flex-wrap align-items-center gap-3 ms-auto"
+          data-controller="auto-submit-form"
+        >
+          <%= form_with url: lecture_roster_participants_path(@lecture),
+                        method: :get,
+                        html: {
+                          id: "roster-participants-search-form",
+                          data: {
+                            turbo_stream: true,
+                            auto_submit_form_target: "form"
+                          },
+                          class: "m-0"
+                        } do |f| %>
+            <%= f.hidden_field :filter,
+                               value: @filter_mode,
+                               data: { auto_submit_form_target: "filterInput" } %>
 
-          <% if @group_type.is_a?(Array) %>
-            <% @group_type.each do |gt| %>
-              <%= f.hidden_field "group_type[]", value: gt %>
+            <% if @group_type.is_a?(Array) %>
+              <% @group_type.each do |gt| %>
+                <%= f.hidden_field "group_type[]", value: gt %>
+              <% end %>
+            <% else %>
+              <%= f.hidden_field :group_type, value: @group_type %>
             <% end %>
-          <% else %>
-            <%= f.hidden_field :group_type, value: @group_type %>
-          <% end %>
 
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-white border-end-0 pe-1">
-              <i class="bi bi-search text-muted"></i>
-            </span>
-
-            <%= f.text_field :search,
-                             value: @search_string,
-                             placeholder: t("basics.search"),
-                             class: "form-control border-start-0 ps-1 focus-ring-0 shadow-none",
-                             data: { action: "input->auto-submit-form#debouncedSubmit" } %>
-          </div>
-        <% end %>
-
-        <!-- Filter Toggle Buttons -->
-        <div class="btn-group btn-group-sm" role="group">
-          <%= link_to lecture_roster_participants_path(@lecture, filter: :all,
-                                                       search: @search_string,
-                                                       group_type: @group_type),
-                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'all'}" do %>
-            <%= t('roster.filters.all') %>
-            (<span><%= @counts[:total] || 0 %></span>)
-          <% end %>
-
-          <%= link_to lecture_roster_participants_path(@lecture,
-                                                       filter: :unassigned,
-                                                       search: @search_string,
-                                                       group_type: @group_type),
-                      class: "btn btn-outline-secondary #{'active' if @filter_mode == 'unassigned'}" do %>
-            <%= t('roster.filters.unassigned') %>
-            (<span><%= @counts[:unassigned] || 0 %></span>)
-          <% end %>
-        </div>
-
-        <div>
-          <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
-        </div>
-      </div>
-    </div>
-
-    <div class="table-responsive mb-4">
-      <table class="table table-hover mb-0 align-middle">
-        <thead class="table-light">
-          <tr>
-            <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
-            <th scope="col" class="border-top-0"><%= t("basics.email") %></th>
-
-            <th scope="col" class="border-top-0">
-              <%= t("roster.columns.groups") %>
-            </th>
-
-            <th scope="col" class="border-top-0 text-end">
-              <%= t("basics.actions") %>
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% if participants.empty? %>
-            <tr>
-              <td
-                colspan="4"
-                class="text-center py-4 text-muted border-bottom-0"
+            <div
+              id="roster-participants-search-field"
+              class="position-relative roster-search-group"
+            >
+              <span
+                class="
+                  position-absolute top-50 start-0 translate-middle-y ps-3
+                  pe-none text-muted
+                "
               >
-                <%= t("roster.details.empty") %>
-              </td>
-            </tr>
-          <% else %>
-            <% participants.each do |membership| %>
-              <% user = membership.user %>
+                <i class="bi bi-search"></i>
+              </span>
 
-              <tr data-cy="participant-row-<%= user.id %>">
-                <td><%= user.tutorial_name %></td>
-                <td><%= user.email %></td>
+              <%= f.text_field :search,
+                               value: @search_string,
+                               placeholder: t("basics.search"),
+                               class: "form-control form-control-sm ps-5 pe-5",
+                               data: {
+                                 action: "input->auto-submit-form#debouncedSubmit",
+                                 auto_submit_form_target: "searchInput"
+                               } %>
 
-                <td>
-                  <% groups = participant_groups(user) %>
-
-                  <% if groups.any? %>
-                    <% groups.each do |group| %>
-                      <%= helpers.roster_group_badge(group, group_type) %>
-                    <% end %>
-                  <% else %>
-                    <span class="text-muted small">
-                      <%= t("roster.stats.status_unassigned") %>
-                    </span>
-                  <% end %>
-                </td>
-
-                <td class="text-end">
-                  <div class="d-flex justify-content-end gap-2">
-                    <%= button_to helpers.remove_member_lecture_path(lecture, user),
-                                  method: :delete,
-                                  params: { source: :participants,
-                                            group_type: group_type,
-                                            page: @pagy.page },
-                                  class: "btn btn-sm btn-outline-danger",
-                                  title: t('roster.tooltips.kick_from_lecture'),
-                                  data: { bs_toggle: "tooltip",
-                                          turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
-                      <i class="bi bi-trash"></i>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
+              <button
+                type="button"
+                class="btn-close position-absolute top-50 end-0 translate-middle-y me-2 roster-search-clear <%= "d-none" unless @search_string.present? %>"
+                data-auto-submit-form-target="clearButton"
+                data-action="mousedown->auto-submit-form#keepFocus click->auto-submit-form#clear"
+                aria-label="<%= t("basics.clear") %>"
+              ></button>
+            </div>
           <% end %>
-        </tbody>
-      </table>
-    </div>
 
-    <% if (nav = pagination_nav) %>
-      <div class="d-flex justify-content-center pb-3">
-        <%== nav %>
+          <%= helpers.turbo_frame_tag section_target(:header_controls),
+                                      class: "d-flex flex-wrap align-items-center gap-3",
+                                      data: { filter_mode: @filter_mode } do %>
+            <%= render section_component(:header_controls) %>
+          <% end %>
+        </div>
       </div>
-    <% end %>
+
+      <%= helpers.turbo_frame_tag section_target(:results) do %>
+        <%= render section_component(:results) %>
+      <% end %>
+    </div>
   </div>
-</div>
+<% else %>
+  <%= render section_partial, component: self %>
+<% end %>

@@ -77,6 +77,9 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import DetailsEditorController from "~/registration/allocations/details_editor.controller.js";
 window.Stimulus.register("details-editor", DetailsEditorController);
 
+import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
+window.Stimulus.register("capacity-editor", CapacityEditorController);
+
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 

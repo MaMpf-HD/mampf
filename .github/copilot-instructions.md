@@ -44,7 +44,7 @@ Although we have linters for it, output code directly with line lengths up to 80
 
 ## Migration files
 
-For the filename of migration files, always use the current date, but all-zeros as timestamp, e.g. `20250905000000_create_some_table.rb`. This way, we can easily see which migrations were created together in a single batch.
+For the filename of migration files, always use the current date, but all-zeros as timestamp, e.g. `20250905000000_create_some_table.rb`. For multiple migrations, update the last 4 digits to be 0001, 0002, etc. for each migration created on the same day. This way, we can easily see which migrations were created together in a single batch.
 
 ## Comments
 

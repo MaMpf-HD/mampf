@@ -2,9 +2,29 @@
 # Manages the list of students on the lecture roster, their assignment status,
 # and actions to assign/move them.
 class RosterParticipantsComponent < ViewComponent::Base
+  SECTION_TARGETS = {
+    top_nav: "roster_participants_top_nav",
+    header_controls: "roster_participants_header_controls",
+    results: "roster_participants_results"
+  }.freeze
+
+  SECTION_PARTIALS = {
+    top_nav: "roster/components/roster_participants_top_nav",
+    header_controls: "roster/components/roster_participants_header_controls",
+    results: "roster/components/roster_participants_results"
+  }.freeze
+
+  def self.section_targets
+    SECTION_TARGETS
+  end
+
+  def self.section_partials
+    SECTION_PARTIALS
+  end
+
   # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 search_string: nil, counts: {})
+                 search_string: nil, counts: {}, section: :full)
     super()
     @lecture = lecture
     @group_type = group_type
@@ -13,10 +33,11 @@ class RosterParticipantsComponent < ViewComponent::Base
     @filter_mode = filter_mode
     @search_string = search_string
     @counts = counts
+    @section = section
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :search_string, :counts
+  attr_reader :lecture, :group_type, :pagy, :filter_mode, :search_string, :counts, :section
 
   # Returns the officially enrolled participants (Lecture Superset).
   def participants
@@ -62,6 +83,7 @@ class RosterParticipantsComponent < ViewComponent::Base
 
     helpers.pagy_series_nav(@pagy,
                             path: helpers.lecture_roster_participants_path(@lecture),
+                            anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
                               p["search"] = @search_string if @search_string.present?
@@ -74,7 +96,29 @@ class RosterParticipantsComponent < ViewComponent::Base
                             })
   end
 
+  def section?(section_name)
+    section == section_name
+  end
+
+  def section_target(section_name)
+    self.class.section_targets.fetch(section_name)
+  end
+
+  def section_component(next_section)
+    self.class.new(**section_kwargs, section: next_section)
+  end
+
+  def section_partial
+    self.class.section_partials.fetch(section)
+  end
+
   private
+
+    def section_kwargs
+      { lecture: lecture, group_type: group_type, participants: participants,
+        pagy: pagy, filter_mode: filter_mode, search_string: search_string,
+        counts: counts }
+    end
 
     def all_assignable_groups
       @all_assignable_groups ||=

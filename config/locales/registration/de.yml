@@ -7,7 +7,7 @@ de:
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
-      confirm_delete: "Sind Sie sicher, dass Sie dieses Anmeldeverfahren löschen wollen?"
+      confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest?"
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
@@ -15,7 +15,7 @@ de:
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
-      completed_campaign_title: "Abgeschlossene Kampagnen"
+      completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
       active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
@@ -82,14 +82,15 @@ de:
         new_deadline: "Neue Anmeldefrist"
         submit: "Bestätigen"
       confirmations:
-        open: "Sind Sie sicher, dass Sie die Anmeldung öffnen möchten? Studierende können sich sofort anmelden."
-        close: "Sind Sie sicher, dass Sie die Anmeldung beenden möchten? Es werden keine neuen Anmeldungen mehr angenommen."
-        close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Sie das Verfahren jetzt schließen, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Sind Sie sicher?"
-        reopen: "Sind Sie sicher, dass Sie die Anmeldung erneut öffnen möchten?"
-        finalize: "Sind Sie sicher, dass Sie die Zuteilung durchführen möchten? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
-        force_finalize: "Sind Sie sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
-        reallocate: "Möchten Sie die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
-        complete_planning: "Sind Sie sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
+        open: "Bist Du sicher, dass Du die Anmeldung öffnen möchtest? Studierende können sich sofort anmelden."
+        close: "Bist Du sicher, dass Du die Anmeldung beenden möchtest? Es werden keine neuen Anmeldungen mehr angenommen."
+        close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Du das Verfahren jetzt schließt, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Bist Du sicher?"
+        reopen: "Bist Du sicher, dass Du die Anmeldung erneut öffnen möchtest?"
+        finalize: "Bist Du sicher, dass Du die Zuteilung durchführen möchtest? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
+        force_finalize: "Bist Du sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
+        complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
+        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -108,16 +109,16 @@ de:
       about:
         toggle: "Was sind Anmeldeverfahren?"
         title: "Anmeldeverfahren: Wann verwenden?"
-        intro: "Ein Anmeldeverfahren orchestriert die Einschreibung in Gruppen über einen festgelegten Zeitraum. Für einfache Fälle können Sie Anmeldeverfahren überspringen und Selbstanmeldung aktivieren."
+        intro: "Ein Anmeldeverfahren orchestriert die Einschreibung in Gruppen über einen festgelegten Zeitraum. Für einfache Fälle kannst Du Anmeldeverfahren überspringen und Selbstanmeldung aktivieren."
         when_to_use_campaign:
-          title: "Verwenden Sie ein Anmeldeverfahren, wenn..."
+          title: "Verwende ein Anmeldeverfahren, wenn..."
           benefits:
-            - "Sie Registrierungen vor der Finalisierung prüfen möchten"
+            - "Du Registrierungen vor der Finalisierung prüfen möchtest"
             - "Zulassungsregeln notwendig sind (z.B. Leistungsnachweis, institutionelle E-Mail)"
             - "Studierende Präferenzen abgeben sollen (bevorzugte Tutorien/Vorträge)"
-            - "Sie eine zeitlich begrenzte Anmeldephase benötigen"
+            - "Du eine zeitlich begrenzte Anmeldephase benötigst"
         when_to_use_self:
-          title: "Verwenden Sie Selbstanmeldung, wenn..."
+          title: "Verwende Selbstanmeldung, wenn..."
           benefits:
             - "Keine Zulassungsprüfungen erforderlich sind"
             - "First-Come-First-Served ausreicht (keine Präferenzen)"
@@ -130,7 +131,7 @@ de:
         policies_frozen: "Richtlinien können nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
         kind: "Die Art der Regel. Zum Beispiel verlangt 'Institutionelle E-Mail', dass Nutzer eine E-Mail-Adresse einer bestimmten Domain haben."
         phase: "Wann die Regel geprüft wird. 'Registrierung': Prüfung bei der Anmeldung. 'Finalisierung': Prüfung bei der endgültigen Zuteilung (nachdem die Registrierungsfrist abgelaufen ist). 'Beide': Prüfung zu beiden Zeitpunkten."
-        allowed_domains: "Geben Sie die Hauptdomains an (z.B. 'uni-heidelberg.de'). Subdomains (wie 'stud.uni-heidelberg.de') sind automatisch eingeschlossen. Trennen Sie mehrere Domains durch Kommas."
+        allowed_domains: "Gib die Hauptdomains an (z.B. 'uni-heidelberg.de'). Subdomains (wie 'stud.uni-heidelberg.de') sind automatisch eingeschlossen. Trenne mehrere Domains durch Kommas."
       index:
         title: "Richtlinien"
         add: "Richtlinie hinzufügen"
@@ -149,6 +150,7 @@ de:
       created: "Richtlinie erfolgreich erstellt."
       updated: "Richtlinie erfolgreich aktualisiert."
       destroyed: "Richtlinie erfolgreich gelöscht."
+      confirm_delete: "Bist Du sicher, dass Du diese Richtlinie löschen möchtest?"
       not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
@@ -222,8 +224,8 @@ de:
       updated: "Element erfolgreich aktualisiert."
       invalid_type: "Ungültiger Typ."
       cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
-      confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
-      confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
+      confirm_delete: "Bist Du sicher, dass Du dieses Element entfernen möchtest?"
+      confirm_remove: "Bist Du sicher, dass Du dieses Element aus dem Anmeldeverfahren entfernen möchtest?"
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
@@ -235,8 +237,8 @@ de:
         talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
         enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
         planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt."
-        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Sie bestimmen, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
-        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktivieren Sie dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
+        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktiviere dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
     user_registration:
       forced_assignment: "Zwangszuweisung"
       index:
@@ -316,20 +318,20 @@ de:
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
-        title: "Konfligierende Registrierungen"
-        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Sie die Zuteilung durchführen, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
+        title: "Konflikte bei Registrierungen"
+        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Du die Zuteilung durchführst, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
         currently_in: "aktuell in %{tutorial}"
       dashboard:
         title: "Zuteilung"
         last_updated: "Stand: %{time}"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
-        workflow_info: "Überprüfen Sie die Statistiken. Falls das Ergebnis nicht zufriedenstellend ist, können Sie die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren, Studierenden die Anpassung ihrer Präferenzen zu ermöglichen oder Kapazitäten und Gruppen zu ändern, und anschließend die Zuteilung erneut berechnen. Sie können die Zuteilung auch direkt neu berechnen. Wenn Sie zufrieden sind, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfen Sie die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicken Sie auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Sie können auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Sie abschließen."
+        workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
+        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
       demand:
         title: "Anmeldenachfrage"
-        info: "Diese Übersicht zeigt die Nachfrage pro Gruppe vor der Zuteilung. Prüfen Sie die Erstwahl-Nachfrage im Verhältnis zu den Kapazitäten und klicken Sie dann auf 'Zuteilung berechnen'. Gelb markierte Zeilen haben mehr Erstwahl-Anmeldungen als verfügbare Plätze. Sie können auch die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren, Studierenden die Anpassung ihrer Präferenzen zu ermöglichen oder Kapazitäten und Gruppen zu ändern."
+        info: "Diese Übersicht zeigt die Nachfrage pro Gruppe vor der Zuteilung. Prüfe die Erstwahl-Nachfrage im Verhältnis zu den Kapazitäten und klicke dann auf 'Zuteilung berechnen'. Gelb markierte Zeilen haben mehr Erstwahl-Anmeldungen als verfügbare Plätze. Du kannst auch die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen."
         items_count: "Gruppen"
         first_choice: "Erste Wahl"
         second_choice: "Zweite Wahl"
@@ -349,11 +351,10 @@ de:
         utilization: "Auslastung"
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
-        already_processing: "Zuteilung läuft bereits."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
-        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfen Sie die Details unten."
+        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfe die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"
-        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Sie können diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Du kannst diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
         policy_violation_count:
           one: "Student betroffen"
           other: "Studenten betroffen"

@@ -202,6 +202,117 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "validations" do
+    it "validates registration_deadline is in the future if open" do
+      campaign = create(:registration_campaign, :open)
+      campaign.registration_deadline = 1.day.ago
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "validates prerequisites are not draft if open" do
+      prereq = create(:registration_campaign)
+      campaign = create(:registration_campaign)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: campaign,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      campaign.status = :open
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:base, :prerequisite_is_draft,
+                                    description: prereq.description)).to be(true)
+    end
+
+    describe "#description" do
+      it "validates maximum length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 101)
+        expect(campaign).not_to be_valid
+        expect(campaign.errors[:description]).to include(I18n.t("errors.messages.too_long",
+                                                                count: 100))
+      end
+
+      it "allows length of 100" do
+        campaign = build(:registration_campaign, description: "a" * 100)
+        expect(campaign).to be_valid
+      end
+    end
+
+    describe "#ensure_editable" do
+      let(:campaign) { create(:registration_campaign, :completed) }
+
+      it "prevents updates if campaign is completed" do
+        campaign.description = "New description"
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
+      end
+
+      it "prevents updates on completed campaign (re-opening)" do
+        campaign.status = :open
+        campaign.registration_deadline = 1.day.from_now
+        expect(campaign).not_to be_valid
+        expect(campaign.errors.added?(:base, :already_finalized)).to be(true)
+      end
+
+      it "allows updates if status is changing (finalizing)" do
+        campaign = create(:registration_campaign, :processing)
+        campaign.status = :completed
+        expect(campaign).to be_valid
+      end
+    end
+
+    describe "#validate_real_campaign_uniqueness" do
+      let(:lecture) { create(:lecture) }
+
+      it "allows creating multiple campaigns for the same lecture" do
+        create(:registration_campaign, campaignable: lecture)
+        new_campaign = build(:registration_campaign, campaignable: lecture)
+        expect(new_campaign).to be_valid
+      end
+    end
+  end
+
+  describe "deletion protection" do
+    it "prevents deletion if not draft" do
+      campaign = create(:registration_campaign, :open)
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion if referenced as prerequisite" do
+      prereq = create(:registration_campaign)
+      dependent = create(:registration_campaign)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect { prereq.destroy }.not_to change(Registration::Campaign, :count)
+      expect(prereq.errors.added?(:base, :referenced_as_prerequisite,
+                                  descriptions: dependent.description)).to be(true)
+    end
+  end
+
+  describe "freezing" do
+    let(:campaign) { create(:registration_campaign, :open) }
+
+    it "prevents changing allocation_mode if not draft" do
+      campaign.allocation_mode = :preference_based
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:allocation_mode, :frozen)).to be(true)
+    end
+
+    it "prevents reverting to draft from open" do
+      campaign.status = :draft
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
+    end
+
+    it "allows changing allocation_mode if draft" do
+      draft_campaign = create(:registration_campaign)
+      draft_campaign.allocation_mode = :preference_based
+      expect(draft_campaign).to be_valid
+    end
+  end
+
   describe "#user_registration_confirmed?" do
     let(:campaign) { FactoryBot.create(:registration_campaign) }
     let(:user) { FactoryBot.create(:user) }
@@ -618,6 +729,60 @@ RSpec.describe(Registration::Campaign, type: :model) do
       it "returns users who are registered but not assigned to any cohort in the lecture" do
         expect(campaign.unassigned_users).to include(unassigned_user)
         expect(campaign.unassigned_users).not_to include(assigned_user)
+      end
+    end
+  end
+
+  describe "#unassigned_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) do
+      create(:registration_campaign, :completed, campaignable: lecture)
+    end
+
+    context "when a lecture roster member lost their group assignment" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:sticky_student) { create(:user, name: "Sticky Student") }
+
+      before do
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: sticky_student)
+        create(:lecture_membership, lecture: lecture, user: sticky_student)
+      end
+
+      it "keeps lecture roster members who lost their group assignment" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .to include(sticky_student)
+      end
+    end
+
+    context "when a student is unassigned in another campaign for the same lecture" do
+      let(:other_campaign) do
+        create(:registration_campaign, :completed, campaignable: lecture)
+      end
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+      let(:other_student) { create(:user, name: "Other Student") }
+
+      before do
+        create(:registration_item,
+               registration_campaign: other_campaign,
+               registerable: other_tutorial)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: other_campaign,
+               registration_item: other_campaign.registration_items.first,
+               user: other_student)
+        create(:lecture_membership, lecture: lecture, user: other_student)
+      end
+
+      it "does not include unassigned students from another campaign" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .not_to include(other_student)
       end
     end
   end

@@ -23,6 +23,11 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get lecture_registration_campaigns_path(lecture)
         expect(response).to have_http_status(:success)
       end
+
+      it "renders the turbo stream for index" do
+        get lecture_registration_campaigns_path(lecture_id: lecture.id), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context "as a student" do
@@ -41,6 +46,17 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get lecture_registration_campaigns_path(lecture_id: -1)
         expect(response).to redirect_to(root_path)
         expect(flash[:alert]).to eq(I18n.t("registration.campaign.lecture_not_found"))
+      end
+    end
+  end
+
+  describe "GET /lectures/:lecture_id/campaigns/new" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "renders the turbo stream for new" do
+        get new_lecture_registration_campaign_path(lecture_id: lecture.id), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
       end
     end
   end
@@ -65,6 +81,26 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(response).to redirect_to(
           registration_campaign_path(new_campaign)
         )
+      end
+
+      it "creates a campaign via turbo stream" do
+        post lecture_registration_campaigns_path(lecture), params: {
+          registration_campaign: valid_attributes
+        }, as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        assert_turbo_stream action: :update, target: "campaigns_container"
+      end
+
+      context "with invalid parameters" do
+        it "responds with form error" do
+          post lecture_registration_campaigns_path(lecture), params: {
+            registration_campaign: { description: nil }
+          }, as: :turbo_stream
+
+          expect(response).to have_http_status(:unprocessable_content)
+          assert_turbo_stream action: :replace, target: "new_campaign_form"
+        end
       end
     end
 
@@ -150,6 +186,18 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           expect(campaign).to be_open
           expect(response).to redirect_to(registration_campaign_path(campaign))
         end
+
+        context "when update_status fails" do
+          before do
+            allow_any_instance_of(Registration::Campaign).to receive(:update).and_return(false)
+          end
+
+          it "responds with error" do
+            patch open_registration_campaign_path(campaign), as: :turbo_stream
+            expect(response).to have_http_status(:ok)
+            assert_flash_error
+          end
+        end
       end
 
       context "as a student" do
@@ -193,6 +241,18 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           campaign.reload
           expect(campaign.registration_deadline).to eq(original_deadline)
         end
+
+        context "when update fails" do
+          before do
+            allow_any_instance_of(Registration::Campaign).to receive(:update).and_return(false)
+          end
+
+          it "responds with error turbo stream" do
+            patch close_registration_campaign_path(campaign), as: :turbo_stream
+            expect(response).to have_http_status(:ok)
+            assert_flash_error
+          end
+        end
       end
 
       context "as a student" do
@@ -218,6 +278,13 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
           expect(response).to redirect_to(lecture_registration_campaigns_path(lecture))
         end
+
+        it "destroys the campaign via turbo stream" do
+          delete registration_campaign_path(campaign), as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          assert_turbo_stream action: :update, target: "campaigns_container"
+        end
       end
 
       context "when campaign is open" do
@@ -230,6 +297,33 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
           expect(response).to redirect_to(registration_campaign_path(campaign))
           expect(flash[:alert]).to be_present
+        end
+      end
+
+      context "when it cannot be deleted" do
+        before do
+          campaign.update!(status: :completed)
+        end
+
+        it "responds with error" do
+          delete registration_campaign_path(campaign), as: :turbo_stream
+          expect(response).to have_http_status(:ok)
+          assert_flash_error
+        end
+      end
+
+      context "when destroy fails internally" do
+        before do
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:destroy).and_return(false)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:can_be_deleted?).and_return(true)
+        end
+
+        it "responds with error" do
+          delete registration_campaign_path(campaign), as: :turbo_stream
+          expect(response).to have_http_status(:ok)
+          assert_flash_error
         end
       end
     end
@@ -252,6 +346,11 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get registration_campaign_path(campaign)
         expect(response).to have_http_status(:success)
       end
+
+      it "renders the turbo stream for show" do
+        get registration_campaign_path(campaign), as: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context "as a student" do
@@ -270,6 +369,53 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         get registration_campaign_path(id: -1)
         expect(response).to redirect_to(root_path)
         expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+      end
+    end
+  end
+
+  describe "GET /campaigns/:id/unassigned" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "without source=panel" do
+        it "redirects to the lecture groups tab" do
+          get unassigned_registration_campaign_path(campaign)
+          expect(response).to redirect_to(edit_lecture_path(campaign.campaignable, tab: "groups"))
+        end
+      end
+
+      context "with source=panel" do
+        it "renders the roster side panel turbo stream" do
+          get unassigned_registration_campaign_path(campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+        end
+
+        context "when a student remains on the lecture roster after losing their group" do
+          let!(:campaign) do
+            create(:registration_campaign, :completed, campaignable: lecture)
+          end
+          let(:sticky_student) { create(:confirmed_user, name: "Sticky Student") }
+          let(:item) { campaign.registration_items.first }
+
+          before do
+            create(:registration_user_registration, :confirmed,
+                   registration_campaign: campaign,
+                   registration_item: item,
+                   user: sticky_student)
+            create(:lecture_membership, lecture: lecture, user: sticky_student)
+          end
+
+          it "still lists the student as unassigned" do
+            get unassigned_registration_campaign_path(campaign),
+                params: { source: "panel" }, as: :turbo_stream
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to include("Sticky Student")
+          end
+        end
       end
     end
   end
@@ -352,6 +498,19 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           expect(campaign.last_allocation_calculated_at).to be_nil
           expect(campaign.user_registrations.confirmed).to be_empty
           expect(campaign.user_registrations.pending.count).to eq(1)
+        end
+      end
+
+      context "when transaction raises ActiveRecord::RecordInvalid" do
+        before do
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:update!).and_raise(ActiveRecord::RecordInvalid)
+        end
+
+        it "rescues and responds with error stream" do
+          patch reopen_registration_campaign_path(campaign), as: :turbo_stream
+          expect(response).to have_http_status(:ok)
+          assert_flash_error
         end
       end
     end

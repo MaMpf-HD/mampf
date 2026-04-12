@@ -14,17 +14,23 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
   describe "#campaign_badge_color" do
     it "returns the correct color sequence based on status" do
-      expect(helper.campaign_badge_color(build(:registration_campaign, status: :draft))).to eq("secondary")
-      expect(helper.campaign_badge_color(build(:registration_campaign, status: :open))).to eq("success")
-      expect(helper.campaign_badge_color(build(:registration_campaign, status: :closed))).to eq("warning")
-      expect(helper.campaign_badge_color(build(:registration_campaign, status: :processing))).to eq("info")
-      expect(helper.campaign_badge_color(build(:registration_campaign, status: :completed))).to eq("dark")
+      expect(helper.campaign_badge_color(build(:registration_campaign, status: :draft)))
+        .to eq("secondary")
+      expect(helper.campaign_badge_color(build(:registration_campaign, status: :open)))
+        .to eq("success")
+      expect(helper.campaign_badge_color(build(:registration_campaign, status: :closed)))
+        .to eq("warning")
+      expect(helper.campaign_badge_color(build(:registration_campaign, status: :processing)))
+        .to eq("info")
+      expect(helper.campaign_badge_color(build(:registration_campaign, status: :completed)))
+        .to eq("dark")
     end
   end
 
   describe "ID generation methods" do
     it "#campaign_header_frame_id" do
-      expect(helper.campaign_header_frame_id(campaign)).to eq("campaign_header_frame_#{campaign.id}")
+      expect(helper.campaign_header_frame_id(campaign))
+        .to eq("campaign_header_frame_#{campaign.id}")
     end
 
     it "#campaign_actions_id" do
@@ -38,10 +44,16 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
   describe "#policy_kinds_summary" do
     it "returns joined translations" do
-      p1 = create(:registration_policy, registration_campaign: campaign, kind: :student_performance, position: 1)
-      p2 = create(:registration_policy, registration_campaign: campaign, kind: :institutional_email, position: 2)
-      
-      expect(helper.policy_kinds_summary(campaign)).to eq("#{I18n.t("registration.policy.kinds.student_performance")}, #{I18n.t("registration.policy.kinds.institutional_email")}")
+      create(:registration_policy, registration_campaign: campaign,
+                                   kind: :student_performance, position: 1)
+      create(:registration_policy, registration_campaign: campaign,
+                                   kind: :institutional_email, position: 2)
+
+      expect(helper.policy_kinds_summary(campaign))
+        .to eq(
+          "#{I18n.t("registration.policy.kinds.student_performance")}, " \
+          "#{I18n.t("registration.policy.kinds.institutional_email")}"
+        )
     end
   end
 
@@ -68,19 +80,22 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
 
     it "returns parameterized label for integer ranks" do
-      expect(helper.rank_label(3)).to eq(I18n.t("registration.allocation.stats.rank_label", rank: 3))
+      expect(helper.rank_label(3)).to eq(I18n.t("registration.allocation.stats.rank_label",
+                                                rank: 3))
     end
   end
 
   describe "#campaign_close_confirmation" do
     it "returns early confirmation when deadline is future" do
       campaign.registration_deadline = 1.day.from_now
-      expect(helper.campaign_close_confirmation(campaign)).to eq(I18n.t("registration.campaign.confirmations.close_early"))
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close_early"))
     end
 
     it "returns normal confirmation when deadline passes" do
       campaign.registration_deadline = 1.day.ago
-      expect(helper.campaign_close_confirmation(campaign)).to eq(I18n.t("registration.campaign.confirmations.close"))
+      expect(helper.campaign_close_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.close"))
     end
   end
 
@@ -95,21 +110,24 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
   describe "#campaign_open_confirmation" do
     it "returns base confirmation string" do
-      expect(helper.campaign_open_confirmation(campaign)).to eq(I18n.t("registration.campaign.confirmations.open"))
+      expect(helper.campaign_open_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirmations.open"))
     end
 
     it "appends unlimited items warning if there are items missing capacity" do
       create(:registration_item, registration_campaign: campaign, capacity: nil)
       create(:registration_item, registration_campaign: campaign, capacity: 10)
-      
-      expected = I18n.t("registration.campaign.confirmations.open") + "\n\n" + I18n.t("registration.campaign.warnings.unlimited_items")
+
+      expected = [I18n.t("registration.campaign.confirmations.open"),
+                  I18n.t("registration.campaign.warnings.unlimited_items")].join("\n\n")
       expect(helper.campaign_open_confirmation(campaign)).to eq(expected)
     end
   end
 
   describe "buttons" do
     it "#campaign_finalize_confirmation returns correct t" do
-      expect(helper.campaign_finalize_confirmation).to eq(I18n.t("registration.campaign.confirmations.finalize"))
+      expect(helper.campaign_finalize_confirmation)
+        .to eq(I18n.t("registration.campaign.confirmations.finalize"))
     end
 
     describe "#finalize_campaign_button" do

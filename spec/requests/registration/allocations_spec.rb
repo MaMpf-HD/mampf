@@ -76,6 +76,23 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(flash[:notice]).to be_present
       end
 
+      context "when campaign is closed and preference based" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :closed,
+                 :preference_based,
+                 campaignable: lecture)
+        end
+
+        it "triggers allocation service" do
+          expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
+          post registration_campaign_allocation_path(campaign)
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to include("calculated")
+        end
+      end
+
       context "when campaign is open" do
         let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
@@ -84,6 +101,43 @@ RSpec.describe("Registration::Allocations", type: :request) do
           post registration_campaign_allocation_path(campaign)
           expect(response).to redirect_to(registration_campaign_path(campaign))
           expect(flash[:alert]).to be_present
+        end
+      end
+
+      context "when campaign is processing and preference based" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :processing,
+                 :preference_based,
+                 campaignable: lecture)
+        end
+
+        it "allows recalculation" do
+          expect_any_instance_of(Registration::AllocationService).to receive(:allocate!)
+
+          post registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to include("calculated")
+        end
+      end
+
+      context "when campaign is first come first served" do
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :closed,
+                 :first_come_first_served,
+                 campaignable: lecture)
+        end
+
+        it "rejects allocation and keeps the campaign closed" do
+          post registration_campaign_allocation_path(campaign)
+
+          campaign.reload
+          expect(campaign).to be_closed
+          expect(response).to redirect_to(registration_campaign_path(campaign))
+          expect(flash[:alert]).to include("preference-based campaigns")
         end
       end
     end

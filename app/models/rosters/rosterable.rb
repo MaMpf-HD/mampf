@@ -134,22 +134,18 @@ module Rosters
     def in_campaign?
       return false unless respond_to?(:registration_items)
 
-      return @in_campaign if defined?(@in_campaign)
-
-      @in_campaign = registration_items.exists?
+      registration_items.exists?
     end
 
     # Checks if the item is associated with a completed campaign.
     def in_completed_campaign?
       return false unless respond_to?(:registration_items)
 
-      return @in_completed_campaign if defined?(@in_completed_campaign)
-
-      @in_completed_campaign = Registration::Campaign
-                               .joins(:registration_items)
-                               .where(registration_items: { registerable_id: id,
-                                                            registerable_type: self.class.name })
-                               .exists?(status: :completed)
+      Registration::Campaign
+        .joins(:registration_items)
+        .where(registration_items: { registerable_id: id,
+                                     registerable_type: self.class.name })
+        .exists?(status: :completed)
     end
 
     # Returns the IDs of users currently in the roster.

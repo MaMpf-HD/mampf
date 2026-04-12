@@ -18,6 +18,12 @@ module Registration
     #
     # Note: Row-level locks are automatically released when the transaction commits or rolls back.
     def allocate!
+      unless @campaign.preference_based?
+        raise(ArgumentError,
+              "Allocation can only be triggered for preference-based campaigns. " \
+              "As a user, you should never see this error, please contact the MaMpf team.")
+      end
+
       Registration::Campaign.transaction do
         # Lock campaign to prevent concurrent allocate! calls
         @campaign.lock!

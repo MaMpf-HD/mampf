@@ -14,9 +14,31 @@ module Rosters
     class CapacityExceededError < StandardError; end
 
     def add_user!(user, rosterable, force: false)
-      ActiveRecord::Base.transaction do
-        rosterable.lock!
+      rosterable.with_lock do
+        add_user_without_lock!(user, rosterable, force: force)
+      end
+    end
 
+    def remove_user!(user, rosterable)
+      rosterable.with_lock do
+        remove_user_without_lock!(user, rosterable)
+      end
+    end
+
+    def move_user!(user, from_rosterable, to_rosterable, force: false)
+      lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        remove_user_without_lock!(user, from_rosterable)
+        add_user_without_lock!(user, to_rosterable, force: force)
+      end
+    end
+
+    private
+
+      def user_in_roster?(user, rosterable)
+        rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)
+      end
+
+      def add_user_without_lock!(user, rosterable, force: false)
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
@@ -30,26 +52,28 @@ module Rosters
         propagate_to_lecture!(user, rosterable)
         update_registration_materialization(user, rosterable)
       end
-    end
 
-    def remove_user!(user, rosterable)
-      ActiveRecord::Base.transaction do
+      def remove_user_without_lock!(user, rosterable)
         rosterable.remove_user_from_roster!(user)
         cascade_removal_from_subgroups!(user, rosterable)
       end
-    end
 
-    def move_user!(user, from_rosterable, to_rosterable, force: false)
-      ActiveRecord::Base.transaction do
-        remove_user!(user, from_rosterable)
-        add_user!(user, to_rosterable, force: force)
+      def lock_rosterables_in_order(*rosterables, &)
+        ActiveRecord::Base.transaction do
+          sorted_rosterables = rosterables.uniq.sort_by { |r| [r.class.name, r.id.to_i] }
+          lock_rosterables_recursively(sorted_rosterables, 0, &)
+        end
       end
-    end
 
-    private
+      def lock_rosterables_recursively(sorted_rosterables, index, &)
+        if index >= sorted_rosterables.length
+          yield
+          return
+        end
 
-      def user_in_roster?(user, rosterable)
-        rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)
+        sorted_rosterables[index].with_lock do
+          lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+        end
       end
 
       def within_capacity?(rosterable)

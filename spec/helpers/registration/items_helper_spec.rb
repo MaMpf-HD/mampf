@@ -11,7 +11,9 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
     end
 
     context "for Talk" do
-      let(:item) { double("Item", registerable_type: "Talk", registerable: double("Talk", position: 5)) }
+      let(:item) do
+        double("Item", registerable_type: "Talk", registerable: double("Talk", position: 5))
+      end
 
       it "returns talk type label with position" do
         expect(helper.item_display_type(item)).to eq("#{I18n.t("registration.item.types.talk")} 5")
@@ -27,7 +29,8 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
         end
 
         it "returns group label without icon" do
-          expect(helper.item_display_type(item)).to eq(I18n.t("registration.item.types.other_group"))
+          expect(helper.item_display_type(item))
+            .to eq(I18n.t("registration.item.types.other_group"))
         end
       end
 
@@ -44,10 +47,10 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
         end
       end
     end
-    
+
     context "for unknown type" do
       let(:item) { double("Item", registerable_type: "Unknown") }
-      
+
       it "returns nil safely" do
         expect(helper.item_display_type(item)).to be_nil
       end
