@@ -15,7 +15,7 @@ module Registration
     # Examples of policy config:
     # student_performance -> config: { certification_status: :pending }
     # institutional_email	-> config:	{ allowed_domains: ["uni-heidelberg.de "] }
-    # prerequisite_campaign	-> config:	{ prerequisite_campaign_id: 42 }
+    # prerequisite_campaign	-> config:	{ prerequisite_campaign: name }
     #
     # Notice config here is JSON object, so keys are string types
     # policy here is also hash, not policy object

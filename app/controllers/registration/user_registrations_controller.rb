@@ -2,7 +2,7 @@ module Registration
   class UserRegistrationsController < ApplicationController
     helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
-    before_action :set_campaign, only: [:create, :reset_preferences,
+    before_action :set_campaign, only: [:create, :destroy, :reset_preferences,
                                         :update, :destroy_for_user]
     before_action :set_locale
     before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
@@ -57,9 +57,6 @@ module Registration
     end
 
     def destroy
-      @campaign = @item.user_registrations.find_by!(user_id: current_user.id,
-                                                    status: :confirmed)
-                       .registration_campaign
       result = Registration::UserRegistration::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,

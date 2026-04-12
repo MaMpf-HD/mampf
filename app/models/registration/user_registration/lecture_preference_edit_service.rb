@@ -52,8 +52,7 @@ module Registration
         def check_options_number(pref_items)
           return if pref_items.size <= 3
 
-          I18n.t("registration.user_registration.messages.too_many_preferences",
-                 max: @campaign.max_preferences)
+          I18n.t("registration.user_registration.messages.too_many_preferences")
         end
     end
   end
