@@ -98,7 +98,7 @@ RSpec.describe(Registration::Campaign::CampaignDetailsService, type: :service) d
         result = service.eligibility
 
         expect(result.first[:config]["prerequisite_campaign"])
-          .to eq("Campaign not found")
+          .to eq(I18n.t("registration.campaign.not_found"))
       end
     end
   end
