@@ -11,14 +11,24 @@ class TutorialMembership < ApplicationRecord
 
     def unique_membership_per_lecture
       return unless tutorial
+      return unless user_id
 
-      scope = TutorialMembership.joins(:tutorial)
-                                .where(tutorials: { lecture_id: tutorial.lecture_id })
-                                .where(user_id: user_id)
-      scope = scope.where.not(id: id) if persisted?
+      lecture_id = tutorial.lecture_id
 
-      return unless scope.exists?
+      self.class.transaction do
+        # Prevent race between exists? check and insert.
+        # Uses (lecture_id, user_id) as lock key — avoid reusing
+        # this (int, int) signature for unrelated entities.
+        self.class.connection.execute(
+          "SELECT pg_advisory_xact_lock(#{lecture_id}, #{user_id})"
+        )
 
-      errors.add(:base, :already_in_lecture_tutorial)
+        scope = TutorialMembership.joins(:tutorial)
+                                  .where(tutorials: { lecture_id: lecture_id })
+                                  .where(user_id: user_id)
+        scope = scope.where.not(id: id) if persisted?
+
+        errors.add(:base, :already_in_lecture_tutorial) if scope.exists?
+      end
     end
 end

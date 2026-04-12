@@ -38,6 +38,24 @@ RSpec.describe(TutorialMembership, type: :model) do
         membership = create(:tutorial_membership, user: user, tutorial: tutorial)
         expect(membership).to be_valid
       end
+
+      it "prevents concurrent memberships in different tutorials of the same lecture" do
+        tutorial_ids = [tutorial.id, other_tutorial.id]
+        uid = user.id
+        index = Mutex.new
+        current = 0
+
+        results = run_concurrently do
+          i = index.synchronize { current.tap { current += 1 } }
+          TutorialMembership.create(
+            user: User.find(uid),
+            tutorial: Tutorial.find(tutorial_ids[i])
+          )
+        end
+
+        saved = results.select { |r| r.is_a?(TutorialMembership) && r.persisted? }
+        expect(saved.size).to eq(1)
+      end
     end
   end
 end
