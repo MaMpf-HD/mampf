@@ -49,6 +49,18 @@ module Registration
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
 
+    # FCFS campaigns: one row per user+campaign for tutorial + talk items
+    # NOTE: DB cannot enforce this via nested conditions/subqueries in indexes
+    # (so enforcement is handled partially in Rails)
+    validates :user_id,
+              uniqueness: {
+                scope: :registration_campaign_id
+              },
+              if: lambda {
+                registration_campaign&.first_come_first_served? &&
+                  registration_item&.registerable_type.in?(["Tutorial", "Talk"])
+              }
+
     private
 
       # We use increment_counter/decrement_counter to update the counter cache
