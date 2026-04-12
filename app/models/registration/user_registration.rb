@@ -49,10 +49,6 @@ module Registration
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
 
-    after_create :increment_confirmed_counter
-    after_update :update_confirmed_counter
-    after_destroy :decrement_confirmed_counter
-
     private
 
       # We use increment_counter/decrement_counter to update the counter cache

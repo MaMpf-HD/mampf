@@ -70,17 +70,6 @@ class Tutorial < ApplicationRecord
     end
   end
 
-  def roster_entries
-    tutorial_memberships
-  end
-
-  def materialize_allocation!(user_ids:, campaign:)
-    transaction do
-      enforce_lecture_uniqueness!(user_ids)
-      super
-    end
-  end
-
   private
 
     def enforce_lecture_uniqueness!(user_ids)
