@@ -137,6 +137,10 @@ module Registration
       value.nil? || (value.is_a?(Integer) && value.positive?)
     end
 
+    def freely_registerable?(group_type)
+      group_type == "Cohort"
+    end
+
     def nullable_capacity_display(capacity)
       capacity.nil? ? "\u221E" : capacity.to_s
     end

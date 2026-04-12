@@ -277,6 +277,7 @@ en:
       seats_remaining: "Seats remaining"
       registered: "Registered"
       not_registered: "Not registered"
+      not_freely_registerable_info: "Only one option is allowed per group type"
       register_now: "Register now"
       need_save: You have unsaved changes. Click “Save” to update your preferences
       currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."

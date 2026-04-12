@@ -277,6 +277,7 @@ de:
       seats_remaining: "Verbleibende Plätze"
       registered: "Registriert"
       not_registered: "Nicht registriert"
+      not_freely_registerable_info: "Es ist nur eine Option pro Gruppentyp erlaubt"
       register_now: "Jetzt registrieren"
       need_save: Sie haben ungespeicherte Änderungen. Klicken Sie auf "Speichern", um Ihre Einstellungen zu aktualisieren.
       currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe austreten."

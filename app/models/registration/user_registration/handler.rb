@@ -22,7 +22,10 @@ module Registration
         I18n.t("registration.user_registration.messages.campaign_not_opened")
       end
 
+      # Checks if the user is already registered for the same campaign and registration type.
+      # only apply for tutorial and talk
       def check_already_registered_current_type(item)
+        return nil if item.registerable_type == "Cohort"
         return nil unless @campaign
                           .user_registration_confirmed_for_group_type?(@user,
                                                                        item.registerable_type)
