@@ -67,15 +67,6 @@ module RosterHelper
     end
   end
 
-  private
-
-    def roster_group_type_param(registerable)
-      gt = registerable.roster_group_type
-      gt == :talks ? {} : { group_type: gt }
-    end
-
-  public
-
   def roster_group_types(lecture)
     if lecture.seminar?
       [:talks, :cohorts]
@@ -170,4 +161,11 @@ module RosterHelper
         field: ->(rosterable) { rosterable.description } }
     ]
   }.freeze
+
+  private
+
+    def roster_group_type_param(registerable)
+      gt = registerable.roster_group_type
+      gt == :talks ? {} : { group_type: gt }
+    end
 end
