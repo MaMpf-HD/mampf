@@ -259,6 +259,9 @@ en:
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from campaign"
+        increase_priority: "Increase priority"
+        decrease_priority: "Decrease priority"
+        remove_option: "Remove option"
       registrations: "Registrations"
       title: "Your Registration"
       planning: "Planning"
@@ -267,7 +270,7 @@ en:
       eligibility_title: "Eligibility"
       preferences_title: Your selected preferences
       success_preferences_title: Your successful selections
-      options_title: "Available options"
+      options_title: "Available options (maximum 3 options are allowed)"
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite Campaign"
@@ -311,6 +314,7 @@ en:
         preferences_saved: "Your preferences have been saved."
         dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"
         not_preference_based_mode: "This registration campaign is not in preference-based mode. Preferences cannot be saved here."
+        too_many_preferences: "You have selected too many preferences. Maximum allowed: 3"
         not_fcfs_mode: "This registration campaign is not in first-come-first-served mode. Direct registrations cannot be made here."
         cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
         course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."

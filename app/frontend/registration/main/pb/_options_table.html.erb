@@ -24,7 +24,7 @@
             <!-- Right: Add button -->
             <button type="submit" name="add_<%= campaign.id %>"
                     class="material-icons clickable playlist_add border-0 bg-transparent"
-                    <%= "disabled" if items_selected.include?(item.id) %> <%# herb:disable erb-no-output-in-attribute-name %>
+                    <%= "disabled" if (items_selected.include?(item.id) || items_selected.size >= 3) %> <%# herb:disable erb-no-output-in-attribute-name %>
                     formaction="<%= add_preference_path(item.id) %>">
               playlist_add
             </button>

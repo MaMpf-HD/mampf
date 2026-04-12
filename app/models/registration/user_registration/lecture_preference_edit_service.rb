@@ -31,13 +31,15 @@ module Registration
         # 1. Check if user satisfies all policies (phase: registration and both)
         # 2. Check if items are valid for this campaign
         # 3. Check if campaign is in preference based mode
+        # 4. Check if number of preferences does not exceed 3
         def validate_update(pref_items)
           [
             check_preference_based_mode,
             check_campaign_open_for_registrations,
             check_campaign_open_for_withdraw,
             check_policies,
-            check_items(pref_items)
+            check_items(pref_items),
+            check_options_number(pref_items)
           ].compact
         end
 
@@ -45,6 +47,13 @@ module Registration
           return if @campaign.preference_based?
 
           I18n.t("registration.user_registration.messages.not_preference_based_mode")
+        end
+
+        def check_options_number(pref_items)
+          return if pref_items.size <= 3
+
+          I18n.t("registration.user_registration.messages.too_many_preferences",
+                 max: @campaign.max_preferences)
         end
     end
   end

@@ -7,6 +7,7 @@
     <% end %>
   </div>
 
+  <div class="row flex-wrap gap-3 ms-0">
   <% if item_preferences.present? %>
     <% item_preferences.each do |pref| %>
       <% item = pref.item %>
@@ -50,6 +51,7 @@
 
           <!-- Move Up -->
           <button type="submit" name="up_<%= campaign.id %>"
+                  title="<%= t('registration.user_registration.actions.increase_priority') %>"
                   class="material-icons clickable arrow_upward border-0 bg-transparent p-0"
                   <%= "disabled" if pref.rank == 1 || !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= preference_up_path(item.id) %>">
@@ -58,6 +60,7 @@
 
           <!-- Move Down -->
           <button type="submit" name="down_<%= campaign.id %>"
+                  title="<%= t('registration.user_registration.actions.decrease_priority') %>"
                   class="material-icons clickable arrow_downward border-0 bg-transparent p-0"
                   <%= "disabled" if pref.rank == item_preferences.size || !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= preference_down_path(item.id) %>">
@@ -65,7 +68,8 @@
           </button>
 
           <!-- Remove -->
-          <button type="submit" name="remove_<%= campaign.id %>"
+          <button type="submit" name="remove_<%= campaign.id %>" 
+                  title="<%= t('registration.user_registration.actions.remove_option') %>"
                   class="material-icons clickable playlist_remove border-0 bg-transparent text-danger p-0"
                   <%= "disabled" if !campaign.open_for_registrations? %> <%# herb:disable erb-no-output-in-attribute-name %>
                   formaction="<%= remove_preference_path(item.id) %>">
@@ -77,6 +81,7 @@
   <% else %>
     <%= render partial: 'shared/no_selection' %>
   <% end %>
+  </div>
 
   <!-- Save / Reset -->
   <div class="d-flex justify-content-end gap-3 mt-3">

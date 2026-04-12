@@ -259,6 +259,9 @@ de:
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+        increase_priority: "Priorität erhöhen"
+        decrease_priority: "Priorität verringern"
+        remove_option: "Option entfernen"
       registrations: "Anmeldungen"
       title: "Ihre Anmeldung"
       planning: "Planung"
@@ -267,7 +270,7 @@ de:
       eligibility_title: "Berechtigung"
       preferences_title: Ihre ausgewählten Einstellungen
       success_preferences_title: Ihre erfolgreichen Einstellungen
-      options_title: "Verfügbare Optionen"
+      options_title: "Verfügbare Optionen (Maximal 3 Optionen erlaubt)"
       eligible: "Berechtigt"
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
@@ -311,6 +314,7 @@ de:
         withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
         dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
         not_preference_based_mode: "Dieses Anmeldeverfahren ist nicht im präferenzbasierten Modus. Präferenzen können hier nicht gespeichert werden."
+        too_many_preferences: "Sie haben zu viele Präferenzen ausgewählt. Maximale Anzahl: 3"
         not_fcfs_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
         cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
