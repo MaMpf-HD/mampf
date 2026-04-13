@@ -15,7 +15,7 @@ de:
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
-      completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
+      completed_campaign_title: "Abgeschlossene Kampagnen"
       active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutzen Sie die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"

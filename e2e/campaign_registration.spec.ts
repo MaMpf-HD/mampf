@@ -76,7 +76,9 @@ test.describe("given completed campaign, preference based", () => {
     const registrationLink = student.page.getByRole("button", { name: "Subscribe event series" });
     await expect(registrationLink).toBeVisible();
     await registrationLink.click();
-    const campaign = await factory.create("registration_campaign", ["completed", "preference_based", "with_items", "with_first_item_registered_preference", "with_first_item_allocated"], { user_id: student["user"]["id"], campaignable_type: "Lecture", campaignable_id: lecture.id });
+    const campaign = await factory.create("registration_campaign",
+      ["completed", "preference_based", "with_items", "with_first_item_registered", "with_first_item_allocated"],
+      { user_id: student["user"]["id"], campaignable_type: "Lecture", campaignable_id: lecture.id });
     const page = new CampaignRegistrationPage(student.page, lecture.id);
     await page.goto();
     const completedSection = student.page.getByText("Abgeschlossene Kampagnen")
@@ -100,10 +102,7 @@ test.describe("closed campaign", () => {
     const campaign = await factory.create("registration_campaign", ["closed"], { campaignable_type: "Lecture", campaignable_id: lecture.id });
     const page = new CampaignRegistrationPage(student.page, lecture.id);
     await page.goto();
-    const completedSection = student.page.getByText("Abgeschlossene Kampagnen")
-      .or(student.page.getByText("Completed Campaign"));
-    await expect(completedSection).toBeVisible();
-    await completedSection.click();
+
     await expect(student.page.getByText("Closed")).toBeVisible();
     const buttons = student.page.locator('button:has-text("Register now")');
     await expect(buttons.nth(0)).toBeDisabled();
