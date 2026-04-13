@@ -24,7 +24,7 @@
     },
     // Disable VSCode-native JS validation since our JS files might include
     // ERB syntax, that would otherwise be flagged as invalid
-    "javascript.validate.enable": false,
+    "js/ts.validate.enabled": false,
     "[html]": {
         "editor.formatOnSave": false // TODO: activate once HTML formatter installed
     },
