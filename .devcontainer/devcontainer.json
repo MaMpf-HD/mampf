@@ -116,7 +116,7 @@
                 "streetsidesoftware.code-spell-checker-german",
                 "nefrob.vscode-just-syntax",
                 "timonwong.shellcheck",
-                "github.copilot",
+                "github.copilot-chat",
                 "github.vscode-pull-request-github",
                 "ms-playwright.playwright"
             ]
