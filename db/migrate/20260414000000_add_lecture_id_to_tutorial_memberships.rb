@@ -1,4 +1,4 @@
-class AddLectureIdToTutorialMemberships < ActiveRecord::Migration[7.2]
+class AddLectureIdToTutorialMemberships < ActiveRecord::Migration[8.0]
   def up
     add_column :tutorial_memberships, :lecture_id, :bigint
 
