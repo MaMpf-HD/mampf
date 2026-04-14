@@ -80,6 +80,11 @@ class Tutorial < ApplicationRecord
       errors.add(:lecture_id, :immutable) if lecture_id_changed?
     end
 
+    # Overrides Rosters::Rosterable#add_missing_users! to inject lecture_id
+    # into the bulk insert and resolve conflicts on the (user_id, lecture_id)
+    # unique index with an upsert. The concern's default insert_all has no
+    # lecture_id and uses ON CONFLICT DO NOTHING, which would silently drop
+    # users already assigned to a sibling tutorial in the same lecture.
     def add_missing_users!(target_ids, current_ids, campaign)
       users_to_add = target_ids - current_ids
       return if users_to_add.empty?
