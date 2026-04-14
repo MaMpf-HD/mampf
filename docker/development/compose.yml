@@ -68,7 +68,7 @@ services:
       - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   redis:
-    image: "redis:6.2.6-alpine"
+    image: "redis:8.6-alpine"
 
   pgadmin:
     image: dpage/pgadmin4
