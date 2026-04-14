@@ -65,17 +65,14 @@ class Tutorial < ApplicationRecord
   end
 
   # Overrides Rosters::Rosterable#add_user_to_roster! to translate a
-  # DB-level RecordNotUnique (from the (user_id, lecture_id) unique index)
-  # into a UserAlreadyInBundleError, maintaining the same error contract
-  # that callers of the concern expect.
+  # DB-level RecordNotUnique into a UserAlreadyInBundleError, maintaining
+  # the same error contract that callers of the concern expect.
   def add_user_to_roster!(user, source_campaign = nil)
     super
   rescue ActiveRecord::RecordNotUnique
     conflicting = TutorialMembership
-                  .where(lecture_id: lecture_id, user_id: user.id)
-                  .where.not(tutorial_id: id)
-                  .first
-    raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial)
+                  .find_by(lecture_id: lecture_id, user_id: user.id)
+    raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial || self)
   end
 
   private
