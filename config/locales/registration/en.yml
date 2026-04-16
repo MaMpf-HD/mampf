@@ -292,7 +292,7 @@ en:
         forced: "Forced Assignment"
         forced_short: "Not preferred"
         capacity: "Capacity"
-        utilization: "Utilization"
+        utilization: "Occupancy"
       errors:
         already_completed: "Registration process is already completed."
         wrong_status: "Registration process has wrong status for this action."
