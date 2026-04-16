@@ -296,4 +296,5 @@ de:
       user_moved: "Studierende/r wurde nach %{target} verschoben."
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
+      user_already_member: "Studierende/r ist bereits in dieser Gruppe."
       user_removed: "Studierende/r erfolgreich entfernt."

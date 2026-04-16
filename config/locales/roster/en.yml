@@ -292,4 +292,5 @@ en:
       user_moved: "Student moved to %{target}."
       user_added: "Student added successfully."
       user_added_to: "Student added to %{group}."
+      user_already_member: "Student is already in this group."
       user_removed: "Student removed successfully."

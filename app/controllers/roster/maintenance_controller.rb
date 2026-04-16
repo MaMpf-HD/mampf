@@ -76,9 +76,14 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
+      already_member = @rosterable.members.exists?(user.id)
       Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
-      flash.now[:notice] = t("roster.messages.user_added")
+      flash.now[:notice] = if already_member
+        t("roster.messages.user_already_member")
+      else
+        t("roster.messages.user_added")
+      end
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       source = find_panel_source
