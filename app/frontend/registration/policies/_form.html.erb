@@ -13,8 +13,7 @@
       <%= helpdesk(t("registration.policy.helpdesk.kind"), false) %>
 
       <%= f.select :kind,
-                   Registration::Policy.kinds.except("student_performance").keys
-                     .map { |k| [t("registration.policy.kinds.#{k}"), k] },
+                   available_policy_kinds(campaign, policy).map { |k| [t("registration.policy.kinds.#{k}"), k] },
                    {},
                    class: "form-select",
                    data: { action: "registration-policy-form#changeKind", registration_policy_form_target: "kindSelect" } %>

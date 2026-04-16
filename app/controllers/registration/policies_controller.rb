@@ -1,5 +1,6 @@
 module Registration
   class PoliciesController < ApplicationController
+    helper RegistrationPolicyHelper
     before_action :set_campaign
     before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]

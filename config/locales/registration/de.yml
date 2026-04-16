@@ -151,6 +151,7 @@ de:
       confirm_delete: "Bist Du sicher, dass Du diese Richtlinie löschen möchtest?"
       not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
+        duplicate_institutional_email: "Pro Anmeldeverfahren ist nur eine Richtlinie für institutionelle E-Mails erlaubt."
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
