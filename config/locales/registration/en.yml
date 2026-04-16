@@ -216,14 +216,14 @@ en:
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
-        remove_from_campaign: "Remove from campaign"
+        remove_from_campaign: "Delete group"
       created: "Item added successfully."
-      destroyed: "Item removed successfully."
+      destroyed: "Group deleted successfully."
       updated: "Item updated successfully."
       invalid_type: "Invalid type."
       cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
       confirm_delete: "Are you sure you want to remove this item?"
-      confirm_remove: "Are you sure you want to remove this item from the campaign?"
+      confirm_remove: "Are you sure you want to permanently delete this group? This action cannot be undone."
       select_type: "Select a group type..."
       attributes:
         capacity_optional: "Capacity (optional)"

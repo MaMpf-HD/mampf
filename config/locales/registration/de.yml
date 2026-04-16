@@ -216,14 +216,14 @@ de:
         lecture: "Vorlesung"
         lecture_signup: "Vorlesungseinschreibung"
       actions:
-        remove_from_campaign: "Aus Anmeldeverfahren entfernen"
+        remove_from_campaign: "Gruppe löschen"
       created: "Element erfolgreich hinzugefügt."
-      destroyed: "Element erfolgreich entfernt."
+      destroyed: "Gruppe erfolgreich gelöscht."
       updated: "Element erfolgreich aktualisiert."
       invalid_type: "Ungültiger Typ."
       cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
       confirm_delete: "Bist Du sicher, dass Du dieses Element entfernen möchtest?"
-      confirm_remove: "Bist Du sicher, dass Du dieses Element aus dem Anmeldeverfahren entfernen möchtest?"
+      confirm_remove: "Bist Du sicher, dass Du diese Gruppe endgültig löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
