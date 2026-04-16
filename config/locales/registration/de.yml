@@ -167,6 +167,7 @@ de:
         lecture_id: "Veranstaltung"
       hints:
         allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
+        select_prerequisite: "— Anmeldeverfahren auswählen —"
       kinds:
         institutional_email: "Institutionelle E-Mail"
         prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"

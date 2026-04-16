@@ -167,6 +167,7 @@ en:
         lecture_id: "Lecture"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
+        select_prerequisite: "— Select a registration process —"
       kinds:
         institutional_email: "Institutional Email"
         prerequisite_campaign: "Prerequisite Registration Process"

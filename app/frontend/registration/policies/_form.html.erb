@@ -69,11 +69,18 @@
       <div class="mb-3">
         <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
 
+        <% prereq_options = campaign.campaignable.registration_campaigns
+                                               .where.not(id: campaign.id).to_a %>
+
+        <% preselect = prereq_options.one? ? prereq_options.first.id
+                                           : policy.prerequisite_campaign_id %>
+
         <%= f.collection_select :prerequisite_campaign_id,
-                                  Registration::Campaign.where.not(id: campaign.id),
+                                  prereq_options,
                                   :id,
                                   :description,
-                                  { include_blank: true },
+                                  { include_blank: t("registration.policy.hints.select_prerequisite"),
+                                    selected: preselect },
                                   class: "form-select" %>
       </div>
     </div>
