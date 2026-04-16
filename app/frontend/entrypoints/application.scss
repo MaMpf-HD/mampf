@@ -55,6 +55,11 @@ trix-toolbar .trix-button-row {
   flex-wrap: wrap;
 }
 
+.td-picker .invalid-feedback {
+  order: 1;
+  width: 100%;
+}
+
 .turbo-progress-bar {
   height: 3px;
   background-color: #ffc107;
