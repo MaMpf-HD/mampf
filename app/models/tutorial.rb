@@ -21,6 +21,7 @@ class Tutorial < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
+  validate :lecture_id_immutable, on: :update
 
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
@@ -63,24 +64,49 @@ class Tutorial < ApplicationRecord
     tutorial_memberships
   end
 
-  def materialize_allocation!(user_ids:, campaign:)
-    transaction do
-      enforce_lecture_uniqueness!(user_ids)
-      super
-    end
+  # Overrides Rosters::Rosterable#add_user_to_roster! to translate a
+  # DB-level RecordNotUnique into a UserAlreadyInBundleError, maintaining
+  # the same error contract that callers of the concern expect.
+  def add_user_to_roster!(user, source_campaign = nil)
+    super
+  rescue ActiveRecord::RecordNotUnique
+    conflicting = TutorialMembership
+                  .find_by(lecture_id: lecture_id, user_id: user.id)
+    raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial || self)
   end
 
   private
 
-    def enforce_lecture_uniqueness!(user_ids)
-      # Enforce uniqueness: A student can only be in one tutorial per lecture.
-      # If we are about to add a student to this tutorial, remove them from any other
-      # tutorial in the same lecture.
-      TutorialMembership.joins(:tutorial)
-                        .where(tutorials: { lecture_id: lecture_id })
-                        .where.not(tutorial_id: id)
-                        .where(user_id: user_ids)
-                        .delete_all
+    def lecture_id_immutable
+      errors.add(:lecture_id, :immutable) if lecture_id_changed?
+    end
+
+    # Overrides Rosters::Rosterable#add_missing_users! to inject lecture_id
+    # into the bulk insert and resolve conflicts on the (user_id, lecture_id)
+    # unique index with an upsert. The concern's default insert_all has no
+    # lecture_id and uses ON CONFLICT DO NOTHING, which would silently drop
+    # users already assigned to a sibling tutorial in the same lecture.
+    def add_missing_users!(target_ids, current_ids, campaign)
+      users_to_add = target_ids - current_ids
+      return if users_to_add.empty?
+
+      scope_attrs = roster_entries.scope_attributes
+      now = Time.current
+      attributes = users_to_add.map do |uid|
+        {
+          user_id: uid,
+          lecture_id: lecture_id,
+          source_campaign_id: campaign.id,
+          created_at: now,
+          updated_at: now
+        }.merge(scope_attrs)
+      end
+
+      roster_entries.upsert_all( # rubocop:disable Rails/SkipsModelValidations
+        attributes,
+        unique_by: :index_tutorial_memberships_on_user_id_and_lecture_id,
+        update_only: [:tutorial_id, :source_campaign_id]
+      )
     end
 
     def check_destructibility

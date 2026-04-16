@@ -95,8 +95,10 @@ module Rosters
       def ensure_uniqueness!(user, rosterable)
         return unless rosterable.is_a?(Tutorial)
 
-        siblings = rosterable.lecture.tutorials.where.not(id: rosterable.id)
-        membership = TutorialMembership.where(tutorial: siblings, user: user).first
+        membership = TutorialMembership
+                     .where(lecture_id: rosterable.lecture_id, user_id: user.id)
+                     .where.not(tutorial_id: rosterable.id)
+                     .first
 
         return unless membership
 

@@ -3908,6 +3908,8 @@ en:
           attributes:
             lecture:
               must_not_be_seminar: "Tutorials cannot be created for seminars."
+            lecture_id:
+              immutable: cannot be changed after the tutorial has been created.
             title:
               taken: >
                 This tutorium title is already taken for this event series.
@@ -3918,6 +3920,8 @@ en:
               already_in_lecture_tutorial: >
                 There is already a tutorial membership for this user in this
                 lecture.
+            lecture:
+              does_not_match_tutorial: does not match the tutorial's lecture.
         user:
           attributes:
             courses:

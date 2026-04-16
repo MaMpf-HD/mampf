@@ -4133,6 +4133,8 @@ de:
           attributes:
             lecture:
               must_not_be_seminar: "Tutorien können nicht für Seminare erstellt werden."
+            lecture_id:
+              immutable: kann nach dem Erstellen des Tutoriums nicht mehr geändert werden.
             title:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits
@@ -4145,6 +4147,8 @@ de:
               already_in_lecture_tutorial: >
                 Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
                 Veranstaltung.
+            lecture:
+              does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
             courses:

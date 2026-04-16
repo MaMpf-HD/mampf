@@ -5,6 +5,16 @@ RSpec.describe(TutorialMembership, type: :model) do
     expect(build(:tutorial_membership)).to be_valid
   end
 
+  describe "associations" do
+    it "populates lecture_id automatically from the tutorial" do
+      tutorial = create(:tutorial)
+      membership = build(:tutorial_membership, tutorial: tutorial)
+      membership.valid?
+
+      expect(membership.lecture_id).to eq(tutorial.lecture_id)
+    end
+  end
+
   describe "validations" do
     describe "#unique_membership_per_lecture" do
       let(:lecture) { create(:lecture) }
@@ -37,6 +47,18 @@ RSpec.describe(TutorialMembership, type: :model) do
       it "allows updating an existing membership" do
         membership = create(:tutorial_membership, user: user, tutorial: tutorial)
         expect(membership).to be_valid
+      end
+    end
+
+    describe "#lecture_matches_tutorial" do
+      it "is invalid when lecture_id is overridden to a mismatching lecture" do
+        other_lecture = create(:lecture)
+        tutorial = create(:tutorial)
+        membership = build(:tutorial_membership, tutorial: tutorial)
+        membership.lecture_id = other_lecture.id
+
+        expect(membership).to be_invalid
+        expect(membership.errors.added?(:lecture, :does_not_match_tutorial)).to be(true)
       end
     end
   end
