@@ -15,13 +15,16 @@ export default class extends Controller {
   tileDropInstances = [];
   pendingDrop = null;
   highlightedTile = null;
+  streamRenderListener = () => this.refreshDropZones();
 
   connect() {
     this.initDraggable();
     this.initDropZones();
+    document.addEventListener("turbo:stream-render", this.streamRenderListener);
   }
 
   disconnect() {
+    document.removeEventListener("turbo:stream-render", this.streamRenderListener);
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];
@@ -80,6 +83,13 @@ export default class extends Controller {
 
       this.tileDropInstances.push(instance);
     });
+  }
+
+  refreshDropZones() {
+    if (!this.hasStudentListTarget) return;
+
+    this.clearHighlight();
+    this.initDropZones();
   }
 
   updateHighlight(dropZone) {
