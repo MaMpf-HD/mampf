@@ -10,7 +10,8 @@ class Cohort < ApplicationRecord
 
   attr_readonly :propagate_to_lecture
 
-  validates :title, presence: true
+  validates :title, presence: true,
+                    uniqueness: { scope: [:context_type, :context_id] }
   validates :capacity, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
   def roster_entries
