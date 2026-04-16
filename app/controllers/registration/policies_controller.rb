@@ -119,6 +119,16 @@ module Registration
                                             :prerequisite_campaign_id])
       end
 
+      def render_campaigns_container
+        @campaign.reload
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
+      end
+
       def move(direction)
         @policy.public_send("move_#{direction}")
         respond_with_flash(:notice, nil,
