@@ -51,11 +51,51 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       expect(policy.errors[:allowed_domains])
         .to include(I18n.t("registration.policy.errors.missing_domains"))
     end
+
+    it "silently normalizes a domain with an @ prefix" do
+      policy.config = { "allowed_domains" => "@uni.example" }
+      handler.validate
+      expect(policy.errors[:allowed_domains]).to be_empty
+    end
+
+    it "adds error for a full email address" do
+      policy.config = { "allowed_domains" => "user@uni.example" }
+      handler.validate
+      expect(policy.errors[:allowed_domains].join)
+        .to include(I18n.t("registration.policy.errors.invalid_domain_format",
+                           domain: "user@uni.example"))
+    end
+
+    it "adds error for a URL" do
+      policy.config = { "allowed_domains" => "https://uni.example" }
+      handler.validate
+      expect(policy.errors[:allowed_domains].join)
+        .to include(I18n.t("registration.policy.errors.invalid_domain_format",
+                           domain: "https://uni.example"))
+    end
+
+    it "adds error for a domain with spaces" do
+      policy.config = { "allowed_domains" => "uni heidelberg.de" }
+      handler.validate
+      expect(policy.errors[:allowed_domains]).not_to be_empty
+    end
+
+    it "adds error for a bare label without a TLD" do
+      policy.config = { "allowed_domains" => "uni-heidelberg" }
+      handler.validate
+      expect(policy.errors[:allowed_domains]).not_to be_empty
+    end
+
+    it "does not add errors for valid domains" do
+      policy.config = { "allowed_domains" => "uni-heidelberg.de, kit.edu" }
+      handler.validate
+      expect(policy.errors[:allowed_domains]).to be_empty
+    end
   end
 
   describe "#summary" do
     it "returns comma separated domains" do
-      expect(handler.summary).to eq("uni.example, test.org")
+      expect(handler.summary).to eq("uni.example | test.org")
     end
   end
 end

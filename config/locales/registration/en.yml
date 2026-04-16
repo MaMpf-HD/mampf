@@ -152,6 +152,7 @@ en:
       not_found: "Registration policy not found."
       errors:
         duplicate_institutional_email: "Only one institutional email policy is allowed per campaign."
+        invalid_domain_format: "Invalid domain format: '%{domain}'. Enter a plain domain, e.g. 'uni-heidelberg.de'."
         missing_domains: "At least one allowed domain must be specified."
         missing_prerequisite_campaign: "A prerequisite campaign must be selected."
         prerequisite_campaign_not_found: "The selected prerequisite campaign does not exist."

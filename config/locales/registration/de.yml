@@ -152,6 +152,7 @@ de:
       not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
         duplicate_institutional_email: "Pro Anmeldeverfahren ist nur eine Richtlinie für institutionelle E-Mails erlaubt."
+        invalid_domain_format: "Ungültiges Domain-Format: '%{domain}'. Bitte eine einfache Domain eingeben, z.B. 'uni-heidelberg.de'."
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
