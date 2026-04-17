@@ -319,7 +319,7 @@ en:
               no_items: "Cannot open registration process because no items have been added."
               already_has_real_campaign: "A standard registration process already exists for this context. Only one standard registration process is allowed."
             registration_deadline:
-              must_be_in_future: "must be in the future when registration process is open"
+              must_be_in_future: "must be in the future"
             status:
               cannot_revert_to_draft: "cannot be reverted to draft once opened"
             allocation_mode:

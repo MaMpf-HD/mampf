@@ -91,6 +91,29 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
     end
 
+    it "rejects a past deadline when creating a draft" do
+      campaign = build(:registration_campaign, registration_deadline: 1.day.ago)
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "rejects explicitly setting a draft deadline to the past" do
+      campaign = create(:registration_campaign)
+      campaign.registration_deadline = 1.day.ago
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "allows saving a draft when the deadline has expired but was not changed" do
+      campaign = create(:registration_campaign)
+      # Simulate deadline becoming stale without touching the field
+      campaign.class.where(id: campaign.id)
+              .update_all(registration_deadline: 1.day.ago) # rubocop:disable Rails/SkipsModelValidations
+      campaign.reload
+      campaign.description = "Updated description"
+      expect(campaign).to be_valid
+    end
+
     it "validates prerequisites are not draft if open" do
       prereq = create(:registration_campaign)
       campaign = create(:registration_campaign)

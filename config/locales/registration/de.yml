@@ -319,7 +319,7 @@ de:
               no_items: "Das Anmeldeverfahren kann nicht geöffnet werden, da keine Einträge hinzugefügt wurden."
               already_has_real_campaign: "Es existiert bereits ein reguläres Anmeldeverfahren für diesen Kontext. Es ist nur ein reguläres Verfahren erlaubt."
             registration_deadline:
-              must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+              must_be_in_future: "muss in der Zukunft liegen"
             status:
               cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:

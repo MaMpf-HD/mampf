@@ -270,7 +270,7 @@ module Registration
       end
 
       def registration_deadline_future_if_open
-        return unless open?
+        return unless open? || (draft? && registration_deadline_changed?)
         return unless registration_deadline_changed? || status_changed?
         return if registration_deadline.blank?
 
