@@ -24,14 +24,25 @@ module Registration
       end
 
       def validate
-        return unless domains.empty?
+        if domains.empty?
+          policy.errors.add(:allowed_domains,
+                            I18n.t("registration.policy.errors.missing_domains"))
+          return
+        end
 
-        policy.errors.add(:allowed_domains, I18n.t("registration.policy.errors.missing_domains"))
+        invalid_domains(config["allowed_domains"]).each do |token|
+          policy.errors.add(
+            :allowed_domains,
+            I18n.t("registration.policy.errors.invalid_domain_format", domain: token)
+          )
+        end
       end
 
       def summary
-        domains.join(", ")
+        domains.join(" | ")
       end
+
+      DOMAIN_FORMAT = /\A[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+\z/
 
       private
 
@@ -46,7 +57,12 @@ module Registration
           else
             Array(raw_domains)
           end
-          list.map { |d| (d || "").strip.downcase.delete_prefix(".") }.reject(&:empty?)
+          list.map { |d| d.to_s.strip.downcase.delete_prefix(".").delete_prefix("@") }
+              .reject(&:empty?)
+        end
+
+        def invalid_domains(raw)
+          parse_domains(raw).grep_v(DOMAIN_FORMAT)
         end
     end
   end

@@ -15,6 +15,7 @@ module Roster
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_flash(:alert, t("roster.errors.user_already_in_bundle",
+                                   user: @member_user&.info,
                                    group: e.conflicting_group.title),
                          fallback_location: fallback_path)
     end
@@ -76,9 +77,13 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+      added = Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
 
-      flash.now[:notice] = t("roster.messages.user_added")
+      flash.now[:notice] = if added
+        t("roster.messages.user_added", user: user.info, group: @rosterable.title)
+      else
+        t("roster.messages.user_already_member", user: user.info, group: @rosterable.title)
+      end
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
 
       source = find_panel_source
@@ -98,7 +103,7 @@ module Roster
       user = find_user
       Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
 
-      flash.now[:notice] = t("roster.messages.user_removed")
+      flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
 
       render_with_streams(stream_builder.streams)
     end
@@ -128,7 +133,7 @@ module Roster
 
       Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
 
-      flash.now[:notice] = t("roster.messages.user_moved", target: target.title)
+      flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
       flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
 
       if @mparams.panel?
@@ -277,7 +282,7 @@ module Roster
         end
         raise(UserNotFoundError) unless user
 
-        user
+        @member_user = user
       end
 
       def find_panel_source

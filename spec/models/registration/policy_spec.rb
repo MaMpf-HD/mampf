@@ -81,12 +81,32 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(policy.errors[:prerequisite_campaign_id])
           .to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
       end
+
+      it "prevents a second institutional_email policy in the same campaign" do
+        campaign = create(:registration_campaign)
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign)
+        duplicate = build(:registration_policy, :institutional_email,
+                          registration_campaign: campaign)
+        expect(duplicate).not_to be_valid
+        expect(duplicate.errors[:kind])
+          .to include(I18n.t("registration.policy.errors.duplicate_institutional_email"))
+      end
+
+      it "allows institutional_email policies in different campaigns" do
+        create(:registration_policy, :institutional_email)
+        policy = build(:registration_policy, :institutional_email)
+        expect(policy).to be_valid
+      end
     end
 
     describe "ordering" do
       let(:campaign) { create(:registration_campaign) }
       let!(:policy1) { create(:registration_policy, registration_campaign: campaign) }
-      let!(:policy2) { create(:registration_policy, registration_campaign: campaign) }
+      let!(:policy2) do
+        create(:registration_policy, :student_performance,
+               registration_campaign: campaign)
+      end
 
       it "orders policies by position" do
         expect(policy1.position).to eq(1)
@@ -268,16 +288,16 @@ RSpec.describe(Registration::Policy, type: :model) do
       describe ".for_phase" do
         let(:campaign) { create(:registration_campaign) }
         let!(:registration_policy) do
-          create(:registration_policy, registration_campaign: campaign,
-                                       phase: :registration)
+          create(:registration_policy, :student_performance,
+                 registration_campaign: campaign, phase: :registration)
         end
         let!(:finalization_policy) do
-          create(:registration_policy, registration_campaign: campaign,
-                                       phase: :finalization)
+          create(:registration_policy, :student_performance,
+                 registration_campaign: campaign, phase: :finalization)
         end
         let!(:both_policy) do
-          create(:registration_policy, registration_campaign: campaign,
-                                       phase: :both)
+          create(:registration_policy, :student_performance,
+                 registration_campaign: campaign, phase: :both)
         end
 
         it "includes policies for the requested phase and 'both'" do

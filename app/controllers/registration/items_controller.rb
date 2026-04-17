@@ -78,13 +78,27 @@ module Registration
         return
       end
 
-      if @item.destroy
+      registerable = @item.registerable
+      authorize! :destroy, registerable
+      success = false
+
+      ActiveRecord::Base.transaction do
+        success = @item.destroy
+        raise(ActiveRecord::Rollback) unless success
+
+        success = registerable.destroy
+        raise(ActiveRecord::Rollback) unless success
+      end
+
+      if success
         respond_with_flash(:notice, t("registration.item.destroyed"),
                            redirect_path: after_action_path) do
           render_campaigns_container
         end
       else
-        respond_with_flash(:alert, @item.errors.full_messages.to_sentence,
+        errors = (@item.errors.full_messages +
+                  registerable.errors.full_messages).uniq
+        respond_with_flash(:alert, errors.to_sentence,
                            redirect_path: after_action_path)
       end
     end

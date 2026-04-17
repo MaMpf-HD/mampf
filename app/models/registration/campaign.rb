@@ -50,6 +50,8 @@ module Registration
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
+    before_destroy :collect_registerables_for_release, prepend: true
+    after_destroy :release_registerables_from_campaign
 
     def locale_with_inheritance
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
@@ -231,6 +233,23 @@ module Registration
         throw(:abort)
       end
 
+      def collect_registerables_for_release
+        @registerables_to_release = registration_items
+                                    .filter_map(&:registerable)
+                                    .select { |r| r.respond_to?(:skip_campaigns) }
+      end
+
+      def release_registerables_from_campaign
+        return if @registerables_to_release.blank?
+
+        ids_by_type = @registerables_to_release.group_by(&:class)
+        ids_by_type.each do |klass, records|
+          # rubocop:disable Rails/SkipsModelValidations
+          klass.where(id: records.map(&:id)).update_all(skip_campaigns: true)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+      end
+
       def ensure_campaign_is_draft
         return if draft?
 
@@ -251,7 +270,7 @@ module Registration
       end
 
       def registration_deadline_future_if_open
-        return unless open?
+        return unless open? || (draft? && registration_deadline_changed?)
         return unless registration_deadline_changed? || status_changed?
         return if registration_deadline.blank?
 

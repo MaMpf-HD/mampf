@@ -48,9 +48,10 @@ module Rosters
                 "Capacity exceeded for #{rosterable.class.name} #{rosterable.id}")
         end
 
-        rosterable.add_user_to_roster!(user)
+        membership = rosterable.add_user_to_roster!(user)
         propagate_to_lecture!(user, rosterable)
         update_registration_materialization(user, rosterable)
+        membership
       end
 
       def remove_user_without_lock!(user, rosterable)
