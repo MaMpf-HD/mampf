@@ -12,10 +12,8 @@ module RegistrationPolicyHelper
   end
 
   def prerequisite_campaign_preselect(policy, options)
-    if policy.persisted?
-      policy.prerequisite_campaign_id
-    elsif options.one?
-      options.first.id
-    end
+    return policy.prerequisite_campaign_id if policy.prerequisite_campaign_id.present?
+
+    options.first.id if options.one?
   end
 end

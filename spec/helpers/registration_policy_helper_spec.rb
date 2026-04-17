@@ -64,7 +64,7 @@ RSpec.describe(RegistrationPolicyHelper, type: :helper) do
     let(:campaign) { create(:registration_campaign, campaignable: lecture) }
     let(:other) { create(:registration_campaign, campaignable: lecture) }
 
-    context "when policy is persisted" do
+    context "when policy has a prerequisite_campaign_id set (persisted)" do
       let(:policy) do
         create(:registration_policy, :prerequisite_campaign,
                registration_campaign: campaign).tap do |p|
@@ -73,21 +73,33 @@ RSpec.describe(RegistrationPolicyHelper, type: :helper) do
         end
       end
 
-      it "returns the saved prerequisite_campaign_id regardless of options count" do
-        options = [other]
-        expect(helper.prerequisite_campaign_preselect(policy, options))
+      it "returns the saved id regardless of options count" do
+        expect(helper.prerequisite_campaign_preselect(policy, [other]))
           .to eq(other.id)
       end
 
-      it "does not auto-pick when options list differs from saved value" do
+      it "does not auto-pick a different single option" do
         third = create(:registration_campaign, campaignable: lecture)
-        options = [third]
-        expect(helper.prerequisite_campaign_preselect(policy, options))
+        expect(helper.prerequisite_campaign_preselect(policy, [third]))
           .to eq(other.id)
       end
     end
 
-    context "when policy is new" do
+    context "when policy has a prerequisite_campaign_id set (new record after validation error)" do
+      let(:policy) do
+        campaign.registration_policies.build.tap do |p|
+          p.prerequisite_campaign_id = other.id
+        end
+      end
+
+      it "preserves the user's previously chosen value" do
+        third = create(:registration_campaign, campaignable: lecture)
+        expect(helper.prerequisite_campaign_preselect(policy, [other, third]))
+          .to eq(other.id)
+      end
+    end
+
+    context "when policy is new with no prior selection" do
       let(:policy) { campaign.registration_policies.build }
 
       it "auto-picks when exactly one option exists" do
