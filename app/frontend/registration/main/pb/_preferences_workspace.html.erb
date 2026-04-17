@@ -1,0 +1,28 @@
+<% last_updated = campaign.user_registrations_last_updated(current_user) %>
+
+<% if last_updated %>
+  <div class="small text-success fw-semibold">
+    <%= t("basics.last_saved_at", time: format_date(last_updated)) %>
+  </div>
+<% end %>
+
+<div class="row g-3 justify-content-between">
+  <input
+    type="hidden"
+    name="preferences_json"
+    id="preferences-json"
+    value="<%= item_preferences.to_json %>"
+  >
+
+  <!-- Left column: preferences -->
+  <div class="col-12 col-xl-5">
+    <%= render partial: "registration/main/pb/preferences_table",
+                    locals: { campaign: campaign, item_preferences: item_preferences } %>
+  </div>
+
+  <!-- Right column: catalog -->
+  <div class="col-12 col-xl-6">
+    <%= render partial: "registration/main/pb/options_table",
+                    locals: { campaign: campaign, item_preferences: item_preferences, items: items } %>
+  </div>
+</div>

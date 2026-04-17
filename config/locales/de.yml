@@ -20,6 +20,9 @@ de:
     script:
       singular: 'Skript'
       short: 'Skr'
+    enrollment:
+      singular: 'Einschreibung'
+      short: 'ESch'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -3573,6 +3576,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3649,6 +3653,26 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
+    select_type: "Wählen Sie Präferenzen"
+    saved_at: "Gespeichert %{time}"
+    last_saved_at: "Zuletzt gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
+    position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: "Ausstehend"
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
     unlimited: unbegrenzt
     personnel: Personal
   access:
@@ -3769,6 +3793,10 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    self_register_talk: Für diesen Vortrag anmelden
+    self_remove_talk: Von diesem Vortrag abmelden
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

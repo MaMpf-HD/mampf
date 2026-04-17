@@ -273,11 +273,14 @@ de:
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
       active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
+      lecture_has_other_roster_entry: 'Sie sind bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlassen Sie zuerst die andere Gruppe, bevor Sie dieser beitreten.'
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
+      self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
@@ -297,3 +300,14 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
+    self_enrollment:
+      campaign_enrollment:
+        title: "Einschreibung durch Anmeldeverfahren"
+        description: "Sie können sich über das aktive Anmeldeverfahren für diese Veranstaltung einschreiben."
+        no_active_campaign: "Derzeit gibt es kein aktives Anmeldeverfahren für diese Veranstaltung."
+      direct_enrollment:
+        title: "Optionen für Selbsteinschreibung"
+        description: >
+          Sie können direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft und aktualisieren Ihren offiziellen Roster. 
+          Dies ist separat von Anmeldeverfahren.
+        no_active_self_rosterables: "Derzeit gibt es keine Gruppen, denen Sie direkt beitreten oder die Sie verlassen können."

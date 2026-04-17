@@ -15,6 +15,8 @@ en:
       cannot_reopen_completed: "Cannot reopen campaign because it has already been finalized."
       not_found: "Registration campaign not found."
       completed_title: "Campaign Completed"
+      completed_campaign_title: "Completed Campaigns"
+      active_campaign_title: "Active Campaigns"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
       dissolved_enrolled: "enrolled"
@@ -241,6 +243,7 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        confirmed_cases: "Your registration is confirmed for:"
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         allocated_count: "allocated"
@@ -256,6 +259,67 @@ en:
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from campaign"
+        increase_priority: "Increase priority"
+        decrease_priority: "Decrease priority"
+        remove_option: "Remove option"
+      registrations: "Registrations"
+      title: "Your Registration"
+      planning: "Planning"
+      course_code: "Course code"
+      campaign_main: "Campaign: Main registration"
+      eligibility_title: "Eligibility"
+      preferences_title: Your selected preferences
+      success_preferences_title: Your successful selections
+      options_title: "Available options (maximum 3 options are allowed)"
+      eligible: "Eligible"
+      not_eligible: "Not eligible"
+      prerequisite_campaign: "Prerequisite Campaign"
+      seats_remaining: "Seats remaining"
+      registered: "Registered"
+      not_registered: "Not registered"
+      not_freely_registerable_info: "Only one option is allowed per group type"
+      register_now: "Register now"
+      need_save: You have unsaved changes. Click “Save” to update your preferences
+      currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."
+      withdraw: "Withdraw"
+      closed_before_deadline: The registration campaign has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+      withdraw_first: "Withdraw first"
+      filter_placeholder: "Filter by weekday, time, tutor"
+      status_for_registration: "Current statuses of your submitted options"
+      submitted_pref: "Your submitted choice(s)"
+      confirmed_assignment_pref: "Your confirmed %{type} assignment"
+      fcfs_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      pb_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      messages:
+        campaign_unavailable: "This campaign is not accessible right now."
+        campaign_not_opened: "Registration for this campaign is not opened."
+        registration_success: "Registration completed successfully."
+        registration_failed: "Registration could not be completed."
+        already_registered: "You are already registered for this campaign."
+        no_slots: "No seats available."
+        requirements_not_met: "You do not meet the requirements."
+        invalid_options: "Invalid options selected."
+        withdrawn: "You have withdrawn your registration."
+        preferences_saved: "Your preferences have been saved."
+        dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"
+        not_preference_based_mode: "This registration campaign is not in preference-based mode. Preferences cannot be saved here."
+        too_many_preferences: "You have selected too many preferences. Maximum allowed: 3"
+        not_fcfs_mode: "This registration campaign is not in first-come-first-served mode. Direct registrations cannot be made here."
+        cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
+        course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
+        campaign_not_found: "Registration campaign not found."
     allocation:
       started: "Allocation has been calculated."
       conflicts:
@@ -302,6 +366,19 @@ en:
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Title"
+          lecture: "Lecture"
+          mode: "Mode"
+          closes: "Closes"
+          eligibility: "Eligibility"
+          action: "Action"
+          status: "Status"
+        view_details: "Details"
+    lecture:
+      not_found: "Lecture not found."
   activerecord:
     errors:
       models:

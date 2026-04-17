@@ -300,6 +300,11 @@ Rails.application.routes.draw do
                 only: [:index, :new, :create],
                 as: :registration_campaigns
     end
+
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :campaign_registrations, only: [:index],
+                                         controller: "registration/user_registrations"
+    end
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
@@ -833,6 +838,10 @@ Rails.application.routes.draw do
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
         end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
       end
     end
   end
@@ -879,6 +888,10 @@ Rails.application.routes.draw do
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
         end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Tutorial" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
       end
     end
   end
@@ -896,6 +909,10 @@ Rails.application.routes.draw do
           post "members", action: :add_member, as: :add_member
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
         end
       end
     end
@@ -985,6 +1002,42 @@ Rails.application.routes.draw do
   resources :watchlists
 
   resources :watchlist_entries
+
+  # registration routes
+  scope module: "registration", path: "" do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      post "campaign_registrations/:campaign_id/items/:item_id/register",
+           to: "user_registrations#create",
+           as: :register_item
+      delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
+             to: "user_registrations#destroy",
+             as: :withdraw_item
+
+      post "user_registrations/:item_id/up",
+           to: "user_registrations#up",
+           as: :preference_up
+
+      post "user_registrations/:item_id/down",
+           to: "user_registrations#down",
+           as: :preference_down
+
+      post "user_registrations/:item_id/add",
+           to: "user_registrations#add",
+           as: :add_preference
+
+      post "user_registrations/:item_id/remove",
+           to: "user_registrations#remove",
+           as: :remove_preference
+
+      post "user_registrations/:campaign_id/reset",
+           to: "user_registrations#reset_preferences",
+           as: :reset_campaign_preferences
+
+      post "user_registrations/:campaign_id/save",
+           to: "user_registrations#update",
+           as: :save_campaign_preferences
+    end
+  end
 
   # main routes
 

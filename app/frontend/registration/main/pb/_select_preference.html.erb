@@ -1,0 +1,22 @@
+<%= form_with method: :post,
+              data: { turbo_frame: dom_id(campaign, :preferences_workspace),
+                      controller: "touched-check",
+                      action: "submit->touched-check#handleMarkState"
+              } do %>
+  <div>
+    <div data-test="multi-item-preference">
+      <div class="fw-bold text-dark mt-2 mb-2">
+        <%= t("basics.select_type") %>
+      </div>
+
+      <div class="d-none mt-2 mb-2 text-danger required-touch-display-<%= campaign.id %>"> <%# herb:disable erb-no-interpolated-class-names %>
+        <span><%= t("registration.user_registration.need_save") %></span>
+      </div>
+
+      <%= turbo_frame_tag dom_id(campaign, :preferences_workspace) do %>
+        <%= render partial: "registration/main/pb/preferences_workspace",
+                       locals: { campaign: campaign, item_preferences: item_preferences, items: items } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

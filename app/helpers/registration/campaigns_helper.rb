@@ -112,5 +112,9 @@ module Registration
                 class: classes,
                 form: { data: form_data })
     end
+
+    def closed_early?(campaign)
+      !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
+    end
   end
 end

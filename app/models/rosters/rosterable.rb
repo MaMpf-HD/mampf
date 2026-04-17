@@ -61,6 +61,33 @@ module Rosters
       !in_completed_campaign?
     end
 
+    def config_allow_self_add?
+      self_materialization_mode_add_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard in FE for self-assignment possibility
+    def allow_self_add?(user)
+      return false unless config_allow_self_add?
+      return false if locked?
+      return false if user_allocated?(user)
+
+      !full?
+    end
+
+    def config_allow_self_remove?
+      self_materialization_mode_remove_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard in FE for self-removal possibility
+    def allow_self_remove?(user)
+      return false unless config_allow_self_remove?
+      return false if locked?
+
+      user_allocated?(user)
+    end
+
     # Checks if skip_campaigns can be enabled (switched from false to true).
     # This is only allowed if the item has never been part of any campaign.
     # Models without skip_campaigns always return false.
@@ -128,6 +155,14 @@ module Rosters
         roster_entries.map { |e| e.public_send(roster_user_id_column) }
       else
         roster_entries.pluck(roster_user_id_column)
+      end
+    end
+
+    def user_allocated?(user)
+      if roster_entries.loaded?
+        roster_entries.any? { |e| e.public_send(roster_user_id_column) == user.id }
+      else
+        roster_entries.exists?(roster_user_id_column => user.id)
       end
     end
 

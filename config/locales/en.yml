@@ -20,6 +20,9 @@ en:
     script:
       singular: 'Manuscript'
       short: 'Man'
+    enrollment:
+      singular: 'Enrollment'
+      short: 'Enr'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -3365,6 +3368,7 @@ en:
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
     answer_count: 'Number of answers'
+    item_count: '%{count} items'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3439,6 +3443,26 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    mode: "Allocation Mode"
+    capacity: "Capacity"
+    seats: "Seats"
+    filled: "filled"
+    across_group: "across group"
+    closes: "Closes"
+    passed: "Passed"
+    failed: "Failed"
+    select_type: "Select preferences"
+    saved_at: "Saved %{time}"
+    last_saved_at: "Last saved %{time}"
+    available: "Available"
+    full: "Full"
+    position: "Position"
+    room: "Room"
+    confirmed: "Confirmed"
+    rejected: Rejected
+    pending: Pending
+    assigned: "Assigned"
+    dismissed: "Dismissed"
     unlimited: unlimited
     personnel: Personnel
   warnings:
@@ -3563,6 +3587,10 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    self_register_talk: Register for this talk
+    self_remove_talk: Unregister from this talk
+    add_to_list: 'Add to List'
+    remove_from_list: 'Remove from List'
   confirmation:
     generic: 'Are you sure?'
     delete_talk: 'Are you sure you want to delete this talk?'
