@@ -69,14 +69,8 @@
       <div class="mb-3">
         <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
 
-        <% prereq_options = campaign.campaignable.registration_campaigns
-                                               .where.not(id: campaign.id).to_a %>
-
-        <% preselect = if policy.persisted?
-                         policy.prerequisite_campaign_id
-                       elsif prereq_options.one?
-                         prereq_options.first.id
-                       end %>
+        <% prereq_options = prerequisite_campaign_options(campaign) %>
+        <% preselect = prerequisite_campaign_preselect(policy, prereq_options) %>
 
         <%= f.collection_select :prerequisite_campaign_id,
                                   prereq_options,
