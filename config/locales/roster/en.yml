@@ -272,7 +272,7 @@ en:
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
-      user_already_in_bundle: "Student is already assigned to %{group}."
+      user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
@@ -289,8 +289,8 @@ en:
       setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:
       updated: "Settings updated."
-      user_moved: "Student moved to %{target}."
-      user_added: "Student added successfully."
-      user_added_to: "Student added to %{group}."
-      user_already_member: "Student is already in this group."
-      user_removed: "Student removed successfully."
+      user_moved: "%{user} moved to %{target}."
+      user_added: "%{user} added to %{group} successfully."
+      user_added_to: "%{user} added to %{group}."
+      user_already_member: "%{user} is already in %{group}."
+      user_removed: "%{user} removed successfully."
