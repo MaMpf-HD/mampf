@@ -693,4 +693,44 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.roster_group_type).to eq("cohorts")
     end
   end
+
+  describe "destroy" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+    let(:cohort) { create(:cohort, context: lecture, skip_campaigns: false) }
+
+    before do
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: tutorial)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: cohort)
+    end
+
+    it "sets skip_campaigns to true on all involved tutorials" do
+      campaign.destroy!
+      expect(tutorial.reload.skip_campaigns).to be(true)
+    end
+
+    it "sets skip_campaigns to true on all involved cohorts" do
+      campaign.destroy!
+      expect(cohort.reload.skip_campaigns).to be(true)
+    end
+
+    it "does not affect tutorials from a different campaign" do
+      other_campaign = create(:registration_campaign, campaignable: lecture)
+      other_tutorial = create(:tutorial, lecture: lecture, skip_campaigns: false)
+      create(:registration_item, registration_campaign: other_campaign,
+                                 registerable: other_tutorial)
+
+      campaign.destroy!
+      expect(other_tutorial.reload.skip_campaigns).to be(false)
+    end
+
+    it "does not destroy the groups themselves" do
+      campaign.destroy!
+      expect { tutorial.reload }.not_to raise_error
+      expect { cohort.reload }.not_to raise_error
+    end
+  end
 end

@@ -7,7 +7,7 @@ de:
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
-      confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest?"
+      confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest? Die zugehörigen Gruppen werden nicht gelöscht und können danach manuell verwaltet werden."
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
