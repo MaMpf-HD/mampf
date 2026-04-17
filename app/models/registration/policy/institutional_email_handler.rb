@@ -57,7 +57,7 @@ module Registration
           else
             Array(raw_domains)
           end
-          list.map { |d| (d || "").strip.downcase.delete_prefix(".").delete_prefix("@") }
+          list.map { |d| d.to_s.strip.downcase.delete_prefix(".").delete_prefix("@") }
               .reject(&:empty?)
         end
 
