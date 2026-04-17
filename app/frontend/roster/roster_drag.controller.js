@@ -86,9 +86,9 @@ export default class extends Controller {
   }
 
   refreshDropZones() {
+    this.clearHighlight();
     if (!this.hasStudentListTarget) return;
 
-    this.clearHighlight();
     this.initDropZones();
   }
 
