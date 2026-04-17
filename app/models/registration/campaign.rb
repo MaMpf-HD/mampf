@@ -242,7 +242,7 @@ module Registration
       def release_registerables_from_campaign
         return if @registerables_to_release.blank?
 
-        ids_by_type = @registerables_to_release.group_by { |r| r.class }
+        ids_by_type = @registerables_to_release.group_by(&:class)
         ids_by_type.each do |klass, records|
           # rubocop:disable Rails/SkipsModelValidations
           klass.where(id: records.map(&:id)).update_all(skip_campaigns: true)
