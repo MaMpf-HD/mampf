@@ -79,6 +79,7 @@ module Registration
       end
 
       registerable = @item.registerable
+      authorize! :destroy, registerable
       success = false
 
       ActiveRecord::Base.transaction do
