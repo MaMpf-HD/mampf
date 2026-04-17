@@ -94,7 +94,7 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
   end
 
   describe "#summary" do
-    it "returns comma separated domains" do
+    it "returns pipe separated domains" do
       expect(handler.summary).to eq("uni.example | test.org")
     end
   end
