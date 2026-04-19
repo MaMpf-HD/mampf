@@ -1,5 +1,6 @@
 namespace :muesli do
-  desc "Full Müsli arena setup (demo + solver finalize + exams + assessments + performance + policy)"
+  desc "Full Müsli arena setup " \
+       "(demo + solver finalize + exams + assessments + performance + policy)"
   task setup: :environment do
     abort "Cannot run in production!" if Rails.env.production?
 
