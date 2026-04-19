@@ -23,7 +23,7 @@ de:
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
       helpdesk:
-        campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Du definierst Fristen, Zuteilungsmodi und Teilnahmebedingungen."
+        campaigns: "Anmeldeverfahren verwalten die Registrierung für Tutorien, Seminare oder Klausuren. Sie definieren Fristen, Zuteilungsmodi und Teilnahmebedingungen."
         description: "Eine kurze Beschreibung des Anmeldeverfahrens (max. 100 Zeichen). Diese wird in Übersichten und Tabellen angezeigt."
         allocation_mode: "Bestimmt den Ablauf der Registrierung. 'Direktanmeldung': Nutzer melden sich für einen Termin an und erhalten sofort eine Zusage oder Absage. 'Präferenzbasiert': Nutzer geben Präferenzen für mehrere Termine an. Die Verteilung erfolgt nach Fristende global."
         registration_deadline: "Der Zeitpunkt, an dem die Registrierungsphase endet. Danach sind für Studierende keine Anmeldungen oder Änderungen mehr möglich."
@@ -90,6 +90,7 @@ de:
         reopen: "Bist Du sicher, dass Du die Anmeldung erneut öffnen möchtest?"
         finalize: "Bist Du sicher, dass Du die Zuteilung durchführen möchtest? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
         force_finalize: "Bist Du sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
       overview:
@@ -266,9 +267,9 @@ de:
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
-        title: "Konfligierende Registrierungen"
-        desc: "Die folgenden Studierenden sind bereits einer Gruppe dieses Typs in dieser Veranstaltung zugewiesen. Wenn Du die Zuteilung durchführst, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
-        currently_in: "aktuell in %{group}"
+        title: "Konflikte bei Registrierungen"
+        desc: "Die folgenden Studierenden sind bereits einem Tutorium in dieser Veranstaltung zugewiesen. Wenn Du die Zuteilung durchführst, wird ihre bestehende Zuweisung durch das neue Ergebnis überschrieben."
+        currently_in: "aktuell in %{tutorial}"
       dashboard:
         title: "Zuteilung"
         last_updated: "Stand: %{time}"

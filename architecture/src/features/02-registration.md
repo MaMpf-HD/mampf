@@ -31,10 +31,10 @@ We use a unified system with:
 - **Allocation mode:** Enum selecting `first_come_first_served` or `preference_based`.
 - **AllocationService:** Computes allocations (preference-based) via `allocate!`.
 - **AllocationMaterializer:** Applies confirmed allocations to domain rosters.
-- **Campaign methods:** `allocate!`, `finalize!`, `allocate_and_finalize!`.
+- **Campaign methods:** `finalize!`, `reset_allocation_results!`, `unassigned_users(...)`.
 - **Policy phases:** `registration` gates intake; `finalization` gates roster materialization; `both` applies in both places.
 - **Assigned users:** Users with `confirmed` status in the registration system (`Registration::UserRegistration.confirmed`). This is registration-side data.
-- **Allocated users:** Users materialized into the domain roster after finalization (`Tutorial#students`, `Talk#speakers`, etc.). This is domain-side data. After finalization, assigned and allocated should match.
+- **Allocated users:** Users materialized into the domain roster after finalization (`Tutorial#members`, `Talk#speakers`, `Cohort#members`, etc.). This is domain-side data. After finalization, assigned and allocated should match.
 ```
 
 ```admonish tip "Related UI mockups"
@@ -62,21 +62,21 @@ We recommend that users follow one of these patterns based on their course struc
 Use this when your lecture has sub-structures (Tutorials or Talks) that need assignment.
 - **Primary Campaign:** Items are **Tutorials** or **Talks**.
     - *Outcome:* Students get a group spot AND official Lecture Roster access (via propagation).
-- **Sidecar Campaign (Optional):** Item is a **Cohort** with `purpose: :general` (e.g., "Waitlist").
+- **Sidecar Campaign (Optional):** Item is a **Cohort** with `propagate_to_lecture: false` (e.g., "Waitlist").
     - *Outcome:* Students land on a separate waitlist. They **do not** get official access until staff moves them to a group.
 
 ### Pattern 2: Enrollment Cohort (Simple Courses)
 Use this when your lecture has no sub-structures (e.g., Advanced Lecture, simple Seminar).
-- **Primary Campaign:** Item is an **Enrollment Cohort** (`purpose: :enrollment`, `propagate_to_lecture: true`).
+- **Primary Campaign:** Item is a **Cohort** with `propagate_to_lecture: true`.
     - *Outcome:* Students join the cohort AND get official Lecture Roster access (via propagation).
 - **Quick-Create:** Use the "Enable Simple Enrollment" button in Roster Overview or campaign item creation.
-    - *Outcome:* Creates the enrollment cohort automatically with correct settings.
+  - *Outcome:* Creates a cohort with propagation enabled.
 
 ### Pattern 3: Planning Cohorts (Demand Forecasting)
 Use this to gauge interest before the semester starts without granting access.
-- **Primary Campaign:** Item is a **Planning Cohort** (`purpose: :planning`, `propagate_to_lecture: false`).
+- **Primary Campaign:** Item is a **Cohort** with `propagate_to_lecture: false`.
     - *Outcome:* Students signal interest. No lecture access granted. Results used for staffing decisions.
-- **Repeatable:** Multiple planning cohorts can exist per lecture (unlike enrollment cohorts).
+- **Repeatable:** Multiple non-propagating cohorts can exist per lecture.
     - *Outcome:* Run surveys in October, November, etc. without conflicts.
 
 > **Note:** These patterns can be mixed in one campaign. Tutorial + Waitlist Cohort, or Talk + Audit Cohort are valid combinations.
@@ -101,28 +101,30 @@ The main fields and methods of `Registration::Campaign` are:
 |---------------------------|-------------------|----------------------------------------------------------------------------------------------|
 | `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture)                                     |
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
-| `title`                   | DB column         | Human-readable campaign title                                                                 |
+| `description`             | DB column         | Human-readable campaign description                                                           |
 | `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_served` or `preference_based`                            |
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
+| `last_allocation_calculated_at` | DB column   | Timestamp of the most recent allocation run                                                  |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
 | `user_registrations`      | Association       | User registrations (registration requests) for this campaign                                 |
 | `registration_policies`   | Association       | Eligibility and other policies attached to this campaign                                     |
 | `evaluate_policies_for(user, phase: :registration)` | Method      | Returns a structured eligibility result for the given phase (delegates to Policy Engine)                         |
 | `policies_satisfied?(user, phase: :registration)` | Method      | Boolean convenience that returns true when all applicable policies pass                                 |
 | `open_for_registrations?` | Method            | Returns true if campaign is currently accepting registrations                                 |
-| `allocate!`               | Method            | Computes allocation (preference-based) without materialization                               |
-| `finalize!`               | Method            | Enforces finalization-phase policies, then materializes the latest allocation into domain rosters                                       |
-| `allocate_and_finalize!`  | Method            | Convenience: computes allocation and then finalizes                                          |
+| `finalize!`               | Method            | Materializes confirmed results, normalizes remaining `pending` registrations to `rejected`, and marks the campaign completed |
+| `reset_allocation_results!` | Method          | Clears prior allocation output when a preference-based campaign is reopened                   |
+| `unassigned_users(preload_registrations: false)` | Method | Returns participating users who are not currently allocated to any matching registerable      |
 
 ```admonish note
 Eligibility is not a single field or method, but is determined dynamically by evaluating all active `registration_policies` for the campaign using the `evaluate_policies_for(user, phase:)` method, which delegates to the phase-aware policy engine. Use `policies_satisfied?(user, phase:)` as a boolean convenience.
 ```
 
 ```admonish tip "API at a glance"
-- `evaluate_policies_for(user, phase: :registration)` → Result (fields: `pass`, `failed_policy`, `trace`, `details`)
+- `evaluate_policies_for(user, phase: :registration)` → Result (fields: `pass`, `failed_policy`, `trace`)
 - `policies_satisfied?(user, phase: :registration)` → Boolean (`true` when all applicable policies pass)
 - `open_for_registrations?` → Boolean (campaign currently accepts registrations)
+- Allocation runs are triggered through `Registration::AllocationService` and the allocation controller flow
 
  See also: Controller endpoints in [Controller Architecture → Registration Controllers](11-controllers.md#registration-controllers).
 ```
@@ -137,14 +139,14 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 #### Assigned vs Unassigned
 
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
-- Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
+- Unassigned: in current campaign helper methods, the student participated but is not currently allocated to any of the campaign's registerables in the domain roster. This can differ from pure registration status after manual roster changes.
 - Previously Assigned: the student was once assigned (confirmed) but later removed (e.g. manually). This is tracked via the `materialized_at` timestamp on `Registration::UserRegistration`.
-- No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
+- No extra tables are required. `Registration::Campaign` exposes `unassigned_users(...)`, while allocation dashboards derive `unassigned_user_ids` and related counts from allocation statistics.
 
 ```admonish note "Status semantics"
 Statuses are mode-specific:
 - First-come-first-served (FCFS): registrations are immediately `confirmed` or `rejected`.
-- Preference-based: registrations are `pending` until allocation, then resolved to `confirmed` or `rejected` on finalize.
+- Preference-based: registrations start as `pending`; allocation confirms selected users, and finalization converts any remaining `pending` registrations to `rejected`.
 
 Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
 ```
@@ -153,11 +155,11 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 
 - **Close registration:** stops intake and edits; transitions `open → closed`.
   Used to lock the window early or when the deadline passes automatically.
-- **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
+- **Run allocation (preference-based only):** triggers `Registration::AllocationService`; transitions `closed → processing` and records `last_allocation_calculated_at`.
   FCFS campaigns skip this step (results already determined).
-- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`. All campaigns materialize—planning cohorts simply don't propagate to the lecture roster.
+- **Finalize results:** in the current implementation, the controller runs `Registration::FinalizationGuard#check(...)` before calling `Registration::Campaign#finalize!`. Finalization materializes confirmed results, sets `materialized_at` for materialized registrations, converts remaining `pending` registrations to `rejected`, and transitions the campaign to `completed`. All campaigns materialize—non-propagating cohorts simply do not update the lecture roster.
   - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
-- **Planning surveys:** Planning cohorts (with `propagate_to_lecture: false` and `purpose: :planning`) are used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
+- **Planning surveys:** Non-propagating cohorts (`propagate_to_lecture: false`) can be used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
 - **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
@@ -196,7 +198,6 @@ Campaigns transition through several states to ensure data integrity and fair us
 | Attribute | Freeze Point | Modification Rules |
 |-----------|--------------|-------------------|
 | `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
-| `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
 | `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
 
 ##### Policies
@@ -210,14 +211,14 @@ Campaigns transition through several states to ensure data integrity and fair us
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
 | Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
-| Remove item | After `draft` | Cannot remove items with existing registrations. Students may have registered for (FCFS) or ranked (preference) that item. |
+| Remove item | After `draft` | Current implementation only allows item removal while the campaign is still `draft`. |
 
 ##### Capacity Constraints
 
 | Mode | Modification Rules |
 |------|-------------------|
 | FCFS | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
-| Preference-based | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. |
+| Preference-based | Can increase anytime. Current implementation does not enforce the same lower-bound validation outside FCFS; staff should avoid shrinking below already confirmed allocations. |
 
 During solver execution (~1 second), capacity modification is prevented via database row-level locks. See "Solver Execution Protection" above.
 
@@ -229,7 +230,7 @@ During solver execution (~1 second), all registerables (tutorials/talks/cohorts)
 
 #### Implementation Notes
 
-**Validation Example:**
+**Illustrative Validation Example:**
 ```ruby
 validate :allocation_mode_frozen_after_open, on: :update
 validate :policies_frozen_after_open, on: :update
@@ -243,8 +244,8 @@ end
 ```
 
 **Item Removal:**
-- Check `item.user_registrations.exists?` before allowing deletion
-- Alternative: Soft-delete (set `active: false`) instead of destroying
+- Current implementation blocks item removal outside `draft`
+- Alternative future approach: Soft-delete (set `active: false`) instead of destroying
 
 **UI Feedback:**
 - Disable/gray out frozen fields in forms
@@ -252,10 +253,12 @@ end
 - Display warning before opening campaign: "Settings will be locked after opening"
 
 ```admonish warning "Reopening Campaigns"
-When reopening a `completed` campaign (transitioning back to `open`), all freezing rules still apply. The campaign returns to accepting registrations, but fundamental settings (mode, policies, items) remain locked.
+Current implementation does not allow reopening a `completed` campaign. Reopening is only available before completion, and preference-based campaigns reset allocation results when reopening from `processing`.
 ```
 
-### Example Implementation (Phase-aware planned state)
+### Example Implementation (Illustrative planned state)
+
+The following sketch is intentionally illustrative. The current implementation splits allocation and finalization responsibilities between `Registration::Campaign`, `Registration::AllocationService`, `Registration::FinalizationGuard`, and the registration controllers.
 
 ```ruby
 module Registration
@@ -329,8 +332,8 @@ Student Registration index.
 
 - A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (Admin UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html); Student UI: [Show – preference-based](../mockups/student_registration.html), [Confirmation](../mockups/student_registration_confirmation.html))
 - A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_served` and assigns talk slots. Items point to `Talk`.
-- An **"Enrollment Campaign" ** is created for a `Lecture` (simple courses without tutorials). It's typically `first_come_first_served` and enrolls students via an enrollment cohort (`purpose: :enrollment`, propagates to lecture). (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- A **"Demand Survey" campaign** is created for a `Lecture` before the term to gauge interest. Items point to a planning cohort (`purpose: :planning`, `propagate_to_lecture: false`). Campaign finalizes normally, but cohort membership doesn't grant lecture access. Results used for staffing decisions. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Enrollment Campaign" ** is created for a `Lecture` (simple courses without tutorials). It's typically `first_come_first_served` and enrolls students via a cohort with `propagate_to_lecture: true`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- A **"Demand Survey" campaign** is created for a `Lecture` before the term to gauge interest. Items point to a cohort with `propagate_to_lecture: false`. Campaign finalizes normally, but cohort membership doesn't grant lecture access. Results used for staffing decisions. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
 - An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `student_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `student_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
@@ -342,14 +345,14 @@ Goal: Measure demand before a lecture starts to plan staffing (e.g., hire
 tutors) without granting lecture access.
 
 - Host: `Lecture` (campaignable).
-- Items: Planning cohort with `purpose: :planning`, `propagate_to_lecture: false`.
+- Items: Cohort with `propagate_to_lecture: false`.
 - Mode: `first_come_first_served`.
 - Capacity: Very high (effectively unlimited) to capture demand signal.
 - Timing: Open well before the term; close before main registrations.
 - Finalization: Campaign finalizes normally. Cohort roster is materialized but doesn't propagate to lecture.
 - Reporting: Query `cohort.cohort_memberships` for confirmed participants.
 - Cleanup: Planning cohorts can be deleted after export (collapsed by default in roster UI).
-- Repeatable: Multiple planning cohorts allowed per lecture (e.g., "Oct Survey", "Nov Survey").
+- Repeatable: Multiple non-propagating cohorts allowed per lecture (e.g., "Oct Survey", "Nov Survey").
 
 See the Roster chapter for how planning cohorts appear collapsed in the "Without Enrollment" section.
 ```
@@ -402,7 +405,7 @@ if tutorial.can_self_add?(current_user)
 end
 ```
 
-See the `Roster::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
+See the `Rosters::Rosterable` concern in Rosters chapter (`03-rosters.md`) for implementation details.
 
 ---
 
@@ -454,9 +457,9 @@ A selectable entry in a `Registration::Campaign`'s "catalog". Each entry points 
 ```
 
 ```admonish note "Think of it as"
-- **Restaurant Analogy:** An item on a restaurant menu. The `Registerable` is the actual dish prepared in the kitchen. The `RegistrationItem` is the line on the menu for a specific day (the campaign). You order from the menu, not by pointing at the dish in the kitchen.
+- **Restaurant Analogy:** An item on a restaurant menu. The `Registerable` is the actual dish prepared in the kitchen. The `Registration::Item` is the line on the menu for a specific day (the campaign). You order from the menu, not by pointing at the dish in the kitchen.
 
-- **Teaching Analogy:** A slot in the registration system. The `Registerable` is the actual tutorial group that meets every Monday at 10am. The `RegistrationItem` is the entry for that tutorial in this semester's "Linear Algebra" registration (the campaign). Students sign up for the slot in the system, not by walking into the classroom.
+- **Teaching Analogy:** A slot in the registration system. The `Registerable` is the actual tutorial group that meets every Monday at 10am. The `Registration::Item` is the entry for that tutorial in this semester's "Linear Algebra" registration (the campaign). Students sign up for the slot in the system, not by walking into the classroom.
 ```
 
 The main fields and methods of `Registration::Item` are:
@@ -469,7 +472,8 @@ The main fields and methods of `Registration::Item` are:
 | `registration_campaign`   | Association       | The parent `Registration::Campaign`.                                      |
 | `registerable`            | Association       | The underlying domain object (e.g., a `Tutorial` instance).              |
 | `user_registrations`      | Association       | All user registrations (registration requests) for this item.            |
-| `assigned_users`          | Method            | Returns users with confirmed registration (registration system data).    |
+| `confirmed_registrations_count` | DB column   | Counter cache for confirmed registrations on this item                    |
+| `confirmed_user_ids`      | Method            | Returns user IDs with confirmed registration (registration system data). |
 | `capacity`                | Method            | The maximum number of users, delegated from the `registerable`.          |
 
 
@@ -483,8 +487,8 @@ module Registration
              class_name: "Registration::UserRegistration",
              dependent: :destroy
 
-    def assigned_users
-      user_registrations.confirmed.includes(:user).map(&:user)
+    def confirmed_user_ids
+      user_registrations.confirmed.pluck(:user_id)
     end
   end
 end
@@ -497,12 +501,12 @@ To ensure data integrity and prevent double-booking, the following constraint ap
 - **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
 
 ### Usage Scenarios
-- **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
-- **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
-- **For an "Enrollment Campaign" (simple courses):** A `RegistrationItem` is created for an enrollment cohort (`purpose: :enrollment`). The cohort propagates to the lecture roster automatically.
-- **For a "Demand Survey" campaign:** A `RegistrationItem` is created for a planning cohort (`purpose: :planning`). The cohort does not propagate to the lecture roster.
-- **For a "Waitlist" or special group:** A `RegistrationItem` is created for a general cohort (`purpose: :general`). Propagation is configurable.
-- **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
+- **For a "Tutorial Registration" campaign:** A `Registration::Item` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
+- **For a "Talk Assignment" campaign:** A `Registration::Item` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
+- **For an "Enrollment Campaign" (simple courses):** A `Registration::Item` is created for a cohort with `propagate_to_lecture: true`. The cohort propagates to the lecture roster automatically.
+- **For a "Demand Survey" campaign:** A `Registration::Item` is created for a cohort with `propagate_to_lecture: false`. The cohort does not propagate to the lecture roster.
+- **For a "Waitlist" or special group:** A `Registration::Item` is created for a cohort. Propagation is controlled by `propagate_to_lecture`.
+- **For an "Exam Registration" campaign:** A `Registration::Item` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
 
 ```admonish warning "Registration::Item vs. Registration::Registerable"
 It's crucial to understand the difference between these two concepts:
@@ -511,7 +515,7 @@ It's crucial to understand the difference between these two concepts:
 
 - **`Registration::Item`** is a **proxy or wrapper** that makes a registerable object available within a specific campaign. Think of it as a "listing in a catalog." If you have a "Tutorial Registration" campaign, you create one `Registration::Item` for each `Tutorial` that students can sign up for in that campaign.
 
-Users register for a `Registration::Item`, not directly for a `Registerable`. This separation allows the same `Tutorial` to potentially be part of different campaigns over time without conflict.
+Users register for a `Registration::Item`, not directly for a `Registerable`. This separation keeps registration logic distinct from domain models, while the current implementation still enforces that a given registerable can belong to at most one campaign at a time.
 ```
 
 ---
@@ -543,7 +547,7 @@ The actual group or event a user is enrolled in, such as a specific tutorial gro
 | `capacity`                                  | Integer seat count.                                    | Yes      |
 | `materialize_allocation!(user_ids:, campaign:)` | Persists the authoritative roster for this campaign.   | Yes      |
 | `allocated_user_ids`                        | Current materialized users from domain roster (delegates to roster system). | Yes |
-| `remaining_capacity`, `full?`               | Convenience derived helpers.                           | Optional |
+| `full?`                                     | Convenience helper based on the current roster size.   | Optional |
 
 #### Example Implementation
 
@@ -561,14 +565,6 @@ module Registration
       raise NotImplementedError, "#{self.class} must implement #allocated_user_ids to delegate to roster"
     end
 
-    def remaining_capacity
-      [capacity - allocated_user_ids.size, 0].max
-    end
-
-    def full?
-      remaining_capacity.zero?
-    end
-
     def materialize_allocation!(user_ids:, campaign:)
       raise NotImplementedError, "#{self.class} must implement #materialize_allocation!"
     end
@@ -584,7 +580,7 @@ The `materialize_allocation!` method is the most critical part of the interface.
 
 This method **must be idempotent**, meaning running it multiple times with the same `user_ids` and `campaign` produces the same result. A common pattern is to first remove all roster entries associated with the given `campaign` and then add the new ones, all within a single database transaction. Concrete examples are shown in the `Tutorial` and `Talk` sections later in this document.
 
-The `allocated_user_ids` method **must be implemented** by each registerable model to delegate to its roster system. This returns the current materialized roster (domain data), as opposed to `Registration::Item#assigned_users` which returns users with confirmed registrations (registration system data). After finalization, these should match.
+The `allocated_user_ids` method **must be implemented** by each registerable model to delegate to its roster system. This returns the current materialized roster (domain data), as opposed to the confirmed registrations tracked on `Registration::Item` and `Registration::UserRegistration`. After finalization, these should match.
 
 
 #### Usage Scenarios
@@ -657,7 +653,7 @@ end
 
 In FCFS mode, registration status is determined immediately upon submission:
 
-**Controller Logic (recommended):**
+**Controller Logic (conceptual):**
 ```ruby
 # app/controllers/registration/user_registrations_controller.rb
 def create
@@ -666,7 +662,11 @@ def create
 
   return unless campaign.policies_satisfied?(current_user, phase: :registration)
 
-  status = item.remaining_capacity > 0 ? :confirmed : :rejected
+  status = if item.capacity.nil? || item.confirmed_registrations_count < item.capacity
+    :confirmed
+  else
+    :rejected
+  end
 
   Registration::UserRegistration.create!(
     user: current_user,
@@ -686,10 +686,10 @@ end
 | When decided | Immediately on create | After allocation runs |
 | Multiple items | User registers for ONE item | User ranks MULTIPLE items |
 | Solver needed | No | Yes |
-| Finalization | Optional (roster may already be live) | Required |
+| Finalization | Used to materialize results into domain rosters | Required |
 
 **Capacity Enforcement:**
-- Check `item.remaining_capacity` before creating the registration
+- Compare `item.confirmed_registrations_count` against `item.capacity` before creating the registration
 - If capacity exhausted, create with `status: :rejected` (no waitlist)
 - Alternatively, return error and don't create record at all
 
@@ -892,12 +892,12 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 | Method           | Purpose                                                              |
 |------------------|----------------------------------------------------------------------|
 | `initialize(campaign)` | Sets up the engine with the campaign whose policies will be used.    |
-| `eligible?(user)`| Evaluates policies for the user and returns a structured `Result`.   |
+| `eligible?(user, phase: :registration)` | Evaluates policies for the user and returns a structured `Result`.   |
 
 ### Behavior Highlights
 - Iterates policies in `position` order.
 - Stops at the first failure (fast fail).
-- Returns a structured `Result` object containing the pass/fail status, the policy that failed (if any), and a full trace of all evaluations.
+- Returns a structured `Result` object containing the pass/fail status, the failed policy (if any), and a full trace of all evaluations.
 - This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
 
 ```admonish tip "Lecture performance: data completeness requirement"
@@ -962,7 +962,7 @@ The 'brain' that solves the puzzle of who gets what in a preference-based campai
 - Gathers all `pending` `Registration::UserRegistration` records with their preference ranks.
 - Gathers all `Registration::Item` records with their capacities.
 - Executes a specific allocation strategy (e.g., Min-Cost Flow) to find an optimal assignment.
-- Updates the `status` of each `Registration::UserRegistration` to either `:confirmed` or `:rejected` based on the solver's output.
+- Confirms selected registrations, may create forced assignments, refreshes per-item confirmed counters, and records the latest allocation timestamp. Remaining non-selected registrations stay `pending` until finalization.
 
 ### Not Responsibilities
 
@@ -1020,7 +1020,7 @@ end
 ```
 
 ### Usage Scenarios
-- After the deadline for a `preference_based` tutorial registration campaign, a background job calls `Registration::AllocationService.new(campaign).allocate!`. The service runs the solver and updates thousands of `Registration::UserRegistration` records to either `:confirmed` or `:rejected`.
+- After the deadline for a `preference_based` tutorial registration campaign, a background job calls `Registration::AllocationService.new(campaign).allocate!`. The service runs the solver, confirms selected registrations, and leaves non-selected registrations pending until finalization.
 - An administrator manually triggers the assignment for a seminar's talk selection via a button in the UI, which in turn calls this service.
 
 ---
@@ -1044,8 +1044,9 @@ The "secretary" that takes the list of confirmed attendees from the registration
 
 ### Responsibilities
 - Gathers all `confirmed` `Registration::UserRegistration` records for the campaign.
-- Groups them by their `Registration::Item`.
+- Iterates the campaign's `Registration::Item` records and derives the confirmed user IDs for each item.
 - For each `Registration::Item`, it calls `materialize_allocation!` on the underlying `registerable` object, passing the final list of user IDs.
+- Sets `materialized_at` on the registrations that were materialized.
 - This process is the crucial hand-off from the temporary registration system to the permanent domain models.
 
 ### Example Implementation
@@ -1079,14 +1080,14 @@ end
 **_The Finalization Gatekeeper_**
 
 ```admonish info "What it represents"
-Ensures every confirmed user passes all finalization-phase policies before roster materialization. For student_performance policies, enforces certification completeness and auto-rejects failed certifications.
+Ensures every confirmed user passes all finalization-phase policies before roster materialization. Future `student_performance` integration is intended to add certification-specific enforcement here.
 ```
 
 ### Public Interface
 | Method           | Purpose |
 |------------------|---------|
 | `initialize(campaign)` | Prepare guard for a campaign. |
-| `check!`         | Raises on first violation; returns true when all confirmed users pass. Auto-rejects students with failed student performance certifications. |
+| `check(ignore_policies: false)` | Returns a `Result` describing whether finalization may proceed. |
 
 ### Example Implementation
 ```ruby
@@ -1098,14 +1099,17 @@ module Registration
       @campaign = campaign
     end
 
-    def check
+    def check(ignore_policies: false)
       if @campaign.completed?
         return failure(:already_completed, "Campaign is already completed")
       end
 
-      unless @campaign.processing?
-        return failure(:wrong_status, "Campaign must be in processing state")
+      expected_state = @campaign.preference_based? ? @campaign.processing? : @campaign.closed?
+      unless expected_state
+        return failure(:wrong_status, "Campaign must be in a finalizable state")
       end
+
+      return success if ignore_policies
 
       validate_policies
     end
@@ -1158,7 +1162,7 @@ end
 - **Policy Validation:** Checks all policies configured for the `:finalization` phase (or `:both`).
 - **Safety Net:** Ensures that users who might have become ineligible after registration (e.g., changed email) are caught before being added to the roster.
 - **Manual Resolution:** If violations are found, the guard returns a failure result with the list of invalid users. The admin must then manually reject these users or fix the issue before retrying finalization.
-- **State Check:** Ensures the campaign is in the correct state (`processing`) and not already completed.
+- **State Check:** Ensures the campaign is in the correct state (`processing` for preference-based campaigns, `closed` for FCFS campaigns) and not already completed.
 
 See also: Student Performance → Certification and Pre-flight Validation (`05-student-performance.md`).
 
@@ -1226,7 +1230,7 @@ class Tutorial < ApplicationRecord
         # persist them as the official roster for this tutorial, sourced
         # from this specific campaign.
         #
-        # The concrete implementation using the Roster::Rosterable concern is detailed
+        # The concrete implementation using the Rosters::Rosterable concern is detailed
         # in the "Allocation & Rosters" chapter.
     end
 end
@@ -1250,14 +1254,14 @@ class Talk < ApplicationRecord
         # Similar to the Tutorial, this method hands off the final list
         # of speakers to the roster management system.
         #
-        # The concrete implementation using the Roster::Rosterable concern is detailed
+        # The concrete implementation using the Rosters::Rosterable concern is detailed
         # in the "Allocation & Rosters" chapter.
     end
 end
 ```
 
 ### Cohort (New Model)
-**_A Generic Registration Target with Semantic Purpose_**
+**_A Generic Registration Target_**
 
 ```admonish info "What it represents"
 A flexible container for students within a specific context (e.g., enrollment, waitlist, planning survey).
@@ -1266,11 +1270,8 @@ A flexible container for students within a specific context (e.g., enrollment, w
 #### Responsibilities
 - Acts as a `Registerable` target for campaigns where `Tutorial`/`Talk` are not appropriate.
 - Acts as a `Rosterable` container for students.
-- **Purpose-Driven Behavior:** Three semantic types via `purpose` enum:
-  - `:enrollment` — Main entry point for simple courses (replaces direct lecture enrollment). Must propagate.
-  - `:general` — Waitlists, special groups, audit listeners. Propagation configurable.
-  - `:planning` — Demand surveys. Must not propagate.
-- **Propagation Control:** `propagate_to_lecture` flag determines if cohort membership grants lecture access.
+- **Propagation Control:** `propagate_to_lecture` determines if cohort membership grants lecture access.
+- **Campaign vs manual control:** `skip_campaigns` and `self_materialization_mode` govern whether the cohort participates in campaigns or is managed directly through roster maintenance.
 - Supports polymorphic contexts: initially `Lecture`, but designed to support generic `Grouping` containers for non-academic events.
 
 #### Schema
@@ -1278,53 +1279,33 @@ A flexible container for students within a specific context (e.g., enrollment, w
 create_table :cohorts do |t|
   t.references :context, polymorphic: true, null: false
   t.string :title, null: false
-  t.integer :purpose, default: 0, null: false # 0: general, 1: enrollment, 2: planning
-  t.boolean :propagate_to_lecture, default: true, null: false
+  t.text :description
   t.integer :capacity
+  t.boolean :propagate_to_lecture, default: false, null: false
+  t.boolean :skip_campaigns, default: false, null: false
+  t.integer :self_materialization_mode, default: 0, null: false
   t.timestamps
 end
-
-add_check_constraint :cohorts,
-  "NOT (purpose = 2 AND propagate_to_lecture = true)",
-  name: "planning_cohorts_must_not_propagate"
-
-add_check_constraint :cohorts,
-  "NOT (purpose = 1 AND propagate_to_lecture = false)",
-  name: "enrollment_cohorts_must_propagate"
 ```
 
 #### Example Implementation
 ```ruby
 class Cohort < ApplicationRecord
   include Registration::Registerable
-  include Roster::Rosterable
+  include Rosters::Rosterable
 
   belongs_to :context, polymorphic: true
 
-  enum :purpose, { general: 0, enrollment: 1, planning: 2 }
+  attr_readonly :propagate_to_lecture
 
-  validates :propagate_to_lecture, inclusion: {
-    in: [false],
-    if: :planning?,
-    message: "must be false for planning cohorts"
-  }
+  validates :title, presence: true
 
-  validates :propagate_to_lecture, inclusion: {
-    in: [true],
-    if: :enrollment?,
-    message: "must be true for enrollment cohorts"
-  }
-
-  scope :operational, -> { where.not(purpose: :planning) }
-  scope :planning, -> { where(purpose: :planning) }
-
-  def capacity
-    self[:capacity]
+  def roster_entries
+    cohort_memberships
   end
 
-  def materialize_allocation!(user_ids:, campaign:)
-    # Delegates to Rosterable implementation
-    # If propagate_to_lecture is true, also calls context.ensure_roster_membership!(user_ids)
+  def lecture
+    context if context.is_a?(Lecture)
   end
 end
 ```
@@ -1423,6 +1404,7 @@ sequenceDiagram
     actor Job as Background Job
     participant AllocationSvc as Registration::AllocationService
     participant Solver as Registration::Solvers::MinCostFlow
+    participant Guard as Registration::FinalizationGuard
     participant Materializer as Registration::AllocationMaterializer
     participant RegTarget as Registerable (e.g., Tutorial)
 
@@ -1446,17 +1428,20 @@ sequenceDiagram
 
     rect rgb(255, 245, 235)
     note over Job,RegTarget: Allocation & finalization
-    Job->>Campaign: allocate_and_finalize!
-    Campaign->>Campaign: update!(status: :closed)
-    Campaign->>AllocationSvc: new(campaign).allocate!
+    Job->>Campaign: close or auto-close at deadline
+    Job->>AllocationSvc: new(campaign).allocate!
     AllocationSvc->>Solver: new(campaign).run()
-    note right of Solver: Build graph, solve, persist statuses
-    Solver->>UserReg: update_all(status: confirmed/rejected)
-    Campaign->>Campaign: update!(status: :processing)
-    Campaign->>Campaign: finalize!
+    note right of Solver: Build graph, solve, confirm selected registrations
+    Solver->>UserReg: update selected rows to confirmed
+    AllocationSvc->>Campaign: touch(last_allocation_calculated_at), update!(status: :processing)
+    Controller->>Campaign: request finalization
+    Controller->>Guard: check(ignore_policies: false)
+    Guard-->>Controller: Result(success?: true/false)
+    Controller->>Campaign: finalize!
     Campaign->>Materializer: new(campaign).materialize!
     Materializer->>RegTarget: materialize_allocation!(user_ids, campaign)
     note right of RegTarget: Update roster (idempotent)
+    Campaign->>UserReg: update remaining pending rows to rejected
     Campaign->>Campaign: update!(status: :completed)
     end
 ```
@@ -1567,10 +1552,11 @@ sequenceDiagram
     alt finalization policies fail
         Campaign-->>Controller: Error (stays in :processing)
     else finalization policies pass
-        Campaign->>Item: materialize_allocation!(confirmed_user_ids)
-        Item->>Roster: Update domain roster
-        Roster-->>Item: Done
-        Item-->>Campaign: Done
+        Campaign->>Materializer: new(campaign).materialize!
+        Materializer->>RegTarget: materialize_allocation!(confirmed_user_ids, campaign)
+        RegTarget->>Roster: Update domain roster
+        Roster-->>RegTarget: Done
+        RegTarget-->>Campaign: Done
         Campaign->>Campaign: update!(status: :completed)
         Campaign-->>Controller: Success
     end

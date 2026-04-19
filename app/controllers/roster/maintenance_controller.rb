@@ -57,6 +57,11 @@ module Roster
     def participants
       @group_type = @mparams.group_type
       setup_participants
+
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: participants_streams }
+        format.html
+      end
     end
 
     def show
@@ -179,6 +184,39 @@ module Roster
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
+        @participants_component_args = participants_component_args
+      end
+
+      def participants_component(section: :full)
+        RosterParticipantsComponent.new(**participants_component_args,
+                                        section: section)
+      end
+
+      def participants_component_args
+        {
+          lecture: @lecture,
+          group_type: @group_type,
+          participants: @participants,
+          pagy: @pagy,
+          filter_mode: @participants_filter,
+          search_string: @search_string,
+          counts: participants_counts
+        }
+      end
+
+      def participants_counts
+        {
+          total: @total_participants_count,
+          unassigned: @unassigned_participants_count
+        }
+      end
+
+      # Renders turbo stream to refresh all participant-related sections.
+      def participants_streams
+        RosterParticipantsComponent.section_targets.map do |section, target_id|
+          component = participants_component(section: section)
+          turbo_stream.update(target_id, component.render_in(view_context))
+        end
       end
 
       def authorize_lecture

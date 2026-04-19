@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# Missing top-level docstring, please formulate one yourself 😁
 RSpec.describe(Rosters::RegisterableOrdering) do
   let(:lecture) { create(:lecture) }
 

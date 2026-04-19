@@ -211,6 +211,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       expect(helpers_mock).to receive(:pagy_series_nav)
         .with(pagy, path: "/path",
+                    anchor_string: 'data-turbo-stream="true"',
                     querify: kind_of(Proc)) do |_, options|
         querify = options[:querify]
 
@@ -239,6 +240,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       expect(helpers_mock).to receive(:pagy_series_nav)
         .with(pagy, path: "/path",
+                    anchor_string: 'data-turbo-stream="true"',
                     querify: kind_of(Proc)) do |_, options|
         querify = options[:querify]
         mock_params = {}
@@ -293,6 +295,29 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       groups = c.participant_groups(user)
 
       expect(groups).to match_array([tutorial, cohort])
+    end
+  end
+
+  describe "search field rendering" do
+    it "keeps the search form in the header cluster and streams updates" do
+      render_inline(component)
+
+      expect(rendered_content).to include('id="roster_participants_top_nav"')
+      expect(rendered_content).to include('id="roster_participants_header_controls"')
+      expect(rendered_content).to include('id="roster_participants_results"')
+      expect(rendered_content).to include('data-turbo-stream="true"')
+      expect(rendered_content).to include('id="roster-participants-search-field"')
+      expect(rendered_content).to include("btn-close")
+    end
+  end
+
+  describe ".section_targets" do
+    it "defines turbo stream target IDs for streamable sections" do
+      expect(described_class.section_targets).to eq(
+        top_nav: "roster_participants_top_nav",
+        header_controls: "roster_participants_header_controls",
+        results: "roster_participants_results"
+      )
     end
   end
 end

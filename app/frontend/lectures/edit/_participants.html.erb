@@ -1,6 +1,6 @@
 <div class="col-12">
   <%= turbo_frame_tag "roster_participants_panel",
-                      src: lecture_roster_participants_path(@lecture),
+                      src: lecture_roster_participants_path(lecture),
                       loading: "lazy" do %>
     <div class="text-center my-5">
       <div class="spinner-border" role="status">

@@ -90,6 +90,7 @@ en:
         reopen: "Are you sure you want to reopen registration?"
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
         force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
+        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
         reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
         complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
       overview:
@@ -267,8 +268,8 @@ en:
       started: "Allocation has been calculated."
       conflicts:
         title: "Conflicting Registrations"
-        desc: "The following students are already assigned to a group of this type in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
-        currently_in: "currently in %{group}"
+        desc: "The following students are already assigned to a tutorial in this lecture. If you proceed with the allocation, their existing assignment will be overwritten by the new result."
+        currently_in: "currently in %{tutorial}"
       dashboard:
         title: "Allocation"
         last_updated: "Last updated: %{time}"
