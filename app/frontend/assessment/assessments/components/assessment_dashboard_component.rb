@@ -79,6 +79,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
       [].tap do |t|
         t << settings_tab if exam? || assignment?
         t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
+        t << policies_tab if exam? && Flipper.enabled?(:registration_campaigns)
         t << tasks_tab if pointable?
         t << points_tab if pointable?
         t << grades_tab if gradable?
@@ -167,6 +168,18 @@ class AssessmentDashboardComponent < ViewComponent::Base
         PartialTabComponent.new(
           partial: "exams/registration",
           locals: { exam: assessable, lecture: lecture }
+        )
+      )
+    end
+
+    def policies_tab
+      campaign = assessable.registration_campaign
+      TabConfig.new(
+        "policies",
+        I18n.t("registration.policy.index.title"),
+        PartialTabComponent.new(
+          partial: "registration/policies/list",
+          locals: { campaign: campaign }
         )
       )
     end
