@@ -2,8 +2,12 @@
 class Talk < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
+  include Assessment::Gradable
 
   belongs_to :lecture, touch: true
+
+  before_save :remove_duplicate_dates
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
@@ -24,7 +28,6 @@ class Talk < ApplicationRecord
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  before_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -155,5 +158,9 @@ class Talk < ApplicationRecord
       return if lecture.seminar?
 
       errors.add(:lecture, :must_be_seminar)
+    end
+
+    def setup_assessment
+      ensure_gradebook!
     end
 end

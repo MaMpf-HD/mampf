@@ -374,6 +374,7 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 **Future Extensions:**
 
+- Rule versioning (on edit, deactivate old rule + create new one; certifications keep FK to historical rule for true audit trail; leverages existing `active` column and partial unique index)
 - Multiple concurrent certification policies (AND/OR logic expression builder)
 - Incremental recompute (listen to grade changes, auto-update stale certifications)
 - Student-facing certification preview (before registration opens, show provisional status)

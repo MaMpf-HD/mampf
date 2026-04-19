@@ -1,0 +1,72 @@
+<div class="mb-3">
+  <%= link_to assessment_assessments_path(lecture_id: lecture.id),
+              class: "btn btn-sm btn-outline-secondary",
+              role: "button",
+              data: { turbo_stream: true } do %>
+    <i class="bi bi-arrow-left"></i> <%= t("back") %>
+  <% end %>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3><%= t("admin.assignment.new") %></h3>
+</div>
+
+<ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active"
+            id="settings-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#settings"
+            type="button"
+            role="tab"
+            aria-controls="settings"
+            aria-selected="true">
+      <%= t("basics.settings") %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link disabled"
+            id="tasks-tab"
+            type="button"
+            role="tab"
+            aria-controls="tasks"
+            aria-selected="false"
+            aria-disabled="true">
+      <%= t("assessment.tasks") %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link disabled"
+            id="points-tab"
+            type="button"
+            role="tab"
+            aria-controls="points"
+            aria-selected="false"
+            aria-disabled="true">
+      <%= t("assessment.points") %>
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link disabled"
+            id="statistics-tab"
+            type="button"
+            role="tab"
+            aria-controls="statistics"
+            aria-selected="false"
+            aria-disabled="true">
+      <%= t("assessment.statistics") %>
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="assessmentTabsContent">
+  <div class="tab-pane fade show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <%= render "assessment/assessments/new_settings_form",
+               assignment: assignment,
+               lecture: lecture %>
+  </div>
+
+  <div class="tab-pane fade" id="tasks" role="tabpanel" aria-labelledby="tasks-tab"></div>
+  <div class="tab-pane fade" id="points" role="tabpanel" aria-labelledby="points-tab"></div>
+  <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab"></div>
+</div>

@@ -1,4 +1,3 @@
-# AssignmentsController
 class AssignmentsController < ApplicationController
   before_action :set_assignment, except: [:new, :cancel_new, :create]
   before_action :set_lecture, only: :create
@@ -14,30 +13,105 @@ class AssignmentsController < ApplicationController
     @assignment.lecture = @lecture
     authorize! :new, @assignment
     set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assessments_container",
+                                                 partial: "assessment/assessments/card_body_form",
+                                                 locals: { assignment: @assignment,
+                                                           lecture: @lecture })
+      end
+    end
   end
 
   def edit
+    set_assignment_locale
   end
 
   def create
     @assignment = Assignment.new(assignment_params)
     authorize! :create, @assignment
-    @assignment.save
-    @errors = @assignment.errors
     @lecture = @assignment.lecture
     set_assignment_locale
+
+    if @assignment.save
+      @assignment.reload
+      assessment = @assignment.assessment
+      tasks = assessment&.tasks&.order(:position) || []
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assessments_container",
+                                AssessmentDashboardComponent.new(
+                                  assessable: @assignment,
+                                  assessment: assessment,
+                                  lecture: @lecture,
+                                  active_tab: "tasks",
+                                  tasks: tasks
+                                ))
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assessments_container",
+                                                   partial: "assessment/assessments/card_body_form",
+                                                   locals: { assignment: @assignment,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
+    end
   end
 
   def update
-    @assignment.update(assignment_params)
-    @errors = @assignment.errors
-    return if @errors.present?
+    set_assignment_locale
+
+    unless @assignment.update(assignment_params)
+      @errors = @assignment.errors
+      return
+    end
 
     @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+    @assignment.reload
   end
 
   def destroy
-    @assignment.destroy
+    set_assignment_locale
+    @lecture = @assignment.lecture
+    remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
+                                    .includes(:assessment)
+                                    .select(&:assessment)
+
+    if @assignment.destroy
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          if remaining_assignments.empty?
+            render turbo_stream:
+            turbo_stream.update("assessments_container",
+                                partial: "assessment/assessments/empty_assignments")
+          else
+            render turbo_stream:
+            turbo_stream.update("assessments_container",
+                                partial: "assessment/assessments/index",
+                                locals: { lecture: @lecture,
+                                          assignments_with_assessments: remaining_assignments })
+          end
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          head :unprocessable_content
+        end
+      end
+    end
   end
 
   def cancel_edit
@@ -76,6 +150,6 @@ class AssignmentsController < ApplicationController
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
                                  :deadline, :accepted_file_type,
-                                 :deletion_date])
+                                 :requires_submission])
     end
 end

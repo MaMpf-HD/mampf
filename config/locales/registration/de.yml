@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      title: 'Anmeldeverfahren'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
@@ -58,6 +60,8 @@ de:
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
         preference_based: "Präferenzbasiert"
+      type:
+        exam: "Klausur"
       status:
         draft: "Entwurf"
         open: "Offen"
@@ -86,9 +90,9 @@ de:
         reopen: "Bist Du sicher, dass Du die Anmeldung erneut öffnen möchtest?"
         finalize: "Bist Du sicher, dass Du die Zuteilung durchführen möchtest? Dies weist Studierende basierend auf ihren Präferenzen und Kapazitäten zu. Diese Aktion kann nicht rückgängig gemacht werden."
         force_finalize: "Bist Du sicher? Dies ignoriert alle Richtlinienverstöße und speichert die Zuteilung. Auch Studierende, die gegen Richtlinien verstoßen, werden übernommen."
+        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
-        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -159,6 +163,8 @@ de:
         prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
         prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
+        missing_lecture: "Es muss eine Veranstaltung ausgewählt werden."
+        lecture_not_found: "Die ausgewählte Veranstaltung existiert nicht."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
@@ -205,10 +211,12 @@ de:
         tutorials: "Tutorien"
         talks: "Vorträge"
         cohorts: "Weitere Gruppen"
+        exams: "Klausuren"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        exam: "Klausur"
         cohort: "Sondergruppe"
         enrollment_group: "Anmeldungsgruppe"
         planning_survey: "Planungsgruppe"
@@ -293,6 +301,7 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        certification_incomplete: "Klausurzulassungen noch nicht für alle registrierten Studierenden abgeschlossen. Bitte zuerst auf dem Leistungs-Tab klären."
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfe die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"
         policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Du kannst diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
@@ -302,6 +311,26 @@ de:
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
+      policy_summary:
+        required_domain: "Erforderliche Domain:"
+        of_total_points: "der Gesamtpunkte"
+        points_absolute: "Punkte (absolut)"
+        no_rule: "Keine aktive Regel konfiguriert"
+      violations_table:
+        override_pass: "Auf bestanden setzen"
+      cert_incomplete:
+        title: "Klausurzulassungen unvollständig"
+        desc:
+          one: "%{count} registrierter Studierender hat keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+          other: "%{count} registrierte Studierende haben keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+        missing_label:
+          one: "%{count} Studierender noch nicht bearbeitet"
+          other: "%{count} Studierende noch nicht bearbeitet"
+        pending_label:
+          one: "%{count} Studierender mit ausstehender Klausurzulassung"
+          other: "%{count} Studierende mit ausstehenden Klausurzulassungen"
+        go_to_certs: "Zu den Klausurzulassungen"
+        policy_reason: "Dieses Anmeldeverfahren hat eine Finalisierungsrichtlinie, die entschiedene Klausurzulassungen voraussetzt."
   activerecord:
     errors:
       models:
@@ -333,6 +362,8 @@ de:
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
+              cannot_add_exam_to_non_exam_campaign: "Klausuren können nicht zu Anmeldeverfahren hinzugefügt werden, die bereits Tutorien, Vorträge oder andere Gruppen enthalten."
+              cannot_add_non_exam_to_exam_campaign: "Tutorien, Vorträge und andere Gruppen können nicht zu Klausuranmeldungen hinzugefügt werden."
         registration/user_registration:
           attributes:
             registration_item:

@@ -1,0 +1,184 @@
+<% campaign = exam.registration_campaign %>
+<% frame_id = "exam_#{exam.id}_registration" %>
+<% bp = { frame_id: frame_id } %>
+<% phase = exam.status_phase %>
+
+<% pre_finalization =
+  %i[draft registration_open registration_closed].include?(phase) %>
+
+<div id="<%= frame_id %>">
+  <% if exam.skip_campaigns %>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      <%= t("assessment.registration_tab.skip_campaigns_info") %>
+    </div>
+    <%= render "exams/participants_table",
+               entries: exam.exam_rosters.includes(:user)
+                            .joins(:user).merge(User.order(:name)),
+               editable: true,
+               exam: exam %>
+  <% elsif campaign.nil? %>
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t("assessment.registration_tab.no_campaign") %>
+    </div>
+  <% elsif pre_finalization %>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center gap-2">
+        <%= render "exams/campaign_status", exam: exam %>
+
+        <% if campaign.registration_deadline %>
+          <span class="text-muted small">
+            <i class="bi bi-calendar-range me-1"></i>
+            <%= t("registration.campaign.deadline_label") %>:
+            <%= l(campaign.registration_deadline, format: :long) %>
+          </span>
+        <% end %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <% if campaign.draft? %>
+          <%= open_campaign_button(campaign, params: bp) %>
+        <% elsif campaign.open? %>
+          <%= close_campaign_button(campaign, params: bp) %>
+        <% elsif campaign.closed? %>
+          <%= reopen_campaign_button(campaign, params: bp) %>
+          <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                      registration_campaign_allocation_path(campaign,
+                                                            frame_id: frame_id),
+                      class: "btn btn-primary",
+                      data: { turbo_stream: true } %>
+        <% elsif campaign.processing? %>
+          <%= link_to t("registration.campaign.actions.review_and_finalize"),
+                      registration_campaign_allocation_path(campaign,
+                                                            frame_id: frame_id),
+                      class: "btn btn-primary",
+                      data: { turbo_stream: true } %>
+        <% end %>
+      </div>
+    </div>
+    <% unless campaign.draft? %>
+      <% count = campaign.total_registrations_count %>
+      <% cap = exam.capacity %>
+      <% grouped = campaign.user_registrations_grouped_by_user %>
+      <div class="d-flex align-items-baseline gap-2 mb-3">
+        <span class="fw-medium">
+          <%= count %>
+          <%= t("assessment.registration_tab.registered_count_label") %>
+        </span>
+
+        <span class="text-muted">&middot;</span>
+
+        <span class="text-muted">
+          <%= t("assessment.registration_tab.capacity_label",
+                capacity: cap.present? ? cap : "∞") %>
+        </span>
+      </div>
+      <% if grouped.any? %>
+        <div data-controller="exams--registration-list">
+          <input
+            type="text"
+            class="form-control form-control-sm mb-3"
+            placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+            autocomplete="off"
+            data-action="input->exams--registration-list#filter"
+          >
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th><%= t("basics.name") %></th>
+                  <th><%= t("basics.email") %></th>
+
+                  <% unless campaign.completed? %>
+                    <th class="text-end"><%= t("basics.actions") %></th>
+                  <% end %>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% grouped.each do |user, _registrations| %>
+                  <tr
+                    data-exams--registration-list-target="entry"
+                    data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
+                  >
+                    <td><%= user.tutorial_name.presence || user.email %></td>
+                    <td class="text-muted"><%= user.email %></td>
+
+                    <% unless campaign.completed? %>
+                      <td class="text-end">
+                        <%= button_to destroy_for_user_registration_campaign_registrations_path(
+                                        campaign, user_id: user.id,
+                                        source: "registrations"),
+                                      method: :delete,
+                                      class: "btn btn-sm btn-outline-danger",
+                                      form: {
+                                        class: "d-inline-block mb-0",
+                                        data: {
+                                          turbo_confirm: t("basics.confirm")
+                                        }
+                                      } do %>
+                          <i class="bi bi-trash"></i>
+                        <% end %>
+                      </td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            class="small text-muted mt-2 text-center d-none"
+            data-exams--registration-list-target="noResults"
+          >
+            <%= t("assessment.registration_tab.no_filter_results") %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <%= render "exams/campaign_status", exam: exam %>
+
+      <span class="text-muted small">
+        <%= t("assessment.registration_tab.finalized_on",
+              date: campaign.updated_at ?
+                l(campaign.updated_at, format: :long) : "—") %>
+      </span>
+    </div>
+    <%= render "exams/participants_table",
+               entries: exam.exam_rosters.includes(:user)
+                            .joins(:user).merge(User.order(:name)),
+               editable: true,
+               exam: exam %>
+    <% rejected = campaign.user_registrations.where(status: :rejected) %>
+    <% if rejected.any? %>
+      <h6 class="text-muted fw-semibold small text-uppercase mt-4 mb-2">
+        <i class="bi bi-person-slash me-1"></i>
+        <%= t("assessment.registration_tab.rejected_heading") %>
+        <span class="badge bg-secondary ms-1"><%= rejected.count %></span>
+      </h6>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% rejected.includes(:user).each do |reg| %>
+              <tr>
+                <td><%= reg.user.name %></td>
+                <td class="text-muted"><%= reg.user.email %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% end %>
+</div>

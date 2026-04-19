@@ -15,7 +15,7 @@
       <li class="mb-1">
         <strong><%= conflict[:user].name %></strong>
         (<%= conflict[:user].email %>) —
-        <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
+        <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:registerable].title) %>
         <% if conflict[:registration] %>
           <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: conflict[:user].id, source: allocation_source),
                         method: :delete,

@@ -1,0 +1,489 @@
+<div
+  class="card"
+  data-controller="assessments--scheme-form"
+  data-assessments--scheme-form-max-points-value="<%= max_points %>"
+  data-assessments--scheme-form-student-points-value="<%= student_points_json %>"
+  data-assessments--scheme-form-pass-label-value="<%= t('assessment.grade_scheme.summary.pass_rate') %>"
+  data-assessments--scheme-form-fail-label-value="<%= t('assessment.grade_scheme.summary.fail_rate') %>"
+  data-assessments--scheme-form-regenerate-hint-value="<%= t('assessment.grade_scheme.form.regenerate_hint') %>"
+  data-assessments--scheme-form-error-invalid-numbers-value="<%= t('assessment.grade_scheme.form.error_invalid_numbers') %>"
+  data-assessments--scheme-form-error-excellence-gt-passing-value="<%= t('assessment.grade_scheme.form.error_excellence_gt_passing') %>"
+  data-assessments--scheme-form-error-passing-negative-value="<%= t('assessment.grade_scheme.form.error_passing_negative') %>"
+  data-assessments--scheme-form-error-excellence-max-value="<%= t('assessment.grade_scheme.form.error_excellence_max', max: max_points) %>"
+  data-assessments--scheme-form-error-range-too-narrow-value="<%= t('assessment.grade_scheme.form.error_range_too_narrow', min_range: '__min_range__', grades: '__grades__', step: '__step__') %>"
+  data-anchor-hint-passing="<%= t('assessment.grade_scheme.form.anchor_hint_passing') %>"
+  data-anchor-hint-excellence="<%= t('assessment.grade_scheme.form.anchor_hint_excellence') %>"
+  data-derived-hint-excellence="<%= t('assessment.grade_scheme.form.derived_hint_excellence') %>"
+  data-derived-hint-passing="<%= t('assessment.grade_scheme.form.derived_hint_passing') %>"
+>
+  <div class="card-header bg-light">
+    <h5 class="mb-0"><%= t("assessment.grade_scheme.form.title") %></h5>
+  </div>
+
+  <div class="card-body">
+    <ul class="nav nav-pills mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          data-bs-toggle="pill"
+          data-bs-target="#two-point-tab"
+          data-action="shown.bs.tab->assessments--scheme-form#syncAutoPreview"
+        >
+          <i class="bi bi-magic me-1"></i>
+          <%= t("assessment.grade_scheme.form.two_point_auto") %>
+        </button>
+      </li>
+
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          data-bs-toggle="pill"
+          data-bs-target="#anchor-delta-tab"
+          data-action="shown.bs.tab->assessments--scheme-form#syncAnchorDeltaPreview"
+        >
+          <i class="bi bi-sliders me-1"></i>
+          <%= t("assessment.grade_scheme.form.anchor_delta") %>
+        </button>
+      </li>
+
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          data-bs-toggle="pill"
+          data-bs-target="#manual-tab"
+          data-action="shown.bs.tab->assessments--scheme-form#initManualTab"
+        >
+          <i class="bi bi-pencil me-1"></i>
+          <%= t("assessment.grade_scheme.form.manual_curve") %>
+        </button>
+      </li>
+    </ul>
+
+    <%= form_with url: form_url, method: form_method,
+                  data: { turbo_stream: true } do |f| %>
+      <%= f.hidden_field :kind, value: "banded" %>
+
+      <%= f.hidden_field :config_json,
+            value: existing_bands.any? ? grade_scheme.config.to_json : "",
+            data: { assessments__scheme_form_target: "configField" } %>
+
+      <div
+        class="d-flex align-items-center gap-2 mb-3"
+        data-assessments--scheme-form-target="pointsStepRow"
+      >
+        <label class="form-label fw-bold mb-0 text-nowrap">
+          <%= t("assessment.grade_scheme.form.points_step_label") %>
+        </label>
+
+        <div class="input-group" style="max-width: 160px;">
+          <input
+            type="number"
+            autocomplete="off"
+            class="form-control form-control-sm"
+            name="points_step"
+            min="0.01"
+            step="any"
+            value="<%= default_points_step %>"
+            data-assessments--scheme-form-target="pointsStepInput"
+            data-action="input->assessments--scheme-form#onStepChange"
+          >
+
+          <span class="input-group-text input-group-text-sm">
+            <%= t("assessment.distribution.points") %>
+          </span>
+        </div>
+
+        <small class="text-muted">
+          <%= t("assessment.grade_scheme.form.points_step_hint") %>
+        </small>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="two-point-tab">
+          <p class="text-muted">
+            <%= t("assessment.grade_scheme.form.two_point_description") %>
+          </p>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">
+                <%= t("assessment.grade_scheme.form.excellence_label") %>
+              </label>
+
+              <div class="input-group">
+                <input
+                  type="number"
+                  autocomplete="off"
+                  class="form-control threshold-input"
+                  value="<%= default_excellence %>"
+                  min="0"
+                  max="<%= max_points %>"
+                  data-assessments--scheme-form-target="excellenceInput"
+                  data-action="input->assessments--scheme-form#markDirty"
+                >
+
+                <span class="input-group-text">
+                  <%= t("assessment.distribution.points") %>
+                </span>
+              </div>
+
+              <small class="text-muted">
+                <%= t("assessment.grade_scheme.form.excellence_hint") %>
+              </small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">
+                <%= t("assessment.grade_scheme.form.passing_label") %>
+              </label>
+
+              <div class="input-group">
+                <input
+                  type="number"
+                  autocomplete="off"
+                  class="form-control threshold-input"
+                  value="<%= default_passing %>"
+                  min="0"
+                  max="<%= max_points %>"
+                  data-assessments--scheme-form-target="passingInput"
+                  data-action="input->assessments--scheme-form#markDirty"
+                >
+
+                <span class="input-group-text">
+                  <%= t("assessment.distribution.points") %>
+                </span>
+              </div>
+
+              <small class="text-muted">
+                <%= t("assessment.grade_scheme.form.passing_hint") %>
+              </small>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary mb-3"
+            data-action="assessments--scheme-form#generate"
+          >
+            <i class="bi bi-arrow-repeat me-2"></i>
+            <%= t("assessment.grade_scheme.form.generate_button") %>
+          </button>
+
+          <div
+            data-assessments--scheme-form-target="bandsPreview"
+            class="<%= existing_bands.any? ? '' : 'd-none' %>"
+          >
+            <h6 class="mb-2">
+              <%= t("assessment.grade_scheme.form.preview_title") %>
+            </h6>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 10%">
+                      <%= t("assessment.grade_scheme.form.col_grade") %>
+                    </th>
+
+                    <th style="width: 30%">
+                      <%= t("assessment.grade_scheme.form.col_range") %>
+                    </th>
+
+                    <th style="width: 35%">
+                      <%= t("assessment.grade_scheme.form.col_students") %>
+                    </th>
+
+                    <th style="width: 25%" class="text-end">
+                      <%= t("assessment.grade_scheme.form.col_percentage") %>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody data-assessments--scheme-form-target="bandsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            class="alert alert-danger d-none mt-3"
+            data-assessments--scheme-form-target="errorAlert"
+          ></div>
+        </div>
+
+        <div class="tab-pane fade" id="anchor-delta-tab">
+          <p class="text-muted">
+            <%= t("assessment.grade_scheme.form.anchor_delta_description") %>
+          </p>
+
+          <div class="mb-3">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="anchor_type"
+                id="anchor-passing"
+                value="passing"
+                checked
+                data-assessments--scheme-form-target="anchorTypeInput"
+                data-action="change->assessments--scheme-form#onAnchorTypeChange"
+              >
+
+              <label class="form-check-label" for="anchor-passing">
+                <%= t("assessment.grade_scheme.form.anchor_type_passing") %>
+              </label>
+            </div>
+
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="anchor_type"
+                id="anchor-excellence"
+                value="excellence"
+                data-assessments--scheme-form-target="anchorTypeInput"
+                data-action="change->assessments--scheme-form#onAnchorTypeChange"
+              >
+
+              <label class="form-check-label" for="anchor-excellence">
+                <%= t("assessment.grade_scheme.form.anchor_type_excellence") %>
+              </label>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">
+                <%= t("assessment.grade_scheme.form.anchor_label") %>
+              </label>
+
+              <div class="input-group">
+                <input
+                  type="number"
+                  autocomplete="off"
+                  class="form-control"
+                  min="0"
+                  max="<%= max_points %>"
+                  value="<%= default_passing %>"
+                  data-assessments--scheme-form-target="anchorInput"
+                  data-action="input->assessments--scheme-form#onAnchorDeltaChange"
+                >
+
+                <span class="input-group-text">
+                  <%= t("assessment.distribution.points") %>
+                </span>
+              </div>
+
+              <small
+                class="text-muted"
+                data-assessments--scheme-form-target="anchorHint"
+              >
+                <%= t("assessment.grade_scheme.form.anchor_hint_passing") %>
+              </small>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">
+                <%= t("assessment.grade_scheme.form.delta_label") %>
+              </label>
+
+              <div class="input-group">
+                <input
+                  type="number"
+                  autocomplete="off"
+                  class="form-control"
+                  min="0.01"
+                  step="any"
+                  value="5"
+                  data-assessments--scheme-form-target="deltaInput"
+                  data-action="input->assessments--scheme-form#onAnchorDeltaChange"
+                >
+
+                <span class="input-group-text">
+                  <%= t("assessment.distribution.points") %>
+                </span>
+              </div>
+
+              <small class="text-muted">
+                <%= t("assessment.grade_scheme.form.delta_hint") %>
+              </small>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">
+                <%= t("assessment.grade_scheme.form.derived_label") %>
+              </label>
+
+              <div class="input-group has-validation">
+                <input
+                  type="number"
+                  autocomplete="off"
+                  class="form-control"
+                  readonly
+                  tabindex="-1"
+                  data-assessments--scheme-form-target="derivedInput"
+                >
+
+                <span class="input-group-text">
+                  <%= t("assessment.distribution.points") %>
+                </span>
+
+                <div
+                  class="invalid-feedback"
+                  data-assessments--scheme-form-target="derivedError"
+                ></div>
+              </div>
+
+              <small
+                class="text-muted"
+                data-assessments--scheme-form-target="derivedHint"
+              >
+                <%= t("assessment.grade_scheme.form.derived_hint_excellence") %>
+              </small>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary mb-3"
+            data-action="assessments--scheme-form#generateFromDelta"
+          >
+            <i class="bi bi-arrow-repeat me-2"></i>
+            <%= t("assessment.grade_scheme.form.generate_button") %>
+          </button>
+
+          <div
+            data-assessments--scheme-form-target="anchorDeltaBandsPreview"
+            class="d-none"
+          >
+            <h6 class="mb-2">
+              <%= t("assessment.grade_scheme.form.preview_title") %>
+            </h6>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 10%">
+                      <%= t("assessment.grade_scheme.form.col_grade") %>
+                    </th>
+
+                    <th style="width: 30%">
+                      <%= t("assessment.grade_scheme.form.col_range") %>
+                    </th>
+
+                    <th style="width: 35%">
+                      <%= t("assessment.grade_scheme.form.col_students") %>
+                    </th>
+
+                    <th style="width: 25%" class="text-end">
+                      <%= t("assessment.grade_scheme.form.col_percentage") %>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody
+                  data-assessments--scheme-form-target="anchorDeltaBandsBody"
+                ></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            class="alert alert-danger d-none mt-3"
+            data-assessments--scheme-form-target="anchorDeltaErrorAlert"
+          ></div>
+        </div>
+
+        <div class="tab-pane fade" id="manual-tab">
+          <p class="text-muted">
+            <%= t("assessment.grade_scheme.form.manual_description") %>
+          </p>
+
+          <div
+            class="position-relative"
+            style="height: 180px;"
+            data-assessments--scheme-form-target="manualHistogramContainer"
+          >
+            <div
+              class="d-flex align-items-end gap-1"
+              style="height: 155px;"
+              data-assessments--scheme-form-target="manualBars"
+            ></div>
+          </div>
+
+          <div
+            class="position-relative mb-3"
+            style="height: 18px; margin-top: 4px;"
+            data-assessments--scheme-form-target="manualAxis"
+          ></div>
+
+          <div
+            data-assessments--scheme-form-target="manualPreview"
+            class="d-none"
+          >
+            <h6 class="mb-2">
+              <%= t("assessment.grade_scheme.form.preview_title") %>
+            </h6>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 10%">
+                      <%= t("assessment.grade_scheme.form.col_grade") %>
+                    </th>
+
+                    <th style="width: 30%">
+                      <%= t("assessment.grade_scheme.form.col_range") %>
+                    </th>
+
+                    <th style="width: 35%">
+                      <%= t("assessment.grade_scheme.form.col_students") %>
+                    </th>
+
+                    <th style="width: 25%" class="text-end">
+                      <%= t("assessment.grade_scheme.form.col_percentage") %>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody data-assessments--scheme-form-target="manualBandsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="
+          d-flex justify-content-between align-items-center mt-4 border-top
+          pt-3
+        "
+      >
+        <small
+          class="text-danger d-none"
+          data-assessments--scheme-form-target="dirtyHint"
+        >
+          <i class="bi bi-exclamation-triangle me-1"></i>
+        </small>
+
+        <div class="d-flex gap-2 ms-auto">
+          <%= link_to t("assessment.grade_scheme.form.cancel"),
+                      cancel_path,
+                      class: "btn btn-secondary",
+                      data: { turbo_stream: true } %>
+
+          <button
+            type="submit"
+            class="btn btn-success"
+            data-assessments--scheme-form-target="submitButton"
+            disabled
+          >
+            <i class="bi bi-save me-2"></i>
+            <%= t("assessment.grade_scheme.form.save_draft") %>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

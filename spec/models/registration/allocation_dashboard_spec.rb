@@ -44,7 +44,7 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
   end
 
   describe "#conflicting_registrations" do
-    context "when there are conflicts" do
+    context "when campaign has tutorial items and there are conflicts" do
       let(:tutorial) { create(:tutorial, lecture: lecture) }
       let(:student) { create(:confirmed_user) }
 
@@ -57,7 +57,28 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
         conflicts = dashboard.conflicting_registrations
         expect(conflicts).to be_present
         expect(conflicts.first[:user]).to eq(student)
-        expect(conflicts.first[:tutorial]).to eq(tutorial)
+        expect(conflicts.first[:registerable]).to eq(tutorial)
+      end
+    end
+
+    context "when campaign has exam items" do
+      let(:exam) { create(:exam, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:exam_campaign) do
+        create(:registration_campaign, campaignable: lecture).tap do |c|
+          create(:registration_item, registration_campaign: c, registerable: exam)
+        end
+      end
+      let(:exam_dashboard) { described_class.new(exam_campaign) }
+
+      before do
+        create(:tutorial, lecture: lecture).tap do |t|
+          create(:tutorial_membership, tutorial: t, user: student)
+        end
+      end
+
+      it "returns empty array even if student is in a tutorial" do
+        expect(exam_dashboard.conflicting_registrations).to be_empty
       end
     end
 

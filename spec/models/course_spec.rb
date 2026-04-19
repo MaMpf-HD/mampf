@@ -290,7 +290,7 @@ RSpec.describe(Course, type: :model) do
       @teacher = FactoryBot.create(:confirmed_user)
       @generic_user = FactoryBot.create(:confirmed_user)
       @course = FactoryBot.create(:course, editors: [@course_editor])
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      year = Faker::Number.between(from: 2050, to: 9999)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
       term2 = FactoryBot.create(:term, year: year, season: "WS")
       term3 = FactoryBot.create(:term, year: year + 1)
@@ -336,7 +336,7 @@ RSpec.describe(Course, type: :model) do
   context "lecture sorting" do
     before :each do
       @course = FactoryBot.create(:course)
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      year = Faker::Number.between(from: 2050, to: 9999)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
       term2 = FactoryBot.create(:term, year: year, season: "WS")
       term3 = FactoryBot.create(:term, year: year + 1)
@@ -385,7 +385,7 @@ RSpec.describe(Course, type: :model) do
   context "lecture subscriptions" do
     before :each do
       @course = FactoryBot.create(:course)
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      year = Faker::Number.between(from: 2050, to: 9999)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
       term2 = FactoryBot.create(:term, year: year, season: "WS")
       term3 = FactoryBot.create(:term, year: year + 1)

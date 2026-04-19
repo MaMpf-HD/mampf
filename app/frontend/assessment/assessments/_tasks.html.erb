@@ -1,0 +1,55 @@
+<% task = local_assigns[:task] || assessment.tasks.build %>
+
+<div class="mb-4">
+  <%= form_with model: task,
+                url: assessment_assessment_tasks_path(assessment),
+                method: :post,
+                local: true,
+                html: { class: "mb-3" } do |f| %>
+    <div data-controller="assessments--points-precision">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
+          <%= f.number_field :max_points,
+                             class: 'form-control',
+                             placeholder: t('assessment.task.max_points_placeholder'),
+                             min: 0,
+                             step: "any",
+                             required: true,
+                             data: {
+                               assessments__points_precision_target: "input",
+                               action: "input->assessments--points-precision#check change->assessments--points-precision#check"
+                             } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.submit t('assessment.task.add'), class: "btn btn-primary w-100" %>
+        </div>
+      </div>
+      <div class="form-text">
+        <%= t("assessment.task.max_points_precision_hint") %>
+        <span class="ms-1"><%= t("assessment.task.description_hint") %></span>
+      </div>
+      <div class="form-text text-danger d-none"
+           data-assessments--points-precision-target="warning">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= t("assessment.task.max_points_precision_warning") %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if tasks.any? %>
+  <div id="tasks-list" class="d-flex flex-column gap-2" data-controller="sortable" data-sortable-url-value="<%= reorder_assessment_assessment_tasks_path(assessment) %>">
+    <% tasks.each_with_index do |task, index| %>
+      <%= render "assessment/tasks/task_card",
+                 task: task,
+                 assessment: assessment,
+                 index: index + 1 %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i>
+    <%= t('assessment.no_tasks_yet') %>
+  </div>
+<% end %>

@@ -39,3 +39,9 @@ campaign_status_worker:
   class: "CampaignStatusWorker"
   queue: critical
   description: "Auto-closes campaigns based on their scheduled dates"
+
+assessment_backfill_worker:
+  cron: "*/1 * * * *"
+  class: "AssessmentBackfillWorker"
+  queue: default
+  description: "Backfills participations for expired assignments"

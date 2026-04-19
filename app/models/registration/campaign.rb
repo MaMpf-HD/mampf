@@ -38,6 +38,13 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    scope :non_exam, lambda {
+      where.not(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -73,6 +80,11 @@ module Registration
 
     def can_be_deleted?
       draft?
+    end
+
+    def exam_campaign?
+      registration_items.where.not(registerable_type: "Exam").none? &&
+        registration_items.where(registerable_type: "Exam").any?
     end
 
     def total_registrations_count

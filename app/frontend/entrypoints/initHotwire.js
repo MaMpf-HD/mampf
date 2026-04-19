@@ -77,6 +77,39 @@ window.Stimulus.register("capacity-editor", CapacityEditorController);
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
+import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
+window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);
+
+import SettingsController from "~/assessment/settings.controller.js";
+window.Stimulus.register("assessments--settings", SettingsController);
+
+import PointsPrecisionController from "~/assessment/points_precision.controller.js";
+window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
+
+import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
+window.Stimulus.register("assessments--scheme-form", SchemeFormController);
+
+import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
+window.Stimulus.register("achievement-form", AchievementFormController);
+
+import RecomputePollController from "~/student_performance/records/recompute_poll.controller.js";
+window.Stimulus.register("recompute-poll", RecomputePollController);
+
+import CertificationInlineController from "~/student_performance/certifications/certification_inline.controller.js";
+window.Stimulus.register("certification-inline", CertificationInlineController);
+
+import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
+window.Stimulus.register("threshold-mode", ThresholdModeController);
+
+import SortableController from "~/assessment/sortable.controller.js";
+window.Stimulus.register("sortable", SortableController);
+
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

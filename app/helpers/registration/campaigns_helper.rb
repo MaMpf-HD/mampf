@@ -75,12 +75,13 @@ module Registration
       t("registration.campaign.confirmations.finalize")
     end
 
-    def finalize_campaign_button(campaign, size: nil, disabled: false)
+    def finalize_campaign_button(campaign, size: nil, disabled: false, params: {})
       classes = ["btn", "btn-danger", size].compact.join(" ")
 
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
                 method: :patch,
+                params: params,
                 form: {
                   data: {
                     controller: "campaign-dissolve",
@@ -93,7 +94,7 @@ module Registration
                 disabled: disabled)
     end
 
-    def allocate_campaign_button(campaign, size: nil)
+    def allocate_campaign_button(campaign, size: nil, params: {})
       has_allocation = campaign.last_allocation_calculated_at.present?
       label = if has_allocation
         t("registration.campaign.actions.reallocate")
@@ -109,8 +110,75 @@ module Registration
       button_to(label,
                 registration_campaign_allocation_path(campaign),
                 method: :post,
+                params: params,
                 class: classes,
                 form: { data: form_data })
     end
+
+    def view_allocation_button(campaign, params: {})
+      link_to(t("registration.campaign.actions.view_allocation"),
+              registration_campaign_allocation_path(campaign, **params),
+              class: "btn btn-secondary",
+              data: { turbo_stream: true })
+    end
+
+    def review_and_finalize_button(campaign, params: {})
+      link_to(t("registration.campaign.actions.review_and_finalize"),
+              registration_campaign_allocation_path(campaign, **params),
+              class: "btn btn-primary",
+              data: { turbo_stream: true })
+    end
+
+    def open_campaign_button(campaign, params: {})
+      button_to(t("registration.campaign.actions.open"),
+                open_registration_campaign_path(campaign),
+                method: :patch,
+                params: params,
+                form: {
+                  data: {
+                    controller: "campaign-action",
+                    "campaign-action-campaign-id-value": campaign.id,
+                    "campaign-action-confirm-message-value":
+                      t("registration.campaign.confirmations.open"),
+                    "campaign-action-warning-message-value":
+                      t("registration.campaign.warnings.unlimited_items"),
+                    action: "submit->campaign-action#confirm",
+                    turbo_stream: true
+                  }
+                },
+                class: "btn btn-success")
+    end
+
+    def close_campaign_button(campaign, params: {})
+      button_to(t("registration.campaign.actions.close"),
+                close_registration_campaign_path(campaign),
+                method: :patch,
+                params: params,
+                data: { confirm: campaign_close_confirmation(campaign),
+                        turbo_stream: true },
+                class: "btn btn-warning")
+    end
+
+    def reopen_campaign_button(campaign, params: {})
+      button_to(t("registration.campaign.actions.reopen"),
+                reopen_registration_campaign_path(campaign),
+                method: :patch,
+                params: params,
+                data: { confirm: t("registration.campaign.confirmations.reopen"),
+                        turbo_stream: true },
+                class: "btn btn-success")
+    end
+
+    private
+
+      def utilization_color(percentage)
+        if percentage >= 100
+          "bg-danger"
+        elsif percentage >= 80
+          "bg-warning"
+        else
+          "bg-success"
+        end
+      end
   end
 end

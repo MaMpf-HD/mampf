@@ -88,10 +88,34 @@
         </div>
       <% end %>
 
-      <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
-        <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
-        </div>
+      <% if Flipper.enabled?(:assessment_grading) %>
+        <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
+          <div class="container medium-width lecture-pane">
+            <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id, tab: params[:assessment_tab]), loading: "lazy" do %>
+              <div class="text-center my-4">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden"><%= t('basics.loading') %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% unless @lecture.seminar? %>
+          <% component.with_tab(name: "exams", label: t("assessment.exams")) do %>
+            <div class="container medium-width lecture-pane">
+              <div id="exams_container">
+                <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
+          <div class="container small-width lecture-pane">
+            <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
+          </div>
+        <% end %>
       <% end %>
 
       <% if @lecture.sort == "vignettes" %>
@@ -143,4 +167,3 @@
     <%= render partial: 'lectures/edit/import_toc_modal',
               locals: { lecture: @lecture } %>
   <% end %>
-

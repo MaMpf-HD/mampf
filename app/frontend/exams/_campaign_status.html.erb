@@ -1,0 +1,5 @@
+<% phase = exam.status_phase %>
+
+<span class="<%= "badge bg-#{Exam::STATUS_PHASE_BADGE[phase]}" %>">
+  <%= t("assessment.exam_status.#{phase}") %>
+</span>

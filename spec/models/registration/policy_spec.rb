@@ -81,6 +81,22 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(policy.errors[:prerequisite_campaign_id])
           .to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
       end
+
+      it "validates student_performance config" do
+        policy = build(:registration_policy, :student_performance)
+        policy.config = {}
+        expect(policy).not_to be_valid
+        expect(policy.errors[:lecture_id])
+          .to include(I18n.t("registration.policy.errors.missing_lecture"))
+      end
+
+      it "validates student_performance lecture exists" do
+        policy = build(:registration_policy, :student_performance,
+                       config: { "lecture_id" => 99_999 })
+        expect(policy).not_to be_valid
+        expect(policy.errors[:lecture_id])
+          .to include(I18n.t("registration.policy.errors.lecture_not_found"))
+      end
     end
 
     describe "ordering" do

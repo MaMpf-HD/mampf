@@ -1,8 +1,36 @@
-<% embedded = local_assigns.fetch(:embedded, false) %>
-<% allocation_source = embedded ? "allocation_embedded" : "allocation" %>
-<% partial_locals = { dashboard: dashboard, campaign: campaign, allocation_source: allocation_source } %>
+<% dashboard = local_assigns.fetch(:dashboard)
+   campaign = local_assigns.fetch(:campaign)
+   embedded = local_assigns.fetch(:embedded, false)
+   allocation_source = embedded ? "allocation_embedded" : "allocation"
+   partial_locals = { dashboard: dashboard, campaign: campaign, allocation_source: allocation_source }
+   cert_incomplete = dashboard.certification_incomplete_data
+   violations = dashboard.policy_violations
+   has_perf = violations.any? { |v| v[:policy] == "student_performance" } %>
 
 <div class="<%= embedded ? "" : "container mt-4" %>" id="allocation-dashboard">
+  <% if cert_incomplete %>
+    <% missing = cert_incomplete[:missing] || [] %>
+    <% pending = cert_incomplete[:pending] || [] %>
+    <div class="alert alert-warning">
+      <i class="bi bi-shield-exclamation me-1"></i>
+
+      <strong><%= t("registration.allocation.cert_incomplete.title") %></strong>
+      —
+      <%= t("registration.allocation.cert_incomplete.missing", count: missing.size) %>
+      <% if pending.any? %>
+        /
+        <%= t("registration.allocation.cert_incomplete.pending", count: pending.size) %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if has_perf %>
+    <div class="alert alert-danger mb-3">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+      <%= t("registration.allocation.student_performance.unfulfilled") %>
+    </div>
+  <% end %>
+
   <%= render "registration/allocations/policy_violations_alert", **partial_locals %>
   <%= render "registration/allocations/conflicting_registrations_alert", **partial_locals %>
 

@@ -1,0 +1,368 @@
+de:
+  assessment:
+    tabs:
+      assessments: "Testate"
+      assignments: "Hausaufgaben"
+      talks: "Vorträge"
+      performance: "Leistungen"
+      achievements: "Zusatzkriterien"
+      certifications: "Prüfungszulassungen"
+    assessments: 'Testate'
+    subtitle:
+      assignments: 'Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten.'
+    achievements:
+      placeholder: 'Zusatzkriterien werden in einem späteren Schritt hier angezeigt.'
+      flash:
+        created: 'Zusatzkriterium erfolgreich erstellt.'
+        updated: 'Zusatzkriterium erfolgreich aktualisiert.'
+        destroyed: 'Zusatzkriterium erfolgreich gelöscht.'
+      errors:
+        not_found: 'Zusatzkriterium nicht gefunden.'
+        referenced_by_rules: 'Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert.'
+      subtitle: 'Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen.'
+      new: 'Neues Zusatzkriterium'
+      edit: 'Zusatzkriterium bearbeiten'
+      value_types:
+        boolean: 'Ja/Nein'
+        numeric: 'Numerisch'
+        percentage: 'Prozentual'
+      fields:
+        title: 'Titel'
+        value_type: 'Typ'
+        threshold: 'Schwellenwert'
+        description: 'Beschreibung'
+      no_achievements_yet: 'Noch keine Zusatzkriterien angelegt.'
+      confirm_delete: 'Zusatzkriterium wirklich löschen?'
+      marking:
+        marked: 'bewertet'
+        met_label: 'erfüllt'
+        value: 'Wert'
+        status: 'Status'
+        met: 'Erfüllt'
+        not_met: 'Nicht erfüllt'
+        unmarked: 'Offen'
+        no_participations: 'Noch keine Teilnahmen vorhanden.'
+    assignment: 'Hausaufgabe'
+    assignments: 'Hausaufgaben'
+    exam: 'Prüfung'
+    exams: 'Prüfungen'
+    new_exam: 'Neue Prüfung anlegen'
+    talk: 'Vortrag'
+    talks: 'Vorträge'
+    tasks: 'Aufgaben'
+    submissions: 'Abgaben'
+    points: 'Punkte'
+    grades: 'Noten'
+    grade: 'Note'
+    participants: 'Teilnehmer'
+    grading: 'Bewertung'
+    graded_by: 'Bewertet von'
+    graded_at: 'Bewertet am'
+    no_grades_yet: 'Es wurden noch keine Noten eingetragen.'
+    grade_table:
+      absent: 'nicht angetreten'
+      exempt: 'entschuldigt'
+      not_submitted: 'nicht abgegeben'
+      excluded_heading: 'Sonderfälle'
+      reason: 'Grund'
+    statistics: 'Statistiken'
+    updated: 'Bewertung erfolgreich aktualisiert.'
+    requires_submission: 'Digitale Abgabe erforderlich'
+    requires_submission_hint: 'Studierende müssen eine Datei hochladen'
+    locked_after_deadline: 'Gesperrt (Abgabefrist abgelaufen)'
+    no_submission_required: 'Keine digitale Abgabe'
+    not_destructible:
+      has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
+      has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
+    exam_not_destructible:
+      roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
+      in_campaign: 'Löschen nicht möglich: Anmeldung wurde bereits geöffnet oder abgeschlossen'
+    form:
+      submit: 'Speichern'
+    task:
+      max_points: 'Maximalpunkte'
+      max_points_placeholder: 'z.B. 10'
+      add: 'Aufgabe hinzufügen'
+      created: 'Aufgabe erfolgreich hinzugefügt.'
+      updated: 'Aufgabe erfolgreich aktualisiert.'
+      deleted: 'Aufgabe erfolgreich gelöscht.'
+      delete_failed: 'Löschen der Aufgabe fehlgeschlagen.'
+      has_points: 'Löschen nicht möglich: Es wurden bereits Punkte eingetragen.'
+      points_abbrev: 'Pkt'
+      description: 'Aufgabenname'
+      description_placeholder: 'z.B. Aufgabe 1'
+      default_name: 'A%{number}'
+      description_hint: 'In der Punktetabelle heißen die Spalten A1, A2, ... – änderbar über den Aufgabennamen beim Bearbeiten.'
+      max_points_precision_hint: 'Es werden 2 Nachkommastellen gespeichert.'
+      max_points_precision_warning: 'Es werden nur 2 Nachkommastellen gespeichert.'
+      missing_warning: 'Noch keine Aufgaben. Punkteingabe durch Tutor:innen nicht möglich.'
+    no_tasks_yet: 'Noch keine Aufgaben erstellt.'
+    position: 'Position'
+    speakers: 'Sprecher'
+    date: 'Datum'
+    edit_grades: 'Noten bearbeiten'
+    visible_from: 'Sichtbar ab'
+    due_at: 'Abgabedatum'
+    legacy: 'Legacy'
+    draft: 'Entwurf'
+    results_published: 'Ergebnisse veröffentlicht'
+    status:
+      title: 'Status'
+      draft: 'Entwurf'
+      open: 'Offen'
+      closed: 'Geschlossen'
+      graded: 'Benotet'
+      archived: 'Archiviert'
+    legacy_items: 'Hausaufgaben (altes System ohne Bewertungsfunktion)'
+    legacy_items_subtitle: 'Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden.'
+    legacy_assignments: 'Hausaufgaben (altes System ohne Bewertungsfunktion)'
+    legacy_assignments_info: 'Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden.'
+    legacy_talks: 'Vorträge (ohne Bewertung)'
+    legacy_talks_info: 'Diese Vorträge wurden erstellt, bevor die Bewertungsfunktion hinzugefügt wurde.'
+    legacy_description: 'Erstellt vor dem Bewertungssystem'
+    no_assignments_yet: 'Noch keine Hausaufgaben erstellt.'
+    no_exams_yet: 'Noch keine Prüfungen erstellt.'
+    exam_created: 'Prüfung erfolgreich erstellt'
+    exam_updated: 'Prüfung erfolgreich aktualisiert'
+    exam_destroyed: 'Prüfung erfolgreich gelöscht'
+    exam_title_placeholder: 'z.B. Hauptklausur, Nachklausur, Mündliche Prüfung'
+    exam_date_hint: 'Optional für mündliche Prüfungen mit individuellen Terminen'
+    exam_location_placeholder: 'z.B. Hörsaal, Raum, oder Online'
+    exam_capacity_hint: 'Leer lassen für unbegrenzte Kapazität'
+    exam_capacity_placeholder: 'Anzahl der Plätze'
+    exam_description_placeholder: 'Optionale Hinweise zur Prüfung'
+    skip_campaigns_label: 'Keine Anmeldung erforderlich (Teilnehmer manuell verwalten)'
+    skip_campaigns_hint: 'Aktivieren, wenn sich Studierende nicht für diese Prüfung anmelden müssen'
+    registration_deadline_label: 'Anmeldefrist'
+    registration_deadline_hint: 'Wird auf 3 Tage vor dem Prüfungsdatum gesetzt, wenn leer gelassen'
+    registration_deadline_locked_hint: 'Anmeldung ist abgeschlossen'
+    info_bar:
+      participants: 'Teilnehmende'
+      registered: 'angemeldet'
+      registration_not_open: 'Anmeldung noch nicht geöffnet.'
+      go_to_registration: 'Zur Anmeldung →'
+    campaign_status:
+      title: 'Anmeldung'
+      none: 'Kein Verfahren'
+      direct: 'Manuelle Verwaltung'
+      create: 'Verfahren erstellen'
+      go_to_campaign: 'Zum Anmeldeverfahren'
+    exam_status:
+      title: 'Status'
+      draft: 'Entwurf'
+      registration_open: 'Anmeldung offen'
+      registration_closed: 'Anmeldung geschlossen'
+      finalized: 'Finalisiert'
+      conducted: 'Durchgeführt'
+      grading: 'Korrektur'
+      graded: 'Benotet'
+    campaign_cta:
+      message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
+      create: 'Jetzt Verfahren erstellen'
+    registration_tab:
+      skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet.'
+      no_campaign: 'Kein Anmeldeverfahren für diese Prüfung gefunden.'
+      participants_heading: 'Teilnehmende'
+      registered_count:
+        zero: 'Noch keine Anmeldungen'
+        one: '%{count} angemeldet'
+        other: '%{count} angemeldet'
+      registered_count_label: 'angemeldet'
+      capacity_label: 'Kapazität: %{capacity}'
+      unlimited_capacity: 'unbegrenzt'
+      filter_placeholder: 'Nach Name oder E-Mail filtern'
+      no_filter_results: 'Keine passenden Studierenden'
+      add_placeholder: 'E-Mail-Adresse'
+      add_button: 'Hinzufügen'
+      participant_added: '%{name} wurde hinzugefügt.'
+      participant_removed: '%{name} wurde entfernt.'
+      user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
+      already_registered: 'Diese Person ist bereits angemeldet.'
+      finalized_on: 'Finalisiert am %{date}'
+      rejected_heading: 'Abgelehnte Anmeldungen'
+    no_talks_yet: 'Noch keine Vorträge erstellt.'
+    no_talks_with_speakers_yet: 'Alle Vorträge haben noch keine Sprecher zugewiesen.'
+    no_assessables_yet: 'Noch keine Bewertungen erstellt.'
+    submission_settings: 'Abgabe-Einstellungen'
+    errors:
+      feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
+      no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
+      no_assessment: 'Bewertung für dieses Element nicht gefunden.'
+      no_task: 'Aufgabe nicht gefunden.'
+    info:
+      talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
+    grading_overview:
+      submission_progress: 'Abgaben'
+      submitted: 'Abgegeben'
+      missing: 'Ausstehend'
+      not_submitted: 'Nicht abgegeben'
+      progress: 'Fortschritt'
+      unassigned: 'Nicht zugewiesen'
+      no_submission_required: 'Für diese Bewertung ist keine digitale Abgabe erforderlich.'
+      no_participants_yet: 'Es wurden noch keine Teilnehmenden hinzugefügt. Teilnehmende werden aus den Vorlesungsanmeldungen übernommen.'
+      no_tutorial_breakdown: 'Keine Aufschlüsselung nach Tutorien verfügbar.'
+      deadline:
+        due_in: 'Fällig in %{time} (%{date})'
+        due_soon: 'Fällig in %{time} (%{date})'
+        just_closed: 'Geschlossen vor %{time}'
+        grading_phase: 'Geschlossen vor %{time} — Bewertungsphase'
+    overview: 'Übersicht'
+    settings: 'Einstellungen'
+    registration: 'Teilnehmende'
+    roster: 'Teilnehmerliste'
+    points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
+    grade_scheme:
+      label: 'Notenschema'
+      unsupported_pct_format: 'Prozentbasierte Notenschemata werden in diesem Editor noch nicht unterstützt.'
+      created: 'Notenschema gespeichert.'
+      updated: 'Notenschema aktualisiert.'
+      applied: 'Notenschema erfolgreich angewendet.'
+      reapplied:
+        zero: 'Erneut angewendet. Alle Studierenden hatten bereits Noten.'
+        one: 'Erneut angewendet. 1 Studierender neu benotet.'
+        other: 'Erneut angewendet. %{count} Studierende neu benotet.'
+      not_found: 'Notenschema nicht gefunden.'
+      pending_title: 'Punkteerfassung läuft.'
+      pending_message: '%{reviewed} von %{total} überprüft, %{pending} noch ausstehend.'
+      pending_breakdown: '%{absent} nicht angetreten, %{exempt} entschuldigt'
+      distribution_hint: 'Überprüfen Sie die Punkteverteilung und erstellen Sie ein Notenschema zur Notenvergabe.'
+      create_button: 'Notenschema erstellen'
+      draft_title: 'Notenschema konfiguriert.'
+      draft_message: 'Überprüfen Sie das Schema, sehen Sie die Notenvorschau und wenden Sie es an, wenn Sie bereit sind.'
+      draft_overwrite_warning:
+        one: >-
+          1 Studierender hat bereits eine Note.
+          Das Anwenden dieses Schemas wird sie überschreiben.
+        other: >-
+          %{count} Studierende haben bereits Noten.
+          Das Anwenden dieses Schemas wird sie überschreiben.
+      edit_button: 'Schema bearbeiten'
+      preview_button: 'Notenvorschau'
+      apply_button: 'Schema anwenden'
+      apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
+      applied_title: 'Notenschema angewendet!'
+      applied_message: 'Noten eingetragen am %{time} für %{count} Studierende.'
+      ungraded_warning:
+        one: '1 Studierender hat noch keine Note.'
+        other: '%{count} Studierende haben noch keine Note.'
+      revise_button: 'Schema überarbeiten'
+      reapply_button: 'Neu anwenden'
+      reapply_confirm: >-
+        Das Schema wird auf alle noch nicht benoteten Studierenden angewendet.
+        Bereits vergebene Noten werden nicht verändert. Fortfahren?
+      summary:
+        title: 'Notenstufen'
+        pass_rate: 'Bestehensquote'
+        fail_rate: 'Durchfallquote'
+        absent_note:
+          one: '%{count} abwesende/r Studierende/r erhält 5,0'
+          other: '%{count} abwesende Studierende erhalten 5,0'
+        exempt_note:
+          one: '%{count} entschuldigte/r Studierende/r (keine Note)'
+          other: '%{count} entschuldigte Studierende (keine Note)'
+      preview:
+        title: 'Notenvorschau'
+        back: 'Zurück'
+        reviewed: 'Überprüft'
+        passed: 'Bestanden'
+        failed: 'Nicht bestanden'
+        absent_title:
+          one: '%{count} abwesende/r Studierende/r'
+          other: '%{count} abwesende Studierende'
+        absent_reason: 'nicht angetreten'
+        col_name: 'Name'
+        col_tutorial: 'Tutorium'
+        col_points: 'Punkte'
+        col_current: 'Aktuelle Note'
+        col_proposed: 'Vorgeschlagene Note'
+        changed: 'Note würde sich ändern'
+      form:
+        title: 'Notenschema konfigurieren'
+        two_point_auto: 'Zwei-Punkte-Automatik'
+        manual_curve: 'Manuelle Kurve'
+        anchor_delta: 'Anker + Schritt'
+        two_point_description: 'Legen Sie zwei Schwellenwerte fest, und das System generiert automatisch die Zwischennoten.'
+        anchor_delta_description: 'Legen Sie einen Anker-Schwellenwert und einen gleichmäßigen Notenschritt fest. Das System leitet den anderen Schwellenwert automatisch ab.'
+        anchor_type_passing: 'Anker auf Bestehen (4,0)'
+        anchor_type_excellence: 'Anker auf Exzellenz (1,0)'
+        anchor_label: 'Anker-Schwelle'
+        anchor_hint_passing: 'Mindestpunktzahl zum Bestehen (Note 4,0).'
+        anchor_hint_excellence: 'Mindestpunktzahl für Note 1,0.'
+        delta_label: 'Notenschritt (Δ)'
+        delta_hint: 'Punkte pro Notenstufe (z.B. 5 bedeutet, jede Notenstufe kostet 5 Pkt).'
+        derived_label: 'Abgeleitete Schwelle'
+        derived_hint_excellence: 'Berechneter Exzellenz-Schwellenwert (Anker + 9 × Δ).'
+        derived_hint_passing: 'Berechneter Bestehens-Schwellenwert (Anker − 9 × Δ).'
+        excellence_label: 'Exzellenz-Schwelle (Note 1,0)'
+        excellence_hint: 'Studierende ab dieser Punktzahl erhalten 1,0'
+        passing_label: 'Bestehens-Schwelle (Note 4,0)'
+        passing_hint: 'Mindestpunktzahl zum Bestehen (darunter = 5,0)'
+        generate_button: 'Notenstufen generieren'
+        preview_title: 'Generierte Stufen (Vorschau)'
+        col_grade: 'Note'
+        col_range: 'Punktebereich'
+        col_students: 'Studierende'
+        col_percentage: 'Anteil'
+        manual_description: 'Ziehen Sie die Notengrenzen im Histogramm, um die Stufen festzulegen.'
+        manual_placeholder: 'Manuelle Konfiguration kommt bald'
+        regenerate_hint: 'Schwellenwerte geändert — bitte Notenstufen neu generieren.'
+        points_step_label: 'Punkteschritt'
+        points_step_hint: 'Kleinste Punkteinheit (z.B. 0,5 für halbe Punkte). Bestimmt die Rastergranularität.'
+        error_invalid_numbers: 'Bitte gültige Zahlen für beide Schwellenwerte eingeben.'
+        error_excellence_gt_passing: 'Exzellenz-Schwelle muss größer als Bestehens-Schwelle sein.'
+        error_passing_negative: 'Bestehens-Schwelle muss 0 oder größer sein.'
+        error_excellence_max: 'Exzellenz-Schwelle darf %{max} Punkte nicht überschreiten.'
+        error_range_too_narrow: 'Bereich zu eng: Mindestens %{min_range} Punkte erforderlich (%{grades} × Schritt %{step}).'
+        cancel: 'Abbrechen'
+        save_draft: 'Als Entwurf speichern'
+    distribution:
+      title: 'Punkteverteilungsanalyse'
+      histogram_title: 'Punkteverteilung'
+      statistics_title: 'Grundlegende Statistiken'
+      percentiles_title: 'Perzentile'
+      no_data: 'Noch keine überprüften Studierenden. Die Verteilung erscheint, sobald Punkte vorliegen.'
+      students_reviewed: 'Überprüfte Studierende'
+      minimum: 'Minimum'
+      maximum: 'Maximum'
+      mean: 'Mittelwert'
+      median: 'Median'
+      std_dev: 'Standardabweichung'
+      points: 'Pkt'
+      percentile_nth: '%{n}. Perzentil'
+    statistics_analysis: 'Statistiken & Analyse'
+    no_points_yet: 'Noch keine Punkte eingetragen.'
+    point_grid:
+      total: 'Gesamt'
+    statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
+    statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
+
+  activerecord:
+    errors:
+      models:
+        assessment/task:
+          attributes:
+            base:
+              requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            grade_numeric:
+              not_gradable: "kann nicht für ein nicht-benotbares Assessment gesetzt werden"
+        assessment/task_point:
+          attributes:
+            base:
+              assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
+        assessment/grade_scheme:
+          attributes:
+            base:
+              immutable_when_applied: "Angewandte Notenschemata können nicht geändert werden."
+            assessment:
+              must_be_pointable_and_gradable: "muss sowohl punktebasiert als auch benotbar sein (z.B. Klausur)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"
+              must_be_in_future: "muss in der Zukunft liegen"
+        assessment/assessment:
+          attributes:
+            requires_submission:
+              locked_after_deadline: "kann nach Ablauf der Abgabefrist nicht mehr geändert werden"

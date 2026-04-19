@@ -1,6 +1,6 @@
 de:
   roster:
-    title: 'Teilnehmende/Gruppen'
+    title: 'Teilnehmende'
     status: 'Status'
     group_category:
       tutorial: "Tutorium"
@@ -279,6 +279,7 @@ de:
       user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
+      cannot_delete: "Kann nicht gelöscht werden."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
@@ -297,3 +298,5 @@ de:
       user_added: "Studierende/r erfolgreich hinzugefügt."
       user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
       user_removed: "Studierende/r erfolgreich entfernt."
+    no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
+    registered: 'Registriert'

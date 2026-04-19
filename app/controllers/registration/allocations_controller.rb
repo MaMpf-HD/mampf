@@ -74,9 +74,22 @@ module Registration
       result = guard.check(ignore_policies: force)
 
       unless result.success?
-        # Redirect to dashboard to show errors
-        redirect_to registration_campaign_allocation_path(@campaign),
-                    alert: t("registration.allocation.errors.#{result.error_code}")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_allocation_path(@campaign),
+                        alert: t("registration.allocation.errors.#{result.error_code}")
+          end
+          format.turbo_stream do
+            @dashboard = Registration::AllocationDashboard.new(@campaign)
+            flash.now[:alert] = t("registration.allocation.errors.#{result.error_code}")
+            render turbo_stream: [
+              turbo_stream.update(target_frame_id,
+                                  partial: "registration/allocations/dashboard",
+                                  locals: { frame_id: target_frame_id }),
+              stream_flash
+            ]
+          end
+        end
         return
       end
 
@@ -111,6 +124,29 @@ module Registration
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
+      end
+
+      def target_frame_id
+        params[:frame_id].presence || "campaigns_container"
+      end
+
+      def exam_campaign_context?
+        target_frame_id != "campaigns_container" &&
+          @campaign.exam_campaign?
+      end
+
+      def render_exam_update(partial)
+        exam = @campaign.registration_items
+                        .find_by(registerable_type: "Exam")
+                        .registerable
+        render turbo_stream: [
+          turbo_stream.replace(
+            target_frame_id,
+            partial: partial,
+            locals: { exam: exam, lecture: exam.lecture }
+          ),
+          stream_flash
+        ].compact
       end
   end
 end

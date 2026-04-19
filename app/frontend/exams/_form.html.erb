@@ -1,0 +1,20 @@
+<div class="mb-3">
+  <%= link_to exams_path(lecture_id: lecture.id),
+              class: "btn btn-sm btn-outline-secondary",
+              role: "button",
+              data: { turbo_stream: true } do %>
+    <i class="bi bi-arrow-left"></i> <%= t("back") %>
+  <% end %>
+</div>
+
+<%= render "exams/delete_button", exam: exam %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3><%= exam.new_record? ? t("assessment.new_exam") : t("buttons.edit") %></h3>
+</div>
+
+<%= form_with model: exam,
+              html: { id: 'exam-form' },
+              data: { turbo: true, controller: "exams--form" } do |f| %>
+  <%= render "exams/form_fields", f: f, exam: exam %>
+<% end %>

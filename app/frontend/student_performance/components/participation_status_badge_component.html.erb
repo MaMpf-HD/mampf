@@ -1,0 +1,8 @@
+<% if variant == :full %>
+  <span class="text-<%= config[:color] %>">
+    <i class="bi <%= config[:icon] %> me-1"></i>
+    <%= label %>
+  </span>
+<% else %>
+  <%= render_compact %>
+<% end %>

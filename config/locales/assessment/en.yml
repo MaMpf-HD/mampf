@@ -1,0 +1,368 @@
+en:
+  assessment:
+    tabs:
+      assessments: "Assessments"
+      assignments: "Assignments"
+      talks: "Talks"
+      performance: "Performance"
+      achievements: "Achievements"
+      certifications: "Exam Eligibility"
+    assessments: 'Assessments'
+    subtitle:
+      assignments: 'Manage homework sheets, grading, and point allocation.'
+    achievements:
+      placeholder: 'Achievements will be displayed here in a later step.'
+      flash:
+        created: 'Achievement created successfully.'
+        updated: 'Achievement updated successfully.'
+        destroyed: 'Achievement deleted successfully.'
+      errors:
+        not_found: 'Achievement not found.'
+        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
+      subtitle: 'Define additional criteria students must fulfill beyond points.'
+      new: 'New Achievement'
+      edit: 'Edit Achievement'
+      value_types:
+        boolean: 'Yes/No'
+        numeric: 'Numeric'
+        percentage: 'Percentage'
+      fields:
+        title: 'Title'
+        value_type: 'Type'
+        threshold: 'Threshold'
+        description: 'Description'
+      no_achievements_yet: 'No achievements defined yet.'
+      confirm_delete: 'Really delete this achievement?'
+      marking:
+        marked: 'marked'
+        met_label: 'met'
+        value: 'Value'
+        status: 'Status'
+        met: 'Met'
+        not_met: 'Not met'
+        unmarked: 'Unmarked'
+        no_participations: 'No participations yet.'
+    assignment: 'Assignment'
+    assignments: 'Assignments'
+    exam: 'Exam'
+    exams: 'Exams'
+    new_exam: 'Create New Exam'
+    talk: 'Talk'
+    talks: 'Talks'
+    tasks: 'Tasks'
+    submissions: 'Submissions'
+    points: 'Points'
+    grades: 'Grades'
+    grade: 'Grade'
+    participants: 'Participants'
+    grading: 'Grading'
+    graded_by: 'Graded by'
+    graded_at: 'Graded at'
+    no_grades_yet: 'No grades have been entered yet.'
+    grade_table:
+      absent: 'absent'
+      exempt: 'exempt'
+      not_submitted: 'not submitted'
+      excluded_heading: 'Special Cases'
+      reason: 'Reason'
+    statistics: 'Statistics'
+    updated: 'Assessment updated successfully.'
+    requires_submission: 'Requires digital submission'
+    requires_submission_hint: 'Students must upload a file'
+    locked_after_deadline: 'Locked (deadline has passed)'
+    no_submission_required: 'No digital submission'
+    not_destructible:
+      has_submissions: 'Cannot delete: Submissions exist'
+      has_grading_data: 'Cannot delete: Grading data exists'
+    exam_not_destructible:
+      roster_not_empty: 'Cannot delete: Registered participants exist'
+      in_campaign: 'Cannot delete: Registration is already open or completed'
+    form:
+      submit: 'Save'
+    task:
+      max_points: 'Max Points'
+      max_points_placeholder: 'e.g., 10'
+      add: 'Add Task'
+      created: 'Task added successfully.'
+      updated: 'Task updated successfully.'
+      deleted: 'Task deleted successfully.'
+      delete_failed: 'Failed to delete task.'
+      has_points: 'Cannot delete: Points have been entered for this task.'
+      points_abbrev: 'pts'
+      description: 'Task name'
+      description_placeholder: 'e.g., Problem 1'
+      default_name: 'T%{number}'
+      description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      max_points_precision_hint: 'Stored with 2 decimal places.'
+      max_points_precision_warning: 'Only 2 decimal places are stored.'
+      missing_warning: 'No tasks yet. Points cannot be entered by tutors.'
+    no_tasks_yet: 'No tasks created yet.'
+    position: 'Position'
+    speakers: 'Speakers'
+    date: 'Date'
+    edit_grades: 'Edit grades'
+    visible_from: 'Visible from'
+    due_at: 'Due'
+    legacy: 'Legacy'
+    draft: 'Draft'
+    results_published: 'Results published'
+    status:
+      title: 'Status'
+      draft: 'Draft'
+      open: 'Open'
+      closed: 'Closed'
+      graded: 'Graded'
+      archived: 'Archived'
+    legacy_items: 'Assignments without Assessment System'
+    legacy_items_subtitle: 'These assignments were created before the assessment system. They can be edited using the legacy interface.'
+    legacy_assignments: 'Assignments (legacy system without grading)'
+    legacy_assignments_info: 'These assignments were created with the old system. They can be edited via the old interface.'
+    legacy_talks: 'Talks (no grading)'
+    legacy_talks_info: 'These talks were created before the grading feature was added.'
+    legacy_description: 'Created before assessment system'
+    no_assignments_yet: 'No assignments created yet.'
+    no_exams_yet: 'No exams created yet.'
+    exam_created: 'Exam created successfully'
+    exam_updated: 'Exam updated successfully'
+    exam_destroyed: 'Exam deleted successfully'
+    exam_title_placeholder: 'e.g., Main Exam, Retake Exam, Oral Examination'
+    exam_date_hint: 'Optional for oral exams with individual appointments'
+    exam_location_placeholder: 'e.g., Lecture Hall, Room, or Online'
+    exam_capacity_hint: 'Leave empty for unlimited capacity'
+    exam_capacity_placeholder: 'Number of seats'
+    exam_description_placeholder: 'Optional notes about the exam'
+    skip_campaigns_label: 'No registration required (manage roster manually)'
+    skip_campaigns_hint: 'Enable if students do not need to register for this exam'
+    registration_deadline_label: 'Registration deadline'
+    registration_deadline_hint: 'Defaults to 3 days before the exam date if left empty'
+    registration_deadline_locked_hint: 'Registration is completed'
+    info_bar:
+      participants: 'participants'
+      registered: 'registered'
+      registration_not_open: 'Registration not yet open.'
+      go_to_registration: 'Go to Registration →'
+    campaign_status:
+      title: 'Registration'
+      none: 'No registration'
+      direct: 'Direct management'
+      create: 'Create campaign'
+      go_to_campaign: 'Go to campaign'
+    exam_status:
+      title: 'Status'
+      draft: 'Draft'
+      registration_open: 'Registration open'
+      registration_closed: 'Registration closed'
+      finalized: 'Finalized'
+      conducted: 'Conducted'
+      grading: 'Grading'
+      graded: 'Graded'
+    campaign_cta:
+      message: 'This exam has no registration campaign. Students cannot register yet.'
+      create: 'Create campaign now'
+    registration_tab:
+      skip_campaigns_info: 'Registration is managed manually for this exam.'
+      no_campaign: 'No registration campaign found for this exam.'
+      participants_heading: 'Participants'
+      registered_count:
+        zero: 'No registrations yet'
+        one: '%{count} registered'
+        other: '%{count} registered'
+      registered_count_label: 'registered'
+      capacity_label: 'Capacity: %{capacity}'
+      unlimited_capacity: 'unlimited'
+      filter_placeholder: 'Filter by name or email'
+      no_filter_results: 'No matching students'
+      add_placeholder: 'Email address'
+      add_button: 'Add'
+      participant_added: '%{name} has been added.'
+      participant_removed: '%{name} has been removed.'
+      user_not_found: 'No user found with this email address.'
+      already_registered: 'This user is already registered.'
+      finalized_on: 'Finalized on %{date}'
+      rejected_heading: 'Rejected registrations'
+    no_talks_yet: 'No talks created yet.'
+    no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
+    no_assessables_yet: 'No assessments created yet.'
+    submission_settings: 'Submission Settings'
+    errors:
+      feature_not_available: 'Assessment feature is not available.'
+      no_assessable: 'Assignment or talk not found.'
+      no_assessment: 'Assessment not found for this item.'
+      no_task: 'Task not found.'
+    info:
+      talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
+    grading_overview:
+      submission_progress: 'Submissions'
+      submitted: 'Submitted'
+      missing: 'Missing'
+      not_submitted: 'Not submitted'
+      progress: 'Progress'
+      unassigned: 'Unassigned'
+      no_submission_required: 'No digital submission required for this assessment.'
+      no_participants_yet: 'No participants have been added yet. Participants are seeded from lecture subscriptions.'
+      no_tutorial_breakdown: 'No tutorial breakdown available.'
+      deadline:
+        due_in: 'Due in %{time} (%{date})'
+        due_soon: 'Due in %{time} (%{date})'
+        just_closed: 'Closed %{time} ago'
+        grading_phase: 'Closed %{time} ago — Grading phase'
+    overview: 'Overview'
+    settings: 'Settings'
+    registration: 'Participants'
+    roster: 'Roster'
+    points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
+    no_points_yet: 'No points have been entered yet.'
+    point_grid:
+      total: 'Total'
+    grade_scheme:
+      label: 'Grade Scheme'
+      unsupported_pct_format: 'Percentage-based grade schemes are not yet supported in this editor.'
+      created: 'Grade scheme saved.'
+      updated: 'Grade scheme updated.'
+      applied: 'Grade scheme applied successfully.'
+      reapplied:
+        zero: 'Re-applied. All students already had grades.'
+        one: 'Re-applied. 1 student newly graded.'
+        other: 'Re-applied. %{count} students newly graded.'
+      not_found: 'Grade scheme not found.'
+      pending_title: 'Point entry in progress.'
+      pending_message: '%{reviewed} of %{total} reviewed, %{pending} still pending.'
+      pending_breakdown: '%{absent} absent, %{exempt} exempt'
+      distribution_hint: 'Review the point distribution and create a grade scheme to assign grades.'
+      create_button: 'Create Grade Scheme'
+      draft_title: 'Grade scheme configured.'
+      draft_message: 'Review the scheme, preview grades, then apply when ready.'
+      draft_overwrite_warning:
+        one: >-
+          1 student currently has a grade.
+          Applying this scheme will overwrite it.
+        other: >-
+          %{count} students currently have grades.
+          Applying this scheme will overwrite them.
+      edit_button: 'Edit Scheme'
+      preview_button: 'Preview Grades'
+      apply_button: 'Apply Scheme'
+      apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
+      applied_title: 'Grade scheme applied!'
+      applied_message: 'Grades recorded on %{time} for %{count} students.'
+      ungraded_warning:
+        one: '1 student has no grade yet.'
+        other: '%{count} students have no grade yet.'
+      revise_button: 'Revise Scheme'
+      reapply_button: 'Re-apply to New'
+      reapply_confirm: >-
+        This will apply the current scheme to any students not yet graded.
+        Already assigned grades will not be changed. Continue?
+      summary:
+        title: 'Grade Bands'
+        pass_rate: 'Pass rate'
+        fail_rate: 'Fail rate'
+        absent_note:
+          one: '%{count} absent student receives 5.0'
+          other: '%{count} absent students receive 5.0'
+        exempt_note:
+          one: '%{count} exempt student (no grade)'
+          other: '%{count} exempt students (no grade)'
+      preview:
+        title: 'Grade Preview'
+        back: 'Back'
+        reviewed: 'Reviewed'
+        passed: 'Passed'
+        failed: 'Failed'
+        absent_title:
+          one: '%{count} Absent Student'
+          other: '%{count} Absent Students'
+        absent_reason: 'absent'
+        col_name: 'Name'
+        col_tutorial: 'Tutorial'
+        col_points: 'Points'
+        col_current: 'Current Grade'
+        col_proposed: 'Proposed Grade'
+        changed: 'Grade would change'
+      form:
+        title: 'Configure Grade Scheme'
+        two_point_auto: 'Two-Point Auto'
+        manual_curve: 'Manual Curve'
+        anchor_delta: 'Anchor + Step'
+        two_point_description: 'Set two key thresholds, and the system will automatically generate intermediate grade bands.'
+        anchor_delta_description: 'Set one anchor threshold and a uniform grade step. The system derives the other boundary automatically.'
+        anchor_type_passing: 'Anchor on Passing (4.0)'
+        anchor_type_excellence: 'Anchor on Excellence (1.0)'
+        anchor_label: 'Anchor Threshold'
+        anchor_hint_passing: 'Minimum points to pass (grade 4.0).'
+        anchor_hint_excellence: 'Minimum points for grade 1.0.'
+        delta_label: 'Grade Step (Δ)'
+        delta_hint: 'Points per grade level (e.g. 5 means each grade step costs 5 pts).'
+        derived_label: 'Derived Threshold'
+        derived_hint_excellence: 'Computed excellence threshold (anchor + 9 × Δ).'
+        derived_hint_passing: 'Computed passing threshold (anchor − 9 × Δ).'
+        excellence_label: 'Excellence Threshold (Grade 1.0)'
+        excellence_hint: 'Students at or above this score get 1.0'
+        passing_label: 'Passing Threshold (Grade 4.0)'
+        passing_hint: 'Minimum points to pass (below = 5.0)'
+        generate_button: 'Auto-Generate Bands'
+        preview_title: 'Generated Bands (Preview)'
+        col_grade: 'Grade'
+        col_range: 'Point Range'
+        col_students: 'Students'
+        col_percentage: 'Percentage'
+        manual_description: 'Drag grade boundaries on the histogram to configure each band.'
+        manual_placeholder: 'Manual configuration coming soon'
+        regenerate_hint: 'Thresholds changed — regenerate bands before saving.'
+        points_step_label: 'Points Step'
+        points_step_hint: 'Smallest score increment (e.g. 0.5 for half-point grading). Controls boundary snapping.'
+        error_invalid_numbers: 'Please enter valid numbers for both thresholds.'
+        error_excellence_gt_passing: 'Excellence threshold must be greater than passing threshold.'
+        error_passing_negative: 'Passing threshold must be 0 or greater.'
+        error_excellence_max: 'Excellence threshold cannot exceed %{max} points.'
+        error_range_too_narrow: 'Range too narrow: need at least %{min_range} points (%{grades} × step %{step}).'
+        cancel: 'Cancel'
+        save_draft: 'Save as Draft'
+    distribution:
+      title: 'Point Distribution Analysis'
+      histogram_title: 'Score Distribution'
+      statistics_title: 'Basic Statistics'
+      percentiles_title: 'Percentiles'
+      no_data: 'No reviewed students yet. Distribution will appear once points are available.'
+      students_reviewed: 'Students reviewed'
+      minimum: 'Minimum'
+      maximum: 'Maximum'
+      mean: 'Mean'
+      median: 'Median'
+      std_dev: 'Standard deviation'
+      points: 'pts'
+      percentile_nth: '%{n}th percentile'
+    statistics_analysis: 'Statistics & Analysis'
+    statistics_placeholder: 'Statistics are not yet available'
+    statistics_description: 'Here you can view statistics and analysis for this exam.'
+
+  activerecord:
+    errors:
+      models:
+        assessment/task:
+          attributes:
+            base:
+              requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            grade_numeric:
+              not_gradable: "cannot be set on a non-gradable assessment"
+        assessment/task_point:
+          attributes:
+            base:
+              assessment_mismatch: "Task and participation must belong to the same assessment"
+        assessment/grade_scheme:
+          attributes:
+            base:
+              immutable_when_applied: "Applied grade schemes cannot be modified."
+            assessment:
+              must_be_pointable_and_gradable: "must be both pointable and gradable (e.g. Exam)"
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "must be before the exam date"
+              must_be_in_future: "must be in the future"
+        assessment/assessment:
+          attributes:
+            requires_submission:
+              locked_after_deadline: "can't be changed after the deadline has passed"

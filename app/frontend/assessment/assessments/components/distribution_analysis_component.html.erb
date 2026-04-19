@@ -1,0 +1,102 @@
+<div data-cy="distribution-analysis">
+  <% if empty? %>
+    <div class="alert alert-secondary d-flex align-items-center">
+      <i class="bi bi-bar-chart-line me-2"></i>
+      <%= t("assessment.distribution.no_data") %>
+    </div>
+  <% else %>
+    <h5 class="mb-3"><%= t("assessment.distribution.title") %></h5>
+    <div class="card mb-3">
+      <div class="card-body pb-2">
+        <div class="position-relative" style="height: 160px; padding: 0 10px;">
+          <div class="d-flex align-items-end gap-1 h-100">
+            <% bins.each do |bin| %>
+              <div
+                class="flex-fill rounded-top"
+                style="height: <%= bin[:height_pct] %>%;
+                          min-height: <%= bin[:min_height_px] %>px;
+                          background-color: #0d6efd;"
+                title="<%= bin[:low] %>\u2013<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
+                data-bs-toggle="tooltip"
+              ></div>
+            <% end %>
+          </div>
+
+          <% threshold_markers.each do |marker| %>
+            <div
+              class="position-absolute"
+              style="left: <%= marker[:pct] %>%;
+                     top: 0; bottom: 0; width: 2px;
+                     background-color: <%= marker[:color] %>;
+                     opacity: 0.8;
+                     pointer-events: none;"
+            ></div>
+
+            <span
+              class="position-absolute fw-bold small"
+              style="left: <%= marker[:pct] %>%;
+                     top: -2px;
+                     transform: translateX(-50%);
+                     color: <%= marker[:color] %>;
+                     font-size: 0.7rem;"
+              title="<%= marker[:points] %> <%= t('assessment.distribution.points') %>"
+            >
+              <%= marker[:label] %>
+            </span>
+          <% end %>
+        </div>
+
+        <div
+          class="position-relative mt-1 mb-2"
+          style="height: 18px; padding: 0 10px;"
+        >
+          <% axis_tick_items.each do |tick| %>
+            <small
+              class="text-muted position-absolute"
+              style="font-size: 0.7rem;
+                     <%= tick[:style] %>"
+            >
+              <%= tick[:value] %>
+            </small>
+          <% end %>
+        </div>
+
+        <div class="d-flex flex-wrap gap-3 text-muted small border-top pt-2">
+          <span>
+            <strong><%= distribution[:count] %></strong>/<%= total_count %>
+            <%= t("assessment.distribution.students_reviewed").downcase %>
+          </span>
+
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.mean") %>"
+          >
+            &empty; <strong><%= format_points(distribution[:mean]) %></strong>
+          </span>
+
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.median") %>"
+          >
+            ~ <strong><%= format_points(distribution[:median]) %></strong>
+          </span>
+
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.std_dev") %>"
+          >
+            &sigma; <strong><%= distribution[:std_dev]&.to_s || "–" %></strong>
+          </span>
+
+          <span
+            data-bs-toggle="tooltip"
+            title="<%= t("assessment.distribution.minimum") %> / <%= t("assessment.distribution.maximum") %>"
+          >
+            <%= format_points(distribution[:min]) %>&ndash;
+            <%= format_points(distribution[:max]) %>
+          </span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -86,6 +86,23 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  # a lecture has many exams (scheduled assessment events)
+  has_many :exams, dependent: :destroy
+
+  has_many :student_performance_records,
+           class_name: "StudentPerformance::Record",
+           dependent: :destroy
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification",
+           dependent: :destroy
+  has_many :student_performance_rules,
+           class_name: "StudentPerformance::Rule",
+           dependent: :destroy
+  has_one :active_performance_rule,
+          -> { where(active: true) },
+          class_name: "StudentPerformance::Rule"
+  has_many :achievements, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
@@ -117,6 +134,7 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
+  before_validation :initialize_submission_deletion_date
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -130,6 +148,8 @@ class Lecture < ApplicationRecord
   after_save :touch_lessons
   after_save :touch_chapters
   after_save :touch_sections
+
+  after_save :fan_out_submission_deletion_date
 
   # scopes
   scope :published, -> { where.not(released: nil) }
@@ -613,6 +633,10 @@ class Lecture < ApplicationRecord
     false
   end
 
+  def supported_assessable_types
+    seminar? ? ["Talk"] : ["Assignment"]
+  end
+
   def chapter_name
     return "chapter" unless seminar?
 
@@ -671,11 +695,9 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
-  def submission_deletion_date
-    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
-        15.days
-    end
+  def default_submission_deletion_date
+    (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
+      15.days
   end
 
   def assignments_by_deadline
@@ -868,6 +890,16 @@ class Lecture < ApplicationRecord
   end
 
   private
+
+    def initialize_submission_deletion_date
+      self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def fan_out_submission_deletion_date
+      return unless saved_change_to_submission_deletion_date?
+
+      assignments.update_all(deletion_date: submission_deletion_date) # rubocop:disable Rails/SkipsModelValidations
+    end
 
     # used for after save callback
     def remove_teacher_as_editor

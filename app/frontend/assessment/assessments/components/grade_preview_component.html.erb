@@ -1,0 +1,185 @@
+<% if pct_scheme? %>
+  <div class="alert alert-warning">
+    <%= t("assessment.grade_scheme.unsupported_pct_format") %>
+  </div>
+<% else %>
+  <div data-cy="grade-preview">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">
+        <i class="bi bi-eye me-2"></i>
+        <%= t("assessment.grade_scheme.preview.title") %>
+      </h5>
+
+      <div class="d-flex gap-2">
+        <%= link_to back_path,
+                  class: "btn btn-sm btn-outline-secondary",
+                  data: { turbo_stream: true } do %>
+          <i class="bi bi-arrow-left me-1"></i>
+          <%= t("assessment.grade_scheme.preview.back") %>
+        <% end %>
+
+        <%= button_to apply_path,
+                    method: :patch,
+                    class: "btn btn-sm btn-success",
+                    data: { turbo_confirm:
+                      t("assessment.grade_scheme.apply_confirm") } do %>
+          <i class="bi bi-check-lg me-1"></i>
+          <%= t("assessment.grade_scheme.apply_button") %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <div class="card text-center">
+          <div class="card-body py-2">
+            <div class="fs-4 fw-bold"><%= total_reviewed %></div>
+
+            <small class="text-muted">
+              <%= t("assessment.grade_scheme.preview.reviewed") %>
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card text-center border-success">
+          <div class="card-body py-2">
+            <div class="fs-4 fw-bold text-success">
+              <%= pass_count %> (<%= pass_rate %>%)
+            </div>
+
+            <small class="text-muted">
+              <%= t("assessment.grade_scheme.preview.passed") %>
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card text-center border-danger">
+          <div class="card-body py-2">
+            <div class="fs-4 fw-bold text-danger">
+              <%= fail_count %> (<%= fail_rate %>%)
+            </div>
+
+            <small class="text-muted">
+              <%= t("assessment.grade_scheme.preview.failed") %>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-sm">
+        <thead class="table-light">
+          <tr>
+            <th><%= t("assessment.grade_scheme.preview.col_name") %></th>
+
+            <% if show_tutorial_column? %>
+              <th><%= t("assessment.grade_scheme.preview.col_tutorial") %></th>
+            <% end %>
+
+            <th class="text-center">
+              <%= t("assessment.grade_scheme.preview.col_points") %>
+            </th>
+
+            <th class="text-center">
+              <%= t("assessment.grade_scheme.preview.col_current") %>
+            </th>
+
+            <th class="text-center">
+              <%= t("assessment.grade_scheme.preview.col_proposed") %>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% preview_rows.each do |row| %>
+            <tr class="<%= 'table-danger' if row[:proposed_grade] > 4.0 %>">
+              <td><%= row[:name] %></td>
+
+              <% if show_tutorial_column? %>
+                <td><%= row[:tutorial] %></td>
+              <% end %>
+
+              <td class="text-center">
+                <%= row[:points] ? row[:points].to_s : "\u2014" %>
+              </td>
+
+              <td class="text-center">
+                <%= row[:current_grade] ? row[:current_grade].to_s : "\u2014" %>
+              </td>
+
+              <td class="text-center">
+                <span class="fw-bold"><%= row[:proposed_grade] %></span>
+
+                <% if grade_changed?(row) %>
+                  <i
+                    class="bi bi-arrow-left-right text-info ms-1"
+                    title="<%= t('assessment.grade_scheme.preview.changed') %>"
+                    data-bs-toggle="tooltip"
+                  ></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if any_absent? %>
+      <div class="card mt-3 border-danger">
+        <div class="card-header bg-danger bg-opacity-10">
+          <h6 class="mb-0">
+            <i class="bi bi-person-x me-1"></i>
+
+            <%= t("assessment.grade_scheme.preview.absent_title",
+                count: absent_rows.size) %>
+          </h6>
+        </div>
+
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th><%= t("assessment.grade_scheme.preview.col_name") %></th>
+
+                <% if show_tutorial_column? %>
+                  <th>
+                    <%= t("assessment.grade_scheme.preview.col_tutorial") %>
+                  </th>
+                <% end %>
+
+                <th class="text-center">
+                  <%= t("assessment.grade_scheme.preview.col_proposed") %>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% absent_rows.each do |row| %>
+                <tr class="table-danger">
+                  <td><%= row[:name] %></td>
+
+                  <% if show_tutorial_column? %>
+                    <td><%= row[:tutorial] %></td>
+                  <% end %>
+
+                  <td class="text-center">
+                    <span class="badge bg-danger">5.0</span>
+
+                    <small class="text-muted ms-1">
+                      (<%= t("assessment.grade_scheme.preview.absent_reason") %>)
+                    </small>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

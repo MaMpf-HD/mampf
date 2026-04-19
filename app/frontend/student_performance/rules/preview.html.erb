@@ -1,0 +1,51 @@
+<%= turbo_frame_tag "rule-preview-frame" do %>
+  <% unless @rule %>
+    <div class="alert alert-secondary small py-2 mt-2 mb-0">
+      <i class="bi bi-info-circle me-1"></i>
+      <%= t("student_performance.rules.preview.no_rule") %>
+    </div>
+  <% else %>
+    <% if @changes.empty? %>
+      <div class="alert alert-secondary small py-2 mt-2 mb-0">
+        <i class="bi bi-check-circle me-1"></i>
+        <%= t("student_performance.rules.preview.no_changes") %>
+      </div>
+    <% else %>
+      <div class="d-flex gap-3 align-items-center mt-2">
+        <span class="small text-muted">
+          <i class="bi bi-eye me-1"></i>
+          <%= t("student_performance.rules.preview.impact") %>:
+        </span>
+
+        <span class="badge bg-light text-dark border">
+          <%= @changes.size %>
+          <%= t("student_performance.rules.preview.affected") %>
+        </span>
+
+        <% if @newly_passed > 0 %>
+          <span class="badge bg-success-subtle text-success border-0">
+            <i class="bi bi-arrow-up"></i>
+            <%= @newly_passed %>
+            <%= t("student_performance.rules.preview.newly_passed") %>
+          </span>
+        <% end %>
+
+        <% if @newly_failed > 0 %>
+          <span class="badge bg-danger-subtle text-danger border-0">
+            <i class="bi bi-arrow-down"></i>
+            <%= @newly_failed %>
+            <%= t("student_performance.rules.preview.newly_failed") %>
+          </span>
+        <% end %>
+
+        <% if @newly_inconclusive > 0 %>
+          <span class="badge bg-amber-subtle text-amber border-0">
+            <i class="bi bi-question-circle"></i>
+            <%= @newly_inconclusive %>
+            <%= t("student_performance.rules.preview.newly_inconclusive") %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,104 @@
+<% if !requires_submission? %>
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i>
+    <%= t("assessment.grading_overview.no_submission_required") %>
+  </div>
+  <div class="text-center py-4">
+    <div class="display-4 text-muted mb-2">
+      <i class="bi bi-people"></i>
+    </div>
+
+    <h4><%= total_expected %> <%= t("assessment.participants") %></h4>
+  </div>
+<% else %>
+  <% if deadline && deadline_status %>
+    <div class="mb-3 <%= deadline_status[:color] %>">
+      <i class="bi <%= deadline_status[:icon] %> me-1"></i>
+
+      <% case deadline_status[:phase] %>
+      <% when :open %>
+        <%= t("assessment.grading_overview.deadline.due_in",
+              time: time_ago_in_words(deadline),
+              date: l(deadline, format: :long)) %>
+      <% when :urgent %>
+        <%= t("assessment.grading_overview.deadline.due_soon",
+              time: time_ago_in_words(deadline),
+              date: l(deadline, format: :long)) %>
+      <% when :just_closed %>
+        <%= t("assessment.grading_overview.deadline.just_closed",
+              time: time_ago_in_words(deadline)) %>
+      <% when :grading %>
+        <%= t("assessment.grading_overview.deadline.grading_phase",
+              time: time_ago_in_words(deadline)) %>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="fw-medium">
+        <%= t("assessment.grading_overview.submission_progress") %>
+      </span>
+
+      <span class="text-muted">
+        <%= submitted_count %>/<%= total_expected %>
+        (<%= progress_percentage %>%)
+      </span>
+    </div>
+
+    <%= progress_bar(submitted_count, total_expected,
+                     classification: progress_bar_color,
+                     height: "24px",
+                     show_label: false,
+                     container_class: "progress") %>
+  </div>
+  <% if total_expected.zero? %>
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t("assessment.grading_overview.no_participants_yet") %>
+    </div>
+  <% elsif tutorials? && tutorial_stats.any? %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= t("basics.tutorial") %></th>
+
+          <th class="text-center">
+            <%= t("assessment.grading_overview.submitted") %>
+          </th>
+
+          <th class="text-center"><%= missing_label %></th>
+
+          <th style="width: 30%;"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% tutorial_stats.each do |stat| %>
+          <tr>
+            <td><%= stat.name %></td>
+            <td class="text-center"><%= stat.submitted %></td>
+            <td class="text-center"><%= stat.missing %></td>
+
+            <td>
+              <%= progress_bar(stat.submitted, stat.total,
+                               classification: stat.progress_percentage == 100 ? :success : :secondary,
+                               height: "16px",
+                               label: "#{stat.progress_percentage}%",
+                               container_class: "progress") %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="text-center text-muted py-3">
+      <p><%= t("assessment.grading_overview.no_tutorial_breakdown") %></p>
+
+      <p>
+        <strong><%= submitted_count %></strong>
+        <%= t("assessment.grading_overview.submitted").downcase %>,
+        <strong><%= missing_count %></strong> <%= missing_label.downcase %>
+      </p>
+    </div>
+  <% end %>
+<% end %>

@@ -3,7 +3,7 @@ require "faker"
 FactoryBot.define do
   factory :term do
     season { ["WS", "SS"].sample }
-    year { Faker::Number.between(from: 2000, to: 100_000) }
+    year { Faker::Number.between(from: 2000, to: 2100) }
 
     trait :summer do
       season { "SS" }

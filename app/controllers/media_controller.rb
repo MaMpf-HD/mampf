@@ -547,7 +547,7 @@ class MediaController < ApplicationController
                              :lock_comments, :publish_vertices,
                              :create_assignment, :assignment_title,
                              :assignment_deadline, :assignment_file_type,
-                             :assignment_deletion_date])
+                             :requires_submission])
     end
 
     def set_medium
