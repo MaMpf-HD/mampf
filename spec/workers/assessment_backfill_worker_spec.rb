@@ -17,8 +17,7 @@ RSpec.describe(AssessmentBackfillWorker) do
   describe "#perform" do
     context "with an expired assignment" do
       let!(:assignment) do
-        create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago)
+        create(:assignment, :expired, lecture: lecture)
       end
 
       it "creates participations for all roster students" do
@@ -109,8 +108,8 @@ RSpec.describe(AssessmentBackfillWorker) do
 
       it "picks up old expired assignments with future deletion_date" do
         old_assignment = create(
-          :assignment, lecture: lecture,
-                       deadline: 2.weeks.ago
+          :assignment, :expired, lecture: lecture,
+                                 expired_since: 2.weeks
         )
 
         described_class.new.perform
@@ -127,8 +126,8 @@ RSpec.describe(AssessmentBackfillWorker) do
         past_tutorial = create(:tutorial, lecture: past_lecture)
         create(:tutorial_membership, user: user1, tutorial: past_tutorial)
         past_assignment = create(
-          :assignment, lecture: past_lecture,
-                       deadline: 2.months.ago
+          :assignment, :expired, lecture: past_lecture,
+                                 expired_since: 2.months
         )
 
         expect do
@@ -156,8 +155,7 @@ RSpec.describe(AssessmentBackfillWorker) do
       before { Flipper.disable(:assessment_grading) }
 
       it "does not create any participations" do
-        create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago)
+        create(:assignment, :expired, lecture: lecture)
 
         expect do
           described_class.new.perform
@@ -171,8 +169,7 @@ RSpec.describe(AssessmentBackfillWorker) do
       end
 
       it "does not create any participations" do
-        create(:assignment, lecture: lecture,
-                            deadline: 1.day.ago)
+        create(:assignment, :expired, lecture: lecture)
 
         expect do
           described_class.new.perform

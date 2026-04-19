@@ -108,20 +108,22 @@ RSpec.describe(Assessment::Task, type: :model) do
     end
 
     context "when assignment deadline has passed" do
-      let(:assignment) do
-        FactoryBot.create(:assignment, :with_lecture).tap do |a|
-          a.update_column(:deadline, 1.day.ago)
-        end
+      let!(:assignment) do
+        FactoryBot.create(:assignment, :with_lecture,
+                          deadline: 1.hour.from_now)
       end
-      let(:assessment) do
+      let!(:assessment) do
         FactoryBot.create(:assessment,
                           requires_points: true,
                           assessable: assignment,
                           lecture: assignment.lecture)
       end
-      let(:past_deadline_task) do
+      let!(:past_deadline_task) do
         FactoryBot.create(:assessment_task, assessment: assessment)
       end
+
+      before { Timecop.travel(2.hours.from_now) }
+      after { Timecop.return }
 
       it "cannot be destroyed" do
         expect(past_deadline_task.destroy).to be(false)

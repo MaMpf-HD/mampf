@@ -43,11 +43,12 @@ RSpec.describe(Assignment, type: :model) do
   end
 
   describe "locked fields after deadline" do
-    let(:assignment) do
-      FactoryBot.create(:valid_assignment).tap do |a|
-        a.update_column(:deadline, 1.day.ago)
-      end
+    let!(:assignment) do
+      FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
     end
+
+    before { Timecop.travel(2.hours.from_now) }
+    after { Timecop.return }
 
     it "prevents changing accepted_file_type" do
       assignment.accepted_file_type = ".zip"

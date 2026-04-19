@@ -151,7 +151,7 @@ RSpec.describe("Exams", type: :request) do
           end
 
           it "uses registration_deadline when provided" do
-            deadline = 3.weeks.from_now.beginning_of_hour
+            deadline = 1.week.from_now.beginning_of_hour
             attrs = valid_attributes.merge(
               registration_deadline: deadline.strftime("%Y-%m-%d %H:%M")
             )

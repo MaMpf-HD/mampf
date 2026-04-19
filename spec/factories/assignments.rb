@@ -13,6 +13,21 @@ FactoryBot.define do
 
     trait :inactive do
       deadline { Faker::Time.backward(days: 30) }
+
+      to_create do |instance|
+        instance.save!(validate: false)
+      end
+    end
+
+    trait :expired do
+      transient do
+        expired_since { 1.day }
+      end
+
+      after(:create) do |assignment, evaluator|
+        past_deadline = evaluator.expired_since.ago
+        assignment.update_column(:deadline, past_deadline)
+      end
     end
 
     factory :valid_assignment, traits: [:with_lecture]
