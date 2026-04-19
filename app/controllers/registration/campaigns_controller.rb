@@ -135,10 +135,14 @@ module Registration
       end
 
       if @campaign.update(attributes)
-        respond_with_flash(:notice, t("registration.campaign.closed"),
-                           redirect_path: registration_campaign_path(@campaign)) do
-          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                        expanded_campaign_id: @campaign.id)
+        if exam_campaign_context?
+          render_exam_update("exams/registration")
+        else
+          respond_with_flash(:notice, t("registration.campaign.closed"),
+                             redirect_path: registration_campaign_path(@campaign)) do
+            evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                          expanded_campaign_id: @campaign.id)
+          end
         end
       else
         respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
@@ -165,10 +169,14 @@ module Registration
         @campaign.reset_allocation_results! if was_processing
       end
 
-      respond_with_flash(:notice, t("registration.campaign.reopened"),
-                         redirect_path: registration_campaign_path(@campaign)) do
-        evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                      expanded_campaign_id: @campaign.id)
+      if exam_campaign_context?
+        render_exam_update("exams/registration")
+      else
+        respond_with_flash(:notice, t("registration.campaign.reopened"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                        expanded_campaign_id: @campaign.id)
+        end
       end
     rescue ActiveRecord::RecordInvalid
       respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
@@ -208,10 +216,14 @@ module Registration
 
       def update_status(status, success_message)
         if @campaign.update(status: status)
-          respond_with_flash(:notice, success_message,
-                             redirect_path: registration_campaign_path(@campaign)) do
-            evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                          expanded_campaign_id: @campaign.id)
+          if exam_campaign_context?
+            render_exam_update("exams/registration")
+          else
+            respond_with_flash(:notice, success_message,
+                               redirect_path: registration_campaign_path(@campaign)) do
+              evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                            expanded_campaign_id: @campaign.id)
+            end
           end
         else
           respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
