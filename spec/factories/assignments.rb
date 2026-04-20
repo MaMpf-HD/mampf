@@ -26,7 +26,9 @@ FactoryBot.define do
 
       after(:create) do |assignment, evaluator|
         past_deadline = evaluator.expired_since.ago
+        # rubocop:disable Rails/SkipsModelValidations
         assignment.update_column(:deadline, past_deadline)
+        # rubocop:enable Rails/SkipsModelValidations
       end
     end
 
