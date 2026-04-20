@@ -26,6 +26,6 @@ module TutorialsHelper
       reviewed: "success",
       exempt: "info",
       absent: "info"
-    }[status.to_sym]
+    }[status&.to_sym]
   end
 end

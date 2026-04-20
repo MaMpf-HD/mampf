@@ -14,7 +14,8 @@ module Assessment
         PointEntryService.enter_points(
           participation,
           { task.id => team_points },
-          grader
+          grader,
+          submission
         )
       end
     end
@@ -32,7 +33,8 @@ module Assessment
         PointEntryService.enter_points(
           participation,
           points_by_task_id,
-          scorer
+          scorer,
+          submission
         )
       end
     end

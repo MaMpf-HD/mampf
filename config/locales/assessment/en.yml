@@ -133,6 +133,9 @@ en:
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
+  
+  submission:
+    enroll_first: 'You need to enroll in a tutorial first to submit to this assignment.'
 
   activerecord:
     errors:

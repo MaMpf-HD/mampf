@@ -134,6 +134,9 @@ de:
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
 
+  submission:
+    enroll_first: 'Sie müssen sich zuerst in einem Tutorium anmelden, um zu dieser Hausaufgabe abgeben zu können.'
+
   activerecord:
     errors:
       models:

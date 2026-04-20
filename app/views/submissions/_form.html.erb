@@ -5,11 +5,20 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <% if Flipper.enabled?(:assessment_grading) && current_user.tutorial_rosterized(lecture) %>
-          <p class="form-control-plaintext">
-            <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
-          </p>
+        <!-- if assessment grading is enabled and current assignment is assessable, retrieve data automatically-->
+        <% if Flipper.enabled?(:assessment_grading)%>
+          <%if assignment.assessable? %>
+            <p class="form-control-plaintext">
+              <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
+            </p>
+          <% else %>
+          <!-- if not assessable, require student to enroll first-->
+            <p class="form-control-plaintext">
+              <%= t('assessment.submission.enroll_first') %>
+            </p>
+          <% end %>
         <% else %>
+        <!-- if assessment grading is not enabled, enable manual selection of tutorial -->
           <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||

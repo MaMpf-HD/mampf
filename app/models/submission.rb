@@ -18,19 +18,18 @@ class Submission < ApplicationRecord
 
   delegate :assessment, to: :assignment
 
-  def representative_task_points
-    representative_participation&.task_points
+  def participations
+    return unless assignment.assessable?
+
+    users.map do |user|
+      Assessment::Participation.find_by(assessment: assignment.assessment, user: user)
+    end
   end
 
-  def representative_participation
-    if assignment.assessable?
-      assessment = assignment.assessment
-      assessment.assessment_participations
-                .where(user: users)
-                .first
-    else
-      nil
-    end
+  def graded_tasks_points
+    return unless assignment.assessable?
+
+    Assessment::TaskPoint.where(submission: self).distinct(:task_id)
   end
 
   def partners_of_user(user)

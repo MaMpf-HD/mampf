@@ -26,15 +26,15 @@
   <% if gradding_enabled?(assignment) %>
     <!-- batch of columns A.1: grade zone -->
     <!-- support point by task -->
-    <% for assessment_task in assignment.assessment.tasks %>
+    <% for assignment_task in assignment.assessment.tasks %>
       <td>
         <input type="number"
               autocomplete="off"
-              name="task_points[<%= assessment_task.id %>]"
-              value="<%= extract_task_points(submission, assessment_task) %>"
+              name="task_points[<%= assignment_task.id %>]"
+              value="<%= extract_task_points(submission, assignment_task) %>"
               step="0.5"
               data-submission-row-target="input"
-              data-task-id="<%= assessment_task.id %>"
+              data-task-id="<%= assignment_task.id %>"
               data-action="change->submission-row#markDirty input->submission-row#markDirty"
               class="form-control">
       </td>
@@ -74,10 +74,12 @@
 
     <!-- Column A.3: Status -->
     <td class="text-center task-col">
-      <% status = submission&.representative_participation&.status %>
-      <span class="badge bg-<%= badge_status_participation_color(status) %>">
-        <%= status %>
-      </span>
+      <% if submission&.participations %>
+        <% status = submission&.participations.first&.status %>
+        <span class="badge bg-<%= badge_status_participation_color(status) %>">
+          <%= status %>
+        </span>
+      <% end %>
     </td>
   <% end %>
 

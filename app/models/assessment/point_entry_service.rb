@@ -3,7 +3,8 @@ module Assessment
     # must ensure participation and task valid before calling this method
     def self.enter_points(participation,
                      task_points, # Hash of task_id => points, points potentially nil and string
-                     grader)
+                     grader,
+                     submission)
       assessment = participation.assessment
       valid_task_ids = assessment.tasks.pluck(:id)
 
@@ -21,6 +22,7 @@ module Assessment
 
           tp.points = points&.to_f
           tp.grader = grader
+          tp.submission_id = submission&.id
           tp.save!
         end
 
