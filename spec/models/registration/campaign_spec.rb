@@ -755,5 +755,14 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect { tutorial.reload }.not_to raise_error
       expect { cohort.reload }.not_to raise_error
     end
+
+    it "releases registerables into manual mode when a campaign is destroyed" do
+      expect { campaign.destroy }.to change(Registration::Campaign, :count).by(-1)
+
+      tutorial.reload
+      expect(tutorial.skip_campaigns).to be(true)
+      expect(tutorial).not_to be_locked
+      expect(tutorial).to be_valid
+    end
   end
 end
