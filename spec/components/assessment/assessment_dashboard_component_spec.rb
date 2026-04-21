@@ -157,12 +157,23 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
         before { Flipper.enable(:registration_campaigns) }
         after { Flipper.disable(:registration_campaigns) }
 
-        it "includes registration and policies tabs" do
+        it "includes the registration tab only" do
           keys = component.tabs.map(&:key)
           expect(keys).to eq(
-            ["settings", "registration", "policies",
+            ["settings", "registration",
              "tasks", "points", "grades",
              "grade_scheme", "statistics"]
+          )
+        end
+
+        it "renders the inline policies section in settings" do
+          render_inline(component)
+
+          expect(rendered_content).to include(
+            I18n.t("registration.policy.index.title")
+          )
+          expect(rendered_content).not_to include(
+            "data-bs-target=\"##{component.dom_prefix}-policies\""
           )
         end
       end

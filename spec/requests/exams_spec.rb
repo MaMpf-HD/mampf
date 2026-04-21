@@ -5,7 +5,7 @@ RSpec.describe("Exams", type: :request) do
   let(:editor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
-  let!(:exam) { create(:exam, lecture: lecture) }
+  let(:exam) { create(:exam, lecture: lecture) }
 
   before do
     Flipper.enable(:assessment_grading)
@@ -26,6 +26,7 @@ RSpec.describe("Exams", type: :request) do
       end
 
       it "renders the exams list" do
+        exam
         get exams_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response.body).to include(exam.title)
       end
@@ -225,6 +226,60 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
+  describe "GET /exams/:id" do
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "returns http success with turbo_stream" do
+        get exam_path(exam), as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+
+      it "renders the assessment dashboard" do
+        get exam_path(exam), as: :turbo_stream
+        expect(response.body).to include("exams_container")
+        expect(response.body).to include("data-cy=\"assessment-dashboard\"")
+      end
+
+      context "when registration_campaigns is enabled" do
+        before { Flipper.enable(:registration_campaigns) }
+        after { Flipper.disable(:registration_campaigns) }
+
+        it "renders the registration tab and inline policies in settings" do
+          get exam_path(exam), as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include(
+            "data-bs-target=\"#dashboard-exam-#{exam.id}-registration\""
+          )
+          expect(response.body).to include(
+            I18n.t("registration.policy.index.title")
+          )
+          expect(response.body).not_to include("-policies\"")
+        end
+      end
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get exam_path(exam), as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects unauthorized users" do
+        get exam_path(exam), as: :turbo_stream
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
   describe "GET /exams/:id/edit" do
     context "as a teacher" do
       before { sign_in teacher }
@@ -363,6 +418,7 @@ RSpec.describe("Exams", type: :request) do
 
       context "when exam is destructible" do
         it "destroys the requested exam" do
+          exam
           expect do
             delete(exam_path(exam), as: :turbo_stream)
           end.to change(Exam, :count).by(-1)
@@ -385,6 +441,7 @@ RSpec.describe("Exams", type: :request) do
       before { sign_in editor }
 
       it "destroys the exam" do
+        exam
         expect do
           delete(exam_path(exam), as: :turbo_stream)
         end.to change(Exam, :count).by(-1)
