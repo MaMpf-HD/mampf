@@ -107,6 +107,9 @@ window.Stimulus.register("sortable", SortableController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 
+import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
+window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
+
 import ExamRegistrationListController from "~/exams/registration_list.controller.js";
 window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 

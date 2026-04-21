@@ -93,17 +93,12 @@
 </div>
 
 <% if Flipper.enabled?(:registration_campaigns) %>
-  <% unless exam.skip_campaigns %>
-    <% campaign = exam.registration_campaign unless exam.new_record?
-      deadline_disabled = campaign&.completed?
-      exam.load_registration_deadline if campaign && exam.registration_deadline.blank? %>
+  <% if exam.new_record? && !exam.skip_campaigns %>
     <div
       class="row mb-3"
-      <% if exam.new_record? %>
-        data-exams--form-target="deadlineGroup"
-        <% if exam.skip_campaigns %>
-          style="display:none"
-        <% end %>
+      data-exams--form-target="deadlineGroup"
+      <% if exam.skip_campaigns %>
+        style="display:none"
       <% end %>
     >
       <div class="col-md-2">
@@ -123,7 +118,6 @@
           <div class="flex-grow-1">
             <%= f.text_field :registration_deadline,
                            class: "form-control td-input",
-                           disabled: deadline_disabled,
                            data: { exams__form_target: "registrationDeadline",
                                    td_target: "#exam-deadline-picker",
                                    action: "change->exams--form#checkForChanges" },
@@ -142,11 +136,7 @@
           </span>
         </div>
 
-        <% if deadline_disabled %>
-          <small class="text-muted d-block">
-            <%= t('assessment.registration_deadline_locked_hint') %>
-          </small>
-        <% elsif exam.new_record? %>
+        <% if exam.new_record? %>
           <small class="text-muted d-block">
             <%= t('assessment.registration_deadline_hint') %>
           </small>

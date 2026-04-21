@@ -256,6 +256,12 @@ RSpec.describe("Exams", type: :request) do
           expect(response.body).to include(
             I18n.t("registration.policy.index.title")
           )
+          expect(response.body).to include(
+            I18n.t("registration.campaign.actions.open")
+          )
+          expect(response.body).not_to include(
+            I18n.t("assessment.info_bar.go_to_registration")
+          )
           expect(response.body).not_to include("-policies\"")
         end
       end

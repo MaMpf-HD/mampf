@@ -30,7 +30,7 @@ module Registration
         format.html
         format.turbo_stream do
           if exam_campaign_context?
-            render_exam_update("exams/registration")
+            render_exam_update(exam_partial_for_frame)
           else
             render_campaigns_index_turbo(lecture: @campaign.campaignable,
                                          expanded_campaign_id: @campaign.id)
@@ -136,7 +136,7 @@ module Registration
 
       if @campaign.update(attributes)
         if exam_campaign_context?
-          render_exam_update("exams/registration")
+          render_exam_update(exam_partial_for_frame)
         else
           respond_with_flash(:notice, t("registration.campaign.closed"),
                              redirect_path: registration_campaign_path(@campaign)) do
@@ -170,7 +170,7 @@ module Registration
       end
 
       if exam_campaign_context?
-        render_exam_update("exams/registration")
+        render_exam_update(exam_partial_for_frame)
       else
         respond_with_flash(:notice, t("registration.campaign.reopened"),
                            redirect_path: registration_campaign_path(@campaign)) do
@@ -217,7 +217,7 @@ module Registration
       def update_status(status, success_message)
         if @campaign.update(status: status)
           if exam_campaign_context?
-            render_exam_update("exams/registration")
+            render_exam_update(exam_partial_for_frame)
           else
             respond_with_flash(:notice, success_message,
                                redirect_path: registration_campaign_path(@campaign)) do
@@ -282,6 +282,10 @@ module Registration
       def exam_campaign_context?
         target_frame_id != "campaigns_container" &&
           @campaign.exam_campaign?
+      end
+
+      def exam_partial_for_frame
+        target_frame_id == "exam-settings" ? "exams/settings" : "exams/registration"
       end
 
       def render_exam_update(partial)

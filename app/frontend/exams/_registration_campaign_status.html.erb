@@ -1,0 +1,11 @@
+<% badge_class = {
+  draft: "bg-secondary",
+  open: "bg-success",
+  closed: "bg-warning",
+  processing: "bg-info",
+  completed: "bg-dark"
+}[campaign.status.to_sym] %>
+
+<span class="<%= class_names("badge", badge_class) %>">
+  <%= t("registration.campaign.status.#{campaign.status}") %>
+</span>

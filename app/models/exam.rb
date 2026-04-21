@@ -74,14 +74,14 @@ class Exam < ApplicationRecord
     :finalized
   end
 
-  STATUS_PHASE_BADGE = {
-    draft: "secondary",
-    registration_open: "primary",
-    registration_closed: "info",
-    finalized: "success",
-    conducted: "dark",
-    grading: "warning",
-    graded: "success"
+  STATUS_PHASE_BADGE_CLASSES = {
+    draft: "bg-secondary",
+    registration_open: "bg-primary",
+    registration_closed: "bg-info",
+    finalized: "bg-danger",
+    conducted: "bg-light text-dark border",
+    grading: "bg-white text-primary border border-primary",
+    graded: "bg-primary"
   }.freeze
 
   private

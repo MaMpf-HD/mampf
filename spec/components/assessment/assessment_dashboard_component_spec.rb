@@ -172,6 +172,12 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
           expect(rendered_content).to include(
             I18n.t("registration.policy.index.title")
           )
+          expect(rendered_content).to include(
+            I18n.t("registration.campaign.actions.open")
+          )
+          expect(rendered_content).not_to include(
+            I18n.t("assessment.info_bar.go_to_registration")
+          )
           expect(rendered_content).not_to include(
             "data-bs-target=\"##{component.dom_prefix}-policies\""
           )

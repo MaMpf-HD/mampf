@@ -541,6 +541,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     let(:exam) { create(:exam, lecture: lecture) }
     let(:exam_campaign) { exam.registration_campaign }
     let(:frame_id) { "exam_#{exam.id}_registration" }
+    let(:settings_frame_id) { "exam-settings" }
 
     before { sign_in editor }
 
@@ -559,6 +560,16 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("campaigns_container")
+    end
+
+    it "renders the settings partial on open with exam-settings frame_id" do
+      patch open_registration_campaign_path(exam_campaign),
+            params: { frame_id: settings_frame_id },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(settings_frame_id)
+      expect(response.body).to include("exam-registration-settings")
     end
 
     it "renders exam-specific partial on close with frame_id" do

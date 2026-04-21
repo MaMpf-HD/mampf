@@ -1,5 +1,12 @@
-<% phase = exam.status_phase %>
+<% campaign = exam.registration_campaign %>
 
-<span class="<%= "badge bg-#{Exam::STATUS_PHASE_BADGE[phase]}" %>">
-  <%= t("assessment.exam_status.#{phase}") %>
-</span>
+<% if campaign && [:draft, :open, :closed, :processing].include?(campaign.status.to_sym) %>
+  <span class="<%= class_names("badge", "bg-#{campaign_badge_color(campaign)}") %>">
+    <%= t("registration.campaign.status.#{campaign.status}") %>
+  </span>
+<% else %>
+  <% phase = exam.status_phase %>
+  <span class="<%= class_names("badge", Exam::STATUS_PHASE_BADGE_CLASSES[phase]) %>">
+    <%= t("assessment.exam_status.#{phase}") %>
+  </span>
+<% end %>
