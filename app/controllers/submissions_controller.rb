@@ -294,8 +294,6 @@ class SubmissionsController < ApplicationController
           locals: { submission: @submission, assignment: @submission.assignment }
         )
       end
-
-      format.html { head :ok } # 👈 prevents redirect fallback
     end
   end
 
@@ -320,7 +318,7 @@ class SubmissionsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
           "grading-table",
-          partial: "tutorials/table_2",
+          partial: "tutorials/table",
           locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
         )
       end
