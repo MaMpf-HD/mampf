@@ -1,7 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new]
+                                          :redeem_code, :join, :cancel_new, :grade_multi_submissions]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
@@ -283,17 +283,48 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def refresh_grade_submission
+    @submission = Submission.find_by(id: params[:id])
+    @assignment = @submission.assignment
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "submission-row-#{@submission.id}",
+          partial: "tutorials/rows_single",
+          locals: { submission: @submission, assignment: @submission.assignment }
+        )
+      end
+
+      format.html { head :ok } # 👈 prevents redirect fallback
+    end
+  end
+
   def grade_multi_submissions
     scorer = current_user
-    params[:submissions].each do |entry|
-      submission = Submission.find(entry[:id])
+    submissions = JSON.parse(params[:submissions])
+
+    submissions.each do |entry|
+      submission = Submission.find(entry["id"])
       Assessment::SubmissionGraderService.score_tasks!(
         submission,
-        entry[:task_points],
+        entry["task_points"],
         scorer
       )
     end
-    head :ok
+    sample_submission = Submission.find_by(id: submissions.first["id"])
+    @assignment = sample_submission.assignment
+    @tutorial = sample_submission.tutorial
+    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
+                        &.order(:last_modification_by_users_at)
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "grading-table",
+          partial: "tutorials/table_2",
+          locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
+        )
+      end
+    end
   end
 
   private

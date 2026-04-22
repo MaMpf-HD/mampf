@@ -772,6 +772,10 @@ Rails.application.routes.draw do
         to: "submissions#grade_submission",
         as: "grade_submission"
 
+  patch "submissions/:id/refresh_grade_submission",
+        to: "submissions#refresh_grade_submission",
+        as: "refresh_grade_submission"
+
   patch "submissions/grade_multi_submissions",
         to: "submissions#grade_multi_submissions",
         as: "grade_multi_submissions"

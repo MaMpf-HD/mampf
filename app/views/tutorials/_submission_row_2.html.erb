@@ -41,7 +41,7 @@
     <% end %>
 
     <!-- Column A.2: Save and refresh -->
-    <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment)  %>
+    <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment) %>
       <td class="text-center task-col" data-id="<%= submission.id %>">
         <!-- Hidden form for this row to submit-->
         <%= form_with url: grade_submission_path(submission),
@@ -54,13 +54,19 @@
         <button type="button"
                 class="text-success material-icons me-2"
                 style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
-                data-bs-toggle="tooltip",
-                title="<%= t('buttons.save')%>",
+                data-bs-toggle="tooltip"
+                title="<%= t('buttons.save') %>"
                 data-action="click->submission-row#saveRow">
           save
         </button>
 
         <!-- Refresh row -->
+        <!-- Hidden form for this row to submit-->
+        <%= form_with url: refresh_grade_submission_path(submission),
+                      method: :patch,
+                      data: { turbo: true, submission_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+        <% end %>
         <button type="button"
                 class="text-primary material-icons"
                 style="font-size: 1.5em; background:none; border:none; cursor:pointer;"

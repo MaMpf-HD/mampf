@@ -119,7 +119,7 @@
 
               <%= form_with url: grade_multi_submissions_path,
                             method: :patch,
-                            data: { submission_table_target: "form" } do %>
+                            data: { turbo: true, submission_table_target: "form" } do %>
                 <input type="hidden" name="submissions" data-submission-table-target="payload">
               <% end %>
             <% end %>

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "form", "payload", "save"];
+  static targets = ["input", "form", "refreshForm", "payload", "save"];
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
@@ -20,6 +20,10 @@ export default class extends Controller {
 
     // Submit the hidden form
     this.formTarget.requestSubmit();
+  }
+
+  refreshRow() {
+    this.refreshFormTarget.requestSubmit();
   }
 
   markDirty() {
