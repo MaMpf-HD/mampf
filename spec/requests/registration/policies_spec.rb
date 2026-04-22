@@ -17,9 +17,29 @@ RSpec.describe("Registration::Policies", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
+      let!(:same_course_lecture) { create(:lecture, course: lecture.course) }
+      let!(:other_course_lecture) { create(:lecture) }
+
       it "returns http success" do
         get new_registration_campaign_policy_path(campaign)
         expect(response).to have_http_status(:success)
+      end
+
+      it "lists only lectures from the same course for student performance policies" do
+        get new_registration_campaign_policy_path(campaign)
+
+        expect(response.body).to include(lecture.title)
+        expect(response.body).to include(same_course_lecture.title)
+        expect(response.body).not_to include(other_course_lecture.title)
+      end
+
+      it "preselects the current lecture for student performance policies" do
+        get new_registration_campaign_policy_path(campaign)
+
+        expect(response.body).to match(
+          /<option[^>]*selected="selected"[^>]*value="#{lecture.id}"[^>]*>
+          #{Regexp.escape(lecture.title)}/x
+        )
       end
 
       it "prefills allowed domains from env" do

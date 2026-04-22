@@ -145,10 +145,11 @@
         </span>
       </div>
 
-      <div class="col-md-9 d-flex align-items-center flex-wrap gap-2">
+      <div class="col-md-9">
         <%= render "registration/policies/inline_badges",
                    campaign: campaign,
-                   frame_id: frame_id %>
+                   frame_id: frame_id,
+                   embedded: true %>
       </div>
     </div>
   <% end %>

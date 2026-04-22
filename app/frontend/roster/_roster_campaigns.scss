@@ -1,5 +1,45 @@
 @import '~/styles/branding';
 
+.policy-badge {
+  vertical-align: middle;
+  cursor: default;
+  position: relative;
+
+  &--draft {
+    cursor: grab;
+    padding-right: 0.5em;
+
+    &:active { cursor: grabbing; }
+  }
+
+  .policy-badge-actions {
+    margin-left: 0.35em;
+    display: none;
+    gap: 0.2em;
+    align-items: center;
+  }
+
+  &--draft:hover .policy-badge-actions,
+  &--draft:focus-within .policy-badge-actions {
+    display: inline-flex;
+  }
+
+  .policy-badge-action {
+    border: none;
+    background: none;
+    padding: 0;
+    line-height: 1;
+    vertical-align: baseline;
+    cursor: pointer;
+
+    &:hover { opacity: 0.7; }
+  }
+
+  &.sortable-ghost {
+    opacity: 0.4;
+  }
+}
+
 .registration-campaign-card {
   background-color: var(--bs-body-bg);
 
@@ -10,46 +50,6 @@
     &:hover .registration-campaign-header-actions,
     &:focus-within .registration-campaign-header-actions {
       opacity: 1;
-    }
-
-    .policy-badge {
-      vertical-align: middle;
-      cursor: default;
-      position: relative;
-
-      &--draft {
-        cursor: grab;
-        padding-right: 0.5em;
-
-        &:active { cursor: grabbing; }
-      }
-
-      .policy-badge-actions {
-        margin-left: 0.35em;
-        display: none;
-        gap: 0.2em;
-        align-items: center;
-      }
-
-      &--draft:hover .policy-badge-actions,
-      &--draft:focus-within .policy-badge-actions {
-        display: inline-flex;
-      }
-
-      .policy-badge-action {
-        border: none;
-        background: none;
-        padding: 0;
-        line-height: 1;
-        vertical-align: baseline;
-        cursor: pointer;
-
-        &:hover { opacity: 0.7; }
-      }
-    }
-
-    .policy-badge.sortable-ghost {
-      opacity: 0.4;
     }
 
     .policy-form-panel {
@@ -101,6 +101,47 @@
 
     .btn {
       width: 100%;
+    }
+  }
+}
+
+.policy-badges-shell {
+  &:has(turbo-frame:not(:empty)) {
+    .policy-add-link {
+      display: none !important;
+    }
+  }
+}
+
+.policy-badges-shell--embedded {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .policy-editor-slot {
+    width: 100%;
+  }
+
+  .policy-add-link {
+    text-decoration: none;
+  }
+
+  .policy-editor-slot--embedded {
+    turbo-frame {
+      display: block;
+    }
+  }
+
+  .policy-editor-slot--embedded:has(turbo-frame:not(:empty)) {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--bs-card-border-radius);
+    background: linear-gradient(160deg, mampf-blue(0.08), mampf-blue(0.03));
+
+    .policy-form-panel {
+      margin: 0;
+      padding: 0.75rem 1.15rem;
+      background-color: rgba(255, 255, 255, 0.72);
+      border-radius: inherit;
     }
   }
 }
