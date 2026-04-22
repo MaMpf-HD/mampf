@@ -68,7 +68,7 @@ module Registration
     end
 
     def config_summary
-      handler.summary || "-"
+      handler.summary || "—"
     end
 
     delegate :evaluate, to: :handler

@@ -39,7 +39,7 @@ module Registration
       end
 
       def summary
-        domains.join(" | ")
+        domains.presence&.join(" | ")
       end
 
       DOMAIN_FORMAT = /\A[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+\z/
