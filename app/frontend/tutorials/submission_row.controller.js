@@ -1,10 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "form", "refreshForm", "payload", "save"];
+  static targets = ["input", "form", "refreshForm", "payload", "save", "totalPoints"];
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
+    this.calculateTotalPoints();
   }
 
   saveRow() {
@@ -26,6 +27,19 @@ export default class extends Controller {
     this.refreshFormTarget.requestSubmit();
   }
 
+  calculateTotalPoints() {
+    let totalPoints = 0;
+    this.inputTargets.forEach((input) => {
+      const points = parseFloat(input.value);
+      if (!isNaN(points)) {
+        totalPoints += points;
+      }
+    });
+    if (this.hasTotalPointsTarget) {
+      this.totalPointsTarget.textContent = totalPoints.toFixed(2);
+    }
+  }
+
   markDirty() {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
 
@@ -40,6 +54,7 @@ export default class extends Controller {
         },
       });
       if (this.hasSaveTarget) this.saveTarget.disabled = false;
+      this.calculateTotalPoints();
     }
     else {
       this.element.classList.remove("row-dirty");

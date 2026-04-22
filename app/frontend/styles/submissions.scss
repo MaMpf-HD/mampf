@@ -82,36 +82,71 @@ table.table tbody tr.row-dirty td {
   background-color: white;
 }
 
-.first-col {
+.team-col {
   width: 200px;
   min-width: 200px;
   max-width: 200px;
   left: 0px;
+  z-index: 2;
 }
 
-.second-col {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
-  left: 200px;
+.task-col {
+  width: 90px;
+  min-width: 90px;
 }
 
-.last-col {
-  width: 120px;
-  max-width: 120px;
-  min-width: 120px;
+.correction-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
   right: 0px;
   background-color: white;
   z-index: 2;
 }
 
-.second-to-last-col {
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
-  right: 120px;
+.action-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 200px;
   background-color: white;
-  z-index: 1;
+  z-index: 2;
+
+  padding: 0.5rem;
+}
+
+.action-icon {
+  // font-size: 1.4rem;
+  // display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  // transition: all 0.2s ease;
+  // cursor: pointer;
+}
+
+
+.status-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 400px;
+  background-color: white;
+  z-index: 2;
+}
+
+.total-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 500px;
+  background-color: white;
+  z-index: 2;
 }
 
 .table-overflow {

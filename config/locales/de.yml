@@ -3678,6 +3678,7 @@ de:
     create_cohort: 'Gruppe erstellen'
     edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
+    refresh: 'Aktualisieren'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
     save_changes: "Änderungen speichern"

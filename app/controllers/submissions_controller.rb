@@ -254,11 +254,13 @@ class SubmissionsController < ApplicationController
   def accept
     @submission.update(accepted: true)
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
   def reject
     @submission.update(accepted: false)
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   def grade_submission
@@ -285,7 +287,10 @@ class SubmissionsController < ApplicationController
 
   def refresh_grade_submission
     @submission = Submission.find_by(id: params[:id])
-    @assignment = @submission.assignment
+    rerender_submission_row
+  end
+
+  def rerender_submission_row
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(

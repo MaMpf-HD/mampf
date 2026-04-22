@@ -3472,6 +3472,7 @@ en:
     create_cohort: 'Create Cohort'
     edit_cohort: 'Edit Cohort'
     save: 'Save'
+    refresh: 'Refresh'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
