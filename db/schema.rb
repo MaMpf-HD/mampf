@@ -1013,7 +1013,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_000000) do
   end
 
   create_table "tutorials", force: :cascade do |t|
-    t.text "title"
+    t.text "title", null: false
     t.bigint "lecture_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
