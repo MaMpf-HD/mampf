@@ -7,6 +7,12 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
+  if Rails.env.development?
+    namespace :dev do
+      post "impersonate/:id", to: "impersonate#create", as: :impersonate
+    end
+  end
+
   if Rails.env.test?
     namespace :cypress do
       resources :factories, only: :create

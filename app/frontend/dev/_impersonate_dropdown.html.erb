@@ -1,0 +1,78 @@
+<% secondary_prefixes = %w[cohort_user solver_user seminar_student]
+  all_users = User.order(:email).pluck(:id, :email)
+                  .map { |id, email| [id, email.split("@").first] }
+
+  prioritized_sort = lambda do |name|
+    lowered_name = name.downcase
+    if lowered_name.start_with?("student")
+      0
+    elsif lowered_name.start_with?("tutor") || lowered_name.start_with?("teacher")
+      1
+    elsif lowered_name.start_with?("admin")
+      2
+    else
+      3
+    end
+  end
+
+  all_users.sort_by! do |_, name|
+    [prioritized_sort.call(name), name.downcase]
+  end
+
+  primary_users, secondary_users = all_users.partition do |_, name|
+    lowered_name = name.downcase
+    secondary_prefixes.none? { |p| lowered_name.start_with?(p) }
+  end %>
+
+<li class="nav-item dropdown">
+  <button
+    class="nav-link bi bi-people btn btn-link p-0"
+    type="button"
+    data-bs-toggle="dropdown"
+    data-bs-auto-close="outside"
+    title="Switch user (dev only)"
+  ></button>
+
+  <div class="dropdown-menu dropdown-menu-end p-0">
+    <div
+      class="p-2 border-bottom bg-white"
+      style="position: sticky; top: 0; z-index: 1;"
+    >
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="Filter..."
+        autocomplete="off"
+        oninput="
+          const q = this.value.toLowerCase();
+          this.closest('.dropdown-menu')
+              .querySelectorAll('li[data-username]')
+              .forEach(li => {
+                li.style.display =
+                  li.dataset.username.includes(q) ? '' : 'none';
+              });
+        "
+      >
+    </div>
+
+    <ul class="list-unstyled mb-0" style="max-height: 280px; overflow-y: auto;">
+      <% primary_users.each do |id, name| %>
+        <li data-username="<%= name.downcase %>">
+          <%= link_to name,
+                      dev_impersonate_path(id),
+                      class: "dropdown-item",
+                      data: { turbo_method: :post } %>
+        </li>
+      <% end %>
+
+      <% secondary_users.each do |id, name| %>
+        <li data-username="<%= name.downcase %>">
+          <%= link_to name,
+                      dev_impersonate_path(id),
+                      class: "dropdown-item",
+                      data: { turbo_method: :post } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</li>
