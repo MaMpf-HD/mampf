@@ -31,6 +31,7 @@
     data-bs-toggle="dropdown"
     data-bs-auto-close="outside"
     title="Switch user (dev only)"
+    onclick="setTimeout(() => { this.parentElement.querySelector('.dropdown-menu input[type=text]').focus(); }, 0);"
   ></button>
 
   <div class="dropdown-menu dropdown-menu-end p-0">
@@ -41,7 +42,7 @@
       <input
         type="text"
         class="form-control form-control-sm"
-        placeholder="Filter..."
+        placeholder="Search..."
         autocomplete="off"
         oninput="
           const q = this.value.toLowerCase();
