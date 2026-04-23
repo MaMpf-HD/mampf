@@ -562,14 +562,14 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       expect(response.body).to include("campaigns_container")
     end
 
-    it "renders the settings partial on open with exam-settings frame_id" do
+    it "renders the registration partial on open with exam-settings frame_id" do
       patch open_registration_campaign_path(exam_campaign),
             params: { frame_id: settings_frame_id },
             as: :turbo_stream
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(settings_frame_id)
-      expect(response.body).to include("exam-registration-settings")
+      expect(response.body).to include("exams--registration-settings")
     end
 
     it "renders exam-specific partial on close with frame_id" do

@@ -95,6 +95,11 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
+    def registration_tab_label
+      helpers.render(partial: "exams/registration_tab_label",
+                     locals: { exam: assessable })
+    end
+
     def settings_component
       if exam?
         PartialTabComponent.new(
@@ -163,7 +168,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def registration_tab
       TabConfig.new(
         "registration",
-        I18n.t("assessment.registration"),
+        registration_tab_label,
         PartialTabComponent.new(
           partial: "exams/registration",
           locals: { exam: assessable, lecture: lecture }

@@ -117,7 +117,7 @@ module Registration
         @campaign.reload
         if exam_campaign_context?
           flash.now[flash_type] = message if message
-          return render_exam_update("exams/settings")
+          return render_exam_update("exams/registration")
         end
 
         respond_with_flash(flash_type, message,
@@ -131,7 +131,7 @@ module Registration
           exam = @campaign.registration_items
                           .find_by(registerable_type: "Exam")
                           &.registerable
-          return exam_path(exam, tab: "settings") if exam
+          return exam_path(exam, tab: "registration") if exam
         end
 
         registration_campaign_path(@campaign, anchor: "policies-tab")

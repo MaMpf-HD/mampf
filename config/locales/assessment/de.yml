@@ -159,9 +159,16 @@ de:
     campaign_cta:
       message: 'Diese Prüfung hat kein Anmeldeverfahren. Studierende können sich noch nicht anmelden.'
       create: 'Jetzt Verfahren erstellen'
+    settings_tab:
+      registration_hint:
+        inline: 'Anmeldung ist noch nicht geöffnet – Studierende können sich nicht anmelden. Wechsle in den Tab "Anmeldungen", um sie zu öffnen.'
     registration_tab:
       skip_campaigns_info: 'Die Anmeldung wird für diese Prüfung manuell verwaltet.'
       no_campaign: 'Kein Anmeldeverfahren für diese Prüfung gefunden.'
+      deadline_summary: 'Frist: %{date}'
+      needs_attention_tooltip: 'Aktion erforderlich: Anmeldung ist noch nicht geöffnet'
+      status:
+        not_open: 'Anmeldung noch nicht geöffnet'
       participants_heading: 'Teilnehmende'
       registered_count:
         zero: 'Noch keine Anmeldungen'
@@ -209,7 +216,7 @@ de:
     overview: 'Übersicht'
     settings: 'Einstellungen'
     registration: 'Teilnehmende'
-    registration_settings: 'Anmeldung'
+    registrations_label: 'Anmeldungen'
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'
     grade_scheme:

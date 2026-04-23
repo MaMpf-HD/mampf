@@ -285,7 +285,7 @@ module Registration
       end
 
       def exam_partial_for_frame
-        target_frame_id == "exam-settings" ? "exams/settings" : "exams/registration"
+        "exams/registration"
       end
 
       def render_exam_update(partial)
@@ -297,6 +297,16 @@ module Registration
             target_frame_id,
             partial: partial,
             locals: { exam: exam, lecture: exam.lecture }
+          ),
+          turbo_stream.replace(
+            "exam-settings",
+            partial: "exams/settings",
+            locals: { exam: exam, lecture: exam.lecture }
+          ),
+          turbo_stream.replace(
+            "exam_#{exam.id}_registration_tab_label",
+            partial: "exams/registration_tab_label",
+            locals: { exam: exam }
           ),
           stream_flash
         ].compact

@@ -1,6 +1,7 @@
 <% dashboard = local_assigns[:dashboard] %>
 <% campaign = local_assigns[:campaign] %>
 <% allocation_source = local_assigns[:allocation_source] %>
+<% frame_id = local_assigns[:frame_id] %>
 
 <% return unless dashboard.policy_violations.present? %>
 
@@ -82,6 +83,7 @@
   <%= button_to t("registration.campaign.actions.force_finalize"),
                 finalize_registration_campaign_allocation_path(campaign, force: true),
                 method: :patch,
+                params: frame_id ? { frame_id: frame_id } : {},
                 data: { turbo_confirm: t("registration.campaign.confirmations.force_finalize") },
                 class: "btn btn-sm btn-danger" %>
 </div>

@@ -107,11 +107,11 @@ class ExamsController < ApplicationController
       if @exam.update(exam_params)
         format.turbo_stream do
           flash[:success] = t("assessment.exam_updated")
-          if params[:tab] == "settings"
+          if ["settings", "registration"].include?(params[:tab])
             render turbo_stream: [
               turbo_stream.update(
                 "exams_container",
-                build_dashboard_component(active_tab: "settings")
+                build_dashboard_component(active_tab: params[:tab])
               ),
               stream_flash
             ]
@@ -128,10 +128,10 @@ class ExamsController < ApplicationController
         end
       else
         format.turbo_stream do
-          if params[:tab] == "settings"
+          if ["settings", "registration"].include?(params[:tab])
             render turbo_stream: turbo_stream.update(
               "exams_container",
-              build_dashboard_component(active_tab: "settings")
+              build_dashboard_component(active_tab: params[:tab])
             ), status: :unprocessable_content
           else
             render turbo_stream: turbo_stream.update("exams_container",

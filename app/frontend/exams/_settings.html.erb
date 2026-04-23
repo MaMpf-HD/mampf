@@ -1,9 +1,14 @@
 <div id="exam-settings">
   <% unless exam.new_record? %>
+    <% campaign_for_bar = exam.registration_campaign if Flipper.enabled?(:registration_campaigns)
+       needs_opening = !exam.skip_campaigns &&
+                       Flipper.enabled?(:registration_campaigns) &&
+                       (campaign_for_bar.nil? || campaign_for_bar.draft?)
+       bar_bg = needs_opening ? "bg-warning-subtle" : "bg-info-subtle" %>
     <div
       class="
         d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
-        bg-info-subtle rounded border text-muted small
+        <%= bar_bg %> rounded border text-muted small
       "
     >
       <span>
@@ -49,6 +54,14 @@
           <%= label %>
         <% end %>
       </span>
+
+      <% if needs_opening %>
+        <span class="text-black-50">·</span>
+        <span class="text-warning-emphasis fw-semibold">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          <%= t("assessment.settings_tab.registration_hint.inline") %>
+        </span>
+      <% end %>
     </div>
   <% end %>
 
@@ -77,10 +90,6 @@
                     html: { id: 'exam-form' },
                     data: { turbo: true, controller: "exams--form" } do |f| %>
         <%= render "exams/form_fields", f: f, exam: exam %>
-      <% end %>
-
-      <% if Flipper.enabled?(:registration_campaigns) && !exam.new_record? %>
-        <%= render "exams/registration_settings", exam: exam %>
       <% end %>
     </div>
   </div>

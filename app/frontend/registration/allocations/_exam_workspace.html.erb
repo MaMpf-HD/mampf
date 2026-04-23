@@ -1,0 +1,50 @@
+<%= vite_stylesheet_tag "registration/allocations/allocation.css" %>
+
+<% has_violators = dashboard.policy_violations.present? %>
+<% bp = { frame_id: container_id } %>
+
+<div id="<%= container_id %>" class="mt-4 pt-4 border-top">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h5 class="mb-0">
+      <i class="bi bi-list-check me-1"></i>
+      <%= t("registration.campaign.actions.review_and_finalize") %>
+    </h5>
+
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+      <% if campaign.preference_based? %>
+        <%= allocate_campaign_button(campaign, params: bp) %>
+        <% if campaign.last_allocation_calculated_at.present? %>
+          <%= finalize_campaign_button(campaign,
+                                       disabled: has_violators,
+                                       params: bp) %>
+        <% end %>
+      <% else %>
+        <%= finalize_campaign_button(campaign,
+                                     disabled: has_violators,
+                                     params: bp) %>
+      <% end %>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="document.getElementById('<%= container_id %>').innerHTML = ''"
+      >
+        <%= t("buttons.cancel") %>
+      </button>
+    </div>
+  </div>
+
+  <% if campaign.preference_based? && !dashboard.allocation_run? %>
+    <%= render "registration/allocations/pre_allocation_demand",
+               campaign: campaign,
+               dashboard: dashboard,
+               embedded: true %>
+  <% else %>
+    <%= render "registration/allocations/dashboard",
+               campaign: campaign,
+               dashboard: dashboard,
+               embedded: true,
+               frame_id: container_id %>
+  <% end %>
+</div>
+

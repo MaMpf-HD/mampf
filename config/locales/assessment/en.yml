@@ -159,9 +159,16 @@ en:
     campaign_cta:
       message: 'This exam has no registration campaign. Students cannot register yet.'
       create: 'Create campaign now'
+    settings_tab:
+      registration_hint:
+        inline: "Registration is not open yet — students cannot register. Switch to the Registrations tab to open it."
     registration_tab:
       skip_campaigns_info: 'Registration is managed manually for this exam.'
       no_campaign: 'No registration campaign found for this exam.'
+      deadline_summary: 'Deadline: %{date}'
+      needs_attention_tooltip: 'Action needed: registration is not open yet'
+      status:
+        not_open: 'Registration not yet open'
       participants_heading: 'Participants'
       registered_count:
         zero: 'No registrations yet'
@@ -209,7 +216,7 @@ en:
     overview: 'Overview'
     settings: 'Settings'
     registration: 'Participants'
-    registration_settings: 'Registration'
+    registrations_label: 'Registrations'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
     no_points_yet: 'No points have been entered yet.'
