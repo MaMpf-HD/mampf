@@ -60,15 +60,13 @@
       <!-- Active campaigns -->
       <% if uncompleted_campaigns.any? %>
         <% uncompleted_campaigns.each do |campaign_details| %>
-          <div>
-            <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
-              <%= render partial: 'registration/main/campaign_card',
+          <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+            <%= render partial: 'registration/main/campaign_card',
                       locals: {
                         details: campaign_details,
                         campaign: campaign_details.campaign
                       } %>
-            <% end %>
-          </div>
+          <% end %>
         <% end %>
       <% else %>
         <p>
