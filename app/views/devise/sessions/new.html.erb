@@ -31,8 +31,15 @@
     <% end %>
   </div>
 
-  <div class="mt-3 mb-2">
-    <%= f.submit t('.login'), class: "devise-button btn btn-primary" %>
+  <div class="mt-3 mb-2 d-flex gap-2">
+    <%= f.submit t('.login'), class: "devise-button btn btn-primary flex-fill" %>
+    <% if Rails.env.development? %>
+      <%= link_to "Login as Teacher",
+        dev_teacher_login_path,
+        role: "button",
+        class: "devise-button btn btn-primary flex-fill flex-fill w-100",
+        method: :post %>
+    <% end %>
   </div>
 <% end %>
 

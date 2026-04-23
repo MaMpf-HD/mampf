@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   if Rails.env.development?
     namespace :dev do
       post "impersonate/:id", to: "impersonate#create", as: :impersonate
+      post "teacher_login", to: "teacher_sessions#create", as: :teacher_login
     end
   end
 
