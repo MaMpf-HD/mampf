@@ -16,9 +16,7 @@
 
   all_users.sort_by! do |_, name|
     [prioritized_sort.call(name), name.downcase]
-  end
-
-%>
+  end %>
 
 <li class="nav-item dropdown">
   <button
@@ -59,7 +57,8 @@
           <%= link_to name,
                       dev_impersonate_path(id),
                       class: "dropdown-item",
-                      data: { turbo_method: :post } %>
+                      method: :post,
+                      data: { turbo: false } %>
         </li>
       <% end %>
     </ul>
