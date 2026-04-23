@@ -48,6 +48,10 @@
                   data: { 'bs-toggle': 'tooltip', method: 'delete', turbo: false },
                   title: t('admin.navbar.logout') %>
       </li>
+
+      <% if Rails.env.development? %>
+        <%= render partial: "dev/impersonate_dropdown" %>
+      <% end %>
     </ul>
 
     <ul class="navbar-nav ms-auto me-auto" id="adminDetails">
