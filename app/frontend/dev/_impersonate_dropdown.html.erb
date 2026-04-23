@@ -1,5 +1,4 @@
-<% secondary_prefixes = %w[cohort_user solver_user seminar_student]
-  all_users = User.order(:email).pluck(:id, :email)
+<% all_users = User.order(:email).pluck(:id, :email)
                   .map { |id, email| [id, email.split("@").first] }
 
   prioritized_sort = lambda do |name|
@@ -19,10 +18,7 @@
     [prioritized_sort.call(name), name.downcase]
   end
 
-  primary_users, secondary_users = all_users.partition do |_, name|
-    lowered_name = name.downcase
-    secondary_prefixes.none? { |p| lowered_name.start_with?(p) }
-  end %>
+%>
 
 <li class="nav-item dropdown">
   <button
@@ -57,16 +53,7 @@
     </div>
 
     <ul class="list-unstyled mb-0" style="max-height: 280px; overflow-y: auto;">
-      <% primary_users.each do |id, name| %>
-        <li data-username="<%= name.downcase %>">
-          <%= link_to name,
-                      dev_impersonate_path(id),
-                      class: "dropdown-item",
-                      data: { turbo_method: :post } %>
-        </li>
-      <% end %>
-
-      <% secondary_users.each do |id, name| %>
+      <% all_users.each do |id, name| %>
         <li data-username="<%= name.downcase %>">
           <%= link_to name,
                       dev_impersonate_path(id),
