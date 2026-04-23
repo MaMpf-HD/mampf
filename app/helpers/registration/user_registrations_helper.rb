@@ -69,7 +69,7 @@ module Registration
           icon: "event",
           field: lambda { |item|
             item.registerable.dates&.map do |d|
-              d.nil? ? "" : d.strftime("%b %d, %H:%M")
+              d.nil? ? "" : d.strftime("%b %d %Y")
             end&.join(", ")
           } }
       ],
@@ -144,20 +144,6 @@ module Registration
     def nullable_capacity_display(capacity)
       capacity.nil? ? "\u221E" : capacity.to_s
     end
-
-    # rubocop:disable Metrics/ParameterLists
-    def nullable_progress_bar(value, max, classification: :neutral, label: nil, height: "1.5rem",
-                              show_label: true, container_class: "progress mb-2", style: nil)
-      unless max.nil?
-        return progress_bar(value, max, classification: classification,
-                                        label: label, height: height, show_label: show_label,
-                                        container_class: container_class, style: style)
-      end
-
-      progress_bar(1, 100, classification: classification, label: label, height: height,
-                           show_label: show_label, container_class: container_class, style: style)
-    end
-    # rubocop:enable Metrics/ParameterLists
 
     def status_campaign_style(status)
       case status
