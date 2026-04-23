@@ -1,56 +1,44 @@
 <div>
-
   <% items_selected = item_preferences.map { |i| i.item.id } %>
+
   <div class="fw-semibold mt-2 mb-2 text-muted">
     <%= t('registration.user_registration.options_title') %>
   </div>
 
   <% items.group_by(&:registerable_type).each do |group, group_items| %>
-    <div class="d-flex flex-wrap gap-3">
-
+    <div
+      class="
+        row row-cols-1 row-cols-md-2 row-cols-xl-3
+        student-registration-tile-grid
+      "
+    >
       <% group_items.each do |item| %>
-        <div class="card shadow-sm p-2 mb-3"
-            style="width: 260px; flex: 0 0 auto;">
+        <% metadata_rows = item_tile_metadata_rows(item) + [{
+             value: nullable_capacity_display(item.capacity)
+           }] %>
 
-          <!-- Title + Type -->
-          <div class="d-flex justify-content-between align-items-start mb-2">
-
-            <!-- Left: Title + Type -->
-            <div class="d-flex align-items-baseline gap-1">
-              <div class="fw-semibold"><%= item.registerable.title %></div>
-              <div class="small text-muted">(<%= item_display_type(item) %>)</div>
-            </div>
-
-            <!-- Right: Add button -->
-            <button type="submit" name="add_<%= campaign.id %>"
-                    class="material-icons clickable playlist_add border-0 bg-transparent"
-                    <%= "disabled" if (items_selected.include?(item.id) || items_selected.size >= 3) %> <%# herb:disable erb-no-output-in-attribute-name %>
-                    formaction="<%= add_preference_path(item.id) %>">
-              playlist_add
-            </button>
-          </div>
-
-          <!-- Details -->
-          <div class="small mb-2">
-            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[item.registerable_type].each do |col| %>
-              <div class="d-flex gap-1">
-                <span class="fw-medium"><%= t(col[:header]) %>:</span>
-                <span><%= col[:field].call(item) %></span>
-              </div>
-            <% end %>
-
-            <div class="d-flex gap-1">
-              <span class="fw-medium"><%= t("basics.seats") %>:</span>
-              <span><%= nullable_capacity_display(item.capacity) %></span>
-            </div>
-          </div>
-
-        </div>
+        <%= render partial: "registration/main/group_tile",
+                   locals: {
+                     tile_title: item.registerable.title,
+                     tile_type: item_display_type(item),
+                     tile_metadata_rows: metadata_rows,
+                     tile_variant_class: "tutorial-gtile--campaign",
+                     tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                     tile_actions_content: capture do
+                       concat(content_tag(
+                         :button,
+                         "playlist_add",
+                         type: :submit,
+                         name: "add_#{campaign.id}",
+                         class: "btn btn-outline-primary btn-sm material-icons clickable border-0 bg-transparent p-0",
+                         disabled: items_selected.include?(item.id) ||
+                                   items_selected.size >= 3,
+                         formaction: add_preference_path(item.id),
+                          title: t("buttons.add", default: "Add")
+                       ))
+                     end
+                   } %>
       <% end %>
-
     </div>
-
   <% end %>
-
-
 </div>

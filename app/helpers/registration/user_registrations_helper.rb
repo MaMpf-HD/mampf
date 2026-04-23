@@ -137,37 +137,56 @@ module Registration
       value.nil? || (value.is_a?(Integer) && value.positive?)
     end
 
+    def item_tile_metadata_rows(item)
+      TABLE_CONFIG[item.registerable_type].map do |col|
+        {
+          label: t(col[:header]),
+          value: col[:field].call(item),
+          icon: gtile_icon_for(col[:icon])
+        }
+      end
+    end
+
     def freely_registerable?(group_type)
       group_type == "Cohort"
     end
 
-    def nullable_capacity_display(capacity)
-      capacity.nil? ? "\u221E" : capacity.to_s
-    end
+    private
 
-    # rubocop:disable Metrics/ParameterLists
-    def nullable_progress_bar(value, max, classification: :neutral, label: nil, height: "1.5rem",
-                              show_label: true, container_class: "progress mb-2", style: nil)
-      unless max.nil?
-        return progress_bar(value, max, classification: classification,
-                                        label: label, height: height, show_label: show_label,
-                                        container_class: container_class, style: style)
+      def gtile_icon_for(icon_name)
+        case icon_name
+        when "person"   then "bi-person"
+        when "location" then "bi-geo-alt"
+        end
       end
 
-      progress_bar(1, 100, classification: classification, label: label, height: height,
-                           show_label: show_label, container_class: container_class, style: style)
-    end
-    # rubocop:enable Metrics/ParameterLists
-
-    def status_campaign_style(status)
-      case status
-      when "open", "completed"
-        "bg-success-subtle text-success"
-      when "closed", "processing"
-        "bg-secondary-subtle text-secondary"
-      else
-        "bg-info-subtle text-info"
+      def nullable_capacity_display(capacity)
+        capacity.nil? ? "\u221E" : capacity.to_s
       end
-    end
+
+      # rubocop:disable Metrics/ParameterLists
+      def nullable_progress_bar(value, max, classification: :neutral, label: nil, height: "1.5rem",
+                                show_label: true, container_class: "progress mb-2", style: nil)
+        unless max.nil?
+          return progress_bar(value, max, classification: classification,
+                                          label: label, height: height, show_label: show_label,
+                                          container_class: container_class, style: style)
+        end
+
+        progress_bar(1, 100, classification: classification, label: label, height: height,
+                             show_label: show_label, container_class: container_class, style: style)
+      end
+      # rubocop:enable Metrics/ParameterLists
+
+      def status_campaign_style(status)
+        case status
+        when "open", "completed"
+          "bg-success-subtle text-success"
+        when "closed", "processing"
+          "bg-secondary-subtle text-secondary"
+        else
+          "bg-info-subtle text-info"
+        end
+      end
   end
 end

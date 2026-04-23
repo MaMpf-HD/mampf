@@ -1,0 +1,32 @@
+@import "../group_tiles";
+
+.student-registration-tile-grid {
+  row-gap: 1rem;
+}
+
+.student-registration-tile-header {
+  gap: 0.75rem;
+}
+
+.student-registration-tile-status {
+  min-height: 1.5rem;
+  min-width: fit-content;
+}
+
+.student-registration-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.student-registration-tile-footer {
+  margin-top: 0.75rem;
+}
+
+.student-registration-tile-rank {
+  white-space: nowrap;
+}
+
+.tutorial-gtile--student .tutorial-gtile-actions > form {
+  margin-bottom: 0;
+}

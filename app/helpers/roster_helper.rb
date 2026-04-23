@@ -162,7 +162,24 @@ module RosterHelper
     ]
   }.freeze
 
+  def rosterable_tile_metadata_rows(rosterable)
+    SELF_ROSTER_TABLE_CONFIG[rosterable.class.name.capitalize].map do |col|
+      {
+        label: t(col[:header]),
+        value: col[:field].call(rosterable),
+        icon: gtile_icon_for(col[:icon])
+      }
+    end
+  end
+
   private
+
+    def gtile_icon_for(icon_name)
+      case icon_name
+      when "person"   then "bi-person"
+      when "location" then "bi-geo-alt"
+      end
+    end
 
     def roster_group_type_param(registerable)
       gt = registerable.roster_group_type
