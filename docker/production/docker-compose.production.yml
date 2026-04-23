@@ -65,7 +65,7 @@ services:
 
   redis:
     restart: always
-    image: redis:6-alpine
+    image: redis:8.6-alpine
     networks:
       - mampf
 

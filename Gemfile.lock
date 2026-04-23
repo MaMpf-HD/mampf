@@ -131,7 +131,7 @@ GEM
     acts_as_tree (2.9.1)
       activerecord (>= 3.0.0)
     acts_as_votable (0.14.0)
-    addressable (2.8.9)
+    addressable (2.8.10)
       public_suffix (>= 2.0.2, < 8.0)
     afm (1.0.0)
     altcha-rails (0.0.6)
@@ -180,6 +180,9 @@ GEM
       term-ansicolor
       thor
     crass (1.0.6)
+    cronex (0.15.0)
+      tzinfo
+      unicode (>= 0.4.4.5)
     csv (3.3.5)
     dalli (5.0.2)
       logger
@@ -255,7 +258,7 @@ GEM
       nokogiri (>= 1.4)
     htmlentities (4.4.2)
     http-accept (1.7.0)
-    http-cookie (1.1.0)
+    http-cookie (1.1.4)
       domain_name (~> 0.5)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
@@ -332,7 +335,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.0331)
+    mime-types-data (3.2026.0407)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
     minitest (6.0.3)
@@ -343,7 +346,7 @@ GEM
       i18n (>= 0.6.10, < 2)
       request_store (~> 1.0)
     msgpack (1.8.0)
-    multi_json (1.19.1)
+    multi_json (1.20.1)
     mustache (1.1.2)
     mutex_m (0.3.0)
     net-imap (0.6.3)
@@ -384,7 +387,7 @@ GEM
     or-tools (0.17.1)
       rice (>= 4.8)
     orm_adapter (0.5.0)
-    pagy (43.4.4)
+    pagy (43.5.1)
       json
       uri
       yaml
@@ -432,7 +435,7 @@ GEM
     rack (3.2.6)
     rack-proxy (0.7.7)
       rack
-    rack-session (2.1.1)
+    rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rack-test (2.2.0)
@@ -496,7 +499,7 @@ GEM
       reline
     redis-client (0.28.0)
       connection_pool
-    regexp_parser (2.11.3)
+    regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
     request_store (1.7.0)
@@ -594,16 +597,17 @@ GEM
     shrine (3.6.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
-    sidekiq (7.3.9)
-      base64
-      connection_pool (>= 2.3.0)
-      logger
-      rack (>= 2.2.4)
-      redis-client (>= 0.22.2)
-    sidekiq-cron (1.12.0)
-      fugit (~> 1.8)
+    sidekiq (8.1.2)
+      connection_pool (>= 3.0.0)
+      json (>= 2.16.0)
+      logger (>= 1.7.0)
+      rack (>= 3.2.0)
+      redis-client (>= 0.26.0)
+    sidekiq-cron (2.3.1)
+      cronex (>= 0.13.0)
+      fugit (~> 1.8, >= 1.11.1)
       globalid (>= 1.0.1)
-      sidekiq (>= 6)
+      sidekiq (>= 6.5.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -613,7 +617,7 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
-    sorbet-runtime (0.6.13092)
+    sorbet-runtime (0.6.13117)
     spring (4.4.2)
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
@@ -644,7 +648,7 @@ GEM
     thor (1.5.0)
     tilt (2.7.0)
     timeago_js (3.0.2.2)
-    timecop (0.9.10)
+    timecop (0.9.11)
     timeout (0.6.1)
     tins (1.52.0)
       bigdecimal
@@ -661,6 +665,7 @@ GEM
       railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    unicode (0.4.4.5)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
@@ -771,8 +776,8 @@ DEPENDENCIES
   rubyzip (~> 2.3)
   sass-rails (~> 6.0)
   shrine (~> 3.6)
-  sidekiq (~> 7.3)
-  sidekiq-cron (~> 1.12)
+  sidekiq (~> 8.1)
+  sidekiq-cron (~> 2.3)
   simplecov (~> 0.22)
   simplecov-cobertura (~> 3.1)
   spring (~> 4.3)
