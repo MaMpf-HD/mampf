@@ -30,7 +30,7 @@ module Registration
         format.html
         format.turbo_stream do
           if exam_campaign_context?
-            render_exam_update(exam_partial_for_frame)
+            render_exam_update
           else
             render_campaigns_index_turbo(lecture: @campaign.campaignable,
                                          expanded_campaign_id: @campaign.id)
@@ -136,7 +136,7 @@ module Registration
 
       if @campaign.update(attributes)
         if exam_campaign_context?
-          render_exam_update(exam_partial_for_frame)
+          render_exam_update
         else
           respond_with_flash(:notice, t("registration.campaign.closed"),
                              redirect_path: registration_campaign_path(@campaign)) do
@@ -170,7 +170,7 @@ module Registration
       end
 
       if exam_campaign_context?
-        render_exam_update(exam_partial_for_frame)
+        render_exam_update
       else
         respond_with_flash(:notice, t("registration.campaign.reopened"),
                            redirect_path: registration_campaign_path(@campaign)) do
@@ -217,7 +217,7 @@ module Registration
       def update_status(status, success_message)
         if @campaign.update(status: status)
           if exam_campaign_context?
-            render_exam_update(exam_partial_for_frame)
+            render_exam_update
           else
             respond_with_flash(:notice, success_message,
                                redirect_path: registration_campaign_path(@campaign)) do
@@ -284,18 +284,12 @@ module Registration
           @campaign.exam_campaign?
       end
 
-      def exam_partial_for_frame
-        "exams/registration"
-      end
-
-      def render_exam_update(partial)
-        exam = @campaign.registration_items
-                        .find_by(registerable_type: "Exam")
-                        .registerable
+      def render_exam_update
+        exam = @campaign.exam
         render turbo_stream: [
           turbo_stream.replace(
             target_frame_id,
-            partial: partial,
+            partial: "exams/registration",
             locals: { exam: exam, lecture: exam.lecture }
           ),
           turbo_stream.replace(

@@ -74,6 +74,9 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 
+import DismissWorkspaceController from "~/registration/allocations/dismiss_workspace.controller.js";
+window.Stimulus.register("dismiss-workspace", DismissWorkspaceController);
+
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 

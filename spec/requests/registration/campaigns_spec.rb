@@ -569,7 +569,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(settings_frame_id)
-      expect(response.body).to include("exams--registration-settings")
+      expect(response.body).to include(frame_id)
     end
 
     it "renders exam-specific partial on close with frame_id" do

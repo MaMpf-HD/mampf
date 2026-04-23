@@ -215,7 +215,6 @@ en:
         grading_phase: 'Closed %{time} ago — Grading phase'
     overview: 'Overview'
     settings: 'Settings'
-    registration: 'Participants'
     registrations_label: 'Registrations'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'

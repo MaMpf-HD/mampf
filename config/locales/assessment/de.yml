@@ -215,7 +215,6 @@ de:
         grading_phase: 'Geschlossen vor %{time} — Bewertungsphase'
     overview: 'Übersicht'
     settings: 'Einstellungen'
-    registration: 'Teilnehmende'
     registrations_label: 'Anmeldungen'
     roster: 'Teilnehmerliste'
     points_grid_placeholder: 'Die Punkteübersicht pro Aufgabe wird in einem zukünftigen Update verfügbar sein.'

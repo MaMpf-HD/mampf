@@ -1,12 +1,13 @@
 <% campaign = exam.registration_campaign
-  base = if exam.skip_campaigns || campaign&.completed?
-           t("assessment.roster")
-         else
-           t("assessment.registrations_label")
-         end
-  needs_attention = !exam.skip_campaigns &&
-                    !exam.new_record? &&
-                    (campaign.nil? || campaign.draft?) %>
+   base = if exam.skip_campaigns || campaign&.completed?
+            t("assessment.roster")
+          else
+            t("assessment.registrations_label")
+          end
+   needs_attention = !exam.skip_campaigns &&
+                     !exam.new_record? &&
+                     (campaign.nil? || campaign.draft?)
+   tooltip = t("assessment.registration_tab.needs_attention_tooltip") %>
 
 <%= turbo_frame_tag "exam_#{exam.id}_registration_tab_label",
                     class: "d-inline" do %>
@@ -16,8 +17,8 @@
     <span
       class="badge rounded-pill bg-warning ms-1"
       style="width: 0.5rem; height: 0.5rem; padding: 0;"
-      title="<%= t('assessment.registration_tab.needs_attention_tooltip') %>"
-      aria-label="<%= t('assessment.registration_tab.needs_attention_tooltip') %>"
+      title="<%= tooltip %>"
+      aria-label="<%= tooltip %>"
     ></span>
   <% end %>
 <% end %>

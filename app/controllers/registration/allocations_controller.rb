@@ -21,7 +21,7 @@ module Registration
               target_frame_id,
               partial: "registration/allocations/exam_workspace",
               locals: { campaign: @campaign, dashboard: @dashboard,
-                        exam: exam_for_campaign,
+                        exam: @campaign.exam,
                         container_id: target_frame_id }
             )
           else
@@ -67,7 +67,7 @@ module Registration
             target_frame_id,
             partial: "registration/allocations/exam_workspace",
             locals: { campaign: @campaign, dashboard: @dashboard,
-                      exam: exam_for_campaign,
+                      exam: @campaign.exam,
                       container_id: target_frame_id }
           ),
           stream_flash
@@ -113,7 +113,7 @@ module Registration
                   target_frame_id,
                   partial: "registration/allocations/exam_workspace",
                   locals: { campaign: @campaign, dashboard: @dashboard,
-                            exam: exam_for_campaign,
+                            exam: @campaign.exam,
                             container_id: target_frame_id }
                 ),
                 stream_flash
@@ -134,7 +134,7 @@ module Registration
       if @campaign.finalize!
         lecture = @campaign.campaignable
         if exam_workspace?
-          exam = exam_for_campaign
+          exam = @campaign.exam
           flash[:success] = t("registration.campaign.finalized")
           render turbo_stream: [
             turbo_stream.replace(
@@ -193,29 +193,7 @@ module Registration
       end
 
       def exam_workspace?
-        target_frame_id.start_with?("exam_") &&
-          target_frame_id.end_with?("_allocation_workspace") &&
-          @campaign.exam_campaign?
-      end
-
-      def exam_for_campaign
-        @campaign.registration_items
-                 .find_by(registerable_type: "Exam")
-                 .registerable
-      end
-
-      def render_exam_update(partial)
-        exam = @campaign.registration_items
-                        .find_by(registerable_type: "Exam")
-                        .registerable
-        render turbo_stream: [
-          turbo_stream.replace(
-            target_frame_id,
-            partial: partial,
-            locals: { exam: exam, lecture: exam.lecture }
-          ),
-          stream_flash
-        ].compact
+        @campaign.exam_workspace_frame_id?(target_frame_id)
       end
   end
 end

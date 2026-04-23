@@ -87,6 +87,18 @@ module Registration
         registration_items.where(registerable_type: "Exam").any?
     end
 
+    def exam
+      registration_items.find_by(registerable_type: "Exam")&.registerable
+    end
+
+    def self.exam_workspace_frame_id(exam)
+      "exam_#{exam.id}_allocation_workspace"
+    end
+
+    def exam_workspace_frame_id?(frame_id)
+      exam_campaign? && frame_id == self.class.exam_workspace_frame_id(exam)
+    end
+
     def total_registrations_count
       return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
 

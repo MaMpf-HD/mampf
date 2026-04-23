@@ -1,10 +1,19 @@
 <div id="exam-settings">
   <% unless exam.new_record? %>
-    <% campaign_for_bar = exam.registration_campaign if Flipper.enabled?(:registration_campaigns)
+    <% campaigns_enabled = Flipper.enabled?(:registration_campaigns)
+       campaign = campaigns_enabled ? exam.registration_campaign : nil
        needs_opening = !exam.skip_campaigns &&
-                       Flipper.enabled?(:registration_campaigns) &&
-                       (campaign_for_bar.nil? || campaign_for_bar.draft?)
-       bar_bg = needs_opening ? "bg-warning-subtle" : "bg-info-subtle" %>
+                       campaigns_enabled &&
+                       (campaign.nil? || campaign.draft?)
+       in_registration = campaign && !campaign.completed?
+       bar_bg = needs_opening ? "bg-warning-subtle" : "bg-info-subtle"
+       if in_registration
+         count = campaign.total_registrations_count
+         count_label = t("assessment.info_bar.registered")
+       else
+         count = exam.roster_entries_count
+         count_label = t("assessment.info_bar.participants")
+       end %>
     <div
       class="
         d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
@@ -13,46 +22,28 @@
     >
       <span>
         <i class="bi bi-calendar-event me-1"></i>
-
-        <% if exam.date %>
-          <%= l(exam.date, format: :long) %>
-        <% else %>
-          <%= t('basics.not_specified') %>
-        <% end %>
+        <%= exam.date ? l(exam.date, format: :long) : t("basics.not_specified") %>
       </span>
 
       <span class="text-black-50">·</span>
 
       <span>
         <i class="bi bi-geo-alt me-1"></i>
-        <%= exam.location.presence || t('basics.not_specified') %>
+        <%= exam.location.presence || t("basics.not_specified") %>
       </span>
 
       <span class="text-black-50">·</span>
 
       <span>
         <i class="bi bi-people me-1"></i>
-
-        <% campaign = exam.registration_campaign if Flipper.enabled?(:registration_campaigns)
-          in_registration = campaign && !campaign.completed?
-
-          if in_registration
-            count = campaign.total_registrations_count
-            label = t("assessment.info_bar.registered")
-          else
-            count = exam.roster_entries_count
-            label = t("assessment.info_bar.participants")
-          end %>
+        <%= count %>
 
         <% if exam.capacity %>
-          <%= count %>
           /
           <%= exam.capacity %>
-          <%= label %>
-        <% else %>
-          <%= count %>
-          <%= label %>
         <% end %>
+
+        <%= count_label %>
       </span>
 
       <% if needs_opening %>

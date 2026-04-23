@@ -128,9 +128,7 @@ module Registration
 
       def policy_redirect_path
         if exam_campaign_context?
-          exam = @campaign.registration_items
-                          .find_by(registerable_type: "Exam")
-                          &.registerable
+          exam = @campaign.exam
           return exam_path(exam, tab: "registration") if exam
         end
 
@@ -147,9 +145,7 @@ module Registration
       end
 
       def render_exam_update(partial)
-        exam = @campaign.registration_items
-                        .find_by(registerable_type: "Exam")
-                        .registerable
+        exam = @campaign.exam
         render turbo_stream: [
           turbo_stream.replace(
             target_frame_id,

@@ -11,19 +11,16 @@ export default class extends Controller {
       return;
     }
 
-    const card = this.element.closest(".registration-campaign-card");
-
-    if (!card) {
-      if (!confirm(this.confirmMessageValue)) {
-        event.preventDefault();
-      }
+    if (!confirm(this.confirmMessageValue)) {
+      event.preventDefault();
       return;
     }
 
+    const card = this.element.closest(".registration-campaign-card");
+
+    if (!card) return;
+
     event.preventDefault();
-
-    if (!confirm(this.confirmMessageValue)) return;
-
     card.classList.add("campaign-dissolving");
 
     const reduced = window.matchMedia(
