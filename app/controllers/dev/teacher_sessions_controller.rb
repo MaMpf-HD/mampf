@@ -1,6 +1,6 @@
 module Dev
   class TeacherSessionsController < ApplicationController
-    before_action :verify_development_environment
+    prepend_before_action :verify_development_environment
     skip_before_action :authenticate_user!
 
     def create

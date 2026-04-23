@@ -1,6 +1,6 @@
 module Dev
   class ImpersonateController < ApplicationController
-    before_action :verify_development_environment
+    prepend_before_action :verify_development_environment
 
     def create
       user = User.find(params[:id])
