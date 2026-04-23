@@ -9,7 +9,7 @@ module Dev
                     .map { |id, email| [id, email.split("@").first] }
 
         users.sort_by do |_, name|
-          [sort_priority(name), name.downcase]
+          [sort_priority(name), natural_name_sort_key(name)]
         end
       end
     end
@@ -30,6 +30,15 @@ module Dev
         return 2 if lowered_name.start_with?("admin")
 
         3
+      end
+
+      def natural_name_sort_key(name)
+        lowered_name = name.downcase
+        match = lowered_name.match(/\A(.*?)(\d+)\z/)
+
+        return [lowered_name, -1] unless match
+
+        [match[1], match[2].to_i]
       end
   end
 end
