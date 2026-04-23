@@ -1,6 +1,5 @@
 module Dev
-  class TeacherSessionsController < ApplicationController
-    prepend_before_action :verify_development_environment
+  class TeacherSessionsController < BaseController
     skip_before_action :authenticate_user!
 
     def create
@@ -12,11 +11,5 @@ module Dev
         redirect_to new_user_session_path, alert: "No teacher found." # rubocop:disable Rails/I18nLocaleTexts
       end
     end
-
-    private
-
-      def verify_development_environment
-        raise(ActionController::RoutingError, "Not Found") unless Rails.env.development?
-      end
   end
 end
