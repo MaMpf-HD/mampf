@@ -79,4 +79,130 @@ RSpec.describe(RosterHelper, type: :helper) do
       expect(badge).to include('data-turbo="false"')
     end
   end
+
+  describe "#rosterable_display_type" do
+    let(:lecture) { create(:lecture) }
+    let(:seminar) { create(:seminar) }
+    context "for Tutorial" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+      it "returns tutorial type label" do
+        expect(helper.rosterable_display_type(tutorial))
+          .to eq(I18n.t("registration.item.types.tutorial"))
+      end
+    end
+
+    context "for Talk" do
+      let(:talk) { create(:talk, lecture: seminar, position: 5) }
+
+      it "returns talk type label with position" do
+        expect(helper.rosterable_display_type(talk))
+          .to eq("#{I18n.t("registration.item.types.talk")} 5")
+      end
+    end
+
+    context "for Cohort" do
+      context "with propagation" do
+        let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+
+        it "returns group label without icon" do
+          expect(helper.rosterable_display_type(cohort))
+            .to eq(I18n.t("registration.item.types.other_group"))
+        end
+      end
+
+      context "without propagation" do
+        let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+        it "returns group label with no-propagation icon" do
+          result = helper.rosterable_display_type(cohort)
+          expect(result).to include(I18n.t("registration.item.types.other_group"))
+          expect(result).to include("bi-person-x")
+          expect(result).to include(I18n.t("registration.item.hints.no_propagation"))
+        end
+      end
+    end
+
+    context "for unknown type" do
+      let(:something) { double("UnknownType") }
+
+      it "returns nil safely" do
+        expect(helper.rosterable_display_type(something)).to be_nil
+      end
+    end
+  end
+
+  describe("SELF_ROSTER_TABLE_CONFIG") do
+    subject(:config) { RosterHelper::SELF_ROSTER_TABLE_CONFIG }
+    let(:lecture) { create(:lecture) }
+    let(:seminar) { create(:seminar) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, location: "Room 101") }
+    let(:talk) do
+      create(:talk, lecture: seminar, position: 5, description: "Deep Learning Overview",
+                    dates: [
+                      Time.zone.local(2026, 4, 10),
+                      Time.zone.local(2026, 4, 11)
+                    ])
+    end
+    let(:cohort) do
+      create(:cohort, context: lecture, propagate_to_lecture: true, description: "Group A")
+    end
+
+    describe "Tutorial config" do
+      it "defines two rows" do
+        expect(config["Tutorial"].size).to eq(2)
+      end
+
+      it "has correct headers and fields" do
+        row1 = config["Tutorial"][0]
+        row2 = config["Tutorial"][1]
+
+        expect(row1[:header]).to eq("basics.tutor")
+        expect(row1[:icon]).to eq("person")
+        expect(row1[:cell_class]).to eq("text-start fw-semibold")
+
+        expect(row2[:header]).to eq("basics.location")
+        expect(row2[:icon]).to eq("location")
+        expect(row2[:field].call(tutorial)).to eq("Room 101")
+      end
+    end
+
+    describe "Talk config" do
+      it "defines three rows" do
+        expect(config["Talk"].size).to eq(3)
+      end
+
+      it "evaluates fields correctly" do
+        pos_row, desc_row, date_row = config["Talk"]
+        expect(pos_row[:header]).to eq("basics.position")
+        expect(pos_row[:field].call(talk)).to eq(5)
+
+        expect(desc_row[:header]).to eq("basics.description")
+        expect(desc_row[:field].call(talk)).to eq("Deep Learning Overview")
+
+        formatted = "Apr 10 2026, Apr 11 2026"
+        expect(date_row[:field].call(talk)).to eq(formatted)
+      end
+
+      it "handles nil dates" do
+        talk_with_nil = instance_double("Talk", position: 1, description: "X", dates: [nil])
+        _, _, date_row = config["Talk"]
+
+        expect(date_row[:field].call(talk_with_nil)).to eq("")
+      end
+    end
+
+    describe "Cohort config" do
+      it "defines one row" do
+        expect(config["Cohort"].size).to eq(1)
+      end
+
+      it "evaluates description field" do
+        row = config["Cohort"].first
+
+        expect(row[:header]).to eq("basics.description")
+        expect(row[:field].call(cohort)).to eq("Group A")
+      end
+    end
+  end
 end

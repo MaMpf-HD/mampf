@@ -150,7 +150,7 @@ module RosterHelper
         icon: "event",
         field: lambda { |rosterable|
           rosterable.dates&.map do |d|
-            d.nil? ? "" : d.strftime("%b %d, %H:%M")
+            d.nil? ? "" : d.strftime("%b %d %Y")
           end&.join(", ")
         } }
     ],

@@ -204,6 +204,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     describe "preference actions" do
       let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
+      let(:service_double_campaign) { instance_double(Registration::Campaign::CampaignDetailsService) }
 
       [:up, :down].each do |action|
         describe "POST ##{action}" do
@@ -227,6 +228,13 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                  params: { preferences_json: pref_items_json }
           end
         end
+      end
+
+      it "resets preferences" do
+        expect(Registration::Campaign::CampaignDetailsService).to receive(:new)
+          .and_return(service_double_campaign)
+        expect(service_double_campaign).to receive(:preferences_info).and_return(stub_success)
+        post reset_campaign_preferences_path(campaign_id: campaign.id)
       end
     end
   end
