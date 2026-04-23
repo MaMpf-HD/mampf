@@ -5,7 +5,9 @@ module Dev
     private
 
       def verify_development_environment
-        allowed = Rails.env.development? && request.local?
+        # Don't use request.local? here since Docker uses 172. as IP range
+        # for localhost, which is not considered local by Rails.
+        allowed = Rails.env.development? && request.host == "localhost"
 
         raise(ActionController::RoutingError, "Not Found") unless allowed
       end
