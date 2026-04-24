@@ -323,8 +323,8 @@ RSpec.describe("Registration::Policies", type: :request) do
                                    kind: :institutional_email, position: 1)
     end
     let!(:policy2) do
-      create(:registration_policy, registration_campaign: campaign,
-                                   kind: :institutional_email, position: 2)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         position: 2)
     end
 
     context "as an editor" do
@@ -359,8 +359,8 @@ RSpec.describe("Registration::Policies", type: :request) do
                                    kind: :institutional_email, position: 1)
     end
     let!(:policy2) do
-      create(:registration_policy, registration_campaign: campaign,
-                                   kind: :institutional_email, position: 2)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         position: 2)
     end
 
     context "as an editor" do

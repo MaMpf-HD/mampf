@@ -22,6 +22,7 @@ module Registration
     validates :kind, :phase, presence: true
     validates :active, inclusion: { in: [true, false] }
     validate :campaign_is_draft, on: [:create, :update]
+    validate :validate_unique_institutional_email, on: [:create, :update]
     validate :single_student_performance_policy
     validate :validate_config
 
@@ -95,7 +96,7 @@ module Registration
     end
 
     def config_summary
-      handler.summary || "-"
+      handler.summary || "—"
     end
 
     delegate :evaluate, to: :handler
@@ -116,6 +117,19 @@ module Registration
     end
 
     private
+
+      def validate_unique_institutional_email
+        return unless institutional_email?
+        return unless registration_campaign_id
+
+        duplicate = registration_campaign.registration_policies
+                                         .institutional_email
+                                         .where.not(id: id)
+        return unless duplicate.exists?
+
+        errors.add(:kind,
+                   I18n.t("registration.policy.errors.duplicate_institutional_email"))
+      end
 
       def campaign_is_draft
         return unless registration_campaign && !registration_campaign.draft?

@@ -1,5 +1,6 @@
 module Registration
   class PoliciesController < ApplicationController
+    helper RegistrationPolicyHelper
     before_action :set_campaign
     before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
@@ -97,6 +98,16 @@ module Registration
                                             :prerequisite_campaign_id,
                                             :lecture_id,
                                             { lecture_ids: [] }])
+      end
+
+      def render_campaigns_container
+        @campaign.reload
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
       end
 
       def move(direction)
