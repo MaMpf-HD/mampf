@@ -134,6 +134,40 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(flash[:alert]).to be_present
       end
 
+      it "includes user name and group name in the success flash" do
+        post add_member_tutorial_path(tutorial), params: { email: new_student.email }
+        expect(flash[:notice]).to eq(
+          I18n.t("roster.messages.user_added",
+                 user: new_student.info, group: tutorial.title)
+        )
+      end
+
+      context "when user is already in this tutorial" do
+        before { create(:tutorial_membership, tutorial: tutorial, user: new_student) }
+
+        it "includes user name and group name in the already-member flash" do
+          post add_member_tutorial_path(tutorial), params: { email: new_student.email }
+          expect(flash[:notice]).to eq(
+            I18n.t("roster.messages.user_already_member",
+                   user: new_student.info, group: tutorial.title)
+          )
+        end
+      end
+
+      context "when user is already in another tutorial of the same lecture" do
+        let!(:other_tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+
+        before { create(:tutorial_membership, tutorial: other_tutorial, user: new_student) }
+
+        it "includes user name and conflicting group in the alert" do
+          post add_member_tutorial_path(tutorial), params: { email: new_student.email }
+          expect(flash[:alert]).to eq(
+            I18n.t("roster.errors.user_already_in_bundle",
+                   user: new_student.info, group: other_tutorial.title)
+          )
+        end
+      end
+
       context "when group is locked" do
         let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
@@ -187,6 +221,13 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           delete(remove_member_tutorial_path(tutorial, user_id: member.id))
         end.not_to(change { lecture.members.count })
+      end
+
+      it "includes user name in the flash" do
+        delete remove_member_tutorial_path(tutorial, user_id: member.id)
+        expect(flash[:notice]).to eq(
+          I18n.t("roster.messages.user_removed", user: member.info)
+        )
       end
 
       context "when group is locked" do
@@ -251,7 +292,10 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       it "sets the correct flash message" do
         patch move_member_tutorial_path(source, user_id: member.id),
               params: { target_id: target.id }
-        expect(flash[:notice]).to eq(I18n.t("roster.messages.user_moved", target: target.title))
+        expect(flash[:notice]).to eq(
+          I18n.t("roster.messages.user_moved",
+                 user: member.info, target: target.title)
+        )
       end
 
       context "when target is locked" do
