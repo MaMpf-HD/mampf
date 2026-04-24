@@ -152,7 +152,9 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
 
     context "in seminar with many types of items" do
       let(:seminar) { create(:seminar) }
-      let(:campaign_seminar) { create(:registration_campaign, :preference_based, campaignable: seminar) }
+      let(:campaign_seminar) do
+        create(:registration_campaign, :preference_based, campaignable: seminar)
+      end
       let(:cohort1) do
         create(:cohort, context: seminar, propagate_to_lecture: false, capacity: nil)
       end
@@ -233,6 +235,43 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
                                       registration_item: item,
                                       preference_rank: nil)
       expect(registration).to be_valid
+    end
+
+    describe "ensures exclusive_assignment is correct" do
+      let(:seminar) { create(:seminar) }
+      let(:campaign_seminar) { create(:registration_campaign, campaignable: seminar) }
+      it "for tutorial items" do
+        registration = FactoryBot.create(:registration_user_registration,
+                                         registration_campaign: campaign,
+                                         user: user,
+                                         registration_item: item,
+                                         preference_rank: nil)
+        expect(registration.exclusive_assignment).to equal(true)
+      end
+      it "for talk items" do
+        item_talk = create(:registration_item, registration_campaign: campaign_seminar,
+                                               registerable: create(:talk, lecture: seminar))
+        registration = FactoryBot.create(:registration_user_registration,
+                                         registration_campaign: campaign_seminar,
+                                         user: user,
+                                         registration_item: item_talk,
+                                         preference_rank: nil)
+
+        expect(registration.exclusive_assignment).to equal(true)
+      end
+      it "for cohort items" do
+        cohort = create(:cohort, context: seminar, propagate_to_lecture: false, capacity: nil)
+
+        item_cohort = create(:registration_item, registration_campaign: campaign_seminar,
+                                                 registerable: cohort)
+        registration = FactoryBot.create(:registration_user_registration,
+                                         registration_campaign: campaign_seminar,
+                                         user: user,
+                                         registration_item: item_cohort,
+                                         preference_rank: nil)
+
+        expect(registration.exclusive_assignment).to equal(false)
+      end
     end
 
     describe "ensures user can only register once per campaign" do
