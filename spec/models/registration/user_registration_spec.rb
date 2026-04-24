@@ -100,6 +100,112 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
                                              preference_rank: 2)
       expect(second_registration).to be_valid
     end
+
+    context "in tutorial campaign with many types of items" do
+      let(:cohort1) do
+        create(:cohort, context: campaign.campaignable, propagate_to_lecture: false, capacity: nil)
+      end
+      let(:cohort2) do
+        create(:cohort, context: campaign.campaignable, propagate_to_lecture: false, capacity: nil)
+      end
+      let(:item_cohort1) do
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: cohort1)
+      end
+      let(:item_cohort2) do
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: cohort2)
+      end
+      let(:item_tutorial2) do
+        FactoryBot.create(:registration_item, registration_campaign: campaign)
+      end
+      it "with existing registration for cohort, can register another cohort" do
+        FactoryBot.create(:registration_user_registration,
+                          registration_campaign: campaign,
+                          user: user,
+                          registration_item: item_cohort1,
+                          preference_rank: 1)
+
+        cohort_registration = FactoryBot.build(:registration_user_registration,
+                                               registration_campaign: campaign,
+                                               user: user,
+                                               registration_item: item_cohort2,
+                                               preference_rank: 2)
+        expect(cohort_registration).to be_valid
+      end
+
+      it "with existing registration for tutorial, can register another tutorial" do
+        FactoryBot.create(:registration_user_registration,
+                          registration_campaign: campaign,
+                          user: user,
+                          registration_item: item,
+                          preference_rank: 1)
+
+        tutorial_registration = FactoryBot.build(:registration_user_registration,
+                                                 registration_campaign: campaign,
+                                                 user: user,
+                                                 registration_item: item_tutorial2,
+                                                 preference_rank: 2)
+        expect(tutorial_registration).to be_valid
+      end
+    end
+
+    context "in seminar with many types of items" do
+      let(:seminar) { create(:seminar) }
+      let(:campaign_seminar) { create(:registration_campaign, :preference_based, campaignable: seminar) }
+      let(:cohort1) do
+        create(:cohort, context: seminar, propagate_to_lecture: false, capacity: nil)
+      end
+      let(:cohort2) do
+        create(:cohort, context: seminar, propagate_to_lecture: false, capacity: nil)
+      end
+      let(:item_cohort1) do
+        create(:registration_item, registration_campaign: campaign_seminar,
+                                   registerable: cohort1)
+      end
+      let(:item_cohort2) do
+        create(:registration_item, registration_campaign: campaign_seminar,
+                                   registerable: cohort2)
+      end
+      let(:item_talk1) do
+        create(:registration_item, registration_campaign: campaign_seminar,
+                                   registerable: create(:talk, lecture: seminar))
+      end
+      let(:item_talk2) do
+        create(:registration_item, registration_campaign: campaign_seminar,
+                                   registerable: create(:talk, lecture: seminar))
+      end
+
+      it "with existing registration for cohort, can register another cohort" do
+        FactoryBot.create(:registration_user_registration,
+                          registration_campaign: campaign_seminar,
+                          user: user,
+                          registration_item: item_cohort1,
+                          preference_rank: 1)
+
+        cohort_registration = FactoryBot.build(:registration_user_registration,
+                                               registration_campaign: campaign_seminar,
+                                               user: user,
+                                               registration_item: item_cohort2,
+                                               preference_rank: 2)
+        expect(cohort_registration).to be_valid
+      end
+
+      it "with existing registration for talk, can register another talk" do
+        FactoryBot.create(:registration_user_registration,
+                          registration_campaign: campaign_seminar,
+                          user: user,
+                          registration_item: item_talk1,
+                          preference_rank: 1)
+
+        talk_registration = FactoryBot.build(:registration_user_registration,
+                                             registration_campaign: campaign_seminar,
+                                             user: user,
+                                             registration_item: item_talk2,
+                                             preference_rank: 2)
+        expect(talk_registration).to be_valid
+      end
+    end
   end
 
   describe "validations for FCFS campaigns" do
