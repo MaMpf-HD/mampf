@@ -178,7 +178,9 @@ module Registration
       end
 
       def set_locale
-        I18n.locale = @campaign&.campaignable&.locale_with_inheritance || I18n.locale
+        I18n.locale = @campaign&.campaignable&.locale_with_inheritance ||
+                      @lecture&.locale_with_inheritance ||
+                      I18n.locale
       end
 
       def campaign_completed?

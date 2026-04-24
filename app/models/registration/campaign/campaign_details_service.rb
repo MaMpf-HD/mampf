@@ -63,8 +63,9 @@ module Registration
                                   .where(user_registrations: { user_id: @user.id })
         items_succeed = Rosters::StudentMaterializedResultResolver
                         .new(@user).succeed_items(@campaign)
+        succeed_ids = items_succeed.to_set(&:id)
         status_items_selected = items_selected.each_with_object({}) do |i, hash|
-          hash[i.id] = items_succeed.pluck(:id).include?(i.id) ? "confirmed" : "dismissed"
+          hash[i.id] = succeed_ids.include?(i.id) ? "confirmed" : "dismissed"
         end
         { items_selected: items_selected,
           items_succeed: items_succeed,
