@@ -93,6 +93,8 @@ module Registration
       user_registrations.where(preference_rank: 1).count
     end
 
+    delegate :exclusive_assignment?, to: :registerable
+
     private
 
       def valid_capacity_reduction?(new_capacity)

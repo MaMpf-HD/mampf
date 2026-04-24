@@ -24,4 +24,8 @@ class Cohort < ApplicationRecord
   def registration_title
     title
   end
+
+  def exclusive_assignment?
+    false
+  end
 end
