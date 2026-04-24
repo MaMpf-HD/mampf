@@ -77,7 +77,7 @@ class DistributionAnalysisComponent < ViewComponent::Base
       bins.each do |bin|
         pct = max_c.positive? ? (bin[:count].to_f / max_c * 100).round : 0
         bin[:height_pct] = pct
-        bin[:min_height_px] = bin[:count].positive? ? 4 : 0
+        bin[:min_height_px] = bin[:count].positive? ? 4 : 1
       end
 
       bins

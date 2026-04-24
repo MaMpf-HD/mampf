@@ -1,5 +1,6 @@
+# Missing top-level docstring, please formulate one yourself 😁
 class GradeTableComponent < ViewComponent::Base
-  # Missing top-level docstring, please formulate one yourself 😁
+  include ActionView::Helpers::DateHelper
 
   def initialize(assessment:)
     super()
@@ -8,14 +9,42 @@ class GradeTableComponent < ViewComponent::Base
 
   attr_reader :assessment
 
+  def exam?
+    assessment.assessable.is_a?(Exam)
+  end
+
+  def assignment?
+    assessment.assessable.is_a?(::Assignment)
+  end
+
+  def talk?
+    assessment.assessable.is_a?(Talk)
+  end
+
   def show_tutorial_column?
-    !assessment.assessable.is_a?(Talk)
+    assignment?
   end
 
   def show_points_column?
     assessable = assessment.assessable
     assessable.is_a?(::Assessment::Pointable) &&
       assessable.is_a?(::Assessment::Gradable)
+  end
+
+  def show_status_column?
+    excluded_participations.any?
+  end
+
+  def show_grader_column?
+    grader_ids = displayed_participations
+                 .pluck(:grader_id)
+                 .compact
+                 .uniq
+    grader_ids.size > 1
+  end
+
+  def show_graded_at_column?
+    !exam?
   end
 
   def points_display(participation)
@@ -25,7 +54,8 @@ class GradeTableComponent < ViewComponent::Base
   end
 
   def gradeable_participations
-    @gradeable_participations ||= participations.where(status: [:pending, :reviewed])
+    @gradeable_participations ||=
+      participations.where(status: [:pending, :reviewed])
   end
 
   def absent_participations
@@ -36,12 +66,42 @@ class GradeTableComponent < ViewComponent::Base
     @exempt_participations ||= participations.where(status: :exempt)
   end
 
+  def excluded_participations
+    @excluded_participations ||=
+      participations.where(status: [:absent, :exempt])
+  end
+
+  def displayed_participations
+    @displayed_participations ||=
+      participations.where(status: [:pending, :reviewed, :absent, :exempt])
+  end
+
+  def any_displayed?
+    displayed_participations.any?
+  end
+
   def any_gradeable?
     gradeable_participations.any?
   end
 
   def any_excluded?
-    absent_participations.any? || exempt_participations.any?
+    excluded_participations.any?
+  end
+
+  def row_status(participation)
+    participation.status.to_sym
+  end
+
+  def status_label(participation)
+    I18n.t("assessment.grade_table.#{participation.status}")
+  end
+
+  def status_badge_class(participation)
+    case row_status(participation)
+    when :absent then "bg-danger"
+    when :exempt then "bg-secondary"
+    else "bg-light text-muted"
+    end
   end
 
   def absent_grade_display(participation)
@@ -68,28 +128,44 @@ class GradeTableComponent < ViewComponent::Base
     participation.grader&.tutorial_name
   end
 
-  def graded_at_display(participation)
+  def graded_at_relative(participation)
+    return nil unless participation.graded_at
+
+    time_ago_in_words(participation.graded_at)
+  end
+
+  def graded_at_full(participation)
     return nil unless participation.graded_at
 
     I18n.l(participation.graded_at, format: :short)
   end
 
-  def excluded_participations
-    @excluded_participations ||=
-      participations.where(status: [:absent, :exempt])
-  end
+  def common_grader_name
+    grader_ids = gradeable_participations.pluck(:grader_id).compact.uniq
+    return nil unless grader_ids.size == 1
 
-  def status_label(participation)
-    I18n.t("assessment.grade_table.#{participation.status}")
+    gradeable_participations.find { |p| p.grader_id.present? }
+                            &.grader
+                            &.tutorial_name
   end
 
   private
 
     def participations
-      @participations ||= assessment
-                          .assessment_participations
-                          .joins(:user)
-                          .includes(:user, :tutorial, :grader)
-                          .order(:tutorial_id, "users.name")
+      @participations ||= base_participations.order(*sort_clause)
+    end
+
+    def base_participations
+      assessment.assessment_participations
+                .joins(:user)
+                .includes(:user, :tutorial, :grader)
+    end
+
+    def sort_clause
+      if exam?
+        ["users.name"]
+      else
+        [:tutorial_id, "users.name"]
+      end
     end
 end

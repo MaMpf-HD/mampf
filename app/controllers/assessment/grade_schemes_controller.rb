@@ -20,12 +20,12 @@ module Assessment
         config: existing_config,
         points_step: existing_step
       )
-      render_dashboard("grade_scheme")
+      render_dashboard("grades")
     end
 
     def edit
       authorize! :update, @assessment
-      render_dashboard("grade_scheme")
+      render_dashboard("grades")
     end
 
     def create
@@ -44,10 +44,10 @@ module Assessment
 
       if saved
         @grade_scheme = nil
-        render_dashboard("grade_scheme",
+        render_dashboard("grades",
                          notice: I18n.t("assessment.grade_scheme.created"))
       else
-        render_dashboard("grade_scheme",
+        render_dashboard("grades",
                          alert: @grade_scheme.errors.full_messages.join(", "),
                          status: :unprocessable_content)
       end
@@ -58,10 +58,10 @@ module Assessment
 
       if @grade_scheme.update(grade_scheme_params)
         @grade_scheme = nil
-        render_dashboard("grade_scheme",
+        render_dashboard("grades",
                          notice: I18n.t("assessment.grade_scheme.updated"))
       else
-        render_dashboard("grade_scheme",
+        render_dashboard("grades",
                          alert: @grade_scheme.errors.full_messages.join(", "),
                          status: :unprocessable_content)
       end
@@ -70,7 +70,7 @@ module Assessment
     def preview
       authorize! :update, @assessment
 
-      render_dashboard("grade_scheme", preview_mode: true)
+      render_dashboard("grades", preview_mode: true)
     end
 
     def apply
@@ -86,7 +86,7 @@ module Assessment
         I18n.t("assessment.grade_scheme.applied")
       end
 
-      redirect_to_dashboard(tab: "grade_scheme", notice: notice)
+      redirect_to_dashboard(tab: "grades", notice: notice)
     end
 
     private
@@ -105,7 +105,7 @@ module Assessment
 
         unless @grade_scheme
           return redirect_to_dashboard(
-            tab: "grade_scheme",
+            tab: "grades",
             alert: I18n.t("assessment.grade_scheme.not_found")
           )
         end
@@ -113,7 +113,7 @@ module Assessment
         return if @grade_scheme.active?
 
         redirect_to_dashboard(
-          tab: "grade_scheme",
+          tab: "grades",
           alert: I18n.t("assessment.grade_scheme.not_found")
         )
       end

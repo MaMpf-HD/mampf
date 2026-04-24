@@ -189,7 +189,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
 
     it "redirects to dashboard" do
       patch apply_assessment_assessment_grade_scheme_path(assessment, grade_scheme)
-      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+      expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
 
     context "as a student" do
@@ -219,7 +219,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
     it "redirects to dashboard" do
       get preview_assessment_assessment_grade_scheme_path(assessment, 99_999),
           as: :turbo_stream
-      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+      expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
 
     it "redirects when id belongs to a different assessment" do
@@ -228,7 +228,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       other_scheme = create(:assessment_grade_scheme, assessment: other_assessment)
       get preview_assessment_assessment_grade_scheme_path(assessment, other_scheme),
           as: :turbo_stream
-      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+      expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
 
     it "redirects when scheme exists but is inactive" do
@@ -236,7 +236,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       scheme.update!(active: false)
       get preview_assessment_assessment_grade_scheme_path(assessment, scheme),
           as: :turbo_stream
-      expect(response).to redirect_to(exam_path(exam, tab: "grade_scheme"))
+      expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
   end
 end

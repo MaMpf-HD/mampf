@@ -116,7 +116,13 @@
         </details>
       <% end %>
     <% when :applied %>
-      <div class="d-flex justify-content-between align-items-center mb-2">
+      <div
+        class="
+          d-flex flex-column flex-xxl-row
+          justify-content-between align-items-stretch align-items-xxl-center
+          gap-2 mb-3
+        "
+      >
         <div
           class="
             alert alert-success d-flex align-items-center mb-0 py-2 px-3
@@ -137,27 +143,29 @@
           </div>
         </div>
 
-        <%= link_to new_scheme_path,
-                    class: "btn btn-sm btn-outline-primary ms-3 flex-shrink-0",
-                    data: { turbo_stream: true } do %>
-          <i class="bi bi-pencil me-1"></i>
-          <%= t("assessment.grade_scheme.revise_button") %>
-        <% end %>
-
-        <%= button_to apply_scheme_path,
-                      method: :patch,
-                      class: "btn btn-sm btn-outline-success ms-2 flex-shrink-0",
-                      data: { turbo_confirm:
-                        t("assessment.grade_scheme.reapply_confirm") } do %>
-          <i class="bi bi-arrow-repeat me-1"></i>
-          <%= t("assessment.grade_scheme.reapply_button") %>
-
-          <% if ungraded_reviewed_count.positive? %>
-            <span class="badge bg-warning text-dark ms-1">
-              <%= ungraded_reviewed_count %>
-            </span>
+        <div class="d-flex gap-2 flex-shrink-0">
+          <%= link_to new_scheme_path,
+                      class: "btn btn-sm btn-outline-primary",
+                      data: { turbo_stream: true } do %>
+            <i class="bi bi-pencil me-1"></i>
+            <%= t("assessment.grade_scheme.revise_button") %>
           <% end %>
-        <% end %>
+
+          <%= button_to apply_scheme_path,
+                        method: :patch,
+                        class: "btn btn-sm btn-outline-success",
+                        data: { turbo_confirm:
+                          t("assessment.grade_scheme.reapply_confirm") } do %>
+            <i class="bi bi-arrow-repeat me-1"></i>
+            <%= t("assessment.grade_scheme.reapply_button") %>
+
+            <% if ungraded_reviewed_count.positive? %>
+              <span class="badge bg-warning text-dark ms-1">
+                <%= ungraded_reviewed_count %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
       </div>
       <% if ungraded_reviewed_count.positive? %>
         <div class="alert alert-warning py-2 mb-3">

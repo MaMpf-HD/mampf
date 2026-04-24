@@ -87,9 +87,9 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
       occupied.each { |b| expect(b[:min_height_px]).to eq(4) }
     end
 
-    it "sets min_height_px to 0 for empty bins" do
+    it "sets min_height_px to 1 for empty bins" do
       empty = component.bins.select { |b| b[:count].zero? }
-      empty.each { |b| expect(b[:min_height_px]).to eq(0) }
+      empty.each { |b| expect(b[:min_height_px]).to eq(1) }
     end
   end
 

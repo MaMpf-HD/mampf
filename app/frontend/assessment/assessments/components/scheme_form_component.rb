@@ -62,13 +62,13 @@ class SchemeFormComponent < ViewComponent::Base
   def cancel_path
     assessable = assessment.assessable
     if assessable.is_a?(Exam)
-      helpers.exam_path(assessable, tab: "grade_scheme")
+      helpers.exam_path(assessable, tab: "grades")
     else
       helpers.assessment_assessment_path(
         assessment,
         assessable_type: assessable.class.name,
         assessable_id: assessable.id,
-        tab: "grade_scheme"
+        tab: "grades"
       )
     end
   end

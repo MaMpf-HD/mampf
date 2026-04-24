@@ -1,5 +1,13 @@
-<% if any_gradeable? %>
-  <table class="table table-hover">
+<% if any_displayed? %>
+  <% if common_grader_name.present? && !show_grader_column? %>
+    <p class="text-muted small mb-2">
+      <i class="bi bi-person-check me-1"></i>
+
+      <%= t("assessment.grade_table.all_graded_by",
+            grader: common_grader_name) %>
+    </p>
+  <% end %>
+  <table class="table table-hover table-sm align-middle">
     <thead>
       <tr>
         <th><%= t("basics.name") %></th>
@@ -9,34 +17,87 @@
         <% end %>
 
         <% if show_points_column? %>
-          <th class="text-center"><%= t("assessment.points") %></th>
+          <th class="text-center" style="width: 1%; white-space: nowrap;">
+            <%= t("assessment.points") %>
+          </th>
         <% end %>
 
-        <th class="text-center"><%= t("assessment.grade") %></th>
-        <th><%= t("assessment.graded_by") %></th>
-        <th><%= t("assessment.graded_at") %></th>
+        <th class="text-center" style="width: 1%; white-space: nowrap;">
+          <%= t("assessment.grade") %>
+        </th>
+
+        <% if show_grader_column? %>
+          <th><%= t("assessment.graded_by") %></th>
+        <% end %>
+
+        <% if show_graded_at_column? %>
+          <th><%= t("assessment.graded_at") %></th>
+        <% end %>
       </tr>
     </thead>
 
     <tbody>
-      <% gradeable_participations.each do |participation| %>
-        <tr>
-          <td><%= participation.user.tutorial_name %></td>
+      <% displayed_participations.each do |p| %>
+        <tr class="<%= 'table-light text-muted' if row_status(p) == :exempt %>">
+          <td>
+            <% case row_status(p) %>
+            <% when :absent %>
+              <i
+                class="bi bi-person-x text-danger me-1"
+                data-bs-toggle="tooltip"
+                title="<%= status_label(p) %>"
+              ></i>
+            <% when :exempt %>
+              <i
+                class="bi bi-person-dash text-secondary me-1"
+                data-bs-toggle="tooltip"
+                title="<%= status_label(p) %>"
+              ></i>
+            <% end %>
+
+            <%= p.user.tutorial_name %>
+          </td>
 
           <% if show_tutorial_column? %>
-            <td><%= participation.tutorial&.title %></td>
+            <td><%= p.tutorial&.title %></td>
           <% end %>
 
           <% if show_points_column? %>
-            <td class="text-center"><%= points_display(participation) %></td>
+            <td class="text-center">
+              <% if row_status(p) == :exempt %>
+                <span class="text-muted">&mdash;</span>
+              <% else %>
+                <%= points_display(p) %>
+              <% end %>
+            </td>
           <% end %>
 
-          <td class="text-center"><%= grade_display(participation) %></td>
-          <td class="text-muted small"><%= grader_display(participation) %></td>
-
-          <td class="text-muted small">
-            <%= graded_at_display(participation) %>
+          <td class="text-center">
+            <% case row_status(p) %>
+            <% when :absent %>
+              <span class="badge bg-danger">
+                <%= absent_grade_display(p) %>
+              </span>
+            <% when :exempt %>
+              <span class="text-muted">&mdash;</span>
+            <% else %>
+              <%= grade_display(p) %>
+            <% end %>
           </td>
+
+          <% if show_grader_column? %>
+            <td class="text-muted small"><%= grader_display(p) %></td>
+          <% end %>
+
+          <% if show_graded_at_column? %>
+            <td class="text-muted small">
+              <% if graded_at_relative(p) %>
+                <span title="<%= graded_at_full(p) %>">
+                  <%= graded_at_relative(p) %>
+                </span>
+              <% end %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
@@ -46,99 +107,4 @@
     <i class="bi bi-mortarboard me-1"></i>
     <%= t("assessment.no_grades_yet") %>
   </div>
-<% end %>
-
-<% if any_excluded? %>
-  <% if absent_participations.any? %>
-    <div class="card mt-3 border-danger">
-      <div class="card-header bg-danger bg-opacity-10">
-        <h6 class="mb-0">
-          <i class="bi bi-person-x me-1"></i>
-          <%= t("assessment.grade_table.absent").capitalize %>
-
-          <span class="badge bg-danger ms-1">
-            <%= absent_participations.size %>
-          </span>
-        </h6>
-      </div>
-
-      <div class="card-body p-0">
-        <table class="table table-sm mb-0">
-          <thead>
-            <tr>
-              <th><%= t("basics.name") %></th>
-
-              <% if show_tutorial_column? %>
-                <th><%= t("basics.tutorial") %></th>
-              <% end %>
-
-              <th class="text-center"><%= t("assessment.grade") %></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <% absent_participations.each do |participation| %>
-              <tr>
-                <td><%= participation.user.tutorial_name %></td>
-
-                <% if show_tutorial_column? %>
-                  <td><%= participation.tutorial&.title %></td>
-                <% end %>
-
-                <td class="text-center">
-                  <span class="badge bg-danger">
-                    <%= absent_grade_display(participation) %>
-                  </span>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  <% end %>
-  <% if exempt_participations.any? %>
-    <div class="card mt-3">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="bi bi-person-dash me-1"></i>
-          <%= t("assessment.grade_table.exempt").capitalize %>
-
-          <span class="badge bg-secondary ms-1">
-            <%= exempt_participations.size %>
-          </span>
-        </h6>
-      </div>
-
-      <div class="card-body p-0">
-        <table class="table table-sm mb-0">
-          <thead>
-            <tr>
-              <th><%= t("basics.name") %></th>
-
-              <% if show_tutorial_column? %>
-                <th><%= t("basics.tutorial") %></th>
-              <% end %>
-
-              <th class="text-center"><%= t("assessment.grade") %></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <% exempt_participations.each do |participation| %>
-              <tr>
-                <td><%= participation.user.tutorial_name %></td>
-
-                <% if show_tutorial_column? %>
-                  <td><%= participation.tutorial&.title %></td>
-                <% end %>
-
-                <td class="text-center text-muted">&mdash;</td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  <% end %>
 <% end %>

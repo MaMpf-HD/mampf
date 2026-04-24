@@ -1,0 +1,25 @@
+<div data-cy="grading-tab">
+  <% if full_width? %>
+    <%= render scheme_component %>
+  <% else %>
+    <div class="row g-4">
+      <div class="col-xl-7 order-2 order-xl-1">
+        <h4 class="h5 mb-3">
+          <%= t("assessment.grade_table.roster_heading") %>
+        </h4>
+
+        <%= render roster_component %>
+      </div>
+
+      <aside class="col-xl-5 order-1 order-xl-2">
+        <div
+          class="grading-aside position-sticky"
+          style="top: 1rem; max-height: calc(100vh - 2rem);
+                    overflow-y: auto;"
+        >
+          <%= render scheme_component %>
+        </div>
+      </aside>
+    </div>
+  <% end %>
+</div>

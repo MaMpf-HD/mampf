@@ -139,17 +139,16 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "visible tab", "tasks"
     include_examples "visible tab", "points"
     include_examples "visible tab", "grades"
-    include_examples "visible tab", "grade_scheme"
     include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "grade_scheme"
 
     describe "#tabs" do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["settings", "tasks", "points", "grades",
-           "grade_scheme", "statistics"]
+          ["settings", "tasks", "points", "grades", "statistics"]
         )
       end
 
@@ -162,7 +161,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
           expect(keys).to eq(
             ["settings", "registration",
              "tasks", "points", "grades",
-             "grade_scheme", "statistics"]
+             "statistics"]
           )
         end
 
@@ -185,9 +184,22 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       end
     end
 
-    it "renders GradeTableComponent in the grades pane" do
+    it "renders GradingTabComponent in the grades pane" do
+      render_inline(component)
+      expect(rendered_content).to include("grading_tab_component")
+    end
+
+    it "renders GradeTableComponent inside the grades pane" do
       render_inline(component)
       expect(rendered_content).to include("grade_table_component")
+    end
+
+    it "normalizes a legacy grade_scheme tab key to grades" do
+      legacy = described_class.new(
+        assessable: exam, assessment: assessment, lecture: lecture,
+        active_tab: "grade_scheme"
+      )
+      expect(legacy.active_tab).to eq("grades")
     end
 
     describe "#default_tab" do

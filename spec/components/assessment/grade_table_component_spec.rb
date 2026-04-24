@@ -80,8 +80,13 @@ RSpec.describe(GradeTableComponent, type: :component) do
         expect(component.grader_display(reviewed_participation)).to eq(grader.tutorial_name)
       end
 
-      it "returns the graded_at display" do
-        expect(component.graded_at_display(reviewed_participation)).to eq(
+      it "returns the graded_at relative display" do
+        expect(component.graded_at_relative(reviewed_participation))
+          .to be_present
+      end
+
+      it "returns the graded_at full display for the tooltip" do
+        expect(component.graded_at_full(reviewed_participation)).to eq(
           I18n.l(reviewed_participation.graded_at, format: :short)
         )
       end
@@ -339,7 +344,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
     end
     let(:component) { described_class.new(assessment: assessment) }
 
-    it "renders separate absent and exempt cards" do
+    it "folds absent and exempt rows into the main roster table" do
       create(:assessment_participation, :absent,
              assessment: assessment, tutorial: tutorial)
       create(:assessment_participation, :exempt,
@@ -348,6 +353,13 @@ RSpec.describe(GradeTableComponent, type: :component) do
       render_inline(component)
       expect(rendered_content).to include("bi-person-x")
       expect(rendered_content).to include("bi-person-dash")
+      expect(rendered_content).to include("bg-danger")
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.absent")
+      )
+      expect(rendered_content).to include(
+        I18n.t("assessment.grade_table.exempt")
+      )
     end
 
     it "shows absent student with grade badge" do

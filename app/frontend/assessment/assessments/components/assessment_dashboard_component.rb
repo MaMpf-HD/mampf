@@ -15,7 +15,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     @task = task
     @grade_scheme = grade_scheme
     @preview_mode = preview_mode
-    @active_tab = active_tab || default_tab
+    @active_tab = normalize_tab_key(active_tab) || default_tab
   end
   # rubocop: enable Metrics/ParameterLists
 
@@ -81,10 +81,17 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
         t << tasks_tab if pointable?
         t << points_tab if pointable?
-        t << grades_tab if gradable?
-        t << grade_scheme_tab if pointable? && gradable?
+        t << grading_tab if gradable? && pointable?
+        t << grades_tab if gradable? && !pointable?
         t << statistics_tab unless assessable.is_a?(Talk)
       end
+    end
+
+    def normalize_tab_key(key)
+      return nil if key.nil?
+      return "grades" if key == "grade_scheme"
+
+      key
     end
 
     def settings_tab
@@ -142,11 +149,11 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
-    def grade_scheme_tab
+    def grading_tab
       TabConfig.new(
-        "grade_scheme",
-        I18n.t("assessment.grade_scheme.label"),
-        GradeSchemeTabComponent.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradingTabComponent.new(
           assessment: assessment,
           grade_scheme: grade_scheme,
           preview_mode: @preview_mode
