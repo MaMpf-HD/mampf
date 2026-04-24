@@ -72,11 +72,14 @@ module Roster
         flash.now[:notice] = message
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              "self_roster_options_zone",
-              partial: "roster/self_roster/options_zone",
-              locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
-            )
+            render turbo_stream: [
+              stream_flash,
+              turbo_stream.update(
+                "self_roster_options_zone",
+                partial: "roster/self_roster/options_zone",
+                locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
+              )
+            ]
           end
         end
       end

@@ -6,6 +6,8 @@ export default class extends Controller {
   }
 
   handleMarkState(event) {
+    const submitterName = event.submitter?.name;
+    if (!submitterName) return;
     const [typeAction, campaignId] = event.submitter.name.split("_");
     if (typeAction === "reset" || typeAction === "save") {
       this.reset(campaignId);
