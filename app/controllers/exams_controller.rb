@@ -78,6 +78,7 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       if @exam.save
+        @exam.load_registration_deadline
         format.turbo_stream do
           flash[:success] = t("assessment.exam_created")
           @active_tab = "settings"
@@ -105,6 +106,7 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       if @exam.update(exam_params)
+        @exam.load_registration_deadline
         format.turbo_stream do
           flash[:success] = t("assessment.exam_updated")
           if ["settings", "registration"].include?(params[:tab])
@@ -223,6 +225,7 @@ class ExamsController < ApplicationController
 
     def set_exam
       @exam = Exam.find(params[:id])
+      @exam.load_registration_deadline
       @lecture = @exam.lecture
       set_exam_locale
     end

@@ -128,12 +128,13 @@ class Exam < ApplicationRecord
 
     def create_registration_campaign
       deadline = registration_deadline.presence || (date && (date - 3.days)) || 1.month.from_now
-      campaign = Registration::Campaign.create!(
+      campaign = Registration::Campaign.new(
         campaignable: lecture,
         allocation_mode: :first_come_first_served,
         status: :draft,
         registration_deadline: deadline
       )
+      campaign.save!(validate: false)
       Registration::Item.create!(
         registration_campaign: campaign,
         registerable: self,
