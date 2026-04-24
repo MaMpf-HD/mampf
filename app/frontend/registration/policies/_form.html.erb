@@ -2,7 +2,7 @@
               url: policy.persisted? ? registration_campaign_policy_path(campaign, policy) : registration_campaign_policies_path(campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
   <% course_lectures = Array(campaign.campaignable.try(:course)&.lectures).sort_by(&:title) %>
-  <% selected_lecture_id = policy.lecture_id || campaign.campaignable.try(:id) %>
+  <% selected_lecture_ids = policy.lecture_ids.presence || Array(campaign.campaignable.try(:id)).compact %>
 
   <% if params[:frame_id].present? %>
     <%= hidden_field_tag :frame_id, params[:frame_id] %>
@@ -94,13 +94,20 @@
     >
       <div class="mb-3">
         <label class="form-label">
-          <%= t("registration.policy.configs.lecture_id") %>
+          <%= t("registration.policy.configs.lecture_ids") %>
         </label>
 
-        <%= f.collection_select :lecture_id,
-                                course_lectures, :id, :title,
-                                { include_blank: true, selected: selected_lecture_id },
-                                { class: "form-select" } %>
+        <%= f.select :lecture_ids,
+                     options_for_select(
+                       course_lectures.map { |course_lecture| [course_lecture.title, course_lecture.id] },
+                       selected_lecture_ids
+                     ),
+                     {},
+                     {
+                       class: "form-select selectize",
+                       multiple: true,
+                       data: { controller: "selectize" }
+                     } %>
       </div>
     </div>
   </div>

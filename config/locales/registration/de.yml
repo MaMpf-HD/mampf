@@ -163,12 +163,14 @@ de:
         prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
         prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
-        missing_lecture: "Es muss eine Veranstaltung ausgewählt werden."
-        lecture_not_found: "Die ausgewählte Veranstaltung existiert nicht."
+        missing_lecture: "Es muss mindestens eine Veranstaltung ausgewählt werden."
+        lecture_not_found: "Mindestens eine ausgewählte Veranstaltung existiert nicht."
+        multiple_student_performance: "Es ist nur eine Richtlinie für Studierendenleistung erlaubt."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
         lecture_id: "Veranstaltung"
+        lecture_ids: "Veranstaltungen"
       hints:
         allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
       kinds:

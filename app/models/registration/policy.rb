@@ -22,6 +22,7 @@ module Registration
     validates :kind, :phase, presence: true
     validates :active, inclusion: { in: [true, false] }
     validate :campaign_is_draft, on: [:create, :update]
+    validate :single_student_performance_policy
     validate :validate_config
 
     before_destroy :ensure_campaign_is_draft
@@ -67,12 +68,30 @@ module Registration
     end
 
     def lecture_id
-      config&.fetch("lecture_id", nil)
+      lecture_ids.first
     end
 
     def lecture_id=(value)
+      self.lecture_ids = [value]
+    end
+
+    def lecture_ids
+      raw = if config&.key?("lecture_ids")
+        config["lecture_ids"]
+      else
+        config&.fetch("lecture_id", nil)
+      end
+
+      Array(raw).filter_map(&:presence).map(&:to_s).uniq
+    end
+
+    def lecture_ids=(values)
       self.config ||= {}
-      self.config["lecture_id"] = value
+      self.config.delete("lecture_id")
+      self.config["lecture_ids"] = Array(values)
+                                   .filter_map(&:presence)
+                                   .map(&:to_s)
+                                   .uniq
     end
 
     def config_summary
@@ -106,6 +125,18 @@ module Registration
 
       def validate_config
         handler.validate
+      end
+
+      def single_student_performance_policy
+        return unless student_performance?
+        return unless registration_campaign
+        return unless registration_campaign.registration_policies
+                                           .where(kind: :student_performance)
+                                           .where.not(id: id)
+                                           .exists?
+
+        errors.add(:base,
+                   I18n.t("registration.policy.errors.multiple_student_performance"))
       end
 
       def ensure_campaign_is_draft

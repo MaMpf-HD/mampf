@@ -76,6 +76,9 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
 
     context "with a student_performance policy" do
       let(:lecture) { FactoryBot.create(:lecture, :with_organizational_stuff) }
+      let(:other_lecture) do
+        FactoryBot.create(:lecture, :with_organizational_stuff)
+      end
 
       it "passes when user has a passed certification" do
         FactoryBot.create(
@@ -111,6 +114,25 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
         expect(result.pass).to be(false)
         expect(result.trace.last[:outcome][:details][:certification_status])
           .to eq(:missing)
+      end
+
+      it "passes when user has passed any selected lecture" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_ids" => [lecture.id.to_s, other_lecture.id.to_s] }
+        )
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: other_lecture,
+                          user: user,
+                          certified_by: FactoryBot.create(:confirmed_user))
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :registration)
+
+        expect(result.pass).to be(true)
       end
 
       it "evaluates during finalization phase" do

@@ -51,10 +51,10 @@ module Registration
       return @performance_rule if defined?(@performance_rule)
 
       perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
-      lid = perf_policy&.config&.dig("lecture_id")
-      @performance_rule = lid &&
+      lecture_ids = perf_policy&.lecture_ids || []
+      @performance_rule = lecture_ids.present? &&
                           StudentPerformance::Rule
-                          .where(lecture_id: lid, active: true)
+                          .where(lecture_id: lecture_ids, active: true)
                           .includes(rule_achievements: :achievement)
                           .first
     end
@@ -63,8 +63,9 @@ module Registration
       return @performance_lecture if defined?(@performance_lecture)
 
       perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
-      lid = perf_policy&.config&.dig("lecture_id")
-      @performance_lecture = lid && Lecture.find_by(id: lid)
+      @performance_lecture = perf_policy&.lecture_ids&.then do |lecture_ids|
+        Lecture.find_by(id: lecture_ids)
+      end
     end
 
     def violations_by_user

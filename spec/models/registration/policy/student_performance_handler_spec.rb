@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
   let(:lecture) { create(:lecture, :with_organizational_stuff) }
+  let(:other_lecture) { create(:lecture, :with_organizational_stuff) }
   let(:policy) do
     build(:registration_policy, :student_performance,
-          config: { "lecture_id" => lecture.id })
+          config: { "lecture_ids" => [lecture.id.to_s] })
   end
   let(:handler) { described_class.new(policy) }
   let(:user) { create(:confirmed_user) }
@@ -16,6 +17,20 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
              user: user,
              certified_by: create(:confirmed_user))
       result = handler.evaluate(user)
+      expect(result[:pass]).to be(true)
+      expect(result[:code]).to eq(:certification_passed)
+    end
+
+    it "passes if user has a passed certification for any selected lecture" do
+      policy.config["lecture_ids"] = [lecture.id.to_s, other_lecture.id.to_s]
+
+      create(:student_performance_certification, :passed,
+             lecture: other_lecture,
+             user: user,
+             certified_by: create(:confirmed_user))
+
+      result = handler.evaluate(user)
+
       expect(result[:pass]).to be(true)
       expect(result[:code]).to eq(:certification_passed)
     end
@@ -56,7 +71,7 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
     end
 
     it "fails with lecture_not_found if lecture was deleted" do
-      policy.config["lecture_id"] = 99_999
+      policy.config = { "lecture_ids" => ["99999"] }
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:lecture_not_found)
@@ -67,14 +82,14 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
     it "adds error if lecture_id is missing" do
       policy.config = {}
       handler.validate
-      expect(policy.errors[:lecture_id])
+      expect(policy.errors[:lecture_ids])
         .to include(I18n.t("registration.policy.errors.missing_lecture"))
     end
 
     it "adds error if lecture does not exist" do
-      policy.config["lecture_id"] = 99_999
+      policy.config["lecture_ids"] = ["99999"]
       handler.validate
-      expect(policy.errors[:lecture_id])
+      expect(policy.errors[:lecture_ids])
         .to include(I18n.t("registration.policy.errors.lecture_not_found"))
     end
 
@@ -89,8 +104,14 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(handler.summary).to eq(lecture.title)
     end
 
+    it "returns all selected lecture titles" do
+      policy.config["lecture_ids"] = [lecture.id.to_s, other_lecture.id.to_s]
+
+      expect(handler.summary).to eq([lecture.title, other_lecture.title].join(", "))
+    end
+
     it "returns nil if lecture does not exist" do
-      policy.config["lecture_id"] = 99_999
+      policy.config["lecture_ids"] = ["99999"]
       expect(handler.summary).to be_nil
     end
   end

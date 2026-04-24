@@ -95,7 +95,8 @@ module Registration
       def policy_params
         params.expect(registration_policy: [:kind, :phase, :allowed_domains,
                                             :prerequisite_campaign_id,
-                                            :lecture_id])
+                                            :lecture_id,
+                                            { lecture_ids: [] }])
       end
 
       def move(direction)

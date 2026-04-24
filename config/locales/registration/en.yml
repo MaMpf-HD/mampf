@@ -163,12 +163,14 @@ en:
         prerequisite_not_configured: "Prerequisite campaign not configured."
         prerequisite_missing: "Prerequisite campaign missing."
         prerequisite_not_met: "Prerequisite campaign not completed."
-        missing_lecture: "A lecture must be selected."
-        lecture_not_found: "The selected lecture does not exist."
+        missing_lecture: "At least one lecture must be selected."
+        lecture_not_found: "At least one selected lecture does not exist."
+        multiple_student_performance: "Only one student performance policy is allowed."
       configs:
         allowed_domains: "Allowed Domains"
         prerequisite_campaign_id: "Prerequisite Campaign"
         lecture_id: "Lecture"
+        lecture_ids: "Lectures"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
       kinds:

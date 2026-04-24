@@ -12,10 +12,10 @@ FactoryBot.define do
     trait :student_performance do
       kind { :student_performance }
       after(:build) do |policy|
-        unless policy.config && policy.config["lecture_id"]
+        unless policy.config && (policy.config["lecture_id"] || policy.config["lecture_ids"])
           lecture = create(:lecture, :with_organizational_stuff)
           policy.config ||= {}
-          policy.config["lecture_id"] = lecture.id
+          policy.config["lecture_ids"] = [lecture.id.to_s]
         end
       end
     end

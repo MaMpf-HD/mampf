@@ -52,32 +52,57 @@ module Registration
                                .find { |p| p.kind == "student_performance" }
         return nil unless perf_policy
 
-        lecture_id = perf_policy.config&.dig("lecture_id")
-        return nil unless lecture_id
+        lecture_ids = perf_policy.lecture_ids
+        return nil if lecture_ids.empty?
 
         registered_user_ids = @campaign.user_registrations
                                        .confirmed.pluck(:user_id)
         return nil if registered_user_ids.empty?
 
-        decided_user_ids = StudentPerformance::Certification
-                           .where(lecture_id: lecture_id,
-                                  user_id: registered_user_ids)
-                           .where(status: [:passed, :failed])
-                           .pluck(:user_id)
+        certifications = StudentPerformance::Certification
+                         .where(lecture_id: lecture_ids,
+                                user_id: registered_user_ids)
+                         .group_by(&:user_id)
 
-        undecided_ids = registered_user_ids - decided_user_ids
+        records_by_user = StudentPerformance::Record
+                          .where(lecture_id: lecture_ids,
+                                 user_id: registered_user_ids)
+                          .pluck(:user_id, :lecture_id)
+                          .each_with_object(Hash.new do |hash, key|
+                                              hash[key] = []
+                                            end) do |(user_id, lecture_id), hash|
+          hash[user_id] << lecture_id.to_s
+        end
 
-        pending_ids = StudentPerformance::Certification
-                      .where(lecture_id: lecture_id,
-                             user_id: undecided_ids,
-                             status: :pending)
-                      .pluck(:user_id)
+        pending_ids = []
+        missing_ids = []
 
-        has_records_ids = StudentPerformance::Record
-                          .where(lecture_id: lecture_id,
-                                 user_id: undecided_ids)
-                          .pluck(:user_id)
-        missing_ids = (undecided_ids - pending_ids) & has_records_ids
+        registered_user_ids.each do |user_id|
+          user_certifications = certifications[user_id] || []
+          next if user_certifications.any?(&:passed?)
+
+          certifications_by_lecture = user_certifications.index_by do |certification|
+            certification.lecture_id.to_s
+          end
+          user_record_lecture_ids = records_by_user[user_id]
+
+          unresolved_lecture_ids = lecture_ids.select do |lecture_id|
+            certification = certifications_by_lecture[lecture_id]
+            next certification.pending? if certification
+
+            user_record_lecture_ids.include?(lecture_id)
+          end
+
+          next if unresolved_lecture_ids.empty?
+
+          if unresolved_lecture_ids.any? do |lecture_id|
+               certifications_by_lecture[lecture_id]&.pending?
+             end
+            pending_ids << user_id
+          else
+            missing_ids << user_id
+          end
+        end
 
         blockable_ids = missing_ids + pending_ids
         return nil if blockable_ids.empty?
@@ -94,7 +119,7 @@ module Registration
             { user_id: id, name: users[id]&.name,
               email: users[id]&.email }
           end,
-          lecture_id: lecture_id
+          lecture_ids: lecture_ids
         }
 
         failure(
