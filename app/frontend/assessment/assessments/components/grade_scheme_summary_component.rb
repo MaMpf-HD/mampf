@@ -49,7 +49,7 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
   end
 
   def saved_counts
-    @saved_counts ||= compute_saved_counts
+    @saved_counts ||= compute_saved_counts(saved_bands)
   end
 
   def saved_count_for(band)
@@ -60,6 +60,51 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     return false if grade_scheme.applied?
 
     saved_counts.values.any?(&:positive?)
+  end
+
+  def previous_applied_scheme
+    return @previous_applied_scheme if defined?(@previous_applied_scheme)
+
+    @previous_applied_scheme = Assessment::GradeScheme
+                               .where(assessment_id: assessment.id)
+                               .where.not(applied_at: nil)
+                               .where.not(id: grade_scheme.id)
+                               .order(applied_at: :desc)
+                               .first
+  end
+
+  def saved_bands
+    @saved_bands ||= begin
+      raw = previous_applied_scheme&.config&.dig("bands")
+      raw = raw.presence || grade_scheme.config&.dig("bands") || []
+      raw.sort_by { |b| b["grade"].to_f }
+    end
+  end
+
+  def saved_total
+    saved_counts.values.sum
+  end
+
+  def saved_pass_count
+    saved_bands
+      .select { |b| b["grade"].to_f <= 4.0 }
+      .sum { |b| saved_count_for(b) }
+  end
+
+  def saved_fail_count
+    saved_total - saved_pass_count
+  end
+
+  def saved_pass_rate
+    return 0.0 if saved_total.zero?
+
+    (saved_pass_count.to_f / saved_total * 100).round(1)
+  end
+
+  def saved_fail_rate
+    return 0.0 if saved_total.zero?
+
+    (saved_fail_count.to_f / saved_total * 100).round(1)
   end
 
   def total_reviewed
@@ -146,8 +191,8 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
       result
     end
 
-    def compute_saved_counts
-      result = bands.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
+    def compute_saved_counts(rows)
+      result = rows.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
 
       assessment.assessment_participations
                 .where.not(grade_numeric: nil)
@@ -163,7 +208,7 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     def max_count
       @max_count ||= begin
         proposed = bands.map { |b| count_for(b) }
-        saved = bands.map { |b| saved_count_for(b) }
+        saved = saved_bands.map { |b| saved_count_for(b) }
         (proposed + saved).max || 0
       end
     end

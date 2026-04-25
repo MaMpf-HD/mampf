@@ -9,208 +9,220 @@
       <%= t("assessment.grade_scheme.summary.title") %>
     </h6>
 
+    <% views =
+        if comparing?
+          [
+            { id: "proposed",
+              label: t("assessment.grade_scheme.summary.proposed_bar"),
+              bands: bands,
+              counts: ->(b) { count_for(b) },
+              total: total_reviewed,
+              pass_count: pass_count,
+              fail_count: fail_count,
+              pass_rate: pass_rate,
+              fail_rate: fail_rate,
+              bar_color: "#ffc107",
+              active: true },
+            { id: "current",
+              label: t("assessment.grade_scheme.summary.saved_bar"),
+              bands: saved_bands,
+              counts: ->(b) { saved_count_for(b) },
+              total: saved_total,
+              pass_count: saved_pass_count,
+              fail_count: saved_fail_count,
+              pass_rate: saved_pass_rate,
+              fail_rate: saved_fail_rate,
+              bar_color: "#adb5bd",
+              active: false }
+          ]
+        else
+          [
+            { id: "single",
+              label: nil,
+              bands: bands,
+              counts: ->(b) { count_for(b) },
+              total: total_reviewed,
+              pass_count: pass_count,
+              fail_count: fail_count,
+              pass_rate: pass_rate,
+              fail_rate: fail_rate,
+              bar_color: nil,
+              active: true }
+          ]
+        end
+
+      tabs_id = "grade-scheme-summary-tabs-#{grade_scheme.id || 'new'}" %>
+
     <% if comparing? %>
-      <div class="d-flex gap-3 small text-muted mb-2">
-        <span>
-          <span
-            class="d-inline-block align-middle"
-            style="width: 14px; height: 8px; background: #adb5bd;
-                   border-radius: 2px;"
-          ></span>
-
-          <%= t("assessment.grade_scheme.summary.saved_bar") %>
-        </span>
-
-        <span>
-          <span
-            class="d-inline-block align-middle"
-            style="width: 14px; height: 8px; background: #ffc107;
-                   border-radius: 2px;"
-          ></span>
-
-          <%= t("assessment.grade_scheme.summary.proposed_bar") %>
-        </span>
-      </div>
+      <ul
+        class="nav nav-pills mb-2"
+        role="tablist"
+        data-cy="grade-scheme-summary-toggle"
+      >
+        <% views.each do |view| %>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link <%= 'active' if view[:active] %>"
+              type="button"
+              role="tab"
+              data-bs-toggle="pill"
+              data-bs-target="#<%= tabs_id %>-<%= view[:id] %>"
+              data-cy="grade-scheme-summary-tab-<%= view[:id] %>"
+            >
+              <%= view[:label] %>
+            </button>
+          </li>
+        <% end %>
+      </ul>
     <% end %>
 
-    <div class="table-responsive">
-      <table class="table table-sm table-hover mb-2">
-        <thead class="table-light">
-          <tr>
-            <th style="width: 1%; white-space: nowrap;">
-              <%= t("assessment.grade_scheme.form.col_grade") %>
-            </th>
+    <div class="tab-content">
+      <% views.each do |view| %>
+        <div
+          class="tab-pane fade <%= 'show active' if view[:active] %>"
+          id="<%= tabs_id %>-<%= view[:id] %>"
+          role="tabpanel"
+        >
+          <div class="table-responsive">
+            <table class="table table-sm table-hover mb-2">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 1%; white-space: nowrap;">
+                    <%= t("assessment.grade_scheme.form.col_grade") %>
+                  </th>
 
-            <th style="width: 1%; white-space: nowrap;">
-              <%= t("assessment.grade_scheme.form.col_range") %>
-            </th>
+                  <th style="width: 1%; white-space: nowrap;">
+                    <%= t("assessment.grade_scheme.form.col_range") %>
+                  </th>
 
-            <th><%= t("assessment.grade_scheme.form.col_students") %></th>
+                  <th><%= t("assessment.grade_scheme.form.col_students") %></th>
 
-            <th class="text-end" style="width: 1%; white-space: nowrap;">
-              <%= t("assessment.grade_scheme.form.col_percentage") %>
-            </th>
-          </tr>
-        </thead>
+                  <th class="text-end" style="width: 1%; white-space: nowrap;">
+                    <%= t("assessment.grade_scheme.form.col_percentage") %>
+                  </th>
+                </tr>
+              </thead>
 
-        <tbody>
-          <% bands.each do |band| %>
-            <tr>
-              <td style="white-space: nowrap;">
-                <span class="badge <%= badge_class(band['grade']) %>">
-                  <%= band["grade"] %>
-                </span>
-              </td>
+              <tbody>
+                <% view_max = view[:bands].map { |b| view[:counts].call(b) }
+                                          .max.to_i %>
 
-              <td style="white-space: nowrap;">
-                &ge;&nbsp;<%= band["min_points"] %>
-                <%= t("assessment.distribution.points") %>
-              </td>
+                <% view[:bands].each do |band| %>
+                  <% count = view[:counts].call(band) %>
 
-              <td>
-                <div
-                  class="d-flex align-items-center gap-2"
-                  style="width: 200px;"
-                >
-                  <div style="flex: 1;">
-                    <% if comparing? %>
+                  <% width = view_max.zero? ? 0 :
+                             (count.to_f / view_max * 100).round %>
+
+                  <% color = view[:bar_color] || bar_color(band) %>
+
+                  <tr>
+                    <td style="white-space: nowrap;">
+                      <span class="badge <%= badge_class(band['grade']) %>">
+                        <%= band["grade"] %>
+                      </span>
+                    </td>
+
+                    <td style="white-space: nowrap;">
+                      &ge;&nbsp;<%= band["min_points"] %>
+                      <%= t("assessment.distribution.points") %>
+                    </td>
+
+                    <td>
                       <div
-                        class="d-flex align-items-center gap-1"
-                        title="<%= t('assessment.grade_scheme.summary.saved_bar') %>"
-                        data-bs-toggle="tooltip"
+                        class="d-flex align-items-center gap-2"
+                        style="width: 200px;"
                       >
-                        <div
-                          style="flex: 1; height: 8px; background: #e9ecef;
-                                  border-radius: 3px; overflow: hidden;"
-                        >
-                          <div
-                            style="width: <%= saved_bar_width(band) %>%;
-                                    height: 100%;
-                                    background: #adb5bd;"
-                          ></div>
-                        </div>
-
-                        <span
-                          class="text-muted small text-end"
-                          style="min-width: 20px;"
-                        >
-                          <%= saved_count_for(band) %>
-                        </span>
-                      </div>
-                      <div
-                        class="d-flex align-items-center gap-1 mt-1"
-                        title="<%= t('assessment.grade_scheme.summary.proposed_bar') %>"
-                        data-bs-toggle="tooltip"
-                      >
-                        <div
-                          style="flex: 1; height: 8px; background: #e9ecef;
-                                  border-radius: 3px; overflow: hidden;"
-                        >
-                          <div
-                            style="width: <%= bar_width(band) %>%;
-                                    height: 100%;
-                                    background: #ffc107;"
-                          ></div>
-                        </div>
-
-                        <span
-                          class="text-warning-emphasis small text-end fw-semibold"
-                          style="min-width: 20px;"
-                        >
-                          <%= count_for(band) %>
-                        </span>
-                      </div>
-                    <% else %>
-                      <div class="d-flex align-items-center gap-2">
                         <div
                           style="flex: 1; height: 14px; background: #e9ecef;
-                                  border-radius: 3px; overflow: hidden;"
+                                 border-radius: 3px; overflow: hidden;"
                         >
                           <div
-                            style="width: <%= bar_width(band) %>%;
-                                    height: 100%;
-                                    background: <%= bar_color(band) %>;"
+                            style="width: <%= width %>%;
+                                   height: 100%;
+                                   background: <%= color %>;"
                           ></div>
                         </div>
 
                         <span class="text-muted small" style="min-width: 20px;">
-                          <%= count_for(band) %>
+                          <%= count %>
                         </span>
                       </div>
-                    <% end %>
-                  </div>
-                </div>
-              </td>
+                    </td>
 
-              <td class="text-end" style="white-space: nowrap;">
-                <% if total_reviewed.positive? %>
-                  <%= (count_for(band).to_f / total_reviewed * 100).round(1) %>
-                  %
-                <% else %>
-                  0.0%
+                    <td class="text-end" style="white-space: nowrap;">
+                      <% if view[:total].positive? %>
+                        <%= (count.to_f / view[:total] * 100).round(1) %>
+                        %
+                      <% else %>
+                        0.0%
+                      <% end %>
+                    </td>
+                  </tr>
                 <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
+              </tbody>
 
-        <% if total_reviewed.positive? %>
-          <tfoot class="table-light">
-            <tr>
-              <th colspan="2">
-                <%= t("assessment.grade_scheme.summary.pass_rate") %>
-              </th>
+              <% if view[:total].positive? %>
+                <tfoot class="table-light">
+                  <tr>
+                    <th colspan="2">
+                      <%= t("assessment.grade_scheme.summary.pass_rate") %>
+                    </th>
 
-              <th colspan="2" class="text-end">
-                <%= pass_rate %>% (<%= pass_count %>/<%= total_reviewed %>)
-              </th>
-            </tr>
+                    <th colspan="2" class="text-end">
+                      <%= view[:pass_rate] %>% (<%= view[:pass_count] %>/
+                      <%= view[:total] %>)
+                    </th>
+                  </tr>
 
-            <tr>
-              <th colspan="2">
-                <%= t("assessment.grade_scheme.summary.fail_rate") %>
-              </th>
+                  <tr>
+                    <th colspan="2">
+                      <%= t("assessment.grade_scheme.summary.fail_rate") %>
+                    </th>
 
-              <th colspan="2" class="text-end">
-                <%= fail_rate %>% (<%= fail_count %>/<%= total_reviewed %>)
-              </th>
-            </tr>
+                    <th colspan="2" class="text-end">
+                      <%= view[:fail_rate] %>% (<%= view[:fail_count] %>/
+                      <%= view[:total] %>)
+                    </th>
+                  </tr>
 
-            <% if any_excluded? %>
-              <% if absent_count.positive? %>
-                <tr>
-                  <td colspan="2">
-                    <i class="bi bi-person-x text-danger me-1"></i>
+                  <% if any_excluded? %>
+                    <% if absent_count.positive? %>
+                      <tr>
+                        <td colspan="2">
+                          <i class="bi bi-person-x text-danger me-1"></i>
 
-                    <%= t("assessment.grade_scheme.summary.absent_note",
-                        count: absent_count) %>
-                  </td>
+                          <%= t("assessment.grade_scheme.summary.absent_note",
+                              count: absent_count) %>
+                        </td>
 
-                  <td colspan="2" class="text-end">
-                    <span class="badge bg-danger-subtle text-danger-emphasis">
-                      5.0
-                    </span>
-                  </td>
-                </tr>
+                        <td colspan="2" class="text-end">
+                          <span class="badge bg-danger-subtle text-danger-emphasis">
+                            5.0
+                          </span>
+                        </td>
+                      </tr>
+                    <% end %>
+                    <% if exempt_count.positive? %>
+                      <tr>
+                        <td colspan="2">
+                          <i class="bi bi-person-dash text-muted me-1"></i>
+
+                          <%= t("assessment.grade_scheme.summary.exempt_note",
+                              count: exempt_count) %>
+                        </td>
+
+                        <td colspan="2" class="text-end text-muted">
+                          &mdash;
+                        </td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tfoot>
               <% end %>
-              <% if exempt_count.positive? %>
-                <tr>
-                  <td colspan="2">
-                    <i class="bi bi-person-dash text-muted me-1"></i>
-
-                    <%= t("assessment.grade_scheme.summary.exempt_note",
-                        count: exempt_count) %>
-                  </td>
-
-                  <td colspan="2" class="text-end text-muted">
-                    &mdash;
-                  </td>
-                </tr>
-              <% end %>
-            <% end %>
-          </tfoot>
-        <% end %>
-      </table>
+            </table>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 <% end %>
