@@ -59,7 +59,7 @@
       </li>
     </ul>
 
-    <%= form_with url: form_url, method: form_method,
+    <%= form_with url: form_url, method: form_method, local: true,
                   data: { turbo_stream: true } do |f| %>
       <%= f.hidden_field :kind, value: "banded" %>
 
