@@ -68,6 +68,8 @@ en:
       roster_heading: 'Roster'
       status: 'Status'
       all_graded_by: 'All grades by %{grader}.'
+      proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'
+      proposed_tooltip_with_current: 'Proposal from the current grade scheme (not yet applied). Currently: %{current}.'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
     requires_submission: 'Requires digital submission'
@@ -249,9 +251,19 @@ en:
         other: >-
           %{count} students currently have grades.
           Applying this scheme will overwrite them.
+      draft_overwrite_short:
+        one: '1 will be overwritten'
+        other: '%{count} will be overwritten'
+      draft_change_count:
+        zero: 'No changes compared to current grades.'
+        one: '1 grade would change compared to the current state.'
+        other: '%{count} grades would change compared to the current state.'
       edit_button: 'Edit Scheme'
-      preview_button: 'Preview Grades'
       apply_button: 'Apply Scheme'
+      discard_button: 'Discard Scheme'
+      discard_confirm: 'The grade scheme will be deleted. Existing grades will be kept. Continue?'
+      discarded: 'Grade scheme discarded.'
+      discard_blocked_applied: 'An already-applied scheme cannot be discarded.'
       apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades recorded on %{time} for %{count} students.'
@@ -267,28 +279,14 @@ en:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'
         fail_rate: 'Fail rate'
+        saved_bar: 'Current distribution'
+        proposed_bar: 'Distribution with new scheme'
         absent_note:
           one: '%{count} absent student receives 5.0'
           other: '%{count} absent students receive 5.0'
         exempt_note:
           one: '%{count} exempt student (no grade)'
           other: '%{count} exempt students (no grade)'
-      preview:
-        title: 'Grade Preview'
-        back: 'Back'
-        reviewed: 'Reviewed'
-        passed: 'Passed'
-        failed: 'Failed'
-        absent_title:
-          one: '%{count} Absent Student'
-          other: '%{count} Absent Students'
-        absent_reason: 'absent'
-        col_name: 'Name'
-        col_tutorial: 'Tutorial'
-        col_points: 'Points'
-        col_current: 'Current Grade'
-        col_proposed: 'Proposed Grade'
-        changed: 'Grade would change'
       form:
         title: 'Configure Grade Scheme'
         two_point_auto: 'Two-Point Auto'
@@ -326,8 +324,7 @@ en:
         error_passing_negative: 'Passing threshold must be 0 or greater.'
         error_excellence_max: 'Excellence threshold cannot exceed %{max} points.'
         error_range_too_narrow: 'Range too narrow: need at least %{min_range} points (%{grades} × step %{step}).'
-        cancel: 'Cancel'
-        save_draft: 'Save as Draft'
+        save_draft: 'Save draft'
     distribution:
       title: 'Point Distribution Analysis'
       histogram_title: 'Score Distribution'

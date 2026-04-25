@@ -59,20 +59,6 @@ class SchemeFormComponent < ViewComponent::Base
     grade_scheme.persisted?
   end
 
-  def cancel_path
-    assessable = assessment.assessable
-    if assessable.is_a?(Exam)
-      helpers.exam_path(assessable, tab: "grades")
-    else
-      helpers.assessment_assessment_path(
-        assessment,
-        assessable_type: assessable.class.name,
-        assessable_id: assessable.id,
-        tab: "grades"
-      )
-    end
-  end
-
   private
 
     def existing_excellence

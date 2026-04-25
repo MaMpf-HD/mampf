@@ -2,21 +2,16 @@ class GradeSchemeTabComponent < ViewComponent::Base
   # Component for displaying the grade scheme tab in the assessment view,
   # showing the current status and actions available for the grade scheme.
 
-  def initialize(assessment:, grade_scheme: nil, preview_mode: false)
+  def initialize(assessment:, grade_scheme: nil)
     super()
     @assessment = assessment
     @grade_scheme = grade_scheme
-    @preview_mode = preview_mode
   end
 
   attr_reader :assessment, :grade_scheme
 
   def show_form?
-    grade_scheme.present? && !preview_mode?
-  end
-
-  def preview_mode?
-    @preview_mode && assessment.grade_scheme&.persisted?
+    grade_scheme.present?
   end
 
   def phase
@@ -48,14 +43,14 @@ class GradeSchemeTabComponent < ViewComponent::Base
     )
   end
 
-  def preview_scheme_path
-    helpers.preview_assessment_assessment_grade_scheme_path(
+  def apply_scheme_path
+    helpers.apply_assessment_assessment_grade_scheme_path(
       assessment, assessment.grade_scheme
     )
   end
 
-  def apply_scheme_path
-    helpers.apply_assessment_assessment_grade_scheme_path(
+  def discard_scheme_path
+    helpers.assessment_assessment_grade_scheme_path(
       assessment, assessment.grade_scheme
     )
   end
@@ -76,6 +71,12 @@ class GradeSchemeTabComponent < ViewComponent::Base
     assessment.assessment_participations
               .where.not(grade_numeric: nil)
               .count
+  end
+
+  def draft_change_count
+    return 0 unless scheme_exists? && !scheme_applied?
+
+    Assessment::GradeSchemeApplier.new(assessment.grade_scheme).change_count
   end
 
   def pending_count

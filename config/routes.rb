@@ -122,9 +122,8 @@ Rails.application.routes.draw do
             post :reorder
           end
         end
-        resources :grade_schemes, only: [:new, :create, :edit, :update] do
+        resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
           member do
-            get :preview
             patch :apply
           end
         end

@@ -58,13 +58,6 @@ RSpec.describe(SchemeFormComponent, type: :component) do
       )
     end
 
-    it "renders the cancel link" do
-      render_inline(component)
-      expect(rendered_content).to include(
-        I18n.t("assessment.grade_scheme.form.cancel")
-      )
-    end
-
     it "has the stimulus controller attribute" do
       render_inline(component)
       expect(rendered_content).to include(

@@ -33,36 +33,18 @@ RSpec.describe(GradingTabComponent, type: :component) do
       end
     end
 
-    context "in preview mode with a persisted scheme" do
+    context "with a persisted scheme" do
       let!(:grade_scheme) do
         create(:assessment_grade_scheme, assessment: assessment)
       end
       let(:component) do
         described_class.new(
           assessment: assessment,
-          grade_scheme: grade_scheme,
-          preview_mode: true
+          grade_scheme: grade_scheme
         )
       end
 
-      it "suppresses the roster section" do
-        expect(component.show_roster?).to be(false)
-      end
-
-      it "does not render the roster heading" do
-        render_inline(component)
-        expect(rendered_content).not_to include(
-          I18n.t("assessment.grade_table.roster_heading")
-        )
-      end
-    end
-
-    context "in preview mode without a persisted scheme" do
-      let(:component) do
-        described_class.new(assessment: assessment, preview_mode: true)
-      end
-
-      it "still renders the roster (preview flag is inert)" do
+      it "still renders the roster" do
         expect(component.show_roster?).to be(true)
       end
     end

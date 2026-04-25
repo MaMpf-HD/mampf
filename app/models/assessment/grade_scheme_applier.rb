@@ -35,6 +35,34 @@ module Assessment
       end
     end
 
+    def preview_all
+      rows = reviewed_participations.map do |p|
+        {
+          user_id: p.user_id,
+          current_grade: p.grade_numeric,
+          proposed_grade: compute_grade_for(p)
+        }
+      end
+
+      rows + absent_participations.map do |p|
+        {
+          user_id: p.user_id,
+          current_grade: p.grade_numeric,
+          proposed_grade: 5.0
+        }
+      end
+    end
+
+    def proposed_grade_map
+      preview_all.to_h { |r| [r[:user_id], r[:proposed_grade]] }
+    end
+
+    def change_count
+      preview_all.count do |r|
+        r[:current_grade].nil? || r[:current_grade] != r[:proposed_grade]
+      end
+    end
+
     # On first apply, grades all reviewed participations. On re-apply
     # (same config), only grades participations with no grade yet. This
     # picks up late-reviewed students while preserving manual corrections.

@@ -105,7 +105,7 @@
           </p>
 
           <div class="row g-3 mb-4">
-            <div class="col-md-6">
+            <div class="col-xxl-6">
               <label class="form-label fw-bold">
                 <%= t("assessment.grade_scheme.form.excellence_label") %>
               </label>
@@ -132,7 +132,7 @@
               </small>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-xxl-6">
               <label class="form-label fw-bold">
                 <%= t("assessment.grade_scheme.form.passing_label") %>
               </label>
@@ -181,19 +181,19 @@
               <table class="table table-sm table-hover">
                 <thead class="table-light">
                   <tr>
-                    <th style="width: 10%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_grade") %>
                     </th>
 
-                    <th style="width: 30%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_range") %>
                     </th>
 
-                    <th style="width: 35%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_students") %>
                     </th>
 
-                    <th style="width: 25%" class="text-end">
+                    <th class="text-end">
                       <%= t("assessment.grade_scheme.form.col_percentage") %>
                     </th>
                   </tr>
@@ -251,7 +251,7 @@
           </div>
 
           <div class="row g-3 mb-4">
-            <div class="col-md-4">
+            <div class="col-xxl-4">
               <label class="form-label fw-bold">
                 <%= t("assessment.grade_scheme.form.anchor_label") %>
               </label>
@@ -281,7 +281,7 @@
               </small>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-xxl-4">
               <label class="form-label fw-bold">
                 <%= t("assessment.grade_scheme.form.delta_label") %>
               </label>
@@ -308,7 +308,7 @@
               </small>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-xxl-4">
               <label class="form-label fw-bold">
                 <%= t("assessment.grade_scheme.form.derived_label") %>
               </label>
@@ -363,19 +363,19 @@
               <table class="table table-sm table-hover">
                 <thead class="table-light">
                   <tr>
-                    <th style="width: 10%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_grade") %>
                     </th>
 
-                    <th style="width: 30%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_range") %>
                     </th>
 
-                    <th style="width: 35%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_students") %>
                     </th>
 
-                    <th style="width: 25%" class="text-end">
+                    <th class="text-end">
                       <%= t("assessment.grade_scheme.form.col_percentage") %>
                     </th>
                   </tr>
@@ -429,19 +429,19 @@
               <table class="table table-sm table-hover">
                 <thead class="table-light">
                   <tr>
-                    <th style="width: 10%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_grade") %>
                     </th>
 
-                    <th style="width: 30%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_range") %>
                     </th>
 
-                    <th style="width: 35%">
+                    <th>
                       <%= t("assessment.grade_scheme.form.col_students") %>
                     </th>
 
-                    <th style="width: 25%" class="text-end">
+                    <th class="text-end">
                       <%= t("assessment.grade_scheme.form.col_percentage") %>
                     </th>
                   </tr>
@@ -468,11 +468,6 @@
         </small>
 
         <div class="d-flex gap-2 ms-auto">
-          <%= link_to t("assessment.grade_scheme.form.cancel"),
-                      cancel_path,
-                      class: "btn btn-secondary",
-                      data: { turbo_stream: true } %>
-
           <button
             type="submit"
             class="btn btn-success"

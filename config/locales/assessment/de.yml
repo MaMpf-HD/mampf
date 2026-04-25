@@ -68,6 +68,8 @@ de:
       roster_heading: 'Teilnehmerliste'
       status: 'Status'
       all_graded_by: 'Alle Noten von %{grader}.'
+      proposed_tooltip: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet).'
+      proposed_tooltip_with_current: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet). Aktuell: %{current}.'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe erforderlich'
@@ -246,9 +248,19 @@ de:
         other: >-
           %{count} Studierende haben bereits Noten.
           Das Anwenden dieses Schemas wird sie überschreiben.
+      draft_overwrite_short:
+        one: '1 wird überschrieben'
+        other: '%{count} werden überschrieben'
+      draft_change_count:
+        zero: 'Keine Änderungen gegenüber den aktuellen Noten.'
+        one: '1 Note würde sich gegenüber dem aktuellen Stand ändern.'
+        other: '%{count} Noten würden sich gegenüber dem aktuellen Stand ändern.'
       edit_button: 'Schema bearbeiten'
-      preview_button: 'Notenvorschau'
       apply_button: 'Schema anwenden'
+      discard_button: 'Schema verwerfen'
+      discard_confirm: 'Das Notenschema wird gelöscht. Bereits vergebene Noten bleiben erhalten. Fortfahren?'
+      discarded: 'Notenschema verworfen.'
+      discard_blocked_applied: 'Ein bereits angewendetes Schema kann nicht verworfen werden.'
       apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten eingetragen am %{time} für %{count} Studierende.'
@@ -264,28 +276,14 @@ de:
         title: 'Notenstufen'
         pass_rate: 'Bestehensquote'
         fail_rate: 'Durchfallquote'
+        saved_bar: 'Aktuelle Verteilung'
+        proposed_bar: 'Verteilung mit neuem Schema'
         absent_note:
           one: '%{count} abwesende/r Studierende/r erhält 5,0'
           other: '%{count} abwesende Studierende erhalten 5,0'
         exempt_note:
           one: '%{count} entschuldigte/r Studierende/r (keine Note)'
           other: '%{count} entschuldigte Studierende (keine Note)'
-      preview:
-        title: 'Notenvorschau'
-        back: 'Zurück'
-        reviewed: 'Überprüft'
-        passed: 'Bestanden'
-        failed: 'Nicht bestanden'
-        absent_title:
-          one: '%{count} abwesende/r Studierende/r'
-          other: '%{count} abwesende Studierende'
-        absent_reason: 'nicht angetreten'
-        col_name: 'Name'
-        col_tutorial: 'Tutorium'
-        col_points: 'Punkte'
-        col_current: 'Aktuelle Note'
-        col_proposed: 'Vorgeschlagene Note'
-        changed: 'Note würde sich ändern'
       form:
         title: 'Notenschema konfigurieren'
         two_point_auto: 'Zwei-Punkte-Automatik'
@@ -323,8 +321,7 @@ de:
         error_passing_negative: 'Bestehens-Schwelle muss 0 oder größer sein.'
         error_excellence_max: 'Exzellenz-Schwelle darf %{max} Punkte nicht überschreiten.'
         error_range_too_narrow: 'Bereich zu eng: Mindestens %{min_range} Punkte erforderlich (%{grades} × Schritt %{step}).'
-        cancel: 'Abbrechen'
-        save_draft: 'Als Entwurf speichern'
+        save_draft: 'Entwurf speichern'
     distribution:
       title: 'Punkteverteilungsanalyse'
       histogram_title: 'Punkteverteilung'

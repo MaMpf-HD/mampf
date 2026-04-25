@@ -72,15 +72,39 @@
             </td>
           <% end %>
 
-          <td class="text-center">
-            <% case row_status(p) %>
-            <% when :absent %>
-              <%= absent_grade_display(p) %>
-            <% when :exempt %>
-              <span class="text-muted">&mdash;</span>
-            <% else %>
-              <%= grade_display(p) %>
-            <% end %>
+          <td class="text-center" style="white-space: nowrap;">
+            <span class="d-inline-flex align-items-center justify-content-center gap-2">
+              <span
+                class="d-inline-block text-center"
+                style="min-width: 2.25rem;"
+              >
+                <% case row_status(p) %>
+                <% when :absent %>
+                  <%= absent_grade_display(p) %>
+                <% when :exempt %>
+                  <span class="text-muted">&mdash;</span>
+                <% else %>
+                  <%= grade_display(p) %>
+                <% end %>
+              </span>
+
+              <% if draft_scheme? %>
+                <span
+                  class="d-inline-block text-center"
+                  style="min-width: 2.25rem;"
+                >
+                  <% if grade_changed?(p) %>
+                    <span
+                      class="badge bg-warning-subtle text-warning-emphasis fw-normal"
+                      data-bs-toggle="tooltip"
+                      title="<%= t('assessment.grade_table.proposed_tooltip') %>"
+                    >
+                      <%= format_grade(proposed_grade_for(p)) %>
+                    </span>
+                  <% end %>
+                </span>
+              <% end %>
+            </span>
           </td>
 
           <% if show_grader_column? %>

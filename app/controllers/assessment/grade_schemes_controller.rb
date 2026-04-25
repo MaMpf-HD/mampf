@@ -1,7 +1,7 @@
 module Assessment
   class GradeSchemesController < ApplicationController
     before_action :set_assessment
-    before_action :set_grade_scheme, only: [:edit, :update, :preview, :apply]
+    before_action :set_grade_scheme, only: [:edit, :update, :apply, :destroy]
     before_action :set_locale
 
     def current_ability
@@ -44,6 +44,7 @@ module Assessment
 
       if saved
         @grade_scheme = nil
+        @assessment.reload
         render_dashboard("grades",
                          notice: I18n.t("assessment.grade_scheme.created"))
       else
@@ -67,12 +68,6 @@ module Assessment
       end
     end
 
-    def preview
-      authorize! :update, @assessment
-
-      render_dashboard("grades", preview_mode: true)
-    end
-
     def apply
       authorize! :update, @assessment
 
@@ -87,6 +82,33 @@ module Assessment
       end
 
       redirect_to_dashboard(tab: "grades", notice: notice)
+    end
+
+    def destroy
+      authorize! :update, @assessment
+
+      if @grade_scheme.applied?
+        return render_dashboard(
+          "grades",
+          alert: I18n.t("assessment.grade_scheme.discard_blocked_applied"),
+          status: :unprocessable_content
+        )
+      end
+
+      previous = GradeScheme
+                 .where(assessment: @assessment, active: false)
+                 .where.not(applied_at: nil)
+                 .order(applied_at: :desc)
+                 .first
+
+      GradeScheme.transaction do
+        @grade_scheme.destroy!
+        previous&.update!(active: true)
+      end
+
+      @grade_scheme = nil
+      render_dashboard("grades",
+                       notice: I18n.t("assessment.grade_scheme.discarded"))
     end
 
     private
@@ -137,8 +159,7 @@ module Assessment
         result
       end
 
-      def render_dashboard(tab, notice: nil, alert: nil, status: :ok,
-                           preview_mode: false)
+      def render_dashboard(tab, notice: nil, alert: nil, status: :ok)
         respond_to do |format|
           format.turbo_stream do
             flash.now[:notice] = notice if notice
@@ -147,9 +168,7 @@ module Assessment
             streams = [
               turbo_stream.update(
                 dashboard_container,
-                build_dashboard_component(
-                  active_tab: tab, preview_mode: preview_mode
-                )
+                build_dashboard_component(active_tab: tab)
               )
             ]
             streams << stream_flash if flash.present?
@@ -178,7 +197,7 @@ module Assessment
         end
       end
 
-      def build_dashboard_component(active_tab: nil, preview_mode: false)
+      def build_dashboard_component(active_tab: nil)
         assessable = @assessment.assessable
         AssessmentDashboardComponent.new(
           assessable: assessable,
@@ -186,8 +205,7 @@ module Assessment
           lecture: assessable.lecture,
           active_tab: active_tab,
           tasks: @assessment.tasks.order(:position),
-          grade_scheme: @grade_scheme,
-          preview_mode: preview_mode
+          grade_scheme: @grade_scheme
         )
       end
 

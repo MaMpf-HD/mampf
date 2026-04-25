@@ -152,29 +152,6 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
     end
   end
 
-  describe "GET /assessment/assessments/:assessment_id/grade_schemes/:id/preview" do
-    let!(:grade_scheme) { create(:assessment_grade_scheme, assessment: assessment) }
-
-    before { sign_in teacher }
-
-    it "renders turbo_stream" do
-      get preview_assessment_assessment_grade_scheme_path(assessment, grade_scheme),
-          as: :turbo_stream
-      expect(response).to have_http_status(:success)
-      expect(response.media_type).to eq(Mime[:turbo_stream])
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects (unauthorized)" do
-        get preview_assessment_assessment_grade_scheme_path(assessment, grade_scheme),
-            as: :turbo_stream
-        expect(response).to redirect_to(root_path)
-      end
-    end
-  end
-
   describe "PATCH /assessment/assessments/:assessment_id/grade_schemes/:id/apply" do
     let!(:grade_scheme) { create(:assessment_grade_scheme, assessment: assessment) }
 
@@ -217,7 +194,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
     before { sign_in teacher }
 
     it "redirects to dashboard" do
-      get preview_assessment_assessment_grade_scheme_path(assessment, 99_999),
+      get edit_assessment_assessment_grade_scheme_path(assessment, 99_999),
           as: :turbo_stream
       expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
@@ -226,7 +203,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       other_exam = create(:exam, lecture: lecture)
       other_assessment = other_exam.reload.assessment
       other_scheme = create(:assessment_grade_scheme, assessment: other_assessment)
-      get preview_assessment_assessment_grade_scheme_path(assessment, other_scheme),
+      get edit_assessment_assessment_grade_scheme_path(assessment, other_scheme),
           as: :turbo_stream
       expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
@@ -234,7 +211,7 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
     it "redirects when scheme exists but is inactive" do
       scheme = create(:assessment_grade_scheme, assessment: assessment)
       scheme.update!(active: false)
-      get preview_assessment_assessment_grade_scheme_path(assessment, scheme),
+      get edit_assessment_assessment_grade_scheme_path(assessment, scheme),
           as: :turbo_stream
       expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end

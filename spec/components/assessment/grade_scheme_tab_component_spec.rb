@@ -226,13 +226,10 @@ RSpec.describe(GradeSchemeTabComponent, type: :component) do
         )
       end
 
-      it "renders edit, preview, and apply buttons" do
+      it "renders edit and apply buttons" do
         render_inline(component)
         expect(rendered_content).to include(
           I18n.t("assessment.grade_scheme.edit_button")
-        )
-        expect(rendered_content).to include(
-          I18n.t("assessment.grade_scheme.preview_button")
         )
         expect(rendered_content).to include(
           I18n.t("assessment.grade_scheme.apply_button")

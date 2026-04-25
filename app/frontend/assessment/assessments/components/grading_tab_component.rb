@@ -1,24 +1,19 @@
 # Missing top-level docstring, please formulate one yourself 😁
 class GradingTabComponent < ViewComponent::Base
-  def initialize(assessment:, grade_scheme: nil, preview_mode: false)
+  def initialize(assessment:, grade_scheme: nil)
     super()
     @assessment = assessment
     @grade_scheme = grade_scheme
-    @preview_mode = preview_mode
   end
 
   attr_reader :assessment, :grade_scheme
 
-  def preview_mode?
-    @preview_mode && assessment.grade_scheme&.persisted?
-  end
-
   def show_form?
-    grade_scheme.present? && !preview_mode?
+    grade_scheme.present?
   end
 
   def full_width?
-    show_form? || preview_mode?
+    false
   end
 
   def show_roster?
@@ -28,12 +23,24 @@ class GradingTabComponent < ViewComponent::Base
   def scheme_component
     GradeSchemeTabComponent.new(
       assessment: assessment,
-      grade_scheme: grade_scheme,
-      preview_mode: @preview_mode
+      grade_scheme: grade_scheme
     )
   end
 
   def roster_component
-    GradeTableComponent.new(assessment: assessment)
+    GradeTableComponent.new(
+      assessment: assessment,
+      draft_scheme: draft_scheme
+    )
   end
+
+  private
+
+    def draft_scheme
+      scheme = assessment.grade_scheme
+      return nil unless scheme&.persisted?
+      return nil if scheme.applied?
+
+      scheme
+    end
 end

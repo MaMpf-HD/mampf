@@ -48,6 +48,20 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     student_counts[band["grade"]] || 0
   end
 
+  def saved_counts
+    @saved_counts ||= compute_saved_counts
+  end
+
+  def saved_count_for(band)
+    saved_counts[band["grade"]] || 0
+  end
+
+  def comparing?
+    return false if grade_scheme.applied?
+
+    saved_counts.values.any?(&:positive?)
+  end
+
   def total_reviewed
     reviewed_points.size
   end
@@ -94,6 +108,12 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     (count_for(band).to_f / max_count * 100).round
   end
 
+  def saved_bar_width(band)
+    return 0 if max_count.zero?
+
+    (saved_count_for(band).to_f / max_count * 100).round
+  end
+
   def bar_color(band)
     band["grade"].to_f <= 4.0 ? "#198754" : "#dc3545"
   end
@@ -126,10 +146,25 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
       result
     end
 
+    def compute_saved_counts
+      result = bands.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
+
+      assessment.assessment_participations
+                .where.not(grade_numeric: nil)
+                .pluck(:grade_numeric)
+                .each do |g|
+        key = format("%.1f", g)
+        result[key] += 1 if result.key?(key)
+      end
+
+      result
+    end
+
     def max_count
       @max_count ||= begin
-        counts = bands.map { |b| count_for(b) }
-        counts.max || 0
+        proposed = bands.map { |b| count_for(b) }
+        saved = bands.map { |b| saved_count_for(b) }
+        (proposed + saved).max || 0
       end
     end
 end
