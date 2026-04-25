@@ -9,220 +9,380 @@
       <%= t("assessment.grade_scheme.summary.title") %>
     </h6>
 
-    <% views =
-        if comparing?
-          [
-            { id: "proposed",
-              label: t("assessment.grade_scheme.summary.proposed_bar"),
-              bands: bands,
-              counts: ->(b) { count_for(b) },
-              total: total_reviewed,
-              pass_count: pass_count,
-              fail_count: fail_count,
-              pass_rate: pass_rate,
-              fail_rate: fail_rate,
-              bar_color: "#ffc107",
-              active: true },
-            { id: "current",
-              label: t("assessment.grade_scheme.summary.saved_bar"),
-              bands: saved_bands,
-              counts: ->(b) { saved_count_for(b) },
-              total: saved_total,
-              pass_count: saved_pass_count,
-              fail_count: saved_fail_count,
-              pass_rate: saved_pass_rate,
-              fail_rate: saved_fail_rate,
-              bar_color: "#adb5bd",
-              active: false }
-          ]
-        else
-          [
-            { id: "single",
-              label: nil,
-              bands: bands,
-              counts: ->(b) { count_for(b) },
-              total: total_reviewed,
-              pass_count: pass_count,
-              fail_count: fail_count,
-              pass_rate: pass_rate,
-              fail_rate: fail_rate,
-              bar_color: nil,
-              active: true }
-          ]
-        end
-
-      tabs_id = "grade-scheme-summary-tabs-#{grade_scheme.id || 'new'}" %>
-
     <% if comparing? %>
-      <ul
-        class="nav nav-pills mb-2"
-        role="tablist"
-        data-cy="grade-scheme-summary-toggle"
-      >
-        <% views.each do |view| %>
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link <%= 'active' if view[:active] %>"
-              type="button"
-              role="tab"
-              data-bs-toggle="pill"
-              data-bs-target="#<%= tabs_id %>-<%= view[:id] %>"
-              data-cy="grade-scheme-summary-tab-<%= view[:id] %>"
-            >
-              <%= view[:label] %>
-            </button>
-          </li>
+      <% all_grades = (bands.map { |b| b["grade"] } +
+                      saved_bands.map { |b| b["grade"] })
+                     .uniq.sort_by(&:to_f)
+        saved_lookup = saved_bands.index_by { |b| b["grade"] }
+        proposed_lookup = bands.index_by { |b| b["grade"] }
+        change = grade_change_summary %>
+      <div class="alert alert-info py-2 px-3 mb-2 small lh-sm">
+        <div>
+          <i class="bi bi-arrow-left-right me-1"></i>
+          <%= t("assessment.grade_scheme.summary.changes_intro") %>
+          <span class="text-success-emphasis fw-semibold">&uarr; <%= change[:better] %> <%= t("assessment.grade_scheme.summary.changes_better") %></span>
+          &middot;
+          <span class="text-danger-emphasis fw-semibold">&darr; <%= change[:worse] %> <%= t("assessment.grade_scheme.summary.changes_worse") %></span>
+          &middot;
+          <span class="text-muted">= <%= change[:unchanged] %> <%= t("assessment.grade_scheme.summary.changes_unchanged") %></span>
+        </div>
+
+        <% if change[:newly_failing].positive? || change[:newly_passing].positive? %>
+          <div class="mt-1">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+
+            <% if change[:newly_failing].positive? %>
+              <span class="text-danger-emphasis fw-semibold">
+                +<%= change[:newly_failing] %>
+                <%= t("assessment.grade_scheme.summary.newly_failing") %>
+              </span>
+            <% end %>
+
+            <% if change[:newly_failing].positive? &&
+                  change[:newly_passing].positive? %>
+              &middot;
+            <% end %>
+
+            <% if change[:newly_passing].positive? %>
+              <span class="text-success-emphasis fw-semibold">
+                +<%= change[:newly_passing] %>
+                <%= t("assessment.grade_scheme.summary.newly_passing") %>
+              </span>
+            <% end %>
+          </div>
         <% end %>
-      </ul>
-    <% end %>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-2 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th colspan="4" class="text-center text-muted small fw-normal">
+                <%= t("assessment.grade_scheme.summary.saved_bar") %>
+              </th>
 
-    <div class="tab-content">
-      <% views.each do |view| %>
-        <div
-          class="tab-pane fade <%= 'show active' if view[:active] %>"
-          id="<%= tabs_id %>-<%= view[:id] %>"
-          role="tabpanel"
-        >
-          <div class="table-responsive">
-            <table class="table table-sm table-hover mb-2">
-              <thead class="table-light">
-                <tr>
-                  <th style="width: 1%; white-space: nowrap;">
-                    <%= t("assessment.grade_scheme.form.col_grade") %>
-                  </th>
+              <th class="text-center text-muted small">&nbsp;</th>
 
-                  <th style="width: 1%; white-space: nowrap;">
-                    <%= t("assessment.grade_scheme.form.col_range") %>
-                  </th>
+              <th colspan="4" class="text-center text-muted small fw-normal">
+                <%= t("assessment.grade_scheme.summary.proposed_bar") %>
+              </th>
+            </tr>
+          </thead>
 
-                  <th><%= t("assessment.grade_scheme.form.col_students") %></th>
+          <tbody>
+            <% all_grades.each do |grade| %>
+              <% saved_band = saved_lookup[grade]
+                proposed_band = proposed_lookup[grade]
+                saved_count = saved_counts_from_points[grade] || 0
+                proposed_count = student_counts[grade] || 0
+                saved_w = max_count.zero? ? 0 :
+                          (saved_count.to_f / max_count * 100).round
+                proposed_w = max_count.zero? ? 0 :
+                             (proposed_count.to_f / max_count * 100).round
+                delta = proposed_count - saved_count
+                delta_class =
+                  if delta.positive?
+                    "text-success-emphasis"
+                  elsif delta.negative?
+                    "text-danger-emphasis"
+                  else
+                    "text-muted"
+                  end
+                delta_label =
+                  if delta.positive?
+                    "+#{delta}"
+                  elsif delta.negative?
+                    delta.to_s
+                  else
+                    "±0"
+                  end %>
 
-                  <th class="text-end" style="width: 1%; white-space: nowrap;">
-                    <%= t("assessment.grade_scheme.form.col_percentage") %>
-                  </th>
-                </tr>
-              </thead>
+              <tr>
+                <td
+                  class="text-end small text-muted"
+                  style="white-space: nowrap;"
+                >
+                  <% if total_reviewed.positive? %>
+                    <%= (saved_count.to_f / total_reviewed * 100).round(1) %>
+                    %
+                  <% else %>
+                    0.0%
+                  <% end %>
+                </td>
 
-              <tbody>
-                <% view_max = view[:bands].map { |b| view[:counts].call(b) }
-                                          .max.to_i %>
+                <td class="text-end" style="white-space: nowrap;">
+                  <%= saved_count %>
+                </td>
 
-                <% view[:bands].each do |band| %>
-                  <% count = view[:counts].call(band) %>
+                <td>
+                  <div
+                    class="d-flex justify-content-end"
+                    style="height: 12px; background: #e9ecef;
+                           border-radius: 3px; overflow: hidden;
+                           min-width: 80px;"
+                  >
+                    <div
+                      style="width: <%= saved_w %>%;
+                             height: 100%;
+                             background: #adb5bd;"
+                    ></div>
+                  </div>
+                </td>
 
-                  <% width = view_max.zero? ? 0 :
-                             (count.to_f / view_max * 100).round %>
+                <td
+                  class="text-end small text-muted"
+                  style="white-space: nowrap;"
+                >
+                  <% if saved_band %>
+                    &ge;&nbsp;
+                    <%= saved_band["min_points"] %>
+                  <% else %>
+                    &mdash;
+                  <% end %>
+                </td>
 
-                  <% color = view[:bar_color] || bar_color(band) %>
+                <td class="text-center" style="white-space: nowrap;">
+                  <span class="badge <%= badge_class(grade) %>">
+                    <%= grade %>
+                  </span>
 
+                  <div class="small fw-semibold <%= delta_class %>">
+                    <%= delta_label %>
+                  </div>
+                </td>
+
+                <td
+                  class="text-start small text-muted"
+                  style="white-space: nowrap;"
+                >
+                  <% if proposed_band %>
+                    &ge;&nbsp;
+                    <%= proposed_band["min_points"] %>
+                  <% else %>
+                    &mdash;
+                  <% end %>
+                </td>
+
+                <td>
+                  <div
+                    class="d-flex justify-content-start"
+                    style="height: 12px; background: #e9ecef;
+                           border-radius: 3px; overflow: hidden;
+                           min-width: 80px;"
+                  >
+                    <div
+                      style="width: <%= proposed_w %>%;
+                             height: 100%;
+                             background: #ffc107;"
+                    ></div>
+                  </div>
+                </td>
+
+                <td class="text-start" style="white-space: nowrap;">
+                  <%= proposed_count %>
+                </td>
+
+                <td
+                  class="text-start small text-muted"
+                  style="white-space: nowrap;"
+                >
+                  <% if total_reviewed.positive? %>
+                    <%= (proposed_count.to_f /
+                         total_reviewed * 100).round(1) %>
+                    %
+                  <% else %>
+                    0.0%
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+
+          <% if total_reviewed.positive? %>
+            <tfoot class="table-light">
+              <tr>
+                <th colspan="4" class="text-end">
+                  <%= saved_pass_rate_pts %>% (<%= saved_pass_count_pts %>/
+                  <%= total_reviewed %>)
+                </th>
+
+                <th class="text-center text-muted">
+                  <%= t("assessment.grade_scheme.summary.pass_rate") %>
+                </th>
+
+                <th colspan="4" class="text-start">
+                  <%= pass_rate %>% (<%= pass_count %>/<%= total_reviewed %>)
+                </th>
+              </tr>
+
+              <tr>
+                <th colspan="4" class="text-end">
+                  <%= saved_fail_rate_pts %>% (<%= saved_fail_count_pts %>/
+                  <%= total_reviewed %>)
+                </th>
+
+                <th class="text-center text-muted">
+                  <%= t("assessment.grade_scheme.summary.fail_rate") %>
+                </th>
+
+                <th colspan="4" class="text-start">
+                  <%= fail_rate %>% (<%= fail_count %>/<%= total_reviewed %>)
+                </th>
+              </tr>
+
+              <% if any_excluded? %>
+                <% if absent_count.positive? %>
                   <tr>
-                    <td style="white-space: nowrap;">
-                      <span class="badge <%= badge_class(band['grade']) %>">
-                        <%= band["grade"] %>
-                      </span>
-                    </td>
+                    <td colspan="9" class="text-muted small">
+                      <i class="bi bi-person-x text-danger me-1"></i>
 
-                    <td style="white-space: nowrap;">
-                      &ge;&nbsp;<%= band["min_points"] %>
-                      <%= t("assessment.distribution.points") %>
-                    </td>
-
-                    <td>
-                      <div
-                        class="d-flex align-items-center gap-2"
-                        style="width: 200px;"
-                      >
-                        <div
-                          style="flex: 1; height: 14px; background: #e9ecef;
-                                 border-radius: 3px; overflow: hidden;"
-                        >
-                          <div
-                            style="width: <%= width %>%;
-                                   height: 100%;
-                                   background: <%= color %>;"
-                          ></div>
-                        </div>
-
-                        <span class="text-muted small" style="min-width: 20px;">
-                          <%= count %>
-                        </span>
-                      </div>
-                    </td>
-
-                    <td class="text-end" style="white-space: nowrap;">
-                      <% if view[:total].positive? %>
-                        <%= (count.to_f / view[:total] * 100).round(1) %>
-                        %
-                      <% else %>
-                        0.0%
-                      <% end %>
+                      <%= t("assessment.grade_scheme.summary.absent_note",
+                            count: absent_count) %>
                     </td>
                   </tr>
                 <% end %>
-              </tbody>
-
-              <% if view[:total].positive? %>
-                <tfoot class="table-light">
+                <% if exempt_count.positive? %>
                   <tr>
-                    <th colspan="2">
-                      <%= t("assessment.grade_scheme.summary.pass_rate") %>
-                    </th>
+                    <td colspan="9" class="text-muted small">
+                      <i class="bi bi-person-dash text-muted me-1"></i>
 
-                    <th colspan="2" class="text-end">
-                      <%= view[:pass_rate] %>% (<%= view[:pass_count] %>/
-                      <%= view[:total] %>)
-                    </th>
+                      <%= t("assessment.grade_scheme.summary.exempt_note",
+                            count: exempt_count) %>
+                    </td>
                   </tr>
-
-                  <tr>
-                    <th colspan="2">
-                      <%= t("assessment.grade_scheme.summary.fail_rate") %>
-                    </th>
-
-                    <th colspan="2" class="text-end">
-                      <%= view[:fail_rate] %>% (<%= view[:fail_count] %>/
-                      <%= view[:total] %>)
-                    </th>
-                  </tr>
-
-                  <% if any_excluded? %>
-                    <% if absent_count.positive? %>
-                      <tr>
-                        <td colspan="2">
-                          <i class="bi bi-person-x text-danger me-1"></i>
-
-                          <%= t("assessment.grade_scheme.summary.absent_note",
-                              count: absent_count) %>
-                        </td>
-
-                        <td colspan="2" class="text-end">
-                          <span class="badge bg-danger-subtle text-danger-emphasis">
-                            5.0
-                          </span>
-                        </td>
-                      </tr>
-                    <% end %>
-                    <% if exempt_count.positive? %>
-                      <tr>
-                        <td colspan="2">
-                          <i class="bi bi-person-dash text-muted me-1"></i>
-
-                          <%= t("assessment.grade_scheme.summary.exempt_note",
-                              count: exempt_count) %>
-                        </td>
-
-                        <td colspan="2" class="text-end text-muted">
-                          &mdash;
-                        </td>
-                      </tr>
-                    <% end %>
-                  <% end %>
-                </tfoot>
+                <% end %>
               <% end %>
-            </table>
-          </div>
-        </div>
-      <% end %>
-    </div>
+            </tfoot>
+          <% end %>
+        </table>
+      </div>
+    <% else %>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-2">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 1%; white-space: nowrap;">
+                <%= t("assessment.grade_scheme.form.col_grade") %>
+              </th>
+
+              <th style="width: 1%; white-space: nowrap;">
+                <%= t("assessment.grade_scheme.form.col_range") %>
+              </th>
+
+              <th><%= t("assessment.grade_scheme.form.col_students") %></th>
+
+              <th class="text-end" style="width: 1%; white-space: nowrap;">
+                <%= t("assessment.grade_scheme.form.col_percentage") %>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% bands.each do |band| %>
+              <tr>
+                <td style="white-space: nowrap;">
+                  <span class="badge <%= badge_class(band['grade']) %>">
+                    <%= band["grade"] %>
+                  </span>
+                </td>
+
+                <td style="white-space: nowrap;">
+                  &ge;&nbsp;<%= band["min_points"] %>
+                  <%= t("assessment.distribution.points") %>
+                </td>
+
+                <td>
+                  <div
+                    class="d-flex align-items-center gap-2"
+                    style="width: 200px;"
+                  >
+                    <div
+                      style="flex: 1; height: 14px; background: #e9ecef;
+                             border-radius: 3px; overflow: hidden;"
+                    >
+                      <div
+                        style="width: <%= bar_width(band) %>%;
+                               height: 100%;
+                               background: <%= bar_color(band) %>;"
+                      ></div>
+                    </div>
+
+                    <span class="text-muted small" style="min-width: 20px;">
+                      <%= count_for(band) %>
+                    </span>
+                  </div>
+                </td>
+
+                <td class="text-end" style="white-space: nowrap;">
+                  <% if total_reviewed.positive? %>
+                    <%= (count_for(band).to_f / total_reviewed * 100)
+                          .round(1) %>
+                    %
+                  <% else %>
+                    0.0%
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+
+          <% if total_reviewed.positive? %>
+            <tfoot class="table-light">
+              <tr>
+                <th colspan="2">
+                  <%= t("assessment.grade_scheme.summary.pass_rate") %>
+                </th>
+
+                <th colspan="2" class="text-end">
+                  <%= pass_rate %>% (<%= pass_count %>/<%= total_reviewed %>)
+                </th>
+              </tr>
+
+              <tr>
+                <th colspan="2">
+                  <%= t("assessment.grade_scheme.summary.fail_rate") %>
+                </th>
+
+                <th colspan="2" class="text-end">
+                  <%= fail_rate %>% (<%= fail_count %>/<%= total_reviewed %>)
+                </th>
+              </tr>
+
+              <% if any_excluded? %>
+                <% if absent_count.positive? %>
+                  <tr>
+                    <td colspan="2">
+                      <i class="bi bi-person-x text-danger me-1"></i>
+
+                      <%= t("assessment.grade_scheme.summary.absent_note",
+                            count: absent_count) %>
+                    </td>
+
+                    <td colspan="2" class="text-end">
+                      <span class="badge bg-danger-subtle text-danger-emphasis">
+                        5.0
+                      </span>
+                    </td>
+                  </tr>
+                <% end %>
+                <% if exempt_count.positive? %>
+                  <tr>
+                    <td colspan="2">
+                      <i class="bi bi-person-dash text-muted me-1"></i>
+
+                      <%= t("assessment.grade_scheme.summary.exempt_note",
+                            count: exempt_count) %>
+                    </td>
+
+                    <td colspan="2" class="text-end text-muted">
+                      &mdash;
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tfoot>
+          <% end %>
+        </table>
+      </div>
+    <% end %>
   </div>
 <% end %>

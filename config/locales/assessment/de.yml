@@ -278,6 +278,12 @@ de:
         fail_rate: 'Durchfallquote'
         saved_bar: 'Aktuelle Verteilung'
         proposed_bar: 'Verteilung mit neuem Schema'
+        changes_intro: 'Notenänderungen:'
+        changes_better: 'besser'
+        changes_worse: 'schlechter'
+        changes_unchanged: 'unverändert'
+        newly_failing: 'neu durchgefallen'
+        newly_passing: 'neu bestanden'
         absent_note:
           one: '%{count} abwesende/r Studierende/r erhält 5,0'
           other: '%{count} abwesende Studierende erhalten 5,0'

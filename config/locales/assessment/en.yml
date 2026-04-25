@@ -281,6 +281,12 @@ en:
         fail_rate: 'Fail rate'
         saved_bar: 'Current distribution'
         proposed_bar: 'Distribution with new scheme'
+        changes_intro: 'Grade changes:'
+        changes_better: 'better'
+        changes_worse: 'worse'
+        changes_unchanged: 'unchanged'
+        newly_failing: 'newly failing'
+        newly_passing: 'newly passing'
         absent_note:
           one: '%{count} absent student receives 5.0'
           other: '%{count} absent students receive 5.0'
