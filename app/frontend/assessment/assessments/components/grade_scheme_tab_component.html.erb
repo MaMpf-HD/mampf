@@ -123,16 +123,13 @@
           gap-2 mb-3
         "
       >
-        <div
-          class="
-            alert alert-success d-flex align-items-center mb-0 py-2 px-3
-            flex-grow-1
-          "
-        >
-          <i class="bi bi-check-circle-fill me-2"></i>
+        <div class="d-flex align-items-center text-muted small mb-0 flex-grow-1">
+          <i class="bi bi-check-circle text-success me-2"></i>
 
           <div>
-            <strong><%= t("assessment.grade_scheme.applied_title") %></strong>
+            <span class="fw-semibold text-success">
+              <%= t("assessment.grade_scheme.applied_title") %>
+            </span>
 
             <%= t("assessment.grade_scheme.applied_message",
                 time: helpers.l(

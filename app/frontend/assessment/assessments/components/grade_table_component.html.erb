@@ -75,9 +75,7 @@
           <td class="text-center">
             <% case row_status(p) %>
             <% when :absent %>
-              <span class="badge bg-danger">
-                <%= absent_grade_display(p) %>
-              </span>
+              <%= absent_grade_display(p) %>
             <% when :exempt %>
               <span class="text-muted">&mdash;</span>
             <% else %>

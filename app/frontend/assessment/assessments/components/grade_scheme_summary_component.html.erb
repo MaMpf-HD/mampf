@@ -13,11 +13,17 @@
       <table class="table table-sm table-hover mb-2">
         <thead class="table-light">
           <tr>
-            <th><%= t("assessment.grade_scheme.form.col_grade") %></th>
-            <th><%= t("assessment.grade_scheme.form.col_range") %></th>
+            <th style="width: 1%; white-space: nowrap;">
+              <%= t("assessment.grade_scheme.form.col_grade") %>
+            </th>
+
+            <th style="width: 1%; white-space: nowrap;">
+              <%= t("assessment.grade_scheme.form.col_range") %>
+            </th>
+
             <th><%= t("assessment.grade_scheme.form.col_students") %></th>
 
-            <th class="text-end">
+            <th class="text-end" style="width: 1%; white-space: nowrap;">
               <%= t("assessment.grade_scheme.form.col_percentage") %>
             </th>
           </tr>
@@ -25,20 +31,23 @@
 
         <tbody>
           <% bands.each do |band| %>
-            <tr class="<%= 'table-danger' if failed?(band) %>">
-              <td>
+            <tr>
+              <td style="white-space: nowrap;">
                 <span class="badge <%= badge_class(band['grade']) %>">
                   <%= band["grade"] %>
                 </span>
               </td>
 
-              <td>
+              <td style="white-space: nowrap;">
                 &ge;&nbsp;<%= band["min_points"] %>
                 <%= t("assessment.distribution.points") %>
               </td>
 
               <td>
-                <div class="d-flex align-items-center gap-2">
+                <div
+                  class="d-flex align-items-center gap-2"
+                  style="width: 200px;"
+                >
                   <div
                     style="flex: 1; height: 14px; background: #e9ecef;
                             border-radius: 3px; overflow: hidden;"
@@ -56,7 +65,7 @@
                 </div>
               </td>
 
-              <td class="text-end">
+              <td class="text-end" style="white-space: nowrap;">
                 <% if total_reviewed.positive? %>
                   <%= (count_for(band).to_f / total_reviewed * 100).round(1) %>
                   %
@@ -101,7 +110,9 @@
                   </td>
 
                   <td colspan="2" class="text-end">
-                    <span class="badge bg-danger">5.0</span>
+                    <span class="badge bg-danger-subtle text-danger-emphasis">
+                      5.0
+                    </span>
                   </td>
                 </tr>
               <% end %>

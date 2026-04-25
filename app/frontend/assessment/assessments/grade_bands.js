@@ -3,17 +3,17 @@ export const PASSING_GRADES = [
 ];
 
 export const GRADE_BADGE_CLASS = {
-  "1.0": "bg-success",
-  "1.3": "bg-success",
-  "1.7": "bg-success",
-  "2.0": "bg-primary",
-  "2.3": "bg-primary",
-  "2.7": "bg-primary",
-  "3.0": "bg-warning text-dark",
-  "3.3": "bg-warning text-dark",
-  "3.7": "bg-warning text-dark",
-  "4.0": "bg-warning text-dark",
-  "5.0": "bg-danger",
+  "1.0": "bg-success-subtle text-success-emphasis",
+  "1.3": "bg-success-subtle text-success-emphasis",
+  "1.7": "bg-success-subtle text-success-emphasis",
+  "2.0": "bg-primary-subtle text-primary-emphasis",
+  "2.3": "bg-primary-subtle text-primary-emphasis",
+  "2.7": "bg-primary-subtle text-primary-emphasis",
+  "3.0": "bg-warning-subtle text-warning-emphasis",
+  "3.3": "bg-warning-subtle text-warning-emphasis",
+  "3.7": "bg-warning-subtle text-warning-emphasis",
+  "4.0": "bg-warning-subtle text-warning-emphasis",
+  "5.0": "bg-danger-subtle text-danger-emphasis",
 };
 
 export const GRADE_MARKER_COLOR = {
