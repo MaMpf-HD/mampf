@@ -1,7 +1,10 @@
 <%= form_with(model: [campaign, policy],
               url: policy.persisted? ? registration_campaign_policy_path(campaign, policy) : registration_campaign_policies_path(campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
-  <% course_lectures = Array(campaign.campaignable.try(:course)&.lectures).sort_by(&:title) %>
+  <% course_lectures = Array(campaign.campaignable.try(:course)&.lectures)
+                         .select(&:uses_exam_eligibility?)
+                         .sort_by(&:title) %>
+
   <% selected_lecture_ids = policy.lecture_ids.presence || Array(campaign.campaignable.try(:id)).compact %>
 
   <% if params[:frame_id].present? %>

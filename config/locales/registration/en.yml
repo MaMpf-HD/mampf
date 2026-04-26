@@ -168,6 +168,8 @@ en:
         prerequisite_not_met: "Prerequisite registration process not completed."
         missing_lecture: "At least one lecture must be selected."
         lecture_not_found: "At least one selected lecture does not exist."
+        lecture_exam_eligibility_disabled: >-
+          Exam eligibility is disabled for: %{titles}
         multiple_student_performance: "Only one student performance policy is allowed."
       configs:
         allowed_domains: "Allowed Domains"

@@ -124,6 +124,10 @@ class Lecture < ApplicationRecord
 
   validate :only_one_lecture, if: :term_independent?, on: :create
 
+  validate :exam_eligibility_can_be_disabled, if: lambda {
+    uses_exam_eligibility_changed? && !uses_exam_eligibility?
+  }
+
   validates :submission_max_team_size,
             numericality: { only_integer: true,
                             greater_than: 0 },
@@ -818,7 +822,9 @@ class Lecture < ApplicationRecord
 
   def ensure_roster_membership!(user_ids)
     user_ids.uniq.each do |uid|
-      LectureMembership.create!(user_id: uid, lecture_id: id)
+      LectureMembership.transaction(requires_new: true) do
+        LectureMembership.create!(user_id: uid, lecture_id: id)
+      end
     rescue ActiveRecord::RecordNotUnique
       next
     end
@@ -981,6 +987,20 @@ class Lecture < ApplicationRecord
       return false unless course
 
       course.term_independent
+    end
+
+    def exam_eligibility_can_be_disabled
+      if student_performance_certifications.exists? ||
+         student_performance_rules.exists?
+        errors.add(:uses_exam_eligibility,
+                   :has_existing_data)
+        return
+      end
+
+      return unless Registration::Policy.student_performance_for_lecture(id).exists?
+
+      errors.add(:uses_exam_eligibility,
+                 :has_existing_data)
     end
 
     def absence_of_term

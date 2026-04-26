@@ -167,6 +167,8 @@ de:
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
         missing_lecture: "Es muss mindestens eine Veranstaltung ausgewählt werden."
         lecture_not_found: "Mindestens eine ausgewählte Veranstaltung existiert nicht."
+        lecture_exam_eligibility_disabled: >-
+          Prüfungszulassung deaktiviert für: %{titles}
         multiple_student_performance: "Es ist nur eine Richtlinie für Studierendenleistung erlaubt."
       configs:
         allowed_domains: "Erlaubte Domains"

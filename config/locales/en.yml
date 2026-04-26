@@ -442,6 +442,7 @@ en:
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
       disable_teacher_display: disable the display of the teacher's name
+      uses_exam_eligibility: enable exam eligibility
       submission_max_team_size: >
         maximal team size for submissions
       submission_grace_period: >
@@ -628,6 +629,10 @@ en:
           lecture card on the start page and from the lecture page for generic
           users. This could make sense e.g. if a lecture that is term
           independent is only administratively supervised by a "teacher".
+        uses_exam_eligibility: >
+          If you check this box, exam eligibility tracking is enabled for
+          this event series. Students can then receive certifications and
+          registration policies can reference this event series.
         submission_max_team_size: >
           Here you can enter how many people are maximally allowed for
           one submission. If you enter nothing, there will be no restriction on
@@ -3855,6 +3860,10 @@ en:
                 Term was given, but associated course is independent of terms
             teacher:
               required: 'You need to give a teacher.'
+            uses_exam_eligibility:
+              has_existing_data: >
+                cannot be disabled because certifications, rules, or
+                registration policies already exist for this event series.
         lesson:
           attributes:
             date:

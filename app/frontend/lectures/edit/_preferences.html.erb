@@ -159,6 +159,21 @@
       </div>
     </div>
   <% end %>
+  <% if Flipper.enabled?(:student_performance) && !lecture.seminar? %>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :uses_exam_eligibility,
+                          class: 'form-check-input' %>
+          <%= f.label :uses_exam_eligibility,
+                      t('admin.lecture.uses_exam_eligibility'),
+                      { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.uses_exam_eligibility'),
+                      false) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
   <div class="row">
     <div class="col-12 text-center">
       <div id="lecture-preferences-warning">

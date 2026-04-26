@@ -33,7 +33,9 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def certifications_enabled?
-    Flipper.enabled?(:student_performance) && !lecture.seminar?
+    Flipper.enabled?(:student_performance) &&
+      !lecture.seminar? &&
+      lecture.uses_exam_eligibility?
   end
 
   def single_tab?

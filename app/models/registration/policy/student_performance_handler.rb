@@ -40,6 +40,17 @@ module Registration
             :lecture_ids,
             I18n.t("registration.policy.errors.lecture_not_found")
           )
+        else
+          ineligible = lectures.reject(&:uses_exam_eligibility?)
+          if ineligible.any?
+            policy.errors.add(
+              :lecture_ids,
+              I18n.t(
+                "registration.policy.errors.lecture_exam_eligibility_disabled",
+                titles: ineligible.map(&:title).join(", ")
+              )
+            )
+          end
         end
       end
 

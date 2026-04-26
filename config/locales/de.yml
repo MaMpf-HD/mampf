@@ -507,6 +507,7 @@ de:
       no_rights: >
         Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
+      uses_exam_eligibility: Prüfungszulassung aktivieren
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
       submission_deletion_date: Löschdatum für Abgaben
@@ -721,6 +722,11 @@ de:
           der DozentInnen-Name nicht angezeigt. Das macht z.B. Sinn, wenn
           eine semesterunabhängige Veranstaltung von jemandem nur administrativ
           als "DozentIn" begleitet wird.
+        uses_exam_eligibility: >
+          Wenn Du diesen Haken setzt, wird die Prüfungszulassung für
+          diese Veranstaltung aktiviert. Studierende können dann
+          Zertifizierungen erhalten und Anmeldebedingungen können auf
+          diese Veranstaltung verweisen.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
@@ -4115,6 +4121,11 @@ de:
                 semesterunabhängig
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
+            uses_exam_eligibility:
+              has_existing_data: >
+                kann nicht deaktiviert werden, da bereits Zertifizierungen,
+                Regeln oder Anmeldebedingungen für diese Veranstaltung
+                existieren.
         link:
           attributes:
             linked_medium:

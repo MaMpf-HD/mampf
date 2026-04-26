@@ -40,6 +40,11 @@ module Registration
       where("config->>'prerequisite_campaign_id' = ?", campaign_id.to_s)
     }
 
+    scope :student_performance_for_lecture, lambda { |lecture_id|
+      where(kind: :student_performance)
+        .where("config->'lecture_ids' @> ?", [lecture_id.to_s].to_json)
+    }
+
     # Virtual attributes for form handling and validation
     def allowed_domains
       val = config&.fetch("allowed_domains", nil)
