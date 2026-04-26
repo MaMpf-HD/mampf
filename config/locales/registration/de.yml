@@ -325,8 +325,14 @@ de:
         no_rule: "Keine aktive Regel konfiguriert"
       violations_table:
         override_pass: "Auf bestanden setzen"
+        confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
       student_performance:
         unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
+      perf_evidence:
+        certified_by: "(von %{name})"
+        no_cert: "Keine Entscheidung"
+        pts_abbr: "Pkt."
+        achievements_short: "%{met}/%{total} Krit."
       cert_incomplete:
         title: "Klausurzulassungen unvollständig"
         desc:

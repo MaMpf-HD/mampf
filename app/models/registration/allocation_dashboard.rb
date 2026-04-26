@@ -72,6 +72,14 @@ module Registration
       @violations_by_user ||= policy_violations.group_by { |v| v[:user_id] }
     end
 
+    def performance_evidence_by_user
+      @performance_evidence_by_user ||= build_performance_evidence
+    end
+
+    def performance_evidence_for(user_id)
+      performance_evidence_by_user[user_id]
+    end
+
     def violation_counts_by_policy
       @violation_counts_by_policy ||=
         policy_violations
@@ -126,6 +134,44 @@ module Registration
             registerable: registerable,
             registration: registrations_by_user[uid]
           }
+        end
+      end
+
+      def build_performance_evidence
+        sp_user_ids = policy_violations
+                      .select { |v| v[:policy] == "student_performance" }
+                      .map { |v| v[:user_id] }
+        return {} if sp_user_ids.empty?
+
+        lecture = performance_lecture
+        return {} unless lecture
+
+        certs = StudentPerformance::Certification
+                .where(lecture: lecture, user_id: sp_user_ids)
+                .includes(:certified_by)
+                .index_by(&:user_id)
+
+        records = StudentPerformance::Record
+                  .where(lecture: lecture, user_id: sp_user_ids)
+                  .index_by(&:user_id)
+
+        rule = performance_rule
+        evaluator = rule ? StudentPerformance::Evaluator.new(rule) : nil
+
+        evals_by_user = if evaluator && records.any?
+          evaluator.bulk_evaluate(records.values)
+                   .transform_keys(&:user_id)
+        else
+          {}
+        end
+
+        sp_user_ids.to_h do |uid|
+          [uid, {
+            cert: certs[uid],
+            record: records[uid],
+            rule: rule,
+            eval: evals_by_user[uid]
+          }]
         end
       end
 

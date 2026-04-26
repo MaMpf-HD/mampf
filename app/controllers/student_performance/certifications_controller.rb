@@ -71,10 +71,10 @@ module StudentPerformance
       )
 
       if cert.save
-        redirect_to lecture_student_performance_certifications_path(@lecture),
+        redirect_to return_to_path,
                     notice: I18n.t("student_performance.certifications.flash.created")
       else
-        redirect_to lecture_student_performance_certifications_path(@lecture),
+        redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
       end
     end
@@ -185,15 +185,27 @@ module StudentPerformance
       )
 
       if cert.save
-        redirect_to lecture_student_performance_certifications_path(@lecture),
+        redirect_to return_to_path,
                     notice: I18n.t("student_performance.certifications.flash.updated")
       else
-        redirect_to lecture_student_performance_certifications_path(@lecture),
+        redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
       end
     end
 
     private
+
+      def return_to_path
+        if params[:return_to].present?
+          begin
+            uri = URI.parse(params[:return_to])
+            return params[:return_to] if uri.host.nil? || uri.host == request.host
+          rescue URI::InvalidURIError
+            # fall through
+          end
+        end
+        lecture_student_performance_certifications_path(@lecture)
+      end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])

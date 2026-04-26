@@ -49,31 +49,151 @@
     <% end %>
   </div>
 
-  <ul class="mt-0 mb-2">
+  <% perf_lecture = dashboard.performance_lecture %>
+  <ul class="mt-0 mb-2 list-unstyled ps-0">
     <% grouped.each do |user_id, violations| %>
       <% first = violations.first %>
+      <% ev     = dashboard.performance_evidence_for(user_id) %>
+      <% cert   = ev&.dig(:cert) %>
+      <% d      = ev&.dig(:eval)&.details || {} %>
+      <% has_sp = violations.any? { |v| v[:policy] == "student_performance" } %>
 
-      <li class="mb-1">
-        <strong><%= first[:name] %></strong> (<%= first[:email] %>)
+      <li class="d-flex align-items-baseline flex-wrap gap-1 mb-1 small">
+        <strong><%= first[:name] %></strong>
+        <span class="text-muted">(<%= first[:email] %>)</span>
+
         <% violations.each do |v| %>
-          <span class="badge bg-danger-subtle text-danger ms-1">
+          <span class="badge bg-danger-subtle text-danger">
             <%= t("registration.policy.kinds.#{v[:policy]}") %>
 
             <% if v[:policy] == "institutional_email" %>
-              <span class="fw-normal">@<%= email_domain(first[:email]) %></span>
+              @
+              <%= email_domain(first[:email]) %>
             <% end %>
           </span>
         <% end %>
-        <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user_id, source: allocation_source),
-                      method: :delete,
-                      class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
-                      data: {
-                        turbo_confirm:
-                        t("registration.campaign.confirmations.user_registration_conflict_remove",
-                        email: first[:email])
-                      },
-                      form: { class: "d-inline-block" },
-                      title: t("registration.user_registration.actions.remove_user") do %>
+
+        <% if has_sp && ev %>
+          <%# Cert status icon %>
+          <% if cert&.failed? %>
+            <i
+              class="bi bi-patch-x-fill text-danger"
+              title="<%= t("student_performance.certifications.status.failed") %>"
+            ></i>
+          <% elsif cert&.pending? %>
+            <i
+              class="bi bi-hourglass text-warning"
+              title="<%= t("student_performance.certifications.status.pending") %>"
+            ></i>
+          <% else %>
+            <i
+              class="bi bi-question-circle text-secondary"
+              title="<%= t("registration.allocation.perf_evidence.no_cert") %>"
+            ></i>
+          <% end %>
+          <%# Points score — shown only when points criterion not met %>
+          <% if d[:meets_points] == false %>
+            <span class="text-danger">
+              <% if d[:required_percentage].present? %>
+                <%= number_to_percentage(d[:percentage] || 0, precision: 1) %>
+                (≥
+                <%= number_to_percentage(d[:required_percentage], precision: 1) %>
+                )
+              <% elsif d[:required_points].present? %>
+                <%= "#{d[:points_total] || 0} / #{d[:points_max] || 0} " \
+                    "#{t("registration.allocation.perf_evidence.pts_abbr")}" %>
+                (≥
+                <%= "#{d[:required_points]} " \
+                      "#{t("registration.allocation.perf_evidence.pts_abbr")}" %>
+                )
+              <% end %>
+            </span>
+          <% end %>
+          <%# Achievement criterion — shown only when not met %>
+          <% req_ids = Array(d[:achievement_ids_required]) %>
+          <% met_ids = Array(d[:achievement_ids_met]) %>
+          <% if req_ids.any? && d[:meets_achievements] == false %>
+            <span class="text-danger">
+              <%= t("registration.allocation.perf_evidence.achievements_short",
+                    met: met_ids.size, total: req_ids.size) %>
+            </span>
+          <% end %>
+          <%# Certifier name %>
+          <% if cert&.certified_by %>
+            <span class="text-muted">
+              <%= t("registration.allocation.perf_evidence.certified_by",
+                    name: cert.certified_by.name) %>
+            </span>
+          <% end %>
+          <%# Note indicator — tooltip on icon %>
+          <% if cert&.note.present? %>
+            <i class="bi bi-chat-text text-muted" title="<%= cert.note %>"></i>
+          <% end %>
+          <%# Override to passed (icon button) %>
+          <% can_override = cert ? !cert.passed? : ev[:record].present? %>
+          <% if perf_lecture && can_override %>
+            <% if cert %>
+              <%= button_to(
+                    lecture_student_performance_certification_path(
+                      perf_lecture, cert
+                    ),
+                    method: :patch,
+                    params: {
+                      certification: { status: :passed },
+                      return_to: registration_campaign_allocation_path(campaign)
+                    },
+                    class: "btn btn-sm p-0 text-success",
+                    title: t("registration.allocation.violations_table.override_pass"),
+                    data: {
+                      turbo_confirm: t(
+                        "registration.allocation.violations_table"\
+                        ".confirm_override_pass"
+                      )
+                    },
+                    form: { class: "d-inline-block" }
+                  ) do %>
+                <i class="bi bi-check-circle-fill"></i>
+              <% end %>
+            <% else %>
+              <%= button_to(
+                    lecture_student_performance_certifications_path(perf_lecture),
+                    method: :post,
+                    params: {
+                      certification: { user_id: user_id, status: :passed },
+                      return_to: registration_campaign_allocation_path(campaign)
+                    },
+                    class: "btn btn-sm p-0 text-success",
+                    title: t("registration.allocation.violations_table.override_pass"),
+                    data: {
+                      turbo_confirm: t(
+                        "registration.allocation.violations_table"\
+                        ".confirm_override_pass"
+                      )
+                    },
+                    form: { class: "d-inline-block" }
+                  ) do %>
+                <i class="bi bi-check-circle-fill"></i>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%# Delete registration (icon button) %>
+        <%= button_to(
+              destroy_for_user_registration_campaign_registrations_path(
+                campaign, user_id: user_id, source: allocation_source
+              ),
+              method: :delete,
+              class: "btn btn-sm btn-link text-danger p-0",
+              data: {
+                turbo_confirm:
+                  t("registration.campaign.confirmations"\
+                    ".user_registration_conflict_remove",
+                    email: first[:email])
+              },
+              form: { class: "d-inline-block" },
+              title: t("registration.user_registration.actions.remove_user")
+            ) do %>
           <i class="bi bi-trash"></i>
         <% end %>
       </li>
