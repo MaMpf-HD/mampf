@@ -141,4 +141,49 @@ RSpec.describe(Assessment::Task, type: :model) do
       end
     end
   end
+
+  describe "performance record recomputation" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    let(:assessment) { FactoryBot.create(:assessment, requires_points: true) }
+
+    context "when records exist" do
+      let(:lecture) { assessment.lecture }
+      let(:user) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
+      end
+
+      it "recomputes all records when a task is created" do
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .to receive(:compute_and_upsert_all_records!)
+        FactoryBot.create(:assessment_task, assessment: assessment)
+      end
+
+      it "recomputes all records when max_points changes" do
+        task = FactoryBot.create(:assessment_task, assessment: assessment)
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .to receive(:compute_and_upsert_all_records!)
+        task.update!(max_points: task.max_points + 5)
+      end
+    end
+
+    context "when no records exist" do
+      it "does not recompute when a task is created" do
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .not_to receive(:compute_and_upsert_all_records!)
+        FactoryBot.create(:assessment_task, assessment: assessment)
+      end
+
+      it "does not recompute when max_points changes" do
+        task = FactoryBot.create(:assessment_task, assessment: assessment)
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .not_to receive(:compute_and_upsert_all_records!)
+        task.update!(max_points: task.max_points + 5)
+      end
+    end
+  end
 end

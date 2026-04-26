@@ -49,7 +49,9 @@ class Achievement < ApplicationRecord
     end
 
     def invalidate_performance_records
-      PerformanceRecordUpdateJob.perform_async(lecture_id)
+      StudentPerformance::ComputationService
+        .new(lecture: lecture)
+        .compute_and_upsert_all_records!
       touch_linked_rules
     end
 

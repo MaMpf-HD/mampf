@@ -558,19 +558,21 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(existing.certified_by).to eq(editor)
       end
 
-      it "redirects with alert when no rule exists" do
+      it "creates a manual certification without an active rule" do
         rule.update!(active: false)
-        post lecture_student_performance_certifications_path(lecture),
-             params: { certification: {
-               user_id: target_user.id, status: "passed"
-             } }
-        expect(response).to redirect_to(
-          lecture_student_performance_certifications_path(lecture)
+        expect do
+          post(lecture_student_performance_certifications_path(lecture),
+               params: { certification: {
+                 user_id: target_user.id, status: "passed"
+               } })
+        end.to change(StudentPerformance::Certification, :count).by(1)
+        cert = StudentPerformance::Certification.find_by(
+          user: target_user, lecture: lecture
         )
-        follow_redirect!
-        expect(response.body).to include(
-          I18n.t("student_performance.evaluator.no_rule")
-        )
+        expect(cert.status).to eq("passed")
+        expect(cert.source).to eq("manual")
+        expect(cert.certified_by).to eq(editor)
+        expect(cert.rule).to be_nil
       end
 
       it "redirects with alert for invalid user" do

@@ -26,7 +26,7 @@ We use a factual materialization + teacher certification + phased policy checks:
 - **Service-Based Computation:** `StudentPerformance::Service` aggregates points and achievements and upserts the factual `StudentPerformance::Record`.
 - **Evaluator (Teacher Tool):** `StudentPerformance::Evaluator` is a teacher-facing tool that interprets factual records to generate bulk certification proposals and show rule change impact. It is never called during registration/finalization runtime.
 - **Achievement Tracking:** A top-level `Achievement` model records qualitative accomplishments (e.g., blackboard presentations).
-- **Recomputation Triggers:** Background jobs and on-demand triggers keep the data fresh and guarantee correctness.
+- **Recomputation Triggers:** Synchronous `after_commit` callbacks on 6 models keep records current automatically whenever grades or enrollments change. Just-in-time recomputation at registration guarantees 100% correctness.
 - **Audit Trail:** Certification provides the authoritative decision and audit (who, when, source, rule snapshot). The Record stays facts-only.
 
 ## Information Architecture
@@ -200,7 +200,7 @@ its internal logic. For the canonical dispatcher, see Registration →
 
 ### Usage Scenarios
 
-- **After coursework completion:** A background job runs `StudentPerformance::Service.new(lecture: ...).compute_and_upsert_all_records!`. Alice's record is created with `points_total_materialized: 58`, `percentage_materialized: 58`. The record itself does not say if she passed.
+- **After coursework completion:** When a tutor grades Alice's submission, an `after_commit` callback on `Assessment::Participation` automatically calls `StudentPerformance::ComputationService.new(lecture: ...).compute_and_upsert_record_for(alice)`. Alice's record is updated with `points_total_materialized: 58`, `percentage_materialized: 58`. The record itself does not say if she passed.
 
 - **Teacher certification workflow:** The teacher opens the Certification UI, which uses the `Evaluator` to generate proposals for all students. The teacher reviews and creates `Certification` rows (pending/passed/failed). Manual edge cases are set with `source: :manual`.
 
@@ -417,7 +417,7 @@ end
 
 ---
 
-## StudentPerformance::Service (Service Object)
+## StudentPerformance::ComputationService (Service Object)
 **_Performance Computer_**
 
 ```admonish info "What it represents"
@@ -444,17 +444,21 @@ The "performance calculator" that gathers all the data and stamps it into a stud
 
 ### Recomputation Triggers
 
-The service is invoked in several scenarios to keep performance records accurate:
-1.  **After coursework grading:** A background job can trigger a full recomputation.
-2.  **After achievement changes:** When tutors record or correct lecture achievements for a user.
-3.  **Just-in-Time:** The `Registration::Policy` triggers a recomputation for a single user at the moment of an exam registration attempt to guarantee 100% correctness.
-4.  **On-demand by staff:** Manual trigger via an admin interface for debugging or corrections.
+The service is called synchronously via `after_commit` callbacks, covering all mutation points:
+1.  **`Assessment::Participation` (per-user):** Changes to `status`, `submitted_at`, or `grade_text` (for achievement participations) trigger `compute_and_upsert_record_for(user)`.
+2.  **`Assessment::TaskPoint` (per-user):** Changes to `points` trigger `compute_and_upsert_record_for(user)`.
+3.  **`Achievement` (full-lecture):** Changes to `threshold` or `value_type` trigger `compute_and_upsert_all_records!`.
+4.  **`Assessment::Assessment` (full-lecture):** Assignment-type create/destroy, or `total_points` change, trigger `compute_and_upsert_all_records!`.
+5.  **`Assessment::Task` (full-lecture):** Create/destroy or `max_points` change trigger `compute_and_upsert_all_records!` (skipped when no participations exist yet, e.g. during initial assignment setup).
+6.  **`LectureMembership` (enrollment):** Student joining calls `compute_and_upsert_record_for(user)`; student leaving deletes the record.
+
+All callbacks are gated by the `:assessment_grading` Flipper flag (except `TaskPoint`, where the flag is implicitly enforced because task points only exist when the flag is on).
 
 ### Example Implementation
 
 ```ruby
 module StudentPerformance
-  class Service
+  class ComputationService
     def initialize(lecture:)
       @lecture = lecture
       @rule = lecture.student_performance_rule
@@ -830,11 +834,8 @@ flowchart TD
 **Computation Phase:**
 
 1. Semester progresses, students submit homework, tutors grade.
-2. After final homework deadline, a background job runs:
-   ```ruby
-   StudentPerformance::Service.new(lecture: linear_algebra).compute_and_upsert_all_records!
-   ```
-3. System creates `StudentPerformance::Record` entries:
+2. Throughout the semester, every time a tutor grades a submission or marks an achievement, `after_commit` callbacks automatically update performance records. After all grading is complete, records already reflect the final state.
+3. System has `StudentPerformance::Record` entries:
     - Alice: 58/100 points (58%), achievements_met_ids: [1, 2]
     - Bob: 42/100 points (42%), achievements_met_ids: []
     - Carol: 65/100 points (65%), achievements_met_ids: [1]

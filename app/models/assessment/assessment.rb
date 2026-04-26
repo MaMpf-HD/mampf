@@ -35,6 +35,16 @@ module Assessment
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
 
+    after_commit :recompute_all_performance_records,
+                 on: :destroy,
+                 if: -> { assessable_type == "Assignment" }
+    after_commit :recompute_all_performance_records,
+                 on: :update,
+                 if: lambda {
+                   assessable_type == "Assignment" &&
+                     saved_change_to_total_points?
+                 }
+
     def seed_participations_from!(user_ids:, tutorial_mapping: {})
       existing = assessment_participations.pluck(:user_id).to_set
       new_user_ids = user_ids.reject { |uid| existing.include?(uid) }
@@ -61,6 +71,8 @@ module Assessment
         unique_by: [:assessment_id, :user_id]
       )
       # rubocop:enable Rails/SkipsModelValidations
+
+      recompute_all_performance_records
     end
 
     private
@@ -77,6 +89,14 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
+      end
+
+      def recompute_all_performance_records
+        return unless Flipper.enabled?(:assessment_grading)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_all_records!
       end
   end
 end

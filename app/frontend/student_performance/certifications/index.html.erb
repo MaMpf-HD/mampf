@@ -99,10 +99,14 @@
       </div>
     <% else %>
       <div class="text-center py-3 mt-3 mb-4 border rounded bg-light">
-        <i class="bi bi-exclamation-triangle text-warning fs-4 d-block mb-2"></i>
+        <i class="bi bi-info-circle text-secondary fs-4 d-block mb-2"></i>
 
-        <p class="text-muted mb-2">
+        <p class="text-muted mb-1">
           <%= t("student_performance.evaluator.no_rule") %>
+        </p>
+
+        <p class="text-muted small mb-2">
+          <%= t("student_performance.certifications.index.no_rule_hint") %>
         </p>
 
         <%= link_to edit_lecture_student_performance_rules_path(
@@ -597,7 +601,7 @@
                       >
                     <% end %>
                   </div>
-                <% elsif @rule %>
+                <% else %>
                   <% pass_btn = proposal&.proposed_status == :passed ?
                       "btn-success" : "btn-outline-success"
                     fail_btn = proposal&.proposed_status == :failed ?

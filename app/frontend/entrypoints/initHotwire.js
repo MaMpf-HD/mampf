@@ -95,9 +95,6 @@ window.Stimulus.register("assessments--scheme-form", SchemeFormController);
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
 
-import RecomputePollController from "~/student_performance/records/recompute_poll.controller.js";
-window.Stimulus.register("recompute-poll", RecomputePollController);
-
 import CertificationInlineController from "~/student_performance/certifications/certification_inline.controller.js";
 window.Stimulus.register("certification-inline", CertificationInlineController);
 

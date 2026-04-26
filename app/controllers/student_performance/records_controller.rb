@@ -11,8 +11,6 @@ module StudentPerformance
       redirect_to main_app.root_url, alert: exception.message
     end
 
-    RECOMPUTE_THROTTLE = 30.seconds
-
     def current_ability
       @current_ability ||= LectureAbility.new(current_user)
     end
@@ -46,40 +44,13 @@ module StudentPerformance
     def recompute
       user_id = params[:user_id].presence
 
-      if user_id
-        recompute_single(user_id.to_i)
-      else
-        recompute_all
-      end
-    end
-
-    def recompute_status
-      threshold = (Time.zone.parse(params[:since]) if params[:since].present?)
-      unless threshold
-        render json: { done: false }
+      unless user_id
+        redirect_to lecture_student_performance_records_path(@lecture),
+                    alert: I18n.t("student_performance.errors.no_member")
         return
       end
 
-      stats = @lecture.student_performance_records
-                      .pick(
-                        Arel.sql("COUNT(*)"),
-                        Arel.sql("COUNT(*) FILTER (WHERE computed_at IS NULL)"),
-                        Arel.sql("MIN(computed_at)")
-                      )
-      record_count, null_count, oldest = stats
-      member_count = @lecture.members.count
-
-      done = if member_count.zero?
-        record_count.zero?
-      else
-        record_count >= member_count &&
-          null_count.zero? &&
-          oldest.present? && oldest > threshold
-      end
-
-      render json: { done: done }
-    rescue ArgumentError
-      render json: { done: false }
+      recompute_single(user_id.to_i)
     end
 
     private
@@ -128,61 +99,6 @@ module StudentPerformance
                     notice: I18n.t(
                       "student_performance.records.recompute.single"
                     )
-      end
-
-      def recompute_all
-        cache_key = "recompute_all/lecture/#{@lecture.id}"
-
-        unless Rails.cache.write(cache_key, true,
-                                 expires_in: RECOMPUTE_THROTTLE,
-                                 unless_exist: true)
-          return respond_with_throttled
-        end
-
-        enqueue_time = Time.current
-        set_recompute_poll_headers(queued: true, since: enqueue_time)
-
-        PerformanceRecordUpdateJob.perform_async(
-          @lecture.id,
-          nil
-        )
-
-        respond_to do |format|
-          format.turbo_stream do
-            flash.now[:notice] =
-              I18n.t("student_performance.records.recompute.all")
-            render turbo_stream: stream_flash
-          end
-          format.html do
-            redirect_to lecture_student_performance_records_path(@lecture),
-                        notice: I18n.t(
-                          "student_performance.records.recompute.all"
-                        )
-          end
-        end
-      end
-
-      def respond_with_throttled
-        msg = I18n.t("student_performance.records.recompute.throttled")
-        set_recompute_poll_headers(queued: false)
-
-        respond_to do |format|
-          format.turbo_stream do
-            flash.now[:alert] = msg
-            render turbo_stream: stream_flash
-          end
-          format.html do
-            redirect_to lecture_student_performance_records_path(@lecture),
-                        alert: msg
-          end
-        end
-      end
-
-      def set_recompute_poll_headers(queued:, since: nil)
-        response.set_header("X-Recompute-Queued", queued ? "1" : "0")
-        return unless since
-
-        response.set_header("X-Recompute-Since", since.iso8601(6))
       end
 
       def load_show_data

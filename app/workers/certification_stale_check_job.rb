@@ -6,10 +6,6 @@ class CertificationStaleCheckJob
   def perform(lecture_id)
     lecture = Lecture.find(lecture_id)
 
-    StudentPerformance::ComputationService
-      .new(lecture: lecture)
-      .compute_and_upsert_all_records!
-
     stale = StudentPerformance::Certification
             .where(lecture: lecture)
             .stale

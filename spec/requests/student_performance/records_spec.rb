@@ -1,5 +1,4 @@
 require "rails_helper"
-require "sidekiq/testing"
 
 RSpec.describe("StudentPerformance::Records", type: :request) do
   let(:lecture) { FactoryBot.create(:lecture, locale: I18n.default_locale) }
@@ -11,12 +10,10 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
-    Sidekiq::Testing.fake!
   end
 
   after do
     Flipper.disable(:student_performance)
-    Sidekiq::Worker.clear_all
   end
 
   describe "GET /lectures/:lecture_id/performance/records" do
@@ -56,9 +53,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
-          FactoryBot.create(:student_performance_record,
-                            lecture: lecture, user: user,
-                            achievements_met_ids: [achievement.id])
+          StudentPerformance::Record
+            .where(lecture: lecture, user: user)
+            .update_all(achievements_met_ids: [achievement.id])
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
@@ -71,9 +68,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
-          FactoryBot.create(:student_performance_record,
-                            lecture: lecture, user: user,
-                            achievements_met_ids: [])
+          StudentPerformance::Record
+            .where(lecture: lecture, user: user)
+            .update_all(achievements_met_ids: [])
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
@@ -200,23 +197,22 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "enqueues a job for all students" do
-        expect do
-          post(recompute_lecture_student_performance_records_path(lecture))
-        end.to change(PerformanceRecordUpdateJob.jobs, :size).by(1)
-
-        job = PerformanceRecordUpdateJob.jobs.last
-        expect(job["args"]).to eq([lecture.id, nil])
+      it "redirects with alert when no user_id is given" do
+        post(recompute_lecture_student_performance_records_path(lecture))
+        expect(response).to redirect_to(
+          lecture_student_performance_records_path(lecture)
+        )
+        expect(flash[:alert]).to eq(
+          I18n.t("student_performance.errors.no_member")
+        )
       end
 
       it "computes inline for a single student and redirects" do
         user = FactoryBot.create(:confirmed_user)
         FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
 
-        expect do
-          post(recompute_lecture_student_performance_records_path(lecture),
-               params: { user_id: user.id })
-        end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
+        post(recompute_lecture_student_performance_records_path(lecture),
+             params: { user_id: user.id })
 
         record = lecture.student_performance_records
                         .find_by(user_id: user.id)
@@ -228,10 +224,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       it "redirects with alert when user_id is not a lecture member" do
         outsider = FactoryBot.create(:confirmed_user)
 
-        expect do
-          post(recompute_lecture_student_performance_records_path(lecture),
-               params: { user_id: outsider.id })
-        end.not_to change(PerformanceRecordUpdateJob.jobs, :size)
+        post(recompute_lecture_student_performance_records_path(lecture),
+             params: { user_id: outsider.id })
 
         expect(response).to redirect_to(
           lecture_student_performance_records_path(lecture)
@@ -240,35 +234,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           I18n.t("student_performance.errors.no_member")
         )
       end
-
-      it "responds with turbo_stream flash for bulk recompute" do
-        post recompute_lecture_student_performance_records_path(lecture),
-             headers: { "Accept" => "text/vnd.turbo-stream.html" }
-        expect(response.media_type).to eq(
-          "text/vnd.turbo-stream.html"
-        )
-        expect(response.headers["X-Recompute-Queued"]).to eq("1")
-        expect(response.headers["X-Recompute-Since"]).to be_present
-      end
-
-      it "redirects for html format" do
-        post recompute_lecture_student_performance_records_path(lecture)
-        expect(response).to redirect_to(
-          lecture_student_performance_records_path(lecture)
-        )
-      end
-
-      it "throttles repeated bulk recompute requests" do
-        post recompute_lecture_student_performance_records_path(lecture)
-        expect(PerformanceRecordUpdateJob.jobs.size).to eq(1)
-
-        post recompute_lecture_student_performance_records_path(lecture)
-        expect(PerformanceRecordUpdateJob.jobs.size).to eq(1)
-        expect(response.headers["X-Recompute-Queued"]).to eq("0")
-        expect(flash[:alert]).to eq(
-          I18n.t("student_performance.records.recompute.throttled")
-        )
-      end
     end
 
     context "as a student" do
@@ -276,124 +241,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
       it "redirects to root (unauthorized)" do
         post recompute_lecture_student_performance_records_path(lecture)
-        expect(response).to redirect_to(root_path)
-      end
-    end
-  end
-
-  describe "GET /lectures/:lecture_id/performance/records/recompute_status" do
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "returns done: true when lecture has no members" do
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        expect(response).to have_http_status(:success)
-        body = response.parsed_body
-        expect(body["done"]).to be(true)
-      end
-
-      it "returns done: false when lecture has members but no records" do
-        member = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
-
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        expect(response).to have_http_status(:success)
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-
-      it "returns done: true when all records are newer than since" do
-        user = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
-        FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
-                          user: user,
-                          computed_at: Time.current)
-
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        body = response.parsed_body
-        expect(body["done"]).to be(true)
-      end
-
-      it "returns done: false when records exist but fewer than members" do
-        user_one = FactoryBot.create(:confirmed_user)
-        user_two = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:lecture_membership,
-                          lecture: lecture, user: user_one)
-        FactoryBot.create(:lecture_membership,
-                          lecture: lecture, user: user_two)
-        FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
-                          user: user_one,
-                          computed_at: Time.current)
-
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-
-      it "returns done: false when some records are older than since" do
-        user = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
-        FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
-                          user: user,
-                          computed_at: 5.minutes.ago)
-
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-
-      it "returns done: false when since is missing" do
-        get recompute_status_lecture_student_performance_records_path(lecture)
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-
-      it "returns done: false when since is malformed" do
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: "not-a-date" }
-        expect(response).to have_http_status(:success)
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-
-      it "returns done: false when a record has null computed_at" do
-        user_one = FactoryBot.create(:confirmed_user)
-        user_two = FactoryBot.create(:confirmed_user)
-        FactoryBot.create(:lecture_membership,
-                          lecture: lecture,
-                          user: user_one)
-        FactoryBot.create(:lecture_membership,
-                          lecture: lecture,
-                          user: user_two)
-        FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
-                          user: user_one,
-                          computed_at: Time.current)
-        FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
-                          user: user_two,
-                          computed_at: nil)
-
-        get recompute_status_lecture_student_performance_records_path(lecture),
-            params: { since: 1.minute.ago.iso8601 }
-        body = response.parsed_body
-        expect(body["done"]).to be(false)
-      end
-    end
-
-    context "as a student" do
-      before { sign_in student }
-
-      it "redirects to root (unauthorized)" do
-        get recompute_status_lecture_student_performance_records_path(lecture)
         expect(response).to redirect_to(root_path)
       end
     end

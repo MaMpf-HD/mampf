@@ -10,24 +10,8 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
   end
 
   describe "#perform" do
-    it "recomputes performance records for the lecture" do
-      service = instance_double(StudentPerformance::ComputationService)
-      allow(StudentPerformance::ComputationService)
-        .to receive(:new).with(lecture: lecture).and_return(service)
-      allow(service).to receive(:compute_and_upsert_all_records!)
-
-      described_class.new.perform(lecture.id)
-
-      expect(service).to have_received(:compute_and_upsert_all_records!)
-    end
-
     context "when a certification is stale" do
       before do
-        service = instance_double(StudentPerformance::ComputationService)
-        allow(StudentPerformance::ComputationService)
-          .to receive(:new).with(lecture: lecture).and_return(service)
-        allow(service).to receive(:compute_and_upsert_all_records!)
-
         FactoryBot.create(:student_performance_record,
                           lecture: lecture, user: user,
                           computed_at: 1.hour.ago)
@@ -51,11 +35,6 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
 
     context "when no certification is stale" do
       before do
-        service = instance_double(StudentPerformance::ComputationService)
-        allow(StudentPerformance::ComputationService)
-          .to receive(:new).with(lecture: lecture).and_return(service)
-        allow(service).to receive(:compute_and_upsert_all_records!)
-
         FactoryBot.create(:student_performance_record,
                           lecture: lecture, user: user,
                           computed_at: 2.hours.ago)

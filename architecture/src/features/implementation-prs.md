@@ -573,9 +573,9 @@ background jobs) that are better reviewed together:
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications; Achievement model exists but has no controller or UI.
 ```
 
-```admonish example "PR-10.2 — Services & jobs (ComputationService, Evaluator, background jobs)"
-- Scope: All backend service objects and background jobs for the
-  student performance pipeline — no controllers or UI.
+```admonish example "PR-10.2 — Services & callbacks (ComputationService, Evaluator, after_commit hooks)"
+- Scope: All backend service objects, sync `after_commit` callbacks, and
+  background jobs for the student performance pipeline — no controllers or UI.
 - Services:
   - `StudentPerformance::ComputationService`: reads from
     `assessment_participations` and `assessment_task_points`; upserts
@@ -585,15 +585,17 @@ background jobs) that are better reviewed together:
     proposed status (passed/failed) per student. Generates bulk
     proposals for the teacher certification UI. Does NOT create
     Certifications.
+- Callbacks (sync `after_commit` on 6 models):
+  - `Assessment::Participation`, `Assessment::TaskPoint`: per-user recompute
+  - `Achievement`, `Assessment::Assessment`, `Assessment::Task`: full-lecture recompute
+  - `LectureMembership`: create record on join, delete on leave
 - Jobs:
-  - `PerformanceRecordUpdateJob`: recomputes Records after grade
-    changes (thin wrapper around `ComputationService`).
   - `CertificationStaleCheckJob`: flags stale certifications when
     Records change.
 - Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service),
   [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator),
   [Background jobs](09-integrity-and-invariants.md#recommended-background-jobs)
-- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. Jobs run on schedule; recomputed Records are accurate; stale certifications flagged for teacher review.
+- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. `after_commit` callbacks keep Records current on grade/enrollment changes. Stale certifications flagged for teacher review.
 ```
 
 ```admonish example "PR-10.3 — Read-only UI (Records + Evaluator + Rules read-only)"

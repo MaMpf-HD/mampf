@@ -23,7 +23,7 @@ de:
         points: "Punkte"
         percentage: "Prozent"
         assessments: "Bewertungen"
-        computed_at: "Zuletzt berechnet"
+
         reviewed: "Bewertet"
         graded: "bewertet"
         pending_grading: "Noch nicht bewertet"
@@ -35,13 +35,11 @@ de:
         achievement_ungraded: "Noch nicht bewertet"
       index:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
-        recompute_all: "Alle neu berechnen"
         generate_proposals: "Vorschläge generieren"
         all_tutorials: "Alle Übungsgruppen"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
-        ago: "her"
-        recomputing: "Wird neu berechnet…"
+
         showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
@@ -60,10 +58,9 @@ de:
         view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
         last_computed: "Zuletzt berechnet vor %{time}."
+
       recompute:
-        single: "Neuberechnung für diese/n Studierende/n wurde eingereiht."
-        all: "Neuberechnung für alle Studierenden wurde eingereiht."
-        throttled: "Eine Neuberechnung wurde kürzlich gestartet. Bitte warten Sie, bevor Sie eine weitere auslösen."
+        single: "Neuberechnung für diese/n Studierende/n abgeschlossen."
     rules:
       show:
         of_total_points: "der Gesamtpunkte erforderlich"
@@ -169,6 +166,7 @@ de:
         empty: "Keine Studierenden-Datensätze gefunden."
         rule_info: "Zulassungsregel"
         setup_rule: "Regel einrichten"
+        no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
         required_achievements_label: "Zusatzkriterien"
         stale_rule_warning:
           one: "Zulassungsregel wurde geändert — %{count} Zulassung ist nicht mehr aktuell."

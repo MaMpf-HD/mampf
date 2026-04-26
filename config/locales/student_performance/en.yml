@@ -23,7 +23,7 @@ en:
         points: "Points"
         percentage: "Percentage"
         assessments: "Assessments"
-        computed_at: "Last Computed"
+
         reviewed: "Reviewed"
         graded: "graded"
         pending_grading: "Pending Grading"
@@ -35,13 +35,11 @@ en:
         achievement_ungraded: "Not yet graded"
       index:
         subtitle: "Factual performance data computed from assessments."
-        recompute_all: "Recompute All"
         generate_proposals: "Generate Proposals"
         all_tutorials: "All Tutorial Groups"
         empty: "No performance records have been computed yet."
         details: "Details"
-        ago: "ago"
-        recomputing: "Recomputing..."
+
         showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"
@@ -60,10 +58,9 @@ en:
         view_correction: "View correction"
         total_row: "Total"
         last_computed: "Last computed %{time} ago."
+
       recompute:
-        single: "Recomputation for this student has been enqueued."
-        all: "Recomputation for all students has been enqueued."
-        throttled: "A recomputation was recently started. Please wait before triggering another."
+        single: "Recomputation for this student completed."
     rules:
       show:
         of_total_points: "of total points required"
@@ -169,6 +166,7 @@ en:
         empty: "No student records found."
         rule_info: "Eligibility rule"
         setup_rule: "Set up rule"
+        no_rule_hint: "You can record decisions manually per student at any time — even without a rule."
         required_achievements_label: "Achievements"
         stale_rule_warning:
           one: "Eligibility rule changed — %{count} decision is outdated."

@@ -12,7 +12,7 @@ module StudentPerformance
 
     def compute_and_upsert_record_for(user)
       stats = aggregate_points(user)
-      met_ids = achievement_ids_met_by(user)
+      met_ids = achievement_ids_met_by_id(user.id)
       ungraded_ids = achievement_ids_ungraded_by_id(user.id)
 
       upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
@@ -53,20 +53,15 @@ module StudentPerformance
         Assessment::Participation
           .where(assessment_id: assessments.select(:id),
                  user_id: user_ids)
-          .select(:id, :assessment_id, :status, :submitted_at, :user_id)
+          .select(:id, :assessment_id, :status, :submitted_at, :user_id,
+                  :points_total)
           .group_by(&:user_id)
       end
 
       def prefetch_task_points(participations)
-        reviewed_ids = participations
-                       .select { |p| p.status == "reviewed" }
-                       .map(&:id)
-        return {} if reviewed_ids.empty?
-
-        Assessment::TaskPoint
-          .where(assessment_participation_id: reviewed_ids)
-          .group(:assessment_participation_id)
-          .sum(:points)
+        participations.each_with_object({}) do |p, acc|
+          acc[p.id] = p.points_total || BigDecimal("0")
+        end
       end
 
       def aggregate_from_prefetched(participations, points_lookup)
@@ -110,7 +105,7 @@ module StudentPerformance
                          .where(assessment_id: assessments.select(:id),
                                 user_id: user.id)
                          .select(:id, :assessment_id, :status, :submitted_at,
-                                 :user_id)
+                                 :user_id, :points_total)
                          .to_a
 
         points_lookup = prefetch_task_points(participations)
@@ -121,12 +116,6 @@ module StudentPerformance
         @lecture_achievements ||= Achievement
                                   .where(lecture_id: lecture.id)
                                   .includes(:assessment)
-      end
-
-      def achievement_ids_met_by(user)
-        lecture_achievements.select do |a|
-          a.student_met_threshold?(user)
-        end.map(&:id)
       end
 
       def achievement_ids_met_by_id(user_id)

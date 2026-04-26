@@ -43,12 +43,6 @@ module StudentPerformance
     end
 
     def create
-      unless @rule
-        redirect_to lecture_student_performance_certifications_path(@lecture),
-                    alert: I18n.t("student_performance.evaluator.no_rule")
-        return
-      end
-
       record = @lecture.student_performance_records
                        .find_by(user_id: certification_params[:user_id])
       unless record

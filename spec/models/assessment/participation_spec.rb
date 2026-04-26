@@ -109,13 +109,18 @@ RSpec.describe(Assessment::Participation, type: :model) do
         FactoryBot.create(:achievement, :boolean, lecture: lecture)
       end
 
-      it "enqueues PerformanceRecordUpdateJob" do
+      it "recomputes the performance record synchronously" do
         participation = achievement.assessment
                                    .assessment_participations
                                    .find_by(user: user)
 
-        expect(PerformanceRecordUpdateJob).to receive(:perform_async)
-          .with(lecture.id, user.id)
+        service = instance_double(
+          StudentPerformance::ComputationService,
+          compute_and_upsert_record_for: nil
+        )
+        expect(StudentPerformance::ComputationService)
+          .to receive(:new).with(lecture: lecture).and_return(service)
+        expect(service).to receive(:compute_and_upsert_record_for).with(user)
 
         participation.update!(grade_text: "pass")
       end
@@ -134,8 +139,9 @@ RSpec.describe(Assessment::Participation, type: :model) do
                           assessment: assessment, user: user)
       end
 
-      it "does not enqueue PerformanceRecordUpdateJob" do
-        expect(PerformanceRecordUpdateJob).not_to receive(:perform_async)
+      it "does not recompute the performance record" do
+        expect(StudentPerformance::ComputationService)
+          .not_to receive(:new)
 
         participation.update!(grade_text: "some value")
       end
@@ -146,12 +152,13 @@ RSpec.describe(Assessment::Participation, type: :model) do
         FactoryBot.create(:achievement, :boolean, lecture: lecture)
       end
 
-      it "does not enqueue PerformanceRecordUpdateJob" do
+      it "recomputes when status changes" do
         participation = achievement.assessment
                                    .assessment_participations
                                    .find_by(user: user)
 
-        expect(PerformanceRecordUpdateJob).not_to receive(:perform_async)
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .to receive(:compute_and_upsert_record_for).with(user)
 
         participation.update!(status: :reviewed)
       end
