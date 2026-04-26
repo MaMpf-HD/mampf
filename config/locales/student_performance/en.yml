@@ -191,6 +191,7 @@ en:
         pending: "Pending"
         manual: "Individual decision"
         stale: "Outdated — reconciliation needed"
+        input_missing: "Auto-evaluation inconclusive — input missing (e.g. tutor grading)"
       columns:
         proposed: "Proposed"
         rule_suggests: "Per rule:"
@@ -222,3 +223,9 @@ en:
         reevaluated:
           one: "%{count} decision re-evaluated."
           other: "%{count} decisions re-evaluated."
+        bulk_inconclusive:
+          one: "%{count} decision left pending (input missing)."
+          other: "%{count} decisions left pending (input missing)."
+        reevaluated_inconclusive:
+          one: "%{count} decision reset to pending (input missing)."
+          other: "%{count} decisions reset to pending (input missing)."

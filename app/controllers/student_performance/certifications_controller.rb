@@ -100,6 +100,7 @@ module StudentPerformance
       existing_certs = @lecture.student_performance_certifications
                                .index_by(&:user_id)
       created = 0
+      inconclusive = 0
 
       ActiveRecord::Base.transaction do
         proposals.each do |record, result|
@@ -114,25 +115,20 @@ module StudentPerformance
             next
           end
 
-          next if result.proposed_status == :inconclusive
-
           cert.assign_attributes(
-            status: result.proposed_status,
-            source: :computed,
-            certified_by: current_user,
-            certified_at: Time.current,
-            rule: @rule
+            attributes_for_proposal(result.proposed_status)
           )
           cert.save!
-          created += 1
+          if result.proposed_status == :inconclusive
+            inconclusive += 1
+          else
+            created += 1
+          end
         end
       end
 
       redirect_to lecture_student_performance_certifications_path(@lecture),
-                  notice: I18n.t(
-                    "student_performance.certifications.flash.bulk_accepted",
-                    count: created
-                  )
+                  notice: bulk_accept_notice(created, inconclusive)
     end
 
     def bulk_reevaluate
@@ -147,6 +143,7 @@ module StudentPerformance
                             .includes(:user)
       evaluator = StudentPerformance::Evaluator.new(@rule)
       updated = 0
+      reset_to_pending = 0
 
       ActiveRecord::Base.transaction do
         stale_certs.find_each do |cert|
@@ -155,22 +152,17 @@ module StudentPerformance
           next unless record
 
           result = evaluator.evaluate(record)
-          cert.update!(
-            status: result.proposed_status,
-            source: :computed,
-            certified_by: current_user,
-            certified_at: Time.current,
-            rule: @rule
-          )
-          updated += 1
+          cert.update!(attributes_for_proposal(result.proposed_status))
+          if result.proposed_status == :inconclusive
+            reset_to_pending += 1
+          else
+            updated += 1
+          end
         end
       end
 
       redirect_to lecture_student_performance_certifications_path(@lecture),
-                  notice: I18n.t(
-                    "student_performance.certifications.flash.reevaluated",
-                    count: updated
-                  )
+                  notice: reevaluated_notice(updated, reset_to_pending)
     end
 
     def bulk_confirm_manual
@@ -254,15 +246,16 @@ module StudentPerformance
         @total_students = @lecture.student_performance_records.count
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
-        certified_count = @certifications.size
-        @uncertified_count = @total_students - certified_count
+        decided_count = @passed_count + @failed_count
+        @uncertified_count = @total_students - decided_count
         @stale_count = @lecture.student_performance_certifications
                                .stale.count
       end
 
       def compute_proposal_counts
-        certified_user_ids = @certifications.to_set(&:user_id)
-        uncertified_proposals = @proposal_by_user.except(*certified_user_ids)
+        decided_user_ids = @certifications.reject(&:pending?)
+                                          .to_set(&:user_id)
+        uncertified_proposals = @proposal_by_user.except(*decided_user_ids)
         @proposed_passed = uncertified_proposals.count { |_, r| r.proposed_status == :passed }
         @proposed_failed = uncertified_proposals.count { |_, r| r.proposed_status == :failed }
         @proposed_inconclusive = uncertified_proposals.count do |_, r|
@@ -281,8 +274,8 @@ module StudentPerformance
         return records if params[:status].blank?
 
         if params[:status] == "uncertified"
-          certified_user_ids = @certifications.map(&:user_id)
-          return records.where.not(user_id: certified_user_ids)
+          decided_user_ids = @certifications.reject(&:pending?).map(&:user_id)
+          return records.where.not(user_id: decided_user_ids)
         end
 
         return records.where(user_id: @stale_user_ids.to_a) if params[:status] == "stale"
@@ -299,6 +292,54 @@ module StudentPerformance
 
       def update_certification_params
         params.expect(certification: [:status, :note])
+      end
+
+      def attributes_for_proposal(proposed_status)
+        if proposed_status == :inconclusive
+          {
+            status: :pending,
+            source: :computed,
+            certified_by: nil,
+            certified_at: Time.current,
+            rule: @rule
+          }
+        else
+          {
+            status: proposed_status,
+            source: :computed,
+            certified_by: current_user,
+            certified_at: Time.current,
+            rule: @rule
+          }
+        end
+      end
+
+      def bulk_accept_notice(created, inconclusive)
+        parts = [
+          I18n.t("student_performance.certifications.flash.bulk_accepted",
+                 count: created)
+        ]
+        if inconclusive.positive?
+          parts << I18n.t(
+            "student_performance.certifications.flash.bulk_inconclusive",
+            count: inconclusive
+          )
+        end
+        parts.join(" ")
+      end
+
+      def reevaluated_notice(updated, reset_to_pending)
+        parts = [
+          I18n.t("student_performance.certifications.flash.reevaluated",
+                 count: updated)
+        ]
+        if reset_to_pending.positive?
+          parts << I18n.t(
+            "student_performance.certifications.flash.reevaluated_inconclusive",
+            count: reset_to_pending
+          )
+        end
+        parts.join(" ")
       end
   end
 end

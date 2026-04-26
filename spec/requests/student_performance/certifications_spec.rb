@@ -120,7 +120,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(uncertified_user.tutorial_name)
             expect(response.body).not_to include(user_a.tutorial_name)
             expect(response.body).not_to include(user_b.tutorial_name)
-            expect(response.body).not_to include(user_c.tutorial_name)
+            expect(response.body).to include(user_c.tutorial_name)
           end
 
           it "filters by stale status" do
@@ -761,6 +761,51 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           I18n.t("student_performance.evaluator.no_rule")
         )
       end
+
+      context "when proposal is inconclusive (input missing)" do
+        let(:achievement) do
+          FactoryBot.create(:achievement, lecture: lecture)
+        end
+        let(:undecided_user) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: achievement)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: undecided_user,
+                            percentage_materialized: 80,
+                            points_total_materialized: 80,
+                            points_max_materialized: 100,
+                            achievements_ungraded_ids: [achievement.id])
+        end
+
+        it "persists a pending computed certification (no human verdict)" do
+          post bulk_accept_lecture_student_performance_certifications_path(
+            lecture
+          )
+          cert = StudentPerformance::Certification.find_by(
+            user: undecided_user, lecture: lecture
+          )
+          expect(cert.status).to eq("pending")
+          expect(cert.source).to eq("computed")
+          expect(cert.certified_by).to be_nil
+          expect(cert.certified_at).to be_within(5.seconds).of(Time.current)
+          expect(cert.rule).to eq(rule)
+        end
+
+        it "mentions the inconclusive count in the flash" do
+          post bulk_accept_lecture_student_performance_certifications_path(
+            lecture
+          )
+          follow_redirect!
+          expect(response.body).to include(
+            I18n.t(
+              "student_performance.certifications.flash.bulk_inconclusive",
+              count: 1
+            )
+          )
+        end
+      end
     end
 
     context "as a student" do
@@ -978,6 +1023,68 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to redirect_to(
           lecture_student_performance_certifications_path(lecture)
         )
+      end
+
+      context "when re-evaluation now yields inconclusive" do
+        let(:achievement) do
+          FactoryBot.create(:achievement, lecture: lecture)
+        end
+
+        let!(:cert_a) do
+          FactoryBot.create(
+            :student_performance_certification, :passed,
+            lecture: lecture, user: user_a, rule: rule,
+            certified_at: 4.hours.ago
+          )
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: achievement)
+          record = StudentPerformance::Record.find_by(
+            lecture: lecture, user: user_a
+          )
+          # rubocop:disable Rails/SkipsModelValidations
+          record.update_columns(
+            achievements_ungraded_ids: [achievement.id],
+            computed_at: 1.hour.ago
+          )
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+
+        it "resets the certification to pending+computed" do
+          post bulk_reevaluate_lecture_student_performance_certifications_path(
+            lecture
+          )
+          cert_a.reload
+          expect(cert_a.status).to eq("pending")
+          expect(cert_a.source).to eq("computed")
+          expect(cert_a.certified_by).to be_nil
+          expect(cert_a.certified_at).to be_within(5.seconds).of(Time.current)
+        end
+
+        it "removes the cert from the stale set" do
+          post bulk_reevaluate_lecture_student_performance_certifications_path(
+            lecture
+          )
+          expect(StudentPerformance::Certification.stale).not_to include(
+            cert_a.reload
+          )
+        end
+
+        it "mentions the inconclusive count in the flash" do
+          post bulk_reevaluate_lecture_student_performance_certifications_path(
+            lecture
+          )
+          follow_redirect!
+          expect(response.body).to include(
+            I18n.t(
+              "student_performance.certifications.flash" \
+              ".reevaluated_inconclusive",
+              count: 1
+            )
+          )
+        end
       end
     end
 

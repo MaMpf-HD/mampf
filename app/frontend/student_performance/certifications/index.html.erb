@@ -5,12 +5,11 @@
     </p>
 
     <div class="d-flex gap-2">
-      <% if @rule && @uncertified_count > 0 %>
-        <% actionable = @proposed_passed + @proposed_failed %>
+      <% if @rule && @uncertified_count > 0 &&
+            (@proposed_passed + @proposed_failed) > 0 %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
-                    disabled: actionable.zero?,
-                    class: "btn btn-sm #{ actionable.zero? ? 'btn-outline-secondary' : 'btn-success' }" do %>
+                    class: "btn btn-sm btn-success" do %>
           <i class="bi bi-check-all me-1"></i>
           <%= t("student_performance.certifications.index.bulk_accept") %>
 
@@ -434,6 +433,14 @@
                         <i
                           class="bi bi-exclamation-triangle-fill text-warning ms-2 small"
                           title="<%= t('student_performance.certifications.status.stale') %>"
+                        ></i>
+                      <% end %>
+
+                      <% if cert.pending? && cert.source == "computed" &&
+                            proposal&.proposed_status == :inconclusive %>
+                        <i
+                          class="bi bi-question-circle-fill text-amber ms-2 small"
+                          title="<%= t('student_performance.certifications.status.input_missing') %>"
                         ></i>
                       <% end %>
                     </div>

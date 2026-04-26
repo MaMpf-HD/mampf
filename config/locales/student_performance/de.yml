@@ -191,6 +191,7 @@ de:
         pending: "Ausstehend"
         manual: "Einzelentscheidung"
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
+        input_missing: "Auto-Auswertung unklar — Eingaben fehlen (z. B. Tutorbewertung)"
       columns:
         proposed: "Vorschlag"
         rule_suggests: "Laut Regel:"
@@ -222,3 +223,9 @@ de:
         reevaluated:
           one: "%{count} Zulassung neu bewertet."
           other: "%{count} Zulassungen neu bewertet."
+        bulk_inconclusive:
+          one: "%{count} Zulassung bleibt ausstehend (Eingaben fehlen)."
+          other: "%{count} Zulassungen bleiben ausstehend (Eingaben fehlen)."
+        reevaluated_inconclusive:
+          one: "%{count} Zulassung auf ausstehend zurückgesetzt (Eingaben fehlen)."
+          other: "%{count} Zulassungen auf ausstehend zurückgesetzt (Eingaben fehlen)."
