@@ -77,24 +77,7 @@
                 saved_w = max_count.zero? ? 0 :
                           (saved_count.to_f / max_count * 100).round
                 proposed_w = max_count.zero? ? 0 :
-                             (proposed_count.to_f / max_count * 100).round
-                delta = proposed_count - saved_count
-                delta_class =
-                  if delta.positive?
-                    "text-success-emphasis"
-                  elsif delta.negative?
-                    "text-danger-emphasis"
-                  else
-                    "text-muted"
-                  end
-                delta_label =
-                  if delta.positive?
-                    "+#{delta}"
-                  elsif delta.negative?
-                    delta.to_s
-                  else
-                    "±0"
-                  end %>
+                             (proposed_count.to_f / max_count * 100).round %>
 
               <tr>
                 <td
@@ -144,10 +127,6 @@
                   <span class="badge <%= badge_class(grade) %>">
                     <%= grade %>
                   </span>
-
-                  <div class="small fw-semibold <%= delta_class %>">
-                    <%= delta_label %>
-                  </div>
                 </td>
 
                 <td
@@ -277,20 +256,28 @@
           </thead>
 
           <tbody>
-            <% bands.each do |band| %>
+            <% bands.each_with_index do |band, idx| %>
+              <% boundary = idx.positive? &&
+                            bands[idx - 1]["grade"].to_f <= 4.0 &&
+                            band["grade"].to_f > 4.0
+                 boundary_style =
+                   boundary ?
+                     "border-top: 2px dashed #f1aeb5 !important;" :
+                     "" %>
+
               <tr>
-                <td style="white-space: nowrap;">
+                <td style="white-space: nowrap; <%= boundary_style %>">
                   <span class="badge <%= badge_class(band['grade']) %>">
                     <%= band["grade"] %>
                   </span>
                 </td>
 
-                <td style="white-space: nowrap;">
+                <td style="white-space: nowrap; <%= boundary_style %>">
                   &ge;&nbsp;<%= band["min_points"] %>
                   <%= t("assessment.distribution.points") %>
                 </td>
 
-                <td>
+                <td style="<%= boundary_style %>">
                   <div
                     class="d-flex align-items-center gap-2"
                     style="width: 200px;"
@@ -312,7 +299,10 @@
                   </div>
                 </td>
 
-                <td class="text-end" style="white-space: nowrap;">
+                <td
+                  class="text-end"
+                  style="white-space: nowrap; <%= boundary_style %>"
+                >
                   <% if total_reviewed.positive? %>
                     <%= (count_for(band).to_f / total_reviewed * 100)
                           .round(1) %>

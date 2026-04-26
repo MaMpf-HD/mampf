@@ -189,8 +189,8 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     (saved_count_for(band).to_f / max_count * 100).round
   end
 
-  def bar_color(band)
-    band["grade"].to_f <= 4.0 ? "#198754" : "#dc3545"
+  def bar_color(_band)
+    "var(--bs-secondary-border-subtle)"
   end
 
   def failed?(band)

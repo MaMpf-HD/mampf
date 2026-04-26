@@ -342,6 +342,7 @@ de:
       std_dev: 'Standardabweichung'
       points: 'Pkt'
       percentile_nth: '%{n}. Perzentil'
+      markers_caption_proposed: 'Schwellenmarker (1.0, 4.0) beziehen sich auf das neue Schema.'
     statistics_analysis: 'Statistiken & Analyse'
     no_points_yet: 'Noch keine Punkte eingetragen.'
     point_grid:

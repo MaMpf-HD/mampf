@@ -345,6 +345,7 @@ en:
       std_dev: 'Standard deviation'
       points: 'pts'
       percentile_nth: '%{n}th percentile'
+      markers_caption_proposed: 'Threshold markers (1.0, 4.0) refer to the proposed scheme.'
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
