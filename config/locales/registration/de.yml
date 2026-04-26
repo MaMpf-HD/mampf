@@ -325,6 +325,8 @@ de:
         no_rule: "Keine aktive Regel konfiguriert"
       violations_table:
         override_pass: "Auf bestanden setzen"
+      student_performance:
+        unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
       cert_incomplete:
         title: "Klausurzulassungen unvollständig"
         desc:

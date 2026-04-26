@@ -326,6 +326,8 @@ en:
         no_rule: "No active rule configured"
       violations_table:
         override_pass: "Override to passed"
+      student_performance:
+        unfulfilled: "Some registered students do not have a passed certification. These will fail the exam eligibility policy on finalization."
       cert_incomplete:
         title: "Certifications Incomplete"
         desc:
