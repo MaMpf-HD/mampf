@@ -24,12 +24,14 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
   end
 
   describe "#badge_class" do
-    it "returns bg-success for grade 1.0" do
-      expect(component.badge_class("1.0")).to eq("bg-success")
+    it "returns the success-subtle palette for grade 1.0" do
+      expect(component.badge_class("1.0"))
+        .to eq("bg-success-subtle text-success-emphasis")
     end
 
-    it "returns bg-danger for grade 5.0" do
-      expect(component.badge_class("5.0")).to eq("bg-danger")
+    it "returns the danger-subtle palette for grade 5.0" do
+      expect(component.badge_class("5.0"))
+        .to eq("bg-danger-subtle text-danger-emphasis")
     end
 
     it "returns bg-secondary for unknown grade" do
@@ -129,15 +131,220 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
     end
   end
 
-  describe "#failed?" do
-    it "returns true for grade 5.0" do
-      band = { "grade" => "5.0", "min_points" => 0 }
-      expect(component.failed?(band)).to be(true)
+  describe "#fail_boundary?" do
+    it "is true at the index where 4.0 transitions to 5.0" do
+      idx = component.bands.index { |b| b["grade"] == "5.0" }
+      expect(component.fail_boundary?(idx)).to be(true)
     end
 
-    it "returns false for grade 4.0" do
-      band = { "grade" => "4.0", "min_points" => 24 }
-      expect(component.failed?(band)).to be(false)
+    it "is false for the first row" do
+      expect(component.fail_boundary?(0)).to be(false)
+    end
+
+    it "is false at intra-passing transitions (e.g. 1.0 -> 1.3)" do
+      idx = component.bands.index { |b| b["grade"] == "1.3" }
+      expect(component.fail_boundary?(idx)).to be(false)
+    end
+  end
+
+  describe "#total_reviewed" do
+    it "returns 0 when no participations" do
+      expect(component.total_reviewed).to eq(0)
+    end
+
+    it "counts only reviewed participations" do
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 50)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 10)
+      create(:assessment_participation, :pending, assessment: assessment)
+      create(:assessment_participation, :absent, assessment: assessment)
+      expect(component.total_reviewed).to eq(2)
+    end
+  end
+
+  describe "#bar_width" do
+    before do
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 55)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 55)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 25)
+    end
+
+    it "returns 100 for the band with the highest count" do
+      band_one = component.bands.find { |b| b["grade"] == "1.0" }
+      expect(component.bar_width(band_one)).to eq(100)
+    end
+
+    it "returns 50 for a band with half the maximum count" do
+      band_four = component.bands.find { |b| b["grade"] == "4.0" }
+      expect(component.bar_width(band_four)).to eq(50)
+    end
+
+    it "returns 0 for a band with no students" do
+      band_two = component.bands.find { |b| b["grade"] == "2.0" }
+      expect(component.bar_width(band_two)).to eq(0)
+    end
+
+    it "returns 0 when there are no reviewed students" do
+      assessment.assessment_participations.destroy_all
+      band_one = component.bands.find { |b| b["grade"] == "1.0" }
+      expect(component.bar_width(band_one)).to eq(0)
+    end
+  end
+
+  describe "comparison mode" do
+    let(:previous_scheme_config) do
+      {
+        "bands" => [
+          { "min_points" => 50, "grade" => "1.0" },
+          { "min_points" => 45, "grade" => "1.3" },
+          { "min_points" => 40, "grade" => "1.7" },
+          { "min_points" => 35, "grade" => "2.0" },
+          { "min_points" => 30, "grade" => "2.3" },
+          { "min_points" => 25, "grade" => "3.0" },
+          { "min_points" => 20, "grade" => "3.7" },
+          { "min_points" => 15, "grade" => "4.0" },
+          { "min_points" => 0,  "grade" => "5.0" }
+        ]
+      }
+    end
+    let!(:previous_applied) do
+      create(:assessment_grade_scheme, :applied,
+             assessment: assessment, active: false,
+             config: previous_scheme_config)
+    end
+    let(:draft_scheme) do
+      create(:assessment_grade_scheme, :draft,
+             assessment: assessment)
+    end
+    let(:draft_component) do
+      described_class.new(assessment: assessment, grade_scheme: draft_scheme)
+    end
+
+    before do
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 55)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 22)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, points_total: 18)
+    end
+
+    describe "#previous_applied_scheme" do
+      it "returns the most recently applied prior scheme" do
+        expect(draft_component.previous_applied_scheme)
+          .to eq(previous_applied)
+      end
+
+      it "is nil for a freshly applied scheme with no prior" do
+        previous_applied.destroy
+        applied = create(:assessment_grade_scheme, :applied,
+                         assessment: assessment, active: true)
+        comp = described_class.new(assessment: assessment,
+                                   grade_scheme: applied)
+        expect(comp.previous_applied_scheme).to be_nil
+      end
+    end
+
+    describe "#comparing?" do
+      it "is true for a draft when a previous applied scheme exists" do
+        expect(draft_component.comparing?).to be(true)
+      end
+
+      it "is false for the currently applied scheme even with prior" do
+        applied = create(:assessment_grade_scheme, :applied,
+                         assessment: assessment, active: true)
+        comp = described_class.new(assessment: assessment,
+                                   grade_scheme: applied)
+        expect(comp.comparing?).to be(false)
+      end
+
+      it "is false for a draft when no previous applied scheme exists" do
+        previous_applied.destroy
+        expect(draft_component.comparing?).to be(false)
+      end
+    end
+
+    describe "#applied_bands" do
+      it "returns the previous applied scheme's bands sorted ascending" do
+        grades = draft_component.applied_bands.pluck("grade")
+        expect(grades.first).to eq("1.0")
+        expect(grades.last).to eq("5.0")
+      end
+    end
+
+    describe "#applied_counts" do
+      it "applies the previous bands to current points" do
+        counts = draft_component.applied_counts
+        expect(counts["1.0"]).to eq(1)
+        expect(counts["3.7"]).to eq(1)
+        expect(counts["4.0"]).to eq(1)
+        expect(counts["5.0"]).to eq(0)
+      end
+    end
+
+    describe "#applied_pass_count and #applied_fail_count" do
+      it "splits the applied bands at the 4.0 boundary" do
+        expect(draft_component.applied_pass_count).to eq(3)
+        expect(draft_component.applied_fail_count).to eq(0)
+      end
+    end
+
+    describe "#applied_pass_rate and #applied_fail_rate" do
+      it "returns the rounded percentage of passing students" do
+        expect(draft_component.applied_pass_rate).to eq(100.0)
+        expect(draft_component.applied_fail_rate).to eq(0.0)
+      end
+
+      it "returns 0.0 when there are no reviewed students" do
+        assessment.assessment_participations.destroy_all
+        expect(draft_component.applied_pass_rate).to eq(0.0)
+        expect(draft_component.applied_fail_rate).to eq(0.0)
+      end
+    end
+
+    describe "#grade_change_summary" do
+      it "counts students with worse, better, and unchanged grades" do
+        summary = draft_component.grade_change_summary
+        expect(summary[:better]).to eq(0)
+        expect(summary[:worse]).to eq(2)
+        expect(summary[:unchanged]).to eq(1)
+      end
+
+      it "tracks newly_failing transitions across the 4.0 boundary" do
+        summary = draft_component.grade_change_summary
+        expect(summary[:newly_failing]).to eq(2)
+        expect(summary[:newly_passing]).to eq(0)
+      end
+
+      it "returns zeros when there are no reviewed students" do
+        assessment.assessment_participations.destroy_all
+        summary = draft_component.grade_change_summary
+        expect(summary).to eq(better: 0, worse: 0, unchanged: 0,
+                              newly_failing: 0, newly_passing: 0)
+      end
+    end
+
+    describe "rendering" do
+      it "renders the side-by-side comparison alert" do
+        render_inline(draft_component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.summary.changes_intro")
+        )
+      end
+
+      it "renders mirrored saved/proposed bar headings" do
+        render_inline(draft_component)
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.summary.saved_bar")
+        )
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.summary.proposed_bar")
+        )
+      end
     end
   end
 

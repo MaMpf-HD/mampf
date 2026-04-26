@@ -48,16 +48,8 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     student_counts[band["grade"]] || 0
   end
 
-  def saved_counts
-    @saved_counts ||= compute_saved_counts(saved_bands)
-  end
-
-  def saved_count_for(band)
-    saved_counts[band["grade"]] || 0
-  end
-
-  def saved_counts_from_points
-    @saved_counts_from_points ||= apply_bands(saved_bands, reviewed_points)
+  def applied_counts
+    @applied_counts ||= apply_bands(applied_bands, reviewed_points)
   end
 
   def grade_change_summary
@@ -67,7 +59,7 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
   def comparing?
     return false if grade_scheme.applied?
 
-    saved_counts.values.any?(&:positive?)
+    previous_applied_scheme.present?
   end
 
   def previous_applied_scheme
@@ -81,60 +73,30 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
                                .first
   end
 
-  def saved_bands
-    @saved_bands ||= begin
+  def applied_bands
+    @applied_bands ||= begin
       raw = previous_applied_scheme&.config&.dig("bands")
       raw = raw.presence || grade_scheme.config&.dig("bands") || []
       raw.sort_by { |b| b["grade"].to_f }
     end
   end
 
-  def saved_total
-    saved_counts.values.sum
-  end
-
-  def saved_pass_count
-    saved_bands
+  def applied_pass_count
+    applied_bands
       .select { |b| b["grade"].to_f <= 4.0 }
-      .sum { |b| saved_count_for(b) }
+      .sum { |b| applied_counts[b["grade"]] || 0 }
   end
 
-  def saved_fail_count
-    saved_total - saved_pass_count
+  def applied_fail_count
+    total_reviewed - applied_pass_count
   end
 
-  def saved_pass_rate
-    return 0.0 if saved_total.zero?
-
-    (saved_pass_count.to_f / saved_total * 100).round(1)
+  def applied_pass_rate
+    pct_of(applied_pass_count, total_reviewed)
   end
 
-  def saved_fail_rate
-    return 0.0 if saved_total.zero?
-
-    (saved_fail_count.to_f / saved_total * 100).round(1)
-  end
-
-  def saved_pass_count_pts
-    saved_bands
-      .select { |b| b["grade"].to_f <= 4.0 }
-      .sum { |b| saved_counts_from_points[b["grade"]] || 0 }
-  end
-
-  def saved_fail_count_pts
-    total_reviewed - saved_pass_count_pts
-  end
-
-  def saved_pass_rate_pts
-    return 0.0 if total_reviewed.zero?
-
-    (saved_pass_count_pts.to_f / total_reviewed * 100).round(1)
-  end
-
-  def saved_fail_rate_pts
-    return 0.0 if total_reviewed.zero?
-
-    (saved_fail_count_pts.to_f / total_reviewed * 100).round(1)
+  def applied_fail_rate
+    pct_of(applied_fail_count, total_reviewed)
   end
 
   def total_reviewed
@@ -152,15 +114,11 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
   end
 
   def pass_rate
-    return 0.0 if total_reviewed.zero?
-
-    (pass_count.to_f / total_reviewed * 100).round(1)
+    pct_of(pass_count, total_reviewed)
   end
 
   def fail_rate
-    return 0.0 if total_reviewed.zero?
-
-    (fail_count.to_f / total_reviewed * 100).round(1)
+    pct_of(fail_count, total_reviewed)
   end
 
   def absent_count
@@ -183,18 +141,10 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     (count_for(band).to_f / max_count * 100).round
   end
 
-  def saved_bar_width(band)
-    return 0 if max_count.zero?
-
-    (saved_count_for(band).to_f / max_count * 100).round
-  end
-
-  def bar_color(_band)
-    "var(--bs-secondary-border-subtle)"
-  end
-
-  def failed?(band)
-    band["grade"].to_f > 4.0
+  def fail_boundary?(idx)
+    idx.positive? &&
+      bands[idx - 1]["grade"].to_f <= 4.0 &&
+      bands[idx]["grade"].to_f > 4.0
   end
 
   private
@@ -228,13 +178,13 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     def compute_grade_change_summary
       return blank_change_summary if pct_scheme? || reviewed_points.empty?
 
-      saved_desc = saved_bands.sort_by { |b| -b["min_points"] }
-      proposed_desc = bands.sort_by { |b| -b["min_points"] }
+      old_desc = applied_bands.sort_by { |b| -b["min_points"] }
+      new_desc = bands.sort_by { |b| -b["min_points"] }
       result = blank_change_summary
 
       reviewed_points.each do |pts|
-        old_band = saved_desc.find { |b| pts >= b["min_points"] }
-        new_band = proposed_desc.find { |b| pts >= b["min_points"] }
+        old_band = old_desc.find { |b| pts >= b["min_points"] }
+        new_band = new_desc.find { |b| pts >= b["min_points"] }
         next unless old_band && new_band
 
         old_grade = old_band["grade"].to_f
@@ -262,27 +212,17 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
         newly_failing: 0, newly_passing: 0 }
     end
 
-    def compute_saved_counts(rows)
-      result = rows.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
+    def pct_of(numerator, denominator)
+      return 0.0 if denominator.zero?
 
-      assessment.assessment_participations
-                .where.not(grade_numeric: nil)
-                .pluck(:grade_numeric)
-                .each do |g|
-        key = format("%.1f", g)
-        result[key] += 1 if result.key?(key)
-      end
-
-      result
+      (numerator.to_f / denominator * 100).round(1)
     end
 
     def max_count
       @max_count ||= begin
         proposed = bands.map { |b| count_for(b) }
-        saved = saved_bands.map do |b|
-          [saved_count_for(b), saved_counts_from_points[b["grade"]] || 0].max
-        end
-        (proposed + saved).max || 0
+        applied = applied_bands.map { |b| applied_counts[b["grade"]] || 0 }
+        (proposed + applied).max || 0
       end
     end
 end

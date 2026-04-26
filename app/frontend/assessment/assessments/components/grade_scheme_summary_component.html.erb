@@ -3,7 +3,7 @@
     <%= t("assessment.grade_scheme.unsupported_pct_format") %>
   </div>
 <% else %>
-  <div data-cy="grade-scheme-summary">
+  <div class="grade-scheme-summary" data-cy="grade-scheme-summary">
     <h6 class="mb-3">
       <i class="bi bi-table me-1"></i>
       <%= t("assessment.grade_scheme.summary.title") %>
@@ -11,9 +11,9 @@
 
     <% if comparing? %>
       <% all_grades = (bands.map { |b| b["grade"] } +
-                      saved_bands.map { |b| b["grade"] })
+                      applied_bands.map { |b| b["grade"] })
                      .uniq.sort_by(&:to_f)
-        saved_lookup = saved_bands.index_by { |b| b["grade"] }
+        applied_lookup = applied_bands.index_by { |b| b["grade"] }
         proposed_lookup = bands.index_by { |b| b["grade"] }
         change = grade_change_summary %>
       <div class="alert alert-info py-2 px-3 mb-2 small lh-sm">
@@ -70,12 +70,12 @@
 
           <tbody>
             <% all_grades.each do |grade| %>
-              <% saved_band = saved_lookup[grade]
+              <% applied_band = applied_lookup[grade]
                 proposed_band = proposed_lookup[grade]
-                saved_count = saved_counts_from_points[grade] || 0
+                applied_count = applied_counts[grade] || 0
                 proposed_count = student_counts[grade] || 0
-                saved_w = max_count.zero? ? 0 :
-                          (saved_count.to_f / max_count * 100).round
+                applied_w = max_count.zero? ? 0 :
+                            (applied_count.to_f / max_count * 100).round
                 proposed_w = max_count.zero? ? 0 :
                              (proposed_count.to_f / max_count * 100).round %>
 
@@ -84,29 +84,18 @@
                   class="text-end small text-muted"
                   style="white-space: nowrap;"
                 >
-                  <% if total_reviewed.positive? %>
-                    <%= (saved_count.to_f / total_reviewed * 100).round(1) %>
-                    %
-                  <% else %>
-                    0.0%
-                  <% end %>
+                  <%= pct_of(applied_count, total_reviewed) %>%
                 </td>
 
                 <td class="text-end" style="white-space: nowrap;">
-                  <%= saved_count %>
+                  <%= applied_count %>
                 </td>
 
                 <td>
-                  <div
-                    class="d-flex justify-content-end"
-                    style="height: 12px; background: #e9ecef;
-                           border-radius: 3px; overflow: hidden;
-                           min-width: 80px;"
-                  >
+                  <div class="d-flex justify-content-end gs-bar-track">
                     <div
-                      style="width: <%= saved_w %>%;
-                             height: 100%;
-                             background: #adb5bd;"
+                      class="gs-bar-fill gs-bar-fill--applied"
+                      style="width: <%= applied_w %>%;"
                     ></div>
                   </div>
                 </td>
@@ -115,9 +104,9 @@
                   class="text-end small text-muted"
                   style="white-space: nowrap;"
                 >
-                  <% if saved_band %>
+                  <% if applied_band %>
                     &ge;&nbsp;
-                    <%= saved_band["min_points"] %>
+                    <%= applied_band["min_points"] %>
                   <% else %>
                     &mdash;
                   <% end %>
@@ -142,16 +131,10 @@
                 </td>
 
                 <td>
-                  <div
-                    class="d-flex justify-content-start"
-                    style="height: 12px; background: #e9ecef;
-                           border-radius: 3px; overflow: hidden;
-                           min-width: 80px;"
-                  >
+                  <div class="d-flex justify-content-start gs-bar-track">
                     <div
-                      style="width: <%= proposed_w %>%;
-                             height: 100%;
-                             background: #ffc107;"
+                      class="gs-bar-fill gs-bar-fill--proposed"
+                      style="width: <%= proposed_w %>%;"
                     ></div>
                   </div>
                 </td>
@@ -164,13 +147,7 @@
                   class="text-start small text-muted"
                   style="white-space: nowrap;"
                 >
-                  <% if total_reviewed.positive? %>
-                    <%= (proposed_count.to_f /
-                         total_reviewed * 100).round(1) %>
-                    %
-                  <% else %>
-                    0.0%
-                  <% end %>
+                  <%= pct_of(proposed_count, total_reviewed) %>%
                 </td>
               </tr>
             <% end %>
@@ -180,7 +157,7 @@
             <tfoot class="table-light">
               <tr>
                 <th colspan="4" class="text-end">
-                  <%= saved_pass_rate_pts %>% (<%= saved_pass_count_pts %>/
+                  <%= applied_pass_rate %>% (<%= applied_pass_count %>/
                   <%= total_reviewed %>)
                 </th>
 
@@ -195,7 +172,7 @@
 
               <tr>
                 <th colspan="4" class="text-end">
-                  <%= saved_fail_rate_pts %>% (<%= saved_fail_count_pts %>/
+                  <%= applied_fail_rate %>% (<%= applied_fail_count %>/
                   <%= total_reviewed %>)
                 </th>
 
@@ -257,39 +234,24 @@
 
           <tbody>
             <% bands.each_with_index do |band, idx| %>
-              <% boundary = idx.positive? &&
-                            bands[idx - 1]["grade"].to_f <= 4.0 &&
-                            band["grade"].to_f > 4.0
-                 boundary_style =
-                   boundary ?
-                     "border-top: 2px dashed #f1aeb5 !important;" :
-                     "" %>
-
-              <tr>
-                <td style="white-space: nowrap; <%= boundary_style %>">
+              <tr class="<%= 'gs-fail-boundary' if fail_boundary?(idx) %>">
+                <td style="white-space: nowrap;">
                   <span class="badge <%= badge_class(band['grade']) %>">
                     <%= band["grade"] %>
                   </span>
                 </td>
 
-                <td style="white-space: nowrap; <%= boundary_style %>">
+                <td style="white-space: nowrap;">
                   &ge;&nbsp;<%= band["min_points"] %>
                   <%= t("assessment.distribution.points") %>
                 </td>
 
-                <td style="<%= boundary_style %>">
-                  <div
-                    class="d-flex align-items-center gap-2"
-                    style="width: 200px;"
-                  >
-                    <div
-                      style="flex: 1; height: 14px; background: #e9ecef;
-                             border-radius: 3px; overflow: hidden;"
-                    >
+                <td>
+                  <div class="d-flex align-items-center gap-2 gs-bar-cell">
+                    <div class="gs-bar-track">
                       <div
-                        style="width: <%= bar_width(band) %>%;
-                               height: 100%;
-                               background: <%= bar_color(band) %>;"
+                        class="gs-bar-fill"
+                        style="width: <%= bar_width(band) %>%;"
                       ></div>
                     </div>
 
@@ -299,17 +261,8 @@
                   </div>
                 </td>
 
-                <td
-                  class="text-end"
-                  style="white-space: nowrap; <%= boundary_style %>"
-                >
-                  <% if total_reviewed.positive? %>
-                    <%= (count_for(band).to_f / total_reviewed * 100)
-                          .round(1) %>
-                    %
-                  <% else %>
-                    0.0%
-                  <% end %>
+                <td class="text-end" style="white-space: nowrap;">
+                  <%= pct_of(count_for(band), total_reviewed) %>%
                 </td>
               </tr>
             <% end %>

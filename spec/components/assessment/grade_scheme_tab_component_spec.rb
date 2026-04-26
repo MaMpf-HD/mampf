@@ -142,6 +142,113 @@ RSpec.describe(GradeSchemeTabComponent, type: :component) do
     end
   end
 
+  describe "status counts" do
+    before do
+      create_list(:assessment_participation, 2, :reviewed,
+                  assessment: assessment)
+      create_list(:assessment_participation, 3, :pending,
+                  assessment: assessment)
+      create(:assessment_participation, :absent, assessment: assessment)
+      create(:assessment_participation, :exempt, assessment: assessment)
+    end
+
+    it "exposes a count per status backed by a single grouped query" do
+      expect(component.reviewed_count).to eq(2)
+      expect(component.pending_count).to eq(3)
+      expect(component.absent_count).to eq(1)
+      expect(component.exempt_count).to eq(1)
+      expect(component.total_count).to eq(7)
+    end
+
+    it "returns 0 for statuses with no participations" do
+      assessment.assessment_participations
+                .where(status: :reviewed).destroy_all
+      fresh = described_class.new(assessment: assessment)
+      expect(fresh.reviewed_count).to eq(0)
+    end
+
+    it "uses a single grouped query for status_counts" do
+      fresh = described_class.new(assessment: assessment)
+      queries = []
+      callback = ->(*, payload) { queries << payload[:sql] }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        fresh.reviewed_count
+        fresh.pending_count
+        fresh.absent_count
+        fresh.exempt_count
+        fresh.total_count
+      end
+      group_queries = queries.grep(/group by .*status/i)
+      expect(group_queries.size).to eq(1)
+    end
+  end
+
+  describe "#graded_count" do
+    it "counts participations with a non-nil grade_numeric" do
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, grade_numeric: 1.0)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, grade_numeric: 5.0)
+      create(:assessment_participation, :reviewed,
+             assessment: assessment, grade_numeric: nil)
+      expect(component.graded_count).to eq(2)
+    end
+
+    it "memoizes the count" do
+      queries = []
+      callback = ->(*, payload) { queries << payload[:sql] }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        component.graded_count
+        component.graded_count
+      end
+      expect(queries.grep(/grade_numeric/i).size).to eq(1)
+    end
+  end
+
+  describe "#ungraded_reviewed_count" do
+    context "without an applied scheme" do
+      it "returns 0" do
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, grade_numeric: nil)
+        expect(component.ungraded_reviewed_count).to eq(0)
+      end
+    end
+
+    context "with an applied scheme" do
+      before do
+        create(:assessment_grade_scheme, :applied, assessment: assessment)
+      end
+
+      it "counts reviewed participations missing a grade" do
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, grade_numeric: nil)
+        create(:assessment_participation, :reviewed,
+               assessment: assessment, grade_numeric: 1.0)
+        expect(component.ungraded_reviewed_count).to eq(1)
+      end
+    end
+  end
+
+  describe "#draft_change_count" do
+    it "is 0 when no scheme exists" do
+      expect(component.draft_change_count).to eq(0)
+    end
+
+    it "is 0 when the scheme is already applied" do
+      create(:assessment_grade_scheme, :applied, assessment: assessment)
+      expect(component.draft_change_count).to eq(0)
+    end
+
+    it "delegates to GradeSchemeApplier when a draft exists" do
+      create(:assessment_grade_scheme, assessment: assessment)
+      applier = instance_double(Assessment::GradeSchemeApplier,
+                                change_count: 7)
+      allow(Assessment::GradeSchemeApplier)
+        .to receive(:new).and_return(applier)
+      expect(component.draft_change_count).to eq(7)
+    end
+  end
+
   describe "rendering" do
     context "pending banner" do
       before do

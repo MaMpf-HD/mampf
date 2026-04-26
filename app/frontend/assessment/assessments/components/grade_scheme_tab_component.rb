@@ -22,7 +22,7 @@ class GradeSchemeTabComponent < ViewComponent::Base
   end
 
   def pending_participations?
-    assessment.assessment_participations.exists?(status: :pending)
+    pending_count.positive?
   end
 
   def scheme_exists?
@@ -56,7 +56,7 @@ class GradeSchemeTabComponent < ViewComponent::Base
   end
 
   def reviewed_count
-    assessment.assessment_participations.where(status: :reviewed).count
+    status_counts[:reviewed]
   end
 
   def ungraded_reviewed_count
@@ -68,9 +68,9 @@ class GradeSchemeTabComponent < ViewComponent::Base
   end
 
   def graded_count
-    assessment.assessment_participations
-              .where.not(grade_numeric: nil)
-              .count
+    @graded_count ||= assessment.assessment_participations
+                                .where.not(grade_numeric: nil)
+                                .count
   end
 
   def draft_change_count
@@ -80,18 +80,27 @@ class GradeSchemeTabComponent < ViewComponent::Base
   end
 
   def pending_count
-    assessment.assessment_participations.where(status: :pending).count
+    status_counts[:pending]
   end
 
   def absent_count
-    assessment.assessment_participations.where(status: :absent).count
+    status_counts[:absent]
   end
 
   def exempt_count
-    assessment.assessment_participations.where(status: :exempt).count
+    status_counts[:exempt]
   end
 
   def total_count
-    assessment.assessment_participations.count
+    status_counts.values.sum
   end
+
+  private
+
+    def status_counts
+      @status_counts ||= begin
+        raw = assessment.assessment_participations.group(:status).count
+        Hash.new(0).merge(raw.transform_keys(&:to_sym))
+      end
+    end
 end
