@@ -429,6 +429,88 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.user_registrations.confirmed.count).to eq(1)
     end
 
+    it "writes finalization events and stores the latest run correlation id" do
+      preference_campaign = create(:registration_campaign,
+                                   :processing,
+                                   :preference_based)
+      item = preference_campaign.registration_items.first
+      pending_registration = create(:registration_user_registration,
+                                    :preference_based,
+                                    registration_campaign: preference_campaign,
+                                    registration_item: item,
+                                    status: :pending,
+                                    preference_rank: 1)
+      confirmed_registration = create(:registration_user_registration,
+                                      :preference_based,
+                                      registration_campaign: preference_campaign,
+                                      registration_item: item,
+                                      status: :confirmed,
+                                      preference_rank: nil)
+
+      expect do
+        preference_campaign.finalize!
+      end.to change(Registration::StatusEvent, :count).by(2)
+
+      preference_campaign.reload
+      expect(preference_campaign.last_finalization_correlation_id).to be_present
+
+      events = preference_campaign.latest_finalization_status_events.order(:action)
+      expect(events.map(&:registration_id))
+        .to contain_exactly(pending_registration.id, confirmed_registration.id)
+      expect(events.map(&:correlation_id).uniq)
+        .to eq([preference_campaign.last_finalization_correlation_id])
+
+      confirm_event = events.find { |event| event.action == "system_confirm" }
+      reject_event = events.find { |event| event.action == "system_reject" }
+
+      expect(confirm_event).to be_present
+      expect(confirm_event.snapshot).to eq({ "label" => "Confirmed by finalization" })
+
+      expect(reject_event).to be_present
+      expect(reject_event.reason_type).to eq("capacity")
+      expect(reject_event.reason_code).to eq("solver_unassigned")
+      expect(reject_event.snapshot).to eq({ "label" => "Not placed by solver" })
+    end
+
+    it "exposes latest finalization counts from the latest run" do
+          preference_campaign = create(:registration_campaign,
+              :processing,
+              :preference_based)
+          item = preference_campaign.registration_items.first
+      create(:registration_user_registration,
+             :preference_based,
+            registration_campaign: preference_campaign,
+             registration_item: item,
+             status: :pending,
+             preference_rank: 1)
+      create(:registration_user_registration,
+             :preference_based,
+            registration_campaign: preference_campaign,
+             registration_item: item,
+             status: :confirmed,
+             preference_rank: nil)
+
+          preference_campaign.finalize!
+
+          expect(preference_campaign.reload.latest_finalization_confirmed_count).to eq(1)
+          expect(preference_campaign.latest_finalization_rejected_count).to eq(1)
+    end
+
+    it "writes nil reason fields for FCFS pending rejections" do
+      campaign.update!(allocation_mode: :first_come_first_served)
+      pending_registration = create(:registration_user_registration,
+                                    registration_campaign: campaign,
+                                    status: :pending)
+
+      campaign.finalize!
+
+      event = campaign.latest_finalization_status_events.find_by!(registration_id: pending_registration.id)
+      expect(event.action).to eq("system_reject")
+      expect(event.reason_type).to be_nil
+      expect(event.reason_code).to be_nil
+      expect(event.snapshot).to eq({ "label" => "Rejected by finalization" })
+    end
+
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield

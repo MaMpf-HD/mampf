@@ -98,6 +98,14 @@ module Registration
       user_registrations.confirmed.distinct.count(:user_id)
     end
 
+    def latest_finalization_confirmed_count
+      return confirmed_count if last_finalization_correlation_id.blank?
+
+      latest_finalization_status_events.where(action: "system_confirm")
+                                     .distinct
+                                     .count(:registration_id)
+    end
+
     def pending_count
       # Users with at least one pending registration, but no confirmed registration.
       # This covers:
@@ -121,6 +129,14 @@ module Registration
                         .count(:user_id)
     end
 
+    def latest_finalization_rejected_count
+      return rejected_count if last_finalization_correlation_id.blank?
+
+      latest_finalization_status_events.where(action: "system_reject")
+                                     .distinct
+                                     .count(:registration_id)
+    end
+
     def user_registrations_grouped_by_user
       user_registrations.includes(:user, :registration_item)
                         .joins(:user)
@@ -132,13 +148,39 @@ module Registration
       with_lock do
         return if completed?
 
+        correlation_id = SecureRandom.uuid
+        confirmed_registrations = user_registrations.confirmed.includes(:user).to_a
+        pending_registrations = user_registrations.pending.includes(:user).to_a
+
         Registration::AllocationMaterializer.new(self).materialize!
 
+        Registration::StatusEventWriter.call(
+          registrations: confirmed_registrations,
+          action: "system_confirm",
+          correlation_id: correlation_id,
+          snapshot: lambda do |_registration|
+            { "label" => "Confirmed by finalization" }
+          end
+        )
+
+        Registration::StatusEventWriter.call(
+          registrations: pending_registrations,
+          action: "system_reject",
+          reason_type: rejection_reason_type,
+          reason_code: rejection_reason_code,
+          correlation_id: correlation_id,
+          snapshot: lambda do |_registration|
+            rejection_snapshot
+          end
+        )
+
         # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.pending.update_all(status: :rejected)
+        user_registrations.where(id: pending_registrations.map(&:id))
+                          .update_all(status: :rejected)
         # rubocop:enable Rails/SkipsModelValidations
 
-        update!(status: :completed)
+        update!(status: :completed,
+                last_finalization_correlation_id: correlation_id)
       end
     end
 
@@ -248,6 +290,24 @@ module Registration
         @registerables_to_release = registration_items
                                     .filter_map(&:registerable)
                                     .select { |r| r.respond_to?(:skip_campaigns) }
+      end
+
+      def rejection_reason_type
+        return "capacity" if preference_based?
+
+        nil
+      end
+
+      def rejection_reason_code
+        return "solver_unassigned" if preference_based?
+
+        nil
+      end
+
+      def rejection_snapshot
+        return { "label" => "Not placed by solver" } if preference_based?
+
+        { "label" => "Rejected by finalization" }
       end
 
       def release_registerables_from_campaign

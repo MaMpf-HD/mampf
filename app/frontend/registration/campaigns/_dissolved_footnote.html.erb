@@ -20,10 +20,20 @@
       <span class="dissolved-campaign-pill-sep">&middot;</span>
 
       <span>
-        <%= campaign.confirmed_count %> /
+        <%= campaign.latest_finalization_confirmed_count %> /
         <%= campaign.total_registrations_count %>
         <%= t("registration.campaign.dissolved_enrolled") %>
       </span>
+
+      <% rejected = campaign.latest_finalization_rejected_count %>
+
+      <% if rejected.positive? %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <span>
+          <%= rejected %>
+          <%= t("registration.user_registration.status.rejected") %>
+        </span>
+      <% end %>
 
       <% summary = policy_kinds_summary(campaign) %>
 
