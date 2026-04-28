@@ -154,13 +154,13 @@ module Registration
         auto_reject_outcomes = auto_reject_outcomes_by_registration
         auto_reject_registration_ids = auto_reject_outcomes.keys
         confirmed_registrations = user_registrations.confirmed
-                                              .where.not(id: auto_reject_registration_ids)
-                                              .includes(:user)
-                                              .to_a
+                                                    .where.not(id: auto_reject_registration_ids)
+                                                    .includes(:user)
+                                                    .to_a
         auto_rejected_registrations = user_registrations.confirmed
-                                                  .where(id: auto_reject_registration_ids)
-                                                  .includes(:user)
-                                                  .to_a
+                                                        .where(id: auto_reject_registration_ids)
+                                                        .includes(:user)
+                                                        .to_a
         pending_registrations = user_registrations.pending.includes(:user).to_a
 
         reject_registrations!(auto_rejected_registrations)
@@ -223,7 +223,9 @@ module Registration
 
         # rubocop:disable Rails/SkipsModelValidations
         user_registrations.update_all(
-          status: :pending, updated_at: Time.current
+          status: :pending,
+          materialized_at: nil,
+          updated_at: Time.current
         )
 
         registration_items.update_all(

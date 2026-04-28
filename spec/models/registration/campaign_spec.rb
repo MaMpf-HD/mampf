@@ -661,6 +661,50 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "latest finalization readers" do
+    it "uses last_finalization_correlation_id instead of older event batches" do
+      campaign = create(:registration_campaign,
+                        :completed,
+                        :preference_based,
+                        last_finalization_correlation_id: SecureRandom.uuid)
+      old_correlation_id = SecureRandom.uuid
+      latest_correlation_id = campaign.last_finalization_correlation_id
+      first_registration = create(:registration_user_registration,
+                                  :preference_based,
+                                  registration_campaign: campaign,
+                                  registration_item: campaign.registration_items.first,
+                                  status: :rejected,
+                                  preference_rank: 1)
+      second_registration = create(:registration_user_registration,
+                                   :preference_based,
+                                   registration_campaign: campaign,
+                                   registration_item: campaign.registration_items.second,
+                                   status: :confirmed,
+                                   preference_rank: nil)
+
+      create(:registration_status_event,
+             :system_confirm,
+             registration: first_registration,
+             registration_campaign: campaign,
+             correlation_id: old_correlation_id)
+      create(:registration_status_event,
+             :system_reject,
+             registration: second_registration,
+             registration_campaign: campaign,
+             correlation_id: old_correlation_id)
+      create(:registration_status_event,
+             :system_confirm,
+             registration: second_registration,
+             registration_campaign: campaign,
+             correlation_id: latest_correlation_id)
+
+      expect(campaign.latest_finalization_status_events.pluck(:correlation_id).uniq)
+        .to eq([latest_correlation_id])
+      expect(campaign.latest_finalization_confirmed_count).to eq(1)
+      expect(campaign.latest_finalization_rejected_count).to eq(0)
+    end
+  end
+
   describe "#reset_allocation_results!" do
     let(:campaign) do
       create(:registration_campaign, :with_items, :preference_based,
@@ -737,6 +781,20 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign.reset_allocation_results!
 
       expect(campaign.reload.last_allocation_calculated_at).to be_nil
+    end
+
+    it "clears materialized_at on remaining registrations" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item1,
+                            user: user,
+                            status: :confirmed,
+                            preference_rank: 1)
+      registration.update_columns(materialized_at: 1.hour.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      campaign.reset_allocation_results!
+
+      expect(registration.reload.materialized_at).to be_nil
     end
   end
 

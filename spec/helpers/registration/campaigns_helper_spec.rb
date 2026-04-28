@@ -134,6 +134,37 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.dissolved_rejection_label(campaign))
         .to eq(I18n.t("registration.campaign.dissolved_rejected"))
     end
+
+    it "uses the latest finalization batch instead of older rejection history" do
+      campaign = create(:registration_campaign,
+                        :completed,
+                        :preference_based,
+                        last_finalization_correlation_id: SecureRandom.uuid)
+      old_correlation_id = SecureRandom.uuid
+      registration = create(:registration_user_registration,
+                            :preference_based,
+                            registration_campaign: campaign,
+                            registration_item: campaign.registration_items.first,
+                            status: :rejected,
+                            preference_rank: 1)
+
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             correlation_id: old_correlation_id,
+             reason_type: nil,
+             reason_code: nil,
+             snapshot: { "label" => "Rejected by finalization" })
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             correlation_id: campaign.last_finalization_correlation_id)
+
+      expect(helper.dissolved_rejection_label(campaign))
+        .to eq(I18n.t("registration.campaign.dissolved_not_placed"))
+    end
   end
 
   describe "#sorted_preference_counts" do
