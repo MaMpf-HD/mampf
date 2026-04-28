@@ -580,6 +580,65 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(reject_event.snapshot).to eq({ "label" => "Rejected by final policy" })
     end
 
+    it "rejects auto-rejected confirmed registrations for FCFS campaigns" do
+      fcfs_campaign = create(:registration_campaign,
+                             :first_come_first_served,
+                             :with_items,
+                             status: :draft)
+      item = fcfs_campaign.registration_items.first
+      auto_reject_user = create(:confirmed_user, email: "auto@uni.edu")
+      confirmed_user = create(:confirmed_user, email: "keep@uni.edu")
+
+      create(:registration_policy, :institutional_email,
+             registration_campaign: fcfs_campaign,
+             phase: :finalization,
+             config: { "allowed_domains" => "uni.edu" })
+
+      fcfs_campaign.update!(status: :closed,
+                            registration_deadline: 1.day.ago)
+
+      auto_rejected_registration = create(:registration_user_registration,
+                                          :confirmed,
+                                          registration_campaign: fcfs_campaign,
+                                          registration_item: item,
+                                          user: auto_reject_user)
+      confirmed_registration = create(:registration_user_registration,
+                                      :confirmed,
+                                      registration_campaign: fcfs_campaign,
+                                      registration_item: item,
+                                      user: confirmed_user)
+
+      allow_any_instance_of(Registration::Policy).to receive(:evaluate) do |_policy, user|
+        if user == auto_reject_user
+          {
+            pass: false,
+            classification: :auto_reject,
+            reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+            reason_code: :institutional_email_mismatch,
+            snapshot: { label: "Rejected by final policy" }
+          }
+        else
+          { pass: true, code: :ok }
+        end
+      end
+
+      fcfs_campaign.finalize!
+
+      expect(auto_rejected_registration.reload).to be_rejected
+      expect(auto_rejected_registration.materialized_at).to be_nil
+      expect(confirmed_registration.reload).to be_confirmed
+      expect(confirmed_registration.materialized_at).to be_present
+
+      reject_event = fcfs_campaign.latest_finalization_status_events.find_by!(
+        registration_id: auto_rejected_registration.id,
+        action: Registration::StatusEvent::ACTION_SYSTEM_REJECT
+      )
+      expect(reject_event.reason_type)
+        .to eq(Registration::StatusEvent::REASON_TYPE_POLICY)
+      expect(reject_event.reason_code).to eq("institutional_email_mismatch")
+      expect(reject_event.snapshot).to eq({ "label" => "Rejected by final policy" })
+    end
+
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield
