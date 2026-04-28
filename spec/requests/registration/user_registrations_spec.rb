@@ -19,10 +19,32 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       destroy_for_user_registration_campaign_registrations_path(campaign, user_id: student.id)
     end
 
-    it "destroys the registration" do
+    it "rejects the registration without deleting it" do
       expect do
         delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
-      end.to change(Registration::UserRegistration, :count).by(-1)
+      end.not_to change(Registration::UserRegistration, :count)
+
+      expect(registration.reload.status).to eq("rejected")
+    end
+
+    it "writes a teacher rejection status event" do
+      expect do
+        delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+      end.to change(Registration::StatusEvent, :count).by(1)
+
+      event = Registration::StatusEvent.order(:created_at).last
+      expect(event.registration).to eq(registration)
+      expect(event.registration_campaign).to eq(campaign)
+      expect(event.action).to eq("teacher_reject")
+      expect(event.reason_type).to eq("manual")
+      expect(event.reason_code).to eq("withdrawn_by_teacher")
+      expect(event.actor).to eq(user)
+      expect(event.correlation_id).to be_present
+      expect(event.snapshot).to include(
+        "label" => "Manually rejected by teacher",
+        "actor_name" => user.info,
+        "student_name" => student.info
+      )
     end
 
     it "returns success via turbo stream" do
@@ -38,10 +60,12 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         sign_in other_user
       end
 
-      it "does not destroy the registration" do
+      it "does not reject the registration" do
         expect do
           delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
         end.not_to change(Registration::UserRegistration, :count)
+
+        expect(registration.reload.status).to eq("pending")
       end
 
       it "redirects to root" do
@@ -68,15 +92,68 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         campaign.update!(status: :completed)
       end
 
-      it "does not destroy the registration" do
+      it "does not reject the registration" do
         expect do
           delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
         end.not_to change(Registration::UserRegistration, :count)
+
+        expect(registration.reload.status).to eq("pending")
       end
 
       it "shows error message" do
         delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response.body).to include(I18n.t("registration.campaign.errors.already_finalized"))
+      end
+    end
+
+    context "with a preference-based campaign bundle" do
+      let(:campaign) { create(:registration_campaign, :preference_based, campaignable: lecture) }
+      let!(:item1) { create(:registration_item, registration_campaign: campaign) }
+      let!(:item2) { create(:registration_item, registration_campaign: campaign) }
+      let!(:registration) do
+        create(:registration_user_registration,
+               :preference_based,
+               registration_campaign: campaign,
+               registration_item: item1,
+               user: student,
+               preference_rank: 1)
+      end
+      let!(:second_registration) do
+        create(:registration_user_registration,
+               :preference_based,
+               registration_campaign: campaign,
+               registration_item: item2,
+               user: student,
+               preference_rank: 2)
+      end
+
+      it "rejects the whole registration bundle with one correlation id" do
+        expect do
+          delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        end.to change(Registration::StatusEvent, :count).by(2)
+
+        expect(registration.reload.status).to eq("rejected")
+        expect(second_registration.reload.status).to eq("rejected")
+
+        events = Registration::StatusEvent.where(registration_campaign: campaign)
+        expect(events.map(&:registration_id))
+          .to contain_exactly(registration.id, second_registration.id)
+        expect(events.map(&:correlation_id).uniq.size).to eq(1)
+      end
+    end
+
+    context "when the user bundle is already rejected" do
+      before do
+        registration.update!(status: :rejected)
+      end
+
+      it "is a clean no-op and does not write another event" do
+        expect do
+          delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        end.not_to change(Registration::StatusEvent, :count)
+
+        expect(response).to redirect_to(registration_campaign_path(campaign))
+        expect(flash[:alert]).to eq(I18n.t("registration.user_registration.none"))
       end
     end
   end

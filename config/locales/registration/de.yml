@@ -253,8 +253,8 @@ de:
         rejected: "Abgelehnt"
       rank: "Rang"
       destroyed: "Anmeldung erfolgreich entfernt."
-      destroyed_all_for_user: "%{count} Anmeldungen für Benutzer entfernt."
-      destroy_failed: "Anmeldungen konnten nicht entfernt werden."
+      rejected_all_for_user: "%{count} Anmeldungen für Benutzer abgelehnt."
+      reject_failed: "Anmeldungen konnten nicht abgelehnt werden."
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
       actions:

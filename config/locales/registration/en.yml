@@ -253,8 +253,8 @@ en:
         rejected: "Rejected"
       rank: "Rank"
       destroyed: "Registration removed successfully."
-      destroyed_all_for_user: "Removed %{count} registrations for user."
-      destroy_failed: "Failed to remove registrations."
+      rejected_all_for_user: "Rejected %{count} registrations for user."
+      reject_failed: "Failed to reject registrations."
       none: "No registrations found."
       preferences: "Preferences"
       actions:

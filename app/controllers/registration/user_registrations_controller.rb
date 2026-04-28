@@ -12,13 +12,14 @@ module Registration
 
       @user = User.find(params[:user_id])
       registrations = @campaign.user_registrations.where(user: @user)
+      active_registrations = registrations.where.not(status: :rejected)
 
-      return if no_registrations_found?(registrations)
+      return if no_registrations_found?(active_registrations)
 
       # Authorize based on the first registration (all belong to same campaign)
-      authorize! :destroy, registrations.first
+      authorize! :destroy, active_registrations.first
 
-      destroy_registrations(registrations)
+      reject_registrations(active_registrations)
     end
 
     private
@@ -89,20 +90,43 @@ module Registration
         true
       end
 
-      def destroy_registrations(registrations)
-        count = registrations.count
+      def reject_registrations(registrations)
+        registrations = registrations.to_a
+        count = registrations.size
+        correlation_id = SecureRandom.uuid
 
-        if registrations.destroy_all
-          respond_with_flash(:notice,
-                             t("registration.user_registration.destroyed_all_for_user",
-                               count: count),
-                             fallback_location: registration_campaign_path(@campaign)) do
-            evaluate_turbo_stream_response
+        Registration::UserRegistration.transaction do
+          registrations.each do |registration|
+            registration.update!(status: :rejected)
           end
-        else
-          respond_with_flash(:alert, t("registration.user_registration.destroy_failed"),
-                             fallback_location: registration_campaign_path(@campaign))
+
+          Registration::StatusEventWriter.call(
+            registrations: registrations,
+            action: "teacher_reject",
+            reason_type: "manual",
+            reason_code: "withdrawn_by_teacher",
+            actor: current_user,
+            correlation_id: correlation_id,
+            snapshot: lambda do |registration|
+              {
+                "label" => "Manually rejected by teacher",
+                "actor_name" => current_user.info,
+                "student_name" => registration.user.info
+              }
+            end
+          )
         end
+
+        respond_with_flash(:notice,
+                           t("registration.user_registration.rejected_all_for_user",
+                             count: count),
+                           fallback_location: registration_campaign_path(@campaign)) do
+          evaluate_turbo_stream_response
+        end
+      rescue ActiveRecord::RecordInvalid
+        respond_with_flash(:alert,
+                           t("registration.user_registration.reject_failed"),
+                           fallback_location: registration_campaign_path(@campaign))
       end
   end
 end
