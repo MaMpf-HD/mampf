@@ -35,9 +35,10 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       event = Registration::StatusEvent.order(:created_at).last
       expect(event.registration).to eq(registration)
       expect(event.registration_campaign).to eq(campaign)
-      expect(event.action).to eq("teacher_reject")
-      expect(event.reason_type).to eq("manual")
-      expect(event.reason_code).to eq("withdrawn_by_teacher")
+      expect(event.action).to eq(Registration::StatusEvent::ACTION_TEACHER_REJECT)
+      expect(event.reason_type).to eq(Registration::StatusEvent::REASON_TYPE_MANUAL)
+      expect(event.reason_code)
+        .to eq(Registration::StatusEvent::REASON_CODE_WITHDRAWN_BY_TEACHER)
       expect(event.actor).to eq(user)
       expect(event.correlation_id).to be_present
       expect(event.snapshot).to include(

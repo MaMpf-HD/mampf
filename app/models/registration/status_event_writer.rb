@@ -4,6 +4,7 @@ module Registration
       new(...).call
     end
 
+    # rubocop:disable Metrics/ParameterLists
     def initialize(registrations:, action:, reason_type: nil, reason_code: nil,
                    actor: nil, correlation_id: nil, schema_version: 1,
                    snapshot: {})
@@ -16,6 +17,7 @@ module Registration
       @schema_version = schema_version
       @snapshot = snapshot
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def call
       return [] if registrations.empty?

@@ -101,9 +101,10 @@ module Registration
     def latest_finalization_confirmed_count
       return confirmed_count if last_finalization_correlation_id.blank?
 
-      latest_finalization_status_events.where(action: "system_confirm")
-                                     .distinct
-                                     .count(:registration_id)
+      latest_finalization_status_events
+        .where(action: Registration::StatusEvent::ACTION_SYSTEM_CONFIRM)
+        .distinct
+        .count(:registration_id)
     end
 
     def pending_count
@@ -132,9 +133,10 @@ module Registration
     def latest_finalization_rejected_count
       return rejected_count if last_finalization_correlation_id.blank?
 
-      latest_finalization_status_events.where(action: "system_reject")
-                                     .distinct
-                                     .count(:registration_id)
+      latest_finalization_status_events
+        .where(action: Registration::StatusEvent::ACTION_SYSTEM_REJECT)
+        .distinct
+        .count(:registration_id)
     end
 
     def user_registrations_grouped_by_user
@@ -156,7 +158,7 @@ module Registration
 
         Registration::StatusEventWriter.call(
           registrations: confirmed_registrations,
-          action: "system_confirm",
+          action: Registration::StatusEvent::ACTION_SYSTEM_CONFIRM,
           correlation_id: correlation_id,
           snapshot: lambda do |_registration|
             { "label" => "Confirmed by finalization" }
@@ -165,7 +167,7 @@ module Registration
 
         Registration::StatusEventWriter.call(
           registrations: pending_registrations,
-          action: "system_reject",
+          action: Registration::StatusEvent::ACTION_SYSTEM_REJECT,
           reason_type: rejection_reason_type,
           reason_code: rejection_reason_code,
           correlation_id: correlation_id,
@@ -293,13 +295,13 @@ module Registration
       end
 
       def rejection_reason_type
-        return "capacity" if preference_based?
+        return Registration::StatusEvent::REASON_TYPE_CAPACITY if preference_based?
 
         nil
       end
 
       def rejection_reason_code
-        return "solver_unassigned" if preference_based?
+        return Registration::StatusEvent::REASON_CODE_SOLVER_UNASSIGNED if preference_based?
 
         nil
       end

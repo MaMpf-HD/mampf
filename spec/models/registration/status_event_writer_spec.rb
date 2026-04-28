@@ -25,9 +25,9 @@ RSpec.describe(Registration::StatusEventWriter, type: :model) do
 
       events = described_class.call(
         registrations: [registration1, registration2],
-        action: "teacher_reject",
-        reason_type: "manual",
-        reason_code: "withdrawn_by_teacher",
+        action: Registration::StatusEvent::ACTION_TEACHER_REJECT,
+        reason_type: Registration::StatusEvent::REASON_TYPE_MANUAL,
+        reason_code: Registration::StatusEvent::REASON_CODE_WITHDRAWN_BY_TEACHER,
         actor: actor,
         correlation_id: correlation_id,
         snapshot: { "label" => "Teacher rejected" }
@@ -45,7 +45,7 @@ RSpec.describe(Registration::StatusEventWriter, type: :model) do
 
       event = described_class.call(
         registrations: registration,
-        action: "system_confirm",
+        action: Registration::StatusEvent::ACTION_SYSTEM_CONFIRM,
         snapshot: lambda do |reg|
           { "registration_id" => reg.id }
         end
@@ -59,9 +59,9 @@ RSpec.describe(Registration::StatusEventWriter, type: :model) do
 
       event = described_class.call(
         registrations: registration,
-        action: "teacher_reject",
-        reason_type: "manual",
-        reason_code: "withdrawn_by_teacher",
+        action: Registration::StatusEvent::ACTION_TEACHER_REJECT,
+        reason_type: Registration::StatusEvent::REASON_TYPE_MANUAL,
+        reason_code: Registration::StatusEvent::REASON_CODE_WITHDRAWN_BY_TEACHER,
         correlation_id: nil,
         snapshot: { "label" => "Teacher rejected" }
       ).first

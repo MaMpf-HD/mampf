@@ -460,40 +460,45 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(events.map(&:correlation_id).uniq)
         .to eq([preference_campaign.last_finalization_correlation_id])
 
-      confirm_event = events.find { |event| event.action == "system_confirm" }
-      reject_event = events.find { |event| event.action == "system_reject" }
+      confirm_event = events.find do |event|
+        event.action == Registration::StatusEvent::ACTION_SYSTEM_CONFIRM
+      end
+      reject_event = events.find do |event|
+        event.action == Registration::StatusEvent::ACTION_SYSTEM_REJECT
+      end
 
       expect(confirm_event).to be_present
       expect(confirm_event.snapshot).to eq({ "label" => "Confirmed by finalization" })
 
       expect(reject_event).to be_present
-      expect(reject_event.reason_type).to eq("capacity")
-      expect(reject_event.reason_code).to eq("solver_unassigned")
+      expect(reject_event.reason_type).to eq(Registration::StatusEvent::REASON_TYPE_CAPACITY)
+      expect(reject_event.reason_code)
+        .to eq(Registration::StatusEvent::REASON_CODE_SOLVER_UNASSIGNED)
       expect(reject_event.snapshot).to eq({ "label" => "Not placed by solver" })
     end
 
     it "exposes latest finalization counts from the latest run" do
-          preference_campaign = create(:registration_campaign,
-              :processing,
-              :preference_based)
-          item = preference_campaign.registration_items.first
+      preference_campaign = create(:registration_campaign,
+                                   :processing,
+                                   :preference_based)
+      item = preference_campaign.registration_items.first
       create(:registration_user_registration,
              :preference_based,
-            registration_campaign: preference_campaign,
+             registration_campaign: preference_campaign,
              registration_item: item,
              status: :pending,
              preference_rank: 1)
       create(:registration_user_registration,
              :preference_based,
-            registration_campaign: preference_campaign,
+             registration_campaign: preference_campaign,
              registration_item: item,
              status: :confirmed,
              preference_rank: nil)
 
-          preference_campaign.finalize!
+      preference_campaign.finalize!
 
-          expect(preference_campaign.reload.latest_finalization_confirmed_count).to eq(1)
-          expect(preference_campaign.latest_finalization_rejected_count).to eq(1)
+      expect(preference_campaign.reload.latest_finalization_confirmed_count).to eq(1)
+      expect(preference_campaign.latest_finalization_rejected_count).to eq(1)
     end
 
     it "writes nil reason fields for FCFS pending rejections" do
@@ -504,8 +509,10 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       campaign.finalize!
 
-      event = campaign.latest_finalization_status_events.find_by!(registration_id: pending_registration.id)
-      expect(event.action).to eq("system_reject")
+      event = campaign.latest_finalization_status_events.find_by!(
+        registration_id: pending_registration.id
+      )
+      expect(event.action).to eq(Registration::StatusEvent::ACTION_SYSTEM_REJECT)
       expect(event.reason_type).to be_nil
       expect(event.reason_code).to be_nil
       expect(event.snapshot).to eq({ "label" => "Rejected by finalization" })

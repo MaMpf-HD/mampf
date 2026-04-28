@@ -7,7 +7,7 @@ FactoryBot.define do
     content_mode { "video" }
     sort { "lecture" }
     submission_deletion_date do
-      ((term&.end_date || Time.zone.today + 180.days) + 15.days).to_date
+      ((term&.end_date || (Time.zone.today + 180.days)) + 15.days).to_date
     end
 
     transient do

@@ -2,11 +2,28 @@ module Registration
   class StatusEvent < ApplicationRecord
     self.table_name = "registration_status_events"
 
+    ACTION_SYSTEM_CONFIRM = "system_confirm".freeze
+    ACTION_SYSTEM_REJECT = "system_reject".freeze
+    ACTION_TEACHER_REJECT = "teacher_reject".freeze
+    ACTION_TEACHER_REINSTATE = "teacher_reinstate".freeze
+
+    REASON_TYPE_CAPACITY = "capacity".freeze
+    REASON_TYPE_MANUAL = "manual".freeze
+
+    REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
+    REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
+    REASON_CODE_REINSTATED_BY_TEACHER = "reinstated_by_teacher".freeze
+
     ACTIONS = [
-      "system_confirm",
-      "system_reject",
-      "teacher_reject",
-      "teacher_reinstate"
+      ACTION_SYSTEM_CONFIRM,
+      ACTION_SYSTEM_REJECT,
+      ACTION_TEACHER_REJECT,
+      ACTION_TEACHER_REINSTATE
+    ].freeze
+
+    REASON_TYPES = [
+      REASON_TYPE_CAPACITY,
+      REASON_TYPE_MANUAL
     ].freeze
 
     belongs_to :registration,

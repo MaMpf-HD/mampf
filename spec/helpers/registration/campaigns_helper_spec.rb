@@ -57,6 +57,85 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
+  describe "#dissolved_rejection_label" do
+    it "returns not placed when the latest finalization only has solver rejections" do
+      campaign = create(:registration_campaign,
+                        :completed,
+                        :preference_based,
+                        last_finalization_correlation_id: SecureRandom.uuid)
+      registration = create(:registration_user_registration,
+                            :preference_based,
+                            registration_campaign: campaign,
+                            registration_item: campaign.registration_items.first,
+                            status: :rejected,
+                            preference_rank: 1)
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             correlation_id: campaign.last_finalization_correlation_id)
+
+      expect(helper.dissolved_rejection_label(campaign))
+        .to eq(I18n.t("registration.campaign.dissolved_not_placed"))
+    end
+
+    it "returns rejected when the latest finalization has mixed rejection reasons" do
+      campaign = create(:registration_campaign,
+                        :completed,
+                        :preference_based,
+                        last_finalization_correlation_id: SecureRandom.uuid)
+      ranked_registration = create(:registration_user_registration,
+                                   :preference_based,
+                                   registration_campaign: campaign,
+                                   registration_item: campaign.registration_items.first,
+                                   status: :rejected,
+                                   preference_rank: 1)
+      forced_registration = create(:registration_user_registration,
+                                   :preference_based,
+                                   registration_campaign: campaign,
+                                   registration_item: campaign.registration_items.second,
+                                   status: :rejected,
+                                   preference_rank: 2)
+      create(:registration_status_event,
+             :system_reject,
+             registration: ranked_registration,
+             registration_campaign: campaign,
+             correlation_id: campaign.last_finalization_correlation_id)
+      create(:registration_status_event,
+             :system_reject,
+             registration: forced_registration,
+             registration_campaign: campaign,
+             correlation_id: campaign.last_finalization_correlation_id,
+             reason_type: nil,
+             reason_code: nil,
+             snapshot: { "label" => "Rejected by finalization" })
+
+      expect(helper.dissolved_rejection_label(campaign))
+        .to eq(I18n.t("registration.campaign.dissolved_rejected"))
+    end
+
+    it "returns rejected when the latest finalization has a generic rejection" do
+      campaign = create(:registration_campaign,
+                        :completed,
+                        last_finalization_correlation_id: SecureRandom.uuid)
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: campaign.registration_items.first,
+                            status: :rejected)
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             correlation_id: campaign.last_finalization_correlation_id,
+             reason_type: nil,
+             reason_code: nil,
+             snapshot: { "label" => "Rejected by finalization" })
+
+      expect(helper.dissolved_rejection_label(campaign))
+        .to eq(I18n.t("registration.campaign.dissolved_rejected"))
+    end
+  end
+
   describe "#sorted_preference_counts" do
     it "sorts preferences pushing :forced to the end" do
       stats = double("Stats", preference_counts: { :forced => 5, 2 => 10, 1 => 20 })

@@ -26,6 +26,22 @@ module Registration
       "policy_form_#{campaign.id}"
     end
 
+    def dissolved_rejection_label(campaign)
+      rejection_events = campaign.latest_finalization_status_events.where(
+        action: Registration::StatusEvent::ACTION_SYSTEM_REJECT
+      )
+      return t("registration.campaign.dissolved_rejected") if rejection_events.empty?
+
+      if rejection_events.where(
+        reason_type: Registration::StatusEvent::REASON_TYPE_CAPACITY,
+        reason_code: Registration::StatusEvent::REASON_CODE_SOLVER_UNASSIGNED
+      ).count == rejection_events.count
+        return t("registration.campaign.dissolved_not_placed")
+      end
+
+      t("registration.campaign.dissolved_rejected")
+    end
+
     def policy_kinds_summary(campaign)
       kinds = campaign.registration_policies.order(:position).map do |p|
         t("registration.policy.kinds.#{p.kind}")
