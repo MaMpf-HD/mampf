@@ -184,6 +184,8 @@ en:
       empty_filtered: 'No students match the current filter.'
     candidates:
       title: 'Unplaced Registrations'
+      completed_title: 'Currently Without a Seat'
+      completed_description: 'Shows students who are currently not placed, including not-placed and rejected registrations.'
       help: 'Students who registered in registration processes but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
       empty: 'No unplaced registrations found.'
       no_prefs: 'No preferences'

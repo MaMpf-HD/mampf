@@ -164,6 +164,40 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(response).to redirect_to(registration_campaign_path(campaign))
           expect(flash[:notice]).to be_present
         end
+
+        it "renders the one-time finalization summary in turbo stream responses" do
+          item = campaign.registration_items.first
+          create(:registration_user_registration,
+                 :confirmed,
+                 registration_campaign: campaign,
+                 registration_item: item,
+                 user: create(:confirmed_user, email: "confirmed@example.test"))
+          create(:registration_user_registration,
+                 :pending,
+                 registration_campaign: campaign,
+                 registration_item: item,
+                 user: create(:confirmed_user, email: "pending@example.test"))
+
+          patch finalize_registration_campaign_allocation_path(campaign), as: :turbo_stream
+
+          campaign.reload
+          expect(campaign).to be_completed
+          expect(response).to have_http_status(:ok)
+          expect(response.body)
+            .to include(I18n.t("registration.campaign.finalization_summary.title"))
+          expect(response.body)
+            .to include(
+              I18n.t("registration.campaign.finalization_summary.review_current_action")
+            )
+          expect(response.body)
+            .to include(
+              unassigned_registration_campaign_path(
+                campaign,
+                source: :panel,
+                format: :turbo_stream
+              )
+            )
+        end
       end
 
       context "when guard checks fail" do

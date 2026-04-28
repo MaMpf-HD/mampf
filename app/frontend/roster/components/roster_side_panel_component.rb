@@ -83,7 +83,11 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def panel_title
     if unassigned?
-      t("roster.candidates.title")
+      if campaign&.completed?
+        t("roster.candidates.completed_title")
+      else
+        t("roster.candidates.title")
+      end
     elsif allocated?
       t("registration.user_registration.index.allocated_title",
         default: "Allocated Students")
@@ -216,6 +220,12 @@ class RosterSidePanelComponent < ViewComponent::Base
     t("roster.details.select_group")
   end
 
+  def unassigned_panel_description
+    return unless unassigned? && campaign&.completed?
+
+    t("roster.candidates.completed_description")
+  end
+
   private
 
     def draggable_unassigned?
@@ -249,16 +259,16 @@ class RosterSidePanelComponent < ViewComponent::Base
       relevant_registrations(student)
         .flat_map { |registration| Array(registration.try(:status_events)) }
         .select { |event| actions.include?(event.action) }
-        .max_by { |event| [event.created_at&.to_i || 0, event.id.to_i] }
+        .max_by { |event| event_sort_key(event) }
     end
 
     def newer_event?(left, right)
       return false unless left
 
-      event_sort_key(left) > event_sort_key(right)
+      (event_sort_key(left) <=> event_sort_key(right)) == 1
     end
 
     def event_sort_key(event)
-      ((event.created_at&.to_i || 0) * 1_000_000) + event.id.to_i
+      [event.created_at, event.id.to_s]
     end
 end

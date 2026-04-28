@@ -30,6 +30,12 @@
                   default: "Registrations") %>
           </span>
         </div>
+
+        <% if unassigned_panel_description.present? %>
+          <div class="text-muted small mt-1">
+            <%= unassigned_panel_description %>
+          </div>
+        <% end %>
       <% elsif registerable %>
         <div class="text-muted small">
           <span><%= registerable.title %></span>

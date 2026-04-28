@@ -15,11 +15,16 @@ en:
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"
-      completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
+      completed_description: "The registration period has ended and allocations have been finalized. Use group management for current placements and for any rejected or not-placed follow-up actions."
       go_to_roster: "Go to Roster"
       dissolved_enrolled: "enrolled"
       dissolved_rejected: "rejected"
       dissolved_not_placed: "not placed"
+      finalization_summary:
+        title: "Latest Finalization Result"
+        body_without_rejected: "The latest run finalized %{confirmed} enrolled students. Later manual roster changes do not change this summary."
+        body_with_rejected: "The latest run finalized %{confirmed} enrolled students and %{rejected} %{rejected_label}. Later manual roster changes do not change this summary."
+        review_current_action: "Review Current-Action List"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
       helpdesk:
@@ -270,8 +275,8 @@ en:
         last_updated: "Last updated: %{time}"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
-        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. Only unresolved blocker cases prevent finalization; automatic rejections are handled during finalization and appear afterwards in the current-action surface. Once satisfied, click 'Finalize' to commit the assignments."
+        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. Only unresolved blocker cases prevent finalization; automatic rejections are handled during finalization and appear afterwards in the current-action surface. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
       demand:
         title: "Registration Demand"

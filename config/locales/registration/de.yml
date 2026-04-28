@@ -15,11 +15,16 @@ de:
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
-      completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
+      completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Nutze die Gruppenverwaltung für aktuelle Platzierungen sowie für Nachbearbeitungen bei abgelehnten oder nicht zugeteilten Studierenden."
       go_to_roster: "Zur Gruppenverwaltung"
       dissolved_enrolled: "zugeteilt"
       dissolved_rejected: "abgelehnt"
       dissolved_not_placed: "nicht zugeteilt"
+      finalization_summary:
+        title: "Ergebnis der letzten Finalisierung"
+        body_without_rejected: "Der letzte Lauf hat %{confirmed} zugeteilte Studierende finalisiert. Spätere manuelle Änderungen an der Gruppenverwaltung ändern diese Zusammenfassung nicht."
+        body_with_rejected: "Der letzte Lauf hat %{confirmed} zugeteilte Studierende sowie %{rejected} %{rejected_label} finalisiert. Spätere manuelle Änderungen an der Gruppenverwaltung ändern diese Zusammenfassung nicht."
+        review_current_action: "Nachbearbeitungsansicht öffnen"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
       helpdesk:
@@ -270,8 +275,8 @@ de:
         last_updated: "Stand: %{time}"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
-        workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Nur ungelöste Blocker verhindern die Finalisierung; automatische Ablehnungen werden während der Finalisierung verarbeitet und erscheinen danach in der Nachbearbeitungsansicht. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern."
+        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Nur ungelöste Blocker verhindern die Finalisierung; automatische Ablehnungen werden während der Finalisierung verarbeitet und erscheinen danach in der Nachbearbeitungsansicht. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
       demand:
         title: "Anmeldenachfrage"

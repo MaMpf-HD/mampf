@@ -315,6 +315,10 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       )
 
       expect(rendered.to_html)
+        .to include(I18n.t("roster.candidates.completed_title"))
+      expect(rendered.to_html)
+        .to include(I18n.t("roster.candidates.completed_description"))
+      expect(rendered.to_html)
         .to include(I18n.t("registration.user_registration.status.rejected"))
       expect(rendered.to_html).to include("Not placed by solver")
     end
@@ -338,8 +342,6 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         )
       )
 
-      expect(rendered.to_html)
-        .not_to include(I18n.t("registration.user_registration.status.rejected"))
       expect(rendered.to_html).not_to include("Not placed by solver")
     end
   end

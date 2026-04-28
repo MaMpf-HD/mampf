@@ -1,0 +1,38 @@
+<div
+  id="finalization_confirmation_campaign_<%= campaign.id %>"
+  class="alert alert-info d-flex flex-column gap-2 mb-2"
+>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+    <div>
+      <div class="fw-semibold">
+        <%= t("registration.campaign.finalization_summary.title") %>
+      </div>
+
+      <div class="small text-muted mt-1">
+        <% rejected = campaign.latest_finalization_rejected_count %>
+        <% confirmed = campaign.latest_finalization_confirmed_count %>
+
+        <% if rejected.positive? %>
+          <%= t("registration.campaign.finalization_summary.body_with_rejected",
+                confirmed: confirmed,
+                rejected: rejected,
+                rejected_label: dissolved_rejection_label(campaign)) %>
+        <% else %>
+          <%= t("registration.campaign.finalization_summary.body_without_rejected",
+                confirmed: confirmed) %>
+        <% end %>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary"
+      data-tutorial-roster-panel-target="tile"
+      data-roster-key="campaign_<%= campaign.id %>_unassigned_confirmation"
+      data-action="click->tutorial-roster-panel#openFromTile"
+      data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
+    >
+      <%= t("registration.campaign.finalization_summary.review_current_action") %>
+    </button>
+  </div>
+</div>

@@ -185,6 +185,8 @@ de:
       empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
     candidates:
       title: 'Unzugeteilte Anmeldungen'
+      completed_title: 'Derzeit ohne Platz'
+      completed_description: 'Zeigt Studierende, die aktuell nicht platziert sind, einschließlich nicht zugeteilter und abgelehnter Anmeldungen.'
       help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
       empty: 'Keine unzugeteilten Anmeldungen gefunden.'
       no_prefs: 'Keine Präferenzen'

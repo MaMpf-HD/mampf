@@ -86,7 +86,8 @@ module Registration
                                 partial: "registration/campaigns/card_body_index",
                                 locals: {
                                   lecture: lecture,
-                                  expanded_campaign_id: @campaign.id
+                                  expanded_campaign_id: @campaign.id,
+                                  finalized_campaign_id: @campaign.id
                                 }),
             *refresh_roster_streams(lecture)
           ]

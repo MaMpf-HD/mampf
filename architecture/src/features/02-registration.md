@@ -106,8 +106,10 @@ The main fields and methods of `Registration::Campaign` are:
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `last_allocation_calculated_at` | DB column   | Timestamp of the most recent allocation run                                                  |
+| `last_finalization_correlation_id` | DB column | Correlation ID of the most recent successful finalization run                                |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
 | `user_registrations`      | Association       | User registrations (registration requests) for this campaign                                 |
+| `status_events`           | Association       | Append-only history of registration outcome transitions                                      |
 | `registration_policies`   | Association       | Eligibility and other policies attached to this campaign                                     |
 | `evaluate_policies_for(user, phase: :registration)` | Method      | Returns a structured eligibility result for the given phase (delegates to Policy Engine)                         |
 | `policies_satisfied?(user, phase: :registration)` | Method      | Boolean convenience that returns true when all applicable policies pass                                 |
@@ -121,7 +123,7 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 ```
 
 ```admonish tip "API at a glance"
-- `evaluate_policies_for(user, phase: :registration)` → Result (fields: `pass`, `failed_policy`, `trace`)
+- `evaluate_policies_for(user, phase: :registration)` → Result (fields include `pass`; finalization also consumes `classification`, `reason_code`, and `snapshot`)
 - `policies_satisfied?(user, phase: :registration)` → Boolean (`true` when all applicable policies pass)
 - `open_for_registrations?` → Boolean (campaign currently accepts registrations)
 - Allocation runs are triggered through `Registration::AllocationService` and the allocation controller flow
@@ -139,14 +141,16 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 #### Assigned vs Unassigned
 
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
-- Unassigned: in current campaign helper methods, the student participated but is not currently allocated to any of the campaign's registerables in the domain roster. This can differ from pure registration status after manual roster changes.
-- Previously Assigned: the student was once assigned (confirmed) but later removed (e.g. manually). This is tracked via the `materialized_at` timestamp on `Registration::UserRegistration`.
+- Unassigned: in current campaign helper methods, the student participated but is not currently allocated to any of the campaign's registerables in the domain roster. After finalization, this current-action surface intentionally includes both not-placed students and rejected students who are still off-roster.
+- Previously Assigned: `materialized_at` is the historical fact that finalization once materialized the registration. Current roster presence is still determined only by live membership rows.
 - No extra tables are required. `Registration::Campaign` exposes `unassigned_users(...)`, while allocation dashboards derive `unassigned_user_ids` and related counts from allocation statistics.
 
 ```admonish note "Status semantics"
 Statuses are mode-specific:
 - First-come-first-served (FCFS): registrations are immediately `confirmed` or `rejected`.
 - Preference-based: registrations start as `pending`; allocation confirms selected users, and finalization converts any remaining `pending` registrations to `rejected`.
+
+`status` remains a coarse operational field. Business meaning such as "not placed by solver", "manually rejected", or policy-specific auto-rejection lives in append-only `registration_status_events` rows and their snapshots.
 
 Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
 ```
@@ -157,8 +161,9 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
   Used to lock the window early or when the deadline passes automatically.
 - **Run allocation (preference-based only):** triggers `Registration::AllocationService`; transitions `closed → processing` and records `last_allocation_calculated_at`.
   FCFS campaigns skip this step (results already determined).
-- **Finalize results:** in the current implementation, the controller runs `Registration::FinalizationGuard#check(...)` before calling `Registration::Campaign#finalize!`. Finalization materializes confirmed results, sets `materialized_at` for materialized registrations, converts remaining `pending` registrations to `rejected`, and transitions the campaign to `completed`. All campaigns materialize—non-propagating cohorts simply do not update the lecture roster.
-  - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
+- **Finalize results:** the controller runs `Registration::FinalizationGuard#check(...)` before calling `Registration::Campaign#finalize!`. Only blocker outcomes stop the run. A successful run materializes confirmed results, writes one immutable status event per touched registration, converts remaining `pending` registrations to `rejected`, transitions the campaign to `completed`, and updates `last_finalization_correlation_id` to the run's shared correlation ID. All campaigns materialize—non-propagating cohorts simply do not update the lecture roster.
+  - **Materialization Timestamp:** During finalization, `materialized_at` is set on registrations that were materialized by the run. It is a historical fact about finalization, not a live roster flag.
+  - **Finalization History:** `system_confirm` and `system_reject` events are the durable source for later summaries and rejection explanations. Later manual roster changes do not rewrite that finalization history.
 - **Planning surveys:** Non-propagating cohorts (`propagate_to_lecture: false`) can be used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
 - **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
@@ -172,10 +177,11 @@ Currently, campaigns transition `draft → open` via manual teacher action. A fu
 ```
 
 ```admonish tip "UI hooks for unassigned"
-After completion, the Campaign Show can surface an "Unassigned registrants"
-table (name, matriculation, top preferences) with actions to place users into
-groups via Roster Maintenance. In roster screens, add a filter
-"Candidates from campaign X" that lists these unassigned users for quick moves.
+After completion, the Campaign Show surfaces a current-action list of students
+who are currently without a seat. This includes both not-placed students and
+rejected registrations that are still off-roster. Roster Maintenance is the
+place to resolve these cases through manual placement, while immutable status
+events continue to explain why the registration ended up there.
 ```
 
 ### Campaign Lifecycle & Freezing Rules
