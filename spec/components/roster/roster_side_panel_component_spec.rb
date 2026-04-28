@@ -272,6 +272,78 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       expect(c.campaign_wishes(student)).to eq("X")
     end
   end
+
+  describe "rejected unassigned students" do
+    let(:lecture) { create(:lecture) }
+    let(:registerable) do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+    end
+    let(:campaign) do
+      create(:registration_campaign,
+             :completed,
+             campaignable: lecture,
+             registration_items: [
+               build(:registration_item, registerable: registerable)
+             ])
+    end
+    let(:student) { create(:confirmed_user, name: "Rejected Student") }
+    let(:registration) do
+      create(:registration_user_registration,
+             :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: student)
+    end
+
+    before do
+      registration
+    end
+
+    it "renders the rejected marker and reason" do
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             snapshot: { "label" => "Not placed by solver" })
+
+      rendered = render_inline(
+        described_class.new(
+          students: [student],
+          is_unassigned: true,
+          campaign: campaign
+        )
+      )
+
+      expect(rendered.to_html)
+        .to include(I18n.t("registration.user_registration.status.rejected"))
+      expect(rendered.to_html).to include("Not placed by solver")
+    end
+
+    it "hides the rejected marker after a reinstate event" do
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             snapshot: { "label" => "Not placed by solver" })
+      create(:registration_status_event,
+             :teacher_reinstate,
+             registration: registration,
+             registration_campaign: campaign)
+
+      rendered = render_inline(
+        described_class.new(
+          students: [student],
+          is_unassigned: true,
+          campaign: campaign
+        )
+      )
+
+      expect(rendered.to_html)
+        .not_to include(I18n.t("registration.user_registration.status.rejected"))
+      expect(rendered.to_html).not_to include("Not placed by solver")
+    end
+  end
+
   describe "#allocated_choice_pills" do
     it "returns empty array if not allocated or no ranks" do
       c1 = described_class.new(allocated: false, preference_ranks: { 1 => 1 })

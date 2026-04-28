@@ -182,6 +182,57 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(tutorial.members).not_to include(new_student)
         end
       end
+
+      context "when adding a rejected campaign student from the unassigned panel" do
+        let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+        let!(:campaign) do
+          create(:registration_campaign,
+                 :completed,
+                 campaignable: lecture,
+                 registration_items: [
+                   build(:registration_item, registerable: tutorial)
+                 ])
+        end
+        let!(:registration) do
+          create(:registration_user_registration,
+                 :rejected,
+                 registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first,
+                 user: new_student)
+        end
+        let!(:rejection_event) do
+          create(:registration_status_event,
+                 :system_reject,
+                 registration: registration,
+                 registration_campaign: campaign,
+                 snapshot: { "label" => "Not placed by solver" })
+        end
+
+        it "writes a reinstate event without materializing the registration" do
+          expect do
+            post add_member_tutorial_path(tutorial),
+                 params: {
+                   email: new_student.email,
+                   source: "unassigned",
+                   source_id: campaign.id.to_s
+                 },
+                 as: :turbo_stream
+          end.to change { tutorial.members.count }.by(1)
+            .and change {
+              Registration::StatusEvent.where(
+                action: Registration::StatusEvent::ACTION_TEACHER_REINSTATE
+              ).count
+            }.by(1)
+
+          event = registration.reload.status_events.order(:created_at, :id).last
+
+          expect(event.action)
+            .to eq(Registration::StatusEvent::ACTION_TEACHER_REINSTATE)
+          expect(event.snapshot["overridden_event_id"]).to eq(rejection_event.id)
+          expect(event.snapshot["target_registerable_id"]).to eq(tutorial.id)
+          expect(registration.materialized_at).to be_nil
+        end
+      end
     end
 
     context "as a student" do

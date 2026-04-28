@@ -13,9 +13,11 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
 
-    def add_user!(user, rosterable, force: false)
+    def add_user!(user, rosterable, force: false,
+                  update_materialization: true)
       rosterable.with_lock do
-        add_user_without_lock!(user, rosterable, force: force)
+        add_user_without_lock!(user, rosterable, force: force,
+                               update_materialization: update_materialization)
       end
     end
 
@@ -38,7 +40,8 @@ module Rosters
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)
       end
 
-      def add_user_without_lock!(user, rosterable, force: false)
+      def add_user_without_lock!(user, rosterable, force: false,
+                                 update_materialization: true)
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
@@ -50,7 +53,9 @@ module Rosters
 
         membership = rosterable.add_user_to_roster!(user)
         propagate_to_lecture!(user, rosterable)
-        update_registration_materialization(user, rosterable)
+        if update_materialization
+          update_registration_materialization(user, rosterable)
+        end
         membership
       end
 

@@ -77,7 +77,15 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      added = Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+      source_campaign = unassigned_source_campaign
+      added = Rosters::MaintenanceService.new.add_user!(
+        user,
+        @rosterable,
+        force: true,
+        update_materialization: source_campaign.nil?
+      )
+
+      record_teacher_reinstatement(user, source_campaign) if added
 
       flash.now[:notice] = if added
         t("roster.messages.user_added", user: user.info, group: @rosterable.title)
@@ -298,6 +306,64 @@ module Roster
         )
 
         source if source && source != @rosterable
+      end
+
+      def unassigned_source_campaign
+        return unless @mparams.unassigned?
+
+        @unassigned_source_campaign ||= @lecture.registration_campaigns.find_by(
+          id: @mparams.source_id
+        )
+      end
+
+      def record_teacher_reinstatement(user, campaign)
+        return unless campaign&.completed?
+
+        rejection_event = latest_rejection_event(campaign, user)
+        return unless rejection_event
+
+        Registration::StatusEventWriter.call(
+          registrations: [rejection_event.registration],
+          action: Registration::StatusEvent::ACTION_TEACHER_REINSTATE,
+          reason_type: Registration::StatusEvent::REASON_TYPE_MANUAL,
+          reason_code: Registration::StatusEvent::REASON_CODE_REINSTATED_BY_TEACHER,
+          actor: current_user,
+          snapshot: {
+            "label" => "Reinstated by teacher",
+            "actor_name" => current_user.info,
+            "overridden_event_id" => rejection_event.id,
+            "overridden_action" => rejection_event.action,
+            "overridden_reason_type" => rejection_event.reason_type,
+            "overridden_reason_code" => rejection_event.reason_code,
+            "overridden_label" => rejection_event.snapshot["label"],
+            "target_registerable_id" => @rosterable.id,
+            "target_registerable_type" => @rosterable.class.name,
+            "target_registerable_title" => @rosterable.title
+          }
+        )
+      end
+
+      def latest_rejection_event(campaign, user)
+        campaign.user_registrations
+                .where(user: user)
+                .joins(:status_events)
+                .merge(
+                  Registration::StatusEvent.where(
+                    action: [
+                      Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+                      Registration::StatusEvent::ACTION_TEACHER_REJECT
+                    ]
+                  )
+                )
+                .includes(:status_events)
+                .flat_map(&:status_events)
+                .select do |event|
+                  [
+                    Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+                    Registration::StatusEvent::ACTION_TEACHER_REJECT
+                  ].include?(event.action)
+                end
+                .max_by { |event| [event.created_at&.to_i || 0, event.id.to_i] }
       end
 
       def ensure_rosterable_unlocked!

@@ -187,6 +187,14 @@ class RosterSidePanelComponent < ViewComponent::Base
     unassigned? && campaign.present? && relevant_registrations(student).any?
   end
 
+  def rejected_student?(student)
+    rejection_event(student).present?
+  end
+
+  def rejection_reason(student)
+    rejection_event(student)&.snapshot&.fetch("label", nil)
+  end
+
   def campaign_wishes(student)
     relevant_registrations(student)
       .sort_by { |r| r.preference_rank || 999 }
@@ -218,5 +226,39 @@ class RosterSidePanelComponent < ViewComponent::Base
       student.user_registrations.select do |r|
         r.registration_campaign_id == campaign.id
       end
+    end
+
+    def rejection_event(student)
+      reject_event = latest_status_event(
+        student,
+        Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+        Registration::StatusEvent::ACTION_TEACHER_REJECT
+      )
+      return unless reject_event
+
+      reinstate_event = latest_status_event(
+        student,
+        Registration::StatusEvent::ACTION_TEACHER_REINSTATE
+      )
+      return if newer_event?(reinstate_event, reject_event)
+
+      reject_event
+    end
+
+    def latest_status_event(student, *actions)
+      relevant_registrations(student)
+        .flat_map { |registration| Array(registration.try(:status_events)) }
+        .select { |event| actions.include?(event.action) }
+        .max_by { |event| [event.created_at&.to_i || 0, event.id.to_i] }
+    end
+
+    def newer_event?(left, right)
+      return false unless left
+
+      event_sort_key(left) > event_sort_key(right)
+    end
+
+    def event_sort_key(event)
+      ((event.created_at&.to_i || 0) * 1_000_000) + event.id.to_i
     end
 end

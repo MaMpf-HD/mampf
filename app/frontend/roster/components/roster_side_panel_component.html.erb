@@ -163,6 +163,24 @@
                   <%= student.email %>
                 </div>
 
+                <% if rejected_student?(student) %>
+                  <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                    <span
+                      class="badge text-bg-warning roster-badge-sm"
+                      title="<%= rejection_reason(student) %>"
+                    >
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                      <%= t("registration.user_registration.status.rejected") %>
+                    </span>
+
+                    <% if rejection_reason(student).present? %>
+                      <span class="small text-muted">
+                        <%= rejection_reason(student) %>
+                      </span>
+                    <% end %>
+                  </div>
+                <% end %>
+
                 <% if show_campaign_wishes?(student) %>
                   <div
                     class="

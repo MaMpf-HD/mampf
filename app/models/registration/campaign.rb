@@ -264,6 +264,7 @@ module Registration
       relation.includes(
         user_registrations: [
           :registration_campaign,
+          :status_events,
           { registration_item: :registerable }
         ]
       ).order(:name, :email)
