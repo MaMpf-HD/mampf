@@ -28,8 +28,8 @@ module Registration
             registration: registration,
             registration_campaign: registration.registration_campaign,
             action: action,
-            reason_type: reason_type,
-            reason_code: reason_code,
+            reason_type: reason_type_for(registration),
+            reason_code: reason_code_for(registration),
             actor: actor,
             correlation_id: correlation_id,
             schema_version: schema_version,
@@ -47,6 +47,14 @@ module Registration
       def snapshot_for(registration)
         value = snapshot.respond_to?(:call) ? snapshot.call(registration) : snapshot
         value || {}
+      end
+
+      def reason_type_for(registration)
+        reason_type.respond_to?(:call) ? reason_type.call(registration) : reason_type
+      end
+
+      def reason_code_for(registration)
+        reason_code.respond_to?(:call) ? reason_code.call(registration) : reason_code
       end
   end
 end

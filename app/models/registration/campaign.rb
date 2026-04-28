@@ -151,8 +151,20 @@ module Registration
         return if completed?
 
         correlation_id = SecureRandom.uuid
-        confirmed_registrations = user_registrations.confirmed.includes(:user).to_a
+        auto_reject_outcomes = auto_reject_outcomes_by_registration
+        auto_reject_registration_ids = auto_reject_outcomes.keys
+        confirmed_registrations = user_registrations.confirmed
+                                              .where.not(id: auto_reject_registration_ids)
+                                              .includes(:user)
+                                              .to_a
+        auto_rejected_registrations = user_registrations.confirmed
+                                                  .where(id: auto_reject_registration_ids)
+                                                  .includes(:user)
+                                                  .to_a
         pending_registrations = user_registrations.pending.includes(:user).to_a
+
+        reject_registrations!(auto_rejected_registrations)
+        reject_registrations!(pending_registrations)
 
         Registration::AllocationMaterializer.new(self).materialize!
 
@@ -166,6 +178,21 @@ module Registration
         )
 
         Registration::StatusEventWriter.call(
+          registrations: auto_rejected_registrations,
+          action: Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+          reason_type: lambda do |registration|
+            auto_reject_reason_type(auto_reject_outcomes[registration.id])
+          end,
+          reason_code: lambda do |registration|
+            auto_reject_reason_code(auto_reject_outcomes[registration.id])
+          end,
+          correlation_id: correlation_id,
+          snapshot: lambda do |registration|
+            auto_reject_snapshot(auto_reject_outcomes[registration.id])
+          end
+        )
+
+        Registration::StatusEventWriter.call(
           registrations: pending_registrations,
           action: Registration::StatusEvent::ACTION_SYSTEM_REJECT,
           reason_type: rejection_reason_type,
@@ -175,11 +202,6 @@ module Registration
             rejection_snapshot
           end
         )
-
-        # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.where(id: pending_registrations.map(&:id))
-                          .update_all(status: :rejected)
-        # rubocop:enable Rails/SkipsModelValidations
 
         update!(status: :completed,
                 last_finalization_correlation_id: correlation_id)
@@ -292,6 +314,44 @@ module Registration
         @registerables_to_release = registration_items
                                     .filter_map(&:registerable)
                                     .select { |r| r.respond_to?(:skip_campaigns) }
+      end
+
+      def auto_reject_outcomes_by_registration
+        Registration::FinalizationGuard.new(self)
+                                       .policy_violations
+                                       .each_with_object({}) do |violation, grouped|
+          next unless violation[:classification] ==
+                      Registration::FinalizationGuard::CLASSIFICATION_AUTO_REJECT
+
+          grouped[violation[:registration_id]] ||= violation
+        end
+      end
+
+      def reject_registrations!(registrations)
+        return if registrations.empty?
+
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.where(id: registrations.map(&:id))
+                          .update_all(status: :rejected)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def auto_reject_reason_type(outcome)
+        outcome&.fetch(:reason_type, nil)&.to_s
+      end
+
+      def auto_reject_reason_code(outcome)
+        outcome&.fetch(:reason_code, nil)&.to_s
+      end
+
+      def auto_reject_snapshot(outcome)
+        snapshot = outcome&.fetch(:snapshot, nil)
+        return snapshot.deep_stringify_keys if snapshot.is_a?(Hash) && snapshot.present?
+
+        message = outcome&.fetch(:message, nil)
+        return { "label" => message } if message.present?
+
+        { "label" => "Rejected by finalization" }
       end
 
       def rejection_reason_type

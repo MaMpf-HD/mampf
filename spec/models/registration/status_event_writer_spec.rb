@@ -54,6 +54,33 @@ RSpec.describe(Registration::StatusEventWriter, type: :model) do
       expect(event.snapshot).to eq({ "registration_id" => registration.id })
     end
 
+    it "supports reason generation per registration" do
+      campaign = FactoryBot.create(:registration_campaign, :preference_based)
+      registration1 = FactoryBot.create(:registration_user_registration,
+                                        :preference_based,
+                                        registration_campaign: campaign,
+                                        preference_rank: 1)
+      registration2 = FactoryBot.create(:registration_user_registration,
+                                        :preference_based,
+                                        registration_campaign: campaign,
+                                        preference_rank: 2)
+
+      events = described_class.call(
+        registrations: [registration1, registration2],
+        action: Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+        reason_type: lambda do |registration|
+          registration.preference_rank == 1 ? "policy" : nil
+        end,
+        reason_code: lambda do |registration|
+          "reason_#{registration.preference_rank}"
+        end,
+        snapshot: { "label" => "Rejected" }
+      )
+
+      expect(events.map(&:reason_type)).to eq(["policy", nil])
+      expect(events.map(&:reason_code)).to eq(["reason_1", "reason_2"])
+    end
+
     it "allows one-off events without a correlation id" do
       registration = FactoryBot.create(:registration_user_registration)
 

@@ -51,7 +51,7 @@ module Registration
 
       # 2. Policy Check
       unless ignore_policies
-        policy_outcomes = check_policies
+        policy_outcomes = policy_violations
         if policy_outcomes.any? { |outcome| outcome[:classification] == CLASSIFICATION_BLOCKER }
           return failure(:policy_violation,
                          I18n.t("registration.allocation.errors.policy_violation"),
@@ -62,6 +62,10 @@ module Registration
       end
 
       success
+    end
+
+    def policy_violations
+      check_policies
     end
 
     private
@@ -94,6 +98,7 @@ module Registration
               policy_config: policy.config,
               passed: outcome[:passed],
               classification: outcome[:classification],
+              reason_type: outcome[:reason_type],
               reason_code: outcome[:reason_code],
               snapshot: outcome[:snapshot],
               evaluate_data: outcome[:snapshot],
@@ -110,6 +115,7 @@ module Registration
         {
           passed: passed,
           classification: normalize_classification(result[:classification], passed),
+          reason_type: result[:reason_type],
           reason_code: result[:reason_code] || result[:code],
           snapshot: normalize_snapshot(result),
           message: result[:message]

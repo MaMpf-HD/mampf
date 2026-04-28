@@ -9,6 +9,7 @@ module Registration
 
     REASON_TYPE_CAPACITY = "capacity".freeze
     REASON_TYPE_MANUAL = "manual".freeze
+    REASON_TYPE_POLICY = "policy".freeze
 
     REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
     REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
@@ -23,7 +24,8 @@ module Registration
 
     REASON_TYPES = [
       REASON_TYPE_CAPACITY,
-      REASON_TYPE_MANUAL
+      REASON_TYPE_MANUAL,
+      REASON_TYPE_POLICY
     ].freeze
 
     belongs_to :registration,
