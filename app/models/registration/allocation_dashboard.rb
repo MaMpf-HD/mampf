@@ -20,22 +20,35 @@ module Registration
       @unassigned_students ||= User.where(id: stats.unassigned_user_ids).order(:email)
     end
 
+    def guard_result
+      @guard_result ||= Registration::FinalizationGuard.new(@campaign).check
+    end
+
+    def blocker_violations
+      @blocker_violations ||= guard_result.blocker_violations
+    end
+
     def policy_violations
-      @policy_violations ||= begin
-        guard_result = Registration::FinalizationGuard.new(@campaign).check
-        guard_result.success? ? [] : (guard_result.data || [])
-      end
+      blocker_violations
+    end
+
+    def blockers_by_user
+      @blockers_by_user ||= blocker_violations.group_by { |v| v[:user_id] }
     end
 
     def violations_by_user
-      @violations_by_user ||= policy_violations.group_by { |v| v[:user_id] }
+      blockers_by_user
+    end
+
+    def blocker_counts_by_policy
+      @blocker_counts_by_policy ||=
+        blocker_violations
+        .group_by { |v| v[:policy] }
+        .transform_values(&:size)
     end
 
     def violation_counts_by_policy
-      @violation_counts_by_policy ||=
-        policy_violations
-        .group_by { |v| v[:policy] }
-        .transform_values(&:size)
+      blocker_counts_by_policy
     end
 
     def finalization_policies

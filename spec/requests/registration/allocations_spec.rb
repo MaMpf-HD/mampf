@@ -184,6 +184,24 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.wrong_status"))
         end
       end
+
+      context "when a force flag is passed" do
+        it "still uses the normal guard path" do
+          expect_any_instance_of(Registration::FinalizationGuard)
+            .to receive(:check).with(no_args).and_return(
+              Registration::FinalizationGuard::Result.new(success?: false,
+                                                          error_code: :policy_violation,
+                                                          data: [{ classification: :blocker }])
+            )
+
+          patch finalize_registration_campaign_allocation_path(campaign, force: true)
+
+          campaign.reload
+          expect(campaign).not_to be_completed
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.policy_violation"))
+        end
+      end
     end
 
     context "as a student" do

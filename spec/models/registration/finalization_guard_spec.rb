@@ -116,12 +116,14 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
 
         result = guard.check
 
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
-        expect(result.data).to include(hash_including(user_id: user.id,
-                                                      classification: :auto_reject,
-                                                      reason_code: :capacity,
-                                                      snapshot: { forced: true }))
+        expect(result.success?).to be(true)
+        expect(result.error_code).to be_nil
+        expect(result.auto_reject_violations).to include(
+          hash_including(user_id: user.id,
+                         classification: :auto_reject,
+                         reason_code: :capacity,
+                         snapshot: { forced: true })
+        )
       end
 
       it "ignores unconfirmed users" do

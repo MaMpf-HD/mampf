@@ -72,7 +72,6 @@ en:
         close: "End Registration"
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"
-        force_finalize: "Force Finalize (Ignore Errors)"
         allocate: "Run Allocation"
         reallocate: "Recalculate Allocation"
         view_allocation: "View Allocation"
@@ -87,7 +86,6 @@ en:
         close_early: "The registration deadline has not passed yet. Closing the registration process now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
-        force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
         reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
         complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
         user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this registration process? You cannot undo this action."
@@ -298,9 +296,9 @@ en:
       errors:
         already_completed: "Registration process is already completed."
         wrong_status: "Registration process has wrong status for this action."
-        policy_violation: "Policy violations detected. Please review details below."
-        policy_violation_title: "Policy Violations Detected"
-        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation: "Blocking policy issues detected. Please review details below."
+        policy_violation_title: "Blocking Policy Issues Detected"
+        policy_violation_desc: "The following users currently block finalization. You can resolve these issues, for example by rejecting the affected registrations. Users that only end in automatic rejection are not listed here."
         policy_violation_count:
           one: "student affected"
           other: "students affected"

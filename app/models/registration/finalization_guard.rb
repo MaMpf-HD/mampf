@@ -7,7 +7,23 @@ module Registration
                        CLASSIFICATION_AUTO_REJECT,
                        CLASSIFICATION_BLOCKER].freeze
 
-    Result = Struct.new(:success?, :error_code, :error_message, :data, keyword_init: true)
+    Result = Struct.new(:success?, :error_code, :error_message, :data, keyword_init: true) do
+      def policy_violations
+        Array(data)
+      end
+
+      def blocker_violations
+        policy_violations.select do |violation|
+          violation[:classification] == FinalizationGuard::CLASSIFICATION_BLOCKER
+        end
+      end
+
+      def auto_reject_violations
+        policy_violations.select do |violation|
+          violation[:classification] == FinalizationGuard::CLASSIFICATION_AUTO_REJECT
+        end
+      end
+    end
 
     def initialize(campaign)
       @campaign = campaign
@@ -35,11 +51,14 @@ module Registration
 
       # 2. Policy Check
       unless ignore_policies
-        policy_errors = check_policies
-        if policy_errors.any?
+        policy_outcomes = check_policies
+        if policy_outcomes.any? { |outcome| outcome[:classification] == CLASSIFICATION_BLOCKER }
           return failure(:policy_violation,
-                         I18n.t("registration.allocation.errors.policy_violation"), policy_errors)
+                         I18n.t("registration.allocation.errors.policy_violation"),
+                         policy_outcomes)
         end
+
+        return success(policy_outcomes.presence)
       end
 
       success
@@ -116,8 +135,8 @@ module Registration
         {}
       end
 
-      def success
-        Result.new(success?: true)
+      def success(data = nil)
+        Result.new(success?: true, data: data)
       end
 
       def failure(code, message, data = nil)

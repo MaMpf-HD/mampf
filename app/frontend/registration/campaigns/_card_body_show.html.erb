@@ -5,10 +5,10 @@
   campaign.completed? %>
 
 <% dashboard = Registration::AllocationDashboard.new(campaign) if show_allocation_dashboard %>
-<% has_violators = dashboard&.policy_violations&.present? %>
+<% has_blockers = dashboard&.blocker_violations&.present? %>
 
 <%= render "registration/campaigns/card_body_actions",
-           campaign: campaign, has_violators: has_violators %>
+           campaign: campaign, has_blockers: has_blockers %>
 
 <% if show_allocation_dashboard %>
   <% if campaign.preference_based? && !dashboard.allocation_run? %>

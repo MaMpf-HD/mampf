@@ -67,11 +67,8 @@ module Registration
     def finalize
       authorize! :finalize, @campaign
 
-      force = params[:force] == "true"
-      authorize!(:force_finalize, @campaign) if force
-
       guard = Registration::FinalizationGuard.new(@campaign)
-      result = guard.check(ignore_policies: force)
+      result = guard.check
 
       unless result.success?
         # Redirect to dashboard to show errors

@@ -42,7 +42,7 @@ module Registration
               partial: "registration/campaigns/card_body_actions",
               locals: {
                 campaign: @campaign,
-                has_violators: @dashboard.policy_violations.present?
+                has_blockers: @dashboard.blocker_violations.present?
               }
             )
           else

@@ -2,7 +2,7 @@
 <% campaign = local_assigns[:campaign] %>
 <% allocation_source = local_assigns[:allocation_source] %>
 
-<% return unless dashboard.policy_violations.present? %>
+<% return unless dashboard.blocker_violations.present? %>
 
 <div class="alert alert-danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -10,9 +10,8 @@
   <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
-
-  <% grouped = dashboard.violations_by_user %>
-  <% policy_counts = dashboard.violation_counts_by_policy %>
+  <% grouped = dashboard.blockers_by_user %>
+  <% policy_counts = dashboard.blocker_counts_by_policy %>
 
   <p class="mt-2 mb-2">
     <strong><%= grouped.size %></strong>
@@ -78,10 +77,4 @@
       </li>
     <% end %>
   </ul>
-
-  <%= button_to t("registration.campaign.actions.force_finalize"),
-                finalize_registration_campaign_allocation_path(campaign, force: true),
-                method: :patch,
-                data: { turbo_confirm: t("registration.campaign.confirmations.force_finalize") },
-                class: "btn btn-sm btn-danger" %>
 </div>

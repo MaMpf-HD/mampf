@@ -1,4 +1,5 @@
-<% has_violators = local_assigns.fetch(:has_violators, false) %>
+<% has_blockers = local_assigns.fetch(:has_blockers,
+                                      local_assigns.fetch(:has_violators, false)) %>
 
 <% show_top_actions = (campaign.draft? && campaign.registration_items.any?) ||
   campaign.open? || campaign.closed? || campaign.processing? %>
@@ -48,11 +49,11 @@
           <%= allocate_campaign_button(campaign) %>
           <% if campaign.last_allocation_calculated_at.present? %>
             <%= finalize_campaign_button(campaign,
-                                         disabled: has_violators) %>
+                                         disabled: has_blockers) %>
           <% end %>
         <% else %>
           <%= finalize_campaign_button(campaign,
-                                       disabled: has_violators) %>
+                                       disabled: has_blockers) %>
         <% end %>
       <% elsif campaign.processing? %>
         <div data-controller="collapse">
@@ -74,11 +75,11 @@
           <%= allocate_campaign_button(campaign, size: "w-100") %>
           <% if campaign.last_allocation_calculated_at.present? %>
             <%= finalize_campaign_button(campaign, size: "w-100",
-                                         disabled: has_violators) %>
+                                         disabled: has_blockers) %>
           <% end %>
         <% else %>
           <%= finalize_campaign_button(campaign, size: "w-100",
-                                       disabled: has_violators) %>
+                                       disabled: has_blockers) %>
         <% end %>
       <% end %>
     </div>
