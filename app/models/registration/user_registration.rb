@@ -13,6 +13,12 @@ module Registration
                class_name: "Registration::Item",
                inverse_of: :user_registrations
 
+    has_many :status_events,
+             class_name: "Registration::StatusEvent",
+             foreign_key: :registration_id,
+             inverse_of: :registration,
+             dependent: :destroy
+
     # A user registration represents an application for a specific item.
     # Changing the target item is semantically a different application.
     # Therefore, the registration_item_id is immutable.

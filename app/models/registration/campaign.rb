@@ -22,6 +22,11 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
+    has_many :status_events,
+             class_name: "Registration::StatusEvent",
+             foreign_key: :registration_campaign_id,
+             inverse_of: :registration_campaign
+
     has_many :users, -> { distinct }, through: :user_registrations
 
     has_many :registration_policies,
@@ -71,6 +76,12 @@ module Registration
 
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def latest_finalization_status_events
+      return Registration::StatusEvent.none if last_finalization_correlation_id.blank?
+
+      status_events.where(correlation_id: last_finalization_correlation_id)
     end
 
     def can_be_deleted?

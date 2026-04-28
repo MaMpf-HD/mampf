@@ -5,6 +5,7 @@ FactoryBot.define do
     allocation_mode { :first_come_first_served }
     registration_deadline { 2.weeks.from_now }
     status { :draft }
+    last_finalization_correlation_id { nil }
 
     trait :first_come_first_served do
       allocation_mode { :first_come_first_served }
