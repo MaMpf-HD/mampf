@@ -80,7 +80,13 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         expect(result.success?).to be(false)
         expect(result.error_code).to eq(:policy_violation)
         expect(result.data).to include(hash_including(user_id: invalid_user.id,
-                                                      policy: "institutional_email"))
+                                                      policy: "institutional_email",
+                                                      passed: false,
+                                                      classification: :blocker,
+                                                      reason_code: :institutional_email_mismatch,
+                                                      snapshot: hash_including(
+                                                        allowed_domains: ["uni.edu"]
+                                                      )))
       end
 
       it "fails if a user becomes invalid after registration" do
@@ -98,6 +104,24 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         expect(result.error_code).to eq(:policy_violation)
         expect(result.data).to include(hash_including(user_id: user.id,
                                                       policy: "institutional_email"))
+      end
+
+      it "preserves explicit non-legacy classification data" do
+        allow_any_instance_of(Registration::Policy).to receive(:evaluate).and_return(
+          pass: false,
+          classification: :auto_reject,
+          reason_code: :capacity,
+          snapshot: { forced: true }
+        )
+
+        result = guard.check
+
+        expect(result.success?).to be(false)
+        expect(result.error_code).to eq(:policy_violation)
+        expect(result.data).to include(hash_including(user_id: user.id,
+                                                      classification: :auto_reject,
+                                                      reason_code: :capacity,
+                                                      snapshot: { forced: true }))
       end
 
       it "ignores unconfirmed users" do

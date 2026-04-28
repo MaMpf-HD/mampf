@@ -102,9 +102,9 @@ module Registration
 
           Registration::StatusEventWriter.call(
             registrations: registrations,
-            action: "teacher_reject",
-            reason_type: "manual",
-            reason_code: "withdrawn_by_teacher",
+            action: Registration::StatusEvent::ACTION_TEACHER_REJECT,
+            reason_type: Registration::StatusEvent::REASON_TYPE_MANUAL,
+            reason_code: Registration::StatusEvent::REASON_CODE_WITHDRAWN_BY_TEACHER,
             actor: current_user,
             correlation_id: correlation_id,
             snapshot: lambda do |registration|
