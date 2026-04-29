@@ -5,8 +5,11 @@ module Registration
     class InstitutionalEmailHandler < Handler
       def evaluate(user)
         if domains.empty?
-          return fail_result(:configuration_error,
-                             I18n.t("registration.policy.errors.no_allowed_domains_configured"))
+          return fail_result(
+            :configuration_error,
+            I18n.t("registration.policy.errors.no_allowed_domains_configured"),
+            classification: Registration::FinalizationGuard::CLASSIFICATION_BLOCKER
+          )
         end
 
         email_domain = user.email.to_s.strip.downcase.split("@", 2).last
@@ -17,9 +20,18 @@ module Registration
         if allowed
           pass_result(:domain_ok)
         else
-          fail_result(:institutional_email_mismatch,
-                      I18n.t("registration.policy.errors.email_domain_not_allowed"),
-                      allowed_domains: domains)
+          fail_result(
+            :institutional_email_mismatch,
+            I18n.t("registration.policy.errors.email_domain_not_allowed"),
+            classification: Registration::FinalizationGuard::CLASSIFICATION_AUTO_REJECT,
+            reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+            reason_code: :institutional_email_mismatch,
+            snapshot: {
+              label: I18n.t("registration.policy.errors.email_domain_not_allowed"),
+              allowed_domains: domains,
+              actual_domain: email_domain
+            }
+          )
         end
       end
 

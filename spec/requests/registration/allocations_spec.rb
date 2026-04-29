@@ -184,19 +184,15 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(campaign).to be_completed
           expect(response).to have_http_status(:ok)
           expect(response.body)
-            .to include(I18n.t("registration.campaign.finalization_summary.title"))
+            .to include('target="flash-messages"')
           expect(response.body)
             .to include(
-              I18n.t("registration.campaign.finalization_summary.review_current_action")
+              I18n.t("registration.campaign.finalized_with_rejected",
+                     confirmed: 1,
+                     rejected: 1)
             )
           expect(response.body)
-            .to include(
-              unassigned_registration_campaign_path(
-                campaign,
-                source: :panel,
-                format: :turbo_stream
-              )
-            )
+            .to include('action="prepend"')
         end
       end
 

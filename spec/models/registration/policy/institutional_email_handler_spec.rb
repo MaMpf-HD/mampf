@@ -27,6 +27,11 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:institutional_email_mismatch)
+      expect(result[:classification]).to eq(:auto_reject)
+      expect(result[:reason_type]).to eq("policy")
+      expect(result[:reason_code]).to eq(:institutional_email_mismatch)
+      expect(result[:snapshot]).to include(allowed_domains: ["uni.example", "test.org"],
+                                           actual_domain: "other.example")
     end
 
     it "fails if email matches a partial domain suffix but not a subdomain" do
@@ -34,6 +39,7 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:institutional_email_mismatch)
+      expect(result[:classification]).to eq(:auto_reject)
     end
 
     it "fails if config is missing" do
@@ -41,6 +47,7 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:configuration_error)
+      expect(result[:classification]).to eq(:blocker)
     end
   end
 

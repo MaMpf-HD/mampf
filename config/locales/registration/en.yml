@@ -12,6 +12,7 @@ en:
       closed: "Registration process closed."
       reopened: "Registration process reopened."
       finalized: "Registration process finalized successfully."
+      finalized_with_rejected: "Registration process finalized: %{confirmed} enrolled, %{rejected} automatically rejected. They can be added manually later if needed."
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"
@@ -20,11 +21,6 @@ en:
       dissolved_enrolled: "enrolled"
       dissolved_rejected: "rejected"
       dissolved_not_placed: "not placed"
-      finalization_summary:
-        title: "Latest Finalization Result"
-        body_without_rejected: "The latest run finalized %{confirmed} enrolled students. Later manual roster changes do not change this summary."
-        body_with_rejected: "The latest run finalized %{confirmed} enrolled students and %{rejected} %{rejected_label}. Later manual roster changes do not change this summary."
-        review_current_action: "Review Current-Action List"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
       helpdesk:

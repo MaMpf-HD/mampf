@@ -79,15 +79,14 @@ module Registration
 
       if @campaign.finalize!
         lecture = @campaign.campaignable
-        respond_with_flash(:notice, t("registration.campaign.finalized"),
+        respond_with_flash(:notice, finalization_flash_message,
                            redirect_path: registration_campaign_path(@campaign)) do
           [
             turbo_stream.update("campaigns_container",
                                 partial: "registration/campaigns/card_body_index",
                                 locals: {
                                   lecture: lecture,
-                                  expanded_campaign_id: @campaign.id,
-                                  finalized_campaign_id: @campaign.id
+                                  expanded_campaign_id: @campaign.id
                                 }),
             *refresh_roster_streams(lecture)
           ]
@@ -109,6 +108,17 @@ module Registration
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
+      end
+
+      def finalization_flash_message
+        rejected = @campaign.latest_finalization_rejected_count
+        confirmed = @campaign.latest_finalization_confirmed_count
+
+        return t("registration.campaign.finalized") unless rejected.positive?
+
+        t("registration.campaign.finalized_with_rejected",
+          confirmed: confirmed,
+          rejected: rejected)
       end
   end
 end

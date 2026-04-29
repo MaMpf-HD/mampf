@@ -639,6 +639,113 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(reject_event.snapshot).to eq({ "label" => "Rejected by final policy" })
     end
 
+    it "auto-rejects institutional email mismatches for FCFS campaigns with the real handler" do
+      fcfs_campaign = create(:registration_campaign,
+                             :first_come_first_served,
+                             :with_items,
+                             status: :draft)
+      item = fcfs_campaign.registration_items.first
+      auto_reject_user = create(:confirmed_user, email: "auto@external.org")
+      confirmed_user = create(:confirmed_user, email: "keep@uni.edu")
+
+      create(:registration_policy, :institutional_email,
+             registration_campaign: fcfs_campaign,
+             phase: :finalization,
+             config: { "allowed_domains" => "uni.edu" })
+
+      fcfs_campaign.update!(status: :closed,
+                            registration_deadline: 1.day.ago)
+
+      auto_rejected_registration = create(:registration_user_registration,
+                                          :confirmed,
+                                          registration_campaign: fcfs_campaign,
+                                          registration_item: item,
+                                          user: auto_reject_user)
+      confirmed_registration = create(:registration_user_registration,
+                                      :confirmed,
+                                      registration_campaign: fcfs_campaign,
+                                      registration_item: item,
+                                      user: confirmed_user)
+
+      fcfs_campaign.finalize!
+
+      expect(auto_rejected_registration.reload).to be_rejected
+      expect(auto_rejected_registration.materialized_at).to be_nil
+      expect(confirmed_registration.reload).to be_confirmed
+      expect(confirmed_registration.materialized_at).to be_present
+
+      reject_event = fcfs_campaign.latest_finalization_status_events.find_by!(
+        registration_id: auto_rejected_registration.id,
+        action: Registration::StatusEvent::ACTION_SYSTEM_REJECT
+      )
+      expect(reject_event.reason_type)
+        .to eq(Registration::StatusEvent::REASON_TYPE_POLICY)
+      expect(reject_event.reason_code).to eq("institutional_email_mismatch")
+      expect(reject_event.snapshot).to include(
+        "allowed_domains" => ["uni.edu"],
+        "actual_domain" => "external.org"
+      )
+    end
+
+    it "auto-rejects unmet prerequisites for FCFS campaigns with the real handler" do
+      prerequisite_campaign = create(:registration_campaign,
+                                     :with_items,
+                                     status: :draft)
+      prerequisite_item = prerequisite_campaign.registration_items.first
+
+      fcfs_campaign = create(:registration_campaign,
+                             :first_come_first_served,
+                             :with_items,
+                             status: :draft)
+      item = fcfs_campaign.registration_items.first
+      auto_reject_user = create(:confirmed_user)
+      confirmed_user = create(:confirmed_user)
+
+      create(:registration_user_registration,
+             :confirmed,
+             registration_campaign: prerequisite_campaign,
+             registration_item: prerequisite_item,
+             user: confirmed_user)
+
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: fcfs_campaign,
+             phase: :finalization,
+             config: { "prerequisite_campaign_id" => prerequisite_campaign.id })
+
+      fcfs_campaign.update!(status: :closed,
+                            registration_deadline: 1.day.ago)
+
+      auto_rejected_registration = create(:registration_user_registration,
+                                          :confirmed,
+                                          registration_campaign: fcfs_campaign,
+                                          registration_item: item,
+                                          user: auto_reject_user)
+      confirmed_registration = create(:registration_user_registration,
+                                      :confirmed,
+                                      registration_campaign: fcfs_campaign,
+                                      registration_item: item,
+                                      user: confirmed_user)
+
+      fcfs_campaign.finalize!
+
+      expect(auto_rejected_registration.reload).to be_rejected
+      expect(auto_rejected_registration.materialized_at).to be_nil
+      expect(confirmed_registration.reload).to be_confirmed
+      expect(confirmed_registration.materialized_at).to be_present
+
+      reject_event = fcfs_campaign.latest_finalization_status_events.find_by!(
+        registration_id: auto_rejected_registration.id,
+        action: Registration::StatusEvent::ACTION_SYSTEM_REJECT
+      )
+      expect(reject_event.reason_type)
+        .to eq(Registration::StatusEvent::REASON_TYPE_POLICY)
+      expect(reject_event.reason_code).to eq("prerequisite_not_met")
+      expect(reject_event.snapshot).to include(
+        "prerequisite_campaign_id" => prerequisite_campaign.id,
+        "prerequisite_campaign_description" => prerequisite_campaign.description
+      )
+    end
+
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield

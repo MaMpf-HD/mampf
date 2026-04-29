@@ -1,56 +1,59 @@
 require "rails_helper"
 
 RSpec.describe(Registration::Policy::PrerequisiteCampaignHandler, type: :model) do
-  let(:prereq) { create(:registration_campaign, :completed) }
+  let(:prerequisite_campaign) { create(:registration_campaign, :with_items) }
   let(:policy) do
     build(:registration_policy, :prerequisite_campaign,
-          config: { "prerequisite_campaign_id" => prereq.id })
+          config: { "prerequisite_campaign_id" => prerequisite_campaign.id })
   end
   let(:handler) { described_class.new(policy) }
-  let(:user) { create(:user) }
+  let(:user) { create(:confirmed_user) }
 
   describe "#evaluate" do
-    it "passes if user is confirmed in prerequisite campaign" do
-      create(:registration_user_registration, registration_campaign: prereq, user: user,
-                                              status: :confirmed)
+    it "passes if the user is confirmed in the prerequisite campaign" do
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: prerequisite_campaign,
+             registration_item: prerequisite_campaign.registration_items.first,
+             user: user)
+
       result = handler.evaluate(user)
+
       expect(result[:pass]).to be(true)
       expect(result[:code]).to eq(:prerequisite_met)
     end
 
-    it "fails if user is not confirmed" do
+    it "auto-rejects if the prerequisite is not met" do
       result = handler.evaluate(user)
+
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:prerequisite_not_met)
+      expect(result[:classification]).to eq(:auto_reject)
+      expect(result[:reason_type]).to eq("policy")
+      expect(result[:reason_code]).to eq(:prerequisite_not_met)
+      expect(result[:snapshot]).to include(
+        prerequisite_campaign_id: prerequisite_campaign.id,
+        prerequisite_campaign_description: prerequisite_campaign.description
+      )
     end
 
-    it "fails if prerequisite campaign is missing" do
-      policy.config["prerequisite_campaign_id"] = 99_999
+    it "returns a blocker if the prerequisite campaign is not configured" do
+      policy.config = {}
+
       result = handler.evaluate(user)
+
+      expect(result[:pass]).to be(false)
+      expect(result[:code]).to eq(:configuration_error)
+      expect(result[:classification]).to eq(:blocker)
+    end
+
+    it "returns a blocker if the prerequisite campaign cannot be found" do
+      policy.config = { "prerequisite_campaign_id" => SecureRandom.uuid }
+
+      result = handler.evaluate(user)
+
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:prerequisite_campaign_not_found)
-    end
-  end
-
-  describe "#validate" do
-    it "adds error if campaign id is missing" do
-      policy.config = {}
-      handler.validate
-      expect(policy.errors[:prerequisite_campaign_id])
-        .to include(I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
-    end
-
-    it "adds error if campaign does not exist" do
-      policy.config["prerequisite_campaign_id"] = 99_999
-      handler.validate
-      expect(policy.errors[:prerequisite_campaign_id])
-        .to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
-    end
-  end
-
-  describe "#summary" do
-    it "returns campaign description" do
-      expect(handler.summary).to eq(prereq.description)
+      expect(result[:classification]).to eq(:blocker)
     end
   end
 end

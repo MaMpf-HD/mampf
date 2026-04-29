@@ -77,16 +77,19 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                user: invalid_user)
 
         result = guard.check
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
-        expect(result.data).to include(hash_including(user_id: invalid_user.id,
-                                                      policy: "institutional_email",
-                                                      passed: false,
-                                                      classification: :blocker,
-                                                      reason_code: :institutional_email_mismatch,
-                                                      snapshot: hash_including(
-                                                        allowed_domains: ["uni.edu"]
-                                                      )))
+        expect(result.success?).to be(true)
+        expect(result.error_code).to be_nil
+        expect(result.auto_reject_violations).to include(
+          hash_including(user_id: invalid_user.id,
+                         policy: "institutional_email",
+                         passed: false,
+                         classification: :auto_reject,
+                         reason_code: :institutional_email_mismatch,
+                         snapshot: hash_including(
+                           allowed_domains: ["uni.edu"],
+                           actual_domain: "other.com"
+                         ))
+        )
       end
 
       it "fails if a user becomes invalid after registration" do
@@ -100,10 +103,12 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         user.update(email: "invalid@other.com")
 
         result = guard.check
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
-        expect(result.data).to include(hash_including(user_id: user.id,
-                                                      policy: "institutional_email"))
+        expect(result.success?).to be(true)
+        expect(result.auto_reject_violations).to include(
+          hash_including(user_id: user.id,
+                         policy: "institutional_email",
+                         classification: :auto_reject)
+        )
       end
 
       it "preserves explicit non-legacy classification data" do

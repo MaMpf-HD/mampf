@@ -3,12 +3,18 @@ module Registration
     class PrerequisiteCampaignHandler < Handler
       def evaluate(user)
         if campaign_id.blank?
-          return fail_result(:configuration_error,
-                             I18n.t("registration.policy.errors.prerequisite_not_configured"))
+          return fail_result(
+            :configuration_error,
+            I18n.t("registration.policy.errors.prerequisite_not_configured"),
+            classification: Registration::FinalizationGuard::CLASSIFICATION_BLOCKER
+          )
         end
         unless campaign
-          return fail_result(:prerequisite_campaign_not_found,
-                             I18n.t("registration.policy.errors.prerequisite_missing"))
+          return fail_result(
+            :prerequisite_campaign_not_found,
+            I18n.t("registration.policy.errors.prerequisite_missing"),
+            classification: Registration::FinalizationGuard::CLASSIFICATION_BLOCKER
+          )
         end
 
         confirmed = if @confirmed_user_ids
@@ -20,8 +26,18 @@ module Registration
         if confirmed
           pass_result(:prerequisite_met)
         else
-          fail_result(:prerequisite_not_met,
-                      I18n.t("registration.policy.errors.prerequisite_not_met"))
+          fail_result(
+            :prerequisite_not_met,
+            I18n.t("registration.policy.errors.prerequisite_not_met"),
+            classification: Registration::FinalizationGuard::CLASSIFICATION_AUTO_REJECT,
+            reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+            reason_code: :prerequisite_not_met,
+            snapshot: {
+              label: I18n.t("registration.policy.errors.prerequisite_not_met"),
+              prerequisite_campaign_id: campaign_id,
+              prerequisite_campaign_description: campaign&.description
+            }
+          )
         end
       end
 

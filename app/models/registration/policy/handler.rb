@@ -27,12 +27,13 @@ module Registration
           policy.config || {}
         end
 
-        def pass_result(code = :ok, details = {})
-          { pass: true, code: code, details: details }
+        def pass_result(code = :ok, details = {}, **metadata)
+          { pass: true, code: code, details: details }.merge(metadata)
         end
 
-        def fail_result(code, message, details = {})
+        def fail_result(code, message, details = {}, **metadata)
           { pass: false, code: code, message: message, details: details }
+            .merge(metadata)
         end
     end
   end

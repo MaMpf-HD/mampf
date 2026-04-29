@@ -7,7 +7,6 @@
   <% active_campaigns = campaigns.reject(&:completed?) %>
   <% completed_campaigns = campaigns.select(&:completed?) %>
   <% no_campaign_groups = no_campaign_registerables(lecture) %>
-  <% finalized_campaign_id = local_assigns[:finalized_campaign_id] %>
   <div class="d-flex flex-column gap-2">
     <section>
       <% if campaigns.any? %>
@@ -51,11 +50,6 @@
 
     <section>
       <% completed_campaigns.each do |campaign| %>
-        <% if campaign.id == finalized_campaign_id %>
-          <%= render "registration/campaigns/finalization_confirmation",
-                     campaign: campaign %>
-        <% end %>
-
         <%= render "registration/campaigns/dissolved_footnote",
                    campaign: campaign %>
       <% end %>

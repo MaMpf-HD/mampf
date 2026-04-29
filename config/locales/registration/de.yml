@@ -12,6 +12,7 @@ de:
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
+      finalized_with_rejected: "Anmeldeverfahren abgeschlossen: %{confirmed} zugeteilt, %{rejected} automatisch abgelehnt. Diese können bei Bedarf später manuell hinzugefügt werden."
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
@@ -20,11 +21,6 @@ de:
       dissolved_enrolled: "zugeteilt"
       dissolved_rejected: "abgelehnt"
       dissolved_not_placed: "nicht zugeteilt"
-      finalization_summary:
-        title: "Ergebnis der letzten Finalisierung"
-        body_without_rejected: "Der letzte Lauf hat %{confirmed} zugeteilte Studierende finalisiert. Spätere manuelle Änderungen an der Gruppenverwaltung ändern diese Zusammenfassung nicht."
-        body_with_rejected: "Der letzte Lauf hat %{confirmed} zugeteilte Studierende sowie %{rejected} %{rejected_label} finalisiert. Spätere manuelle Änderungen an der Gruppenverwaltung ändern diese Zusammenfassung nicht."
-        review_current_action: "Nachbearbeitungsansicht öffnen"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
       helpdesk:
