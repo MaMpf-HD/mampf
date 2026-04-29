@@ -5,13 +5,15 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(registerable: nil, students: [], read_only: false,
-                 is_unassigned: false, campaign: nil, item: nil,
+                 is_unassigned: false, candidate_scope: :unassigned,
+                 campaign: nil, item: nil,
                  allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
     @students = students
     @read_only = read_only
     @is_unassigned = is_unassigned
+    @candidate_scope = candidate_scope.to_sym
     @campaign = campaign
     @item = item
     @allocated = allocated
@@ -83,7 +85,9 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def panel_title
     if unassigned?
-      if campaign&.completed?
+      if rejected_only?
+        t("roster.candidates.rejected_title")
+      elsif campaign&.completed?
         t("roster.candidates.completed_title")
       else
         t("roster.candidates.title")
@@ -165,7 +169,7 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def drag_source_type
     if draggable_unassigned?
-      "unassigned"
+      rejected_only? ? "rejected" : "unassigned"
     else
       registerable.class.name.downcase
     end
@@ -192,10 +196,14 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def rejected_student?(student)
+    return false unless unassigned? && campaign.present?
+
     rejection_event(student).present?
   end
 
   def rejection_reason(student)
+    return unless unassigned? && campaign.present?
+
     rejection_event(student)&.snapshot&.fetch("label", nil)
   end
 
@@ -223,16 +231,24 @@ class RosterSidePanelComponent < ViewComponent::Base
   def unassigned_panel_description
     return unless unassigned? && campaign&.completed?
 
+    return t("roster.candidates.rejected_description") if rejected_only?
+
     t("roster.candidates.completed_description")
   end
 
   private
+
+    def rejected_only?
+      unassigned? && @candidate_scope == :rejected
+    end
 
     def draggable_unassigned?
       unassigned? && campaign.present?
     end
 
     def relevant_registrations(student)
+      return [] unless campaign.present?
+
       student.user_registrations.select do |r|
         r.registration_campaign_id == campaign.id
       end

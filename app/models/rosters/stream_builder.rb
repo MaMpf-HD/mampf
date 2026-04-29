@@ -25,8 +25,8 @@ module Rosters
     def streams(variant: nil, update_tiles: true)
       return move_panel_streams if variant == :move_panel
 
-      if @mparams.unassigned?
-        unassigned_streams
+      if @mparams.candidate_source?
+        candidate_streams
       elsif @mparams.panel?
         panel_streams(update_tiles: update_tiles)
       elsif @mparams.participants?
@@ -58,7 +58,7 @@ module Rosters
         streams
       end
 
-      def unassigned_streams
+      def candidate_streams
         campaign = Registration::Campaign.find_by(id: @mparams.source_id)
         @rosterable.reload
 
@@ -66,9 +66,12 @@ module Rosters
         tile_replacements_for(@rosterable, streams)
 
         if campaign
-          unassigned_users = campaign.unassigned_users(
-            preload_registrations: true
-          )
+          panel_mode = @mparams.rejected? ? :rejected : :unassigned
+          students = if @mparams.rejected?
+            campaign.rejected_users
+          else
+            campaign.unassigned_non_rejected_users
+          end
 
           streams << @turbo_stream.replace(
             "dissolved_campaign_#{campaign.id}",
@@ -80,8 +83,9 @@ module Rosters
             "tutorial-roster-side-panel",
             html: RosterSidePanelComponent.new(
               campaign: campaign,
-              students: unassigned_users,
-              is_unassigned: true
+              students: students,
+              is_unassigned: true,
+              candidate_scope: panel_mode
             ).render_in(@view_context)
           )
         end

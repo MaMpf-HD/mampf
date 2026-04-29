@@ -416,6 +416,100 @@ RSpec.describe("Registration::Campaigns", type: :request) do
             expect(response.body).to include("Sticky Student")
           end
         end
+
+        it "shows only still-unassigned students" do
+          completed_campaign = create(:registration_campaign, :completed, campaignable: lecture)
+          tutorial = create(:tutorial, lecture: lecture)
+          item = create(:registration_item,
+                        registration_campaign: completed_campaign,
+                        registerable: tutorial)
+          rejected_student = create(:confirmed_user, name: "Rejected Student")
+          waiting_student = create(:confirmed_user, name: "Waiting Student")
+
+          rejected_registration = create(:registration_user_registration,
+                                         :rejected,
+                                         registration_campaign: completed_campaign,
+                                         registration_item: item,
+                                         user: rejected_student)
+          create(:registration_status_event,
+                 :system_reject,
+                 registration: rejected_registration,
+                 registration_campaign: completed_campaign,
+                 reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+                 reason_code: "institutional_email_mismatch",
+                 snapshot: { "label" => "Institutional email" })
+          create(:registration_user_registration,
+                 :pending,
+                 registration_campaign: completed_campaign,
+                 registration_item: item,
+                 user: waiting_student)
+
+          get unassigned_registration_campaign_path(completed_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Waiting Student")
+          expect(response.body).not_to include("Rejected Student")
+        end
+      end
+    end
+  end
+
+  describe "GET /campaigns/:id/rejected" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "without source=panel" do
+        it "redirects to the lecture groups tab" do
+          get rejected_registration_campaign_path(campaign)
+          expect(response).to redirect_to(edit_lecture_path(campaign.campaignable, tab: "groups"))
+        end
+      end
+
+      context "with source=panel" do
+        it "renders the rejected roster side panel turbo stream" do
+          get rejected_registration_campaign_path(campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+        end
+
+        it "shows only rejected students" do
+          completed_campaign = create(:registration_campaign, :completed, campaignable: lecture)
+          tutorial = create(:tutorial, lecture: lecture)
+          item = create(:registration_item,
+                        registration_campaign: completed_campaign,
+                        registerable: tutorial)
+          rejected_student = create(:confirmed_user, name: "Rejected Student")
+          waiting_student = create(:confirmed_user, name: "Waiting Student")
+
+          rejected_registration = create(:registration_user_registration,
+                                         :rejected,
+                                         registration_campaign: completed_campaign,
+                                         registration_item: item,
+                                         user: rejected_student)
+          create(:registration_status_event,
+                 :system_reject,
+                 registration: rejected_registration,
+                 registration_campaign: completed_campaign,
+                 reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+                 reason_code: "institutional_email_mismatch",
+                 snapshot: { "label" => "Institutional email" })
+          create(:registration_user_registration,
+                 :pending,
+                 registration_campaign: completed_campaign,
+                 registration_item: item,
+                 user: waiting_student)
+
+          get rejected_registration_campaign_path(completed_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Rejected Student")
+          expect(response.body).to include(I18n.t("roster.candidates.rejected_title"))
+          expect(response.body).not_to include("Waiting Student")
+        end
       end
     end
   end

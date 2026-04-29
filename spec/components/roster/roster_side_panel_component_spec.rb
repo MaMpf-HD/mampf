@@ -344,6 +344,21 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
       expect(rendered.to_html).not_to include("Not placed by solver")
     end
+
+    it "does not consult campaign rejection state for ordinary group panels" do
+      student = create(:confirmed_user, name: "Regular Student")
+
+      rendered = render_inline(
+        described_class.new(
+          registerable: registerable,
+          students: [student]
+        )
+      )
+
+      expect(rendered.to_html).to include("Regular Student")
+      expect(rendered.to_html)
+        .not_to include(I18n.t("registration.user_registration.status.rejected"))
+    end
   end
 
   describe "#allocated_choice_pills" do

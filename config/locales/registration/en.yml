@@ -13,6 +13,8 @@ en:
       reopened: "Registration process reopened."
       finalized: "Registration process finalized successfully."
       finalized_with_rejected: "Registration process finalized: %{confirmed} enrolled, %{rejected} automatically rejected. They can be added manually later if needed."
+      finalized_with_unassigned: "Registration process finalized: %{confirmed} enrolled, %{unassigned} not placed. They can be added manually later if needed."
+      finalized_with_rejected_and_unassigned: "Registration process finalized: %{confirmed} enrolled, %{rejected} automatically rejected, %{unassigned} not placed. They can be added manually later if needed."
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"

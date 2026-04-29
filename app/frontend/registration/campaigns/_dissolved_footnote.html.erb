@@ -25,13 +25,28 @@
         <%= t("registration.campaign.dissolved_enrolled") %>
       </span>
 
-      <% rejected = campaign.latest_finalization_rejected_count %>
+      <% rejected = campaign.rejected_users.size %>
 
       <% if rejected.positive? %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
-        <span>
-          <%= rejected %>
-          <%= dissolved_rejection_label(campaign) %>
+        <span
+          role="button"
+          tabindex="0"
+          class="
+            p-0 text-decoration-none text-reset candidate-warning-trigger d-inline-flex
+            align-items-center gap-1
+          "
+          data-tutorial-roster-panel-target="tile"
+          data-roster-key="campaign_<%= campaign.id %>_rejected"
+          data-action="click->tutorial-roster-panel#openFromTile"
+          data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
+        >
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+
+          <span>
+            <%= rejected %>
+            <%= dissolved_rejection_label(campaign) %>
+          </span>
         </span>
       <% end %>
 
@@ -42,7 +57,7 @@
         <span><%= summary %></span>
       <% end %>
 
-      <% unassigned = campaign.unassigned_users.count %>
+      <% unassigned = campaign.unassigned_non_rejected_users.size %>
 
       <% if unassigned > 0 %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
@@ -50,7 +65,7 @@
           role="button"
           tabindex="0"
           class="
-            p-0 text-decoration-none text-reset unassigned-warning-trigger
+            p-0 text-decoration-none text-reset candidate-warning-trigger
             d-inline-flex align-items-center gap-1
           "
           data-tutorial-roster-panel-target="tile"

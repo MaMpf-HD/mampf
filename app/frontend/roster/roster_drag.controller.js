@@ -84,12 +84,12 @@ export default class extends Controller {
     });
   }
 
-  refreshDropZones() {
+  refreshDropZones = () => {
     this.clearHighlight();
     if (!this.hasStudentListTarget) return;
 
     this.initDropZones();
-  }
+  };
 
   updateHighlight(dropZone) {
     const tile = dropZone.closest(".tutorial-gtile");
@@ -119,7 +119,7 @@ export default class extends Controller {
     const targetTitle = tile.dataset.rosterTitle;
     const targetAddPath = tile.dataset.rosterAddMemberPath;
 
-    if (this.sourceTypeValue === "unassigned") {
+    if (this.isCandidateSource()) {
       if (targetFull && !confirm(this.overbookingWarningValue)) {
         return;
       }
@@ -196,9 +196,9 @@ export default class extends Controller {
   }
 
   submitAdd(userId, targetAddPath) {
-    const sourceParams = this.sourceTypeValue === "unassigned"
+    const sourceParams = this.isCandidateSource()
       ? {
-          source: "unassigned",
+          source: this.sourceTypeValue,
           source_id: this.sourceIdValue,
         }
       : {
@@ -249,5 +249,9 @@ export default class extends Controller {
   classNameFor(type) {
     const map = { tutorial: "Tutorial", cohort: "Cohort", talk: "Talk" };
     return map[type] || type;
+  }
+
+  isCandidateSource() {
+    return ["unassigned", "rejected"].includes(this.sourceTypeValue);
   }
 }

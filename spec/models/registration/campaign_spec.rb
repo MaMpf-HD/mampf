@@ -498,7 +498,46 @@ RSpec.describe(Registration::Campaign, type: :model) do
       preference_campaign.finalize!
 
       expect(preference_campaign.reload.latest_finalization_confirmed_count).to eq(1)
-      expect(preference_campaign.latest_finalization_rejected_count).to eq(1)
+      expect(preference_campaign.latest_finalization_rejected_count).to eq(0)
+      expect(preference_campaign.latest_finalization_unassigned_count).to eq(1)
+    end
+
+    it "counts rejected applicants by user, excluding users also confirmed in the same run" do
+      preference_campaign = create(:registration_campaign,
+                                   :processing,
+                                   :preference_based)
+      first_item = preference_campaign.registration_items.first
+      second_item = preference_campaign.registration_items.second
+      confirmed_user = create(:confirmed_user)
+      rejected_user = create(:confirmed_user)
+
+      create(:registration_user_registration,
+             :preference_based,
+             registration_campaign: preference_campaign,
+             registration_item: first_item,
+             user: confirmed_user,
+             status: :confirmed,
+             preference_rank: nil)
+      create(:registration_user_registration,
+             :preference_based,
+             registration_campaign: preference_campaign,
+             registration_item: second_item,
+             user: confirmed_user,
+             status: :pending,
+             preference_rank: 2)
+      create(:registration_user_registration,
+             :preference_based,
+             registration_campaign: preference_campaign,
+             registration_item: first_item,
+             user: rejected_user,
+             status: :pending,
+             preference_rank: 1)
+
+      preference_campaign.finalize!
+
+      expect(preference_campaign.reload.latest_finalization_confirmed_count).to eq(1)
+      expect(preference_campaign.latest_finalization_rejected_count).to eq(0)
+      expect(preference_campaign.latest_finalization_unassigned_count).to eq(1)
     end
 
     it "writes nil reason fields for FCFS pending rejections" do
@@ -1062,6 +1101,56 @@ RSpec.describe(Registration::Campaign, type: :model) do
       it "does not include unassigned students from another campaign" do
         expect(campaign.unassigned_users(preload_registrations: true))
           .not_to include(other_student)
+      end
+    end
+
+    context "when a campaign has rejected and still-unassigned students" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:rejected_student) { create(:user, name: "Rejected Student") }
+      let(:waiting_student) { create(:user, name: "Waiting Student") }
+      let(:assigned_student) { create(:user, name: "Assigned Student") }
+
+      before do
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial)
+
+        rejected_registration = create(:registration_user_registration,
+                                       :rejected,
+                                       registration_campaign: campaign,
+                                       registration_item: campaign.registration_items.first,
+                                       user: rejected_student)
+        create(:registration_status_event,
+               :system_reject,
+               registration: rejected_registration,
+               registration_campaign: campaign,
+               reason_type: Registration::StatusEvent::REASON_TYPE_POLICY,
+               reason_code: "institutional_email_mismatch",
+               snapshot: { "label" => "Institutional email" })
+
+        waiting_registration = create(:registration_user_registration,
+                                      :rejected,
+                                      registration_campaign: campaign,
+                                      registration_item: campaign.registration_items.first,
+                                      user: waiting_student)
+        create(:registration_status_event,
+               :system_reject,
+               registration: waiting_registration,
+               registration_campaign: campaign)
+
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: assigned_student)
+        create(:tutorial_membership, tutorial: tutorial, user: assigned_student)
+      end
+
+      it "splits rejected users from still-unassigned users" do
+        expect(campaign.rejected_users)
+          .to contain_exactly(rejected_student)
+        expect(campaign.unassigned_non_rejected_users)
+          .to contain_exactly(waiting_student)
       end
     end
   end

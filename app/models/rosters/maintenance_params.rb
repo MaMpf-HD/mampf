@@ -3,7 +3,7 @@ module Rosters
   # roster maintenance UI, providing a single source of truth for interpreting
   # these parameters in the controller and related classes.
   class MaintenanceParams
-    SOURCE_TYPES = ["panel", "unassigned", "participants"].freeze
+    SOURCE_TYPES = ["panel", "unassigned", "rejected", "participants"].freeze
 
     attr_reader :group_type, :source, :source_id, :source_type, :target_id,
                 :target_type, :user_id, :email, :mode, :search,
@@ -48,6 +48,14 @@ module Rosters
 
     def unassigned?
       source == "unassigned" && source_id.present?
+    end
+
+    def rejected?
+      source == "rejected" && source_id.present?
+    end
+
+    def candidate_source?
+      unassigned? || rejected?
     end
 
     def participants?

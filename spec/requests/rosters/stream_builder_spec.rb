@@ -103,6 +103,51 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
     end
   end
 
+  describe "stream dispatch via rejected source" do
+    let(:campaign_tutorial) do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+    end
+    let(:campaign) do
+      create(:registration_campaign, campaignable: lecture,
+                                     status: :completed, registration_deadline: 2.weeks.ago)
+    end
+    let(:new_student) { create(:confirmed_user) }
+    let!(:item) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: campaign_tutorial)
+    end
+    let!(:registration) do
+      create(:registration_user_registration,
+             :rejected,
+             registration_campaign: campaign,
+             registration_item: item,
+             user: new_student)
+    end
+
+    before do
+      create(:registration_status_event,
+             :system_reject,
+             registration: registration,
+             registration_campaign: campaign,
+             snapshot: { "label" => "Institutional email" })
+    end
+
+    it "returns dissolved footnote and side panel streams" do
+      post add_member_tutorial_path(campaign_tutorial),
+           params: {
+             user_id: new_student.id,
+             source: "rejected",
+             source_id: campaign.id.to_s
+           },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("dissolved_campaign_#{campaign.id}")
+      expect(response.body).to include("tutorial-roster-side-panel")
+    end
+  end
+
   describe "stream dispatch default (roster overview)" do
     let(:new_student) { create(:confirmed_user) }
 

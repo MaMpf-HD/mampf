@@ -13,6 +13,8 @@ de:
       reopened: "Anmeldung wiedereröffnet."
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       finalized_with_rejected: "Anmeldeverfahren abgeschlossen: %{confirmed} zugeteilt, %{rejected} automatisch abgelehnt. Diese können bei Bedarf später manuell hinzugefügt werden."
+      finalized_with_unassigned: "Anmeldeverfahren abgeschlossen: %{confirmed} zugeteilt, %{unassigned} nicht zugeteilt. Diese können bei Bedarf später manuell hinzugefügt werden."
+      finalized_with_rejected_and_unassigned: "Anmeldeverfahren abgeschlossen: %{confirmed} zugeteilt, %{rejected} automatisch abgelehnt, %{unassigned} nicht zugeteilt. Diese können bei Bedarf später manuell hinzugefügt werden."
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"

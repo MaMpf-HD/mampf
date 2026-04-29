@@ -111,14 +111,29 @@ module Registration
       end
 
       def finalization_flash_message
-        rejected = @campaign.latest_finalization_rejected_count
+        auto_rejected = @campaign.latest_finalization_auto_rejected_count
+        unassigned = @campaign.latest_finalization_unassigned_count
         confirmed = @campaign.latest_finalization_confirmed_count
 
-        return t("registration.campaign.finalized") unless rejected.positive?
+        return t("registration.campaign.finalized") unless auto_rejected.positive? ||
+                                                           unassigned.positive?
 
-        t("registration.campaign.finalized_with_rejected",
+        if auto_rejected.positive? && unassigned.positive?
+          return t("registration.campaign.finalized_with_rejected_and_unassigned",
+                   confirmed: confirmed,
+                   rejected: auto_rejected,
+                   unassigned: unassigned)
+        end
+
+        if auto_rejected.positive?
+          return t("registration.campaign.finalized_with_rejected",
+                   confirmed: confirmed,
+                   rejected: auto_rejected)
+        end
+
+        t("registration.campaign.finalized_with_unassigned",
           confirmed: confirmed,
-          rejected: rejected)
+          unassigned: unassigned)
       end
   end
 end

@@ -187,9 +187,9 @@ RSpec.describe("Registration::Allocations", type: :request) do
             .to include('target="flash-messages"')
           expect(response.body)
             .to include(
-              I18n.t("registration.campaign.finalized_with_rejected",
+              I18n.t("registration.campaign.finalized_with_unassigned",
                      confirmed: 1,
-                     rejected: 1)
+                     unassigned: 1)
             )
           expect(response.body)
             .to include('action="prepend"')

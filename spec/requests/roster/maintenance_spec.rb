@@ -183,7 +183,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
       end
 
-      context "when adding a rejected campaign student from the unassigned panel" do
+      context "when adding a rejected campaign student from the rejected panel" do
         let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
         let!(:campaign) do
           create(:registration_campaign,
@@ -210,19 +210,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         it "writes a reinstate event without materializing the registration" do
           expect do
-            post add_member_tutorial_path(tutorial),
+            post(add_member_tutorial_path(tutorial),
                  params: {
                    email: new_student.email,
-                   source: "unassigned",
+                   source: "rejected",
                    source_id: campaign.id.to_s
                  },
-                 as: :turbo_stream
+                 as: :turbo_stream)
           end.to change { tutorial.members.count }.by(1)
-            .and change {
-              Registration::StatusEvent.where(
-                action: Registration::StatusEvent::ACTION_TEACHER_REINSTATE
-              ).count
-            }.by(1)
+                                                  .and(change {
+                                                         Registration::StatusEvent.where(
+                                                           action: Registration::StatusEvent::ACTION_TEACHER_REINSTATE
+                                                         ).count
+                                                       }.by(1))
 
           event = registration.reload.status_events.order(:created_at, :id).last
 

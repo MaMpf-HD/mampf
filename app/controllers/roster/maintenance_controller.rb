@@ -77,7 +77,7 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      source_campaign = unassigned_source_campaign
+      source_campaign = candidate_source_campaign
       added = Rosters::MaintenanceService.new.add_user!(
         user,
         @rosterable,
@@ -308,10 +308,10 @@ module Roster
         source if source && source != @rosterable
       end
 
-      def unassigned_source_campaign
-        return unless @mparams.unassigned?
+      def candidate_source_campaign
+        return unless @mparams.candidate_source?
 
-        @unassigned_source_campaign ||= @lecture.registration_campaigns.find_by(
+        @candidate_source_campaign ||= @lecture.registration_campaigns.find_by(
           id: @mparams.source_id
         )
       end

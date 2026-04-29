@@ -319,6 +319,7 @@ Rails.application.routes.draw do
         patch :close
         patch :reopen
         get :unassigned
+        get :rejected
       end
       resource :allocation,
                controller: "registration/allocations",

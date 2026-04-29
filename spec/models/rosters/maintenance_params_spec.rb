@@ -42,6 +42,7 @@ RSpec.describe(Rosters::MaintenanceParams) do
         expect(mp.source).to eq("panel")
         expect(mp).to be_panel
         expect(mp).not_to be_unassigned
+        expect(mp).not_to be_rejected
         expect(mp).not_to be_participants
       end
     end
@@ -56,6 +57,19 @@ RSpec.describe(Rosters::MaintenanceParams) do
         mp = described_class.new(params_hash, lecture: lecture)
         expect(mp.source).to eq("unassigned")
         expect(mp).to be_unassigned
+      end
+    end
+
+    context "with valid source 'rejected' and source_id" do
+      let(:campaign) do
+        create(:registration_campaign, :open, campaignable: lecture)
+      end
+      let(:raw_params) { { source: "rejected", source_id: campaign.id.to_s } }
+
+      it "accepts the value" do
+        mp = described_class.new(params_hash, lecture: lecture)
+        expect(mp.source).to eq("rejected")
+        expect(mp).to be_rejected
       end
     end
 

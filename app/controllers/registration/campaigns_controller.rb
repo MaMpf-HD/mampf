@@ -35,21 +35,11 @@ module Registration
     end
 
     def unassigned
-      unless params[:source] == "panel"
-        redirect_to edit_lecture_path(@campaign.campaignable, tab: "groups")
-        return
-      end
+      render_candidate_panel(:unassigned)
+    end
 
-      unassigned_users = @campaign.unassigned_users(preload_registrations: true)
-
-      render turbo_stream: turbo_stream.replace(
-        "tutorial-roster-side-panel",
-        html: RosterSidePanelComponent.new(
-          campaign: @campaign,
-          students: unassigned_users,
-          is_unassigned: true
-        ).render_in(view_context)
-      )
+    def rejected
+      render_candidate_panel(:rejected)
     end
 
     def new
@@ -170,6 +160,29 @@ module Registration
     end
 
     private
+
+      def render_candidate_panel(scope)
+        unless params[:source] == "panel"
+          redirect_to edit_lecture_path(@campaign.campaignable, tab: "groups")
+          return
+        end
+
+        students = if scope == :rejected
+          @campaign.rejected_users
+        else
+          @campaign.unassigned_non_rejected_users
+        end
+
+        render turbo_stream: turbo_stream.replace(
+          "tutorial-roster-side-panel",
+          html: RosterSidePanelComponent.new(
+            campaign: @campaign,
+            students: students,
+            is_unassigned: true,
+            candidate_scope: scope
+          ).render_in(view_context)
+        )
+      end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])

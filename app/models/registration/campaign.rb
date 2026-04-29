@@ -10,13 +10,6 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
-    # This association - which seems redundant at first glance - allows us to
-    # enforce uniqueness constraints at the database level in addition to the
-    # model level validations defined in UserRegistration (see the corresponding
-    # indexes in the UserRegistration table in the schema):
-    # - in preference  mode,  the same preference_rank cannot be used twice by
-    #   the same user in the same campaign.
-    # - in FCFS mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
@@ -101,17 +94,12 @@ module Registration
     def latest_finalization_confirmed_count
       return confirmed_count if last_finalization_correlation_id.blank?
 
-      latest_finalization_status_events
-        .where(action: Registration::StatusEvent::ACTION_SYSTEM_CONFIRM)
-        .distinct
-        .count(:registration_id)
+      latest_finalization_user_ids_for(
+        Registration::StatusEvent::ACTION_SYSTEM_CONFIRM
+      ).size
     end
 
     def pending_count
-      # Users with at least one pending registration, but no confirmed registration.
-      # This covers:
-      # - Preference mode: All applicants before allocation (since none are confirmed).
-      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
       user_registrations.pending
                         .where.not(user_id: user_registrations.confirmed.select(:user_id))
                         .distinct
@@ -119,9 +107,6 @@ module Registration
     end
 
     def rejected_count
-      # Users with at least one rejected registration, but no confirmed or pending registration.
-      # This explicitly queries for :rejected state, ensuring we don't count possibly other future
-      # states.
       user_registrations.rejected
                         .where.not(user_id: user_registrations
                         .where(status: [:confirmed,
@@ -131,12 +116,36 @@ module Registration
     end
 
     def latest_finalization_rejected_count
-      return rejected_count if last_finalization_correlation_id.blank?
+      latest_finalization_auto_rejected_count
+    end
 
-      latest_finalization_status_events
-        .where(action: Registration::StatusEvent::ACTION_SYSTEM_REJECT)
-        .distinct
-        .count(:registration_id)
+    def latest_finalization_auto_rejected_count
+      return rejected_users.size if last_finalization_correlation_id.blank?
+
+      auto_rejected_user_ids = latest_finalization_rejected_user_ids(
+        reason_type: Registration::StatusEvent::REASON_TYPE_POLICY
+      )
+      confirmed_user_ids = latest_finalization_user_ids_for(
+        Registration::StatusEvent::ACTION_SYSTEM_CONFIRM
+      )
+
+      (auto_rejected_user_ids - confirmed_user_ids).size
+    end
+
+    def latest_finalization_unassigned_count
+      return unassigned_non_rejected_users.size if last_finalization_correlation_id.blank?
+
+      unassigned_user_ids = latest_finalization_rejected_user_ids_excluding(
+        reason_type: Registration::StatusEvent::REASON_TYPE_POLICY
+      )
+      confirmed_user_ids = latest_finalization_user_ids_for(
+        Registration::StatusEvent::ACTION_SYSTEM_CONFIRM
+      )
+      auto_rejected_user_ids = latest_finalization_rejected_user_ids(
+        reason_type: Registration::StatusEvent::REASON_TYPE_POLICY
+      )
+
+      (unassigned_user_ids - confirmed_user_ids - auto_rejected_user_ids).size
     end
 
     def user_registrations_grouped_by_user
@@ -254,20 +263,24 @@ module Registration
     def unassigned_users(preload_registrations: false)
       return User.none if draft?
 
-      allocated_ids = registerable_types.flat_map do |type|
-        allocated_user_ids_for_type(type)
-      end.uniq
-
-      relation = users.where.not(id: allocated_ids)
+      relation = unassigned_users_relation
       return relation unless preload_registrations
 
-      relation.includes(
-        user_registrations: [
-          :registration_campaign,
-          :status_events,
-          { registration_item: :registerable }
-        ]
-      ).order(:name, :email)
+      preload_candidate_users(relation)
+    end
+
+    def unassigned_non_rejected_users
+      return [] if draft?
+
+      candidate_users = preload_candidate_users(unassigned_users_relation)
+      candidate_users.reject { |user| strictly_rejected_candidate_user?(user) }
+    end
+
+    def rejected_users
+      return [] if draft?
+
+      candidate_users = preload_candidate_users(unassigned_users_relation)
+      candidate_users.select { |user| strictly_rejected_candidate_user?(user) }
     end
 
     def roster_group_type
@@ -280,6 +293,96 @@ module Registration
     end
 
     private
+
+      def unassigned_users_relation
+        allocated_ids = registerable_types.flat_map do |type|
+          allocated_user_ids_for_type(type)
+        end.uniq
+
+        users.where.not(id: allocated_ids)
+      end
+
+      def preload_candidate_users(relation)
+        relation.includes(
+          user_registrations: [
+            :registration_campaign,
+            :status_events,
+            { registration_item: :registerable }
+          ]
+        ).order(:name, :email).to_a
+      end
+
+      def latest_finalization_user_ids_for(action)
+        latest_finalization_status_events
+          .where(action: action)
+          .joins(:registration)
+          .distinct
+          .pluck("#{Registration::UserRegistration.table_name}.user_id")
+      end
+
+      def latest_finalization_rejected_user_ids(reason_type:)
+        latest_finalization_status_events
+          .where(action: Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+                 reason_type: reason_type)
+          .joins(:registration)
+          .distinct
+          .pluck("#{Registration::UserRegistration.table_name}.user_id")
+      end
+
+      def latest_finalization_rejected_user_ids_excluding(reason_type:)
+        latest_finalization_status_events
+          .where(action: Registration::StatusEvent::ACTION_SYSTEM_REJECT)
+          .joins(:registration)
+          .pluck(
+            "#{Registration::UserRegistration.table_name}.user_id",
+            "#{Registration::StatusEvent.table_name}.reason_type"
+          )
+          .select { |_, event_reason_type| event_reason_type != reason_type }
+          .map(&:first)
+          .uniq
+      end
+
+      def strictly_rejected_candidate_user?(user)
+        reject_event = latest_candidate_status_event(
+          user,
+          Registration::StatusEvent::ACTION_SYSTEM_REJECT,
+          Registration::StatusEvent::ACTION_TEACHER_REJECT
+        )
+        return false unless reject_event
+
+        reinstate_event = latest_candidate_status_event(
+          user,
+          Registration::StatusEvent::ACTION_TEACHER_REINSTATE
+        )
+        return false if newer_candidate_event?(reinstate_event, reject_event)
+
+        reject_event.action == Registration::StatusEvent::ACTION_TEACHER_REJECT ||
+          [Registration::StatusEvent::REASON_TYPE_POLICY,
+           Registration::StatusEvent::REASON_TYPE_MANUAL].include?(reject_event.reason_type)
+      end
+
+      def latest_candidate_status_event(user, *actions)
+        relevant_candidate_registrations(user)
+          .flat_map { |registration| Array(registration.try(:status_events)) }
+          .select { |event| actions.include?(event.action) }
+          .max_by { |event| candidate_event_sort_key(event) }
+      end
+
+      def relevant_candidate_registrations(user)
+        user.user_registrations.select do |registration|
+          registration.registration_campaign_id == id
+        end
+      end
+
+      def newer_candidate_event?(left, right)
+        return false unless left
+
+        (candidate_event_sort_key(left) <=> candidate_event_sort_key(right)) == 1
+      end
+
+      def candidate_event_sort_key(event)
+        [event.created_at, event.id.to_s]
+      end
 
       def ensure_editable
         return unless status_was == "completed"
