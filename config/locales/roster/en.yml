@@ -185,9 +185,9 @@ en:
     candidates:
       title: 'Unplaced Registrations'
       completed_title: 'Currently Unplaced'
-      completed_description: 'Shows students who currently have no seat but are not rejected.'
+      completed_description: 'Shows students who currently did not receive a seat and therefore were not assigned. They can still be added manually if needed.'
       rejected_title: 'Rejected Registrations'
-      rejected_description: 'Shows students whose registration is currently rejected. They can still be added manually if needed.'
+      rejected_description: 'Shows students whose registration is currently rejected, for example due to a violated policy or a manual rejection. They can still be added manually if needed.'
       help: 'Students who registered in registration processes but were not allocated. Assigning them here will add them to the selected group and - depending on group type - also enroll them in the lecture.'
       empty: 'No unplaced registrations found.'
       no_prefs: 'No preferences'

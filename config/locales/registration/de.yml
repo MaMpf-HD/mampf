@@ -22,7 +22,7 @@ de:
       go_to_roster: "Zur Gruppenverwaltung"
       dissolved_enrolled: "zugeteilt"
       dissolved_rejected: "abgelehnt"
-      dissolved_not_placed: "nicht zugeteilt"
+      dissolved_unassigned: "unzugeteilt"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
       helpdesk:

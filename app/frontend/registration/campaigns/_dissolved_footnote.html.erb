@@ -45,7 +45,7 @@
 
           <span>
             <%= rejected %>
-            <%= dissolved_rejection_label(campaign) %>
+            <%= t("registration.campaign.dissolved_rejected") %>
           </span>
         </span>
       <% end %>
@@ -74,7 +74,11 @@
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-exclamation-triangle-fill text-warning"></i>
-          <span><%= unassigned %> <%= t('roster.candidates.title') %></span>
+
+          <span>
+            <%= unassigned %>
+            <%= t("registration.campaign.dissolved_unassigned") %>
+          </span>
         </span>
       <% end %>
     </span>

@@ -299,7 +299,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       registration
     end
 
-    it "renders the rejected marker and reason" do
+    it "renders the rejection reason" do
       create(:registration_status_event,
              :system_reject,
              registration: registration,
@@ -318,8 +318,6 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to include(I18n.t("roster.candidates.completed_title"))
       expect(rendered.to_html)
         .to include(I18n.t("roster.candidates.completed_description"))
-      expect(rendered.to_html)
-        .to include(I18n.t("registration.user_registration.status.rejected"))
       expect(rendered.to_html).to include("Not placed by solver")
     end
 
@@ -357,7 +355,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
       expect(rendered.to_html).to include("Regular Student")
       expect(rendered.to_html)
-        .not_to include(I18n.t("registration.user_registration.status.rejected"))
+        .not_to include("bi-exclamation-triangle-fill")
     end
   end
 
