@@ -283,9 +283,10 @@ de:
       dashboard:
         title: "Zuteilung"
         last_updated: "Stand: %{time}"
+        rejected_students: "Abgelehnte Studierende"
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
-        workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
+        workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene oder abgelehnte Studierende können anschließend manuell in Gruppen nachverteilt werden."
         workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
       demand:

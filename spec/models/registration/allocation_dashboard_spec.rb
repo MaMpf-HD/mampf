@@ -15,11 +15,63 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     let(:student) { create(:confirmed_user) }
 
     before do
+      next if campaign.preference_based?
+
       create(:registration_user_registration, registration_campaign: campaign, user: student)
     end
 
     it "returns unassigned students" do
       expect(dashboard.unassigned_students).to include(student)
+    end
+
+    context "when a preference-based campaign has auto-rejected registrations" do
+      let(:campaign) do
+        create(:registration_campaign, :preference_based, :with_items,
+               status: :draft,
+               campaignable: lecture)
+      end
+      let(:dashboard) { described_class.new(campaign) }
+      let(:assigned_student) { create(:confirmed_user, email: "assigned@uni.edu") }
+      let(:unassigned_student) { create(:confirmed_user, email: "waiting@uni.edu") }
+      let(:rejected_student) { create(:confirmed_user, email: "rejected@other.com") }
+
+      before do
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :processing,
+                         registration_deadline: 1.day.ago)
+
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               preference_rank: 1,
+               user: assigned_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 1,
+               user: unassigned_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.third,
+               preference_rank: 1,
+               status: :rejected,
+               rejection_reason_code: "institutional_email_mismatch",
+               rejection_reason_label: I18n.t("registration.policy.errors.email_domain_not_allowed"),
+               user: rejected_student)
+      end
+
+      it "does not classify rejected students as unassigned" do
+        expect(dashboard.unassigned_students).to include(unassigned_student)
+        expect(dashboard.unassigned_students).not_to include(rejected_student)
+        expect(dashboard.rejected_students).to include(rejected_student)
+        expect(dashboard.stats.unassigned_users).to eq(1)
+        expect(dashboard.stats.rejected_users).to eq(1)
+      end
     end
   end
 
@@ -88,11 +140,11 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
   end
   describe "#violations_by_user" do
     it "groups violations by user_id" do
-      allow(dashboard).to receive(:policy_violations).and_return([
-                                                                   { user_id: 1, policy: "A" },
-                                                                   { user_id: 1, policy: "B" },
-                                                                   { user_id: 2, policy: "A" }
-                                                                 ])
+      allow(dashboard).to receive(:blocker_violations).and_return([
+                                                                    { user_id: 1, policy: "A" },
+                                                                    { user_id: 1, policy: "B" },
+                                                                    { user_id: 2, policy: "A" }
+                                                                  ])
       expect(dashboard.violations_by_user).to eq({
                                                    1 => [{ user_id: 1, policy: "A" },
                                                          { user_id: 1, policy: "B" }],
@@ -103,11 +155,11 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
 
   describe "#violation_counts_by_policy" do
     it "counts violations per policy" do
-      allow(dashboard).to receive(:policy_violations).and_return([
-                                                                   { user_id: 1, policy: "A" },
-                                                                   { user_id: 1, policy: "B" },
-                                                                   { user_id: 2, policy: "A" }
-                                                                 ])
+      allow(dashboard).to receive(:blocker_violations).and_return([
+                                                                    { user_id: 1, policy: "A" },
+                                                                    { user_id: 1, policy: "B" },
+                                                                    { user_id: 2, policy: "A" }
+                                                                  ])
       expect(dashboard.violation_counts_by_policy).to eq({ "A" => 2, "B" => 1 })
     end
   end

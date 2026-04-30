@@ -12,12 +12,32 @@ module Registration
                               .where(status: :confirmed)
                               .pluck(:user_id, :registration_item_id)
                               .to_h
-        Registration::AllocationStats.new(@campaign, assignment)
+        rejected_user_ids = @campaign.user_registrations
+                                     .where(status: :rejected)
+                                     .distinct
+                                     .pluck(:user_id)
+
+        Registration::AllocationStats.new(
+          @campaign,
+          assignment,
+          rejected_user_ids: rejected_user_ids
+        )
       end
     end
 
     def unassigned_students
       @unassigned_students ||= User.where(id: stats.unassigned_user_ids).order(:email)
+    end
+
+    def rejected_students
+      @rejected_students ||= User.where(id: stats.rejected_user_ids).order(:email)
+    end
+
+    def rejection_reasons_for(student)
+      Array(rejected_registrations_by_user[student.id])
+        .filter_map(&:rejection_reason_label)
+        .uniq
+        .join(", ")
     end
 
     def guard_result
@@ -133,6 +153,13 @@ module Registration
             capacity: item.capacity
           }
         end
+      end
+
+      def rejected_registrations_by_user
+        @rejected_registrations_by_user ||= @campaign.user_registrations
+                                                     .where(status: :rejected, user_id: stats.rejected_user_ids)
+                                                     .to_a
+                                                     .group_by(&:user_id)
       end
   end
 end

@@ -207,6 +207,38 @@ RSpec.describe(Registration::AllocationService) do
           .to eq("institutional_email_mismatch")
       end
 
+      it "re-applies auto-rejection reasons on recalculation" do
+        create(:registration_policy,
+               :institutional_email,
+               :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+
+        invalid_user = create(:confirmed_user, email: "invalid@other.test")
+        invalid_registration = create(:registration_user_registration,
+                                      user: invalid_user,
+                                      registration_item: item2,
+                                      registration_campaign: campaign,
+                                      preference_rank: 1,
+                                      status: :pending)
+
+        allow(solver_double).to receive(:run).and_return({}, {})
+
+        service.allocate!
+
+        expect(invalid_registration.reload).to be_rejected
+        expect(invalid_registration.rejection_reason_code)
+          .to eq("institutional_email_mismatch")
+        expect(invalid_registration.rejection_reason_label).to be_present
+
+        service.allocate!
+
+        expect(invalid_registration.reload).to be_rejected
+        expect(invalid_registration.rejection_reason_code)
+          .to eq("institutional_email_mismatch")
+        expect(invalid_registration.rejection_reason_label).to be_present
+      end
+
       it "raises when blockers are present before allocation" do
         policy = build(:registration_policy,
                        :institutional_email,

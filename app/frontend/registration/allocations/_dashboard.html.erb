@@ -27,6 +27,9 @@
   <%= render "registration/allocations/item_capacities_table",
              **partial_locals %>
 
+  <%= render "registration/allocations/rejected_students",
+             dashboard: dashboard %>
+
   <%= render "registration/allocations/unassigned_students",
              dashboard: dashboard %>
 </div>

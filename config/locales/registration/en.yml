@@ -283,9 +283,10 @@ en:
       dashboard:
         title: "Allocation"
         last_updated: "Last updated: %{time}"
+        rejected_students: "Rejected Students"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
+        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
       demand:

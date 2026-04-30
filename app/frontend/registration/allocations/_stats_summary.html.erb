@@ -16,6 +16,14 @@
       (<%= number_to_percentage(dashboard.stats.assigned_percentage, precision: 0) %>)
     </span>
 
+    <% if dashboard.stats.rejected_users.positive? %>
+      <span class="mx-1 text-muted">·</span>
+      <span class="text-danger fw-medium">
+        <%= dashboard.stats.rejected_users %>
+        <%= t("registration.user_registration.status.rejected").downcase %>
+      </span>
+    <% end %>
+
     <span class="mx-1 text-muted">·</span>
 
     <span class="<%= dashboard.stats.unassigned_users > 0 ? 'text-danger' : 'text-muted' %> fw-medium">

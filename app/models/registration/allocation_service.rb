@@ -106,6 +106,7 @@ module Registration
                    rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL
                  )
                  .update_all(
+                   status: :pending,
                    rejection_reason_type: nil,
                    rejection_reason_code: nil,
                    rejection_reason_label: nil,
