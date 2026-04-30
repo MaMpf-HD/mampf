@@ -62,16 +62,28 @@ module Registration
                               expanded_campaign_id: @campaign.id
                             })
       end
+    rescue Registration::AllocationService::BlockedError
+      @dashboard = Registration::AllocationDashboard.new(@campaign)
+
+      respond_with_flash(
+        :alert,
+        t("registration.allocation.errors.policy_violation"),
+        redirect_path: registration_campaign_allocation_path(@campaign)
+      ) do
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
+      end
     end
 
     def finalize
       authorize! :finalize, @campaign
 
-      force = params[:force] == "true"
-      authorize!(:force_finalize, @campaign) if force
-
       guard = Registration::FinalizationGuard.new(@campaign)
-      result = guard.check(ignore_policies: force)
+      result = guard.check
 
       unless result.success?
         # Redirect to dashboard to show errors

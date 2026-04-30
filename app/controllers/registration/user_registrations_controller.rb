@@ -41,7 +41,7 @@ module Registration
               partial: "registration/campaigns/card_body_actions",
               locals: {
                 campaign: @campaign,
-                has_violators: @dashboard.policy_violations.present?
+                has_violators: @dashboard.blocker_violations.present?
               }
             )
           else
@@ -90,19 +90,28 @@ module Registration
       end
 
       def destroy_registrations(registrations)
-        count = registrations.count
+        registrations = registrations.where.not(status: :rejected).to_a
+        count = registrations.size
 
-        if registrations.destroy_all
-          respond_with_flash(:notice,
-                             t("registration.user_registration.destroyed_all_for_user",
-                               count: count),
-                             fallback_location: registration_campaign_path(@campaign)) do
-            evaluate_turbo_stream_response
+        Registration::UserRegistration.transaction do
+          registrations.each do |registration|
+            registration.reject!(
+              reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+              reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+              reason_label: "Manually rejected by teacher"
+            )
           end
-        else
-          respond_with_flash(:alert, t("registration.user_registration.destroy_failed"),
-                             fallback_location: registration_campaign_path(@campaign))
         end
+
+        respond_with_flash(:notice,
+                           t("registration.user_registration.rejected_all_for_user",
+                             count: count),
+                           fallback_location: registration_campaign_path(@campaign)) do
+          evaluate_turbo_stream_response
+        end
+      rescue ActiveRecord::RecordInvalid
+        respond_with_flash(:alert, t("registration.user_registration.reject_failed"),
+                           fallback_location: registration_campaign_path(@campaign))
       end
   end
 end

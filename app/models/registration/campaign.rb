@@ -121,13 +121,23 @@ module Registration
       with_lock do
         return if completed?
 
+        if first_come_first_served?
+          screening = Registration::ScreeningService.new(
+            self,
+            registrations: user_registrations.confirmed
+          ).call
+
+          return false if screening.blocked?
+
+          apply_auto_rejections!(screening.auto_reject_violations)
+        end
+
         Registration::AllocationMaterializer.new(self).materialize!
 
-        # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.pending.update_all(status: :rejected)
-        # rubocop:enable Rails/SkipsModelValidations
+        reject_pending_registrations!
 
-        update!(status: :completed)
+        update!(status: :completed,
+                allocation_decided_at: allocation_decided_at || Time.current)
       end
     end
 
@@ -146,7 +156,12 @@ module Registration
 
         # rubocop:disable Rails/SkipsModelValidations
         user_registrations.update_all(
-          status: :pending, updated_at: Time.current
+          status: :pending,
+          rejection_reason_type: nil,
+          rejection_reason_code: nil,
+          rejection_reason_label: nil,
+          rejected_at: nil,
+          updated_at: Time.current
         )
 
         registration_items.update_all(
@@ -154,7 +169,8 @@ module Registration
           updated_at: Time.current
         )
 
-        update_columns(last_allocation_calculated_at: nil)
+        update_columns(last_allocation_calculated_at: nil,
+                       allocation_decided_at: nil)
         # rubocop:enable Rails/SkipsModelValidations
       end
     end
@@ -200,6 +216,30 @@ module Registration
     end
 
     private
+
+      def apply_auto_rejections!(violations)
+        now = Time.current
+
+        violations.each do |violation|
+          registration = user_registrations.find(violation[:registration_id])
+          registration.reject!(
+            reason_type: violation[:reason_type] || Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+            reason_code: violation[:reason_code].to_s,
+            reason_label: violation[:reason_label] || violation[:message],
+            rejected_at: now
+          )
+        end
+      end
+
+      def reject_pending_registrations!
+        user_registrations.pending.find_each do |registration|
+          registration.reject!(
+            reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
+            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+            reason_label: "Not placed by solver"
+          )
+        end
+      end
 
       def ensure_editable
         return unless status_was == "completed"

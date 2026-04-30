@@ -19,10 +19,13 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       destroy_for_user_registration_campaign_registrations_path(campaign, user_id: student.id)
     end
 
-    it "destroys the registration" do
+    it "rejects the registration instead of deleting it" do
       expect do
         delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
-      end.to change(Registration::UserRegistration, :count).by(-1)
+      end.not_to change(Registration::UserRegistration, :count)
+
+      expect(registration.reload).to be_rejected
+      expect(registration.rejection_reason_type).to eq("manual")
     end
 
     it "returns success via turbo stream" do

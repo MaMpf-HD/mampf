@@ -3,6 +3,13 @@ module Registration
   # Tracks the status (pending/confirmed) and, for preference-based campaigns,
   # the specific ranking of an item.
   class UserRegistration < ApplicationRecord
+    REJECTION_REASON_TYPE_CAPACITY = "capacity".freeze
+    REJECTION_REASON_TYPE_MANUAL = "manual".freeze
+    REJECTION_REASON_TYPE_POLICY = "policy".freeze
+
+    REJECTION_REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
+    REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
+
     belongs_to :user
 
     belongs_to :registration_campaign,
@@ -56,6 +63,25 @@ module Registration
     after_create :increment_confirmed_counter
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
+
+    def reject!(reason_type:, reason_code:, reason_label:, rejected_at: Time.current)
+      update!(
+        status: :rejected,
+        rejection_reason_type: reason_type,
+        rejection_reason_code: reason_code,
+        rejection_reason_label: reason_label,
+        rejected_at: rejected_at
+      )
+    end
+
+    def clear_rejection_decision!
+      update!(
+        rejection_reason_type: nil,
+        rejection_reason_code: nil,
+        rejection_reason_label: nil,
+        rejected_at: nil
+      )
+    end
 
     private
 
