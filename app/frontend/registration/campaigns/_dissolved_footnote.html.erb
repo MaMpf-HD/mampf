@@ -39,7 +39,7 @@
           role="button"
           tabindex="0"
           class="
-            p-0 text-decoration-none text-reset d-inline-flex
+            p-0 text-decoration-none text-reset campaign-panel-trigger d-inline-flex
             align-items-center gap-1
           "
           data-tutorial-roster-panel-target="tile"
@@ -50,7 +50,7 @@
           <i class="bi bi-x-octagon-fill text-danger"></i>
 
           <span>
-            <%= rejected %> <%= t("registration.user_registration.status.rejected") %>
+            <%= rejected %> <%= t("roster.candidates.rejected_short", default: "rejected") %>
           </span>
         </span>
       <% end %>
@@ -63,7 +63,7 @@
           role="button"
           tabindex="0"
           class="
-            p-0 text-decoration-none text-reset unassigned-warning-trigger
+            p-0 text-decoration-none text-reset campaign-panel-trigger
             d-inline-flex align-items-center gap-1
           "
           data-tutorial-roster-panel-target="tile"
@@ -72,7 +72,10 @@
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-exclamation-triangle-fill text-warning"></i>
-          <span><%= unassigned %> <%= t('roster.candidates.title') %></span>
+
+          <span>
+            <%= unassigned %> <%= t('roster.candidates.short_title', default: 'unplaced') %>
+          </span>
         </span>
       <% end %>
     </span>

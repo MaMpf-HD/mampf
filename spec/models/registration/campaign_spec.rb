@@ -719,6 +719,28 @@ RSpec.describe(Registration::Campaign, type: :model) do
           .not_to include(other_student)
       end
     end
+
+    context "when a student is still in the open rejected queue" do
+      let(:rejected_student) { create(:user, name: "Rejected Student") }
+
+      before do
+        tutorial = create(:tutorial, lecture: lecture)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial)
+        create(:registration_user_registration,
+               :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: rejected_student,
+               rejection_reason_label: "Missing prerequisite")
+      end
+
+      it "excludes rejected students from the unassigned queue" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .not_to include(rejected_student)
+      end
+    end
   end
 
   describe "#rejected_users" do
@@ -765,6 +787,19 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.rejected_users).not_to include(rejected_user)
       expect(campaign.open_rejected_count).to eq(0)
       expect(campaign.rejected_count).to eq(1)
+    end
+
+    it "excludes solver-unassigned users from the rejected queue" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(
+        rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+        rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned")
+      )
+
+      expect(campaign.rejected_users).not_to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(0)
+      expect(campaign.rejected_count).to eq(1)
+      expect(campaign.unassigned_users(preload_registrations: true)).to include(rejected_user)
     end
   end
 

@@ -623,24 +623,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_30_000001) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
-  create_table "registration_status_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "registration_id", null: false
-    t.uuid "registration_campaign_id", null: false
-    t.string "action", null: false
-    t.string "reason_type"
-    t.string "reason_code"
-    t.bigint "actor_id"
-    t.uuid "correlation_id"
-    t.integer "schema_version", default: 1, null: false
-    t.jsonb "snapshot", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.index ["actor_id"], name: "index_registration_status_events_on_actor_id"
-    t.index ["correlation_id"], name: "index_registration_status_events_on_correlation_id"
-    t.index ["registration_campaign_id", "action"], name: "index_reg_status_events_on_campaign_and_action"
-    t.index ["registration_campaign_id", "reason_type"], name: "index_reg_status_events_on_campaign_and_reason_type"
-    t.index ["registration_id"], name: "index_registration_status_events_on_registration_id"
-  end
-
   create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "preference_rank"

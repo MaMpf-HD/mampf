@@ -219,10 +219,22 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def campaign_panel_count_label
     if rejected?
-      t("registration.user_registration.status.rejected")
+      t("roster.candidates.rejected_short", default: "rejected")
+    elsif unassigned?
+      t("roster.candidates.short_title", default: "unplaced")
     else
       t("registration.item.columns.registrations",
         default: "Registrations")
+    end
+  end
+
+  def campaign_panel_description
+    return unless campaign_source? && campaign.completed?
+
+    if rejected?
+      t("roster.candidates.rejected_description")
+    elsif unassigned?
+      t("roster.candidates.completed_description")
     end
   end
 

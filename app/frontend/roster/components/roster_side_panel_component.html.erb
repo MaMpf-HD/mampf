@@ -26,6 +26,11 @@
 
           <span><%= students.size %> <%= campaign_panel_count_label %></span>
         </div>
+        <% if campaign_panel_description.present? %>
+          <div class="text-muted small mt-1">
+            <%= campaign_panel_description %>
+          </div>
+        <% end %>
       <% elsif registerable %>
         <div class="text-muted small">
           <span><%= registerable.title %></span>
@@ -160,8 +165,10 @@
                 </div>
 
                 <% if show_rejection_reasons?(student) %>
-                  <div class="small text-danger mt-1 tutorial-roster-wishes">
-                    <%= t("registration.user_registration.reason") %>:
+                  <div
+                    class="small text-muted mt-1 tutorial-roster-wishes"
+                    title="<%= rejection_reasons(student) %>"
+                  >
                     <%= rejection_reasons(student) %>
                   </div>
                 <% end %>

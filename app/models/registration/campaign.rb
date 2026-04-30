@@ -187,7 +187,8 @@ module Registration
     # relevant tutorials, talks, or cohorts, whether that happened manually or
     # through another campaign. A user is considered unassigned if they haven't
     # secured a spot in any of the campaign's registerables, even if they are
-    # members of the lecture roster.
+    # members of the lecture roster. Open rejected registrations are excluded
+    # and shown in the rejected queue instead.
     #
     # When preload_registrations is true, the returned relation also eager-loads
     # the registration data needed by the "unassigned side panel" and orders by
@@ -200,6 +201,7 @@ module Registration
       end.uniq
 
       relation = users.where.not(id: allocated_ids)
+                      .where.not(id: open_rejected_registrations.select(:user_id))
       return relation unless preload_registrations
 
       relation.includes(
@@ -239,6 +241,10 @@ module Registration
 
       def open_rejected_registrations
         user_registrations.rejected
+                          .where(
+                            "rejection_reason_code IS NULL OR rejection_reason_code != ?",
+                            Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+                          )
                           .where(rejection_overridden_at: nil)
                           .where.not(
                             user_id: user_registrations.where(status: [:confirmed, :pending])
