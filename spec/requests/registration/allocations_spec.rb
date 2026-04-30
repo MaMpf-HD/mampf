@@ -162,7 +162,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
           campaign.reload
           expect(campaign).to be_completed
           expect(response).to redirect_to(registration_campaign_path(campaign))
-          expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to eq(I18n.t("registration.campaign.finalized"))
+        end
+
+        it "includes only nonzero queue summaries" do
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:open_rejected_count).and_return(5)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive_message_chain(:unassigned_users, :count).and_return(3)
+
+          patch finalize_registration_campaign_allocation_path(campaign)
+
+          expect(flash[:notice]).to eq(
+            [
+              I18n.t("registration.campaign.finalized"),
+              I18n.t("registration.campaign.finalization_summary.rejected", count: 5),
+              I18n.t("registration.campaign.finalization_summary.unassigned", count: 3),
+              I18n.t("registration.campaign.finalization_summary.manual_addition")
+            ].join(" ")
+          )
         end
       end
 

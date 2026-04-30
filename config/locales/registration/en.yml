@@ -12,6 +12,14 @@ en:
       closed: "Registration process closed."
       reopened: "Registration process reopened."
       finalized: "Registration process finalized successfully."
+      finalization_summary:
+        rejected:
+          one: "1 student currently has a rejected registration."
+          other: "%{count} students currently have a rejected registration."
+        unassigned:
+          one: "1 student could not be placed."
+          other: "%{count} students could not be placed."
+        manual_addition: "They can still be added manually in the roster."
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"

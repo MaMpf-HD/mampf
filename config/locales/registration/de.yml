@@ -12,6 +12,14 @@ de:
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
+      finalization_summary:
+        rejected:
+          one: "1 Person hat derzeit eine abgelehnte Anmeldung."
+          other: "%{count} Studierende haben derzeit eine abgelehnte Anmeldung."
+        unassigned:
+          one: "1 Person konnte nicht zugeteilt werden."
+          other: "%{count} Studierende konnten nicht zugeteilt werden."
+        manual_addition: "Nachträgliches manuelles Hinzufügen ist möglich."
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
