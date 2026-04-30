@@ -77,7 +77,12 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      added = Rosters::MaintenanceService.new.add_user!(user, @rosterable, force: true)
+      added = Rosters::MaintenanceService.new.add_user!(
+        user,
+        @rosterable,
+        force: true,
+        source_campaign_id: (@mparams.source_id if @mparams.rejected?)
+      )
 
       flash.now[:notice] = if added
         t("roster.messages.user_added", user: user.info, group: @rosterable.title)

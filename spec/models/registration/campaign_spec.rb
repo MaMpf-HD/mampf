@@ -721,6 +721,53 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#rejected_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) do
+      create(:registration_campaign, :completed, campaignable: lecture)
+    end
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:rejected_user) { create(:user, name: "Rejected User") }
+    let(:confirmed_user) { create(:user, name: "Confirmed User") }
+
+    before do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+      create(:registration_user_registration,
+             :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: rejected_user,
+             rejection_reason_label: "Missing prerequisite")
+      create(:registration_user_registration,
+             :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: confirmed_user)
+    end
+
+    it "returns only users whose final campaign state is rejected" do
+      expect(campaign.rejected_users).to include(rejected_user)
+      expect(campaign.rejected_users).not_to include(confirmed_user)
+    end
+
+    it "preloads registrations when requested" do
+      user = campaign.rejected_users(preload_registrations: true).first
+
+      expect(user.association(:user_registrations)).to be_loaded
+    end
+
+    it "excludes rejected users whose rejection was overridden" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(rejection_overridden_at: Time.current)
+
+      expect(campaign.rejected_users).not_to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(0)
+      expect(campaign.rejected_count).to eq(1)
+    end
+  end
+
   describe "#roster_group_type" do
     let(:campaign) { build(:registration_campaign) }
 

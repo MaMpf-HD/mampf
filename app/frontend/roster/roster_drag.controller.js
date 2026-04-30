@@ -119,7 +119,7 @@ export default class extends Controller {
     const targetTitle = tile.dataset.rosterTitle;
     const targetAddPath = tile.dataset.rosterAddMemberPath;
 
-    if (this.sourceTypeValue === "unassigned") {
+    if (["unassigned", "rejected"].includes(this.sourceTypeValue)) {
       if (targetFull && !confirm(this.overbookingWarningValue)) {
         return;
       }
@@ -196,9 +196,9 @@ export default class extends Controller {
   }
 
   submitAdd(userId, targetAddPath) {
-    const sourceParams = this.sourceTypeValue === "unassigned"
+    const sourceParams = ["unassigned", "rejected"].includes(this.sourceTypeValue)
       ? {
-          source: "unassigned",
+          source: this.sourceTypeValue,
           source_id: this.sourceIdValue,
         }
       : {

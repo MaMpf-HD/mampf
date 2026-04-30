@@ -26,10 +26,33 @@
       </span>
 
       <% summary = policy_kinds_summary(campaign) %>
+      <% rejected = campaign.open_rejected_count %>
 
       <% if summary.present? %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
         <span><%= summary %></span>
+      <% end %>
+
+      <% if rejected > 0 %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <span
+          role="button"
+          tabindex="0"
+          class="
+            p-0 text-decoration-none text-reset d-inline-flex
+            align-items-center gap-1
+          "
+          data-tutorial-roster-panel-target="tile"
+          data-roster-key="campaign_<%= campaign.id %>_rejected"
+          data-action="click->tutorial-roster-panel#openFromTile"
+          data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
+        >
+          <i class="bi bi-x-octagon-fill text-danger"></i>
+
+          <span>
+            <%= rejected %> <%= t("registration.user_registration.status.rejected") %>
+          </span>
+        </span>
       <% end %>
 
       <% unassigned = campaign.unassigned_users.count %>

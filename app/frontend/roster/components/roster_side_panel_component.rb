@@ -5,13 +5,15 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(registerable: nil, students: [], read_only: false,
-                 is_unassigned: false, campaign: nil, item: nil,
+                 is_unassigned: false, is_rejected: false,
+                 campaign: nil, item: nil,
                  allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
     @students = students
     @read_only = read_only
     @is_unassigned = is_unassigned
+    @is_rejected = is_rejected
     @campaign = campaign
     @item = item
     @allocated = allocated
@@ -25,6 +27,10 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def unassigned?
     @is_unassigned
+  end
+
+  def rejected?
+    @is_rejected
   end
 
   def allocated?
@@ -82,7 +88,10 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def panel_title
-    if unassigned?
+    if rejected?
+      t("registration.user_registration.index.rejected_title",
+        default: "Rejected Registrations")
+    elsif unassigned?
       t("roster.candidates.title")
     elsif allocated?
       t("registration.user_registration.index.allocated_title",
@@ -156,11 +165,13 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def drag_controller?
-    !read_only? && (draggable_unassigned? || registerable.present?)
+    !read_only? && (draggable_campaign_source? || registerable.present?)
   end
 
   def drag_source_type
-    if draggable_unassigned?
+    if rejected?
+      "rejected"
+    elsif unassigned?
       "unassigned"
     else
       registerable.class.name.downcase
@@ -168,7 +179,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def drag_source_id
-    if draggable_unassigned?
+    if draggable_campaign_source?
       campaign.id
     else
       registerable.id
@@ -176,15 +187,15 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def show_add_form?
-    registerable.present? && !read_only? && !unassigned?
+    registerable.present? && !read_only? && !unassigned? && !rejected?
   end
 
   def show_remove_button?
-    !read_only? && !unassigned?
+    registerable.present? && !read_only? && !unassigned? && !rejected?
   end
 
   def show_campaign_wishes?(student)
-    unassigned? && campaign.present? && relevant_registrations(student).any?
+    campaign_source? && relevant_registrations(student).any?
   end
 
   def campaign_wishes(student)
@@ -192,6 +203,27 @@ class RosterSidePanelComponent < ViewComponent::Base
       .sort_by { |r| r.preference_rank || 999 }
       .map { |r| r.registration_item.registerable.title }
       .join(", ")
+  end
+
+  def show_rejection_reasons?(student)
+    rejected? && rejection_reasons(student).present?
+  end
+
+  def rejection_reasons(student)
+    relevant_registrations(student)
+      .select { |r| rejected_registration?(r) }
+      .filter_map(&:rejection_reason_label)
+      .uniq
+      .join(", ")
+  end
+
+  def campaign_panel_count_label
+    if rejected?
+      t("registration.user_registration.status.rejected")
+    else
+      t("registration.item.columns.registrations",
+        default: "Registrations")
+    end
   end
 
   def student_display_name(student)
@@ -210,13 +242,23 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   private
 
-    def draggable_unassigned?
-      unassigned? && campaign.present?
+    def campaign_source?
+      (unassigned? || rejected?) && campaign.present?
+    end
+
+    def draggable_campaign_source?
+      campaign_source?
     end
 
     def relevant_registrations(student)
       student.user_registrations.select do |r|
         r.registration_campaign_id == campaign.id
       end
+    end
+
+    def rejected_registration?(registration)
+      return registration.rejected? if registration.respond_to?(:rejected?)
+
+      registration.respond_to?(:status) && registration.status.to_s == "rejected"
     end
 end

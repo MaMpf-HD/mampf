@@ -420,6 +420,57 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
   end
 
+  describe "GET /campaigns/:id/rejected" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "without source=panel" do
+        it "redirects to the lecture groups tab" do
+          get rejected_registration_campaign_path(campaign)
+          expect(response).to redirect_to(edit_lecture_path(campaign.campaignable, tab: "groups"))
+        end
+      end
+
+      context "with source=panel" do
+        let!(:rejected_campaign) do
+          create(:registration_campaign, :completed, campaignable: lecture)
+        end
+        let(:item) { rejected_campaign.registration_items.first }
+        let(:rejected_student) { create(:confirmed_user, name: "Rejected Student") }
+
+        before do
+          create(:registration_user_registration,
+                 :rejected,
+                 registration_campaign: rejected_campaign,
+                 registration_item: item,
+                 user: rejected_student,
+                 rejection_reason_label: "Needs prerequisite")
+        end
+
+        it "renders the rejected roster side panel turbo stream" do
+          get rejected_registration_campaign_path(rejected_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+          expect(response.body).to include("Rejected Student")
+          expect(response.body).to include("Needs prerequisite")
+        end
+
+        it "hides overridden rejected students" do
+          rejected_campaign.user_registrations.find_by(user: rejected_student)
+                           .update!(rejection_overridden_at: Time.current)
+
+          get rejected_registration_campaign_path(rejected_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).not_to include("Rejected Student")
+        end
+      end
+    end
+  end
+
   describe "GET /campaigns/:id/edit" do
     context "as an editor" do
       before { sign_in editor }

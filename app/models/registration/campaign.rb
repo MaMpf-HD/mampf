@@ -110,6 +110,10 @@ module Registration
                         .count(:user_id)
     end
 
+    def open_rejected_count
+      open_rejected_registrations.distinct.count(:user_id)
+    end
+
     def user_registrations_grouped_by_user
       user_registrations.includes(:user, :registration_item)
                         .joins(:user)
@@ -206,6 +210,22 @@ module Registration
       ).order(:name, :email)
     end
 
+    def rejected_users(preload_registrations: false)
+      return User.none if draft?
+
+      relation = users.where(
+        id: open_rejected_registrations.select(:user_id)
+      )
+      return relation unless preload_registrations
+
+      relation.includes(
+        user_registrations: [
+          :registration_campaign,
+          { registration_item: :registerable }
+        ]
+      ).order(:name, :email)
+    end
+
     def roster_group_type
       items = if association(:registration_items).loaded?
         registration_items
@@ -216,6 +236,15 @@ module Registration
     end
 
     private
+
+      def open_rejected_registrations
+        user_registrations.rejected
+                          .where(rejection_overridden_at: nil)
+                          .where.not(
+                            user_id: user_registrations.where(status: [:confirmed, :pending])
+                                                       .select(:user_id)
+                          )
+      end
 
       def apply_auto_rejections!(violations)
         now = Time.current

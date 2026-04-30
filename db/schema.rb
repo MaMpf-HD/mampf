@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_30_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_30_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -623,6 +623,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_30_000000) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
+  create_table "registration_status_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "registration_id", null: false
+    t.uuid "registration_campaign_id", null: false
+    t.string "action", null: false
+    t.string "reason_type"
+    t.string "reason_code"
+    t.bigint "actor_id"
+    t.uuid "correlation_id"
+    t.integer "schema_version", default: 1, null: false
+    t.jsonb "snapshot", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["actor_id"], name: "index_registration_status_events_on_actor_id"
+    t.index ["correlation_id"], name: "index_registration_status_events_on_correlation_id"
+    t.index ["registration_campaign_id", "action"], name: "index_reg_status_events_on_campaign_and_action"
+    t.index ["registration_campaign_id", "reason_type"], name: "index_reg_status_events_on_campaign_and_reason_type"
+    t.index ["registration_id"], name: "index_registration_status_events_on_registration_id"
+  end
+
   create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "preference_rank"
@@ -636,10 +654,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_30_000000) do
     t.string "rejection_reason_code"
     t.string "rejection_reason_label"
     t.datetime "rejected_at"
+    t.datetime "rejection_overridden_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
     t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
+    t.index ["rejection_overridden_at"], name: "index_reg_user_regs_on_rejection_overridden_at"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
   end

@@ -8,7 +8,7 @@
     data-controller="roster-drag"
     data-roster-drag-source-type-value="<%= drag_source_type %>"
     data-roster-drag-source-id-value="<%= drag_source_id %>"
-    data-roster-drag-move-path-value="<%= move_member_path_template unless unassigned? %>"
+    data-roster-drag-move-path-value="<%= move_member_path_template unless unassigned? || rejected? %>"
     data-roster-drag-overbooking-warning-value="<%= overbooking_warning %>"
   <% end %>
 >
@@ -16,7 +16,7 @@
     <div>
       <h5 class="mb-1"><%= panel_title %></h5>
 
-      <% if unassigned? && campaign %>
+      <% if (unassigned? || rejected?) && campaign %>
         <div class="text-muted small">
           <span>
             <%= campaign.description.presence || "Campaign ##{campaign.id}" %>
@@ -24,11 +24,7 @@
 
           <span class="mx-1">·</span>
 
-          <span>
-            <%= "#{students.size} " +
-                t("registration.item.columns.registrations",
-                  default: "Registrations") %>
-          </span>
+          <span><%= students.size %> <%= campaign_panel_count_label %></span>
         </div>
       <% elsif registerable %>
         <div class="text-muted small">
@@ -84,7 +80,7 @@
   </div>
 
   <div class="card-body border-0">
-    <% if registerable || unassigned? %>
+    <% if registerable || unassigned? || rejected? %>
       <% if show_add_form? %>
         <div class="mb-3">
           <%= form_with url: add_member_path,
@@ -162,6 +158,13 @@
                   <i class="bi bi-envelope me-1"></i>
                   <%= student.email %>
                 </div>
+
+                <% if show_rejection_reasons?(student) %>
+                  <div class="small text-danger mt-1 tutorial-roster-wishes">
+                    <%= t("registration.user_registration.reason") %>:
+                    <%= rejection_reasons(student) %>
+                  </div>
+                <% end %>
 
                 <% if show_campaign_wishes?(student) %>
                   <div

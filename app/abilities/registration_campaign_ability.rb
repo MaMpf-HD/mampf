@@ -6,7 +6,7 @@ class RegistrationCampaignAbility
 
     can [:index, :new, :create, :show, :edit, :update, :destroy, :open, :close,
          :reopen, :finalize, :force_finalize, :allocate,
-         :view_allocation, :unassigned],
+         :view_allocation, :unassigned, :rejected],
         Registration::Campaign do |campaign|
       user.can_edit?(campaign.campaignable)
     end
