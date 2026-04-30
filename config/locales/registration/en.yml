@@ -270,6 +270,7 @@ en:
       reason_labels:
         manual_rejected: "Manually rejected by teacher"
         solver_unassigned: "Not placed by solver"
+        withdrawn_by_teacher: "Manually rejected by teacher"
       none: "No registrations found."
       preferences: "Preferences"
       actions:
@@ -298,6 +299,7 @@ en:
         third_plus: "3rd+"
       stats:
         total_registrations: "Total Registrations"
+        eligible: "Eligible"
         assigned: "Assigned"
         unassigned: "Unassigned"
         happiness_distribution: "Preference Distribution"

@@ -475,18 +475,24 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     it "joins unique rejection labels for the campaign" do
       reg_a = double(registration_campaign_id: 1,
                      status: :rejected,
-                     rejection_reason_label: "Missing prerequisite")
+                     rejection_reason_code: "prerequisite_not_met",
+                     rejection_reason_label: "Prerequisite registration process not completed.")
       reg_b = double(registration_campaign_id: 1,
                      status: :rejected,
-                     rejection_reason_label: "Wrong email domain")
+                     rejection_reason_code: "institutional_email_mismatch",
+                     rejection_reason_label: "Email domain not allowed.")
       reg_c = double(registration_campaign_id: 2,
                      status: :rejected,
+                     rejection_reason_code: "ignored",
                      rejection_reason_label: "Ignored")
       student = double(user_registrations: [reg_a, reg_b, reg_c])
       c = described_class.new(is_rejected: true, campaign: campaign)
 
-      expect(c.rejection_reasons(student)).to eq("Missing prerequisite, Wrong email domain")
-      expect(c.show_rejection_reasons?(student)).to be(true)
+      I18n.with_locale(:de) do
+        expect(c.rejection_reasons(student))
+          .to eq("Vorausgesetztes Anmeldeverfahren nicht abgeschlossen., E-Mail-Domain nicht erlaubt.")
+        expect(c.show_rejection_reasons?(student)).to be(true)
+      end
     end
   end
   describe "additional branch coverage" do

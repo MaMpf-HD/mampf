@@ -159,6 +159,24 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
+  describe ".localized_rejection_reason_label" do
+    it "prefers translations derived from the rejection code" do
+      I18n.with_locale(:de) do
+        expect(described_class.localized_rejection_reason_label(
+                 reason_code: "prerequisite_not_met",
+                 reason_label: "Prerequisite registration process not completed."
+               )).to eq("Vorausgesetztes Anmeldeverfahren nicht abgeschlossen.")
+      end
+    end
+
+    it "falls back to the stored label when no translation exists" do
+      expect(described_class.localized_rejection_reason_label(
+               reason_code: "custom_reason",
+               reason_label: "Custom reason"
+             )).to eq("Custom reason")
+    end
+  end
+
   describe "counter cache callbacks" do
     let(:user) { FactoryBot.create(:user) }
 

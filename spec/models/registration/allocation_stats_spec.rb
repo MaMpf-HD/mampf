@@ -40,6 +40,7 @@ RSpec.describe(Registration::AllocationStats) do
 
       it "calculates total and unassigned users" do
         expect(stats.total_registrations).to eq(3)
+        expect(stats.eligible_users).to eq(3)
         expect(stats.assigned_users).to eq(2)
         expect(stats.unassigned_users).to eq(1)
       end
@@ -93,9 +94,11 @@ RSpec.describe(Registration::AllocationStats) do
 
       it "excludes rejected users from the unassigned bucket" do
         expect(stats.total_registrations).to eq(3)
+        expect(stats.eligible_users).to eq(2)
         expect(stats.assigned_users).to eq(2)
         expect(stats.rejected_users).to eq(1)
         expect(stats.unassigned_users).to eq(0)
+        expect(stats.assigned_percentage).to eq(100.0)
         expect(stats.rejected_user_ids).to eq([user3.id])
       end
     end

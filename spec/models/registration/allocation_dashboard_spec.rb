@@ -72,6 +72,13 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
         expect(dashboard.stats.unassigned_users).to eq(1)
         expect(dashboard.stats.rejected_users).to eq(1)
       end
+
+      it "localizes rejection reasons from the code instead of the stored label" do
+        I18n.with_locale(:de) do
+          expect(dashboard.rejection_reasons_for(rejected_student))
+            .to eq("E-Mail-Domain nicht erlaubt.")
+        end
+      end
     end
   end
 

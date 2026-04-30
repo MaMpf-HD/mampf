@@ -270,6 +270,7 @@ de:
       reason_labels:
         manual_rejected: "Manuell von Lehrperson abgelehnt"
         solver_unassigned: "Nicht durch Solver zugeteilt"
+        withdrawn_by_teacher: "Manuell von Lehrperson abgelehnt"
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
       actions:
@@ -298,6 +299,7 @@ de:
         third_plus: "Dritte+"
       stats:
         total_registrations: "Anmeldungen gesamt"
+        eligible: "Zuteilbar"
         assigned: "Zugewiesen"
         unassigned: "Nicht zugewiesen"
         happiness_distribution: "Präferenzverteilung"

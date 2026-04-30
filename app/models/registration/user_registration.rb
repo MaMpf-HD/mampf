@@ -10,6 +10,10 @@ module Registration
     REJECTION_REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
     REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
 
+    REJECTION_REASON_CODE_TRANSLATION_ALIASES = {
+      "institutional_email_mismatch" => "email_domain_not_allowed"
+    }.freeze
+
     belongs_to :user
 
     belongs_to :registration_campaign,
@@ -64,6 +68,21 @@ module Registration
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
 
+    def self.localized_rejection_reason_label(reason_code:, reason_label:)
+      code = reason_code.to_s.presence
+      return reason_label if code.blank?
+
+      translated_code = REJECTION_REASON_CODE_TRANSLATION_ALIASES.fetch(code, code)
+
+      policy_key = "registration.policy.errors.#{translated_code}"
+      return I18n.t(policy_key) if I18n.exists?(policy_key)
+
+      reason_key = "registration.user_registration.reason_labels.#{translated_code}"
+      return I18n.t(reason_key) if I18n.exists?(reason_key)
+
+      reason_label
+    end
+
     def reject!(reason_type:, reason_code:, reason_label:, rejected_at: Time.current)
       update!(
         status: :rejected,
@@ -80,6 +99,13 @@ module Registration
         rejection_reason_code: nil,
         rejection_reason_label: nil,
         rejected_at: nil
+      )
+    end
+
+    def localized_rejection_reason_label
+      self.class.localized_rejection_reason_label(
+        reason_code: rejection_reason_code,
+        reason_label: rejection_reason_label
       )
     end
 

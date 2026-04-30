@@ -1,7 +1,8 @@
 module Registration
   class AllocationStats
     attr_reader :total_registrations, :assigned_users, :unassigned_users,
-                :rejected_users, :global_avg_rank, :percent_top_choice,
+                :rejected_users, :eligible_users, :global_avg_rank,
+                :percent_top_choice,
                 :preference_counts, :items, :unassigned_user_ids,
                 :rejected_user_ids
 
@@ -13,9 +14,9 @@ module Registration
     end
 
     def assigned_percentage
-      return 0 if total_registrations.zero?
+      return 0 if eligible_users.zero?
 
-      (assigned_users.to_f / total_registrations * 100)
+      (assigned_users.to_f / eligible_users * 100)
     end
 
     def unassigned_percentage
@@ -66,6 +67,7 @@ module Registration
         all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
         @rejected_user_ids &= all_user_ids
         @rejected_users = @rejected_user_ids.size
+        @eligible_users = all_user_ids.size - @rejected_users
         @unassigned_user_ids = all_user_ids - @assignment.keys - @rejected_user_ids
         @unassigned_users = @unassigned_user_ids.size
 
@@ -93,6 +95,7 @@ module Registration
         @assigned_users = @assignment.size
         @rejected_user_ids &= user_preferences.keys
         @rejected_users = @rejected_user_ids.size
+        @eligible_users = user_preferences.keys.size - @rejected_users
         @unassigned_user_ids = user_preferences.keys - @assignment.keys - @rejected_user_ids
         @unassigned_users = @unassigned_user_ids.size
         @preference_counts = Hash.new(0)
