@@ -85,8 +85,7 @@ module Rosters
             html: RosterSidePanelComponent.new(
               campaign: campaign,
               students: students,
-              is_unassigned: kind == :unassigned,
-              is_rejected: kind == :rejected
+              panel_kind: kind
             ).render_in(@view_context)
           )
         end

@@ -8,7 +8,7 @@
     data-controller="roster-drag"
     data-roster-drag-source-type-value="<%= drag_source_type %>"
     data-roster-drag-source-id-value="<%= drag_source_id %>"
-    data-roster-drag-move-path-value="<%= move_member_path_template unless unassigned? || rejected? %>"
+    data-roster-drag-move-path-value="<%= move_member_path_template unless panel_mode? %>"
     data-roster-drag-overbooking-warning-value="<%= overbooking_warning %>"
   <% end %>
 >
@@ -16,7 +16,7 @@
     <div>
       <h5 class="mb-1"><%= panel_title %></h5>
 
-      <% if (unassigned? || rejected?) && campaign %>
+      <% if campaign_panel? %>
         <div class="text-muted small">
           <span>
             <%= campaign.description.presence || "Campaign ##{campaign.id}" %>
@@ -85,7 +85,7 @@
   </div>
 
   <div class="card-body border-0">
-    <% if registerable || unassigned? || rejected? %>
+    <% if registerable || panel_mode? %>
       <% if show_add_form? %>
         <div class="mb-3">
           <%= form_with url: add_member_path,

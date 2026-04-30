@@ -42,7 +42,7 @@ module Registration
 
       render_campaign_panel(
         students: @campaign.unassigned_users(preload_registrations: true),
-        is_unassigned: true
+        panel_kind: :unassigned
       )
     end
 
@@ -54,7 +54,7 @@ module Registration
 
       render_campaign_panel(
         students: @campaign.rejected_users(preload_registrations: true),
-        is_rejected: true
+        panel_kind: :rejected
       )
     end
 
@@ -206,14 +206,13 @@ module Registration
         )
       end
 
-      def render_campaign_panel(students:, is_unassigned: false, is_rejected: false)
+      def render_campaign_panel(students:, panel_kind: nil)
         render turbo_stream: turbo_stream.replace(
           "tutorial-roster-side-panel",
           html: RosterSidePanelComponent.new(
             campaign: @campaign,
             students: students,
-            is_unassigned: is_unassigned,
-            is_rejected: is_rejected
+            panel_kind: panel_kind
           ).render_in(view_context)
         )
       end

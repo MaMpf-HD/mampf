@@ -78,41 +78,9 @@ module Registration
       end
 
       def prepare_for_allocation!
-        subquery = Registration::UserRegistration
-                   .select(:user_id)
-                   .where(registration_campaign_id: @campaign.id)
-                   .group(:user_id)
-                   .having("count(*) > 1")
-
-        @campaign.user_registrations
-                 .where(preference_rank: nil)
-                 .where(user_id: subquery)
-                 .delete_all
+        @campaign.reset_registrations_for_allocation!
 
         # rubocop:disable Rails/SkipsModelValidations
-        @campaign.user_registrations
-                 .where(status: [:pending, :confirmed])
-                 .update_all(
-                   status: :pending,
-                   rejection_reason_type: nil,
-                   rejection_reason_code: nil,
-                   rejection_reason_label: nil,
-                   rejected_at: nil,
-                   updated_at: Time.current
-                 )
-        @campaign.user_registrations
-                 .where(status: :rejected)
-                 .where.not(
-                   rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL
-                 )
-                 .update_all(
-                   status: :pending,
-                   rejection_reason_type: nil,
-                   rejection_reason_code: nil,
-                   rejection_reason_label: nil,
-                   rejected_at: nil,
-                   updated_at: Time.current
-                 )
         @campaign.update_columns(allocation_decided_at: nil)
         # rubocop:enable Rails/SkipsModelValidations
       end
@@ -122,17 +90,7 @@ module Registration
       end
 
       def apply_auto_rejections!(screening)
-        now = Time.current
-
-        screening.auto_reject_violations.each do |violation|
-          registration = @campaign.user_registrations.find(violation[:registration_id])
-          registration.reject!(
-            reason_type: violation[:reason_type] || Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
-            reason_code: violation[:reason_code].to_s,
-            reason_label: violation[:reason_label] || violation[:message],
-            rejected_at: now
-          )
-        end
+        @campaign.apply_rejections!(screening.auto_reject_violations)
       end
 
       def process_allocations(allocation)

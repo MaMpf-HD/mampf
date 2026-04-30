@@ -133,7 +133,7 @@ module Registration
 
           return false if screening.blocked?
 
-          apply_auto_rejections!(screening.auto_reject_violations)
+          apply_rejections!(screening.auto_reject_violations)
         end
 
         Registration::AllocationMaterializer.new(self).materialize!
@@ -145,29 +145,42 @@ module Registration
       end
     end
 
+    def apply_rejections!(violations,
+                          default_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      now = Time.current
+
+      violations.each do |violation|
+        registration = user_registrations.find(violation[:registration_id])
+        registration.reject!(
+          reason_type: violation[:reason_type] || default_reason_type,
+          reason_code: violation[:reason_code].to_s,
+          reason_label: violation[:reason_label] || violation[:message],
+          rejected_at: now
+        )
+      end
+    end
+
+    def reset_registrations_for_allocation!(clear_manual_rejections: false)
+      remove_forced_assignments_with_preferences!
+
+      reset_registrations_to_pending!(
+        user_registrations.where(status: [:pending, :confirmed])
+      )
+
+      rejected_scope = user_registrations.where(status: :rejected)
+      unless clear_manual_rejections
+        rejected_scope = rejected_scope.where.not(
+          rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL
+        )
+      end
+      reset_registrations_to_pending!(rejected_scope)
+    end
+
     def reset_allocation_results!
       with_lock do
-        subquery = Registration::UserRegistration
-                   .select(:user_id)
-                   .where(registration_campaign_id: id)
-                   .group(:user_id)
-                   .having("count(*) > 1")
-
-        user_registrations
-          .where(preference_rank: nil)
-          .where(user_id: subquery)
-          .delete_all
+        reset_registrations_for_allocation!(clear_manual_rejections: true)
 
         # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.update_all(
-          status: :pending,
-          rejection_reason_type: nil,
-          rejection_reason_code: nil,
-          rejection_reason_label: nil,
-          rejected_at: nil,
-          updated_at: Time.current
-        )
-
         registration_items.update_all(
           confirmed_registrations_count: 0,
           updated_at: Time.current
@@ -239,6 +252,32 @@ module Registration
 
     private
 
+      def remove_forced_assignments_with_preferences!
+        subquery = Registration::UserRegistration
+                   .select(:user_id)
+                   .where(registration_campaign_id: id)
+                   .group(:user_id)
+                   .having("count(*) > 1")
+
+        user_registrations
+          .where(preference_rank: nil)
+          .where(user_id: subquery)
+          .delete_all
+      end
+
+      def reset_registrations_to_pending!(scope)
+        # rubocop:disable Rails/SkipsModelValidations
+        scope.update_all(
+          status: :pending,
+          rejection_reason_type: nil,
+          rejection_reason_code: nil,
+          rejection_reason_label: nil,
+          rejected_at: nil,
+          updated_at: Time.current
+        )
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
       def open_rejected_registrations
         user_registrations.rejected
                           .where(
@@ -250,20 +289,6 @@ module Registration
                             user_id: user_registrations.where(status: [:confirmed, :pending])
                                                        .select(:user_id)
                           )
-      end
-
-      def apply_auto_rejections!(violations)
-        now = Time.current
-
-        violations.each do |violation|
-          registration = user_registrations.find(violation[:registration_id])
-          registration.reject!(
-            reason_type: violation[:reason_type] || Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
-            reason_code: violation[:reason_code].to_s,
-            reason_label: violation[:reason_label] || violation[:message],
-            rejected_at: now
-          )
-        end
       end
 
       def reject_pending_registrations!
