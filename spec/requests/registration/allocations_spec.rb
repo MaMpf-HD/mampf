@@ -82,16 +82,12 @@ RSpec.describe("Registration::Allocations", type: :request) do
         policy.save!(validate: false)
       end
 
-      it "shows blocker-specific guidance without suggesting an override" do
+      it "tells the teacher to contact admins" do
         get registration_campaign_allocation_path(campaign)
 
         expect(response).to have_http_status(:success)
         expect(response.body)
-          .to include(I18n.t("registration.allocation.errors.policy_violation_desc"))
-        expect(response.body)
-          .to include(I18n.t("registration.allocation.errors.policy_violation_config_title"))
-        expect(response.body)
-          .to include(I18n.t("registration.allocation.errors.policy_violation_next_step_desc"))
+          .to include(I18n.t("registration.allocation.errors.policy_violation_config_desc"))
         expect(response.body).not_to include("force the finalization")
       end
     end

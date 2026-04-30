@@ -64,25 +64,6 @@ module Registration
       blocker_violations
     end
 
-    def blockers_by_user
-      @blockers_by_user ||= blocker_violations.group_by { |v| v[:user_id] }
-    end
-
-    def violations_by_user
-      blockers_by_user
-    end
-
-    def blocker_counts_by_policy
-      @blocker_counts_by_policy ||=
-        blocker_violations
-        .group_by { |v| v[:policy] }
-        .transform_values(&:size)
-    end
-
-    def violation_counts_by_policy
-      blocker_counts_by_policy
-    end
-
     def finalization_policies
       @finalization_policies ||=
         @campaign.registration_policies.active.for_phase(:finalization)

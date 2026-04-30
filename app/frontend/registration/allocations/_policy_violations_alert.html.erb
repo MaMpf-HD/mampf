@@ -80,13 +80,15 @@
       </div>
     <% end %>
 
-    <div>
-      <strong>
-        <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
-      </strong>
+    <% if has_user_blockers %>
+      <div>
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
+        </strong>
 
-      <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
-    </div>
+        <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
+      </div>
+    <% end %>
   </div>
 
   <ul class="mt-0 mb-2">
@@ -105,7 +107,10 @@
           </span>
         <% end %>
         <% if violations.none? { |violation| violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION } %>
-          <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user_id, source: allocation_source),
+          <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
+                                                                                user_id: user_id,
+                                                                                source: allocation_source,
+                                                                                reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
                         method: :delete,
                         class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
                         data: {

@@ -17,17 +17,20 @@
         (<%= conflict[:user].email %>) —
         <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:tutorial].title) %>
         <% if conflict[:registration] %>
-          <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: conflict[:user].id, source: allocation_source),
+          <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
+                                                                                user_id: conflict[:user].id,
+                                                                                source: allocation_source,
+                                                                                reason: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER),
                         method: :delete,
                         class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
                         data: {
                           confirm:
-                          t("registration.campaign.confirmations.user_registration_conflict_remove",
+                          t("registration.campaign.confirmations.user_registration_reject_for_user",
                           email: conflict[:user].email)
                         },
                         form: { class: "d-inline-block" },
-                        title: t("registration.user_registration.actions.remove_user") do %>
-            <i class="bi bi-trash"></i>
+                        title: t("registration.user_registration.actions.reject_user") do %>
+            <i class="bi bi-slash-circle"></i>
           <% end %>
         <% end %>
       </li>

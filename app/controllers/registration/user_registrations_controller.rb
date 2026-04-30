@@ -7,7 +7,7 @@ module Registration
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
     end
 
-    def destroy_for_user
+    def reject_for_user
       return if campaign_completed?
 
       @user = User.find(params[:user_id])
@@ -18,7 +18,7 @@ module Registration
       # Authorize based on the first registration (all belong to same campaign)
       authorize! :destroy, registrations.first
 
-      destroy_registrations(registrations)
+      reject_registrations(registrations)
     end
 
     private
@@ -89,16 +89,17 @@ module Registration
         true
       end
 
-      def destroy_registrations(registrations)
+      def reject_registrations(registrations)
         registrations = registrations.where.not(status: :rejected).to_a
         count = registrations.size
+        reason_code, reason_label = rejection_reason
 
         Registration::UserRegistration.transaction do
           registrations.each do |registration|
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
-              reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER,
-              reason_label: I18n.t("registration.user_registration.reason_labels.deferred_due_to_blocker")
+              reason_code: reason_code,
+              reason_label: reason_label
             )
           end
         end
@@ -112,6 +113,20 @@ module Registration
       rescue ActiveRecord::RecordInvalid
         respond_with_flash(:alert, t("registration.user_registration.reject_failed"),
                            fallback_location: registration_campaign_path(@campaign))
+      end
+
+      def rejection_reason
+        if params[:reason] == Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
+          [
+            Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER,
+            t("registration.user_registration.reason_labels.deferred_due_to_blocker")
+          ]
+        else
+          [
+            Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+            t("registration.user_registration.reason_labels.withdrawn_by_teacher")
+          ]
+        end
       end
   end
 end

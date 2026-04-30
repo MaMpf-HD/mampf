@@ -350,8 +350,8 @@ Rails.application.routes.draw do
                 controller: "registration/user_registrations",
                 only: [] do
         collection do
-          delete "user/:user_id", to: "registration/user_registrations#destroy_for_user",
-                                  as: :destroy_for_user
+          delete "user/:user_id/reject", to: "registration/user_registrations#reject_for_user",
+                                         as: :reject_for_user
         end
       end
     end
