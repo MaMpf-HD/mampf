@@ -9,6 +9,7 @@ module Registration
 
     REJECTION_REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
     REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
+    REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER = "deferred_due_to_blocker".freeze
 
     REJECTION_REASON_CODE_TRANSLATION_ALIASES = {
       "institutional_email_mismatch" => "email_domain_not_allowed"

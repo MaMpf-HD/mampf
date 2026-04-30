@@ -2,7 +2,17 @@
 <% campaign = local_assigns[:campaign] %>
 <% allocation_source = local_assigns[:allocation_source] %>
 
-<% return unless dashboard.blocker_violations.present? %>
+<% blocker_violations = dashboard.blocker_violations %>
+
+<% return unless blocker_violations.present? %>
+
+<% has_configuration_blockers = blocker_violations.any? do |violation|
+     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+   end %>
+
+<% has_user_blockers = blocker_violations.any? do |violation|
+     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
+   end %>
 
 <div class="alert alert-danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -11,8 +21,9 @@
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
 
-  <% grouped = dashboard.blockers_by_user %>
-  <% policy_counts = dashboard.blocker_counts_by_policy %>
+  <% grouped = blocker_violations.group_by { |violation| violation[:user_id] } %>
+  <% policy_counts = blocker_violations.group_by { |violation| violation[:policy] }
+                                     .transform_values(&:size) %>
 
   <p class="mt-2 mb-2">
     <strong><%= grouped.size %></strong>
@@ -48,6 +59,36 @@
     <% end %>
   </div>
 
+  <div class="small mb-3">
+    <% if has_configuration_blockers %>
+      <div class="mb-1">
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_config_title") %>
+        </strong>
+
+        <%= t("registration.allocation.errors.policy_violation_config_desc") %>
+      </div>
+    <% end %>
+
+    <% if has_user_blockers %>
+      <div class="mb-1">
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_user_title") %>
+        </strong>
+
+        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
+      </div>
+    <% end %>
+
+    <div>
+      <strong>
+        <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
+      </strong>
+
+      <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
+    </div>
+  </div>
+
   <ul class="mt-0 mb-2">
     <% grouped.each do |user_id, violations| %>
       <% first = violations.first %>
@@ -66,15 +107,16 @@
         <% if violations.none? { |violation| violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION } %>
           <%= button_to destroy_for_user_registration_campaign_registrations_path(campaign, user_id: user_id, source: allocation_source),
                         method: :delete,
-                        class: "btn btn-sm btn-link text-danger p-0 ms-2 align-baseline",
+                        class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
                         data: {
                           turbo_confirm:
-                          t("registration.campaign.confirmations.user_registration_conflict_remove",
+                          t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
                           email: first[:email])
                         },
                         form: { class: "d-inline-block" },
-                        title: t("registration.user_registration.actions.remove_user") do %>
-            <i class="bi bi-trash"></i>
+                        title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+            <i class="bi bi-slash-circle me-1"></i>
+            <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
           <% end %>
         <% end %>
       </li>

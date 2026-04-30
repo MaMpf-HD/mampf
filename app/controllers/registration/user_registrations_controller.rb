@@ -97,8 +97,8 @@ module Registration
           registrations.each do |registration|
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
-              reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
-              reason_label: I18n.t("registration.user_registration.reason_labels.manual_rejected")
+              reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER,
+              reason_label: I18n.t("registration.user_registration.reason_labels.deferred_due_to_blocker")
             )
           end
         end

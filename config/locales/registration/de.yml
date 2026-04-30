@@ -97,6 +97,7 @@ de:
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
         user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
+        user_registration_defer_due_to_blocker: "Möchtest Du die Anmeldung von %{email} für jetzt manuell ablehnen? Die Anmeldung bleibt erhalten, erscheint in der Liste der abgelehnten Anmeldungen und kann später erneut bearbeitet werden."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -271,10 +272,12 @@ de:
         manual_rejected: "Manuell von Lehrperson abgelehnt"
         solver_unassigned: "Nicht durch Solver zugeteilt"
         withdrawn_by_teacher: "Manuell von Lehrperson abgelehnt"
+        deferred_due_to_blocker: "Vorerst wegen eines Blockers manuell abgelehnt"
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+        defer_due_to_blocker: "Für jetzt ablehnen"
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
@@ -316,7 +319,13 @@ de:
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
         policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfe die Details unten."
         policy_violation_title: "Richtlinienverstöße erkannt"
-        policy_violation_desc: "Die folgenden Benutzer verstoßen gegen die Registrierungsrichtlinien. Du kannst diese Probleme beheben (z.B. durch Entfernen der Registrierungen) oder die Finalisierung erzwingen. Hinweis: Benutzer, die aufgrund von Kapazitätsgrenzen aktuell nicht zugewiesen sind, werden hier nicht aufgeführt, da sie keinen Platz belegen."
+        policy_violation_desc: "Die Zuteilung kann erst fortgesetzt werden, wenn diese Blocker aufgelöst sind. Nicht aufgeführt sind Studierende, die aktuell nur aufgrund von Kapazitätsgrenzen nicht zugewiesen sind."
+        policy_violation_config_title: "Konfigurationsblocker:"
+        policy_violation_config_desc: "Diese Probleme kannst Du in diesem Anmeldeverfahren beheben, zum Beispiel durch Anpassen der Richtlinienkonfiguration."
+        policy_violation_user_title: "Blockierte Studierende:"
+        policy_violation_user_desc: "Diese Fälle können eine externe Klärung benötigen. Falls Du sie hier nicht lösen kannst, entferne die betroffenen Anmeldungen oder kläre die fehlenden Daten mit der zuständigen Person."
+        policy_violation_next_step_title: "Danach:"
+        policy_violation_next_step_desc: "Sobald die Blocker behoben sind, berechne die Zuteilung erneut."
         policy_violation_count:
           one: "Student betroffen"
           other: "Studenten betroffen"

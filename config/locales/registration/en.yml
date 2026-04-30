@@ -97,6 +97,7 @@ en:
         reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
         complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
         user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this registration process? You cannot undo this action."
+        user_registration_defer_due_to_blocker: "Do you want to reject %{email} for now? The registration will be kept, shown in the rejected list, and can be handled again later."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -271,10 +272,12 @@ en:
         manual_rejected: "Manually rejected by teacher"
         solver_unassigned: "Not placed by solver"
         withdrawn_by_teacher: "Manually rejected by teacher"
+        deferred_due_to_blocker: "Manually rejected for now because of a blocker"
       none: "No registrations found."
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from registration process"
+        defer_due_to_blocker: "Reject for now"
     allocation:
       started: "Allocation has been calculated."
       conflicts:
@@ -316,7 +319,13 @@ en:
         wrong_status: "Registration process has wrong status for this action."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
-        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation_desc: "Allocation can only continue once these blockers are resolved. Students who are currently unassigned only because of capacity limits are not listed here."
+        policy_violation_config_title: "Configuration blockers:"
+        policy_violation_config_desc: "You can resolve these issues in this registration campaign, for example by adjusting the policy configuration."
+        policy_violation_user_title: "Blocked students:"
+        policy_violation_user_desc: "These cases may require external clarification. If you cannot resolve them here, remove the affected registrations or coordinate the missing data with the responsible person."
+        policy_violation_next_step_title: "After that:"
+        policy_violation_next_step_desc: "Recalculate the allocation once the blockers have been resolved."
         policy_violation_count:
           one: "student affected"
           other: "students affected"

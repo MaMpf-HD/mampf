@@ -63,6 +63,82 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(response.body).to include(tutorial.title)
       end
     end
+
+    context "with configuration blockers" do
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+
+      before do
+        sign_in editor
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               user: blocked_student)
+
+        policy = build(:registration_policy,
+                       :institutional_email,
+                       :for_finalization,
+                       registration_campaign: campaign,
+                       config: { "allowed_domains" => "" })
+        policy.save!(validate: false)
+      end
+
+      it "shows blocker-specific guidance without suggesting an override" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_desc"))
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_config_title"))
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_next_step_desc"))
+        expect(response.body).not_to include("force the finalization")
+      end
+    end
+
+    context "with user blockers" do
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+      let(:guard_result) do
+        Registration::FinalizationGuard::Result.new(
+          success?: false,
+          error_code: :policy_violation,
+          error_message: "blocked",
+          data: [
+            {
+              user_id: blocked_student.id,
+              registration_id: registration.id,
+              name: blocked_student.name,
+              email: blocked_student.email,
+              policy: "student_performance",
+              classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+              blocker_kind: Registration::ScreeningService::BLOCKER_KIND_USER
+            }
+          ]
+        )
+      end
+      let!(:registration) do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               user: blocked_student)
+      end
+
+      before do
+        sign_in editor
+        allow_any_instance_of(Registration::AllocationDashboard)
+          .to receive(:guard_result)
+          .and_return(guard_result)
+      end
+
+      it "offers a visible reject-for-now action" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("registration.user_registration.actions.defer_due_to_blocker"))
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_user_desc"))
+      end
+    end
   end
 
   describe "POST /campaigns/:campaign_id/allocation" do
