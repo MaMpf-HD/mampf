@@ -24,14 +24,14 @@ module Registration
           violation[:registration_id]
         end.uniq
 
-        Array(violations)
-          .select do |violation|
-            violation[:classification] == ScreeningService::CLASSIFICATION_AUTO_REJECT &&
-              !blocked_registration_ids.include?(violation[:registration_id])
-          end
-          .group_by { |violation| violation[:registration_id] }
-          .values
-          .map(&:first)
+        auto_reject_violations = Array(violations).select do |violation|
+          violation[:classification] == ScreeningService::CLASSIFICATION_AUTO_REJECT &&
+            blocked_registration_ids.exclude?(violation[:registration_id])
+        end
+
+        auto_reject_violations.group_by { |violation| violation[:registration_id] }
+                              .values
+                              .map(&:first)
       end
 
       def blocked?
@@ -50,6 +50,7 @@ module Registration
 
       registrations = @registrations.includes(:user).to_a
       user_ids = registrations.map(&:user_id).uniq
+      policy_outcomes = {}
 
       policies.each do |policy|
         policy.handler.batch_prepare(user_ids)
@@ -59,7 +60,8 @@ module Registration
         user = registration.user
 
         policies.each do |policy|
-          outcome = normalized_policy_outcome(policy.evaluate(user))
+          outcome = policy_outcomes[[user.id, policy.id]] ||=
+            normalized_policy_outcome(policy.evaluate(user))
           next if outcome[:passed]
 
           result << {

@@ -456,7 +456,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
                    registration_item: item,
                    user: unassigned_student,
                    rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-                   rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned"))
+                   rejection_reason_label: I18n.t(
+                     "registration.user_registration.reason_labels.solver_unassigned"
+                   ))
           end
 
           it "still lists the student in the unassigned panel" do
@@ -523,7 +525,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           rejected_campaign.user_registrations.find_by(user: rejected_student)
                            .update!(
                              rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-                             rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned")
+                             rejection_reason_label: I18n.t(
+                               "registration.user_registration.reason_labels.solver_unassigned"
+                             )
                            )
 
           get rejected_registration_campaign_path(rejected_campaign),

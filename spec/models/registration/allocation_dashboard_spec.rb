@@ -61,7 +61,9 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
                preference_rank: 1,
                status: :rejected,
                rejection_reason_code: "institutional_email_mismatch",
-               rejection_reason_label: I18n.t("registration.policy.errors.email_domain_not_allowed"),
+               rejection_reason_label: I18n.t(
+                 "registration.policy.errors.email_domain_not_allowed"
+               ),
                user: rejected_student)
       end
 

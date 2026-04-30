@@ -481,6 +481,35 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#apply_rejections!" do
+    let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
+    let(:item) { campaign.registration_items.first }
+
+    it "bulk-loads registrations before rejecting them" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item,
+                            user: create(:confirmed_user),
+                            preference_rank: 1,
+                            status: :pending)
+      relation = campaign.user_registrations
+
+      allow(campaign).to receive(:user_registrations).and_return(relation)
+      expect(relation).not_to receive(:find)
+
+      campaign.apply_rejections!([
+                                   {
+                                     registration_id: registration.id,
+                                     reason_code: :institutional_email_mismatch,
+                                     reason_label: "Email domain not allowed.",
+                                     message: "Email domain not allowed."
+                                   }
+                                 ])
+
+      expect(registration.reload).to be_rejected
+    end
+  end
+
   describe "#reset_allocation_results!" do
     let(:campaign) do
       create(:registration_campaign, :with_items, :preference_based,
@@ -793,7 +822,9 @@ RSpec.describe(Registration::Campaign, type: :model) do
       registration = campaign.user_registrations.find_by(user: rejected_user)
       registration.update!(
         rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-        rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned")
+        rejection_reason_label: I18n.t(
+          "registration.user_registration.reason_labels.solver_unassigned"
+        )
       )
 
       expect(campaign.rejected_users).not_to include(rejected_user)

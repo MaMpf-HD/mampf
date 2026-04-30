@@ -101,12 +101,14 @@ module Rosters
 
         return if source_campaign_id.blank?
 
+        # rubocop:disable Rails/SkipsModelValidations
         Registration::UserRegistration.rejected
                                       .where(user: user,
                                              registration_campaign_id: source_campaign_id,
                                              rejection_overridden_at: nil)
                                       .update_all(rejection_overridden_at: now,
                                                   updated_at: now)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       def ensure_uniqueness!(user, rosterable)

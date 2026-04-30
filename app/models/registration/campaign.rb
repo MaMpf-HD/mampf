@@ -147,10 +147,20 @@ module Registration
 
     def apply_rejections!(violations,
                           default_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      return if violations.empty?
+
       now = Time.current
+      registrations_by_id = user_registrations.where(
+        id: violations.pluck(:registration_id)
+      ).index_by(&:id)
 
       violations.each do |violation|
-        registration = user_registrations.find(violation[:registration_id])
+        registration = registrations_by_id.fetch(violation[:registration_id]) do
+          raise(ActiveRecord::RecordNotFound,
+                "Couldn't find Registration::UserRegistration " \
+                "with id=#{violation[:registration_id]}")
+        end
+
         registration.reject!(
           reason_type: violation[:reason_type] || default_reason_type,
           reason_code: violation[:reason_code].to_s,

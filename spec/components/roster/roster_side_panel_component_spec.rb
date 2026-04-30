@@ -490,7 +490,10 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
       I18n.with_locale(:de) do
         expect(c.rejection_reasons(student))
-          .to eq("Vorausgesetztes Anmeldeverfahren nicht abgeschlossen., E-Mail-Domain nicht erlaubt.")
+          .to eq(
+            "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen., " \
+            "E-Mail-Domain nicht erlaubt."
+          )
         expect(c.show_rejection_reasons?(student)).to be(true)
       end
     end
