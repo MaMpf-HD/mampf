@@ -449,6 +449,36 @@ RSpec.describe(Registration::Campaign, type: :model) do
         campaign.finalize!
       end
     end
+
+    context "with FCFS policy auto-rejections" do
+      let(:campaign) do
+        create(:registration_campaign, :with_items, :first_come_first_served)
+      end
+      let(:item) { campaign.registration_items.first }
+
+      before do
+        create(:registration_policy,
+               :institutional_email,
+               :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+        campaign.update!(status: :closed)
+      end
+
+      it "applies policy rejection reasons to pending FCFS rows" do
+        registration = create(:registration_user_registration,
+                              :pending,
+                              registration_campaign: campaign,
+                              registration_item: item,
+                              user: create(:confirmed_user, email: "invalid@other.test"))
+
+        campaign.finalize!
+
+        expect(registration.reload).to be_rejected
+        expect(registration.rejection_reason_type).to eq("policy")
+        expect(registration.rejection_reason_code).to eq("institutional_email_mismatch")
+      end
+    end
   end
 
   describe "#reset_allocation_results!" do

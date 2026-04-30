@@ -270,6 +270,19 @@ RSpec.describe(Registration::AllocationService) do
 
         expect(Registration::UserRegistration.where(user: user3, preference_rank: nil)).to exist
       end
+
+      it "resets previous confirmations before recalculating the allocation" do
+        registration = create(:registration_user_registration,
+                              user: user1,
+                              registration_item: item1,
+                              registration_campaign: campaign,
+                              preference_rank: 1,
+                              status: :confirmed)
+
+        service.allocate!
+
+        expect(registration.reload).to be_pending
+      end
     end
 
     context "with unknown strategy" do

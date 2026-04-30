@@ -44,7 +44,7 @@ module Registration
 
       screening = Registration::ScreeningService.new(
         @campaign,
-        registrations: @campaign.user_registrations.confirmed
+        registrations: @campaign.user_registrations.where.not(status: :rejected)
       ).call
 
       if screening.blocked?

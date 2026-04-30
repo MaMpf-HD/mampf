@@ -98,7 +98,7 @@ module Registration
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
               reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
-              reason_label: "Manually rejected by teacher"
+              reason_label: I18n.t("registration.user_registration.reason_labels.manual_rejected")
             )
           end
         end

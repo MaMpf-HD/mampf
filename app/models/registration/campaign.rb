@@ -124,7 +124,7 @@ module Registration
         if first_come_first_served?
           screening = Registration::ScreeningService.new(
             self,
-            registrations: user_registrations.confirmed
+            registrations: user_registrations.where.not(status: :rejected)
           ).call
 
           return false if screening.blocked?
@@ -236,7 +236,7 @@ module Registration
           registration.reject!(
             reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
             reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-            reason_label: "Not placed by solver"
+            reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned")
           )
         end
       end
