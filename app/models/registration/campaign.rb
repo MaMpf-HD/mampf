@@ -321,7 +321,8 @@ module Registration
           status: Registration::UserRegistration.statuses[:rejected],
           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-          rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned"),
+          rejection_reason_label:
+          I18n.t("registration.user_registration.reason_labels.solver_unassigned"),
           rejected_at: now,
           rejection_overridden_at: nil,
           updated_at: now
