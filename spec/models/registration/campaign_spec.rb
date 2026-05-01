@@ -449,6 +449,84 @@ RSpec.describe(Registration::Campaign, type: :model) do
         campaign.finalize!
       end
     end
+
+    context "with FCFS policy auto-rejections" do
+      let(:campaign) do
+        create(:registration_campaign, :with_items, :first_come_first_served)
+      end
+      let(:item) { campaign.registration_items.first }
+
+      before do
+        create(:registration_policy,
+               :institutional_email,
+               :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+        campaign.update!(status: :closed)
+      end
+
+      it "applies policy rejection reasons to pending FCFS rows" do
+        registration = create(:registration_user_registration,
+                              :pending,
+                              registration_campaign: campaign,
+                              registration_item: item,
+                              user: create(:confirmed_user, email: "invalid@other.test"))
+
+        campaign.finalize!
+
+        expect(registration.reload).to be_rejected
+        expect(registration.rejection_reason_type).to eq("policy")
+        expect(registration.rejection_reason_code).to eq("institutional_email_mismatch")
+      end
+
+      it "raises a finalization blocked error when screening finds blockers" do
+        policy = build(:registration_policy,
+                       :institutional_email,
+                       :for_finalization,
+                       registration_campaign: campaign,
+                       config: { "allowed_domains" => "" })
+        policy.save!(validate: false)
+
+        create(:registration_user_registration,
+               :pending,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: create(:confirmed_user, email: "student@other.test"))
+
+        expect do
+          campaign.finalize!
+        end.to raise_error(Registration::Campaign::FinalizationBlockedError)
+      end
+    end
+  end
+
+  describe "#apply_rejections!" do
+    let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
+    let(:item) { campaign.registration_items.first }
+
+    it "bulk-loads registrations before rejecting them" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item,
+                            user: create(:confirmed_user),
+                            preference_rank: 1,
+                            status: :pending)
+      relation = campaign.user_registrations
+
+      allow(campaign).to receive(:user_registrations).and_return(relation)
+      expect(relation).not_to receive(:find)
+
+      campaign.apply_rejections!([
+                                   {
+                                     registration_id: registration.id,
+                                     reason_code: :institutional_email_mismatch,
+                                     reason_label: "Email domain not allowed.",
+                                     message: "Email domain not allowed."
+                                   }
+                                 ])
+
+      expect(registration.reload).to be_rejected
+    end
   end
 
   describe "#reset_allocation_results!" do
@@ -507,6 +585,20 @@ RSpec.describe(Registration::Campaign, type: :model) do
       ranks = campaign.user_registrations.reload.order(:preference_rank)
                       .pluck(:preference_rank)
       expect(ranks).to eq([1, 2])
+    end
+
+    it "clears rejection overrides on reset" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item1,
+                            user: user,
+                            status: :rejected,
+                            preference_rank: 1,
+                            rejection_overridden_at: Time.current)
+
+      campaign.reset_allocation_results!
+
+      expect(registration.reload.rejection_overridden_at).to be_nil
     end
 
     it "zeroes out confirmed_registrations_count on all items" do
@@ -688,6 +780,105 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.unassigned_users(preload_registrations: true))
           .not_to include(other_student)
       end
+    end
+
+    context "when a student is still in the open rejected queue" do
+      let(:rejected_student) { create(:user, name: "Rejected Student") }
+
+      before do
+        tutorial = create(:tutorial, lecture: lecture)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial)
+        create(:registration_user_registration,
+               :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: rejected_student,
+               rejection_reason_label: "Missing prerequisite")
+      end
+
+      it "excludes rejected students from the unassigned queue" do
+        expect(campaign.unassigned_users(preload_registrations: true))
+          .not_to include(rejected_student)
+      end
+    end
+  end
+
+  describe "#rejected_users" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) do
+      create(:registration_campaign, :completed, campaignable: lecture)
+    end
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:rejected_user) { create(:user, name: "Rejected User") }
+    let(:confirmed_user) { create(:user, name: "Confirmed User") }
+
+    before do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+      create(:registration_user_registration,
+             :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: rejected_user,
+             rejection_reason_label: "Missing prerequisite")
+      create(:registration_user_registration,
+             :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: confirmed_user)
+    end
+
+    it "returns only users whose final campaign state is rejected" do
+      expect(campaign.rejected_users).to include(rejected_user)
+      expect(campaign.rejected_users).not_to include(confirmed_user)
+    end
+
+    it "preloads registrations when requested" do
+      user = campaign.rejected_users(preload_registrations: true).first
+
+      expect(user.association(:user_registrations)).to be_loaded
+    end
+
+    it "excludes rejected users whose rejection was overridden" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(rejection_overridden_at: Time.current)
+
+      expect(campaign.rejected_users).not_to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(0)
+      expect(campaign.rejected_count).to eq(1)
+    end
+
+    it "re-includes users when a rejection is reapplied after override" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(rejection_overridden_at: Time.current)
+
+      registration.reject!(
+        reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+        reason_code: :institutional_email_mismatch,
+        reason_label: "Email domain not allowed."
+      )
+
+      expect(registration.reload.rejection_overridden_at).to be_nil
+      expect(campaign.rejected_users).to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(1)
+    end
+
+    it "excludes solver-unassigned users from the rejected queue" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(
+        rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+        rejection_reason_label: I18n.t(
+          "registration.user_registration.reason_labels.solver_unassigned"
+        )
+      )
+
+      expect(campaign.rejected_users).not_to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(0)
+      expect(campaign.rejected_count).to eq(1)
+      expect(campaign.unassigned_users(preload_registrations: true)).to include(rejected_user)
     end
   end
 

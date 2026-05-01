@@ -87,16 +87,28 @@ module Registration
                               expanded_campaign_id: @campaign.id
                             })
       end
+    rescue Registration::AllocationService::BlockedError
+      @dashboard = Registration::AllocationDashboard.new(@campaign)
+
+      respond_with_flash(
+        :alert,
+        t("registration.allocation.errors.policy_violation"),
+        redirect_path: registration_campaign_allocation_path(@campaign)
+      ) do
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
+      end
     end
 
     def finalize
       authorize! :finalize, @campaign
 
-      force = params[:force] == "true"
-      authorize!(:force_finalize, @campaign) if force
-
       guard = Registration::FinalizationGuard.new(@campaign)
-      result = guard.check(ignore_policies: force)
+      result = guard.check
 
       unless result.success?
         respond_to do |format|
@@ -151,7 +163,7 @@ module Registration
             stream_flash
           ]
         else
-          respond_with_flash(:notice, t("registration.campaign.finalized"),
+          respond_with_flash(:notice, finalization_notice,
                              redirect_path: registration_campaign_path(@campaign)) do
             [
               turbo_stream.update("campaigns_container",
@@ -168,9 +180,33 @@ module Registration
         respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
                            redirect_path: registration_campaign_path(@campaign))
       end
+    rescue Registration::Campaign::FinalizationBlockedError
+      redirect_to registration_campaign_allocation_path(@campaign),
+                  alert: t("registration.allocation.errors.policy_violation")
     end
 
     private
+
+      def finalization_notice
+        rejected_count = @campaign.open_rejected_count
+        unassigned_count = @campaign.unassigned_users.count
+
+        parts = [t("registration.campaign.finalized")]
+        if rejected_count.positive?
+          parts << t("registration.campaign.finalization_summary.rejected",
+                     count: rejected_count)
+        end
+        if unassigned_count.positive?
+          parts << t("registration.campaign.finalization_summary.unassigned",
+                     count: unassigned_count)
+        end
+
+        if rejected_count.positive? || unassigned_count.positive?
+          parts << t("registration.campaign.finalization_summary.manual_addition")
+        end
+
+        parts.join(" ")
+      end
 
       def set_campaign
         @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])

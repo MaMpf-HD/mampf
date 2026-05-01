@@ -185,6 +185,10 @@ de:
       empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
     candidates:
       title: 'Unzugeteilte Anmeldungen'
+      short_title: 'unzugeteilt'
+      completed_description: 'Zeigt Studierende, die aktuell keinen Platz erhalten haben und daher nicht zugeteilt wurden. Sie können bei Bedarf manuell hinzugefügt werden.'
+      rejected_short: 'abgelehnt'
+      rejected_description: 'Zeigt Studierende, deren Anmeldung aktuell abgelehnt ist, z.B. wegen einer verletzten Richtlinie oder einer manuellen Ablehnung. Sie können bei Bedarf manuell hinzugefügt werden.'
       help: 'Studierende, die sich über Anmeldeverfahren angemeldet haben, aber nicht zugeteilt wurden. Eine Zuteilung hier fügt sie zur gewählten Gruppe hinzu und - je nach Gruppentyp - auch zur Veranstaltung.'
       empty: 'Keine unzugeteilten Anmeldungen gefunden.'
       no_prefs: 'Keine Präferenzen'

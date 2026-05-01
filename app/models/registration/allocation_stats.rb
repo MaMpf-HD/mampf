@@ -1,19 +1,22 @@
 module Registration
   class AllocationStats
     attr_reader :total_registrations, :assigned_users, :unassigned_users,
-                :global_avg_rank, :percent_top_choice, :preference_counts, :items,
-                :unassigned_user_ids
+                :rejected_users, :eligible_users, :global_avg_rank,
+                :percent_top_choice,
+                :preference_counts, :items, :unassigned_user_ids,
+                :rejected_user_ids
 
-    def initialize(campaign, assignment)
+    def initialize(campaign, assignment, rejected_user_ids: [])
       @campaign = campaign
       @assignment = assignment
+      @rejected_user_ids = Array(rejected_user_ids).uniq
       calculate
     end
 
     def assigned_percentage
-      return 0 if total_registrations.zero?
+      return 0 if eligible_users.zero?
 
-      (assigned_users.to_f / total_registrations * 100)
+      (assigned_users.to_f / eligible_users * 100)
     end
 
     def unassigned_percentage
@@ -60,12 +63,13 @@ module Registration
       def calculate_fcfs
         @total_registrations = @campaign.total_registrations_count
         @assigned_users = @assignment.size
-        @unassigned_users = @total_registrations - @assigned_users
 
-        # In FCFS, unassigned users are those who have registrations but are not
-        # in the assignment list (e.g. rejected or pending if any)
         all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
-        @unassigned_user_ids = all_user_ids - @assignment.keys
+        @rejected_user_ids &= all_user_ids
+        @rejected_users = @rejected_user_ids.size
+        @eligible_users = all_user_ids.size - @rejected_users
+        @unassigned_user_ids = all_user_ids - @assignment.keys - @rejected_user_ids
+        @unassigned_users = @unassigned_user_ids.size
 
         @preference_counts = Hash.new(0)
         @items = {}
@@ -89,8 +93,11 @@ module Registration
 
         @total_registrations = user_preferences.keys.size
         @assigned_users = @assignment.size
-        @unassigned_users = @total_registrations - @assigned_users
-        @unassigned_user_ids = user_preferences.keys - @assignment.keys
+        @rejected_user_ids &= user_preferences.keys
+        @rejected_users = @rejected_user_ids.size
+        @eligible_users = user_preferences.keys.size - @rejected_users
+        @unassigned_user_ids = user_preferences.keys - @assignment.keys - @rejected_user_ids
+        @unassigned_users = @unassigned_user_ids.size
         @preference_counts = Hash.new(0)
         @items = {}
         @global_avg_rank = 0

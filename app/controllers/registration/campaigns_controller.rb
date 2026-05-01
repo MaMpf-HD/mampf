@@ -45,15 +45,21 @@ module Registration
         return
       end
 
-      unassigned_users = @campaign.unassigned_users(preload_registrations: true)
+      render_campaign_panel(
+        students: @campaign.unassigned_users(preload_registrations: true),
+        panel_kind: :unassigned
+      )
+    end
 
-      render turbo_stream: turbo_stream.replace(
-        "tutorial-roster-side-panel",
-        html: RosterSidePanelComponent.new(
-          campaign: @campaign,
-          students: unassigned_users,
-          is_unassigned: true
-        ).render_in(view_context)
+    def rejected
+      unless params[:source] == "panel"
+        redirect_to edit_lecture_path(@campaign.campaignable, tab: "groups")
+        return
+      end
+
+      render_campaign_panel(
+        students: @campaign.rejected_users(preload_registrations: true),
+        panel_kind: :rejected
       )
     end
 
@@ -211,6 +217,17 @@ module Registration
         params.expect(
           registration_campaign: [:description, :allocation_mode,
                                   :registration_deadline]
+        )
+      end
+
+      def render_campaign_panel(students:, panel_kind: nil)
+        render turbo_stream: turbo_stream.replace(
+          "tutorial-roster-side-panel",
+          html: RosterSidePanelComponent.new(
+            campaign: @campaign,
+            students: students,
+            panel_kind: panel_kind
+          ).render_in(view_context)
         )
       end
 

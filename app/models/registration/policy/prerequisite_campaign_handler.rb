@@ -3,12 +3,20 @@ module Registration
     class PrerequisiteCampaignHandler < Handler
       def evaluate(user)
         if campaign_id.blank?
-          return fail_result(:configuration_error,
-                             I18n.t("registration.policy.errors.prerequisite_not_configured"))
+          return fail_result(
+            :configuration_error,
+            I18n.t("registration.policy.errors.prerequisite_not_configured"),
+            classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+            blocker_kind: Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+          )
         end
         unless campaign
-          return fail_result(:prerequisite_campaign_not_found,
-                             I18n.t("registration.policy.errors.prerequisite_missing"))
+          return fail_result(
+            :prerequisite_campaign_not_found,
+            I18n.t("registration.policy.errors.prerequisite_missing"),
+            classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+            blocker_kind: Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+          )
         end
 
         confirmed = if @confirmed_user_ids
@@ -20,8 +28,14 @@ module Registration
         if confirmed
           pass_result(:prerequisite_met)
         else
-          fail_result(:prerequisite_not_met,
-                      I18n.t("registration.policy.errors.prerequisite_not_met"))
+          fail_result(
+            :prerequisite_not_met,
+            I18n.t("registration.policy.errors.prerequisite_not_met"),
+            classification: Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT,
+            reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+            reason_code: :prerequisite_not_met,
+            reason_label: I18n.t("registration.policy.errors.prerequisite_not_met")
+          )
         end
       end
 

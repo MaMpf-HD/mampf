@@ -37,8 +37,19 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
 
     it "reflects the constructor argument" do
-      c = described_class.new(is_unassigned: true)
+      c = described_class.new(panel_kind: :unassigned)
       expect(c.unassigned?).to be(true)
+    end
+  end
+
+  describe "#rejected?" do
+    it "defaults to false" do
+      expect(component.rejected?).to be(false)
+    end
+
+    it "reflects the constructor argument" do
+      c = described_class.new(panel_kind: :rejected)
+      expect(c.rejected?).to be(true)
     end
   end
 
@@ -107,13 +118,20 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
     it "is true for draggable unassigned (unassigned + campaign)" do
       c = described_class.new(
-        is_unassigned: true, campaign: double(id: 1)
+        panel_kind: :unassigned, campaign: double(id: 1)
+      )
+      expect(c.drag_controller?).to be(true)
+    end
+
+    it "is true for draggable rejected (rejected + campaign)" do
+      c = described_class.new(
+        panel_kind: :rejected, campaign: double(id: 1)
       )
       expect(c.drag_controller?).to be(true)
     end
 
     it "is false for unassigned without campaign and no registerable" do
-      c = described_class.new(is_unassigned: true)
+      c = described_class.new(panel_kind: :unassigned)
       expect(c.drag_controller?).to be(false)
     end
   end
@@ -121,9 +139,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
   describe "#drag_source_type" do
     it "returns 'unassigned' for draggable unassigned" do
       c = described_class.new(
-        is_unassigned: true, campaign: double(id: 1)
+        panel_kind: :unassigned, campaign: double(id: 1)
       )
       expect(c.drag_source_type).to eq("unassigned")
+    end
+
+    it "returns 'rejected' for draggable rejected" do
+      c = described_class.new(
+        panel_kind: :rejected, campaign: double(id: 1)
+      )
+      expect(c.drag_source_type).to eq("rejected")
     end
 
     it "returns downcased class name of registerable" do
@@ -135,9 +160,17 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     it "returns campaign id for draggable unassigned" do
       camp = double(id: 7)
       c = described_class.new(
-        is_unassigned: true, campaign: camp
+        panel_kind: :unassigned, campaign: camp
       )
       expect(c.drag_source_id).to eq(7)
+    end
+
+    it "returns campaign id for draggable rejected" do
+      camp = double(id: 8)
+      c = described_class.new(
+        panel_kind: :rejected, campaign: camp
+      )
+      expect(c.drag_source_id).to eq(8)
     end
 
     it "returns registerable id otherwise" do
@@ -157,7 +190,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
     it "is false when unassigned" do
       c = described_class.new(
-        registerable: tutorial, is_unassigned: true
+        registerable: tutorial, panel_kind: :unassigned
       )
       expect(c.show_add_form?).to be(false)
     end
@@ -179,7 +212,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
 
     it "is false when unassigned" do
-      c = described_class.new(is_unassigned: true)
+      c = described_class.new(panel_kind: :unassigned)
       expect(c.show_remove_button?).to be(false)
     end
   end
@@ -191,7 +224,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       reg = double(registration_campaign_id: 1)
       student = double(user_registrations: [reg])
       c = described_class.new(
-        is_unassigned: true, campaign: campaign
+        panel_kind: :unassigned, campaign: campaign
       )
       expect(c.show_campaign_wishes?(student)).to be(true)
     end
@@ -203,7 +236,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
     it "is false without campaign" do
       student = double(user_registrations: [])
-      c = described_class.new(is_unassigned: true)
+      c = described_class.new(panel_kind: :unassigned)
       expect(c.show_campaign_wishes?(student)).to be(false)
     end
 
@@ -211,7 +244,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       reg = double(registration_campaign_id: 999)
       student = double(user_registrations: [reg])
       c = described_class.new(
-        is_unassigned: true, campaign: campaign
+        panel_kind: :unassigned, campaign: campaign
       )
       expect(c.show_campaign_wishes?(student)).to be(false)
     end
@@ -254,7 +287,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       )
       student = double(user_registrations: [reg_a, reg_b])
       c = described_class.new(
-        is_unassigned: true, campaign: campaign
+        panel_kind: :unassigned, campaign: campaign
       )
       expect(c.campaign_wishes(student)).to eq("A, B")
     end
@@ -267,7 +300,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       )
       student = double(user_registrations: [reg])
       c = described_class.new(
-        is_unassigned: true, campaign: campaign
+        panel_kind: :unassigned, campaign: campaign
       )
       expect(c.campaign_wishes(student)).to eq("X")
     end
@@ -308,8 +341,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
   describe "#panel_title" do
     it "returns candidates title when unassigned" do
-      expect(described_class.new(is_unassigned: true).panel_title)
+      expect(described_class.new(panel_kind: :unassigned).panel_title)
         .to eq(I18n.t("roster.candidates.title"))
+    end
+
+    it "returns rejected title when rejected" do
+      expect(described_class.new(panel_kind: :rejected).panel_title)
+        .to eq(I18n.t(
+                 "registration.user_registration.index.rejected_title",
+                 default: "Rejected Registrations"
+               ))
     end
 
     it "returns allocated title when allocated" do
@@ -427,6 +468,36 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       expect(described_class.new.empty_state_text).to eq(I18n.t("roster.details.select_group"))
     end
   end
+
+  describe "#rejection_reasons" do
+    let(:campaign) { double(id: 1) }
+
+    it "joins unique rejection labels for the campaign" do
+      reg_a = double(registration_campaign_id: 1,
+                     status: :rejected,
+                     rejection_reason_code: "prerequisite_not_met",
+                     rejection_reason_label: "Prerequisite registration process not completed.")
+      reg_b = double(registration_campaign_id: 1,
+                     status: :rejected,
+                     rejection_reason_code: "institutional_email_mismatch",
+                     rejection_reason_label: "Email domain not allowed.")
+      reg_c = double(registration_campaign_id: 2,
+                     status: :rejected,
+                     rejection_reason_code: "ignored",
+                     rejection_reason_label: "Ignored")
+      student = double(user_registrations: [reg_a, reg_b, reg_c])
+      c = described_class.new(panel_kind: :rejected, campaign: campaign)
+
+      I18n.with_locale(:de) do
+        expect(c.rejection_reasons(student))
+          .to eq(
+            "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen., " \
+            "E-Mail-Domain nicht erlaubt."
+          )
+        expect(c.show_rejection_reasons?(student)).to be(true)
+      end
+    end
+  end
   describe "additional branch coverage" do
     it "campaign_wishes handles nil preference_rank" do
       reg_nil = double(
@@ -447,7 +518,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     it "relevant_registrations handles non-matching campaigns" do
       reg = double(registration_campaign_id: 2)
       student = double(user_registrations: [reg])
-      c = described_class.new(is_unassigned: true, campaign: double(id: 1))
+      c = described_class.new(panel_kind: :unassigned, campaign: double(id: 1))
       expect(c.show_campaign_wishes?(student)).to be(false)
     end
 

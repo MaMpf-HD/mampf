@@ -14,6 +14,14 @@ en:
       closed: "Registration process closed."
       reopened: "Registration process reopened."
       finalized: "Registration process finalized successfully."
+      finalization_summary:
+        rejected:
+          one: "1 student currently has a rejected registration."
+          other: "%{count} students currently have a rejected registration."
+        unassigned:
+          one: "1 student could not be placed."
+          other: "%{count} students could not be placed."
+        manual_addition: "They can still be added manually in the roster."
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"
@@ -74,7 +82,6 @@ en:
         close: "End Registration"
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"
-        force_finalize: "Force Finalize (Ignore Errors)"
         allocate: "Run Allocation"
         reallocate: "Recalculate Allocation"
         view_allocation: "View Allocation"
@@ -89,11 +96,10 @@ en:
         close_early: "The registration deadline has not passed yet. Closing the registration process now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
         finalize: "Are you sure you want to finalize the allocation? This will assign students to items based on their preferences and capacities. This action cannot be undone."
-        force_finalize: "Are you sure? This will ignore all policy violations and commit the allocation. Even students violating policies will be included."
-        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this campaign? You cannot undo this action."
         reallocate: "Do you really want to recalculate the allocation? The current distribution will be overwritten and might change."
         complete_planning: "Are you sure? This will mark the planning as completed. No rosters will be modified."
-        user_registration_conflict_remove: "Are you sure to remove the registration for user with email %{email} from this registration process? You cannot undo this action."
+        user_registration_reject_for_user: "Do you want to reject the registrations for %{email}? The registrations will be kept and can be handled again later."
+        user_registration_defer_due_to_blocker: "Do you want to reject %{email} for now? The registration will be kept, shown in the rejected list, and can be handled again later."
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -259,19 +265,29 @@ en:
         title: "Registrations"
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
+        rejected_title: "Rejected Registrations"
         allocated_count: "allocated"
       status:
         pending: "Pending"
         confirmed: "Confirmed"
         rejected: "Rejected"
       rank: "Rank"
+      reason: "Reason"
       destroyed: "Registration removed successfully."
       destroyed_all_for_user: "Removed %{count} registrations for user."
       destroy_failed: "Failed to remove registrations."
+      rejected_all_for_user: "Rejected %{count} registrations for user."
+      reject_failed: "Failed to reject registrations."
+      reason_labels:
+        manual_rejected: "Manually rejected by teacher"
+        solver_unassigned: "Not placed by solver"
+        withdrawn_by_teacher: "Manually rejected by teacher"
+        deferred_due_to_blocker: "Manually rejected for now because of a blocker"
       none: "No registrations found."
       preferences: "Preferences"
       actions:
-        remove_user: "Remove user from registration process"
+        reject_user: "Reject registrations"
+        defer_due_to_blocker: "Reject for now"
     allocation:
       started: "Allocation has been calculated."
       conflicts:
@@ -281,10 +297,14 @@ en:
       dashboard:
         title: "Allocation"
         last_updated: "Last updated: %{time}"
+        rejected_students: "Rejected Students"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
-        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
+        workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info_fcfs_auto_rejections:
+          one: "When finalizing, the finalization policies are checked once more; %{count} registration will likely be rejected automatically."
+          other: "When finalizing, the finalization policies are checked once more; %{count} registrations will likely be rejected automatically."
         item_capacities: "Group Capacities"
       demand:
         title: "Registration Demand"
@@ -295,6 +315,7 @@ en:
         third_plus: "3rd+"
       stats:
         total_registrations: "Total Registrations"
+        eligible: "Eligible"
         assigned: "Assigned"
         unassigned: "Unassigned"
         happiness_distribution: "Preference Distribution"
@@ -312,15 +333,19 @@ en:
         certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Policy violations detected. Please review details below."
         policy_violation_title: "Policy Violations Detected"
-        policy_violation_desc: "The following users violate the registration policies. You can fix these issues (e.g. by removing the registrations) or force the finalization. Note: Users who are currently unassigned due to capacity limits are not listed here, as they do not occupy a spot."
+        policy_violation_desc: "Allocation can only continue once these blockers are resolved. Students who are currently unassigned only because of capacity limits are not listed here."
+        policy_violation_config_title: "Unexpected issue:"
+        policy_violation_config_desc: "This policy configuration should not normally occur. Please contact the MaMpf administrators."
+        policy_violation_user_title: "Blocked students:"
+        policy_violation_user_desc: "These cases may require external clarification. If you cannot resolve them here, remove the affected registrations or coordinate the missing data with the responsible person."
+        policy_violation_next_step_title: "After that:"
+        policy_violation_next_step_desc: "Recalculate the allocation once the blockers have been resolved."
         policy_violation_count:
           one: "student affected"
           other: "students affected"
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
-      policy_summary:
-        required_domain: "Required domain:"
         of_total_points: "of total points"
         points_absolute: "points (absolute)"
         no_rule: "No active rule configured"

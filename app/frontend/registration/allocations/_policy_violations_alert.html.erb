@@ -1,9 +1,18 @@
 <% dashboard = local_assigns[:dashboard] %>
 <% campaign = local_assigns[:campaign] %>
 <% allocation_source = local_assigns[:allocation_source] %>
-<% frame_id = local_assigns[:frame_id] %>
 
-<% return unless dashboard.policy_violations.present? %>
+<% blocker_violations = dashboard.blocker_violations %>
+
+<% return unless blocker_violations.present? %>
+
+<% has_configuration_blockers = blocker_violations.any? do |violation|
+     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+   end %>
+
+<% has_user_blockers = blocker_violations.any? do |violation|
+     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
+   end %>
 
 <div class="alert alert-danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -11,9 +20,9 @@
   <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
-
-  <% grouped = dashboard.violations_by_user %>
-  <% policy_counts = dashboard.violation_counts_by_policy %>
+  <% grouped = blocker_violations.group_by { |violation| violation[:user_id] } %>
+  <% policy_counts = blocker_violations.group_by { |violation| violation[:policy] }
+                                     .transform_values(&:size) %>
 
   <p class="mt-2 mb-2">
     <strong><%= grouped.size %></strong>
@@ -30,7 +39,6 @@
     </small>
   </p>
 
-  <%# Policy requirement summaries %>
   <div class="small mb-2">
     <% dashboard.finalization_policies.each do |policy| %>
       <% if policy.kind == "institutional_email" %>
@@ -46,6 +54,38 @@
           <code>@<%= policy.allowed_domains_display %></code>
         </div>
       <% end %>
+    <% end %>
+  </div>
+
+  <div class="small mb-3">
+    <% if has_configuration_blockers %>
+      <div class="mb-1">
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_config_title") %>
+        </strong>
+
+        <%= t("registration.allocation.errors.policy_violation_config_desc") %>
+      </div>
+    <% end %>
+
+    <% if has_user_blockers %>
+      <div class="mb-1">
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_user_title") %>
+        </strong>
+
+        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
+      </div>
+    <% end %>
+
+    <% if has_user_blockers %>
+      <div>
+        <strong>
+          <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
+        </strong>
+
+        <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
+      </div>
     <% end %>
   </div>
 
@@ -74,7 +114,6 @@
         <% end %>
 
         <% if has_sp && ev %>
-          <%# Cert status icon %>
           <% if cert&.failed? %>
             <i
               class="bi bi-patch-x-fill text-danger"
@@ -91,7 +130,7 @@
               title="<%= t("registration.allocation.perf_evidence.no_cert") %>"
             ></i>
           <% end %>
-          <%# Points score — shown only when points criterion not met %>
+
           <% if d[:meets_points] == false %>
             <span class="text-danger">
               <% if d[:required_percentage].present? %>
@@ -100,16 +139,16 @@
                 <%= number_to_percentage(d[:required_percentage], precision: 1) %>
                 )
               <% elsif d[:required_points].present? %>
-                <%= "#{d[:points_total] || 0} / #{d[:points_max] || 0} " \
-                    "#{t("registration.allocation.perf_evidence.pts_abbr")}" %>
+                <%= d[:points_total] || 0 %> / <%= d[:points_max] || 0 %>
+                <%= t("registration.allocation.perf_evidence.pts_abbr") %>
                 (≥
-                <%= "#{d[:required_points]} " \
-                      "#{t("registration.allocation.perf_evidence.pts_abbr")}" %>
+                <%= d[:required_points] %>
+                <%= t("registration.allocation.perf_evidence.pts_abbr") %>
                 )
               <% end %>
             </span>
           <% end %>
-          <%# Achievement criterion — shown only when not met %>
+
           <% req_ids = Array(d[:achievement_ids_required]) %>
           <% met_ids = Array(d[:achievement_ids_met]) %>
           <% if req_ids.any? && d[:meets_achievements] == false %>
@@ -118,18 +157,18 @@
                     met: met_ids.size, total: req_ids.size) %>
             </span>
           <% end %>
-          <%# Certifier name %>
+
           <% if cert&.certified_by %>
             <span class="text-muted">
               <%= t("registration.allocation.perf_evidence.certified_by",
                     name: cert.certified_by.name) %>
             </span>
           <% end %>
-          <%# Note indicator — tooltip on icon %>
+
           <% if cert&.note.present? %>
             <i class="bi bi-chat-text text-muted" title="<%= cert.note %>"></i>
           <% end %>
-          <%# Override to passed (icon button) %>
+
           <% can_override = cert ? !cert.passed? : ev[:record].present? %>
           <% if perf_lecture && can_override %>
             <% if cert %>
@@ -146,7 +185,7 @@
                     title: t("registration.allocation.violations_table.override_pass"),
                     data: {
                       turbo_confirm: t(
-                        "registration.allocation.violations_table"\
+                        "registration.allocation.violations_table" \
                         ".confirm_override_pass"
                       )
                     },
@@ -166,7 +205,7 @@
                     title: t("registration.allocation.violations_table.override_pass"),
                     data: {
                       turbo_confirm: t(
-                        "registration.allocation.violations_table"\
+                        "registration.allocation.violations_table" \
                         ".confirm_override_pass"
                       )
                     },
@@ -178,32 +217,25 @@
           <% end %>
         <% end %>
 
-        <%# Delete registration (icon button) %>
-        <%= button_to(
-              destroy_for_user_registration_campaign_registrations_path(
-                campaign, user_id: user_id, source: allocation_source
-              ),
-              method: :delete,
-              class: "btn btn-sm btn-link text-danger p-0",
-              data: {
-                turbo_confirm:
-                  t("registration.campaign.confirmations"\
-                    ".user_registration_conflict_remove",
-                    email: first[:email])
-              },
-              form: { class: "d-inline-block" },
-              title: t("registration.user_registration.actions.remove_user")
-            ) do %>
-          <i class="bi bi-trash"></i>
+        <% if violations.none? { |violation| violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION } %>
+          <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
+                                                                                user_id: user_id,
+                                                                                source: allocation_source,
+                                                                                reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                        method: :delete,
+                        class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
+                        data: {
+                          turbo_confirm:
+                          t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                          email: first[:email])
+                        },
+                        form: { class: "d-inline-block" },
+                        title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+            <i class="bi bi-slash-circle me-1"></i>
+            <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
+          <% end %>
         <% end %>
       </li>
     <% end %>
   </ul>
-
-  <%= button_to t("registration.campaign.actions.force_finalize"),
-                finalize_registration_campaign_allocation_path(campaign, force: true),
-                method: :patch,
-                params: frame_id ? { frame_id: frame_id } : {},
-                data: { turbo_confirm: t("registration.campaign.confirmations.force_finalize") },
-                class: "btn btn-sm btn-danger" %>
 </div>

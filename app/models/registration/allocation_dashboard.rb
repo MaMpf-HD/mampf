@@ -12,7 +12,13 @@ module Registration
                               .where(status: :confirmed)
                               .pluck(:user_id, :registration_item_id)
                               .to_h
-        Registration::AllocationStats.new(@campaign, assignment)
+        rejected_user_ids = @campaign.rejected_users.pluck(:id)
+
+        Registration::AllocationStats.new(
+          @campaign,
+          assignment,
+          rejected_user_ids: rejected_user_ids
+        )
       end
     end
 
@@ -20,26 +26,39 @@ module Registration
       @unassigned_students ||= User.where(id: stats.unassigned_user_ids).order(:email)
     end
 
+    def rejected_students
+      @rejected_students ||= User.where(id: stats.rejected_user_ids).order(:email)
+    end
+
+    def rejection_reasons_for(student)
+      Array(rejected_registrations_by_user[student.id])
+        .filter_map do |registration|
+          Registration::UserRegistration.localized_rejection_reason_label(
+            reason_code: registration.rejection_reason_code,
+            reason_label: registration.rejection_reason_label
+          )
+        end
+        .uniq
+        .join(", ")
+    end
+
     def guard_result
-      @guard_result ||=
+      @guard_result ||= if @campaign.preference_based? && @campaign.allocation_decided_at.blank?
+        Registration::ScreeningService.new(
+          @campaign,
+          registrations: @campaign.user_registrations.where.not(status: :rejected)
+        ).call
+      else
         Registration::FinalizationGuard.new(@campaign).check
+      end
     end
 
-    def certification_incomplete?
-      guard_result.error_code == :certification_incomplete
-    end
-
-    def certification_incomplete_data
-      return nil unless certification_incomplete?
-
-      guard_result.data
+    def blocker_violations
+      @blocker_violations ||= guard_result.blocker_violations
     end
 
     def policy_violations
-      return [] if guard_result.success?
-      return [] unless guard_result.error_code == :policy_violation
-
-      guard_result.data || []
+      blocker_violations
     end
 
     def finalization_policies
@@ -68,10 +87,6 @@ module Registration
       end
     end
 
-    def violations_by_user
-      @violations_by_user ||= policy_violations.group_by { |v| v[:user_id] }
-    end
-
     def performance_evidence_by_user
       @performance_evidence_by_user ||= build_performance_evidence
     end
@@ -80,11 +95,11 @@ module Registration
       performance_evidence_by_user[user_id]
     end
 
-    def violation_counts_by_policy
-      @violation_counts_by_policy ||=
-        policy_violations
-        .group_by { |v| v[:policy] }
-        .transform_values(&:size)
+    def projected_auto_rejection_count
+      return 0 unless @campaign.first_come_first_served?
+      return 0 if @campaign.completed?
+
+      @projected_auto_rejection_count ||= guard_result.auto_reject_violations.count
     end
 
     def allocation_run?
@@ -213,6 +228,16 @@ module Registration
             capacity: item.capacity
           }
         end
+      end
+
+      def rejected_registrations_by_user
+        @rejected_registrations_by_user ||= @campaign.user_registrations
+                                                     .where(
+                                                       status: :rejected,
+                                                       user_id: stats.rejected_user_ids
+                                                     )
+                                                     .to_a
+                                                     .group_by(&:user_id)
       end
   end
 end

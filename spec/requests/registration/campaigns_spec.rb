@@ -429,6 +429,136 @@ RSpec.describe("Registration::Campaigns", type: :request) do
             expect(response.body).to include("Sticky Student")
           end
         end
+
+        context "when a student is still in the open rejected queue" do
+          let!(:campaign) do
+            create(:registration_campaign, :completed, campaignable: lecture)
+          end
+          let(:rejected_student) { create(:confirmed_user, name: "Rejected Student") }
+          let(:item) { campaign.registration_items.first }
+
+          before do
+            create(:registration_user_registration,
+                   :rejected,
+                   registration_campaign: campaign,
+                   registration_item: item,
+                   user: rejected_student,
+                   rejection_reason_label: "Needs prerequisite")
+          end
+
+          it "does not list rejected students in the unassigned panel" do
+            get unassigned_registration_campaign_path(campaign),
+                params: { source: "panel" }, as: :turbo_stream
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).not_to include("Rejected Student")
+          end
+        end
+
+        context "when a student was only left unassigned by the solver" do
+          let!(:campaign) do
+            create(:registration_campaign, :completed, campaignable: lecture)
+          end
+          let(:unassigned_student) { create(:confirmed_user, name: "Unassigned Student") }
+          let(:item) { campaign.registration_items.first }
+
+          before do
+            create(:registration_user_registration,
+                   :rejected,
+                   registration_campaign: campaign,
+                   registration_item: item,
+                   user: unassigned_student,
+                   rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+                   rejection_reason_label: I18n.t(
+                     "registration.user_registration.reason_labels.solver_unassigned"
+                   ))
+          end
+
+          it "still lists the student in the unassigned panel" do
+            get unassigned_registration_campaign_path(campaign),
+                params: { source: "panel" }, as: :turbo_stream
+
+            expect(response).to have_http_status(:ok)
+            expect(response.body).to include("Unassigned Student")
+          end
+        end
+      end
+    end
+  end
+
+  describe "GET /campaigns/:id/rejected" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "without source=panel" do
+        it "redirects to the lecture groups tab" do
+          get rejected_registration_campaign_path(campaign)
+          expect(response).to redirect_to(edit_lecture_path(campaign.campaignable, tab: "groups"))
+        end
+      end
+
+      context "with source=panel" do
+        let!(:rejected_campaign) do
+          create(:registration_campaign, :completed, campaignable: lecture)
+        end
+        let(:item) { rejected_campaign.registration_items.first }
+        let(:rejected_student) { create(:confirmed_user, name: "Rejected Student") }
+
+        before do
+          create(:registration_user_registration,
+                 :rejected,
+                 registration_campaign: rejected_campaign,
+                 registration_item: item,
+                 user: rejected_student,
+                 rejection_reason_label: "Needs prerequisite")
+        end
+
+        it "renders the rejected roster side panel turbo stream" do
+          get rejected_registration_campaign_path(rejected_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+          expect(response.body).to include("Rejected Student")
+          expect(response.body).to include("Needs prerequisite")
+        end
+
+        it "hides overridden rejected students" do
+          rejected_campaign.user_registrations.find_by(user: rejected_student)
+                           .update!(rejection_overridden_at: Time.current)
+
+          get rejected_registration_campaign_path(rejected_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).not_to include("Rejected Student")
+        end
+
+        it "does not list solver-unassigned students" do
+          rejected_campaign.user_registrations.find_by(user: rejected_student)
+                           .update!(
+                             rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+                             rejection_reason_label: I18n.t(
+                               "registration.user_registration.reason_labels.solver_unassigned"
+                             )
+                           )
+
+          get rejected_registration_campaign_path(rejected_campaign),
+              params: { source: "panel" }, as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).not_to include("Rejected Student")
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get rejected_registration_campaign_path(campaign)
+
+        expect(response).to redirect_to(root_path)
       end
     end
   end

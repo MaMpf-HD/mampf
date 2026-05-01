@@ -14,15 +14,19 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     sign_in user
   end
 
-  describe "DELETE /campaigns/:campaign_id/registrations/user/:user_id" do
+  describe "DELETE /campaigns/:campaign_id/registrations/user/:user_id/reject" do
     let(:path) do
-      destroy_for_user_registration_campaign_registrations_path(campaign, user_id: student.id)
+      reject_for_user_registration_campaign_registrations_path(campaign, user_id: student.id)
     end
 
-    it "destroys the registration" do
+    it "rejects the registration instead of deleting it" do
       expect do
         delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
-      end.to change(Registration::UserRegistration, :count).by(-1)
+      end.not_to change(Registration::UserRegistration, :count)
+
+      expect(registration.reload).to be_rejected
+      expect(registration.rejection_reason_type).to eq("manual")
+      expect(registration.rejection_reason_code).to eq("withdrawn_by_teacher")
     end
 
     it "returns success via turbo stream" do
@@ -52,8 +56,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     context "when campaign does not exist" do
       let(:path) do
-        destroy_for_user_registration_campaign_registrations_path(registration_campaign_id: -1,
-                                                                  user_id: student.id)
+        reject_for_user_registration_campaign_registrations_path(registration_campaign_id: -1,
+                                                                 user_id: student.id)
       end
 
       it "redirects to root with error" do
