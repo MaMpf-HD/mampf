@@ -283,6 +283,7 @@ module Registration
           rejection_reason_code: nil,
           rejection_reason_label: nil,
           rejected_at: nil,
+          rejection_overridden_at: nil,
           updated_at: Time.current
         )
         # rubocop:enable Rails/SkipsModelValidations

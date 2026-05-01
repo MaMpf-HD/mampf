@@ -177,6 +177,22 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
+  describe "rejection state helpers" do
+    let(:registration) { FactoryBot.create(:registration_user_registration, :rejected) }
+
+    it "clears rejection_overridden_at when clearing the rejection decision" do
+      registration.update!(rejection_overridden_at: Time.current)
+
+      registration.clear_rejection_decision!
+
+      expect(registration.reload.rejection_reason_type).to be_nil
+      expect(registration.rejection_reason_code).to be_nil
+      expect(registration.rejection_reason_label).to be_nil
+      expect(registration.rejected_at).to be_nil
+      expect(registration.rejection_overridden_at).to be_nil
+    end
+  end
+
   describe "counter cache callbacks" do
     let(:user) { FactoryBot.create(:user) }
 

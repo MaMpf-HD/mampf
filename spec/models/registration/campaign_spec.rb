@@ -568,6 +568,20 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(ranks).to eq([1, 2])
     end
 
+    it "clears rejection overrides on reset" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item1,
+                            user: user,
+                            status: :rejected,
+                            preference_rank: 1,
+                            rejection_overridden_at: Time.current)
+
+      campaign.reset_allocation_results!
+
+      expect(registration.reload.rejection_overridden_at).to be_nil
+    end
+
     it "zeroes out confirmed_registrations_count on all items" do
       # rubocop:disable Rails/SkipsModelValidations
       item1.update_columns(confirmed_registrations_count: 5)
@@ -816,6 +830,21 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.rejected_users).not_to include(rejected_user)
       expect(campaign.open_rejected_count).to eq(0)
       expect(campaign.rejected_count).to eq(1)
+    end
+
+    it "re-includes users when a rejection is reapplied after override" do
+      registration = campaign.user_registrations.find_by(user: rejected_user)
+      registration.update!(rejection_overridden_at: Time.current)
+
+      registration.reject!(
+        reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+        reason_code: :institutional_email_mismatch,
+        reason_label: "Email domain not allowed."
+      )
+
+      expect(registration.reload.rejection_overridden_at).to be_nil
+      expect(campaign.rejected_users).to include(rejected_user)
+      expect(campaign.open_rejected_count).to eq(1)
     end
 
     it "excludes solver-unassigned users from the rejected queue" do

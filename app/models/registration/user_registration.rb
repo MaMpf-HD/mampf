@@ -90,7 +90,8 @@ module Registration
         rejection_reason_type: reason_type,
         rejection_reason_code: reason_code,
         rejection_reason_label: reason_label,
-        rejected_at: rejected_at
+        rejected_at: rejected_at,
+        rejection_overridden_at: nil
       )
     end
 
@@ -99,7 +100,8 @@ module Registration
         rejection_reason_type: nil,
         rejection_reason_code: nil,
         rejection_reason_label: nil,
-        rejected_at: nil
+        rejected_at: nil,
+        rejection_overridden_at: nil
       )
     end
 
