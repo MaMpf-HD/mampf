@@ -3,6 +3,15 @@ module Registration
   # Acts as a container for configuration (deadlines, allocation mode),
   # rules (policies), and the resulting user registrations.
   class Campaign < ApplicationRecord
+    class FinalizationBlockedError < StandardError
+      attr_reader :screening_result
+
+      def initialize(screening_result)
+        @screening_result = screening_result
+        super("Finalization blocked by policy violations")
+      end
+    end
+
     belongs_to :campaignable, polymorphic: true
 
     has_many :registration_items,
@@ -131,7 +140,7 @@ module Registration
             registrations: user_registrations.where.not(status: :rejected)
           ).call
 
-          return false if screening.blocked?
+          raise(FinalizationBlockedError, screening) if screening.blocked?
 
           apply_rejections!(screening.auto_reject_violations)
         end

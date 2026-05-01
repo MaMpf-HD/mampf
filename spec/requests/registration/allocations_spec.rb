@@ -309,6 +309,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
             ].join(" ")
           )
         end
+
+        it "redirects back to the dashboard when finalization is blocked under lock" do
+          screening_result = Registration::ScreeningService::Result.new(
+            violations: [
+              {
+                classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
+              }
+            ]
+          )
+
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:finalize!)
+            .and_raise(Registration::Campaign::FinalizationBlockedError.new(screening_result))
+
+          patch finalize_registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.policy_violation"))
+        end
       end
 
       context "when guard checks fail" do

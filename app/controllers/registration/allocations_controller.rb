@@ -110,6 +110,9 @@ module Registration
         respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
                            redirect_path: registration_campaign_path(@campaign))
       end
+    rescue Registration::Campaign::FinalizationBlockedError
+      redirect_to registration_campaign_allocation_path(@campaign),
+                  alert: t("registration.allocation.errors.policy_violation")
     end
 
     private
