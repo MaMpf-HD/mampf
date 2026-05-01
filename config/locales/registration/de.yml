@@ -300,7 +300,7 @@ de:
         third_plus: "Dritte+"
       stats:
         total_registrations: "Anmeldungen gesamt"
-        eligible: "Zuteilbar"
+        eligible: "Berücksichtigt"
         assigned: "Zugewiesen"
         unassigned: "Nicht zugewiesen"
         happiness_distribution: "Präferenzverteilung"
