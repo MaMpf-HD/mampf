@@ -312,13 +312,21 @@ module Registration
       end
 
       def reject_pending_registrations!
-        user_registrations.pending.find_each do |registration|
-          registration.reject!(
-            reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
-            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-            reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned")
-          )
-        end
+        now = Time.current
+
+        # Safe here because this scope only contains pending rows, so bypassing
+        # per-record callbacks cannot affect confirmed registration counters
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.pending.update_all(
+          status: Registration::UserRegistration.statuses[:rejected],
+          rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
+          rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+          rejection_reason_label: I18n.t("registration.user_registration.reason_labels.solver_unassigned"),
+          rejected_at: now,
+          rejection_overridden_at: nil,
+          updated_at: now
+        )
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       def ensure_editable
