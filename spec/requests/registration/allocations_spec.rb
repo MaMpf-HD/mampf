@@ -192,6 +192,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:notice]).to be_present
           expect(flash[:notice]).to include("calculated")
         end
+
+        it "redirects back to the dashboard when allocation is blocked by policies" do
+          screening_result = Registration::ScreeningService::Result.new(
+            violations: [
+              {
+                classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
+              }
+            ]
+          )
+
+          allow_any_instance_of(Registration::AllocationService)
+            .to receive(:allocate!)
+            .and_raise(Registration::AllocationService::BlockedError.new(screening_result))
+
+          post registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.policy_violation"))
+        end
       end
 
       context "when campaign is open" do
