@@ -52,7 +52,7 @@
     <% if campaign.closed? || campaign.processing? %>
       <div id="<%= allocation_workspace_id %>"></div>
     <% end %>
-    <% if pre_finalization && !campaign.draft? %>
+    <% if campaign.open? %>
       <%= render "exams/registrants_table",
                  exam: exam,
                  campaign: campaign %>

@@ -5,13 +5,21 @@ module Registration
     class StudentPerformanceHandler < Handler
       def evaluate(user)
         if lecture_ids.blank?
-          return fail_result(:configuration_error,
-                             "Lectures not configured")
+          return fail_result(
+            :configuration_error,
+            I18n.t("registration.policy.errors.missing_lecture"),
+            classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+            blocker_kind: Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+          )
         end
 
         if lectures.size != lecture_ids.size
-          return fail_result(:lecture_not_found,
-                             "Lecture not found")
+          return fail_result(
+            :lecture_not_found,
+            I18n.t("registration.policy.errors.lecture_not_found"),
+            classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+            blocker_kind: Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+          )
         end
 
         certifications = StudentPerformance::Certification.where(
@@ -21,11 +29,7 @@ module Registration
         if certifications.passed.exists?
           pass_result(:certification_passed)
         else
-          fail_result(
-            :certification_not_passed,
-            "Lecture performance certification required",
-            certification_status: certification_status(certifications)
-          )
+          fail_for_certification_status(certification_status(certifications))
         end
       end
 
@@ -79,6 +83,29 @@ module Registration
           return :failed if statuses.include?(:failed)
 
           :missing
+        end
+
+        def fail_for_certification_status(status)
+          message = I18n.t("registration.policy.errors.certification_not_passed")
+
+          if status == :failed
+            fail_result(
+              :certification_not_passed,
+              message,
+              { certification_status: status },
+              classification: Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT,
+              reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+              reason_code: :certification_not_passed,
+              reason_label: message
+            )
+          else
+            fail_result(
+              :certification_not_passed,
+              message,
+              { certification_status: status },
+              classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
+            )
+          end
         end
     end
   end

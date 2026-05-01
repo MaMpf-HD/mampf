@@ -172,6 +172,7 @@ en:
         prerequisite_not_configured: "Prerequisite registration process not configured."
         prerequisite_missing: "Prerequisite registration process missing."
         prerequisite_not_met: "Prerequisite registration process not completed."
+        certification_not_passed: "Exam eligibility not granted."
         missing_lecture: "At least one lecture must be selected."
         lecture_not_found: "At least one selected lecture does not exist."
         lecture_exam_eligibility_disabled: >-

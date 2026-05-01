@@ -44,6 +44,11 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:certification_not_passed)
       expect(result[:details][:certification_status]).to eq(:failed)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT)
+      expect(result[:reason_type])
+        .to eq(Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      expect(result[:reason_code]).to eq(:certification_not_passed)
     end
 
     it "fails if user has a pending certification" do
@@ -54,6 +59,8 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:certification_not_passed)
       expect(result[:details][:certification_status]).to eq(:pending)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
     end
 
     it "fails with :missing if user has no certification" do
@@ -61,6 +68,8 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:certification_not_passed)
       expect(result[:details][:certification_status]).to eq(:missing)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
     end
 
     it "fails with configuration error if lecture_id is blank" do
@@ -68,6 +77,10 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:configuration_error)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
+      expect(result[:blocker_kind])
+        .to eq(Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION)
     end
 
     it "fails with lecture_not_found if lecture was deleted" do
@@ -75,6 +88,10 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:lecture_not_found)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
+      expect(result[:blocker_kind])
+        .to eq(Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION)
     end
   end
 
