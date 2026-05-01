@@ -23,17 +23,24 @@ module Registration
 
       protected
 
+        RESERVED_RESULT_KEYS = [:pass, :code, :message, :details].freeze
+
         def config
           policy.config || {}
         end
 
         def pass_result(code = :ok, details = {}, **metadata)
-          { pass: true, code: code, details: details }.merge(metadata)
+          { pass: true, code: code, details: details }
+            .merge(sanitize_result_metadata(metadata))
         end
 
         def fail_result(code, message, details = {}, **metadata)
           { pass: false, code: code, message: message, details: details }
-            .merge(metadata)
+            .merge(sanitize_result_metadata(metadata))
+        end
+
+        def sanitize_result_metadata(metadata)
+          metadata.except(*RESERVED_RESULT_KEYS)
         end
     end
   end
