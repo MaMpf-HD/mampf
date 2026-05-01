@@ -270,7 +270,7 @@ de:
         manual_rejected: "Manuell von Lehrperson abgelehnt"
         solver_unassigned: "Nicht durch Solver zugeteilt"
         withdrawn_by_teacher: "Manuell von Lehrperson abgelehnt"
-        deferred_due_to_blocker: "Vorerst wegen eines Blockers manuell abgelehnt"
+        deferred_due_to_blocker: "Vorerst wegen ungeklärter Richtlinienprüfung manuell abgelehnt"
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
       actions:
@@ -303,9 +303,6 @@ de:
           blocked_desc:
             one: "Es gibt %{count} Blocker. Diese Anmeldung muss zuerst geklärt werden."
             other: "Es gibt %{count} Blocker. Diese Anmeldungen müssen zuerst geklärt werden."
-          blocked_auto_rejections_note:
-            one: "Nach Auflösung der Blocker würde zusätzlich voraussichtlich %{count} Anmeldung automatisch abgelehnt."
-            other: "Nach Auflösung der Blocker würden zusätzlich voraussichtlich %{count} Anmeldungen automatisch abgelehnt."
           auto_rejections_title: "Finalisierung möglich"
           auto_rejections_desc:
             one: "Beim Abschließen wird voraussichtlich %{count} Anmeldung aufgrund einer Finalisierungsrichtlinie automatisch abgelehnt; nachträgliches manuelles Hinzufügen bleibt möglich."
@@ -344,18 +341,18 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
-        policy_violation: "Richtlinienverstöße erkannt. Bitte überprüfe die Details unten."
-        policy_violation_title: "Richtlinienverstöße erkannt"
-        policy_violation_desc: "Die Zuteilung kann erst fortgesetzt werden, wenn diese Blocker aufgelöst sind. Nicht aufgeführt sind Studierende, die aktuell nur aufgrund von Kapazitätsgrenzen nicht zugewiesen sind."
+        policy_violation: "Zuteilung derzeit nicht möglich. Bitte überprüfe die Details unten."
+        policy_violation_title: "Zuteilung derzeit nicht möglich"
+        policy_violation_desc: "Für diese Anmeldungen kann mindestens eine Finalisierungsrichtlinie derzeit nicht abschließend geprüft werden. Kläre die Fälle, bevor Du die Zuteilung durchführen kannst."
         policy_violation_config_title: "Unerwartetes Problem:"
         policy_violation_config_desc: "Diese Richtlinienkonfiguration sollte so normalerweise nicht auftreten. Bitte kontaktiere die MaMpf-Administratoren."
         policy_violation_user_title: "Blockierte Studierende:"
-        policy_violation_user_desc: "Diese Fälle können eine externe Klärung benötigen. Falls Du sie hier nicht lösen kannst, entferne die betroffenen Anmeldungen oder kläre die fehlenden Daten mit der zuständigen Person."
+        policy_violation_user_desc: "Wenn Du einen Fall jetzt nicht klären kannst, lehne die Anmeldung vorerst ab. Nach der Zuteilung kannst Du betroffene Studierende bei Bedarf manuell in Gruppen aufnehmen."
         policy_violation_next_step_title: "Danach:"
         policy_violation_next_step_desc: "Sobald die Blocker behoben sind, berechne die Zuteilung erneut."
         policy_violation_count:
-          one: "Student betroffen"
-          other: "Studenten betroffen"
+          one: "Person betroffen"
+          other: "Studierende betroffen"
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"

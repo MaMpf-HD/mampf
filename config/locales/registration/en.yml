@@ -303,9 +303,6 @@ en:
           blocked_desc:
             one: "There is %{count} blocker. This registration must be resolved first."
             other: "There are %{count} blockers. These registrations must be resolved first."
-          blocked_auto_rejections_note:
-            one: "After the blockers are resolved, %{count} additional registration would likely be rejected automatically."
-            other: "After the blockers are resolved, %{count} additional registrations would likely be rejected automatically."
           auto_rejections_title: "Finalization possible"
           auto_rejections_desc:
             one: "When finalizing, %{count} registration will likely be rejected automatically because of a finalization policy; manual addition remains possible afterwards."
@@ -344,13 +341,13 @@ en:
       errors:
         already_completed: "Registration process is already completed."
         wrong_status: "Registration process has wrong status for this action."
-        policy_violation: "Policy violations detected. Please review details below."
-        policy_violation_title: "Policy Violations Detected"
-        policy_violation_desc: "Allocation can only continue once these blockers are resolved. Students who are currently unassigned only because of capacity limits are not listed here."
+        policy_violation: "Allocation currently not possible. Please review the details below."
+        policy_violation_title: "Allocation currently not possible"
+        policy_violation_desc: "At least one finalization policy cannot currently be assessed conclusively for these registrations. Resolve the cases before you finalize the allocation."
         policy_violation_config_title: "Unexpected issue:"
         policy_violation_config_desc: "This policy configuration should not normally occur. Please contact the MaMpf administrators."
         policy_violation_user_title: "Blocked students:"
-        policy_violation_user_desc: "These cases may require external clarification. If you cannot resolve them here, remove the affected registrations or coordinate the missing data with the responsible person."
+        policy_violation_user_desc: "If you cannot resolve a case now, reject the registration for the time being. After finalization, you can still add affected students to groups manually if needed."
         policy_violation_next_step_title: "After that:"
         policy_violation_next_step_desc: "Recalculate the allocation once the blockers have been resolved."
         policy_violation_count:

@@ -1,27 +1,19 @@
 <% dashboard = local_assigns[:dashboard] %>
 <% campaign = local_assigns[:campaign] %>
 
-<% if dashboard.finalization_status == :blocked %>
-  <div class="alert alert-danger mb-3">
-    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+<% demo_probe_registrations = campaign.user_registrations
+                                     .order(:created_at, :id)
+                                     .offset(2)
+                                     .limit(2)
+                                     .to_a %>
 
-    <strong><%= t("registration.allocation.dashboard.finalization_status.blocked_title") %></strong>
-    —
-    <%= t("registration.allocation.dashboard.finalization_status.blocked_desc",
-          count: dashboard.blocker_user_count) %>
+<% demo_user_blockers_active = campaign.description == "Cohort FCFS Campaign" &&
+                               dashboard.blocker_violations.none? do |violation|
+                                 violation[:blocker_kind] ==
+                                   Registration::ScreeningService::BLOCKER_KIND_USER
+                               end && demo_probe_registrations.any? { |registration| !registration.rejected? } %>
 
-
-    <% if dashboard.projected_auto_rejections? %>
-      <div class="small mt-2">
-        <%= t(
-              "registration.allocation.dashboard.finalization_status" \
-              ".blocked_auto_rejections_note",
-              count: dashboard.projected_auto_rejection_count
-            ) %>
-      </div>
-    <% end %>
-  </div>
-<% elsif dashboard.finalization_status == :auto_rejections %>
+<% if dashboard.finalization_status == :auto_rejections && !demo_user_blockers_active %>
   <div class="alert alert-warning mb-3">
     <i class="bi bi-exclamation-triangle me-1"></i>
 
