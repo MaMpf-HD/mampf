@@ -4,32 +4,6 @@
 
 <% blocker_violations = dashboard.blocker_violations %>
 
-<% demo_probe_registrations = campaign.user_registrations
-                                     .includes(:user)
-                                     .order(:created_at, :id)
-                                     .offset(2)
-                                     .limit(2)
-                                     .to_a %>
-
-<% if campaign.description == "Cohort FCFS Campaign" && blocker_violations.none? do |violation|
-       violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
-     end %>
-  <% demo_user_blockers = demo_probe_registrations
-                                 .reject(&:rejected?)
-                                 .map do |registration|
-       {
-         user_id: registration.user_id,
-         registration_id: registration.id,
-         name: registration.user.name,
-         email: registration.user.email,
-         policy: "student_performance",
-         classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
-         blocker_kind: Registration::ScreeningService::BLOCKER_KIND_USER
-       }
-     end %>
-  <% blocker_violations = blocker_violations + demo_user_blockers %>
-<% end %>
-
 <% return unless blocker_violations.present? %>
 
 <% has_configuration_blockers = blocker_violations.any? do |violation|
