@@ -513,7 +513,7 @@ namespace :solver do
                                     status: :draft,
                                     allocation_mode: :first_come_first_served,
                                     description: "Stage 1: Planning",
-                                    registration_deadline: 1.week.ago)
+                                    registration_deadline: 1.week.from_now)
 
       planning_cohort = FactoryBot.create(:cohort,
                                           context: seminar,

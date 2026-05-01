@@ -277,7 +277,7 @@ de:
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
-      user_already_in_bundle: "Studierende/r ist bereits %{group} zugewiesen."
+      user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
       self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
       self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
@@ -296,10 +296,11 @@ de:
       setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
     messages:
       updated: "Einstellungen aktualisiert."
-      user_moved: "Studierende/r wurde nach %{target} verschoben."
-      user_added: "Studierende/r erfolgreich hinzugefügt."
-      user_added_to: "Studierende/r wurde zu %{group} hinzugefügt."
-      user_removed: "Studierende/r erfolgreich entfernt."
+      user_moved: "%{user} wurde nach %{target} verschoben."
+      user_added: "%{user} wurde zu %{group} hinzugefügt."
+      user_added_to: "%{user} wurde zu %{group} hinzugefügt."
+      user_already_member: "%{user} ist bereits %{group} zugewiesen."
+      user_removed: "%{user} erfolgreich entfernt."
     self_enrollment:
       campaign_enrollment:
         title: "Einschreibung durch Anmeldeverfahren"
@@ -308,6 +309,5 @@ de:
       direct_enrollment:
         title: "Optionen für Selbsteinschreibung"
         description: >
-          Sie können direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft und aktualisieren Ihren offiziellen Roster. 
-          Dies ist separat von Anmeldeverfahren.
+          Sie können direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft. Dies ist separat von Anmeldeverfahren.
         no_active_self_rosterables: "Derzeit gibt es keine Gruppen, denen Sie direkt beitreten oder die Sie verlassen können."

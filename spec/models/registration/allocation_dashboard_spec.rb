@@ -116,10 +116,10 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     it "returns active finalization policies for the campaign" do
       policy = create(:registration_policy, registration_campaign: campaign,
                                             active: true, phase: :finalization)
-      create(:registration_policy, registration_campaign: campaign, active: false,
-                                   phase: :finalization)
-      create(:registration_policy, registration_campaign: campaign, active: true,
-                                   phase: :registration)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         active: false, phase: :finalization)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         active: true, phase: :registration)
       expect(dashboard.finalization_policies).to eq([policy])
     end
   end

@@ -163,6 +163,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_24_000000) do
     t.datetime "updated_at", null: false
     t.boolean "skip_campaigns", default: false, null: false
     t.integer "self_materialization_mode", default: 0, null: false
+    t.index ["context_type", "context_id", "title"], name: "index_cohorts_on_context_and_title_unique", unique: true
     t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
     t.index ["self_materialization_mode"], name: "index_cohorts_on_self_materialization_mode"
   end
@@ -1014,7 +1015,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_24_000000) do
   end
 
   create_table "tutorials", force: :cascade do |t|
-    t.text "title"
+    t.text "title", null: false
     t.bigint "lecture_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1022,6 +1023,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_24_000000) do
     t.boolean "skip_campaigns", default: false, null: false
     t.integer "self_materialization_mode", default: 0, null: false
     t.string "location"
+    t.index ["lecture_id", "title"], name: "index_tutorials_on_lecture_id_and_title_unique", unique: true
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
     t.index ["self_materialization_mode"], name: "index_tutorials_on_self_materialization_mode"
   end

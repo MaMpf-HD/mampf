@@ -13,8 +13,7 @@
       <%= helpdesk(t("registration.policy.helpdesk.kind"), false) %>
 
       <%= f.select :kind,
-                   Registration::Policy.kinds.except("student_performance").keys
-                     .map { |k| [t("registration.policy.kinds.#{k}"), k] },
+                   available_policy_kinds(campaign, policy).map { |k| [t("registration.policy.kinds.#{k}"), k] },
                    {},
                    class: "form-select",
                    data: { action: "registration-policy-form#changeKind", registration_policy_form_target: "kindSelect" } %>
@@ -70,11 +69,15 @@
       <div class="mb-3">
         <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
 
+        <% prereq_options = prerequisite_campaign_options(campaign) %>
+        <% preselect = prerequisite_campaign_preselect(policy, prereq_options) %>
+
         <%= f.collection_select :prerequisite_campaign_id,
-                                  Registration::Campaign.where.not(id: campaign.id),
+                                  prereq_options,
                                   :id,
                                   :description,
-                                  { include_blank: true },
+                                  { include_blank: t("registration.policy.hints.select_prerequisite"),
+                                    selected: preselect },
                                   class: "form-select" %>
       </div>
     </div>
