@@ -21,8 +21,11 @@
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
 
-  <% grouped = blocker_violations.group_by { |violation| violation[:user_id] } %>
-  <% policy_counts = blocker_violations.group_by { |violation| violation[:policy] }
+  <% display_violations = blocker_violations.uniq do |violation|
+       [violation[:user_id], violation[:policy]]
+     end %>
+  <% grouped = display_violations.group_by { |violation| violation[:user_id] } %>
+  <% policy_counts = display_violations.group_by { |violation| violation[:policy] }
                                      .transform_values(&:size) %>
 
   <p class="mt-2 mb-2">
