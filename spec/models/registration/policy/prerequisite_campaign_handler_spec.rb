@@ -22,6 +22,12 @@ RSpec.describe(Registration::Policy::PrerequisiteCampaignHandler, type: :model) 
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:prerequisite_not_met)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT)
+      expect(result[:reason_type]).to eq(Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      expect(result[:reason_code]).to eq(:prerequisite_not_met)
+      expect(result[:reason_label])
+        .to eq(I18n.t("registration.policy.errors.prerequisite_not_met"))
     end
 
     it "fails if prerequisite campaign is missing" do
@@ -29,6 +35,10 @@ RSpec.describe(Registration::Policy::PrerequisiteCampaignHandler, type: :model) 
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:prerequisite_campaign_not_found)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
+      expect(result[:blocker_kind])
+        .to eq(Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION)
     end
   end
 
