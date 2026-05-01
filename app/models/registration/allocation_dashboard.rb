@@ -168,11 +168,8 @@ module Registration
       end
 
       def rejected_registrations_by_user
-        @rejected_registrations_by_user ||= @campaign.user_registrations
-                                                     .where(
-                                                       status: :rejected,
-                                                       user_id: stats.rejected_user_ids
-                                                     )
+        @rejected_registrations_by_user ||= @campaign.open_rejected_registrations
+                                                     .where(user_id: stats.rejected_user_ids)
                                                      .to_a
                                                      .group_by(&:user_id)
       end
