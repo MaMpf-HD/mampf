@@ -20,6 +20,7 @@
   <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
+
   <% grouped = blocker_violations.group_by { |violation| violation[:user_id] } %>
   <% policy_counts = blocker_violations.group_by { |violation| violation[:policy] }
                                      .transform_values(&:size) %>
@@ -130,7 +131,6 @@
               title="<%= t("registration.allocation.perf_evidence.no_cert") %>"
             ></i>
           <% end %>
-
           <% if d[:meets_points] == false %>
             <span class="text-danger">
               <% if d[:required_percentage].present? %>
@@ -139,7 +139,9 @@
                 <%= number_to_percentage(d[:required_percentage], precision: 1) %>
                 )
               <% elsif d[:required_points].present? %>
-                <%= d[:points_total] || 0 %> / <%= d[:points_max] || 0 %>
+                <%= d[:points_total] || 0 %>
+                /
+                <%= d[:points_max] || 0 %>
                 <%= t("registration.allocation.perf_evidence.pts_abbr") %>
                 (≥
                 <%= d[:required_points] %>
@@ -148,7 +150,6 @@
               <% end %>
             </span>
           <% end %>
-
           <% req_ids = Array(d[:achievement_ids_required]) %>
           <% met_ids = Array(d[:achievement_ids_met]) %>
           <% if req_ids.any? && d[:meets_achievements] == false %>
@@ -157,18 +158,15 @@
                     met: met_ids.size, total: req_ids.size) %>
             </span>
           <% end %>
-
           <% if cert&.certified_by %>
             <span class="text-muted">
               <%= t("registration.allocation.perf_evidence.certified_by",
                     name: cert.certified_by.name) %>
             </span>
           <% end %>
-
           <% if cert&.note.present? %>
             <i class="bi bi-chat-text text-muted" title="<%= cert.note %>"></i>
           <% end %>
-
           <% can_override = cert ? !cert.passed? : ev[:record].present? %>
           <% if perf_lecture && can_override %>
             <% if cert %>
