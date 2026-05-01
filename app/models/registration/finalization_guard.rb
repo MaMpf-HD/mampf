@@ -12,9 +12,18 @@ module Registration
       end
 
       def auto_reject_violations
-        policy_violations.select do |violation|
-          violation[:classification] == ScreeningService::CLASSIFICATION_AUTO_REJECT
+        blocked_registration_ids = blocker_violations.map do |violation|
+          violation[:registration_id]
+        end.uniq
+
+        auto_reject_violations = policy_violations.select do |violation|
+          violation[:classification] == ScreeningService::CLASSIFICATION_AUTO_REJECT &&
+            blocked_registration_ids.exclude?(violation[:registration_id])
         end
+
+        auto_reject_violations.group_by { |violation| violation[:registration_id] }
+                              .values
+                              .map(&:first)
       end
     end
 
@@ -53,11 +62,11 @@ module Registration
                        screening.violations)
       end
 
-      success
+      success(screening.violations)
     end
 
-    def success
-      Result.new(success?: true)
+    def success(data = nil)
+      Result.new(success?: true, data: data)
     end
 
     def failure(code, message, data = nil)

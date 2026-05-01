@@ -47,6 +47,16 @@
   <% end %>
 </div>
 
+<% if campaign.first_come_first_served? &&
+      dashboard.projected_auto_rejection_count.positive? %>
+  <div class="alert alert-warning py-2 px-3 mb-3 small">
+    <i class="bi bi-exclamation-triangle me-1"></i>
+
+    <%= t("registration.allocation.dashboard.workflow_info_fcfs_auto_rejections",
+          count: dashboard.projected_auto_rejection_count) %>
+  </div>
+<% end %>
+
 <small class="text-muted d-block mb-4">
   <i class="bi bi-info-circle me-1"></i>
 

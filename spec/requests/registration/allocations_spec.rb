@@ -135,6 +135,42 @@ RSpec.describe("Registration::Allocations", type: :request) do
           .to include(I18n.t("registration.allocation.errors.policy_violation_user_desc"))
       end
     end
+
+    context "with projected FCFS auto rejections" do
+      let!(:campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign)
+      end
+
+      before do
+        sign_in editor
+
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: blocked_student)
+      end
+
+      it "shows that finalization will likely auto reject registrations" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(
+          I18n.t(
+            "registration.allocation.dashboard.workflow_info_fcfs_auto_rejections",
+            count: 1
+          )
+        )
+      end
+    end
   end
 
   describe "POST /campaigns/:campaign_id/allocation" do

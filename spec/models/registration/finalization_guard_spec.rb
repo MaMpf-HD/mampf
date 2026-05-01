@@ -58,6 +58,40 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
       end
     end
 
+    context "when a closed FCFS campaign has auto-reject violations" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) do
+        create(:registration_campaign, campaignable: lecture)
+      end
+      let(:item) do
+        create(:registration_item, registration_campaign: campaign)
+      end
+      let(:user) { create(:confirmed_user, email: "invalid@other.com") }
+
+      before do
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: user)
+      end
+
+      it "returns success and exposes projected auto rejections" do
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(true)
+        expect(result.blocker_violations).to be_empty
+        expect(result.auto_reject_violations.size).to eq(1)
+        expect(result.auto_reject_violations.first[:user_id]).to eq(user.id)
+      end
+    end
+
     context "with policies" do
       # Create as draft first to allow policy creation
       let(:campaign) do

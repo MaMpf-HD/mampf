@@ -290,6 +290,9 @@ en:
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info_fcfs_auto_rejections:
+          one: "When finalizing, the finalization policies are checked once more; %{count} registration will likely be rejected automatically."
+          other: "When finalizing, the finalization policies are checked once more; %{count} registrations will likely be rejected automatically."
         item_capacities: "Group Capacities"
       demand:
         title: "Registration Demand"

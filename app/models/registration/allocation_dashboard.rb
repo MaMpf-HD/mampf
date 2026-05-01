@@ -66,6 +66,13 @@ module Registration
         @campaign.registration_policies.active.for_phase(:finalization)
     end
 
+    def projected_auto_rejection_count
+      return 0 unless @campaign.first_come_first_served?
+      return 0 if @campaign.completed?
+
+      @projected_auto_rejection_count ||= guard_result.auto_reject_violations.count
+    end
+
     def allocation_run?
       @campaign.last_allocation_calculated_at.present?
     end
