@@ -66,18 +66,6 @@ module Registration
         @campaign.registration_policies.active.for_phase(:finalization)
     end
 
-    def performance_rule
-      return @performance_rule if defined?(@performance_rule)
-
-      perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
-      lecture_ids = perf_policy&.lecture_ids || []
-      @performance_rule = lecture_ids.present? &&
-                          StudentPerformance::Rule
-                          .where(lecture_id: lecture_ids, active: true)
-                          .includes(rule_achievements: :achievement)
-                          .first
-    end
-
     def performance_lecture
       return @performance_lecture if defined?(@performance_lecture)
 
@@ -85,14 +73,6 @@ module Registration
       @performance_lecture = perf_policy&.lecture_ids&.then do |lecture_ids|
         Lecture.find_by(id: lecture_ids)
       end
-    end
-
-    def performance_evidence_by_user
-      @performance_evidence_by_user ||= build_performance_evidence
-    end
-
-    def performance_evidence_for(user_id)
-      performance_evidence_by_user[user_id]
     end
 
     def projected_auto_rejection_count
@@ -149,44 +129,6 @@ module Registration
             registerable: registerable,
             registration: registrations_by_user[uid]
           }
-        end
-      end
-
-      def build_performance_evidence
-        sp_user_ids = policy_violations
-                      .select { |v| v[:policy] == "student_performance" }
-                      .map { |v| v[:user_id] }
-        return {} if sp_user_ids.empty?
-
-        lecture = performance_lecture
-        return {} unless lecture
-
-        certs = StudentPerformance::Certification
-                .where(lecture: lecture, user_id: sp_user_ids)
-                .includes(:certified_by)
-                .index_by(&:user_id)
-
-        records = StudentPerformance::Record
-                  .where(lecture: lecture, user_id: sp_user_ids)
-                  .index_by(&:user_id)
-
-        rule = performance_rule
-        evaluator = rule ? StudentPerformance::Evaluator.new(rule) : nil
-
-        evals_by_user = if evaluator && records.any?
-          evaluator.bulk_evaluate(records.values)
-                   .transform_keys(&:user_id)
-        else
-          {}
-        end
-
-        sp_user_ids.to_h do |uid|
-          [uid, {
-            cert: certs[uid],
-            record: records[uid],
-            rule: rule,
-            eval: evals_by_user[uid]
-          }]
         end
       end
 

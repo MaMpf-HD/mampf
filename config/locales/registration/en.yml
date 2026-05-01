@@ -352,6 +352,9 @@ en:
       violations_table:
         override_pass: "Override to passed"
         confirm_override_pass: "Mark this student as eligible? This creates a manual certification override and cannot be undone without going to the Certifications dashboard."
+        go_to_certifications: "Resolve in Certifications dashboard"
+        additional_blockers: "Additional blockers"
+        other_blockers: "Other blockers"
       student_performance:
         unfulfilled: "Some registered students do not have a passed certification. These will fail the exam eligibility policy on finalization."
       perf_evidence:

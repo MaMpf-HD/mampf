@@ -40,9 +40,13 @@
     </small>
   </p>
 
-  <div class="small mb-2">
-    <% dashboard.finalization_policies.each do |policy| %>
-      <% if policy.kind == "institutional_email" %>
+  <% email_policies = dashboard.finalization_policies.select do |policy|
+       policy.kind == "institutional_email"
+     end %>
+
+  <% if email_policies.any? %>
+    <div class="small mb-2">
+      <% email_policies.each do |policy| %>
         <div class="mb-1">
           <i class="bi bi-envelope me-1"></i>
 
@@ -55,8 +59,8 @@
           <code>@<%= policy.allowed_domains_display %></code>
         </div>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   <div class="small mb-3">
     <% if has_configuration_blockers %>
@@ -91,149 +95,258 @@
   </div>
 
   <% perf_lecture = dashboard.performance_lecture %>
-  <ul class="mt-0 mb-2 list-unstyled ps-0">
-    <% grouped.each do |user_id, violations| %>
-      <% first = violations.first %>
-      <% ev     = dashboard.performance_evidence_for(user_id) %>
-      <% cert   = ev&.dig(:cert) %>
-      <% d      = ev&.dig(:eval)&.details || {} %>
-      <% has_sp = violations.any? { |v| v[:policy] == "student_performance" } %>
+  <% certifications_by_user = if perf_lecture
+       StudentPerformance::Certification.where(
+         lecture: perf_lecture,
+         user_id: grouped.keys
+       ).index_by(&:user_id)
+     else
+       {}
+     end %>
 
-      <li class="d-flex align-items-baseline flex-wrap gap-1 mb-1 small">
-        <strong><%= first[:name] %></strong>
-        <span class="text-muted">(<%= first[:email] %>)</span>
+  <% performance_entries = grouped.filter_map do |user_id, violations|
+       next unless violations.any? { |violation| violation[:policy] == "student_performance" }
 
-        <% violations.each do |v| %>
-          <span class="badge bg-danger-subtle text-danger">
-            <%= t("registration.policy.kinds.#{v[:policy]}") %>
+       first = violations.first
+       cert = certifications_by_user[user_id]
+       status_key = if cert&.failed?
+         :failed
+       elsif cert&.pending?
+         :pending
+       else
+         :no_cert
+       end
 
-            <% if v[:policy] == "institutional_email" %>
-              @
-              <%= email_domain(first[:email]) %>
-            <% end %>
+       {
+         user_id: user_id,
+         first: first,
+         status_key: status_key,
+         other_violations: violations.reject do |violation|
+           violation[:policy] == "student_performance"
+         end,
+         can_defer: violations.none? do |violation|
+           violation[:blocker_kind] ==
+             Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+         end
+       }
+     end.sort_by do |entry|
+       [
+         { no_cert: 0, pending: 1, failed: 2 }.fetch(entry[:status_key]),
+         entry[:first][:email].to_s
+       ]
+     end %>
+
+  <% performance_status_counts = performance_entries.group_by do |entry|
+       entry[:status_key]
+     end.transform_values(&:size) %>
+
+  <% show_additional_blockers = performance_entries.any? do |entry|
+       entry[:other_violations].present?
+     end %>
+
+  <% other_entries = grouped.filter_map do |user_id, violations|
+       next if violations.any? { |violation| violation[:policy] == "student_performance" }
+
+       {
+         user_id: user_id,
+         first: violations.first,
+         violations: violations,
+         can_defer: violations.none? do |violation|
+           violation[:blocker_kind] ==
+             Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+         end
+       }
+     end.sort_by { |entry| entry[:first][:email].to_s } %>
+
+  <% if performance_entries.any? %>
+    <div class="border rounded bg-body mt-3 mb-3">
+      <div class="p-3 pb-2 d-flex flex-wrap align-items-center gap-2">
+        <span class="badge bg-danger-subtle text-danger">
+          <%= t("registration.policy.kinds.student_performance") %>
+        </span>
+
+        <span class="small text-muted">
+          <%= t("registration.allocation.errors.policy_violation_count",
+                count: performance_entries.size) %>
+        </span>
+
+        <% [:no_cert, :pending, :failed].each do |status_key| %>
+          <% count = performance_status_counts[status_key].to_i %>
+          <% next if count.zero? %>
+
+          <span class="badge text-bg-light border">
+            <%= count %>
+
+            <%= status_key == :no_cert ?
+                  t("registration.allocation.perf_evidence.no_cert") :
+                  t("student_performance.certifications.status.#{status_key}") %>
           </span>
         <% end %>
 
-        <% if has_sp && ev %>
-          <% if cert&.failed? %>
-            <i
-              class="bi bi-patch-x-fill text-danger"
-              title="<%= t("student_performance.certifications.status.failed") %>"
-            ></i>
-          <% elsif cert&.pending? %>
-            <i
-              class="bi bi-hourglass text-warning"
-              title="<%= t("student_performance.certifications.status.pending") %>"
-            ></i>
-          <% else %>
-            <i
-              class="bi bi-question-circle text-secondary"
-              title="<%= t("registration.allocation.perf_evidence.no_cert") %>"
-            ></i>
-          <% end %>
-          <% if d[:meets_points] == false %>
-            <span class="text-danger">
-              <% if d[:required_percentage].present? %>
-                <%= number_to_percentage(d[:percentage] || 0, precision: 1) %>
-                (≥
-                <%= number_to_percentage(d[:required_percentage], precision: 1) %>
-                )
-              <% elsif d[:required_points].present? %>
-                <%= d[:points_total] || 0 %>
-                /
-                <%= d[:points_max] || 0 %>
-                <%= t("registration.allocation.perf_evidence.pts_abbr") %>
-                (≥
-                <%= d[:required_points] %>
-                <%= t("registration.allocation.perf_evidence.pts_abbr") %>
-                )
-              <% end %>
-            </span>
-          <% end %>
-          <% req_ids = Array(d[:achievement_ids_required]) %>
-          <% met_ids = Array(d[:achievement_ids_met]) %>
-          <% if req_ids.any? && d[:meets_achievements] == false %>
-            <span class="text-danger">
-              <%= t("registration.allocation.perf_evidence.achievements_short",
-                    met: met_ids.size, total: req_ids.size) %>
-            </span>
-          <% end %>
-          <% if cert&.certified_by %>
-            <span class="text-muted">
-              <%= t("registration.allocation.perf_evidence.certified_by",
-                    name: cert.certified_by.name) %>
-            </span>
-          <% end %>
-          <% if cert&.note.present? %>
-            <i class="bi bi-chat-text text-muted" title="<%= cert.note %>"></i>
-          <% end %>
-          <% can_override = cert ? !cert.passed? : ev[:record].present? %>
-          <% if perf_lecture && can_override %>
-            <% if cert %>
-              <%= button_to(
-                    lecture_student_performance_certification_path(
-                      perf_lecture, cert
-                    ),
-                    method: :patch,
-                    params: {
-                      certification: { status: :passed },
-                      return_to: registration_campaign_allocation_path(campaign)
-                    },
-                    class: "btn btn-sm p-0 text-success",
-                    title: t("registration.allocation.violations_table.override_pass"),
-                    data: {
-                      turbo_confirm: t(
-                        "registration.allocation.violations_table" \
-                        ".confirm_override_pass"
-                      )
-                    },
-                    form: { class: "d-inline-block" }
-                  ) do %>
-                <i class="bi bi-check-circle-fill"></i>
-              <% end %>
-            <% else %>
-              <%= button_to(
-                    lecture_student_performance_certifications_path(perf_lecture),
-                    method: :post,
-                    params: {
-                      certification: { user_id: user_id, status: :passed },
-                      return_to: registration_campaign_allocation_path(campaign)
-                    },
-                    class: "btn btn-sm p-0 text-success",
-                    title: t("registration.allocation.violations_table.override_pass"),
-                    data: {
-                      turbo_confirm: t(
-                        "registration.allocation.violations_table" \
-                        ".confirm_override_pass"
-                      )
-                    },
-                    form: { class: "d-inline-block" }
-                  ) do %>
-                <i class="bi bi-check-circle-fill"></i>
-              <% end %>
-            <% end %>
-          <% end %>
+        <% if perf_lecture %>
+          <%= link_to t("registration.allocation.violations_table.go_to_certifications"),
+                      lecture_student_performance_certifications_path(
+                        perf_lecture,
+                        return_to: registration_campaign_allocation_path(campaign)
+                      ),
+                      class: "ms-md-auto small link-danger text-decoration-none" %>
         <% end %>
+      </div>
 
-        <% if violations.none? { |violation| violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION } %>
-          <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
-                                                                                user_id: user_id,
-                                                                                source: allocation_source,
-                                                                                reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
-                        method: :delete,
-                        class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
-                        data: {
-                          turbo_confirm:
-                          t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
-                          email: first[:email])
-                        },
-                        form: { class: "d-inline-block" },
-                        title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
-            <i class="bi bi-slash-circle me-1"></i>
-            <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
-          <% end %>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+              <th><%= t("basics.status") %></th>
+
+              <% if show_additional_blockers %>
+                <th>
+                  <%= t("registration.allocation.violations_table.additional_blockers") %>
+                </th>
+              <% end %>
+
+              <th class="text-end"><%= t("basics.actions") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% performance_entries.each do |entry| %>
+              <tr>
+                <td><strong><%= entry[:first][:name] %></strong></td>
+                <td class="text-muted"><%= entry[:first][:email] %></td>
+
+                <td>
+                  <% if entry[:status_key] == :failed %>
+                    <span class="text-danger">
+                      <i class="bi bi-patch-x-fill me-1"></i>
+                      <%= t("student_performance.certifications.status.failed") %>
+                    </span>
+                  <% elsif entry[:status_key] == :pending %>
+                    <span class="text-warning">
+                      <i class="bi bi-hourglass me-1"></i>
+                      <%= t("student_performance.certifications.status.pending") %>
+                    </span>
+                  <% else %>
+                    <span class="text-secondary">
+                      <i class="bi bi-question-circle me-1"></i>
+                      <%= t("registration.allocation.perf_evidence.no_cert") %>
+                    </span>
+                  <% end %>
+                </td>
+
+                <% if show_additional_blockers %>
+                  <td>
+                    <% entry[:other_violations].each do |violation| %>
+                      <span class="badge bg-danger-subtle text-danger me-1">
+                        <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+
+                        <% if violation[:policy] == "institutional_email" %>
+                          @
+                          <%= email_domain(entry[:first][:email]) %>
+                        <% end %>
+                      </span>
+                    <% end %>
+                  </td>
+                <% end %>
+
+                <td class="text-end">
+                  <% if entry[:can_defer] %>
+                    <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
+                                                                                          user_id: entry[:user_id],
+                                                                                          source: allocation_source,
+                                                                                          reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger py-0 px-2",
+                                  data: {
+                                    turbo_confirm:
+                                    t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                                    email: entry[:first][:email])
+                                  },
+                                  form: { class: "d-inline-block mb-0" },
+                                  title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+                      <i class="bi bi-slash-circle me-1"></i>
+                      <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <% if other_entries.any? %>
+    <div class="border rounded bg-body mt-3">
+      <div class="p-3 pb-2 d-flex flex-wrap align-items-center gap-2">
+        <span class="small fw-semibold">
+          <%= t("registration.allocation.violations_table.other_blockers") %>
+        </span>
+
+        <span class="small text-muted">
+          <%= t("registration.allocation.errors.policy_violation_count",
+                count: other_entries.size) %>
+        </span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
+              <th><%= t("registration.policy.kind") %></th>
+              <th class="text-end"><%= t("basics.actions") %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% other_entries.each do |entry| %>
+              <tr>
+                <td><strong><%= entry[:first][:name] %></strong></td>
+                <td class="text-muted"><%= entry[:first][:email] %></td>
+
+                <td>
+                  <% entry[:violations].each do |violation| %>
+                    <span class="badge bg-danger-subtle text-danger me-1">
+                      <%= t("registration.policy.kinds.#{violation[:policy]}") %>
+
+                      <% if violation[:policy] == "institutional_email" %>
+                        @
+                        <%= email_domain(entry[:first][:email]) %>
+                      <% end %>
+                    </span>
+                  <% end %>
+                </td>
+
+                <td class="text-end">
+                  <% if entry[:can_defer] %>
+                    <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
+                                                                                          user_id: entry[:user_id],
+                                                                                          source: allocation_source,
+                                                                                          reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger py-0 px-2",
+                                  data: {
+                                    turbo_confirm:
+                                    t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                                    email: entry[:first][:email])
+                                  },
+                                  form: { class: "d-inline-block mb-0" },
+                                  title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+                      <i class="bi bi-slash-circle me-1"></i>
+                      <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 </div>

@@ -352,6 +352,9 @@ de:
       violations_table:
         override_pass: "Auf bestanden setzen"
         confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
+        go_to_certifications: "Im Zulassungs-Dashboard klären"
+        additional_blockers: "Weitere Blocker"
+        other_blockers: "Weitere Blocker"
       student_performance:
         unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
       perf_evidence:

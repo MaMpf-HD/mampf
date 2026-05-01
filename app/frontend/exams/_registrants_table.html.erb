@@ -39,7 +39,7 @@
               <td class="text-muted"><%= user.email %></td>
 
               <td class="text-end">
-                <%= button_to destroy_for_user_registration_campaign_registrations_path(
+                <%= button_to reject_for_user_registration_campaign_registrations_path(
                                 campaign, user_id: user.id,
                                 source: "registrations"),
                               method: :delete,
