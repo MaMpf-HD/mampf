@@ -288,12 +288,28 @@ en:
         rejected_students: "Rejected Students"
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
+        current_registration_state: "Current Registration State"
+        current_group_occupancy: "Current Group Occupancy"
+        students_currently_without_place: "Students Currently Without a Place"
+        no_students_currently_without_place: "All registered students currently have a place."
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         workflow_info_fcfs_auto_rejections:
           one: "When finalizing, the finalization policies are checked once more; %{count} registration will likely be rejected automatically."
           other: "When finalizing, the finalization policies are checked once more; %{count} registrations will likely be rejected automatically."
         item_capacities: "Group Capacities"
+        finalization_status:
+          blocked_title: "Finalization currently not possible"
+          blocked_desc:
+            one: "There is %{count} blocker. This registration must be resolved first."
+            other: "There are %{count} blockers. These registrations must be resolved first."
+          blocked_auto_rejections_note:
+            one: "After the blockers are resolved, %{count} additional registration would likely be rejected automatically."
+            other: "After the blockers are resolved, %{count} additional registrations would likely be rejected automatically."
+          auto_rejections_title: "Finalization possible"
+          auto_rejections_desc:
+            one: "When finalizing, %{count} registration will likely be rejected automatically because of a finalization policy; manual addition remains possible afterwards."
+            other: "When finalizing, %{count} registrations will likely be rejected automatically because of finalization policies; manual addition remains possible afterwards."
       demand:
         title: "Registration Demand"
         info: "This overview shows the registration demand per item before allocation. Review the first-choice demand against capacities, then click 'Run Allocation' to compute the assignment. Rows highlighted in yellow have more first-choice registrations than available capacity. You can also 'Reopen Registration' to accept new sign-ups or let students adjust their preferences."
@@ -304,8 +320,18 @@ en:
       stats:
         total_registrations: "Total Registrations"
         eligible: "Eligible"
+        eligible_inline: "eligible"
         assigned: "Assigned"
+        assigned_inline: "assigned"
+        currently_confirmed: "Currently Confirmed"
+        currently_confirmed_inline: "currently confirmed"
+        currently_rejected: "Currently Rejected"
+        currently_rejected_inline: "currently rejected"
+        currently_without_place: "Currently Without a Place"
+        currently_without_place_inline: "currently without a place"
+        rejected_inline: "rejected"
         unassigned: "Unassigned"
+        unassigned_inline: "unassigned"
         happiness_distribution: "Preference Distribution"
         rank: "Preference Rank"
         count: "Count"

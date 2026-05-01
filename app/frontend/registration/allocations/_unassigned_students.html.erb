@@ -1,7 +1,9 @@
 <% dashboard = local_assigns[:dashboard] %>
 
 <h6 class="text-muted fw-semibold small text-uppercase mb-2">
-  <%= t("registration.allocation.dashboard.unassigned_students") %>
+  <%= t(dashboard.current_registration_state? ?
+        "registration.allocation.dashboard.students_currently_without_place" :
+        "registration.allocation.dashboard.unassigned_students") %>
 
   <% if dashboard.unassigned_students.any? %>
     <span class="badge bg-danger ms-1">
@@ -33,6 +35,11 @@
 <% else %>
   <div class="py-3 text-center text-muted">
     <i class="bi bi-check-circle d-block mb-1 allocation-check-icon"></i>
-    <small><%= t("registration.allocation.dashboard.no_unassigned") %></small>
+
+    <small>
+      <%= t(dashboard.current_registration_state? ?
+                 "registration.allocation.dashboard.no_students_currently_without_place" :
+                 "registration.allocation.dashboard.no_unassigned") %>
+    </small>
   </div>
 <% end %>

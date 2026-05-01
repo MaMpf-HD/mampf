@@ -1,0 +1,33 @@
+<% dashboard = local_assigns[:dashboard] %>
+<% campaign = local_assigns[:campaign] %>
+
+<% if dashboard.finalization_status == :blocked %>
+  <div class="alert alert-danger mb-3">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
+    <strong><%= t("registration.allocation.dashboard.finalization_status.blocked_title") %></strong>
+    —
+    <%= t("registration.allocation.dashboard.finalization_status.blocked_desc",
+          count: dashboard.blocker_user_count) %>
+
+
+    <% if dashboard.projected_auto_rejections? %>
+      <div class="small mt-2">
+        <%= t(
+              "registration.allocation.dashboard.finalization_status" \
+              ".blocked_auto_rejections_note",
+              count: dashboard.projected_auto_rejection_count
+            ) %>
+      </div>
+    <% end %>
+  </div>
+<% elsif dashboard.finalization_status == :auto_rejections %>
+  <div class="alert alert-warning mb-3">
+    <i class="bi bi-exclamation-triangle me-1"></i>
+
+    <strong><%= t("registration.allocation.dashboard.finalization_status.auto_rejections_title") %></strong>
+    —
+    <%= t("registration.allocation.dashboard.finalization_status.auto_rejections_desc",
+          count: dashboard.projected_auto_rejection_count) %>
+  </div>
+<% end %>

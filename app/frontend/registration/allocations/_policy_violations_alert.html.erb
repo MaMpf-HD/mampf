@@ -40,10 +40,13 @@
     </small>
   </p>
 
-  <%# Policy requirement summaries %>
-  <div class="small mb-2">
-    <% dashboard.finalization_policies.each do |policy| %>
-      <% if policy.kind == "institutional_email" %>
+  <% email_policies = dashboard.finalization_policies.select do |policy|
+       policy.kind == "institutional_email"
+     end %>
+
+  <% if email_policies.any? %>
+    <div class="small mb-2">
+      <% email_policies.each do |policy| %>
         <div class="mb-1">
           <i class="bi bi-envelope me-1"></i>
 
@@ -56,8 +59,8 @@
           <code>@<%= policy.allowed_domains_display %></code>
         </div>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   <div class="small mb-3">
     <% if has_configuration_blockers %>
@@ -71,22 +74,8 @@
     <% end %>
 
     <% if has_user_blockers %>
-      <div class="mb-1">
-        <strong>
-          <%= t("registration.allocation.errors.policy_violation_user_title") %>
-        </strong>
-
-        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
-      </div>
-    <% end %>
-
-    <% if has_user_blockers %>
       <div>
-        <strong>
-          <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
-        </strong>
-
-        <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
+        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
       </div>
     <% end %>
   </div>
