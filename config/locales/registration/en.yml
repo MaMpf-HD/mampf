@@ -290,8 +290,6 @@ en:
         no_unassigned: "All students have been assigned!"
         current_registration_state: "Current Registration State"
         current_group_occupancy: "Current Group Occupancy"
-        students_currently_without_place: "Students Currently Without a Place"
-        no_students_currently_without_place: "All registered students currently have a place."
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
         workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         workflow_info_fcfs_auto_rejections:
@@ -324,8 +322,6 @@ en:
         currently_confirmed_inline: "currently confirmed"
         currently_rejected: "Currently Rejected"
         currently_rejected_inline: "currently rejected"
-        currently_without_place: "Currently Without a Place"
-        currently_without_place_inline: "currently without a place"
         rejected_inline: "rejected"
         unassigned: "Unassigned"
         unassigned_inline: "unassigned"
