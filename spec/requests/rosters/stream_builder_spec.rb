@@ -137,7 +137,9 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include("dissolved_campaign_#{campaign.id}")
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel" do
+        assert_select "template", text: /#{Regexp.escape(rejected_student.name)}/, count: 0
+      end
       expect(registration.reload.rejection_overridden_at).to be_present
     end
   end

@@ -538,6 +538,16 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end
       end
     end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get rejected_registration_campaign_path(campaign)
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
   end
 
   describe "GET /campaigns/:id/edit" do
