@@ -1,5 +1,33 @@
 namespace :eligibility_demo do
-  EXAM_TITLE = "Prüfungszulassung Demo – Finale Zulassung"
+  def exam_title = "Prüfungszulassung Demo – Finale Zulassung"
+
+  desc "Prepare the finalization-only student-performance blocker demo in one go"
+  task prepare_blocker_demo: :environment do
+    abort "Cannot run in production!" if Rails.env.production?
+
+    run_task("muesli:setup")
+    run_task("exam_policy:create_exam")
+    run_task("eligibility_demo:setup")
+
+    campaign = open_demo_campaign!
+
+    run_task("eligibility_demo:register_members")
+
+    puts ""
+    puts "=" * 60
+    puts "Student Performance Blocker Demo Ready"
+    puts "=" * 60
+    puts "  Exam: #{exam_title}"
+    puts "  Campaign status: #{campaign.status}"
+    puts "  Registrations: #{campaign.user_registrations.count}"
+    puts ""
+    puts "  Next steps in the UI:"
+    puts "    1. Open the lecture → Assessments → Exam Eligibility"
+    puts "    2. Review or adjust Certifications"
+    puts "    3. Open the exam → Registration tab"
+    puts "    4. Close and finalize the campaign"
+    puts "=" * 60
+  end
 
   desc "Create an exam with a single student-performance policy " \
        "(checked at finalization only). " \
@@ -19,13 +47,13 @@ namespace :eligibility_demo do
             "Enable it in the lecture preferences first."
     end
 
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
     if exam
       puts "✓ Exam already exists (ID: #{exam.id})"
     else
       exam = Exam.create!(
         lecture: lecture,
-        title: EXAM_TITLE,
+        title: exam_title,
         date: 6.weeks.from_now,
         location: "Hörsaal 1",
         capacity: 200,
@@ -70,7 +98,7 @@ namespace :eligibility_demo do
     Flipper.enable(:registration_campaigns)
 
     lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
     abort "Demo exam not found. Run eligibility_demo:setup first." unless exam
 
     campaign = exam.registration_campaign
@@ -110,7 +138,7 @@ namespace :eligibility_demo do
     Rake::Task["assessment:reset"].invoke
 
     lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: EXAM_TITLE)
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
 
     unless exam
       puts "No demo exam found."
@@ -128,12 +156,45 @@ namespace :eligibility_demo do
 
     exam.exam_rosters.destroy_all
     exam.destroy!
-    puts "✓ Destroyed exam: #{EXAM_TITLE}"
+    puts "✓ Destroyed exam: #{exam_title}"
   end
 
   def find_lecture!
     lecture = Lecture.joins(:tutorials).distinct.first
     abort("No lecture with tutorials found. Run 'just seed' first.") unless lecture
     lecture
+  end
+
+  def open_demo_campaign!
+    lecture = find_lecture!
+    exam = Exam.find_by(lecture: lecture, title: exam_title)
+    abort("Demo exam not found. Run eligibility_demo:setup first.") unless exam
+
+    campaign = exam.registration_campaign
+    abort("No campaign found for demo exam.") unless campaign
+
+    if campaign.draft?
+      attrs = { status: :open }
+      if campaign.registration_deadline.blank? || campaign.registration_deadline < Time.current
+        attrs[:registration_deadline] = 1.week.from_now
+      end
+      campaign.update!(attrs)
+      puts "✓ Opened demo campaign"
+    elsif campaign.open?
+      puts "✓ Demo campaign already open"
+    else
+      abort("Demo campaign is #{campaign.status}. Reset or reopen it before continuing.")
+    end
+
+    campaign
+  end
+
+  def run_task(name)
+    puts "-" * 60
+    puts "Running #{name}..."
+    puts "-" * 60
+    Rake::Task[name].invoke
+    Rake::Task[name].reenable
+    puts ""
   end
 end
