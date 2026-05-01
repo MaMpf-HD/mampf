@@ -61,6 +61,14 @@ module Registration
       blocker_violations
     end
 
+    def blockers?
+      blocker_violations.present?
+    end
+
+    def blocker_user_count
+      blocker_violations.pluck(:user_id).uniq.size
+    end
+
     def finalization_policies
       @finalization_policies ||=
         @campaign.registration_policies.active.for_phase(:finalization)
@@ -80,6 +88,20 @@ module Registration
       return 0 if @campaign.completed?
 
       @projected_auto_rejection_count ||= guard_result.auto_reject_violations.count
+    end
+
+    def projected_auto_rejections?
+      projected_auto_rejection_count.positive?
+    end
+
+    def current_registration_state?
+      @campaign.first_come_first_served? && !@campaign.completed?
+    end
+
+    def finalization_status
+      return :blocked if blockers?
+
+      :auto_rejections if projected_auto_rejections?
     end
 
     def allocation_run?
@@ -173,11 +195,8 @@ module Registration
       end
 
       def rejected_registrations_by_user
-        @rejected_registrations_by_user ||= @campaign.user_registrations
-                                                     .where(
-                                                       status: :rejected,
-                                                       user_id: stats.rejected_user_ids
-                                                     )
+        @rejected_registrations_by_user ||= @campaign.open_rejected_registrations
+                                                     .where(user_id: stats.rejected_user_ids)
                                                      .to_a
                                                      .group_by(&:user_id)
       end

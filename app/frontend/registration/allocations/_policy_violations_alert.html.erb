@@ -21,8 +21,11 @@
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
 
-  <% grouped = blocker_violations.group_by { |violation| violation[:user_id] } %>
-  <% policy_counts = blocker_violations.group_by { |violation| violation[:policy] }
+  <% display_violations = blocker_violations.uniq do |violation|
+       [violation[:user_id], violation[:policy]]
+     end %>
+  <% grouped = display_violations.group_by { |violation| violation[:user_id] } %>
+  <% policy_counts = display_violations.group_by { |violation| violation[:policy] }
                                      .transform_values(&:size) %>
 
   <p class="mt-2 mb-2">
@@ -40,8 +43,12 @@
     </small>
   </p>
 
-  <% email_policies = dashboard.finalization_policies.select do |policy|
-       policy.kind == "institutional_email"
+  <% email_policies = if policy_counts.key?("institutional_email")
+       dashboard.finalization_policies.select do |policy|
+         policy.kind == "institutional_email"
+       end
+     else
+       []
      end %>
 
   <% if email_policies.any? %>
@@ -74,22 +81,8 @@
     <% end %>
 
     <% if has_user_blockers %>
-      <div class="mb-1">
-        <strong>
-          <%= t("registration.allocation.errors.policy_violation_user_title") %>
-        </strong>
-
-        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
-      </div>
-    <% end %>
-
-    <% if has_user_blockers %>
       <div>
-        <strong>
-          <%= t("registration.allocation.errors.policy_violation_next_step_title") %>
-        </strong>
-
-        <%= t("registration.allocation.errors.policy_violation_next_step_desc") %>
+        <%= t("registration.allocation.errors.policy_violation_user_desc") %>
       </div>
     <% end %>
   </div>

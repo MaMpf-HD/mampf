@@ -284,6 +284,19 @@ module Registration
       ).order(:name, :email)
     end
 
+    def open_rejected_registrations
+      user_registrations.rejected
+                        .where(
+                          "rejection_reason_code IS NULL OR rejection_reason_code != ?",
+                          Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+                        )
+                        .where(rejection_overridden_at: nil)
+                        .where.not(
+                          user_id: user_registrations.where(status: [:confirmed, :pending])
+                                                     .select(:user_id)
+                        )
+    end
+
     def roster_group_type
       items = if association(:registration_items).loaded?
         registration_items
@@ -320,19 +333,6 @@ module Registration
           updated_at: Time.current
         )
         # rubocop:enable Rails/SkipsModelValidations
-      end
-
-      def open_rejected_registrations
-        user_registrations.rejected
-                          .where(
-                            "rejection_reason_code IS NULL OR rejection_reason_code != ?",
-                            Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
-                          )
-                          .where(rejection_overridden_at: nil)
-                          .where.not(
-                            user_id: user_registrations.where(status: [:confirmed, :pending])
-                                                       .select(:user_id)
-                          )
       end
 
       def reject_pending_registrations!

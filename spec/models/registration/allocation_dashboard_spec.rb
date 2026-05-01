@@ -82,6 +82,29 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
         end
       end
 
+      it "does not include solver-unassigned reasons for students in the rejected queue" do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 2,
+               status: :rejected,
+               rejection_reason_code:
+                 Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+               rejection_reason_label: I18n.t(
+                 "registration.user_registration.reason_labels.solver_unassigned"
+               ),
+               user: rejected_student)
+
+        expected_reason = Registration::UserRegistration.localized_rejection_reason_label(
+          reason_code: "institutional_email_mismatch",
+          reason_label: I18n.t("registration.policy.errors.email_domain_not_allowed")
+        )
+
+        expect(dashboard.rejected_students).to include(rejected_student)
+        expect(dashboard.rejection_reasons_for(rejected_student))
+          .to eq(expected_reason)
+      end
+
       it "keeps users with active registrations out of the rejected bucket" do
         mixed_student = create(:confirmed_user, email: "mixed@uni.edu")
 
