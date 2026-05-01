@@ -81,6 +81,34 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
             .to eq("E-Mail-Domain nicht erlaubt.")
         end
       end
+
+      it "keeps users with active registrations out of the rejected bucket" do
+        mixed_student = create(:confirmed_user, email: "mixed@uni.edu")
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               preference_rank: 1,
+               user: mixed_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 2,
+               status: :rejected,
+               rejection_reason_code: "institutional_email_mismatch",
+               rejection_reason_label: I18n.t(
+                 "registration.policy.errors.email_domain_not_allowed"
+               ),
+               user: mixed_student)
+
+        expect(dashboard.rejected_students).not_to include(mixed_student)
+        expect(dashboard.unassigned_students).to include(mixed_student)
+        expect(dashboard.stats.rejected_user_ids).to eq([rejected_student.id])
+        expect(dashboard.stats.unassigned_user_ids).to contain_exactly(
+          unassigned_student.id,
+          mixed_student.id
+        )
+      end
     end
   end
 

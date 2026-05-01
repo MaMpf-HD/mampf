@@ -12,10 +12,7 @@ module Registration
                               .where(status: :confirmed)
                               .pluck(:user_id, :registration_item_id)
                               .to_h
-        rejected_user_ids = @campaign.user_registrations
-                                     .where(status: :rejected)
-                                     .distinct
-                                     .pluck(:user_id)
+        rejected_user_ids = @campaign.rejected_users.pluck(:id)
 
         Registration::AllocationStats.new(
           @campaign,
