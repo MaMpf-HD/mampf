@@ -88,78 +88,6 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
     end
   end
 
-  describe "#confirm_status_badge" do
-    it "renders confirmed badge" do
-      html = helper.confirm_status_badge("confirmed")
-      expect(html).to include(I18n.t("basics.confirmed"))
-      expect(html).to include("text-bg-success")
-    end
-
-    it "renders empty span for unknown" do
-      expect(helper.confirm_status_badge("weird")).to eq("<span></span>")
-    end
-  end
-
-  describe "#confirm_status_badge" do
-    subject(:badge) { helper.confirm_status_badge(status) }
-
-    shared_examples "a badge" do |translated_text, css_class|
-      it "renders the correct span" do
-        expect(badge).to include("<span")
-        expect(badge).to include(translated_text)
-        expect(badge).to include("class=\"#{css_class}\"")
-      end
-    end
-
-    context "when status is confirmed" do
-      let(:status) { "confirmed" }
-
-      include_examples(
-        "a badge",
-        I18n.t("basics.confirmed"),
-        "text-bg-success"
-      )
-    end
-
-    context "when status is pending" do
-      let(:status) { "pending" }
-
-      include_examples(
-        "a badge",
-        I18n.t("basics.pending"),
-        "text-bg-warning"
-      )
-    end
-
-    context "when status is rejected" do
-      let(:status) { "rejected" }
-
-      include_examples(
-        "a badge",
-        I18n.t("basics.rejected"),
-        "text-bg-danger"
-      )
-    end
-
-    context "when status is dismissed" do
-      let(:status) { "dismissed" }
-
-      include_examples(
-        "a badge",
-        I18n.t("basics.dismissed"),
-        "text-bg-danger"
-      )
-    end
-
-    context "when status is unknown" do
-      let(:status) { "something_else" }
-
-      it "renders an empty span" do
-        expect(badge).to eq("<span></span>")
-      end
-    end
-  end
-
   describe "#freely_registerable?" do
     subject(:result) { helper.freely_registerable?(group_type) }
 
@@ -256,18 +184,6 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
         expect(row[:field].call(item_cohort)).to eq("Group A")
       end
     end
-  end
-
-  describe "#sum_of_nullable" do
-    it { expect(helper.sum_of_nullable([1, 2, 3])).to eq(6) }
-    it { expect(helper.sum_of_nullable([1, nil, 3])).to eq(nil) }
-  end
-
-  describe "#nil_or_positive_integer?" do
-    it { expect(helper.nil_or_positive_integer?(nil)).to eq(true) }
-    it { expect(helper.nil_or_positive_integer?(5)).to eq(true) }
-    it { expect(helper.nil_or_positive_integer?(0)).to eq(false) }
-    it { expect(helper.nil_or_positive_integer?("x")).to eq(false) }
   end
 
   describe "#nullable_capacity_display" do

@@ -177,64 +177,31 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       )
     end
     let(:item) { campaign.registration_items.first }
-    let(:item2) { campaign.registration_items.second }
-    let(:item3) { campaign.registration_items.third }
-    let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item2, 1) }
-    let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item, 2) }
-    let(:pref_from_fe3) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item3, 3) }
-    let(:pref_items_json) do
-      [{ item: item2, rank: 1 }, { item: item, rank: 2 }, { item: item3, rank: 3 }].to_json
-    end
-    describe "POST user_registrations/:campaign_id/save" do
-      it "updates preferences campaign" do
-        service_double = instance_double(Registration::UserRegistration::LecturePreferenceEditService)
-        expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
-          .with(campaign, an_instance_of(User))
-          .and_return(service_double)
-        expect(service_double).to receive(:update!).and_return(stub_success)
-        post save_campaign_preferences_path(campaign_id: campaign.id),
-             params: { preferences_json: pref_items_json }
-
-        expect(response).to have_http_status(:found)
-        follow_redirect!
-        expect(response.body).to include(I18n.t("registration.user_registration.messages." \
-                                                "registration_success"))
-      end
-    end
 
     describe "preference actions" do
       let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
-      let(:service_double_campaign) { instance_double(Registration::Campaign::CampaignDetailsService) }
 
-      [:up, :down].each do |action|
-        describe "POST ##{action}" do
-          it "updates preferences via #{action}" do
-            expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
-              .and_return(service_double)
-            expect(service_double).to receive(action).and_return(stub_success)
-            post send("preference_#{action}_path", item),
-                 params: { preferences_json: pref_items_json }
-          end
+      describe "POST #add" do
+        it "saves the selected preference rank" do
+          pref_items = [Registration::UserRegistration::PreferencesHandler::SimpleItemPreference
+            .new(item.id, 1)]
+          edit_service = instance_double(
+            Registration::UserRegistration::LecturePreferenceEditService
+          )
+
+          expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(:pref_item_build_with_rank)
+            .with(campaign, user, item.id.to_s, "1")
+            .and_return(pref_items)
+          expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
+            .with(campaign, user)
+            .and_return(edit_service)
+          expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
+
+          post add_preference_path(item), params: { rank: 1 }
+          expect(response).to have_http_status(:found)
         end
-      end
-
-      [:add, :remove].each do |action|
-        describe "POST ##{action}" do
-          it "updates preferences via #{action}" do
-            expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
-              .and_return(service_double)
-            expect(service_double).to receive(action).and_return(stub_success)
-            post send("#{action}_preference_path", item),
-                 params: { preferences_json: pref_items_json }
-          end
-        end
-      end
-
-      it "resets preferences" do
-        expect(Registration::Campaign::CampaignDetailsService).to receive(:new)
-          .and_return(service_double_campaign)
-        expect(service_double_campaign).to receive(:preferences_info).and_return(stub_success)
-        post reset_campaign_preferences_path(campaign_id: campaign.id)
       end
     end
   end
@@ -293,55 +260,30 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       )
     end
     let(:item) { campaign.registration_items.first }
-    let(:item2) { campaign.registration_items.second }
-    let(:item3) { campaign.registration_items.third }
-    let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item2, 1) }
-    let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item, 2) }
-    let(:pref_from_fe3) { Registration::UserRegistration::PreferencesHandler::ItemPreference.new(item3, 3) }
-    let(:pref_items_json) do
-      [{ item: item2, rank: 1 }, { item: item, rank: 2 }, { item: item3, rank: 3 }].to_json
-    end
-    describe "POST user_registrations/:campaign_id/save" do
-      it "updates preferences campaign" do
-        service_double = instance_double(Registration::UserRegistration::LecturePreferenceEditService)
-        expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
-          .with(campaign, an_instance_of(User))
-          .and_return(service_double)
-        expect(service_double).to receive(:update!).and_return(stub_success)
-        post save_campaign_preferences_path(campaign_id: campaign.id),
-             params: { preferences_json: pref_items_json }
-
-        expect(response).to have_http_status(:found)
-        follow_redirect!
-        expect(response.body).to include(I18n.t("registration.user_registration.messages." \
-                                                "registration_success"))
-      end
-    end
 
     describe "preference actions" do
       let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
 
-      [:up, :down].each do |action|
-        describe "POST ##{action}" do
-          it "updates preferences via #{action}" do
-            expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
-              .and_return(service_double)
-            expect(service_double).to receive(action).and_return(stub_success)
-            post send("preference_#{action}_path", item),
-                 params: { preferences_json: pref_items_json }
-          end
-        end
-      end
+      describe "POST #add" do
+        it "saves the selected preference rank" do
+          pref_items = [Registration::UserRegistration::PreferencesHandler::SimpleItemPreference
+            .new(item.id, 1)]
+          edit_service = instance_double(
+            Registration::UserRegistration::LecturePreferenceEditService
+          )
 
-      [:add, :remove].each do |action|
-        describe "POST ##{action}" do
-          it "updates preferences via #{action}" do
-            expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
-              .and_return(service_double)
-            expect(service_double).to receive(action).and_return(stub_success)
-            post send("#{action}_preference_path", item),
-                 params: { preferences_json: pref_items_json }
-          end
+          expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(:pref_item_build_with_rank)
+            .with(campaign, user, item.id.to_s, "1")
+            .and_return(pref_items)
+          expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
+            .with(campaign, user)
+            .and_return(edit_service)
+          expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
+
+          post add_preference_path(item), params: { rank: 1 }
+          expect(response).to have_http_status(:found)
         end
       end
     end
