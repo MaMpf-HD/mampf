@@ -84,7 +84,7 @@ module Registration
     def format_date(time)
       return "" if time.nil?
 
-      time.strftime("%b %d, %H:%M")
+      l(time, format: :student_registration)
     end
 
     OUTCOME_MAP = {
@@ -113,8 +113,13 @@ module Registration
     end
 
     def student_registration_campaign_title(campaign)
-      campaign.description.presence ||
-        t("registration.user_registration.campaign_main")
+      description = campaign.description.to_s.strip
+      return t("registration.user_registration.campaign_main") if description.blank?
+
+      campaign_locale = campaign.locale_with_inheritance.presence&.to_s
+      return description if campaign_locale.blank? || campaign_locale == I18n.locale.to_s
+
+      t("registration.user_registration.campaign_main")
     end
 
     def student_registration_instruction(campaign)

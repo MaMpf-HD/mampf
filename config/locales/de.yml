@@ -2765,6 +2765,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:

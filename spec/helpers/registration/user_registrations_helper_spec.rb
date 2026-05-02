@@ -275,11 +275,19 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
     it { expect(helper.nullable_capacity_display(10)).to eq("10") }
   end
 
-  describe "#status_campaign_style" do
-    it { expect(helper.status_campaign_style("open")).to eq("bg-success-subtle text-success") }
-    it {
-      expect(helper.status_campaign_style("closed")).to eq("bg-secondary-subtle text-secondary")
-    }
-    it { expect(helper.status_campaign_style("other")).to eq("bg-info-subtle text-info") }
+  describe "#format_date" do
+    let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
+
+    it "uses the English student registration format" do
+      I18n.with_locale(:en) do
+        expect(helper.format_date(timestamp)).to eq("May 2, 17h45")
+      end
+    end
+
+    it "uses the German student registration format" do
+      I18n.with_locale(:de) do
+        expect(helper.format_date(timestamp)).to eq("2. Mai, 17h45")
+      end
+    end
   end
 end
