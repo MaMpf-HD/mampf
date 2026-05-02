@@ -39,11 +39,96 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     document = Nokogiri::HTML.fragment(rendered_content)
     workspace = document.at_css(".exam-registration-allocation-workspace")
     registrants_shell = document.at_css(".exam-registration-registrants-shell")
+    reject_action = document.at_css("button[title]")
 
     expect(workspace).to be_present
     expect(registrants_shell).to be_present
+    expect(reject_action["title"]).to eq(
+      I18n.t("assessment.registration_tab.reject_tooltip")
+    )
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.filter_placeholder")
+    )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.reject_button")
+    )
+  end
+
+  it "renders rejected registrations in a separate table before finalization" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    campaign = exam.registration_campaign
+    campaign.update!(status: :closed)
+    rejected_user = create(:confirmed_user)
+    create(:registration_user_registration,
+           :rejected,
+           registration_campaign: campaign,
+           registration_item: campaign.registration_items.first,
+           user: rejected_user,
+           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+           rejection_reason_label: I18n.t(
+             "registration.user_registration.reason_labels.withdrawn_by_teacher"
+           ))
+
+    render_inline(described_class.new(exam: exam))
+
+    document = Nokogiri::HTML.fragment(rendered_content)
+
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.rejected_heading")
+    )
+    expect(rendered_content).to include(rejected_user.email)
+    expect(rendered_content).to include(
+      I18n.t("registration.user_registration.reason")
+    )
+    expect(rendered_content).to include(
+      I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher")
+    )
+    expect(document.css("button[title]")).to be_empty
+  end
+
+  it "renders rejection reasons after finalization" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    campaign = exam.registration_campaign
+    campaign.update!(status: :completed)
+    rejected_user = create(:confirmed_user)
+    create(:registration_user_registration,
+           :rejected,
+           registration_campaign: campaign,
+           registration_item: campaign.registration_items.first,
+           user: rejected_user,
+           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+           rejection_reason_label: I18n.t(
+             "registration.user_registration.reason_labels.withdrawn_by_teacher"
+           ))
+
+    render_inline(described_class.new(exam: exam))
+
+    expect(rendered_content).to include(
+      I18n.t("registration.user_registration.reason")
+    )
+    expect(rendered_content).to include(
+      I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher")
+    )
+    expect(rendered_content).to include(rejected_user.email)
+  end
+
+  it "renders the participants removal action with explicit label after finalization" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    exam.registration_campaign.update!(status: :completed)
+    create(:exam_roster, exam: exam, user: create(:confirmed_user))
+
+    render_inline(described_class.new(exam: exam))
+
+    document = Nokogiri::HTML.fragment(rendered_content)
+    remove_action = document.at_css("button[title]")
+
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.remove_button")
+    )
+    expect(remove_action["title"]).to eq(
+      I18n.t("assessment.registration_tab.remove_tooltip")
     )
   end
 

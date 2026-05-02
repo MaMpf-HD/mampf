@@ -148,7 +148,8 @@ module Registration
     end
 
     def user_registrations_grouped_by_user
-      user_registrations.includes(:user, :registration_item)
+      user_registrations.where.not(status: :rejected)
+                        .includes(:user, :registration_item)
                         .joins(:user)
                         .order("users.name")
                         .group_by(&:user)

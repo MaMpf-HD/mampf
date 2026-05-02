@@ -54,14 +54,22 @@
                   <%= button_to remove_participant_exam_path(exam,
                                                              user_id: user.id),
                                 method: :delete,
-                                class: "btn btn-sm btn-outline-danger",
+                                class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1",
+                                title: t("assessment.registration_tab.remove_tooltip"),
+                                aria: {
+                                  label: t("assessment.registration_tab.remove_tooltip")
+                                },
                                 form: {
                                   class: "d-inline-block mb-0",
                                   data: {
-                                    turbo_confirm: t("basics.confirm")
+                                    turbo_confirm: t("assessment.registration_tab.remove_confirm")
                                   }
                                 } do %>
                     <i class="bi bi-trash"></i>
+
+                    <span>
+                      <%= t("assessment.registration_tab.remove_button") %>
+                    </span>
                   <% end %>
                 </td>
               </tr>

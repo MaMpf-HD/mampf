@@ -26,7 +26,21 @@ module Registration
       def evaluate_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
 
-        if ["allocation", "allocation_embedded"].include?(params[:source])
+        if exam_registrations_source?
+          exam = @campaign.exam
+          exam.load_registration_deadline
+
+          streams << turbo_stream.replace(
+            exam_registration_frame_id,
+            partial: "exams/registration",
+            locals: { exam: exam, lecture: exam.lecture }
+          )
+          streams << turbo_stream.replace(
+            "exam_#{exam.id}_registration_tab_label",
+            partial: "exams/registration_tab_label",
+            locals: { exam: exam }
+          )
+        elsif ["allocation", "allocation_embedded"].include?(params[:source])
           load_allocation_data
           if params[:source] == "allocation_embedded"
             streams << turbo_stream.replace("allocation-dashboard",
@@ -55,6 +69,14 @@ module Registration
         end
 
         streams
+      end
+
+      def exam_registrations_source?
+        params[:source] == "registrations" && @campaign.exam_campaign?
+      end
+
+      def exam_registration_frame_id
+        params[:frame_id].presence || "exam_#{@campaign.exam.id}_registration"
       end
 
       def load_allocation_data

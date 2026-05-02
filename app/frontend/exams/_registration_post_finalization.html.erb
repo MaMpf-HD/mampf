@@ -20,6 +20,7 @@
         <tr>
           <th><%= t("basics.name") %></th>
           <th><%= t("basics.email") %></th>
+          <th><%= t("registration.user_registration.reason") %></th>
         </tr>
       </thead>
 
@@ -28,6 +29,7 @@
           <tr>
             <td><%= reg.user.name %></td>
             <td class="text-muted"><%= reg.user.email %></td>
+            <td><%= reg.localized_rejection_reason_label %></td>
           </tr>
         <% end %>
       </tbody>

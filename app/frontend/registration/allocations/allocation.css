@@ -118,7 +118,7 @@
     background: var(--bs-warning-bg-subtle);
 }
 
-.exam-registration-allocation-workspace:not(:empty) + .exam-registration-registrants-shell {
+.exam-registration-allocation-workspace.is-active + .exam-registration-registrants-shell {
     display: none;
 }
 
