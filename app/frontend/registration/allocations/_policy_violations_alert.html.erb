@@ -152,8 +152,8 @@
      end.sort_by { |entry| entry[:first][:email].to_s } %>
 
   <% if performance_entries.any? %>
-    <div class="border rounded bg-body mt-3 mb-3">
-      <div class="p-3 pb-2 d-flex flex-wrap align-items-center gap-2">
+    <div class="border border-danger-subtle rounded mt-3 mb-3 overflow-hidden">
+      <div class="px-3 py-2 d-flex flex-wrap align-items-center gap-2 bg-danger-subtle">
         <span class="badge bg-danger-subtle text-danger">
           <%= t("registration.policy.kinds.student_performance") %>
         </span>
@@ -178,16 +178,18 @@
 
         <% if perf_lecture %>
           <%= link_to t("registration.allocation.violations_table.go_to_certifications"),
-                      lecture_student_performance_certifications_path(
+                      edit_lecture_path(
                         perf_lecture,
-                        return_to: registration_campaign_allocation_path(campaign)
+                        tab: "assessments",
+                        assessment_tab: "certifications"
                       ),
-                      class: "ms-md-auto small link-danger text-decoration-none" %>
+                      class: "ms-md-auto small link-danger text-decoration-none",
+                      data: { turbo_frame: "_top" } %>
         <% end %>
       </div>
 
       <div class="table-responsive">
-        <table class="table table-sm align-middle mb-0">
+        <table class="table table-sm table-danger align-middle mb-0">
           <thead>
             <tr>
               <th><%= t("basics.name") %></th>
@@ -273,8 +275,8 @@
   <% end %>
 
   <% if other_entries.any? %>
-    <div class="border rounded bg-body mt-3">
-      <div class="p-3 pb-2 d-flex flex-wrap align-items-center gap-2">
+    <div class="border border-danger-subtle rounded mt-3 overflow-hidden">
+      <div class="px-3 py-2 d-flex flex-wrap align-items-center gap-2 bg-danger-subtle">
         <span class="small fw-semibold">
           <%= t("registration.allocation.violations_table.other_blockers") %>
         </span>
@@ -286,7 +288,7 @@
       </div>
 
       <div class="table-responsive">
-        <table class="table table-sm align-middle mb-0">
+        <table class="table table-sm table-danger align-middle mb-0">
           <thead>
             <tr>
               <th><%= t("basics.name") %></th>
