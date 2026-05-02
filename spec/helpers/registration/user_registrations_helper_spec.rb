@@ -88,6 +88,22 @@ RSpec.describe(Registration::UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#student_registration_campaign_title" do
+    it "returns the campaign description when present" do
+      campaign = build(:registration_campaign, description: "Localized description")
+
+      expect(helper.student_registration_campaign_title(campaign))
+        .to eq("Localized description")
+    end
+
+    it "falls back to the default title when the description is blank" do
+      campaign = build(:registration_campaign, description: "  ")
+
+      expect(helper.student_registration_campaign_title(campaign))
+        .to eq(I18n.t("registration.user_registration.campaign_main"))
+    end
+  end
+
   describe "#freely_registerable?" do
     subject(:result) { helper.freely_registerable?(group_type) }
 
