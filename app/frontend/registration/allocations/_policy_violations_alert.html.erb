@@ -155,8 +155,8 @@
   </div>
 
   <% if performance_entries.any? %>
-    <div class="border border-danger-subtle rounded mt-3 mb-3 overflow-hidden">
-      <div class="px-3 py-2 d-flex flex-wrap align-items-center gap-2 bg-danger-subtle">
+    <div class="mt-3 mb-3 pt-2 border-top border-danger-subtle">
+      <div class="pb-2 mb-2 d-flex flex-wrap align-items-center gap-2">
         <span class="badge bg-danger-subtle text-danger">
           <%= t("registration.policy.kinds.student_performance") %>
         </span>
@@ -192,7 +192,7 @@
       </div>
 
       <div class="table-responsive">
-        <table class="table table-sm table-danger align-middle mb-0">
+        <table class="table table-sm align-middle mb-0">
           <thead>
             <tr>
               <th><%= t("basics.name") %></th>
@@ -278,8 +278,8 @@
   <% end %>
 
   <% if other_entries.any? %>
-    <div class="border border-danger-subtle rounded mt-3 overflow-hidden">
-      <div class="px-3 py-2 d-flex flex-wrap align-items-center gap-2 bg-danger-subtle">
+    <div class="mt-3 pt-2 border-top border-danger-subtle">
+      <div class="pb-2 mb-2 d-flex flex-wrap align-items-center gap-2">
         <span class="small fw-semibold">
           <%= t("registration.allocation.violations_table.other_blockers") %>
         </span>
@@ -291,7 +291,7 @@
       </div>
 
       <div class="table-responsive">
-        <table class="table table-sm table-danger align-middle mb-0">
+        <table class="table table-sm align-middle mb-0">
           <thead>
             <tr>
               <th><%= t("basics.name") %></th>

@@ -183,6 +183,7 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     describe "#reopen_campaign_button" do
       it "renders a button_to with params embedded in hidden fields" do
         html = helper.reopen_campaign_button(campaign, params: frame_params)
+        expect(html).to include("btn allocation-action-secondary")
         expect(html).to include('name="frame_id"')
         expect(html).to include('value="exam_1_registration"')
       end
@@ -215,6 +216,7 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       it "includes params in the URL" do
         html = helper.review_and_finalize_button(campaign,
                                                  params: frame_params)
+        expect(html).to include("btn allocation-action-accent")
         expect(html).to include("frame_id=exam_1_registration")
       end
     end

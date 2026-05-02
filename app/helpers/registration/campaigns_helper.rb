@@ -125,7 +125,7 @@ module Registration
     def review_and_finalize_button(campaign, params: {})
       link_to(t("registration.campaign.actions.review_and_finalize"),
               registration_campaign_allocation_path(campaign, **params),
-              class: "btn btn-primary",
+              class: "btn allocation-action-accent",
               data: { turbo_stream: true })
     end
 
@@ -166,7 +166,7 @@ module Registration
                 params: params,
                 data: { confirm: t("registration.campaign.confirmations.reopen"),
                         turbo_stream: true },
-                class: "btn btn-success")
+                class: "btn allocation-action-secondary")
     end
 
     private

@@ -28,17 +28,11 @@
       <%= close_campaign_button(campaign, params: bp) %>
     <% elsif campaign.closed? %>
       <%= reopen_campaign_button(campaign, params: bp) %>
-      <%= link_to t("registration.campaign.actions.review_and_finalize"),
-                  registration_campaign_allocation_path(campaign,
-                    frame_id: allocation_workspace_id),
-                  class: "btn btn-primary",
-                  data: { turbo_stream: true } %>
+      <%= review_and_finalize_button(campaign,
+                                     params: { frame_id: allocation_workspace_id }) %>
     <% elsif campaign.processing? %>
-      <%= link_to t("registration.campaign.actions.review_and_finalize"),
-                  registration_campaign_allocation_path(campaign,
-                    frame_id: allocation_workspace_id),
-                  class: "btn btn-primary",
-                  data: { turbo_stream: true } %>
+      <%= review_and_finalize_button(campaign,
+                                     params: { frame_id: allocation_workspace_id }) %>
     <% end %>
   </div>
 </div>
