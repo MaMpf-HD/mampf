@@ -35,7 +35,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
   end
 
   def show_registrants_table?
-    campaign&.open?
+    campaign&.open? || campaign&.closed?
   end
 
   def show_post_finalization?

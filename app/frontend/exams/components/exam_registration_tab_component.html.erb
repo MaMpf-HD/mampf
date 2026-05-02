@@ -35,12 +35,17 @@
       </div>
     </div>
     <% if show_allocation_workspace? %>
-      <div id="<%= allocation_workspace_id %>"></div>
+      <div
+        id="<%= allocation_workspace_id %>"
+        class="exam-registration-allocation-workspace"
+      ></div>
     <% end %>
     <% if show_registrants_table? %>
-      <%= render "exams/registrants_table",
-                 exam: exam,
-                 campaign: campaign %>
+      <div class="exam-registration-registrants-shell">
+        <%= render "exams/registrants_table",
+                   exam: exam,
+                   campaign: campaign %>
+      </div>
     <% elsif show_post_finalization? %>
       <%= render "exams/registration_post_finalization",
                  exam: exam,

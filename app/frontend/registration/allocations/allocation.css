@@ -118,6 +118,10 @@
     background: var(--bs-warning-bg-subtle);
 }
 
+.exam-registration-allocation-workspace:not(:empty) + .exam-registration-registrants-shell {
+    display: none;
+}
+
 .allocation-status-panel--danger {
     border-color: var(--bs-danger-border-subtle);
     background: rgba(var(--bs-danger-rgb), 0.04);

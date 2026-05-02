@@ -26,6 +26,27 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(rendered_content).to include(I18n.t("registration.policy.index.title"))
   end
 
+  it "renders the registrations table for a closed campaign before review opens" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    campaign = exam.registration_campaign
+    campaign.update!(status: :closed)
+    create(:registration_user_registration, :confirmed,
+           registration_campaign: campaign,
+           registration_item: campaign.registration_items.first)
+
+    render_inline(described_class.new(exam: exam))
+
+    document = Nokogiri::HTML.fragment(rendered_content)
+    workspace = document.at_css(".exam-registration-allocation-workspace")
+    registrants_shell = document.at_css(".exam-registration-registrants-shell")
+
+    expect(workspace).to be_present
+    expect(registrants_shell).to be_present
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.filter_placeholder")
+    )
+  end
+
   it "renders retry-reopen mode without the header reopen button" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :closed)
