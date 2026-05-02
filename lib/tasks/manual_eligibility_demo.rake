@@ -1,23 +1,23 @@
 namespace :eligibility_demo do
-  def exam_title = "Prüfungszulassung Demo – Finale Zulassung"
+  def eligibility_demo_exam_title = "Prüfungszulassung Demo – Finale Zulassung"
 
   desc "Prepare the finalization-only student-performance blocker demo in one go"
   task prepare_blocker_demo: :environment do
     abort "Cannot run in production!" if Rails.env.production?
 
-    run_task("muesli:setup")
-    run_task("exam_policy:create_exam")
-    run_task("eligibility_demo:setup")
+    invoke_task("muesli:setup")
+    invoke_task("exam_policy:create_exam")
+    invoke_task("eligibility_demo:setup")
 
-    campaign = open_demo_campaign!
+    campaign = open_eligibility_demo_campaign!
 
-    run_task("eligibility_demo:register_members")
+    invoke_task("eligibility_demo:register_members")
 
     puts ""
     puts "=" * 60
     puts "Student Performance Blocker Demo Ready"
     puts "=" * 60
-    puts "  Exam: #{exam_title}"
+    puts "  Exam: #{eligibility_demo_exam_title}"
     puts "  Campaign status: #{campaign.status}"
     puts "  Registrations: #{campaign.user_registrations.count}"
     puts ""
@@ -40,20 +40,20 @@ namespace :eligibility_demo do
     Rake::Task["assessment:setup"].invoke
     Rake::Task["performance:compute"].invoke
 
-    lecture = find_lecture!
+    lecture = find_eligibility_demo_lecture!
 
     unless lecture.uses_exam_eligibility?
       abort "Lecture '#{lecture.title}' has uses_exam_eligibility disabled. " \
             "Enable it in the lecture preferences first."
     end
 
-    exam = Exam.find_by(lecture: lecture, title: exam_title)
+    exam = Exam.find_by(lecture: lecture, title: eligibility_demo_exam_title)
     if exam
       puts "✓ Exam already exists (ID: #{exam.id})"
     else
       exam = Exam.create!(
         lecture: lecture,
-        title: exam_title,
+        title: eligibility_demo_exam_title,
         date: 6.weeks.from_now,
         location: "Hörsaal 1",
         capacity: 200,
@@ -97,8 +97,8 @@ namespace :eligibility_demo do
   task register_members: :environment do
     Flipper.enable(:registration_campaigns)
 
-    lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: exam_title)
+    lecture = find_eligibility_demo_lecture!
+    exam = Exam.find_by(lecture: lecture, title: eligibility_demo_exam_title)
     abort "Demo exam not found. Run eligibility_demo:setup first." unless exam
 
     campaign = exam.registration_campaign
@@ -137,8 +137,8 @@ namespace :eligibility_demo do
     Rake::Task["performance:reset"].invoke
     Rake::Task["assessment:reset"].invoke
 
-    lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: exam_title)
+    lecture = find_eligibility_demo_lecture!
+    exam = Exam.find_by(lecture: lecture, title: eligibility_demo_exam_title)
 
     unless exam
       puts "No demo exam found."
@@ -156,18 +156,18 @@ namespace :eligibility_demo do
 
     exam.exam_rosters.destroy_all
     exam.destroy!
-    puts "✓ Destroyed exam: #{exam_title}"
+    puts "✓ Destroyed exam: #{eligibility_demo_exam_title}"
   end
 
-  def find_lecture!
+  def find_eligibility_demo_lecture!
     lecture = Lecture.joins(:tutorials).distinct.first
     abort("No lecture with tutorials found. Run 'just seed' first.") unless lecture
     lecture
   end
 
-  def open_demo_campaign!
-    lecture = find_lecture!
-    exam = Exam.find_by(lecture: lecture, title: exam_title)
+  def open_eligibility_demo_campaign!
+    lecture = find_eligibility_demo_lecture!
+    exam = Exam.find_by(lecture: lecture, title: eligibility_demo_exam_title)
     abort("Demo exam not found. Run eligibility_demo:setup first.") unless exam
 
     campaign = exam.registration_campaign
@@ -189,7 +189,7 @@ namespace :eligibility_demo do
     campaign
   end
 
-  def run_task(name)
+  def invoke_task(name)
     puts "-" * 60
     puts "Running #{name}..."
     puts "-" * 60

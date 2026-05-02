@@ -370,7 +370,7 @@ namespace :assessment do
     Rake::Task["assessment:seed_grades"].invoke
     Rake::Task["assessment:seed_achievement_grades"].invoke
 
-    print_summary
+    print_assessment_playground_summary
 
     ActiveRecord::Base.logger&.level = old_level
   end
@@ -421,7 +421,7 @@ namespace :assessment do
     end
   end
 
-  def print_summary
+  def print_assessment_playground_summary
     lecture = Lecture.joins(:tutorials).distinct.first
     return unless lecture
 
