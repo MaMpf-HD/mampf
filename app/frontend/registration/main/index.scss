@@ -5,6 +5,27 @@
   overflow: hidden;
 }
 
+.student-registration-campaign-headline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.student-registration-campaign-title {
+  line-height: 1.2;
+}
+
+.student-registration-campaign-deadline {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  white-space: nowrap;
+  text-align: right;
+}
+
 .student-registration-campaign-instruction {
   font-weight: 600;
 }
@@ -32,12 +53,12 @@
   margin-top: 0.75rem;
 }
 
-.student-registration-tile-rank {
-  white-space: nowrap;
-}
-
 .student-registration-rank-button {
   min-width: 2.75rem;
+}
+
+.student-registration-rank-actions > form {
+  margin-bottom: 0;
 }
 
 .tutorial-gtile--student .tutorial-gtile-actions > form {

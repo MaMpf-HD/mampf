@@ -269,8 +269,8 @@ en:
       course_code: "Course code"
       campaign_main: "Registration process: Main registration"
       eligibility_title: "Eligibility"
-      fcfs_instruction: "Select one option. Available seats are assigned immediately."
-      preference_instruction: "Rank up to three options. Your choice is saved immediately. Allocation is calculated after the deadline."
+      fcfs_instruction: "Select one option."
+      preference_instruction: "Rank up to three options. Allocation is calculated after the deadline."
       preference_rank_options:
         "1": "1st"
         "2": "2nd"

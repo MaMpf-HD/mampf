@@ -269,8 +269,8 @@ de:
       course_code: "Kurscode"
       campaign_main: "Anmeldeverfahren: Allgemeine Anmeldung"
       eligibility_title: "Berechtigung"
-      fcfs_instruction: "Wähle eine Option. Freie Plätze werden direkt vergeben."
-      preference_instruction: "Ordne bis zu drei Optionen nach Präferenz. Deine Auswahl wird sofort gespeichert. Die Zuteilung erfolgt nach Ablauf der Frist."
+      fcfs_instruction: "Wähle eine Option."
+      preference_instruction: "Ordne bis zu drei Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
       preference_rank_options:
         "1": "1."
         "2": "2."

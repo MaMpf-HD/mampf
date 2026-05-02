@@ -149,31 +149,6 @@ module Registration
       "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}"
     end
 
-    def confirm_status_badge(status)
-      case status
-      when "confirmed"
-        content_tag(:span, I18n.t("basics.confirmed"),
-                    class: "badge fw-medium small w-auto text-bg-success")
-      when "pending"
-        content_tag(:span, I18n.t("basics.pending"),
-                    class: "badge fw-medium small w-auto text-bg-warning")
-      when "rejected"
-        content_tag(:span, I18n.t("basics.rejected"),
-                    class: "badge fw-medium small w-auto text-bg-danger")
-      when "dismissed"
-        content_tag(:span, I18n.t("basics.dismissed"),
-                    class: "badge fw-medium small w-auto text-bg-danger")
-      else
-        content_tag(:span, "")
-      end
-    end
-
-    def sum_of_nullable(values)
-      return nil if values.any?(&:nil?)
-
-      values.sum
-    end
-
     def item_tile_metadata_rows(item)
       TABLE_CONFIG[item.registerable_type].map do |col|
         {

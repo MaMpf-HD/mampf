@@ -1,7 +1,8 @@
 <div>
   <div
     class="
-      row row-cols-1 row-cols-md-2 row-cols-xl-3
+      row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
+      row-cols-xxl-5
       student-registration-tile-grid
     "
   >
@@ -18,21 +19,11 @@
                    tile_metadata_rows: metadata_rows,
                    tile_variant_class: "tutorial-gtile--campaign",
                    tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
-                   tile_status_content: capture do
-                     if selected_rank
-                       concat(content_tag(
-                         :span,
-                         class: "badge rounded-pill text-primary border border-primary-subtle px-2 py-1 small student-registration-tile-rank"
-                       ) do
-                         safe_join([
-                           "#{t('registration.user_registration.rank')}: ",
-                           content_tag(:span, selected_rank, class: "fw-bold")
-                         ])
-                       end)
-                     end
-                   end,
                    tile_actions_content: capture do
-                     concat(content_tag(:div, class: "d-flex gap-1") do
+                     concat(content_tag(
+                       :div,
+                       class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
+                     ) do
                        ranks = 1..Registration::UserRegistration::PreferencesHandler::MAX_PREFERENCES
                        safe_join(ranks.map do |rank|
                          button_to(

@@ -1,80 +1,24 @@
-<% campaignable_host = details.campaignable_host %>
 <% eligibility = details.eligibility %>
 <% items = details.items %>
 <% item_preferences = details.item_preferences %>
-<% results = details.results %>
-<% total_capacity = sum_of_nullable(items.map(&:capacity)) %>
 
 <div class="card mb-3 campaign-section registration-campaign-card student-registration-campaign-card">
   <div class="card-header registration-campaign-card-header">
-    <div class="mb-3">
-      <h6 class="mb-0 fw-semibold">
-        <%= student_registration_campaign_title(campaign) %>
-      </h6>
-    </div>
-
-    <div class="row g-2 align-items-start text-start">
-      <div class="col-6 col-md-3">
-        <small class="d-block text-muted fw-normal">
-          <%= t("registration.campaign.index.columns.deadline") %>
-        </small>
-
-        <div class="fw-semibold">
-          <% if campaign.registration_deadline %>
-            <%= format_date(campaign.registration_deadline) %>
-          <% end %>
-        </div>
+    <div class="student-registration-campaign-headline">
+      <div>
+        <h6 class="mb-0 fw-semibold student-registration-campaign-title">
+          <%= student_registration_campaign_title(campaign) %>
+        </h6>
       </div>
 
-      <div class="col-6 col-md-3">
-        <small class="d-block text-muted fw-normal">
-          <%= t("basics.status") %>
-        </small>
-
-        <div>
-          <span class="<%= class_names("badge", "bg-#{campaign_badge_color(campaign)}") %>">
-            <%= t("registration.campaign.status.#{campaign.status}") %>
+      <% if campaign.registration_deadline %>
+        <div class="student-registration-campaign-deadline text-muted small">
+          <span class="me-2">
+            <%= t("registration.campaign.index.columns.deadline") %>
           </span>
-        </div>
-      </div>
 
-      <div class="col-6 col-md-3">
-        <small class="d-block text-muted fw-normal">
-          <%= t("basics.capacity") %>
-        </small>
-
-        <div>
-          <%= nullable_capacity_display(total_capacity) %>
-          <%= t("basics.seats") %>
-        </div>
-      </div>
-
-      <% if campaign.status == "completed" %>
-        <div class="col-6 col-md-3">
-          <small class="d-block text-muted fw-normal">
-            <%= t("registration.user_registration.title") %>
-          </small>
-
-          <div>
-            <% if campaign.user_registration_confirmed?(current_user) %>
-              <span class="badge text-bg-success">
-                <%= t("basics.assigned") %>
-              </span>
-            <% else %>
-              <span class="badge text-bg-danger">
-                <%= t("basics.dismissed") %>
-              </span>
-            <% end %>
-          </div>
-        </div>
-      <% elsif campaign.only_planning_cohort? %>
-        <div class="col-6 col-md-3">
-          <small class="d-block text-muted fw-normal">
-            <%= t("registration.user_registration.planning") %>
-          </small>
-
-          <span class="badge text-bg-info">
-            <%= t("registration.user_registration.planning") %>
+          <span class="fw-semibold text-body">
+            <%= format_date(campaign.registration_deadline) %>
           </span>
         </div>
       <% end %>
@@ -103,15 +47,11 @@
     <% if campaign.first_come_first_served? %>
       <%= render partial: 'registration/main/fcfs/select_fcfs',
                    locals: { campaign: campaign,
-                             campaignable_host: campaignable_host,
-                             results: results,
                              items: items } %>
     <% else %>
       <%= render partial: 'registration/main/pb/select_preference',
                    locals: { campaign: campaign,
-                             campaignable_host: campaignable_host,
                              item_preferences: item_preferences,
-                             results: results,
                              items: items } %>
     <% end %>
   </div>

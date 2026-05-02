@@ -28,7 +28,8 @@
     <div>
       <div
         class="
-          row row-cols-1 row-cols-md-2 row-cols-xl-3
+          row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
+          row-cols-xxl-5
           student-registration-tile-grid
         "
       >
@@ -48,35 +49,6 @@
                          "tutorial-gtile--full": item_full
                        ),
                        tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
-                       tile_status_content: capture do
-                         if !item.user_registered?(current_user)
-                           if item.still_has_capacity?
-                             concat(content_tag(
-                               :span,
-                               t("basics.available"),
-                               class: "badge bg-light-blue-lighten-4 text-dark fw-medium small"
-                             ))
-                           else
-                             concat(content_tag(
-                               :span,
-                               t("basics.full"),
-                               class: "badge bg-grey-lighten-4 text-dark fw-medium small"
-                             ))
-                           end
-                         else
-                           concat(content_tag(
-                             :span,
-                             t("registration.user_registration.registered"),
-                             class: "badge text-bg-success fw-medium small"
-                           ))
-                         end
-
-                         if campaign.status == "completed"
-                           concat(confirm_status_badge(
-                             results[:status_items_selected][item.id]
-                           ))
-                         end
-                       end,
                        tile_actions_content: capture do
                          if item.user_registered?(current_user)
                            concat(button_to(
