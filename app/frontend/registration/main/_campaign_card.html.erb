@@ -2,7 +2,12 @@
 <% items = details.items %>
 <% item_preferences = details.item_preferences %>
 
-<div class="card mb-3 campaign-section registration-campaign-card student-registration-campaign-card">
+<div
+  class="
+    card mb-3 campaign-section registration-campaign-card
+    student-registration-campaign-card
+  "
+>
   <div class="card-header registration-campaign-card-header">
     <div class="student-registration-campaign-headline">
       <div>
@@ -11,17 +16,15 @@
         </h6>
       </div>
 
-      <% if campaign.registration_deadline %>
-        <div class="student-registration-campaign-deadline text-muted small">
-          <span class="me-2">
-            <%= t("registration.campaign.index.columns.deadline") %>
-          </span>
+      <div class="student-registration-campaign-deadline text-muted small">
+        <span class="me-2">
+          <%= t("registration.campaign.index.columns.deadline") %>
+        </span>
 
-          <span class="fw-semibold text-body">
-            <%= format_date(campaign.registration_deadline) %>
-          </span>
-        </div>
-      <% end %>
+        <span class="fw-semibold text-body">
+          <%= format_date(campaign.registration_deadline) %>
+        </span>
+      </div>
     </div>
   </div>
 
