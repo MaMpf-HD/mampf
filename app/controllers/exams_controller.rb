@@ -106,9 +106,15 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       if @exam.update(exam_params)
+        reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
+        reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
         @exam.load_registration_deadline
         format.turbo_stream do
-          flash[:success] = t("assessment.exam_updated")
+          flash[:success] = if reopen_after_deadline_fix
+            t("registration.campaign.reopened")
+          else
+            t("assessment.exam_updated")
+          end
           if ["settings", "registration"].include?(params[:tab])
             render turbo_stream: [
               turbo_stream.update(
@@ -130,6 +136,7 @@ class ExamsController < ApplicationController
         end
       else
         format.turbo_stream do
+          @exam.reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
           if ["settings", "registration"].include?(params[:tab])
             render turbo_stream: turbo_stream.update(
               "exams_container",
@@ -260,5 +267,18 @@ class ExamsController < ApplicationController
         tasks: tasks,
         task: task
       )
+    end
+
+    def reopen_exam_campaign_after_deadline_fix
+      campaign = @exam.registration_campaign
+      return unless campaign && !campaign.completed?
+
+      was_processing = campaign.processing?
+
+      campaign.transaction do
+        campaign.update!(status: :open,
+                         registration_deadline: @exam.registration_deadline)
+        campaign.reset_allocation_results! if was_processing
+      end
     end
 end

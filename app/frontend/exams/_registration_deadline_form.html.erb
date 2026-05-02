@@ -1,6 +1,12 @@
 <% deadline_value = exam.registration_deadline ||
                     exam.registration_campaign&.registration_deadline %>
 
+<% reopen_after_deadline_fix = exam.reopen_after_deadline_fix %>
+
+<% submit_label = reopen_after_deadline_fix ?
+     t("registration.campaign.actions.reopen") :
+     t("buttons.save") %>
+
 <%= form_with model: exam,
               url: exam_path(exam, tab: "registration"),
               data: {
@@ -8,6 +14,10 @@
                 controller: "exams--registration-settings",
                 action: "turbo:submit-end->exams--registration-settings#resetAfterSave"
               } do |f| %>
+  <% if reopen_after_deadline_fix %>
+    <%= hidden_field_tag :reopen_after_deadline_fix, "1" %>
+  <% end %>
+
   <div class="row mb-3">
     <div class="col-md-2">
       <%= f.label :registration_deadline,
@@ -25,10 +35,7 @@
       >
         <div class="flex-grow-1">
           <%= f.text_field :registration_deadline,
-                           class: class_names(
-                             "form-control td-input",
-                             "is-invalid": exam.errors[:registration_deadline].present?
-                           ),
+                           class: "form-control td-input",
                            data: {
                              td_target: "#exam-settings-deadline-picker",
                              exams__registration_settings_target: "registrationDeadline",
@@ -37,12 +44,6 @@
                            value: deadline_value.try(:strftime, "%Y-%m-%d %H:%M") ||
                                   deadline_value,
                            autocomplete: "off" %>
-
-          <% if exam.errors[:registration_deadline].present? %>
-            <div class="invalid-feedback d-block">
-              <%= exam.errors[:registration_deadline].join(", ") %>
-            </div>
-          <% end %>
         </div>
 
         <span
@@ -59,7 +60,7 @@
   </div>
 
   <div
-    class="mt-3 text-center d-none"
+    class="mt-3 mb-4 text-center d-none"
     data-exams--registration-settings-target="warning"
   >
     <div class="d-inline-block">
@@ -71,13 +72,13 @@
         <%= t("warnings.unsaved_changes") %>
       </div>
 
-      <%= f.submit t("buttons.save"),
-                   class: "btn btn-primary me-2 d-none",
+      <%= f.submit submit_label,
+                   class: "btn allocation-action-secondary me-2 d-none",
                    data: { exams__registration_settings_target: "submitButton" } %>
 
       <%= button_tag t("buttons.cancel"),
                      type: "button",
-                     class: "btn btn-secondary d-none",
+                     class: "btn btn-outline-secondary d-none",
                      data: {
                        exams__registration_settings_target: "cancelButton",
                        action: "click->exams--registration-settings#cancel"

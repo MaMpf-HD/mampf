@@ -365,6 +365,31 @@ RSpec.describe("Exams", type: :request) do
                 as: :turbo_stream
           expect(response.body).to include("exams_container")
         end
+
+        it "reopens the campaign when saving a deadline fix for reopen" do
+          Flipper.enable(:registration_campaigns)
+          campaign = exam.registration_campaign
+          campaign.update!(status: :closed)
+
+          deadline = 1.week.from_now.beginning_of_hour
+
+          patch(exam_path(exam),
+                params: {
+                  exam: {
+                    registration_deadline: deadline.strftime("%Y-%m-%d %H:%M")
+                  },
+                  tab: "registration",
+                  reopen_after_deadline_fix: "1"
+                },
+                as: :turbo_stream)
+
+          campaign.reload
+          expect(campaign).to be_open
+          expect(campaign.registration_deadline).to be_within(1.minute).of(deadline)
+          expect(response).to have_http_status(:ok)
+        ensure
+          Flipper.disable(:registration_campaigns)
+        end
       end
 
       context "with invalid parameters" do

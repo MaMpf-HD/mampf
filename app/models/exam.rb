@@ -8,7 +8,7 @@ class Exam < ApplicationRecord
   include Assessment::Pointable
   include Assessment::Gradable
 
-  attr_accessor :registration_deadline
+  attr_accessor :registration_deadline, :reopen_after_deadline_fix
 
   validates :title, presence: true
   validates :capacity, numericality: { greater_than: 0, allow_nil: true }

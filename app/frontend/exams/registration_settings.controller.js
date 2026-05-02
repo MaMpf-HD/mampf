@@ -7,7 +7,13 @@ export default class extends Controller {
     if (!this.hasRegistrationDeadlineTarget) return;
 
     this.storeOriginalValues();
-    this.hideSubmitElements();
+
+    if (this.registrationDeadlineTarget.classList.contains("is-invalid")) {
+      this.showSubmitElements();
+    }
+    else {
+      this.hideSubmitElements();
+    }
   }
 
   storeOriginalValues() {

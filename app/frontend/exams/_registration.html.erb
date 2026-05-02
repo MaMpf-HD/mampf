@@ -33,6 +33,7 @@
                exam: exam,
                campaign: campaign,
                bp: bp,
+               reopen_after_deadline_fix: exam.reopen_after_deadline_fix,
                allocation_workspace_id: allocation_workspace_id %>
     <% unless campaign.completed? %>
       <%= render "exams/registration_deadline_form", exam: exam %>

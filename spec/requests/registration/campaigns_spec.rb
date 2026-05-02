@@ -713,6 +713,41 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       expect(response.body).to include(frame_id)
     end
 
+    it "renders an inline deadline error on reopen failure with frame_id" do
+      exam_campaign.update_columns(registration_deadline: 1.day.ago)
+
+      patch reopen_registration_campaign_path(exam_campaign),
+            params: { frame_id: frame_id },
+            as: :turbo_stream
+
+      document = Nokogiri::HTML.fragment(response.body)
+      error_nodes = document.css(
+        "turbo-stream[target='#{frame_id}'] .invalid-feedback[aria-live='polite']"
+      )
+      retry_submit = document.at_css(
+        "turbo-stream[target='#{frame_id}'] " \
+        "input[data-exams--registration-settings-target='submitButton']"
+      )
+      cancel_button = document.css(
+        "turbo-stream[target='#{frame_id}'] button"
+      ).find do |node|
+        node.text.squish == I18n.t("buttons.cancel")
+      end
+      header_reopen_button = document.at_css(
+        "turbo-stream[target='#{frame_id}'] " \
+        "form.button_to[action$='/reopen'] button"
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(frame_id)
+      expect(response.body).to include("is-invalid")
+      expect(error_nodes.size).to eq(1)
+      expect(error_nodes.first.text).to be_present
+      expect(header_reopen_button).to be_nil
+      expect(retry_submit).to be_present
+      expect(retry_submit["class"]).to include("allocation-action-secondary")
+      expect(cancel_button["class"]).to include("btn-outline-secondary")
+    end
     it "renders exam-specific partial on reopen with frame_id" do
       exam_campaign.update!(status: :closed)
 

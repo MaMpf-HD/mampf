@@ -185,8 +185,13 @@ module Registration
         end
       end
     rescue ActiveRecord::RecordInvalid
-      respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
-                         redirect_path: registration_campaign_path(@campaign))
+      if exam_campaign_context?
+        render_exam_update(exam: exam_with_campaign_errors,
+                           status: :unprocessable_content)
+      else
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
+      end
     end
 
     private
@@ -301,8 +306,7 @@ module Registration
           @campaign.exam_campaign?
       end
 
-      def render_exam_update
-        exam = @campaign.exam
+      def render_exam_update(exam: @campaign.exam, status: :ok)
         render turbo_stream: [
           turbo_stream.replace(
             target_frame_id,
@@ -320,7 +324,23 @@ module Registration
             locals: { exam: exam }
           ),
           stream_flash
-        ].compact
+        ].compact, status: status
+      end
+
+      def exam_with_campaign_errors
+        exam = @campaign.exam
+        exam.load_registration_deadline
+        exam.reopen_after_deadline_fix = true
+        exam.registration_deadline = params[:registration_deadline].presence ||
+                                     @campaign.registration_deadline
+
+        @campaign.errors.each do |error|
+          next unless error.attribute == :registration_deadline
+
+          exam.errors.add(:registration_deadline, error.type, **error.options)
+        end
+
+        exam
       end
   end
 end
