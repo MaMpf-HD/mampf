@@ -139,19 +139,6 @@ module Registration
       item_preferences.find { |pref| pref.item.id == item.id }&.rank
     end
 
-    def preference_rank_choices(item, item_preferences)
-      selected_rank = preference_rank_for(item, item_preferences)
-      count = selected_rank ? item_preferences.size : item_preferences.size + 1
-
-      1..[count, Registration::UserRegistration::PreferencesHandler::MAX_PREFERENCES].min
-    end
-
-    def preference_rank_option_label(rank)
-      rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
-      t("registration.user_registration.actions.make_preference_rank",
-        rank: rank_label)
-    end
-
     def preference_rank_button_tooltip(rank)
       rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
       t("registration.user_registration.actions.rank_option_tooltip",
@@ -187,10 +174,6 @@ module Registration
       values.sum
     end
 
-    def nil_or_positive_integer?(value)
-      value.nil? || (value.is_a?(Integer) && value.positive?)
-    end
-
     def item_tile_metadata_rows(item)
       TABLE_CONFIG[item.registerable_type].map do |col|
         {
@@ -203,6 +186,10 @@ module Registration
 
     def freely_registerable?(group_type)
       group_type == "Cohort"
+    end
+
+    def nullable_capacity_display(capacity)
+      capacity.nil? ? "\u221E" : capacity.to_s
     end
 
     private
@@ -237,21 +224,6 @@ module Registration
         return if col[:header] == "basics.description"
 
         t(col[:header])
-      end
-
-      def nullable_capacity_display(capacity)
-        capacity.nil? ? "\u221E" : capacity.to_s
-      end
-
-      def status_campaign_style(status)
-        case status
-        when "open", "completed"
-          "bg-success-subtle text-success"
-        when "closed", "processing"
-          "bg-secondary-subtle text-secondary"
-        else
-          "bg-info-subtle text-info"
-        end
       end
   end
 end

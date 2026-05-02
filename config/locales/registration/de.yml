@@ -262,11 +262,6 @@ de:
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
-        increase_priority: "Priorität erhöhen"
-        decrease_priority: "Priorität verringern"
-        remove_option: "Option entfernen"
-        rank_option: "Option einstufen"
-        make_preference_rank: "Als %{rank} Präferenz setzen"
         rank_option_tooltip: "Als %{rank} Präferenz setzen"
       registrations: "Anmeldungen"
       title: "Deine Anmeldung"
@@ -274,12 +269,8 @@ de:
       course_code: "Kurscode"
       campaign_main: "Anmeldeverfahren: Allgemeine Anmeldung"
       eligibility_title: "Berechtigung"
-      preferences_title: Deine ausgewählten Einstellungen
-      success_preferences_title: Deine erfolgreichen Einstellungen
-      options_title: "Verfügbare Optionen (Maximal 3 Optionen erlaubt)"
       fcfs_instruction: "Wähle eine Option. Freie Plätze werden direkt vergeben."
       preference_instruction: "Ordne bis zu drei Optionen nach Präferenz. Deine Auswahl wird sofort gespeichert. Die Zuteilung erfolgt nach Ablauf der Frist."
-      preference_hint: "Lege die Präferenz einer Option direkt über die Rang-Buttons fest."
       preference_rank_options:
         "1": "1."
         "2": "2."
@@ -290,9 +281,7 @@ de:
       seats_remaining: "Verbleibende Plätze"
       registered: "Registriert"
       not_registered: "Nicht registriert"
-      not_freely_registerable_info: "Es ist nur eine Option pro Gruppentyp erlaubt"
       register_now: "Jetzt registrieren"
-      need_save: Du hast ungespeicherte Änderungen. Klicke auf "Speichern", um Deine Einstellungen zu aktualisieren.
       currently_registered: "Aktuell registriert %{name}. Zum Wechsel in eine andere Gruppe austreten."
       withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.

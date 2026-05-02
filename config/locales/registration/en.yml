@@ -262,11 +262,6 @@ en:
       preferences: "Preferences"
       actions:
         remove_user: "Remove user from registration process"
-        increase_priority: "Increase priority"
-        decrease_priority: "Decrease priority"
-        remove_option: "Remove option"
-        rank_option: "Rank option"
-        make_preference_rank: "Make %{rank} preference"
         rank_option_tooltip: "Set as %{rank} preference"
       registrations: "Registrations"
       title: "Your Registration"
@@ -274,12 +269,8 @@ en:
       course_code: "Course code"
       campaign_main: "Registration process: Main registration"
       eligibility_title: "Eligibility"
-      preferences_title: Your selected preferences
-      success_preferences_title: Your successful selections
-      options_title: "Available options (maximum 3 options are allowed)"
       fcfs_instruction: "Select one option. Available seats are assigned immediately."
       preference_instruction: "Rank up to three options. Your choice is saved immediately. Allocation is calculated after the deadline."
-      preference_hint: "Set an option's preference directly with the rank buttons."
       preference_rank_options:
         "1": "1st"
         "2": "2nd"
@@ -290,9 +281,7 @@ en:
       seats_remaining: "Seats remaining"
       registered: "Registered"
       not_registered: "Not registered"
-      not_freely_registerable_info: "Only one option is allowed per group type"
       register_now: "Register now"
-      need_save: You have unsaved changes. Click “Save” to update your preferences
       currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."
       withdraw: "Withdraw"
       closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.

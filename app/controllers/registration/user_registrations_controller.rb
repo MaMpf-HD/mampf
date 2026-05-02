@@ -2,10 +2,9 @@ module Registration
   class UserRegistrationsController < ApplicationController
     helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
-    before_action :set_campaign, only: [:create, :destroy, :reset_preferences,
-                                        :update, :destroy_for_user]
+    before_action :set_campaign, only: [:create, :destroy, :destroy_for_user]
     before_action :set_locale
-    before_action :set_item, only: [:create, :destroy, :up, :down, :add, :remove]
+    before_action :set_item, only: [:create, :destroy, :add]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -46,31 +45,11 @@ module Registration
                                              "registration_success"))
     end
 
-    def update
-      pref_items = UserRegistration::PreferencesHandler
-                   .new.pref_item_build_for_save(params[:preferences_json])
-      result = Registration::UserRegistration::LecturePreferenceEditService
-               .new(@campaign, current_user).update!(pref_items)
-      respond_to_student_registration(result,
-                                      I18n.t("registration.user_registration.messages." \
-                                             "registration_success"))
-    end
-
     def destroy
       result = Registration::UserRegistration::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages.withdrawn"))
-    end
-
-    def up
-      locals = handle_preference_action(:up)
-      rerender_preferences(locals)
-    end
-
-    def down
-      locals = handle_preference_action(:down)
-      rerender_preferences(locals)
     end
 
     def add
@@ -84,17 +63,6 @@ module Registration
         result,
         I18n.t("registration.user_registration.messages.preferences_saved")
       )
-    end
-
-    def remove
-      locals = handle_preference_action(:remove)
-      rerender_preferences(locals)
-    end
-
-    def reset_preferences
-      locals = Registration::Campaign::CampaignDetailsService.new(@campaign, current_user)
-                                                             .preferences_info
-      rerender_preferences(locals)
     end
 
     private
@@ -128,14 +96,6 @@ module Registration
             fallback_location: lecture_campaign_registrations_path(@campaign.campaignable)
           )
         end
-      end
-
-      def rerender_preferences(locals)
-        render turbo_stream: turbo_stream.update(
-          view_context.dom_id(@campaign, :preferences_workspace),
-          partial: "registration/main/pb/preferences_workspace",
-          locals: locals
-        )
       end
 
       def evaluate_turbo_stream_response
@@ -237,21 +197,6 @@ module Registration
 
         respond_with_flash(:alert, t("registration.lecture.not_found"),
                            fallback_location: root_path)
-      end
-
-      def handle_preference_action(action)
-        @campaign = @item.registration_campaign
-        items = @campaign.registration_items.includes(:user_registrations)
-        handler = UserRegistration::PreferencesHandler.new
-        item_preferences = if action == :add
-          handler.add(params[:item_id], params[:preferences_json], params[:rank])
-        else
-          handler.public_send(action, params[:item_id], params[:preferences_json])
-        end
-        @campaign.reload
-        { item_preferences: item_preferences,
-          campaign: @campaign,
-          items: items }
       end
   end
 end

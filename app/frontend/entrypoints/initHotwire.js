@@ -32,9 +32,6 @@ window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceCon
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
-import TouchedCheckController from "~/registration/touched_check/touched_check.controller.js";
-window.Stimulus.register("touched-check", TouchedCheckController);
-
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
