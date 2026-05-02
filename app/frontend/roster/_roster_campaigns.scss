@@ -80,15 +80,15 @@
   .registration-campaign-start-btn {
     border: 1px solid $mampf-blue;
     border-radius: 0.55rem;
-    background: linear-gradient(160deg, mampf-blue(0.95), mampf-blue(0.85));
-    color: #fff;
+    background: linear-gradient(160deg, mampf-blue(0.12), mampf-blue(0.06));
+    color: $mampf-blue;
     font-weight: 600;
 
     &:hover,
     &:focus {
       border-color: $mampf-blue-focus;
-      background: linear-gradient(160deg, $mampf-blue-focus, $mampf-blue);
-      color: #fff;
+      background: linear-gradient(160deg, mampf-blue(0.16), mampf-blue(0.09));
+      color: $mampf-blue-focus;
     }
   }
 

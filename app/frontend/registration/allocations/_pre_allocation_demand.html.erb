@@ -70,7 +70,7 @@
         <% dashboard.demand_per_item.each do |data| %>
           <% hot = data[:capacity] && data[:first] > data[:capacity] %>
 
-          <tr class="<%= 'table-warning' if hot %>">
+          <tr class="<%= 'allocation-demand-row--hot' if hot %>">
             <td><%= data[:item].title %></td>
 
             <td class="text-end">

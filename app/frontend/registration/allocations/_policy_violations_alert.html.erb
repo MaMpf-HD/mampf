@@ -14,7 +14,7 @@
      violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
    end %>
 
-<div class="alert alert-danger">
+<div class="allocation-status-panel allocation-status-panel--danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
 
   <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
@@ -94,7 +94,7 @@
       <li class="mb-1">
         <strong><%= first[:name] %></strong> (<%= first[:email] %>)
         <% violations.each do |v| %>
-          <span class="badge bg-danger-subtle text-danger ms-1">
+          <span class="badge bg-danger-subtle text-danger-emphasis ms-1">
             <%= t("registration.policy.kinds.#{v[:policy]}") %>
 
             <% if v[:policy] == "institutional_email" %>
