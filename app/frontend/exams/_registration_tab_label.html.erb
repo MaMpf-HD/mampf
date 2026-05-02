@@ -1,24 +1,15 @@
-<% campaign = exam.registration_campaign
-   base = if exam.skip_campaigns || campaign&.completed?
-            t("assessment.roster")
-          else
-            t("assessment.registrations_label")
-          end
-   needs_attention = !exam.skip_campaigns &&
-                     !exam.new_record? &&
-                     (campaign.nil? || campaign.draft?)
-   tooltip = t("assessment.registration_tab.needs_attention_tooltip") %>
+<% ui_state = ExamCampaignUiState.new(exam: exam) %>
 
 <%= turbo_frame_tag "exam_#{exam.id}_registration_tab_label",
                     class: "d-inline" do %>
-  <%= base %>
+  <%= ui_state.registration_tab_label %>
 
-  <% if needs_attention %>
+  <% if ui_state.registration_tab_needs_attention? %>
     <span
       class="badge rounded-pill bg-warning ms-1"
       style="width: 0.5rem; height: 0.5rem; padding: 0;"
-      title="<%= tooltip %>"
-      aria-label="<%= tooltip %>"
+      title="<%= ui_state.registration_tab_tooltip %>"
+      aria-label="<%= ui_state.registration_tab_tooltip %>"
     ></span>
   <% end %>
 <% end %>

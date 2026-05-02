@@ -1,12 +1,5 @@
-<% campaign = exam.registration_campaign %>
+<% ui_state = ExamCampaignUiState.new(exam: exam) %>
 
-<% if campaign && [:draft, :open, :closed, :processing].include?(campaign.status.to_sym) %>
-  <span class="<%= class_names("badge", "bg-#{campaign_badge_color(campaign)}") %>">
-    <%= t("registration.campaign.status.#{campaign.status}") %>
-  </span>
-<% else %>
-  <% phase = exam.status_phase %>
-  <span class="<%= class_names("badge", Exam::STATUS_PHASE_BADGE_CLASSES[phase]) %>">
-    <%= t("assessment.exam_status.#{phase}") %>
-  </span>
-<% end %>
+<span class="<%= class_names("badge", ui_state.status_badge_class) %>">
+  <%= ui_state.status_label %>
+</span>
