@@ -178,6 +178,19 @@ module Registration
       end
     end
 
+    def reopen!(registration_deadline: nil)
+      with_lock do
+        return if completed?
+
+        was_processing = processing?
+        attributes = { status: :open }
+        attributes[:registration_deadline] = registration_deadline if registration_deadline.present?
+
+        update!(attributes)
+        reset_allocation_results! if was_processing
+      end
+    end
+
     def apply_rejections!(violations,
                           default_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
       return if violations.empty?

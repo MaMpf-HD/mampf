@@ -103,10 +103,11 @@ class ExamsController < ApplicationController
 
   def update
     authorize! :update, @exam
+    reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
+    update_params = exam_update_params(reopen_after_deadline_fix: reopen_after_deadline_fix)
 
     respond_to do |format|
-      if @exam.update(exam_params)
-        reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
+      if @exam.update(update_params)
         reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
         @exam.load_registration_deadline
         format.turbo_stream do
@@ -256,6 +257,20 @@ class ExamsController < ApplicationController
                            :lecture_id])
     end
 
+    def exam_update_params(reopen_after_deadline_fix: false)
+      permitted = exam_params
+      return permitted if deadline_editable?(reopen_after_deadline_fix: reopen_after_deadline_fix)
+
+      permitted.except(:registration_deadline)
+    end
+
+    def deadline_editable?(reopen_after_deadline_fix: false)
+      return true if reopen_after_deadline_fix
+
+      campaign = @exam.registration_campaign
+      campaign && (campaign.draft? || campaign.open?)
+    end
+
     def build_dashboard_component(active_tab: @active_tab, task: nil)
       assessment = @exam.assessment
       tasks = assessment&.tasks&.order(:position) || []
@@ -273,12 +288,6 @@ class ExamsController < ApplicationController
       campaign = @exam.registration_campaign
       return unless campaign && !campaign.completed?
 
-      was_processing = campaign.processing?
-
-      campaign.transaction do
-        campaign.update!(status: :open,
-                         registration_deadline: @exam.registration_deadline)
-        campaign.reset_allocation_results! if was_processing
-      end
+      campaign.reopen!(registration_deadline: @exam.registration_deadline)
     end
 end

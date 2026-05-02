@@ -264,6 +264,20 @@ RSpec.describe("Exams", type: :request) do
           )
           expect(response.body).not_to include("-policies\"")
         end
+
+        it "renders the deadline form disabled for a closed campaign" do
+          exam.registration_campaign.update!(status: :closed)
+
+          get exam_path(exam), params: { tab: "registration" }, as: :turbo_stream
+
+          document = Nokogiri::HTML.fragment(response.body)
+          deadline_input = document.at_css("#exam_registration_deadline")
+
+          expect(response).to have_http_status(:success)
+          expect(deadline_input).to be_present
+          expect(deadline_input["disabled"]).to eq("disabled")
+          expect(response.body).not_to include("exams--registration-settings")
+        end
       end
     end
 
@@ -386,6 +400,30 @@ RSpec.describe("Exams", type: :request) do
           campaign.reload
           expect(campaign).to be_open
           expect(campaign.registration_deadline).to be_within(1.minute).of(deadline)
+          expect(response).to have_http_status(:ok)
+        ensure
+          Flipper.disable(:registration_campaigns)
+        end
+
+        it "does not change the deadline for a closed campaign without reopen mode" do
+          Flipper.enable(:registration_campaigns)
+          campaign = exam.registration_campaign
+          campaign.update!(status: :closed)
+          original_deadline = campaign.registration_deadline
+
+          patch(exam_path(exam),
+                params: {
+                  exam: {
+                    registration_deadline: 1.week.from_now.beginning_of_hour.strftime(
+                      "%Y-%m-%d %H:%M"
+                    )
+                  },
+                  tab: "registration"
+                },
+                as: :turbo_stream)
+
+          campaign.reload
+          expect(campaign.registration_deadline).to eq(original_deadline)
           expect(response).to have_http_status(:ok)
         ensure
           Flipper.disable(:registration_campaigns)

@@ -3,17 +3,36 @@
 
 <% reopen_after_deadline_fix = exam.reopen_after_deadline_fix %>
 
+<% deadline_editable = local_assigns.fetch(
+  :deadline_editable,
+  reopen_after_deadline_fix || exam.registration_campaign&.draft? ||
+    exam.registration_campaign&.open?
+   ) %>
+
+<% form_data = { turbo: true } %>
+
+<% if deadline_editable %>
+  <% form_data[:controller] = "exams--registration-settings" %>
+  <% form_data[:action] =
+    "turbo:submit-end->exams--registration-settings#resetAfterSave" %>
+<% end %>
+
+<% input_data = { td_target: "#exam-settings-deadline-picker" } %>
+
+<% if deadline_editable %>
+  <% input_data[:exams__registration_settings_target] = "registrationDeadline" %>
+  <% input_data[:action] =
+       "change->exams--registration-settings#checkForChanges " \
+       "input->exams--registration-settings#checkForChanges" %>
+<% end %>
+
 <% submit_label = reopen_after_deadline_fix ?
      t("registration.campaign.actions.reopen") :
      t("buttons.save") %>
 
 <%= form_with model: exam,
               url: exam_path(exam, tab: "registration"),
-              data: {
-                turbo: true,
-                controller: "exams--registration-settings",
-                action: "turbo:submit-end->exams--registration-settings#resetAfterSave"
-              } do |f| %>
+        data: form_data do |f| %>
   <% if reopen_after_deadline_fix %>
     <%= hidden_field_tag :reopen_after_deadline_fix, "1" %>
   <% end %>
@@ -36,53 +55,58 @@
         <div class="flex-grow-1">
           <%= f.text_field :registration_deadline,
                            class: "form-control td-input",
-                           data: {
-                             td_target: "#exam-settings-deadline-picker",
-                             exams__registration_settings_target: "registrationDeadline",
-                             action: "change->exams--registration-settings#checkForChanges input->exams--registration-settings#checkForChanges"
-                           },
+                           data: input_data,
                            value: deadline_value.try(:strftime, "%Y-%m-%d %H:%M") ||
                                   deadline_value,
-                           autocomplete: "off" %>
+                           autocomplete: "off",
+                           disabled: !deadline_editable %>
         </div>
 
         <span
-          class="input-group-text td-picker-button"
+          class="
+            <%= class_names("input-group-text td-picker-button",
+            "disabled opacity-50": !deadline_editable) %>
+          "
           style="height: 38px"
-          role="button"
-          data-td-target="#exam-settings-deadline-picker"
-          data-td-toggle="datetimepicker"
+          role="<%= deadline_editable ? "button" : nil %>"
+          data-td-target="<%= deadline_editable ? "#exam-settings-deadline-picker" : nil %>"
+          data-td-toggle="<%= deadline_editable ? "datetimepicker" : nil %>"
         >
-          <i class="fas fa-calendar" data-td-toggle="datetimepicker"></i>
+          <i
+            class="fas fa-calendar"
+            data-td-toggle="<%= deadline_editable ? "datetimepicker" : nil %>"
+          ></i>
         </span>
       </div>
     </div>
   </div>
 
-  <div
-    class="mt-3 mb-4 text-center d-none"
-    data-exams--registration-settings-target="warning"
-  >
-    <div class="d-inline-block">
-      <div
-        class="alert alert-warning d-flex align-items-center mb-3"
-        role="alert"
-      >
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        <%= t("warnings.unsaved_changes") %>
+  <% if deadline_editable %>
+    <div
+      class="mt-3 mb-4 text-center d-none"
+      data-exams--registration-settings-target="warning"
+    >
+      <div class="d-inline-block">
+        <div
+          class="alert alert-warning d-flex align-items-center mb-3"
+          role="alert"
+        >
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <%= t("warnings.unsaved_changes") %>
+        </div>
+
+        <%= f.submit submit_label,
+                     class: "btn allocation-action-secondary me-2 d-none",
+                     data: { exams__registration_settings_target: "submitButton" } %>
+
+        <%= button_tag t("buttons.cancel"),
+                       type: "button",
+                       class: "btn btn-outline-secondary d-none",
+                       data: {
+                         exams__registration_settings_target: "cancelButton",
+                         action: "click->exams--registration-settings#cancel"
+                       } %>
       </div>
-
-      <%= f.submit submit_label,
-                   class: "btn allocation-action-secondary me-2 d-none",
-                   data: { exams__registration_settings_target: "submitButton" } %>
-
-      <%= button_tag t("buttons.cancel"),
-                     type: "button",
-                     class: "btn btn-outline-secondary d-none",
-                     data: {
-                       exams__registration_settings_target: "cancelButton",
-                       action: "click->exams--registration-settings#cancel"
-                     } %>
     </div>
-  </div>
+  <% end %>
 <% end %>

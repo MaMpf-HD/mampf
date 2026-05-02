@@ -9,6 +9,9 @@
 
 <% phase = exam.status_phase %>
 
+<% deadline_editable = exam.reopen_after_deadline_fix ||
+           campaign.draft? || campaign.open? %>
+
 <% pre_finalization =
      %i[draft registration_open registration_closed].include?(phase) %>
 
@@ -36,7 +39,9 @@
                reopen_after_deadline_fix: exam.reopen_after_deadline_fix,
                allocation_workspace_id: allocation_workspace_id %>
     <% unless campaign.completed? %>
-      <%= render "exams/registration_deadline_form", exam: exam %>
+      <%= render "exams/registration_deadline_form",
+                 exam: exam,
+                 deadline_editable: deadline_editable %>
     <% end %>
     <div class="row mb-3">
       <div class="col-md-2">
