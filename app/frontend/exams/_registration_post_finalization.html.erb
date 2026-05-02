@@ -6,7 +6,7 @@
            editable: true,
            exam: exam %>
 
-<% rejected = campaign.user_registrations.where(status: :rejected) %>
+<% rejected = local_assigns.fetch(:rejected_registrations) %>
 
 <% if rejected.any? %>
   <h6 class="text-muted fw-semibold small text-uppercase mt-4 mb-2">
@@ -24,7 +24,7 @@
       </thead>
 
       <tbody>
-        <% rejected.includes(:user).each do |reg| %>
+        <% rejected.each do |reg| %>
           <tr>
             <td><%= reg.user.name %></td>
             <td class="text-muted"><%= reg.user.email %></td>

@@ -1,40 +1,38 @@
-<% reopen_after_deadline_fix ||= false %>
-
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
   <div class="d-flex flex-wrap align-items-center gap-2">
-    <% if campaign.draft? %>
+    <% if show_draft_badge %>
       <span class="badge bg-secondary">
         <%= t("assessment.registration_tab.status.not_open") %>
       </span>
-    <% elsif !campaign.completed? %>
+    <% elsif show_registration_status_badge %>
       <%= render "exams/registration_campaign_status", campaign: campaign %>
     <% end %>
 
-    <% if campaign.completed? && campaign.updated_at %>
+    <% if finalized_on %>
       <span class="text-muted small">
         <%= t("assessment.registration_tab.finalized_on",
-              date: l(campaign.updated_at, format: :long)) %>
+              date: l(finalized_on, format: :long)) %>
       </span>
-    <% elsif campaign.open? || campaign.closed? || campaign.processing? %>
+    <% elsif registered_count %>
       <span class="text-muted small">
         <%= t("assessment.registration_tab.registered_count",
-              count: campaign.total_registrations_count) %>
+              count: registered_count) %>
       </span>
     <% end %>
   </div>
 
   <div class="d-flex flex-wrap gap-2">
-    <% if campaign.draft? %>
+    <% if show_open_action %>
       <%= open_campaign_button(campaign, params: bp) %>
-    <% elsif campaign.open? %>
+    <% elsif show_close_action %>
       <%= close_campaign_button(campaign, params: bp) %>
-    <% elsif campaign.closed? %>
-      <% unless reopen_after_deadline_fix %>
-        <%= reopen_campaign_button(campaign, params: bp) %>
-      <% end %>
-      <%= review_and_finalize_button(campaign,
-                                     params: { frame_id: allocation_workspace_id }) %>
-    <% elsif campaign.processing? %>
+    <% end %>
+
+    <% if show_reopen_action %>
+      <%= reopen_campaign_button(campaign, params: bp) %>
+    <% end %>
+
+    <% if show_review_and_finalize_action %>
       <%= review_and_finalize_button(campaign,
                                      params: { frame_id: allocation_workspace_id }) %>
     <% end %>
