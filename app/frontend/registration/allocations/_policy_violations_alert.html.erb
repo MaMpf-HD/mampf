@@ -14,19 +14,86 @@
      violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
    end %>
 
-<div class="alert alert-danger">
+<% display_violations = blocker_violations.uniq do |violation|
+     [violation[:user_id], violation[:policy]]
+   end %>
+
+<% grouped = display_violations.group_by { |violation| violation[:user_id] } %>
+
+<% policy_counts = display_violations.group_by { |violation| violation[:policy] }
+                                   .transform_values(&:size) %>
+
+<% perf_lecture = dashboard.performance_lecture %>
+
+<% certifications_by_user = if perf_lecture
+     StudentPerformance::Certification.where(
+       lecture: perf_lecture,
+       user_id: grouped.keys
+     ).index_by(&:user_id)
+   else
+     {}
+   end %>
+
+<% performance_entries = grouped.filter_map do |user_id, violations|
+     next unless violations.any? { |violation| violation[:policy] == "student_performance" }
+
+     first = violations.first
+     cert = certifications_by_user[user_id]
+     status_key = if cert&.failed?
+       :failed
+     elsif cert&.pending?
+       :pending
+     else
+       :no_cert
+     end
+
+     {
+       user_id: user_id,
+       first: first,
+       status_key: status_key,
+       other_violations: violations.reject do |violation|
+         violation[:policy] == "student_performance"
+       end,
+       can_defer: violations.none? do |violation|
+         violation[:blocker_kind] ==
+           Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+       end
+     }
+   end.sort_by do |entry|
+     [
+       { no_cert: 0, pending: 1, failed: 2 }.fetch(entry[:status_key]),
+       entry[:first][:email].to_s
+     ]
+   end %>
+
+<% performance_status_counts = performance_entries.group_by do |entry|
+     entry[:status_key]
+   end.transform_values(&:size) %>
+
+<% show_additional_blockers = performance_entries.any? do |entry|
+     entry[:other_violations].present?
+   end %>
+
+<% other_entries = grouped.filter_map do |user_id, violations|
+     next if violations.any? { |violation| violation[:policy] == "student_performance" }
+
+     {
+       user_id: user_id,
+       first: violations.first,
+       violations: violations,
+       can_defer: violations.none? do |violation|
+         violation[:blocker_kind] ==
+           Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+       end
+     }
+   end.sort_by { |entry| entry[:first][:email].to_s } %>
+
+<div class="allocation-status-panel allocation-status-panel--danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
 
   <strong><%= t("registration.allocation.errors.policy_violation_title") %></strong>
   — <%= t("registration.allocation.errors.policy_violation_desc") %>
 
-
-  <% display_violations = blocker_violations.uniq do |violation|
-       [violation[:user_id], violation[:policy]]
-     end %>
-  <% grouped = display_violations.group_by { |violation| violation[:user_id] } %>
-  <% policy_counts = display_violations.group_by { |violation| violation[:policy] }
-                                     .transform_values(&:size) %>
 
   <p class="mt-2 mb-2">
     <strong><%= grouped.size %></strong>
@@ -87,70 +154,6 @@
     <% end %>
   </div>
 
-  <% perf_lecture = dashboard.performance_lecture %>
-  <% certifications_by_user = if perf_lecture
-       StudentPerformance::Certification.where(
-         lecture: perf_lecture,
-         user_id: grouped.keys
-       ).index_by(&:user_id)
-     else
-       {}
-     end %>
-
-  <% performance_entries = grouped.filter_map do |user_id, violations|
-       next unless violations.any? { |violation| violation[:policy] == "student_performance" }
-
-       first = violations.first
-       cert = certifications_by_user[user_id]
-       status_key = if cert&.failed?
-         :failed
-       elsif cert&.pending?
-         :pending
-       else
-         :no_cert
-       end
-
-       {
-         user_id: user_id,
-         first: first,
-         status_key: status_key,
-         other_violations: violations.reject do |violation|
-           violation[:policy] == "student_performance"
-         end,
-         can_defer: violations.none? do |violation|
-           violation[:blocker_kind] ==
-             Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
-         end
-       }
-     end.sort_by do |entry|
-       [
-         { no_cert: 0, pending: 1, failed: 2 }.fetch(entry[:status_key]),
-         entry[:first][:email].to_s
-       ]
-     end %>
-
-  <% performance_status_counts = performance_entries.group_by do |entry|
-       entry[:status_key]
-     end.transform_values(&:size) %>
-
-  <% show_additional_blockers = performance_entries.any? do |entry|
-       entry[:other_violations].present?
-     end %>
-
-  <% other_entries = grouped.filter_map do |user_id, violations|
-       next if violations.any? { |violation| violation[:policy] == "student_performance" }
-
-       {
-         user_id: user_id,
-         first: violations.first,
-         violations: violations,
-         can_defer: violations.none? do |violation|
-           violation[:blocker_kind] ==
-             Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
-         end
-       }
-     end.sort_by { |entry| entry[:first][:email].to_s } %>
-
   <% if performance_entries.any? %>
     <div class="border border-danger-subtle rounded mt-3 mb-3 overflow-hidden">
       <div class="px-3 py-2 d-flex flex-wrap align-items-center gap-2 bg-danger-subtle">
@@ -160,7 +163,7 @@
 
         <span class="small text-muted">
           <%= t("registration.allocation.errors.policy_violation_count",
-                count: performance_entries.size) %>
+                  count: performance_entries.size) %>
         </span>
 
         <% [:no_cert, :pending, :failed].each do |status_key| %>
@@ -171,20 +174,20 @@
             <%= count %>
 
             <%= status_key == :no_cert ?
-                  t("registration.allocation.perf_evidence.no_cert") :
-                  t("student_performance.certifications.status.#{status_key}") %>
+                    t("registration.allocation.perf_evidence.no_cert") :
+                    t("student_performance.certifications.status.#{status_key}") %>
           </span>
         <% end %>
 
         <% if perf_lecture %>
           <%= link_to t("registration.allocation.violations_table.go_to_certifications"),
-                      edit_lecture_path(
-                        perf_lecture,
-                        tab: "assessments",
-                        assessment_tab: "certifications"
-                      ),
-                      class: "ms-md-auto small link-danger text-decoration-none",
-                      data: { turbo_frame: "_top" } %>
+                        edit_lecture_path(
+                          perf_lecture,
+                          tab: "assessments",
+                          assessment_tab: "certifications"
+                        ),
+                        class: "ms-md-auto small link-danger text-decoration-none",
+                        data: { turbo_frame: "_top" } %>
         <% end %>
       </div>
 
@@ -249,18 +252,18 @@
                 <td class="text-end">
                   <% if entry[:can_defer] %>
                     <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
-                                                                                          user_id: entry[:user_id],
-                                                                                          source: allocation_source,
-                                                                                          reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
-                                  method: :delete,
-                                  class: "btn btn-sm btn-outline-danger py-0 px-2",
-                                  data: {
-                                    turbo_confirm:
-                                    t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
-                                    email: entry[:first][:email])
-                                  },
-                                  form: { class: "d-inline-block mb-0" },
-                                  title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+                                                                                            user_id: entry[:user_id],
+                                                                                            source: allocation_source,
+                                                                                            reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                                    method: :delete,
+                                    class: "btn btn-sm btn-outline-danger py-0 px-2",
+                                    data: {
+                                      turbo_confirm:
+                                        t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                                          email: entry[:first][:email])
+                                    },
+                                    form: { class: "d-inline-block mb-0" },
+                                    title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
                       <i class="bi bi-slash-circle me-1"></i>
                       <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
                     <% end %>
@@ -327,8 +330,8 @@
                                   class: "btn btn-sm btn-outline-danger py-0 px-2",
                                   data: {
                                     turbo_confirm:
-                                    t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
-                                    email: entry[:first][:email])
+                                      t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                                        email: entry[:first][:email])
                                   },
                                   form: { class: "d-inline-block mb-0" },
                                   title: t("registration.user_registration.actions.defer_due_to_blocker") do %>

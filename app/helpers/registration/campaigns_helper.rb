@@ -39,10 +39,10 @@ module Registration
 
     def rank_color(rank)
       case rank
-      when :forced then :danger
-      when 1 then :success
-      when 2 then :primary
-      else :secondary
+      when :forced then :allocation_forced
+      when 1 then :allocation_first
+      when 2 then :allocation_second
+      else :allocation_other
       end
     end
 
@@ -76,7 +76,7 @@ module Registration
     end
 
     def finalize_campaign_button(campaign, size: nil, disabled: false, params: {})
-      classes = ["btn", "btn-danger", size].compact.join(" ")
+      classes = ["btn", "allocation-action-primary", size].compact.join(" ")
 
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
@@ -102,7 +102,7 @@ module Registration
         t("registration.campaign.actions.allocate")
       end
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
-      classes = ["btn", "btn-primary", size].compact.join(" ")
+      classes = ["btn", "btn-outline-primary", size].compact.join(" ")
 
       form_data = { turbo_stream: true }
       form_data[:turbo_confirm] = confirm if confirm

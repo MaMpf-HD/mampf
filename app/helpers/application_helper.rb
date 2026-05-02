@@ -65,6 +65,14 @@ module ApplicationHelper
                     "bg-info"
                   when :neutral
                     "bg-primary"
+                  when :allocation_first
+                    "allocation-progress-bar allocation-progress-bar--first"
+                  when :allocation_second
+                    "allocation-progress-bar allocation-progress-bar--second"
+                  when :allocation_other
+                    "allocation-progress-bar allocation-progress-bar--other"
+                  when :allocation_forced
+                    "allocation-progress-bar allocation-progress-bar--forced"
                   else
                     "bg-#{classification}"
     end
@@ -83,11 +91,11 @@ module ApplicationHelper
 
   def utilization_color(percentage)
     if percentage >= 100
-      "bg-danger"
+      "allocation-progress-bar allocation-progress-bar--utilization-high"
     elsif percentage >= 80
-      "bg-warning"
+      "allocation-progress-bar allocation-progress-bar--utilization-mid"
     else
-      "bg-success"
+      "allocation-progress-bar allocation-progress-bar--utilization-low"
     end
   end
 
