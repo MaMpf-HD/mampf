@@ -284,6 +284,9 @@ en:
       register_now: "Register now"
       withdraw: "Withdraw"
       closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+      readonly_notice:
+        title: "Registration closed"
+        description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
       withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"

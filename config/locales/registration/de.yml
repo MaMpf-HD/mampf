@@ -284,6 +284,9 @@ de:
       register_now: "Jetzt registrieren"
       withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
+      readonly_notice:
+        title: "Anmeldung geschlossen"
+        description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die Zuteilung finalisiert. Änderungen sind nicht mehr möglich."
       withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"

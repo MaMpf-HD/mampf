@@ -129,6 +129,28 @@ module Registration
       t("registration.user_registration.#{key}")
     end
 
+    def student_visible_campaign?(campaign)
+      campaign.open? || campaign.closed? || campaign.processing?
+    end
+
+    def student_registration_readonly?(campaign)
+      student_visible_campaign?(campaign) && !campaign.open_for_registrations?
+    end
+
+    def sorted_student_visible_campaigns(campaigns_details)
+      visible_campaigns = campaigns_details.select do |campaign_details|
+        student_visible_campaign?(campaign_details.campaign)
+      end
+
+      readonly_campaigns, open_campaigns = visible_campaigns.partition do |campaign_details|
+        student_registration_readonly?(campaign_details.campaign)
+      end
+
+      readonly_campaigns.sort_by do |campaign_details|
+        -student_registration_readonly_changed_at(campaign_details.campaign).to_i
+      end + open_campaigns
+    end
+
     def sorted_student_registration_items(campaign, items, user)
       items.sort_by do |item|
         [student_registration_item_priority(campaign, item, user),
@@ -170,6 +192,12 @@ module Registration
     end
 
     private
+
+      def student_registration_readonly_changed_at(campaign)
+        return campaign.last_allocation_calculated_at || campaign.updated_at if campaign.processing?
+
+        campaign.updated_at
+      end
 
       def student_registration_item_priority(campaign, item, user)
         return 0 if item.user_registered?(user)

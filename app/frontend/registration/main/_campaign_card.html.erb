@@ -1,61 +1,87 @@
 <% eligibility = details.eligibility %>
 <% items = details.items %>
 <% item_preferences = details.item_preferences %>
+<% readonly = student_registration_readonly?(campaign) %>
 
-<div
-  class="
-    card mb-3 campaign-section registration-campaign-card
-    student-registration-campaign-card
-  "
->
-  <div class="card-header registration-campaign-card-header">
-    <div class="student-registration-campaign-headline">
-      <div>
-        <h6 class="mb-0 fw-semibold student-registration-campaign-title">
-          <%= student_registration_campaign_title(campaign) %>
-        </h6>
+<div>
+  <% if readonly %>
+    <div class="student-registration-campaign-readonly-notice">
+      <div class="student-registration-campaign-readonly-title">
+        <%= t("registration.user_registration.readonly_notice.title") %>
       </div>
 
-      <div class="student-registration-campaign-deadline text-muted small">
-        <span class="me-2">
-          <%= t("registration.campaign.index.columns.deadline") %>
-        </span>
+      <p class="mb-0 small">
+        <%= t("registration.user_registration.readonly_notice.description") %>
+      </p>
+    </div>
+  <% end %>
 
-        <span class="fw-semibold text-body">
-          <%= format_date(campaign.registration_deadline) %>
-        </span>
+  <div
+    class="
+      card campaign-section registration-campaign-card
+      student-registration-campaign-card
+      <%= "student-registration-campaign-card--readonly" if readonly %>
+    "
+  >
+    <div class="card-header registration-campaign-card-header">
+      <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+        <div>
+          <h6 class="mb-0 fw-semibold">
+            <%= student_registration_campaign_title(campaign) %>
+          </h6>
+        </div>
+
+        <div>
+          <div
+            class="
+              d-flex align-items-baseline justify-content-start
+              justify-content-md-end flex-nowrap text-start text-md-end
+              text-muted small
+            "
+          >
+            <span class="me-2">
+              <%= t("registration.campaign.index.columns.deadline") %>
+            </span>
+
+            <span class="fw-semibold text-body">
+              <%= format_date(campaign.registration_deadline) %>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card-body">
-    <% if closed_early?(campaign) %>
-      <div class="alert alert-warning py-2 mb-3">
-        <%= t("registration.user_registration.closed_before_deadline") %>
-      </div>
-    <% end %>
+    <div class="card-body">
+      <% if closed_early?(campaign) %>
+        <div class="alert alert-warning py-2 mb-3">
+          <%= t("registration.user_registration.closed_before_deadline") %>
+        </div>
+      <% end %>
 
-    <% if campaign.status != "completed" &&
-          !eligible_for_registration?(eligibility) %>
-      <div class="mb-3">
-        <%= render partial: 'registration/main/eligibility',
-                   locals: { eligibility: eligibility } %>
-      </div>
-    <% end %>
+      <% if campaign.status != "completed" &&
+            !eligible_for_registration?(eligibility) %>
+        <div class="mb-3">
+          <%= render partial: 'registration/main/eligibility',
+                     locals: { eligibility: eligibility } %>
+        </div>
+      <% end %>
 
-    <div class="student-registration-campaign-instruction mb-3">
-      <%= student_registration_instruction(campaign) %>
+      <% unless readonly %>
+        <div class="student-registration-campaign-instruction fw-semibold mb-3">
+          <%= student_registration_instruction(campaign) %>
+        </div>
+      <% end %>
+
+      <% if campaign.first_come_first_served? %>
+        <%= render partial: 'registration/main/fcfs/select_fcfs',
+                     locals: { campaign: campaign,
+                               items: items } %>
+      <% else %>
+        <%= render partial: 'registration/main/pb/select_preference',
+                     locals: { campaign: campaign,
+                               item_preferences: item_preferences,
+                               items: items } %>
+      <% end %>
     </div>
-
-    <% if campaign.first_come_first_served? %>
-      <%= render partial: 'registration/main/fcfs/select_fcfs',
-                   locals: { campaign: campaign,
-                             items: items } %>
-    <% else %>
-      <%= render partial: 'registration/main/pb/select_preference',
-                   locals: { campaign: campaign,
-                             item_preferences: item_preferences,
-                             items: items } %>
-    <% end %>
   </div>
 </div>

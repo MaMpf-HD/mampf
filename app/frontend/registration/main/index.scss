@@ -2,32 +2,43 @@
 @import "../group_tiles";
 
 .student-registration-campaign-card {
+  position: relative;
+  z-index: 1;
   overflow: hidden;
 }
 
-.student-registration-campaign-headline {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+.student-registration-campaign-readonly-notice {
+  position: relative;
+  z-index: 0;
+  margin-bottom: -0.95rem;
+  padding: 0.9rem 1rem 1.65rem;
+  border: 1px solid #d7b55f;
+  border-bottom: none;
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+  background: linear-gradient(135deg, #fff7dd, #ffe7ad);
+  color: #6c4b00;
 }
 
-.student-registration-campaign-title {
-  line-height: 1.2;
-}
-
-.student-registration-campaign-deadline {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-end;
-  gap: 0.15rem;
-  white-space: nowrap;
-  text-align: right;
-}
-
-.student-registration-campaign-instruction {
+.student-registration-campaign-readonly-title {
+  margin-bottom: 0.25rem;
   font-weight: 600;
+  color: #5a3f00;
+}
+
+.student-registration-campaign-card--readonly {
+  border-color: #d7dee6;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  .registration-campaign-card-header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+  }
+
+  .registration-group-tile-col {
+    pointer-events: none;
+  }
 }
 
 .student-registration-tile-grid {
