@@ -1,30 +1,5 @@
 <div data-test="multi-item-fcfs">
   <div>
-    <!-- status row -->
-    <div
-      class="
-        d-flex justify-content-between align-items-center small text-muted
-        mb-2 mt-2
-      "
-    >
-      <!-- Registered info -->
-      <% if campaign.user_registration_confirmed?(current_user) && campaign.status != "completed" %>
-        <div class="fw-normal">
-          <%= t("registration.user_registration.currently_registered",
-                name: campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title) %>
-        </div>
-      <% end %>
-
-      <% last_updated = campaign.user_registrations_last_updated(current_user) %>
-
-      <!-- Saved time -->
-      <% if last_updated %>
-        <div class="text-success fw-semibold">
-          <%= t("basics.last_saved_at", time: format_date(last_updated)) %>
-        </div>
-      <% end %>
-    </div>
-
     <div>
       <div
         class="
@@ -37,6 +12,7 @@
           <% metadata_rows = item_tile_metadata_rows(item) + [{
                value: item_capacity_row(item)
              }] %>
+
           <% item_full = !item.still_has_capacity? && !item.user_registered?(current_user) %>
 
           <%= render partial: "registration/main/group_tile",
@@ -85,7 +61,7 @@
                          end
                        end
                      } %>
-      <% end %>
+        <% end %>
       </div>
     </div>
   </div>

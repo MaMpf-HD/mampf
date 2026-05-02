@@ -1,11 +1,4 @@
-<% last_updated = campaign.user_registrations_last_updated(current_user) %>
 <% item_preferences = Array(item_preferences).select { |pref| pref.respond_to?(:item) } %>
-
-<% if last_updated %>
-  <div class="small text-success fw-semibold">
-    <%= t("basics.last_saved_at", time: format_date(last_updated)) %>
-  </div>
-<% end %>
 
 <div>
   <%= render partial: "registration/main/pb/options_table",

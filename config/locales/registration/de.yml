@@ -282,7 +282,6 @@ de:
       registered: "Registriert"
       not_registered: "Nicht registriert"
       register_now: "Jetzt registrieren"
-      currently_registered: "Aktuell registrierte %{name}. Zum Wechsel in eine andere Gruppe austreten."
       withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       withdraw_first: "Zuerst zurückziehen"

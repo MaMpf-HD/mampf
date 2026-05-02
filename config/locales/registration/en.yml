@@ -282,7 +282,6 @@ en:
       registered: "Registered"
       not_registered: "Not registered"
       register_now: "Register now"
-      currently_registered: "Currently registered %{name}. Withdraw to switch to a different group."
       withdraw: "Withdraw"
       closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
       withdraw_first: "Withdraw first"
