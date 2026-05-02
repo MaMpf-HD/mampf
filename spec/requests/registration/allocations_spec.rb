@@ -159,13 +159,18 @@ RSpec.describe("Registration::Allocations", type: :request) do
                user: blocked_student)
       end
 
-      it "shows that finalization will likely auto reject registrations" do
+      it "shows the automatic rejections warning" do
         get registration_campaign_allocation_path(campaign)
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(
           I18n.t(
-            "registration.allocation.dashboard.workflow_info_fcfs_auto_rejections",
+            "registration.allocation.dashboard.finalization_status.auto_rejections_title"
+          )
+        )
+        expect(response.body).to include(
+          I18n.t(
+            "registration.allocation.dashboard.finalization_status.auto_rejections_desc",
             count: 1
           )
         )

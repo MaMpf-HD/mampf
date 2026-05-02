@@ -21,11 +21,11 @@ RSpec.describe(ApplicationHelper, type: :helper) do
 
     it "applies utilization colors" do
       expect(helper.progress_bar(50, 100, classification: :utilization))
-        .to include("bg-success")
+        .to include("allocation-progress-bar--utilization-low")
       expect(helper.progress_bar(85, 100, classification: :utilization))
-        .to include("bg-warning")
+        .to include("allocation-progress-bar--utilization-mid")
       expect(helper.progress_bar(100, 100, classification: :utilization))
-        .to include("bg-danger")
+        .to include("allocation-progress-bar--utilization-high")
     end
 
     it "applies custom classification colors" do
@@ -46,15 +46,18 @@ RSpec.describe(ApplicationHelper, type: :helper) do
 
   describe "#utilization_color" do
     it "returns success for low usage" do
-      expect(helper.send(:utilization_color, 40)).to eq("bg-success")
+      expect(helper.send(:utilization_color, 40))
+        .to eq("allocation-progress-bar allocation-progress-bar--utilization-low")
     end
 
     it "returns warning for medium usage" do
-      expect(helper.send(:utilization_color, 85)).to eq("bg-warning")
+      expect(helper.send(:utilization_color, 85))
+        .to eq("allocation-progress-bar allocation-progress-bar--utilization-mid")
     end
 
     it "returns danger for high usage" do
-      expect(helper.send(:utilization_color, 110)).to eq("bg-danger")
+      expect(helper.send(:utilization_color, 110))
+        .to eq("allocation-progress-bar allocation-progress-bar--utilization-high")
     end
   end
 
