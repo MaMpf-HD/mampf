@@ -108,6 +108,60 @@ module Registration
       end
     end
 
+    def eligible_for_registration?(eligibility)
+      eligibility.all? { |policy| policy[:outcome][:pass] }
+    end
+
+    def student_registration_campaign_title(campaign)
+      campaign.description.presence ||
+        t("registration.user_registration.campaign_main")
+    end
+
+    def student_registration_instruction(campaign)
+      key = if campaign.first_come_first_served?
+        "fcfs_instruction"
+      else
+        "preference_instruction"
+      end
+
+      t("registration.user_registration.#{key}")
+    end
+
+    def sorted_student_registration_items(campaign, items, user)
+      items.sort_by do |item|
+        [student_registration_item_priority(campaign, item, user),
+         item_display_type(item).to_s,
+         item.registerable.title.to_s]
+      end
+    end
+
+    def preference_rank_for(item, item_preferences)
+      item_preferences.find { |pref| pref.item.id == item.id }&.rank
+    end
+
+    def preference_rank_choices(item, item_preferences)
+      selected_rank = preference_rank_for(item, item_preferences)
+      count = selected_rank ? item_preferences.size : item_preferences.size + 1
+
+      1..[count, Registration::UserRegistration::PreferencesHandler::MAX_PREFERENCES].min
+    end
+
+    def preference_rank_option_label(rank)
+      rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
+      t("registration.user_registration.actions.make_preference_rank",
+        rank: rank_label)
+    end
+
+    def preference_rank_button_tooltip(rank)
+      rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
+      t("registration.user_registration.actions.rank_option_tooltip",
+        rank: rank_label)
+    end
+
+    def item_capacity_row(item)
+      "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}"
+    end
+
     def confirm_status_badge(status)
       case status
       when "confirmed"
@@ -140,7 +194,7 @@ module Registration
     def item_tile_metadata_rows(item)
       TABLE_CONFIG[item.registerable_type].map do |col|
         {
-          label: t(col[:header]),
+          label: metadata_label_for(col),
           value: col[:field].call(item),
           icon: gtile_icon_for(col[:icon])
         }
@@ -153,11 +207,36 @@ module Registration
 
     private
 
+      def student_registration_item_priority(campaign, item, user)
+        return 0 if item.user_registered?(user)
+        return 1 if student_registration_item_available?(campaign, item, user)
+        return 3 unless item.still_has_capacity?
+
+        2
+      end
+
+      def student_registration_item_available?(campaign, item, user)
+        return false unless campaign.open_for_registrations?
+        return false unless item.still_has_capacity?
+        return true if freely_registerable?(item.registerable_type)
+
+        !campaign.user_registration_confirmed_for_group_type?(
+          user,
+          item.registerable_type
+        )
+      end
+
       def gtile_icon_for(icon_name)
         case icon_name
         when "person"   then "bi-person"
         when "location" then "bi-geo-alt"
         end
+      end
+
+      def metadata_label_for(col)
+        return if col[:header] == "basics.description"
+
+        t(col[:header])
       end
 
       def nullable_capacity_display(capacity)

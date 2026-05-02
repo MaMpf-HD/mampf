@@ -3,6 +3,8 @@ module Registration
     # Handler for managing user preferences in preference-based registration campaigns,
     # including parsing preference data from the frontend and preparing preference data for display.
     class PreferencesHandler
+      MAX_PREFERENCES = 3
+
       # struct for store temporary preference items during modification process,
       # will be used in form
       SimpleItemPreference = Struct.new(:id, :rank)
@@ -22,6 +24,14 @@ module Registration
 
       def pref_item_build_for_save(json)
         normalize_ranks(pref_item_from_json(json))
+      end
+
+      def pref_item_build_with_rank(campaign, user, item_id, rank)
+        pref_items = preferences_info(campaign, user).map do |pref|
+          SimpleItemPreference.new(pref.item.id, pref.rank)
+        end
+        set_pref_item_rank(pref_items, item_id, rank)
+        pref_items
       end
 
       # preferences info saved in DB
@@ -51,11 +61,9 @@ module Registration
         build_preferences(pref_items)
       end
 
-      def add(item_id, json)
+      def add(item_id, json, rank = nil)
         pref_items = pref_item_from_json(json)
-        unless pref_items.any? { |i| i.id == item_id }
-          pref_items << SimpleItemPreference.new(item_id, pref_items.size + 1)
-        end
+        add_pref_item(pref_items, item_id, rank)
         build_preferences(pref_items)
       end
 
@@ -84,6 +92,51 @@ module Registration
           pref_items.sort_by!(&:rank)
           pref_items.each_with_index { |i, idx| i.rank = idx + 1 }
           pref_items
+        end
+
+        def add_pref_item(pref_items, item_id, rank)
+          item_id = item_id.to_s
+          existing = pref_items.find { |i| i.id == item_id }
+
+          return pref_items if existing.nil? && pref_items.size >= MAX_PREFERENCES
+
+          pref_items.reject! { |i| i.id == item_id }
+          target_rank = preference_target_rank(rank, pref_items.size)
+          pref_items.insert(target_rank - 1,
+                            SimpleItemPreference.new(item_id, target_rank))
+        end
+
+        def set_pref_item_rank(pref_items, item_id, rank)
+          item_id = item_id.to_s
+          target_rank = persistent_target_rank(rank)
+          used_ranks = [target_rank]
+          remaining = pref_items.reject { |i| i.id == item_id }
+          updated = [SimpleItemPreference.new(item_id, target_rank)]
+
+          remaining.sort_by(&:rank).each do |pref|
+            pref.rank = next_available_rank(used_ranks) if used_ranks.include?(pref.rank) ||
+                                                           pref.rank > MAX_PREFERENCES
+            next unless pref.rank
+
+            used_ranks << pref.rank
+            updated << pref
+          end
+
+          pref_items.replace(updated.sort_by(&:rank))
+        end
+
+        def preference_target_rank(rank, current_size)
+          return current_size + 1 if rank.blank?
+
+          [[rank.to_i, 1].max, current_size + 1].min
+        end
+
+        def persistent_target_rank(rank)
+          [[rank.to_i, 1].max, MAX_PREFERENCES].min
+        end
+
+        def next_available_rank(used_ranks)
+          (1..MAX_PREFERENCES).detect { |rank| used_ranks.exclude?(rank) }
         end
 
         # build preference info based on given info

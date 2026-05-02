@@ -1,4 +1,13 @@
+@import "../../roster/roster_campaigns";
 @import "../group_tiles";
+
+.student-registration-campaign-card {
+  overflow: hidden;
+}
+
+.student-registration-campaign-instruction {
+  font-weight: 600;
+}
 
 .student-registration-tile-grid {
   row-gap: 1rem;
@@ -27,6 +36,15 @@
   white-space: nowrap;
 }
 
+.student-registration-rank-button {
+  min-width: 2.75rem;
+}
+
 .tutorial-gtile--student .tutorial-gtile-actions > form {
   margin-bottom: 0;
+}
+
+.tutorial-gtile--student.tutorial-gtile--full:hover,
+.tutorial-gtile--student.tutorial-gtile--full:focus-within {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }

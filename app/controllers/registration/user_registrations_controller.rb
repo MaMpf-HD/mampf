@@ -74,8 +74,16 @@ module Registration
     end
 
     def add
-      locals = handle_preference_action(:add)
-      rerender_preferences(locals)
+      @campaign = @item.registration_campaign
+      pref_items = UserRegistration::PreferencesHandler
+                   .new.pref_item_build_with_rank(@campaign, current_user,
+                                                  params[:item_id], params[:rank])
+      result = Registration::UserRegistration::LecturePreferenceEditService
+               .new(@campaign, current_user).update!(pref_items)
+      respond_to_student_registration(
+        result,
+        I18n.t("registration.user_registration.messages.preferences_saved")
+      )
     end
 
     def remove
@@ -178,9 +186,7 @@ module Registration
       end
 
       def set_locale
-        I18n.locale = @campaign&.campaignable&.locale_with_inheritance ||
-                      @lecture&.locale_with_inheritance ||
-                      I18n.locale
+        I18n.locale = current_user&.locale.presence || I18n.default_locale
       end
 
       def campaign_completed?
@@ -236,9 +242,12 @@ module Registration
       def handle_preference_action(action)
         @campaign = @item.registration_campaign
         items = @campaign.registration_items.includes(:user_registrations)
-        item_preferences = UserRegistration::PreferencesHandler
-                           .new.public_send(action, params[:item_id],
-                                            params[:preferences_json])
+        handler = UserRegistration::PreferencesHandler.new
+        item_preferences = if action == :add
+          handler.add(params[:item_id], params[:preferences_json], params[:rank])
+        else
+          handler.public_send(action, params[:item_id], params[:preferences_json])
+        end
         @campaign.reload
         { item_preferences: item_preferences,
           campaign: @campaign,

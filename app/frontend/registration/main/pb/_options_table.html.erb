@@ -1,44 +1,57 @@
 <div>
-  <% items_selected = item_preferences.map { |i| i.item.id } %>
+  <div
+    class="
+      row row-cols-1 row-cols-md-2 row-cols-xl-3
+      student-registration-tile-grid
+    "
+  >
+    <% sorted_student_registration_items(campaign, items, current_user).each do |item| %>
+      <% metadata_rows = item_tile_metadata_rows(item) + [{
+           value: item_capacity_row(item)
+         }] %>
+      <% selected_rank = preference_rank_for(item, item_preferences) %>
 
-  <div class="fw-semibold mt-2 mb-2 text-muted">
-    <%= t('registration.user_registration.options_title') %>
-  </div>
-
-  <% items.group_by(&:registerable_type).each do |group, group_items| %>
-    <div
-      class="
-        row row-cols-1 row-cols-md-2 row-cols-xl-3
-        student-registration-tile-grid
-      "
-    >
-      <% group_items.each do |item| %>
-        <% metadata_rows = item_tile_metadata_rows(item) + [{
-             value: nullable_capacity_display(item.capacity)
-           }] %>
-
-        <%= render partial: "registration/main/group_tile",
-                   locals: {
-                     tile_title: item.registerable.title,
-                     tile_type: item_display_type(item),
-                     tile_metadata_rows: metadata_rows,
-                     tile_variant_class: "tutorial-gtile--campaign",
-                     tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
-                     tile_actions_content: capture do
+      <%= render partial: "registration/main/group_tile",
+                 locals: {
+                   tile_title: item.registerable.title,
+                   tile_type: item_display_type(item),
+                   tile_metadata_rows: metadata_rows,
+                   tile_variant_class: "tutorial-gtile--campaign",
+                   tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                   tile_status_content: capture do
+                     if selected_rank
                        concat(content_tag(
-                         :button,
-                         "playlist_add",
-                         type: :submit,
-                         name: "add_#{campaign.id}",
-                         class: "btn btn-outline-primary btn-sm material-icons clickable border-0 bg-transparent p-0",
-                         disabled: items_selected.include?(item.id) ||
-                                   items_selected.size >= 3,
-                         formaction: add_preference_path(item.id),
-                          title: t("buttons.add", default: "Add")
-                       ))
+                         :span,
+                         class: "badge rounded-pill text-primary border border-primary-subtle px-2 py-1 small student-registration-tile-rank"
+                       ) do
+                         safe_join([
+                           "#{t('registration.user_registration.rank')}: ",
+                           content_tag(:span, selected_rank, class: "fw-bold")
+                         ])
+                       end)
                      end
-                   } %>
-      <% end %>
-    </div>
-  <% end %>
+                   end,
+                   tile_actions_content: capture do
+                     concat(content_tag(:div, class: "d-flex gap-1") do
+                       ranks = 1..Registration::UserRegistration::PreferencesHandler::MAX_PREFERENCES
+                       safe_join(ranks.map do |rank|
+                         button_to(
+                           t("registration.user_registration.preference_rank_options.#{rank}"),
+                           add_preference_path(item.id, rank: rank),
+                           method: :post,
+                           disabled: !campaign.open_for_registrations?,
+                           class: class_names(
+                             "btn btn-sm student-registration-rank-button",
+                             "btn-primary": selected_rank == rank,
+                             "btn-outline-primary": selected_rank != rank
+                           ),
+                           title: preference_rank_button_tooltip(rank),
+                           form: { data: { turbo_stream: true } }
+                         )
+                       end)
+                     end)
+                   end
+                 } %>
+    <% end %>
+  </div>
 </div>

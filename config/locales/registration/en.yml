@@ -265,6 +265,9 @@ en:
         increase_priority: "Increase priority"
         decrease_priority: "Decrease priority"
         remove_option: "Remove option"
+        rank_option: "Rank option"
+        make_preference_rank: "Make %{rank} preference"
+        rank_option_tooltip: "Set as %{rank} preference"
       registrations: "Registrations"
       title: "Your Registration"
       planning: "Planning"
@@ -274,6 +277,13 @@ en:
       preferences_title: Your selected preferences
       success_preferences_title: Your successful selections
       options_title: "Available options (maximum 3 options are allowed)"
+      fcfs_instruction: "Select one option. Available seats are assigned immediately."
+      preference_instruction: "Rank up to three options. Your choice is saved immediately. Allocation is calculated after the deadline."
+      preference_hint: "Set an option's preference directly with the rank buttons."
+      preference_rank_options:
+        "1": "1st"
+        "2": "2nd"
+        "3": "3rd"
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite registration process"
