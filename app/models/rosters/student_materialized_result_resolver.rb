@@ -25,27 +25,21 @@ module Rosters
     end
 
     def all_rosterized_for_lecture(lecture)
-      names =
+      rosterables =
         lecture.tutorials
-               .joins(:tutorial_memberships)
-               .where(tutorial_memberships: { user_id: @user.id })
-               .map { |tutorial| rosterable_label(tutorial) } +
+               .includes(:tutors, :members)
+               .where(id: TutorialMembership.where(user_id: @user.id).select(:tutorial_id))
+               .to_a +
         lecture.cohorts
-               .joins(:cohort_memberships)
-               .where(cohort_memberships: { user_id: @user.id })
-               .map { |cohort| rosterable_label(cohort) } +
+               .includes(:members)
+               .where(id: CohortMembership.where(user_id: @user.id).select(:cohort_id))
+               .to_a +
         lecture.talks
-               .joins(:speaker_talk_joins)
-               .where(speaker_talk_joins: { speaker_id: @user.id })
-               .map { |talk| rosterable_label(talk) }
+               .includes(:speakers, :members)
+               .where(id: SpeakerTalkJoin.where(speaker_id: @user.id).select(:talk_id))
+               .to_a
 
-      names.presence&.join(", ")
+      rosterables.presence
     end
-
-    private
-
-      def rosterable_label(rosterable)
-        "#{rosterable.class.model_name.human} #{rosterable.title}"
-      end
   end
 end

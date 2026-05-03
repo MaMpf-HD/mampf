@@ -246,7 +246,8 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
-        confirmed_cases: "Your registration is confirmed for:"
+        confirmed_cases: "Your registration is confirmed for"
+        unknown_tutor: "A tutor has not been assigned yet."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         allocated_count: "allocated"

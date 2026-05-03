@@ -246,7 +246,8 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
-        confirmed_cases: "Deine Anmeldung ist bestätigt für:"
+        confirmed_cases: "Deine Anmeldung ist bestätigt für"
+        unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         allocated_count: "zugeteilt"

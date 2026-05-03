@@ -1,24 +1,55 @@
 <%= vite_stylesheet_tag "registration/main/index.scss" %>
 
-<!-- rosterized items summary -->
-<% if @rosterized_entries %>
-  <div
-    style="
-  background-color: #e6f4ea;
-  border: 1px solid #c3e6cb;
-  color: #1e4620;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  "
-  >
-    <%= t("registration.user_registration.index.confirmed_cases") %>
-    <strong><%= @rosterized_entries %></strong>
-  </div>
-<% end %>
-
 <!-- campaign list -->
 <div class="container-md small-width">
+  <% if @rosterized_entries.present? %>
+    <div class="student-registration-rosterized-notice mb-4">
+      <div class="student-registration-rosterized-shell">
+        <div class="student-registration-rosterized-kicker">
+          <%= t("registration.user_registration.index.confirmed_cases") %>
+        </div>
+
+        <div class="student-registration-rosterized-list">
+          <% @rosterized_entries.each do |rosterized_entry| %>
+            <article class="student-registration-rosterized-entry">
+              <div class="student-registration-rosterized-type">
+                <%= rosterized_entry_type(rosterized_entry) %>
+              </div>
+
+              <h5 class="student-registration-rosterized-title mb-0">
+                <%= rosterized_entry.title %>
+              </h5>
+
+              <% if rosterized_entry_description(rosterized_entry).present? %>
+                <p class="student-registration-rosterized-description mb-0">
+                  <%= rosterized_entry_description(rosterized_entry) %>
+                </p>
+              <% end %>
+
+              <div class="student-registration-rosterized-meta-list">
+                <% rosterized_entry_metadata_rows(rosterized_entry).each do |row| %>
+                  <div class="student-registration-rosterized-meta-pill">
+                    <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
+
+                    <div class="student-registration-rosterized-meta-copy">
+                      <div class="student-registration-rosterized-meta-label">
+                        <%= row[:label] %>
+                      </div>
+
+                      <div class="student-registration-rosterized-meta-value">
+                        <%= row[:value] %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Direct enrollment -->
   <div class="mb-5">
     <div class="mb-3">

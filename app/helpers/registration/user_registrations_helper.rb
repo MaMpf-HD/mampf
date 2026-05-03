@@ -191,7 +191,75 @@ module Registration
       capacity.nil? ? "\u221E" : capacity.to_s
     end
 
+    def rosterized_entry_type(rosterable)
+      roster_type_text(rosterable)
+    end
+
+    def rosterized_entry_description(rosterable)
+      return unless rosterable.respond_to?(:description)
+
+      rosterable.description.presence
+    end
+
+    def rosterized_entry_metadata_rows(rosterable)
+      [rosterized_entry_person_row(rosterable),
+       rosterized_entry_location_row(rosterable),
+       rosterized_entry_participants_row(rosterable)].compact
+    end
+
     private
+
+      def rosterized_entry_person_row(rosterable)
+        case rosterable
+        when Tutorial
+          {
+            icon: "bi-person",
+            label: t("basics.tutor"),
+            value: rosterized_entry_tutor_value(rosterable)
+          }
+        when Talk
+          {
+            icon: "bi-mic",
+            label: t("basics.speakers"),
+            value: roster_tutors_text(rosterable)
+          }
+        end
+      end
+
+      def rosterized_entry_location_row(rosterable)
+        return unless rosterable.respond_to?(:location)
+        return if rosterable.location.blank?
+
+        {
+          icon: "bi-geo-alt",
+          label: t("basics.location"),
+          value: rosterable.location
+        }
+      end
+
+      def rosterized_entry_participants_row(rosterable)
+        {
+          icon: "bi-people",
+          label: t("basics.participants"),
+          value: rosterized_entry_participants_text(rosterable)
+        }
+      end
+
+      def rosterized_entry_participants_text(rosterable)
+        rosterable.members.size.to_s
+      end
+
+      def rosterized_entry_tutor_value(rosterable)
+        return roster_tutors_text(rosterable) if rosterable.tutors.any?
+
+        content_tag(
+          :span,
+          "?",
+          class: "student-registration-rosterized-unknown",
+          title: t("registration.user_registration.index.unknown_tutor"),
+          aria: { label: t("registration.user_registration.index.unknown_tutor") }
+        )
+      end
 
       def student_registration_readonly_changed_at(campaign)
         return campaign.last_allocation_calculated_at || campaign.updated_at if campaign.processing?
