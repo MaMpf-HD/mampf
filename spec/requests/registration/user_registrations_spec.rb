@@ -83,5 +83,31 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         expect(response.body).to include(I18n.t("registration.campaign.errors.already_finalized"))
       end
     end
+
+    context "when called from the embedded exam allocation workspace" do
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
+      let(:campaign) { exam.registration_campaign }
+      let!(:registration) { nil }
+      let(:registration_item) { campaign.registration_items.first }
+
+      before do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: registration_item,
+               user: student)
+      end
+
+      it "refreshes the whole exam workspace frame" do
+        delete(path,
+               params: { source: "allocation_embedded" },
+               headers: { "Accept" => "text/vnd.turbo-stream.html" })
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(
+          Registration::Campaign.exam_workspace_frame_id(exam)
+        )
+        expect(response.body).to include('data-controller="dismiss-workspace"')
+      end
+    end
   end
 end
