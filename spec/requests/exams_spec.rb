@@ -538,6 +538,48 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
+  describe "DELETE /exams/:id/participants/:user_id" do
+    before { sign_in teacher }
+
+    context "with registration campaigns enabled" do
+      let(:campaign) { exam.registration_campaign }
+
+      before do
+        Flipper.enable(:registration_campaigns)
+        create(:exam_roster_entry, exam: exam, user: student)
+        campaign.update!(status: :completed)
+      end
+
+      after do
+        Flipper.disable(:registration_campaigns)
+      end
+
+      it "blocks removal when grading data already exists" do
+        assessment = exam.assessment
+        assessment.update!(requires_points: true)
+        task = create(:assessment_task, assessment: assessment)
+        participation = create(:assessment_participation,
+                               assessment: assessment,
+                               user: student,
+                               status: :pending,
+                               submitted_at: nil)
+        create(:assessment_task_point,
+               task: task,
+               assessment_participation: participation)
+
+        expect do
+          delete(remove_participant_exam_path(exam, user_id: student.id),
+                 as: :turbo_stream)
+        end.not_to(change { exam.reload.exam_roster_entries.count })
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include(
+          I18n.t("assessment.registration_tab.remove_blocked")
+        )
+      end
+    end
+  end
+
   describe "DELETE /exams/:id" do
     context "as a teacher" do
       before { sign_in teacher }

@@ -214,17 +214,24 @@ class ExamsController < ApplicationController
   def remove_participant
     authorize! :remove_participant, @exam
     user = User.find(params[:user_id])
-    Rosters::MaintenanceService.new.remove_user!(user, @exam)
+    status = :ok
+
+    if @exam.participant_removable?(user)
+      Rosters::MaintenanceService.new.remove_user!(user, @exam)
+      flash.now[:success] = t("assessment.registration_tab.participant_removed",
+                              name: user.tutorial_name.presence || user.email)
+    else
+      flash.now[:error] = t("assessment.registration_tab.remove_blocked")
+      status = :unprocessable_content
+    end
 
     respond_to do |format|
       format.turbo_stream do
-        flash.now[:success] = t("assessment.registration_tab.participant_removed",
-                                name: user.tutorial_name.presence || user.email)
         @active_tab = "registration"
         render turbo_stream: [
           turbo_stream.update("exams_container", build_dashboard_component),
           stream_flash
-        ]
+        ], status: status
       end
     end
   end

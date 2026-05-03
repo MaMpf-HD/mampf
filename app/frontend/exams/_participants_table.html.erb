@@ -5,7 +5,6 @@
 <% if editable && exam %>
   <% add_form_id = "exam-#{exam.id}-participants-add-form" %>
   <% add_form_open = entries.empty? %>
-
   <div data-controller="exams--registration-list">
     <div class="d-flex flex-column flex-sm-row gap-2 align-items-sm-end mb-3">
       <% if entries.any? %>
@@ -30,7 +29,10 @@
 
       <div class="flex-shrink-0">
         <button
-          class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+          class="
+            btn btn-sm btn-outline-primary d-inline-flex align-items-center
+            gap-1
+          "
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#<%= add_form_id %>"
@@ -43,7 +45,10 @@
       </div>
     </div>
 
-    <div id="<%= add_form_id %>" class="collapse <%= "show" if add_form_open %>">
+    <div
+      id="<%= add_form_id %>"
+      class="collapse <%= "show" if add_form_open %>"
+    >
       <div class="border rounded-3 p-3 mb-3 bg-body-tertiary">
         <div class="small fw-semibold mb-2">
           <%= t("assessment.registration_tab.add_form_label") %>
@@ -85,6 +90,7 @@
           <tbody>
             <% entries.each do |entry| %>
               <% user = entry.user %>
+              <% removable = exam.participant_removable?(user) %>
 
               <tr
                 data-exams--registration-list-target="entry"
@@ -94,24 +100,47 @@
                 <td class="text-muted"><%= user.email %></td>
 
                 <td class="text-end">
-                  <%= button_to remove_participant_exam_path(exam,
-                                                             user_id: user.id),
-                                method: :delete,
-                                class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1",
-                                title: t("assessment.registration_tab.remove_tooltip"),
-                                aria: {
-                                  label: t("assessment.registration_tab.remove_tooltip")
-                                },
-                                form: {
-                                  class: "d-inline-block mb-0",
-                                  data: {
-                                    turbo_confirm: t("assessment.registration_tab.remove_confirm")
-                                  }
-                                } do %>
-                    <i class="bi bi-trash"></i>
+                  <% if removable %>
+                    <%= button_to remove_participant_exam_path(exam,
+                                                               user_id: user.id),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1",
+                                  title: t("assessment.registration_tab.remove_tooltip"),
+                                  aria: {
+                                    label: t("assessment.registration_tab.remove_tooltip")
+                                  },
+                                  form: {
+                                    class: "d-inline-block mb-0",
+                                    data: {
+                                      turbo_confirm: t("assessment.registration_tab.remove_confirm")
+                                    }
+                                  } do %>
+                      <i class="bi bi-trash"></i>
 
-                    <span>
-                      <%= t("assessment.registration_tab.remove_button") %>
+                      <span>
+                        <%= t("assessment.registration_tab.remove_button") %>
+                      </span>
+                    <% end %>
+                  <% else %>
+                    <span
+                      class="d-inline-block"
+                      title="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
+                    >
+                      <button
+                        type="button"
+                        class="
+                          btn btn-sm btn-outline-danger d-inline-flex
+                          align-items-center gap-1
+                        "
+                        disabled
+                        aria-label="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
+                      >
+                        <i class="bi bi-trash"></i>
+
+                        <span>
+                          <%= t("assessment.registration_tab.remove_button") %>
+                        </span>
+                      </button>
                     </span>
                   <% end %>
                 </td>
