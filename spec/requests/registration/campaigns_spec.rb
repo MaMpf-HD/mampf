@@ -714,7 +714,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     it "renders an inline deadline error on reopen failure with frame_id" do
+      # rubocop: disable Rails/SkipsModelValidations
       exam_campaign.update_columns(registration_deadline: 1.day.ago)
+      # rubocop: enable Rails/SkipsModelValidations
 
       patch reopen_registration_campaign_path(exam_campaign),
             params: { frame_id: frame_id },

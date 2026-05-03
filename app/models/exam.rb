@@ -76,7 +76,7 @@ class Exam < ApplicationRecord
   end
 
   def participant_removable?(user)
-    !participants_with_grading_data.include?(user.id)
+    participants_with_grading_data.exclude?(user.id)
   end
 
   def ensure_participant_removable!(user)
