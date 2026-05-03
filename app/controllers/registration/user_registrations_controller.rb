@@ -85,7 +85,7 @@ module Registration
               ]
             end
             format.html do
-              redirect_to lecture_campaign_registrations_path(@campaign.campaignable),
+              redirect_to lecture_user_registrations_path(@campaign.campaignable),
                           notice: success_message
             end
           end
@@ -93,7 +93,7 @@ module Registration
           respond_with_flash(
             :alert,
             result.errors.join(", "),
-            fallback_location: lecture_campaign_registrations_path(@campaign.campaignable)
+            fallback_location: lecture_user_registrations_path(@campaign.campaignable)
           )
         end
       end

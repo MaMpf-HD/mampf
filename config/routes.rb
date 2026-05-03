@@ -309,8 +309,10 @@ Rails.application.routes.draw do
     end
 
     constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
-      resources :campaign_registrations, only: [:index],
-                                         controller: "registration/user_registrations"
+      resources :registration, only: [:index],
+                               controller: "registration/user_registrations",
+                               as: :user_registrations,
+                               defaults: { project: "registration" }
     end
   end
 

@@ -45,11 +45,10 @@
 
   <%# Enrollment %>
   <% if lecture && Flipper.enabled?(:registration_campaigns) && can?(:enroll, lecture) %>
-    <% project_name = 'enrollment' %>
-    <% fullpath = lecture_campaign_registrations_path(lecture) %>
+    <% project_name = 'registration' %>
+    <% fullpath = lecture_user_registrations_path(lecture) %>
     <% active_class = get_class_for_project(project_name) %>
-    <li class="sidebar-item nav-link <%= active_class %>
-            <%= !lecture ? "disabled" : ""%>">
+    <li class="sidebar-item nav-link <%= active_class %>">
       <%= link_to url_for(fullpath),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-person-check<%= active_class.present? ? "-fill" : "" %>"></i>
@@ -103,7 +102,7 @@
   <% if lecture %>
     <%# Müsli (external link) %>
     <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
+      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank">
         <i class="bi bi-list-check"></i>
         <%= t('categories.muesli') %>
       </a>

@@ -105,14 +105,14 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                           description: "Solver Test Campaign")
       end
       it "return success response" do
-        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture_id: lecture.id)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
       end
 
       it "renders available options" do
         campaign
-        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture_id: lecture.id)
         expect(response.body.squish).to include("Solver Test Campaign")
       end
     end
@@ -125,7 +125,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                           description: "Solver Test Campaign")
       end
       it "return success response" do
-        get lecture_campaign_registrations_path(lecture_id: seminar.id)
+        get lecture_user_registrations_path(lecture_id: seminar.id)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
       end
@@ -133,7 +133,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     context "when no registration options are available" do
       it "shows a single empty state message" do
-        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture_id: lecture.id)
 
         expect(response.body.squish).to include(
           I18n.t("roster.self_enrollment.no_registration_options")
@@ -148,7 +148,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "does not show the empty state message" do
-        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture_id: lecture.id)
 
         expect(response.body.squish).to include(
           I18n.t("registration.user_registration.index.confirmed_cases")
