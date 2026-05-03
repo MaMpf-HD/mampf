@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_30_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -382,6 +382,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_30_000001) do
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "excluded_at"
+    t.index ["exam_id", "excluded_at"], name: "index_exam_rosters_on_exam_id_and_excluded_at"
     t.index ["exam_id"], name: "index_exam_rosters_on_exam_id"
     t.index ["source_campaign_id"], name: "index_exam_rosters_on_source_campaign_id"
     t.index ["user_id", "exam_id"], name: "index_exam_rosters_on_user_id_and_exam_id", unique: true

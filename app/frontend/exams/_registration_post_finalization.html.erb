@@ -11,13 +11,16 @@
            editable: true,
            exam: exam %>
 
-<% rejected = local_assigns.fetch(:rejected_registrations) %>
+<% not_on_roster_entries = local_assigns.fetch(:not_on_roster_entries) %>
 
-<% if rejected.any? %>
+<% if not_on_roster_entries.any? %>
   <h6 class="text-muted fw-semibold small text-uppercase mt-4 mb-2">
     <i class="bi bi-person-slash me-1"></i>
-    <%= t("assessment.registration_tab.rejected_heading") %>
-    <span class="badge bg-secondary ms-1"><%= rejected.count %></span>
+    <%= t("assessment.registration_tab.not_on_roster_heading") %>
+
+    <span class="badge bg-secondary ms-1">
+      <%= not_on_roster_entries.count %>
+    </span>
   </h6>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
@@ -30,11 +33,11 @@
       </thead>
 
       <tbody>
-        <% rejected.each do |reg| %>
+        <% not_on_roster_entries.each do |entry| %>
           <tr>
-            <td><%= reg.user.name %></td>
-            <td class="text-muted"><%= reg.user.email %></td>
-            <td><%= reg.localized_rejection_reason_label %></td>
+            <td><%= entry[:user].name %></td>
+            <td class="text-muted"><%= entry[:user].email %></td>
+            <td><%= entry[:reason_label] %></td>
           </tr>
         <% end %>
       </tbody>

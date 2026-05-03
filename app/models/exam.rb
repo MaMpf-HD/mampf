@@ -1,6 +1,17 @@
 class Exam < ApplicationRecord
   belongs_to :lecture
-  has_many :exam_rosters, dependent: :destroy
+  has_many :all_exam_rosters,
+           class_name: "ExamRoster",
+           dependent: :destroy,
+           inverse_of: :exam
+  has_many :exam_rosters,
+           -> { active },
+           class_name: "ExamRoster",
+           inverse_of: :exam
+  has_many :excluded_exam_rosters,
+           -> { excluded },
+           class_name: "ExamRoster",
+           inverse_of: :exam
   has_many :users, through: :exam_rosters
 
   include Registration::Registerable
@@ -39,6 +50,25 @@ class Exam < ApplicationRecord
 
   def roster_association_name
     :exam_rosters
+  end
+
+  def add_user_to_roster!(user, source_campaign = nil)
+    roster_entry = all_exam_rosters.find_or_initialize_by(user: user)
+    roster_entry.source_campaign ||= source_campaign
+    roster_entry.excluded_at = nil
+    roster_entry.save!
+    roster_entry
+  end
+
+  def remove_user_from_roster!(user)
+    roster_entry = all_exam_rosters.find_by(user: user)
+    return unless roster_entry
+
+    if registration_campaign&.completed?
+      roster_entry.update!(excluded_at: Time.current)
+    else
+      roster_entry.destroy
+    end
   end
 
   def registration_campaign

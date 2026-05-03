@@ -181,6 +181,61 @@ RSpec.describe(Exam, type: :model) do
     it "#allocated_user_ids returns user IDs" do
       expect(exam.allocated_user_ids).to match_array(users.map(&:id))
     end
+
+    it "excludes soft-removed roster rows from active roster queries" do
+      excluded_user = create(:confirmed_user)
+      create(:exam_roster, exam: exam, user: excluded_user, excluded_at: Time.current)
+
+      expect(exam.exam_rosters.map(&:user_id)).not_to include(excluded_user.id)
+      expect(exam.excluded_exam_rosters.map(&:user_id)).to include(excluded_user.id)
+      expect(exam.allocated_user_ids).not_to include(excluded_user.id)
+    end
+  end
+
+  describe "exam roster exclusions" do
+    let(:exam) { create(:exam, :with_date) }
+    let(:user) { create(:confirmed_user) }
+
+    before do
+      Flipper.enable(:registration_campaigns)
+      create(:exam_roster, exam: exam, user: user)
+    end
+
+    after do
+      Flipper.disable(:registration_campaigns)
+    end
+
+    it "soft-removes participants after finalization" do
+      exam.registration_campaign.update!(status: :completed)
+      roster_entry = exam.all_exam_rosters.find_by!(user: user)
+
+      expect do
+        exam.remove_user_from_roster!(user)
+      end.not_to change(ExamRoster, :count)
+
+      expect(roster_entry.reload.excluded_at).to be_present
+      expect(exam.exam_rosters).to be_empty
+      expect(exam.excluded_exam_rosters).to include(roster_entry)
+    end
+
+    it "reinstates excluded participants when they are added again" do
+      exam.registration_campaign.update!(status: :completed)
+      roster_entry = exam.all_exam_rosters.find_by!(user: user)
+      exam.remove_user_from_roster!(user)
+
+      expect do
+        exam.add_user_to_roster!(user)
+      end.not_to change(ExamRoster, :count)
+
+      expect(roster_entry.reload.excluded_at).to be_nil
+      expect(exam.exam_rosters).to include(roster_entry)
+    end
+
+    it "keeps destroying roster rows before finalization" do
+      expect do
+        exam.remove_user_from_roster!(user)
+      end.to change(ExamRoster, :count).by(-1)
+    end
   end
 
   describe "#status_phase" do

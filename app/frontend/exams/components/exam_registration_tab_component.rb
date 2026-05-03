@@ -49,6 +49,13 @@ class ExamRegistrationTabComponent < ViewComponent::Base
                                   .merge(User.order(:name))
   end
 
+  def excluded_participants_entries
+    @excluded_participants_entries ||= exam.excluded_exam_rosters
+                                           .includes(:user)
+                                           .joins(:user)
+                                           .merge(User.order(:name))
+  end
+
   def registration_header_locals
     {
       campaign: campaign,
@@ -89,6 +96,33 @@ class ExamRegistrationTabComponent < ViewComponent::Base
                                         .includes(:user)
                                         .joins(:user)
                                         .merge(User.order(:name))
+  end
+
+  def not_on_roster_entries
+    @not_on_roster_entries ||= begin
+      participant_user_ids = participants_entries.map(&:user_id)
+      entries_by_user_id = {}
+
+      rejected_registrations.each do |registration|
+        next if participant_user_ids.include?(registration.user_id)
+
+        entries_by_user_id[registration.user_id] = {
+          user: registration.user,
+          reason_label: registration.localized_rejection_reason_label
+        }
+      end
+
+      excluded_participants_entries.each do |roster_entry|
+        entries_by_user_id[roster_entry.user_id] = {
+          user: roster_entry.user,
+          reason_label: roster_entry.exclusion_reason_label
+        }
+      end
+
+      entries_by_user_id.values.sort_by do |entry|
+        [entry[:user].name.to_s, entry[:user].email.to_s]
+      end
+    end
   end
 
   private

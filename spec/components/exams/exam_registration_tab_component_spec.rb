@@ -85,17 +85,18 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     document = Nokogiri::HTML.fragment(rendered_content)
 
     expect(rendered_content).not_to include(
-      I18n.t("assessment.registration_tab.rejected_heading")
+      I18n.t("assessment.registration_tab.not_on_roster_heading")
     )
     expect(rendered_content).not_to include(rejected_user.email)
     expect(document.css("button[title]")).to be_empty
   end
 
-  it "renders rejection reasons after finalization" do
+  it "renders unified not-on-roster reasons after finalization" do
     exam = create(:exam, :with_date, lecture: lecture)
     campaign = exam.registration_campaign
     campaign.update!(status: :completed)
     rejected_user = create(:confirmed_user)
+    excluded_user = create(:confirmed_user)
     create(:registration_user_registration,
            :rejected,
            registration_campaign: campaign,
@@ -106,6 +107,10 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
            rejection_reason_label: I18n.t(
              "registration.user_registration.reason_labels.withdrawn_by_teacher"
            ))
+    create(:exam_roster,
+           exam: exam,
+           user: excluded_user,
+           excluded_at: Time.current)
 
     render_inline(described_class.new(exam: exam))
 
@@ -113,12 +118,19 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       I18n.t("assessment.registration_tab.post_finalization_hint")
     )
     expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.not_on_roster_heading")
+    )
+    expect(rendered_content).to include(
       I18n.t("registration.user_registration.reason")
     )
     expect(rendered_content).to include(
       I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher")
     )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.removed_from_roster_reason")
+    )
     expect(rendered_content).to include(rejected_user.email)
+    expect(rendered_content).to include(excluded_user.email)
   end
 
   it "renders the participants removal action with explicit label after finalization" do

@@ -54,4 +54,24 @@ RSpec.describe(ExamRoster, type: :model) do
       expect(roster.source_campaign).to be_nil
     end
   end
+
+  describe "exclusion state" do
+    it "returns the default exclusion reason label" do
+      roster = create(:exam_roster, excluded_at: Time.current)
+
+      expect(roster.exclusion_reason_label).to eq(
+        I18n.t("assessment.registration_tab.removed_from_roster_reason")
+      )
+    end
+
+    it "scopes active and excluded rows separately" do
+      active_roster = create(:exam_roster)
+      excluded_roster = create(:exam_roster, excluded_at: Time.current)
+
+      expect(described_class.active).to include(active_roster)
+      expect(described_class.active).not_to include(excluded_roster)
+      expect(described_class.excluded).to include(excluded_roster)
+      expect(described_class.excluded).not_to include(active_roster)
+    end
+  end
 end
