@@ -40,7 +40,7 @@
 namespace :assessment do
   desc "Create test assignments for the first lecture with tutorials"
   task create_assignments: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found. Run solver:create_campaign first." unless lecture
@@ -75,7 +75,7 @@ namespace :assessment do
 
   desc "Create random tasks for each assignment"
   task create_tasks: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
@@ -105,10 +105,17 @@ namespace :assessment do
 
   desc "Seed participation records from tutorial memberships (lazy creation simulation)"
   task seed_participations: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
+
+    memberships = TutorialMembership.where(tutorial_id: lecture.tutorial_ids)
+    if memberships.empty?
+      puts "⚠ No tutorial memberships found. Run demo:setup or " \
+           "solver:create_registrations first."
+      next
+    end
 
     lecture.assignments.each do |assignment|
       assessment = assignment.assessment
@@ -120,7 +127,6 @@ namespace :assessment do
         next
       end
 
-      memberships = TutorialMembership.where(tutorial_id: lecture.tutorial_ids)
       created = 0
 
       memberships.find_each do |membership|
@@ -139,7 +145,7 @@ namespace :assessment do
 
   desc "Randomize participation statuses with per-tutorial variance"
   task randomize_statuses: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
@@ -216,7 +222,7 @@ namespace :assessment do
 
   desc "Assign random German grades to reviewed participations"
   task seed_grades: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
@@ -232,7 +238,7 @@ namespace :assessment do
 
   desc "Seed random task points for reviewed participations"
   task seed_task_points: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     lecture = Lecture.joins(:tutorials).distinct.first
     abort "No lecture with tutorials found." unless lecture
@@ -317,7 +323,8 @@ namespace :assessment do
       pending_nosub = parts.where(status: :pending, submitted_at: nil).count
       absent = parts.where(status: :absent).count
       exempt = parts.where(status: :exempt).count
-      gradable = assessable.is_a?(Assessment::Gradable)
+      gradable = defined?(Assessment::Gradable) &&
+                 assessable.is_a?(Assessment::Gradable)
       grades = gradable ? parts.where.not(grade_numeric: nil).count : "-"
       pointable = assessable.is_a?(Assessment::Pointable)
       points = if pointable
@@ -340,7 +347,7 @@ namespace :assessment do
 
   desc "Seed grades for talks in the two-stage seminar campaign"
   task seed_seminar_grades: :environment do
-    Flipper.enable(:assessment_grading)
+    ensure_assessment_grading_feature!
 
     course = Course.find_by(title: "Campaign Test Seminar")
     abort "Seminar course not found. Run solver:create_two_stage_campaign first." unless course
@@ -517,5 +524,10 @@ namespace :assessment do
     when :dropout then rand(0.80..0.95)
     when :occasional then rand(0.55..0.75)
     end
+  end
+
+  def ensure_assessment_grading_feature!
+    Flipper.add(:assessment_grading)
+    Flipper.enable(:assessment_grading)
   end
 end
