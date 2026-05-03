@@ -1,0 +1,12 @@
+<% if assessment %>
+  <%= render "assessment/assessments/tasks",
+             assessment: assessment,
+             assessable: assessable,
+             tasks: tasks,
+             task: task %>
+<% else %>
+  <div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <%= t("assessment.errors.no_assessment") %>
+  </div>
+<% end %>

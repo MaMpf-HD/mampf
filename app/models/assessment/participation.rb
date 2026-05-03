@@ -1,0 +1,42 @@
+module Assessment
+  class Participation < ApplicationRecord
+    belongs_to :assessment, class_name: "Assessment::Assessment",
+                            inverse_of: :assessment_participations
+    belongs_to :user
+    belongs_to :tutorial, optional: true
+    belongs_to :grader, class_name: "User", optional: true, inverse_of: false
+
+    has_many :task_points, dependent: :destroy,
+                           class_name: "Assessment::TaskPoint",
+                           foreign_key: :assessment_participation_id,
+                           inverse_of: :assessment_participation
+
+    enum :status, {
+      pending: 0,
+      reviewed: 1,
+      absent: 2,
+      exempt: 3
+    }
+
+    scope :submitted, -> { where.not(submitted_at: nil) }
+
+    validates :user_id, uniqueness: { scope: :assessment_id }
+
+    def self.tutorial_for(user, lecture)
+      TutorialMembership.joins(:tutorial)
+                        .where(tutorials: { lecture_id: lecture.id },
+                               user_id: user.id)
+                        .pick(:tutorial_id)
+    end
+
+    def display_status
+      if pending? && submitted_at.nil?
+        :not_submitted
+      elsif pending?
+        :pending_grading
+      else
+        status.to_sym
+      end
+    end
+  end
+end

@@ -497,7 +497,7 @@ namespace :solver do
     end
 
     # Subscribe teacher to seminar
-    unless teacher.favorite_lectures.exists?(seminar.id)
+    unless teacher.lectures.exists?(seminar.id)
       teacher.lectures << seminar
       puts "Subscribed teacher to seminar"
     end

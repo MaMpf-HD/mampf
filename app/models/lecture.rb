@@ -117,6 +117,7 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
+  before_validation :initialize_submission_deletion_date
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -130,6 +131,8 @@ class Lecture < ApplicationRecord
   after_save :touch_lessons
   after_save :touch_chapters
   after_save :touch_sections
+
+  after_save :fan_out_submission_deletion_date
 
   # scopes
   scope :published, -> { where.not(released: nil) }
@@ -613,6 +616,10 @@ class Lecture < ApplicationRecord
     false
   end
 
+  def supported_assessable_types
+    seminar? ? ["Talk"] : ["Assignment"]
+  end
+
   def chapter_name
     return "chapter" unless seminar?
 
@@ -671,11 +678,9 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
-  def submission_deletion_date
-    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
-        15.days
-    end
+  def default_submission_deletion_date
+    (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
+      15.days
   end
 
   def assignments_by_deadline
@@ -795,23 +800,13 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    # Efficiently insert missing memberships (ignoring duplicates)
-    # Note: Requires a unique index on [:user_id, :lecture_id]
-    attributes = user_ids.map do |uid|
-      { user_id: uid, lecture_id: id }
+    user_ids.uniq.each do |uid|
+      LectureMembership.transaction(requires_new: true) do
+        LectureMembership.create!(user_id: uid, lecture_id: id)
+      end
+    rescue ActiveRecord::RecordNotUnique
+      next
     end
-
-    return if attributes.empty?
-
-    # Rails handles timestamps automatically.
-    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
-    # created_at/updated_at for existing members.
-    # rubocop:disable Rails/SkipsModelValidations
-    LectureMembership.insert_all(
-      attributes,
-      unique_by: [:user_id, :lecture_id]
-    )
-    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def eligible_as_tutors
@@ -868,6 +863,16 @@ class Lecture < ApplicationRecord
   end
 
   private
+
+    def initialize_submission_deletion_date
+      self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def fan_out_submission_deletion_date
+      return unless saved_change_to_submission_deletion_date?
+
+      assignments.update_all(deletion_date: submission_deletion_date) # rubocop:disable Rails/SkipsModelValidations
+    end
 
     # used for after save callback
     def remove_teacher_as_editor
