@@ -37,6 +37,14 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
     I18n.t("student_performance.records.columns.#{@status}")
   end
 
+  def text_class
+    ["text", config[:color]].join("-")
+  end
+
+  def icon_class
+    ["bi", config[:icon], "me-1"].join(" ")
+  end
+
   def tooltip(assessment_title)
     case @status
     when :reviewed
