@@ -3,29 +3,72 @@
 <% exam ||= nil %>
 
 <% if editable && exam %>
+  <% add_form_id = "exam-#{exam.id}-participants-add-form" %>
+  <% add_form_open = entries.empty? %>
+
   <div data-controller="exams--registration-list">
-    <div class="d-flex gap-2 mb-3">
-      <input
-        type="text"
-        class="form-control form-control-sm"
-        placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
-        autocomplete="off"
-        data-action="input->exams--registration-list#filter"
-      >
+    <div class="d-flex flex-column flex-sm-row gap-2 align-items-sm-end mb-3">
+      <% if entries.any? %>
+        <div class="flex-grow-1">
+          <label
+            class="form-label form-label-sm mb-1"
+            for="exam-participants-filter"
+          >
+            <%= t("assessment.registration_tab.filter_label") %>
+          </label>
 
-      <%= form_with url: participants_exam_path(exam), method: :post,
-                    local: true,
-                    class: "d-flex gap-2 flex-nowrap" do |f| %>
-        <%= f.email_field :email,
-                          class: "form-control form-control-sm",
-                          placeholder: t("assessment.registration_tab.add_placeholder"),
-                          required: true,
-                          autocomplete: "off",
-                          style: "min-width: 220px;" %>
-
-        <%= f.submit t("assessment.registration_tab.add_button"),
-                     class: "btn btn-sm btn-outline-primary flex-shrink-0" %>
+          <input
+            id="exam-participants-filter"
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+            autocomplete="off"
+            data-action="input->exams--registration-list#filter"
+          >
+        </div>
       <% end %>
+
+      <div class="flex-shrink-0">
+        <button
+          class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#<%= add_form_id %>"
+          aria-expanded="<%= add_form_open %>"
+          aria-controls="<%= add_form_id %>"
+        >
+          <i class="bi bi-plus-lg"></i>
+          <span><%= t("assessment.registration_tab.add_form_label") %></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="<%= add_form_id %>" class="collapse <%= "show" if add_form_open %>">
+      <div class="border rounded-3 p-3 mb-3 bg-body-tertiary">
+        <div class="small fw-semibold mb-2">
+          <%= t("assessment.registration_tab.add_form_label") %>
+        </div>
+
+        <%= form_with url: participants_exam_path(exam), method: :post,
+                      local: true,
+                      class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
+          <%= f.email_field :email,
+                            class: "form-control form-control-sm",
+                            placeholder: t("assessment.registration_tab.add_placeholder"),
+                            required: true,
+                            autocomplete: "off",
+                            aria: {
+                              label: t("assessment.registration_tab.add_form_label")
+                            } %>
+
+          <%= f.submit t("assessment.registration_tab.add_button"),
+                       class: "btn btn-sm btn-outline-primary flex-shrink-0" %>
+        <% end %>
+
+        <div class="small text-muted mt-2">
+          <%= t("assessment.registration_tab.add_form_hint") %>
+        </div>
+      </div>
     </div>
 
     <% if entries.any? %>

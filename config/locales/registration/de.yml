@@ -250,15 +250,15 @@ de:
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
-        propagate_to_lecture: "Studierende erscheinen in der Teilnehmerliste der Veranstaltung"
+        propagate_to_lecture: "Studierende erscheinen in der Teilnahmeliste der Veranstaltung"
       hints:
-        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnehmerliste der Veranstaltung"
+        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnahmeliste der Veranstaltung"
       help:
-        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt."
-        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnahmelisten statt."
+        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnahmeliste der Veranstaltung erscheinen."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktiviere dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
     user_registration:
       forced_assignment: "Zwangszuweisung"
@@ -304,7 +304,7 @@ de:
         current_registration_state: "Aktueller Registrierungsstand"
         current_group_occupancy: "Aktuelle Belegung der Gruppen"
         workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene oder abgelehnte Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnahmelisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
         finalization_status:
           blocked_title: "Finalisierung derzeit nicht möglich"

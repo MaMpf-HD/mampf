@@ -55,7 +55,7 @@ de:
     lifecycle_help:
       title: "Lebenszyklus"
       toggle: "Lebenszyklus"
-      intro: "Folge diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      intro: "Folge diesen Schritten, um Teilnahmelisten zu erstellen und zu verwalten."
       phase1:
         title: "Gruppenerstellung"
         description_html: "Erstelle Deine %{link} über das Dashboard unten."
@@ -66,7 +66,7 @@ de:
         link_text: "Einschreibemethoden"
       phase3:
         title: "Verwaltung"
-        description_html: "Verwalte Deine Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        description_html: "Verwalte Deine Teilnahmelisten während des Semesters manuell. Details unter %{link}."
         link_text: "Verwaltung"
     roster_help:
       title: "Einschreibemethoden"
@@ -79,16 +79,16 @@ de:
         intro: "Verschiedene Gruppentypen dienen unterschiedlichen Zwecken in Deiner Veranstaltungsstruktur."
         tutorials:
           title: "Tutorien"
-          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         talks:
           title: "Vorträge"
-          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         flexible:
           title: "Flexible Gruppen"
-          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnahmeliste der Veranstaltung übernommen werden sollen."
         superset_principle:
           title: "Obermengenprinzip"
-          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnahmeliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Feste Einschreibung"
           description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwende die Entfernen-Aktion im Tab 'Eingeschriebene'."

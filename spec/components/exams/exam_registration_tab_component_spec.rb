@@ -192,12 +192,62 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
 
     document = Nokogiri::HTML.fragment(rendered_content)
     remove_action = document.at_css("button[title]")
+    filter_label = document.at_css('label[for="exam-participants-filter"]')
+    add_toggle = document.at_css(
+      "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"
+    )
+    add_form = document.at_css("#exam-#{exam.id}-participants-add-form.collapse")
+    add_form_label = document.css(".small.fw-semibold").find do |node|
+      node.text.include?(I18n.t("assessment.registration_tab.add_form_label"))
+    end
+    filter_label_index = rendered_content.index(
+      I18n.t("assessment.registration_tab.filter_label")
+    )
+    add_form_label_index = rendered_content.index(
+      I18n.t("assessment.registration_tab.add_form_label")
+    )
 
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.remove_button")
     )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.filter_label")
+    )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.add_form_label")
+    )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.add_form_hint")
+    )
+    expect(filter_label).to be_present
+    expect(add_toggle).to be_present
+    expect(add_toggle["aria-expanded"]).to eq("false")
+    expect(add_form).to be_present
+    expect(add_form["class"]).not_to include("show")
+    expect(add_form_label).to be_present
+    expect(filter_label_index).to be < add_form_label_index
     expect(remove_action["title"]).to eq(
       I18n.t("assessment.registration_tab.remove_tooltip")
+    )
+  end
+
+  it "renders the add-by-email form expanded when no participants exist" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    exam.registration_campaign.update!(status: :completed)
+
+    render_inline(described_class.new(exam: exam))
+
+    document = Nokogiri::HTML.fragment(rendered_content)
+    add_toggle = document.at_css(
+      "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"
+    )
+    add_form = document.at_css("#exam-#{exam.id}-participants-add-form.collapse.show")
+
+    expect(add_toggle).to be_present
+    expect(add_toggle["aria-expanded"]).to eq("true")
+    expect(add_form).to be_present
+    expect(rendered_content).not_to include(
+      I18n.t("assessment.registration_tab.filter_label")
     )
   end
 
