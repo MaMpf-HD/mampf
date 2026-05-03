@@ -376,7 +376,7 @@ de:
         unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
       perf_evidence:
         certified_by: "(von %{name})"
-        no_cert: "Keine Entscheidung"
+        no_cert: "Kein Zulassungseintrag"
         pts_abbr: "Pkt."
         achievements_short: "%{met}/%{total} Krit."
       cert_incomplete:

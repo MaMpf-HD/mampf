@@ -149,6 +149,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
 
         expect(response).to have_http_status(:success)
         expect(response.body)
+          .to include(I18n.t("registration.allocation.perf_evidence.no_cert"))
+        expect(response.body)
           .to include(I18n.t("registration.user_registration.actions.defer_due_to_blocker"))
         expect(response.body)
           .to include(I18n.t("registration.allocation.errors.policy_violation_user_desc"))

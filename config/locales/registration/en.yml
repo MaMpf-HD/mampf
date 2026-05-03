@@ -376,7 +376,7 @@ en:
         unfulfilled: "Some registered students do not have a passed certification. These will fail the exam eligibility policy on finalization."
       perf_evidence:
         certified_by: "(by %{name})"
-        no_cert: "No decision"
+        no_cert: "No certification record"
         pts_abbr: "pts"
         achievements_short: "%{met}/%{total} crit."
       cert_incomplete:
