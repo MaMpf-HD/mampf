@@ -44,8 +44,7 @@
       <div class="exam-registration-registrants-shell">
         <%= render "exams/registrants_table",
                    exam: exam,
-                   campaign: campaign,
-                   rejected_registrations: rejected_registrations %>
+                   campaign: campaign %>
       </div>
     <% elsif show_post_finalization? %>
       <%= render "exams/registration_post_finalization",

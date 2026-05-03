@@ -196,6 +196,7 @@ de:
       participant_removed: '%{name} wurde entfernt.'
       user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
       already_registered: 'Diese Person ist bereits angemeldet.'
+      review_hint: 'Einzelentscheidungen über Anmeldungen erfolgen in der Prüfphase nach Anmeldeschluss.'
       finalized_on: 'Finalisiert am %{date}'
       rejected_heading: 'Abgelehnte Anmeldungen'
     no_talks_yet: 'Noch keine Vorträge erstellt.'

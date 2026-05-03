@@ -35,42 +35,6 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       expect(response.media_type).to eq(Mime[:turbo_stream])
     end
 
-    it "rerenders the exam registration tab when called from the exam registrations table" do
-      exam = create(:exam, :with_date, lecture: lecture)
-      exam_campaign = exam.registration_campaign
-      exam_campaign.update!(status: :closed)
-      exam_registration = create(
-        :registration_user_registration,
-        registration_campaign: exam_campaign,
-        registration_item: exam_campaign.registration_items.first,
-        user: student
-      )
-
-      delete(
-        reject_for_user_registration_campaign_registrations_path(
-          exam_campaign,
-          user_id: student.id,
-          source: "registrations"
-        ),
-        headers: { "Accept" => "text/vnd.turbo-stream.html" }
-      )
-
-      expect(response).to have_http_status(:success)
-      expect(response.body).to include(%(target="exam_#{exam.id}_registration"))
-      expect(response.body).to include(
-        I18n.t("assessment.registration_tab.rejected_heading")
-      )
-      expect(response.body).to include(student.email)
-      expect(response.body).not_to include(
-        reject_for_user_registration_campaign_registrations_path(
-          exam_campaign,
-          user_id: student.id,
-          source: "registrations"
-        )
-      )
-      expect(exam_registration.reload).to be_rejected
-    end
-
     context "when user is not authorized" do
       let(:other_user) { create(:confirmed_user) }
 

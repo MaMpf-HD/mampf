@@ -39,22 +39,32 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     document = Nokogiri::HTML.fragment(rendered_content)
     workspace = document.at_css(".exam-registration-allocation-workspace")
     registrants_shell = document.at_css(".exam-registration-registrants-shell")
-    reject_action = document.at_css("button[title]")
 
     expect(workspace).to be_present
     expect(registrants_shell).to be_present
-    expect(reject_action["title"]).to eq(
-      I18n.t("assessment.registration_tab.reject_tooltip")
-    )
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.filter_placeholder")
     )
     expect(rendered_content).to include(
-      I18n.t("assessment.registration_tab.reject_button")
+      I18n.t("assessment.registration_tab.review_hint")
+    )
+    expect(rendered_content).not_to include(I18n.t("basics.actions"))
+    expect(document.css("button[title]")).to be_empty
+  end
+
+  it "renders the review hint during open registrations" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    campaign = exam.registration_campaign
+    campaign.update!(status: :open)
+
+    render_inline(described_class.new(exam: exam))
+
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.review_hint")
     )
   end
 
-  it "renders rejected registrations in a separate table before finalization" do
+  it "does not render rejected registrations before finalization" do
     exam = create(:exam, :with_date, lecture: lecture)
     campaign = exam.registration_campaign
     campaign.update!(status: :closed)
@@ -74,16 +84,10 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
 
     document = Nokogiri::HTML.fragment(rendered_content)
 
-    expect(rendered_content).to include(
+    expect(rendered_content).not_to include(
       I18n.t("assessment.registration_tab.rejected_heading")
     )
-    expect(rendered_content).to include(rejected_user.email)
-    expect(rendered_content).to include(
-      I18n.t("registration.user_registration.reason")
-    )
-    expect(rendered_content).to include(
-      I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher")
-    )
+    expect(rendered_content).not_to include(rejected_user.email)
     expect(document.css("button[title]")).to be_empty
   end
 

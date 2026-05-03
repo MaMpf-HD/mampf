@@ -84,22 +84,17 @@ class ExamRegistrationTabComponent < ViewComponent::Base
   def rejected_registrations
     return Registration::UserRegistration.none unless campaign
 
-    @rejected_registrations ||= rejected_registrations_scope
-                                .includes(:user)
-                                .joins(:user)
-                                .merge(User.order(:name))
+    @rejected_registrations ||= campaign.user_registrations
+                                        .where(status: :rejected)
+                                        .includes(:user)
+                                        .joins(:user)
+                                        .merge(User.order(:name))
   end
 
   private
 
     def pre_finalization?
       exam.status_phase.in?([:draft, :registration_open, :registration_closed])
-    end
-
-    def rejected_registrations_scope
-      return campaign.user_registrations.where(status: :rejected) if campaign.completed?
-
-      campaign.open_rejected_registrations
     end
 
     def registered_count
