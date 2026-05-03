@@ -29,6 +29,7 @@
           <th><%= t("basics.name") %></th>
           <th><%= t("basics.email") %></th>
           <th><%= t("registration.user_registration.reason") %></th>
+          <th class="text-end"><%= t("basics.actions") %></th>
         </tr>
       </thead>
 
@@ -38,6 +39,31 @@
             <td><%= entry[:user].name %></td>
             <td class="text-muted"><%= entry[:user].email %></td>
             <td><%= entry[:reason_label] %></td>
+
+            <td class="text-end">
+              <%= button_to participants_exam_path(exam),
+                            method: :post,
+                            params: { user_id: entry[:user].id },
+                            class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1",
+                            title: t("assessment.registration_tab.add_to_participants_tooltip"),
+                            aria: {
+                              label: t("assessment.registration_tab.add_to_participants_tooltip")
+                            },
+                            form: {
+                              class: "d-inline-block mb-0",
+                              data: {
+                                turbo_confirm: t(
+                                  "assessment.registration_tab.add_to_participants_confirm"
+                                )
+                              }
+                            } do %>
+                <i class="bi bi-plus-lg"></i>
+
+                <span>
+                  <%= t("assessment.registration_tab.add_to_participants_button") %>
+                </span>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

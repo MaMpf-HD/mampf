@@ -481,6 +481,63 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
+  describe "POST /exams/:id/participants" do
+    before { sign_in teacher }
+
+    context "with registration campaigns enabled" do
+      let(:campaign) { exam.registration_campaign }
+
+      before do
+        Flipper.enable(:registration_campaigns)
+        campaign.update!(status: :completed)
+      end
+
+      after do
+        Flipper.disable(:registration_campaigns)
+      end
+
+      it "adds a rejected registration to the participants list by user id" do
+        registration = create(:registration_user_registration,
+                              :rejected,
+                              registration_campaign: campaign,
+                              registration_item: campaign.registration_items.first,
+                              user: student,
+                              rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+                              rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+                              rejection_reason_label: I18n.t(
+                                "registration.user_registration.reason_labels.withdrawn_by_teacher"
+                              ))
+
+        expect do
+          post(participants_exam_path(exam),
+               params: { user_id: student.id },
+               as: :turbo_stream)
+        end.to change { exam.reload.exam_roster_entries.count }.by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(registration.reload).to be_rejected
+        expect(registration.rejection_overridden_at).to be_nil
+      end
+
+      it "reinstates an excluded participant by user id" do
+        roster_entry = create(:exam_roster_entry,
+                              exam: exam,
+                              user: student,
+                              excluded_at: Time.current)
+
+        expect do
+          post(participants_exam_path(exam),
+               params: { user_id: student.id },
+               as: :turbo_stream)
+        end.not_to change(ExamRosterEntry, :count)
+
+        expect(response).to have_http_status(:ok)
+        expect(roster_entry.reload.excluded_at).to be_nil
+        expect(exam.reload.exam_roster_entries.map(&:user_id)).to include(student.id)
+      end
+    end
+  end
+
   describe "DELETE /exams/:id" do
     context "as a teacher" do
       before { sign_in teacher }

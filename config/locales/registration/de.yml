@@ -172,7 +172,7 @@ de:
         prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
         prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
-        certification_not_passed: "Prüfungszulassung nicht erteilt."
+        certification_not_passed: "Prüfungszulassung nicht erteilt"
         missing_lecture: "Es muss mindestens eine Veranstaltung ausgewählt werden."
         lecture_not_found: "Mindestens eine ausgewählte Veranstaltung existiert nicht."
         lecture_exam_eligibility_disabled: >-

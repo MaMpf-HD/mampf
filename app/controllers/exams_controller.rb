@@ -186,7 +186,7 @@ class ExamsController < ApplicationController
 
   def add_participant
     authorize! :add_participant, @exam
-    user = User.find_by(email: params[:email]&.strip)
+    user = participant_user
 
     respond_to do |format|
       format.turbo_stream do
@@ -230,6 +230,12 @@ class ExamsController < ApplicationController
   end
 
   private
+
+    def participant_user
+      return User.find_by(id: params[:user_id]) if params[:user_id].present?
+
+      User.find_by(email: params[:email]&.strip)
+    end
 
     def set_exam
       @exam = Exam.find(params[:id])

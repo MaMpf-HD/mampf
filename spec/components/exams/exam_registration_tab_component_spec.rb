@@ -113,6 +113,8 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
            excluded_at: Time.current)
 
     render_inline(described_class.new(exam: exam))
+    document = Nokogiri::HTML.fragment(rendered_content)
+    add_path = Rails.application.routes.url_helpers.participants_exam_path(exam)
 
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.post_finalization_hint")
@@ -123,14 +125,62 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(rendered_content).to include(
       I18n.t("registration.user_registration.reason")
     )
+    expect(rendered_content).to include(I18n.t("basics.actions"))
     expect(rendered_content).to include(
       I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher")
     )
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.removed_from_roster_reason")
     )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.add_to_participants_button")
+    )
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.add_to_participants_confirm")
+    )
     expect(rendered_content).to include(rejected_user.email)
     expect(rendered_content).to include(excluded_user.email)
+    expect(
+      document.at_css(
+        "form[action='#{add_path}'] input[name='user_id'][value='#{rejected_user.id}']"
+      )
+    ).to be_present
+    expect(
+      document.at_css(
+        "form[action='#{add_path}'] input[name='user_id'][value='#{excluded_user.id}']"
+      )
+    ).to be_present
+    expect(
+      document.at_css(
+        "form[action='#{add_path}'][data-turbo-confirm='#{I18n.t("assessment.registration_tab.add_to_participants_confirm")}']"
+      )
+    ).to be_present
+  end
+
+  it "renders a detailed exam-eligibility reason after finalization" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    campaign = exam.registration_campaign
+    campaign.update!(status: :completed)
+    rejected_user = create(:confirmed_user)
+    create(:registration_user_registration,
+           :rejected,
+           registration_campaign: campaign,
+           registration_item: campaign.registration_items.first,
+           user: rejected_user,
+           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
+           rejection_reason_code: "certification_not_passed",
+           rejection_reason_label: I18n.t(
+             "registration.policy.errors.certification_not_passed"
+           ))
+
+    render_inline(described_class.new(exam: exam))
+
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.certification_not_passed_reason")
+    )
+    expect(rendered_content).not_to include(
+      "#{I18n.t("registration.policy.errors.certification_not_passed")}."
+    )
   end
 
   it "renders the participants removal action with explicit label after finalization" do

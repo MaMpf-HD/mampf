@@ -108,7 +108,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
 
         entries_by_user_id[registration.user_id] = {
           user: registration.user,
-          reason_label: registration.localized_rejection_reason_label
+          reason_label: post_finalization_reason_label(registration)
         }
       end
 
@@ -126,6 +126,18 @@ class ExamRegistrationTabComponent < ViewComponent::Base
   end
 
   private
+
+    def post_finalization_reason_label(registration)
+      if registration.rejection_reason_code == "certification_not_passed"
+        return certification_not_passed_reason_label
+      end
+
+      registration.localized_rejection_reason_label
+    end
+
+    def certification_not_passed_reason_label
+      helpers.t("assessment.registration_tab.certification_not_passed_reason")
+    end
 
     def pre_finalization?
       exam.status_phase.in?([:draft, :registration_open, :registration_closed])
