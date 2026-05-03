@@ -45,8 +45,8 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.filter_placeholder")
     )
-    expect(rendered_content).to include(
-      I18n.t("assessment.registration_tab.review_hint")
+    expect(registrants_shell.text.squish).to include(
+      I18n.t("assessment.registration_tab.closed_review_hint")
     )
     expect(rendered_content).not_to include(I18n.t("basics.actions"))
     expect(document.css("button[title]")).to be_empty
@@ -60,7 +60,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     render_inline(described_class.new(exam: exam))
 
     expect(rendered_content).to include(
-      I18n.t("assessment.registration_tab.review_hint")
+      I18n.t("assessment.registration_tab.open_review_hint")
     )
   end
 
@@ -109,6 +109,9 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
 
     render_inline(described_class.new(exam: exam))
 
+    expect(rendered_content).to include(
+      I18n.t("assessment.registration_tab.post_finalization_hint")
+    )
     expect(rendered_content).to include(
       I18n.t("registration.user_registration.reason")
     )

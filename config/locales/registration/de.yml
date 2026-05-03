@@ -309,8 +309,8 @@ de:
         finalization_status:
           blocked_title: "Finalisierung derzeit nicht möglich"
           blocked_desc:
-            one: "Es gibt %{count} Blocker. Diese Anmeldung muss zuerst geklärt werden."
-            other: "Es gibt %{count} Blocker. Diese Anmeldungen müssen zuerst geklärt werden."
+            one: "Es gibt %{count} offenen Fall. Diese Anmeldung muss zuerst geklärt werden."
+            other: "Es gibt %{count} offene Fälle. Diese Anmeldungen müssen zuerst geklärt werden."
           auto_rejections_title: "Automatische Ablehnungen"
           auto_rejections_desc:
             one: "Beim Zuteilen wird voraussichtlich %{count} Anmeldung aufgrund einer Finalisierungsrichtlinie automatisch abgelehnt; nachträgliches manuelles Hinzufügen bleibt möglich."
@@ -356,7 +356,7 @@ de:
         policy_violation_user_title: "Blockierte Studierende:"
         policy_violation_user_desc: "Wenn Du einen Fall jetzt nicht klären kannst, lehne die Anmeldung vorerst ab. Nach der Zuteilung kannst Du betroffene Studierende bei Bedarf manuell in Gruppen aufnehmen."
         policy_violation_next_step_title: "Danach:"
-        policy_violation_next_step_desc: "Sobald die Blocker behoben sind, berechne die Zuteilung erneut."
+        policy_violation_next_step_desc: "Sobald die offenen Fälle geklärt sind, berechne die Zuteilung erneut."
         policy_violation_count:
           one: "Person betroffen"
           other: "Studierende betroffen"
@@ -370,8 +370,8 @@ de:
         override_pass: "Auf bestanden setzen"
         confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
         go_to_certifications: "Im Zulassungs-Dashboard klären"
-        additional_blockers: "Weitere Blocker"
-        other_blockers: "Weitere Blocker"
+        additional_blockers: "Weitere offene Punkte"
+        other_blockers: "Weitere offene Punkte"
       student_performance:
         unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
       perf_evidence:

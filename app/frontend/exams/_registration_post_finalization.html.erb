@@ -1,5 +1,10 @@
 <hr class="my-4">
 
+<div class="small text-muted d-flex align-items-start gap-2 mb-3">
+  <i class="bi bi-info-circle"></i>
+  <span><%= t("assessment.registration_tab.post_finalization_hint") %></span>
+</div>
+
 <%= render "exams/participants_table",
            entries: exam.exam_rosters.includes(:user)
                         .joins(:user).merge(User.order(:name)),
