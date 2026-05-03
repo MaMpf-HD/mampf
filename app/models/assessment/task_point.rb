@@ -12,10 +12,9 @@ module Assessment
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
 
-    after_commit :refresh_participation_points_total, on: :destroy
     after_commit :refresh_participation_points_total,
-                 on: [:create, :update],
-                 if: :saved_change_to_points?
+                 on: [:create, :update, :destroy],
+                 if: :refresh_participation_points_total?
 
     private
 
@@ -27,9 +26,15 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
-        ::Assessment::Participation
-          .where(id: assessment_participation_id)
-          .update_all(points_total: sum)
+
+        participation = ::Assessment::Participation.find_by(
+          id: assessment_participation_id
+        )
+        participation&.update!(points_total: sum)
+      end
+
+      def refresh_participation_points_total?
+        destroyed? || saved_change_to_points?
       end
 
       def ensure_task_and_participation_match_assessment

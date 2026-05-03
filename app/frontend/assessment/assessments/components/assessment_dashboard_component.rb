@@ -3,6 +3,7 @@
 class AssessmentDashboardComponent < ViewComponent::Base
   TabConfig = Data.define(:key, :label, :component)
 
+  # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
                  active_tab: nil, tasks: nil, task: nil)
     super()
@@ -13,6 +14,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     @task = task
     @active_tab = normalize_tab_key(active_tab) || default_tab
   end
+  # rubocop: enable Metrics/ParameterLists
 
   attr_reader :assessable, :assessment, :lecture, :active_tab, :tasks, :task
 
@@ -98,5 +100,4 @@ class AssessmentDashboardComponent < ViewComponent::Base
         StatisticsTabComponent.new(assessment: assessment, lecture: lecture)
       )
     end
-
 end

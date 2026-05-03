@@ -141,5 +141,4 @@ RSpec.describe(Assessment::Task, type: :model) do
       end
     end
   end
-
 end

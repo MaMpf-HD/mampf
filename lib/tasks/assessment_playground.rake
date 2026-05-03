@@ -476,10 +476,14 @@ namespace :assessment do
   end
 
   def clean_invalid_grades!
-    non_gradable_ids = Assessment::Assessment
-                       .includes(:assessable)
-                       .reject { |a| a.assessable.is_a?(Assessment::Gradable) }
-                       .map(&:id)
+    non_gradable_ids = if defined?(Assessment::Gradable)
+      Assessment::Assessment
+        .includes(:assessable)
+        .reject { |a| a.assessable.is_a?(Assessment::Gradable) }
+        .map(&:id)
+    else
+      Assessment::Assessment.pluck(:id)
+    end
     return if non_gradable_ids.empty?
 
     dirty = Assessment::Participation

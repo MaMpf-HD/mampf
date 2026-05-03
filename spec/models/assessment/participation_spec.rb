@@ -23,7 +23,6 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(participation.status).to eq("reviewed")
       expect(participation.graded_at).to be_present
     end
-
   end
 
   describe "validations" do
@@ -38,7 +37,6 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to be_present
     end
-
   end
 
   describe "enums" do

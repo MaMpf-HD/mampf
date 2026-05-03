@@ -35,7 +35,9 @@
   <% end %>
   <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <span class="fw-medium"><%= t("assessment.grading_overview.submission_progress") %></span>
+      <span class="fw-medium">
+        <%= t("assessment.grading_overview.submission_progress") %>
+      </span>
 
       <span class="text-muted">
         <%= submitted_count %>/<%= total_expected %>
@@ -59,7 +61,11 @@
       <thead>
         <tr>
           <th><%= t("basics.tutorial") %></th>
-          <th class="text-center"><%= t("assessment.grading_overview.submitted") %></th>
+
+          <th class="text-center">
+            <%= t("assessment.grading_overview.submitted") %>
+          </th>
+
           <th class="text-center"><%= missing_label %></th>
           <th style="width: 30%;"></th>
         </tr>
@@ -71,6 +77,7 @@
             <td><%= stat.name %></td>
             <td class="text-center"><%= stat.submitted %></td>
             <td class="text-center"><%= stat.missing %></td>
+
             <td>
               <%= progress_bar(stat.submitted, stat.total,
                                classification: stat.progress_percentage == 100 ? :success : :secondary,

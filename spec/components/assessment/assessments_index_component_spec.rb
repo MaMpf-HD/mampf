@@ -21,5 +21,4 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
       expect(rendered_content).to include("Assignment 1")
     end
   end
-
 end

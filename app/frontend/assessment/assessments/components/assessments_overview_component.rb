@@ -2,7 +2,8 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   def initialize(lecture:, active_tab: nil)
     super()
     @lecture = lecture
-    @active_tab = active_tab&.to_sym == :assessments ? :assessments : :assessments
+    tab = active_tab&.to_sym
+    @active_tab = tab == :assessments ? tab : :assessments
   end
 
   attr_reader :lecture, :active_tab

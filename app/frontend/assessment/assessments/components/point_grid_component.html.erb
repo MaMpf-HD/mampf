@@ -44,10 +44,14 @@
             <% end %>
 
             <% tasks.each do |task| %>
-              <td class="text-center"><%= points_display(participation, task) %></td>
+              <td class="text-center">
+                <%= points_display(participation, task) %>
+              </td>
             <% end %>
 
-            <td class="text-center fw-bold"><%= total_display(participation) %></td>
+            <td class="text-center fw-bold">
+              <%= total_display(participation) %>
+            </td>
           </tr>
         <% end %>
       </tbody>
@@ -67,7 +71,9 @@
         <i class="bi bi-person-dash me-1"></i>
         <%= t("assessment.grade_table.excluded_heading") %>
 
-        <span class="badge bg-secondary ms-1"><%= excluded_participations.size %></span>
+        <span class="badge bg-secondary ms-1">
+          <%= excluded_participations.size %>
+        </span>
       </h6>
     </div>
 

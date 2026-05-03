@@ -102,5 +102,4 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment.results_published?).to be(true)
     end
   end
-
 end

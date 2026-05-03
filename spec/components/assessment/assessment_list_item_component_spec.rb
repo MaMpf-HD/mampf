@@ -139,5 +139,4 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(component.show_path).to eq("#")
     end
   end
-
 end

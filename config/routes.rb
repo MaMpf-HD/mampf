@@ -323,7 +323,6 @@ Rails.application.routes.draw do
                 only: [:index, :new, :create],
                 as: :registration_campaigns
     end
-
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do

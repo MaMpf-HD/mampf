@@ -110,10 +110,12 @@ class GradingOverviewComponent < ViewComponent::Base
       stats = []
 
       membership_counts = roster_memberships.group(:tutorial_id).count
-      submission_counts = participations.where.not(tutorial_id: nil)
-                                   .where.not(submitted_at: nil)
-                                   .group(:tutorial_id)
-                                   .count
+      submission_counts =
+        participations
+        .where.not(tutorial_id: nil)
+        .where.not(submitted_at: nil)
+        .group(:tutorial_id)
+        .count
 
       lecture.tutorials.includes(:tutors).order(:title).each do |tutorial|
         total = membership_counts[tutorial.id] || 0

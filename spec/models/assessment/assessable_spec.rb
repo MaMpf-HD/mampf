@@ -55,5 +55,4 @@ RSpec.describe(Assessment::Assessable) do
 
     it_behaves_like "an assessable model"
   end
-
 end

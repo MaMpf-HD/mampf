@@ -96,9 +96,10 @@ class PointGridComponent < ViewComponent::Base
     end
 
     def participations
-      @participations ||= assessment.assessment_participations
-                                  .joins(:user)
-                                  .includes(:user, :tutorial, task_points: :task)
-                                  .order(:tutorial_id, "users.name")
+      @participations ||= assessment
+                          .assessment_participations
+                          .joins(:user)
+                          .includes(:user, :tutorial, task_points: :task)
+                          .order(:tutorial_id, "users.name")
     end
 end
