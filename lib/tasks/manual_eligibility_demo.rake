@@ -38,7 +38,7 @@ namespace :eligibility_demo do
     Flipper.enable(:student_performance)
 
     Rake::Task["assessment:setup"].invoke
-    Rake::Task["performance:compute"].invoke
+    Rake::Task["performance:setup"].invoke
 
     lecture = find_eligibility_demo_lecture!
 

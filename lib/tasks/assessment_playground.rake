@@ -22,7 +22,6 @@
 # assessment:seed_participations - Seeds participations (simulates submissions)
 # assessment:randomize_statuses  - Randomizes: some reviewed, some exempt, some deleted
 # assessment:seed_grades         - Assigns random German grades to reviewed participations
-# assessment:seed_achievement_grades - Seeds achievements and grade_text values
 # assessment:seed_seminar_grades - Grades speakers in the two-stage seminar campaign
 # assessment:setup               - Runs all of the above (except seed_seminar_grades)
 # assessment:reset               - Destroys test assignments
@@ -136,46 +135,6 @@ namespace :assessment do
 
       puts "✓ Created #{created} participations for: #{assignment.title}"
     end
-
-    if lecture.respond_to?(:exams)
-      membership_lookup = TutorialMembership
-                          .where(tutorial_id: lecture.tutorial_ids)
-                          .pluck(:user_id, :tutorial_id)
-                          .to_h
-
-      lecture.exams.each do |exam|
-        assessment = exam.assessment
-        next unless assessment
-
-        existing_count = assessment.assessment_participations.count
-        if existing_count.positive?
-          puts "✓ Participations already exist for: #{exam.title} (#{existing_count})"
-          next
-        end
-
-        roster_user_ids = exam.exam_roster_entries.pluck(:user_id)
-        if roster_user_ids.empty?
-          puts "  ⏭ No roster entries for: #{exam.title} (run exam:setup first)"
-          next
-        end
-
-        created = 0
-        roster_user_ids.each do |uid|
-          tutorial_id = membership_lookup[uid]
-          next unless tutorial_id
-
-          assessment.assessment_participations.create!(
-            user_id: uid,
-            tutorial_id: tutorial_id,
-            status: :pending,
-            submitted_at: (exam.date || Time.current) - rand(1..4).hours
-          )
-          created += 1
-        end
-
-        puts "✓ Created #{created} participations for: #{exam.title}"
-      end
-    end
   end
 
   desc "Randomize participation statuses with per-tutorial variance"
@@ -269,12 +228,6 @@ namespace :assessment do
         seed_grades_for(talk.assessment, german_grades, talk.title)
       end
     end
-
-    if lecture.respond_to?(:exams)
-      lecture.exams.each do |exam|
-        seed_grades_for(exam.assessment, german_grades, exam.title)
-      end
-    end
   end
 
   desc "Seed random task points for reviewed participations"
@@ -287,72 +240,6 @@ namespace :assessment do
     lecture.assignments.each do |assignment|
       seed_task_points_for(assignment.assessment, assignment.title)
     end
-
-    if lecture.respond_to?(:exams)
-      lecture.exams.each do |exam|
-        seed_task_points_for(exam.assessment, exam.title)
-      end
-    end
-  end
-
-  desc "Seed achievements and grade_text values for achievement participations"
-  task seed_achievement_grades: :environment do
-    Flipper.enable(:assessment_grading)
-    Flipper.enable(:student_performance)
-
-    lecture = Lecture.joins(:tutorials).distinct.first
-    abort "No lecture with tutorials found." unless lecture
-
-    achievement_defs = [
-      { title: "Blackboard Talk", value_type: :boolean, threshold: nil },
-      { title: "Homework Points", value_type: :numeric, threshold: 15 },
-      { title: "Attendance Rate", value_type: :percentage, threshold: 80.0 }
-    ]
-
-    memberships = TutorialMembership
-                  .where(tutorial_id: lecture.tutorial_ids)
-                  .pluck(:user_id, :tutorial_id)
-                  .to_h
-
-    abort "No tutorial memberships found for lecture." if memberships.empty?
-
-    achievement_defs.each do |defn|
-      achievement = lecture.achievements.find_or_create_by!(title: defn[:title]) do |a|
-        a.value_type = defn[:value_type]
-        a.threshold = defn[:threshold]
-      end
-      assessment = achievement.ensure_assessment!(
-        requires_points: false, requires_submission: false
-      )
-
-      existing = assessment.assessment_participations.count
-      if existing.positive?
-        puts "  ✓ Participations exist for: #{defn[:title]} (#{existing})"
-      else
-        memberships.each do |uid, tid|
-          assessment.assessment_participations.create!(
-            user_id: uid, tutorial_id: tid, status: :reviewed
-          )
-        end
-        puts "  ✓ Created #{memberships.size} participations " \
-             "for: #{defn[:title]}"
-      end
-
-      seed_achievement_grade_text(assessment, achievement, defn[:title])
-    end
-
-    puts "✅ Achievement grades seeded."
-  end
-
-  desc "Clear all achievement grade_text values"
-  task reset_achievement_grades: :environment do
-    ids = Assessment::Assessment.where(assessable_type: "Achievement")
-                                .pluck(:id)
-    count = Assessment::Participation
-            .where(assessment_id: ids)
-            .where.not(grade_text: [nil, ""])
-            .update_all(grade_text: nil) # rubocop:disable Rails/SkipsModelValidations
-    puts "✅ Cleared grade_text for #{count} achievement participations."
   end
 
   desc "Run full assessment playground setup"
@@ -368,8 +255,6 @@ namespace :assessment do
     Rake::Task["assessment:randomize_statuses"].invoke
     Rake::Task["assessment:seed_task_points"].invoke
     Rake::Task["assessment:seed_grades"].invoke
-    Rake::Task["assessment:seed_achievement_grades"].invoke
-
     print_assessment_playground_summary
 
     ActiveRecord::Base.logger&.level = old_level
@@ -405,20 +290,6 @@ namespace :assessment do
     end
 
     puts "Done. Destroyed #{destroyed} test assignments."
-
-    achievement_titles = ["Blackboard Talk", "Homework Points",
-                          "Attendance Rate"]
-    achievement_titles.each do |title|
-      achievement = lecture.achievements.find_by(title: title)
-      next unless achievement
-
-      if achievement.assessment
-        achievement.assessment.assessment_participations.delete_all
-        achievement.assessment.destroy!
-      end
-      achievement.destroy!
-      puts "✓ Destroyed achievement: #{title}"
-    end
   end
 
   def print_assessment_playground_summary
@@ -436,10 +307,6 @@ namespace :assessment do
     if lecture.respond_to?(:talks)
       assessables += lecture.talks.map { |t| [t.title, t.assessment, t] }
     end
-    if lecture.respond_to?(:exams)
-      assessables += lecture.exams.map { |e| [e.title, e.assessment, e] }
-    end
-
     assessables.each do |label, assessment, assessable|
       next unless assessment
 
@@ -649,41 +516,6 @@ namespace :assessment do
     when :struggling then rand(0.60..0.80)
     when :dropout then rand(0.80..0.95)
     when :occasional then rand(0.55..0.75)
-    end
-  end
-
-  def seed_achievement_grade_text(assessment, achievement, label)
-    ungradeable = assessment.assessment_participations
-                            .where(grade_text: [nil, ""])
-    count = ungradeable.count
-    if count.zero?
-      puts "  ✓ Grades already set for: #{label}"
-      return
-    end
-
-    graded = 0
-    ungradeable.find_each do |p|
-      if rand < 0.1
-        graded += 1
-        next
-      end
-      quality = student_quality(p.user_id)
-      p.update!(grade_text: random_grade_text(achievement, quality))
-    end
-
-    puts "  ✓ Seeded grade_text for #{count - graded} " \
-         "participations (#{graded} left ungraded): #{label}"
-  end
-
-  def random_grade_text(achievement, quality)
-    case achievement.value_type
-    when "boolean"
-      quality > 0.5 ? "pass" : "fail"
-    when "numeric"
-      max = (achievement.threshold * 1.5).ceil
-      (quality * max).round.to_s
-    when "percentage"
-      (quality * 100).round(1).to_s
     end
   end
 end

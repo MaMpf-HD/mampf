@@ -11,8 +11,11 @@
 #
 # ## Usage
 #
-#   bundle exec rake exam:setup    # Full setup
-#   bundle exec rake exam:reset    # Start over
+#   bundle exec rake exam:setup_core        # Create exams + tasks
+#   bundle exec rake exam:setup_registration # Open campaigns + finalize sample roster
+#   bundle exec rake exam:seed_grading_data  # Seed exam participations, points, grades
+#   bundle exec rake exam:setup              # Full setup
+#   bundle exec rake exam:reset              # Start over
 
 namespace :exam do
   desc "Create a test exam for the first lecture with tutorials"
@@ -57,81 +60,89 @@ namespace :exam do
     end
   end
 
-  desc "Open/manage registration campaigns for the exams"
-  task create_campaign: :environment do
-    Flipper.enable(:registration_campaigns)
+  desc "Seed participation records for finalized playground exams"
+  task seed_participations: :environment do
+    Flipper.enable(:assessment_grading)
 
     lecture = find_lecture!
+    membership_lookup = TutorialMembership
+                        .where(tutorial_id: lecture.tutorial_ids)
+                        .pluck(:user_id, :tutorial_id)
+                        .to_h
 
-    midterm = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
-    practice = Exam.find_by(lecture: lecture,
-                            title: "Practice Exam - Open Registration")
+    lecture.exams.each do |exam|
+      assessment = exam.assessment
+      next unless assessment
 
-    [midterm, practice].compact.each do |exam|
-      campaign = exam.registration_campaign
-      next unless campaign
-
-      if campaign.draft?
-        if campaign.registration_deadline < Time.current
-          campaign.update!(registration_deadline: 1.week.from_now,
-                           status: :open)
-        else
-          campaign.update!(status: :open)
-        end
-        puts "✓ Opened campaign for #{exam.title}"
-      else
-        puts "✓ Campaign for #{exam.title} already #{campaign.status}"
+      existing_count = assessment.assessment_participations.count
+      if existing_count.positive?
+        puts "✓ Participations already exist for: #{exam.title} (#{existing_count})"
+        next
       end
-    end
 
-    final_exam = Exam.find_by(lecture: lecture, title: "Final Exam - Draft")
-    puts "✓ Campaign for #{final_exam.title} stays draft" if final_exam&.registration_campaign
+      roster_user_ids = exam.exam_roster_entries.pluck(:user_id)
+      if roster_user_ids.empty?
+        puts "  ⏭ No roster entries for: #{exam.title} (run exam:setup_registration first)"
+        next
+      end
+
+      created = 0
+      roster_user_ids.each do |uid|
+        tutorial_id = membership_lookup[uid]
+        next unless tutorial_id
+
+        assessment.assessment_participations.create!(
+          user_id: uid,
+          tutorial_id: tutorial_id,
+          status: :pending,
+          submitted_at: (exam.date || Time.current) - rand(1..4).hours
+        )
+        created += 1
+      end
+
+      puts "✓ Created #{created} participations for: #{exam.title}"
+    end
   end
 
-  desc "Create user registrations for the exam campaigns"
-  task create_registrations: :environment do
+  desc "Seed random task points for reviewed exam participations"
+  task seed_task_points: :environment do
+    Flipper.enable(:assessment_grading)
+
     lecture = find_lecture!
 
-    midterm = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
-    practice = Exam.find_by(lecture: lecture,
-                            title: "Practice Exam - Open Registration")
-
-    user_ids = TutorialMembership.where(tutorial_id: lecture.tutorial_ids)
-                                 .pluck(:user_id).uniq
-
-    if user_ids.empty?
-      abort "No tutorial members found. Run solver:create_campaign + " \
-            "solver:create_registrations first, then finalize that campaign."
+    lecture.exams.each do |exam|
+      seed_exam_task_points_for(exam.assessment, exam.title)
     end
-
-    register_users(midterm, user_ids, ratio: 0.9)
-    register_users(practice, user_ids, ratio: 0.5)
   end
 
-  desc "Finalize the midterm campaign (materialize roster)"
-  task finalize_campaign: :environment do
+  desc "Assign random German grades to reviewed exam participations"
+  task seed_grades: :environment do
+    Flipper.enable(:assessment_grading)
+
     lecture = find_lecture!
+    german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
 
-    exam = Exam.find_by(lecture: lecture, title: "Midterm Exam - Playground")
-    abort "Midterm exam not found." unless exam
-
-    campaign = exam.registration_campaign
-    abort "Campaign not found." unless campaign
-
-    if campaign.completed?
-      puts "✓ Campaign already finalized."
-      puts "  Exam roster has #{exam.exam_roster_entries.count} entries."
-      next
+    lecture.exams.each do |exam|
+      seed_exam_grades_for(exam.assessment, german_grades, exam.title)
     end
+  end
 
-    unless campaign.closed?
-      campaign.update!(status: :closed)
-      puts "✓ Closed campaign"
-    end
+  desc "Run the core exam playground setup"
+  task setup_core: :environment do
+    old_level = ActiveRecord::Base.logger&.level
+    ActiveRecord::Base.logger&.level = :warn
 
-    campaign.finalize!
-    puts "✓ Finalized campaign — roster materialized"
-    puts "  Exam roster: #{exam.exam_roster_entries.count} students"
+    Rake::Task["exam:create_exam"].invoke
+    Rake::Task["exam:create_tasks"].invoke
+
+    ActiveRecord::Base.logger&.level = old_level
+  end
+
+  desc "Seed exam grading data after registration has been finalized"
+  task seed_grading_data: :environment do
+    Rake::Task["exam:seed_participations"].invoke
+    Rake::Task["exam:seed_task_points"].invoke
+    Rake::Task["exam:seed_grades"].invoke
   end
 
   desc "Run full exam playground setup"
@@ -139,11 +150,8 @@ namespace :exam do
     old_level = ActiveRecord::Base.logger&.level
     ActiveRecord::Base.logger&.level = :warn
 
-    Rake::Task["exam:create_exam"].invoke
-    Rake::Task["exam:create_tasks"].invoke
-    Rake::Task["exam:create_campaign"].invoke
-    Rake::Task["exam:create_registrations"].invoke
-    Rake::Task["exam:finalize_campaign"].invoke
+    Rake::Task["exam:setup_core"].invoke
+    Rake::Task["exam:setup_registration"].invoke
 
     ActiveRecord::Base.logger&.level = old_level
 
@@ -180,27 +188,6 @@ namespace :exam do
     end
 
     puts "Done."
-  end
-
-  desc "Reset only registrations (keeps exams + campaigns)"
-  task reset_registrations: :environment do
-    lecture = find_lecture!
-
-    playground_titles.each do |title|
-      exam = Exam.find_by(lecture: lecture, title: title)
-      next unless exam
-
-      campaign = exam.registration_campaign
-      next unless campaign
-
-      campaign.user_registrations.destroy_all
-      exam.exam_roster_entries.destroy_all
-      campaign.update!(status: :open) if campaign.completed? || campaign.closed?
-
-      puts "✓ Cleared registrations for #{title}"
-    end
-
-    puts "Run exam:create_registrations to re-populate."
   end
 
   def find_lecture!
@@ -263,6 +250,86 @@ namespace :exam do
     puts "✓ Created #{tasks_spec.size} tasks for #{exam.title} (#{total} pts)"
   end
 
+  def seed_exam_grades_for(assessment, german_grades, label)
+    return unless assessment
+
+    graded = assessment.assessment_participations.where(status: :reviewed)
+    if graded.empty?
+      puts "  ⏭ No reviewed participations for: #{label}"
+      return
+    end
+
+    already_graded = graded.where.not(grade_numeric: nil).count
+    if already_graded == graded.count
+      puts "  ✓ Grades already set for: #{label} (#{already_graded})"
+      return
+    end
+
+    graded.where(grade_numeric: nil).find_each do |participation|
+      participation.update!(grade_numeric: german_grades.sample)
+    end
+
+    puts "  ✓ Assigned grades to #{graded.count} participations for: #{label}"
+  end
+
+  def seed_exam_task_points_for(assessment, label)
+    return unless assessment&.requires_points?
+
+    if assessment.assessment_participations.empty?
+      puts "  ⏭ No participations for: #{label}"
+      return
+    end
+
+    tasks = assessment.tasks.order(:position)
+    if tasks.empty?
+      puts "  ⏭ No tasks for: #{label}"
+      return
+    end
+
+    all_participation_ids = assessment.assessment_participations.select(:id)
+    Assessment::TaskPoint
+      .where(assessment_participation_id: all_participation_ids)
+      .delete_all
+    # rubocop:disable Rails/SkipsModelValidations
+    assessment.assessment_participations
+              .where.not(points_total: nil)
+              .update_all(points_total: nil)
+    # rubocop:enable Rails/SkipsModelValidations
+
+    reviewable = assessment.assessment_participations.where(status: :reviewed)
+    if reviewable.empty?
+      reviewable = assessment.assessment_participations.where(status: :pending)
+      reviewable.find_each do |participation|
+        participation.update!(status: :reviewed)
+      end
+    end
+
+    if reviewable.empty?
+      puts "  ⏭ No reviewed participations for: #{label}"
+      return
+    end
+
+    reviewable.find_each do |participation|
+      quality = exam_student_quality(participation.user_id)
+      total = 0.0
+      tasks.each do |task|
+        raw = (quality * task.max_points) + rand(-1.0..1.0)
+        half_steps = (raw * 2).round.clamp(0, (task.max_points * 2).to_i)
+        points = half_steps / 2.0
+        Assessment::TaskPoint.create!(
+          assessment_participation: participation,
+          task: task,
+          points: points,
+          grader_id: participation.grader_id
+        )
+        total += points
+      end
+      participation.update!(points_total: total)
+    end
+
+    puts "  ✓ Seeded task points for #{reviewable.count} participations: #{label}"
+  end
+
   def register_users(exam, user_ids, ratio: 0.9)
     return unless exam
 
@@ -320,5 +387,27 @@ namespace :exam do
 
     exam.delete
     puts "✓ Destroyed: #{exam.title}"
+  end
+
+  def exam_student_profile(user_id)
+    bucket = user_id.hash.abs % 100
+    if bucket < 15 then :top
+    elsif bucket < 60 then :good
+    elsif bucket < 75 then :struggling
+    elsif bucket < 90 then :dropout
+    else
+      :occasional
+    end
+  end
+
+  def exam_student_quality(user_id)
+    rng = Random.new(user_id.hash)
+    case exam_student_profile(user_id)
+    when :top then rng.rand(0.82..0.98)
+    when :good then rng.rand(0.55..0.82)
+    when :struggling then rng.rand(0.20..0.50)
+    when :dropout then rng.rand(0.55..0.85)
+    when :occasional then rng.rand(0.40..0.70)
+    end
   end
 end

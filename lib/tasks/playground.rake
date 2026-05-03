@@ -1,9 +1,10 @@
 namespace :playground do
   desc "Run full playground setup (exam + assessment + performance)"
   task setup: :environment do
-    Rake::Task["exam:setup"].invoke
     Rake::Task["assessment:setup"].invoke
-    Rake::Task["performance:compute"].invoke
+    Rake::Task["exam:setup"].invoke
+    Rake::Task["exam:seed_grading_data"].invoke
+    Rake::Task["performance:setup"].invoke
   end
 
   desc "Reset full playground (assessment + exam + performance)"
