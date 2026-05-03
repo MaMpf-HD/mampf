@@ -43,14 +43,14 @@ class ExamRegistrationTabComponent < ViewComponent::Base
   end
 
   def participants_entries
-    @participants_entries ||= exam.exam_rosters
+    @participants_entries ||= exam.exam_roster_entries
                                   .includes(:user)
                                   .joins(:user)
                                   .merge(User.order(:name))
   end
 
   def excluded_participants_entries
-    @excluded_participants_entries ||= exam.excluded_exam_rosters
+    @excluded_participants_entries ||= exam.excluded_exam_roster_entries
                                            .includes(:user)
                                            .joins(:user)
                                            .merge(User.order(:name))

@@ -5,7 +5,7 @@ class ExamParticipantsComponent < ViewComponent::Base
   end
 
   def entries
-    @entries ||= @exam.exam_rosters
+    @entries ||= @exam.exam_roster_entries
                       .includes(:user)
                       .joins(:user)
                       .merge(User.order(:name))

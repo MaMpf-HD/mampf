@@ -376,18 +376,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000000) do
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
-  create_table "exam_rosters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "exam_roster_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "exam_id", null: false
     t.bigint "user_id", null: false
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "excluded_at"
-    t.index ["exam_id", "excluded_at"], name: "index_exam_rosters_on_exam_id_and_excluded_at"
-    t.index ["exam_id"], name: "index_exam_rosters_on_exam_id"
-    t.index ["source_campaign_id"], name: "index_exam_rosters_on_source_campaign_id"
-    t.index ["user_id", "exam_id"], name: "index_exam_rosters_on_user_id_and_exam_id", unique: true
-    t.index ["user_id"], name: "index_exam_rosters_on_user_id"
+    t.index ["exam_id", "excluded_at"], name: "index_exam_roster_entries_on_exam_id_and_excluded_at"
+    t.index ["exam_id"], name: "index_exam_roster_entries_on_exam_id"
+    t.index ["source_campaign_id"], name: "index_exam_roster_entries_on_source_campaign_id"
+    t.index ["user_id", "exam_id"], name: "index_exam_roster_entries_on_user_id_and_exam_id", unique: true
+    t.index ["user_id"], name: "index_exam_roster_entries_on_user_id"
   end
 
   create_table "exams", force: :cascade do |t|
@@ -1489,9 +1489,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000000) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
-  add_foreign_key "exam_rosters", "exams"
-  add_foreign_key "exam_rosters", "registration_campaigns", column: "source_campaign_id"
-  add_foreign_key "exam_rosters", "users"
+  add_foreign_key "exam_roster_entries", "exams"
+  add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "exam_roster_entries", "users"
   add_foreign_key "exams", "lectures"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"

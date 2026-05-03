@@ -337,7 +337,7 @@ without waiting for the interactive entry UI.
 - Scope: Exam model, backend implementation, teacher CRUD, campaign creation for exams.
 - Migrations:
   - `20251110000000_create_exams.rb`
-  - `20251110000001_create_exam_rosters.rb`
+  - `20251110000001_create_exam_roster_entries.rb`
 - Backend:
   - Create `Exam` model with concerns: `Registration::Registerable`, `Roster::Rosterable`, `Assessment::Assessable`, `Assessment::Pointable`, `Assessment::Gradable`
   - Implement `materialize_allocation!` (delegates to `replace_roster!`)

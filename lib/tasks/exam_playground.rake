@@ -120,7 +120,7 @@ namespace :exam do
 
     if campaign.completed?
       puts "✓ Campaign already finalized."
-      puts "  Exam roster has #{exam.exam_rosters.count} entries."
+      puts "  Exam roster has #{exam.exam_roster_entries.count} entries."
       next
     end
 
@@ -131,7 +131,7 @@ namespace :exam do
 
     campaign.finalize!
     puts "✓ Finalized campaign — roster materialized"
-    puts "  Exam roster: #{exam.exam_rosters.count} students"
+    puts "  Exam roster: #{exam.exam_roster_entries.count} students"
   end
 
   desc "Run full exam playground setup"
@@ -160,7 +160,7 @@ namespace :exam do
       campaign = exam.registration_campaign
       status = campaign&.status || "none"
       regs = campaign&.user_registrations&.count || 0
-      roster = exam.exam_rosters.count
+      roster = exam.exam_roster_entries.count
 
       puts format("  %-40<t>s  %<s>-10s  regs=%<r>d  roster=%<ro>d",
                   t: title, s: status, r: regs, ro: roster)
@@ -194,7 +194,7 @@ namespace :exam do
       next unless campaign
 
       campaign.user_registrations.destroy_all
-      exam.exam_rosters.destroy_all
+      exam.exam_roster_entries.destroy_all
       campaign.update!(status: :open) if campaign.completed? || campaign.closed?
 
       puts "✓ Cleared registrations for #{title}"
@@ -303,7 +303,7 @@ namespace :exam do
       campaign.reload
       campaign.user_registrations.delete_all
       campaign.registration_items.delete_all
-      exam.exam_rosters.delete_all
+      exam.exam_roster_entries.delete_all
       campaign.delete
     end
 

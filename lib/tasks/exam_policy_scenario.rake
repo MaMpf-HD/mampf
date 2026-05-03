@@ -264,7 +264,7 @@ namespace :exam_policy do
         campaign.destroy!
         puts "✓ Destroyed campaign + registrations"
       end
-      exam.exam_rosters.destroy_all
+      exam.exam_roster_entries.destroy_all
       exam.destroy!
       puts "✓ Destroyed exam: #{exam_policy_exam_title}"
     else

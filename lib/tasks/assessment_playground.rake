@@ -153,7 +153,7 @@ namespace :assessment do
           next
         end
 
-        roster_user_ids = exam.exam_rosters.pluck(:user_id)
+        roster_user_ids = exam.exam_roster_entries.pluck(:user_id)
         if roster_user_ids.empty?
           puts "  ⏭ No roster entries for: #{exam.title} (run exam:setup first)"
           next

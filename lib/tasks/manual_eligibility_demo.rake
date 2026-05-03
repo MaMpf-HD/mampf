@@ -154,7 +154,7 @@ namespace :eligibility_demo do
       puts "✓ Destroyed campaign"
     end
 
-    exam.exam_rosters.destroy_all
+    exam.exam_roster_entries.destroy_all
     exam.destroy!
     puts "✓ Destroyed exam: #{eligibility_demo_exam_title}"
   end

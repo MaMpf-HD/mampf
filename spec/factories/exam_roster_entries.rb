@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :exam_roster do
+  factory :exam_roster_entry do
     association :exam
     association :user, factory: :confirmed_user
     source_campaign { nil }

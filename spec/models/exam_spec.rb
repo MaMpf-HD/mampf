@@ -53,7 +53,7 @@ RSpec.describe(Exam, type: :model) do
 
       it "is valid when deadline is in the future on create" do
         exam = build(:exam, :with_date,
-                     registration_deadline: 1.week.from_now)
+                     registration_deadline: 3.days.from_now)
         expect(exam).to be_valid
       end
 
@@ -117,29 +117,29 @@ RSpec.describe(Exam, type: :model) do
       expect(exam.lecture).to be_a(Lecture)
     end
 
-    it "has many exam_rosters" do
+    it "has many exam_roster_entries" do
       exam = create(:exam)
-      create_list(:exam_roster, 3, exam: exam)
-      expect(exam.exam_rosters.count).to eq(3)
+      create_list(:exam_roster_entry, 3, exam: exam)
+      expect(exam.exam_roster_entries.count).to eq(3)
     end
 
-    it "has many users through exam_rosters" do
+    it "has many users through exam_roster_entries" do
       exam = create(:exam)
       users = create_list(:confirmed_user, 3)
-      users.each { |user| create(:exam_roster, exam: exam, user: user) }
+      users.each { |user| create(:exam_roster_entry, exam: exam, user: user) }
       expect(exam.users.count).to eq(3)
     end
 
-    it "destroys dependent exam_rosters when destroyed" do
+    it "destroys dependent exam_roster_entries when destroyed" do
       exam = create(:exam)
-      create_list(:exam_roster, 3, exam: exam)
+      create_list(:exam_roster_entry, 3, exam: exam)
 
       # Rosterable concern prevents destruction if roster not empty
       # This is expected behavior - clear roster first
       expect(exam.reload.destructible?).to be(false)
 
       # After clearing roster, exam can be destroyed
-      exam.exam_rosters.destroy_all
+      exam.exam_roster_entries.destroy_all
       expect { exam.destroy }.not_to raise_error
     end
   end
@@ -167,15 +167,15 @@ RSpec.describe(Exam, type: :model) do
     let(:users) { create_list(:confirmed_user, 3) }
 
     before do
-      users.each { |user| create(:exam_roster, exam: exam, user: user) }
+      users.each { |user| create(:exam_roster_entry, exam: exam, user: user) }
     end
 
-    it "#roster_entries returns exam_rosters" do
-      expect(exam.roster_entries).to eq(exam.exam_rosters)
+    it "#roster_entries returns exam_roster_entries" do
+      expect(exam.roster_entries).to eq(exam.exam_roster_entries)
     end
 
-    it "#roster_association_name returns :exam_rosters" do
-      expect(exam.roster_association_name).to eq(:exam_rosters)
+    it "#roster_association_name returns :exam_roster_entries" do
+      expect(exam.roster_association_name).to eq(:exam_roster_entries)
     end
 
     it "#allocated_user_ids returns user IDs" do
@@ -184,10 +184,13 @@ RSpec.describe(Exam, type: :model) do
 
     it "excludes soft-removed roster rows from active roster queries" do
       excluded_user = create(:confirmed_user)
-      create(:exam_roster, exam: exam, user: excluded_user, excluded_at: Time.current)
+      create(:exam_roster_entry,
+             exam: exam,
+             user: excluded_user,
+             excluded_at: Time.current)
 
-      expect(exam.exam_rosters.map(&:user_id)).not_to include(excluded_user.id)
-      expect(exam.excluded_exam_rosters.map(&:user_id)).to include(excluded_user.id)
+      expect(exam.exam_roster_entries.map(&:user_id)).not_to include(excluded_user.id)
+      expect(exam.excluded_exam_roster_entries.map(&:user_id)).to include(excluded_user.id)
       expect(exam.allocated_user_ids).not_to include(excluded_user.id)
     end
   end
@@ -198,7 +201,7 @@ RSpec.describe(Exam, type: :model) do
 
     before do
       Flipper.enable(:registration_campaigns)
-      create(:exam_roster, exam: exam, user: user)
+      create(:exam_roster_entry, exam: exam, user: user)
     end
 
     after do
@@ -207,34 +210,34 @@ RSpec.describe(Exam, type: :model) do
 
     it "soft-removes participants after finalization" do
       exam.registration_campaign.update!(status: :completed)
-      roster_entry = exam.all_exam_rosters.find_by!(user: user)
+      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
 
       expect do
         exam.remove_user_from_roster!(user)
-      end.not_to change(ExamRoster, :count)
+      end.not_to change(ExamRosterEntry, :count)
 
       expect(roster_entry.reload.excluded_at).to be_present
-      expect(exam.exam_rosters).to be_empty
-      expect(exam.excluded_exam_rosters).to include(roster_entry)
+      expect(exam.exam_roster_entries).to be_empty
+      expect(exam.excluded_exam_roster_entries).to include(roster_entry)
     end
 
     it "reinstates excluded participants when they are added again" do
       exam.registration_campaign.update!(status: :completed)
-      roster_entry = exam.all_exam_rosters.find_by!(user: user)
+      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
       exam.remove_user_from_roster!(user)
 
       expect do
         exam.add_user_to_roster!(user)
-      end.not_to change(ExamRoster, :count)
+      end.not_to change(ExamRosterEntry, :count)
 
       expect(roster_entry.reload.excluded_at).to be_nil
-      expect(exam.exam_rosters).to include(roster_entry)
+      expect(exam.exam_roster_entries).to include(roster_entry)
     end
 
     it "keeps destroying roster rows before finalization" do
       expect do
         exam.remove_user_from_roster!(user)
-      end.to change(ExamRoster, :count).by(-1)
+      end.to change(ExamRosterEntry, :count).by(-1)
     end
   end
 
@@ -410,7 +413,10 @@ RSpec.describe(Exam, type: :model) do
     end
 
     it "removes users not in the target list" do
-      create(:exam_roster, exam: exam, user: user1, source_campaign: campaign)
+      create(:exam_roster_entry,
+             exam: exam,
+             user: user1,
+             source_campaign: campaign)
 
       exam.materialize_allocation!(user_ids: [user2.id], campaign: campaign)
 
@@ -420,7 +426,10 @@ RSpec.describe(Exam, type: :model) do
 
     it "preserves manually added users" do
       manual_user = create(:confirmed_user)
-      create(:exam_roster, exam: exam, user: manual_user, source_campaign: nil)
+      create(:exam_roster_entry,
+             exam: exam,
+             user: manual_user,
+             source_campaign: nil)
 
       exam.materialize_allocation!(user_ids: [user1.id], campaign: campaign)
 
@@ -549,7 +558,7 @@ RSpec.describe(Exam, type: :model) do
     context "when exam has roster entries" do
       before do
         user = create(:confirmed_user)
-        create(:exam_roster, exam: exam, user: user)
+        create(:exam_roster_entry, exam: exam, user: user)
       end
 
       it "is not destructible" do
@@ -602,7 +611,7 @@ RSpec.describe(Exam, type: :model) do
       before do
         campaign = create(:registration_campaign,
                           campaignable: exam.lecture,
-                          registration_deadline: 2.weeks.ago)
+                          registration_deadline: 2.weeks.from_now)
         create(:registration_item, registerable: exam,
                                    registration_campaign: campaign)
         # rubocop:disable Rails/SkipsModelValidations
@@ -622,7 +631,7 @@ RSpec.describe(Exam, type: :model) do
     context "when exam has both roster entries and is in a campaign" do
       before do
         user = create(:confirmed_user)
-        create(:exam_roster, exam: exam, user: user)
+        create(:exam_roster_entry, exam: exam, user: user)
         campaign = create(:registration_campaign)
         create(:registration_item, registerable: exam, registration_campaign: campaign)
       end

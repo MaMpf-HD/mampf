@@ -55,7 +55,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
   it "renders the review hint during open registrations" do
     exam = create(:exam, :with_date, lecture: lecture)
     campaign = exam.registration_campaign
-    campaign.update!(status: :open)
+    campaign.update!(status: :open, registration_deadline: 1.week.from_now)
 
     render_inline(described_class.new(exam: exam))
 
@@ -107,7 +107,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
            rejection_reason_label: I18n.t(
              "registration.user_registration.reason_labels.withdrawn_by_teacher"
            ))
-    create(:exam_roster,
+    create(:exam_roster_entry,
            exam: exam,
            user: excluded_user,
            excluded_at: Time.current)
@@ -136,7 +136,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
   it "renders the participants removal action with explicit label after finalization" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
-    create(:exam_roster, exam: exam, user: create(:confirmed_user))
+    create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
 
     render_inline(described_class.new(exam: exam))
 
