@@ -28,4 +28,23 @@ module TutorialsHelper
       absent: "info"
     }[status&.to_sym]
   end
+
+  def tutorials_for_dropdown(user, lecture, current_tutorial)
+    if !user.in?(lecture.tutors)
+      {
+        "All tutorials" => lecture.tutorials - [current_tutorial]
+      }
+
+    elsif user.editor_or_teacher_in?(lecture)
+      {
+        "Own tutorials" => user.tutorials(lecture) - [current_tutorial],
+        "Other tutorials" => lecture.tutorials - user.tutorials(lecture) - [current_tutorial]
+      }.delete_if { |_, list| list.empty? }
+
+    else # user is a tutor
+      {
+        "Your tutorials" => user.tutorials(lecture) - [current_tutorial]
+      }
+    end
+  end
 end

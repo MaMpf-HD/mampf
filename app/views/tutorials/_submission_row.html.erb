@@ -59,22 +59,21 @@
 
   <!-- Column 5: Actions buttons -->
   <td class="text-center sticky-col action-col" data-id="<%= submission.id %>">
+    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
     <!-- Download-->
     <%= link_to show_submission_manuscript_path(submission, params: { download: 'true' }),
-                class: "material-icons me-2",
-                style: "text-decoration:none; font-size: 1.5em;",
+                class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                 data: { bs_toggle: "tooltip", turbo: false },
                 title: t('buttons.download') do %>
-      download
+      <span class="material-icons fs-6 lh-1">download</span>
     <% end %>
     <!-- Show -->
     <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
       <%= link_to show_submission_manuscript_path(submission),
-                  class: "material-icons",
-                  style: "text-decoration:none; font-size: 1.5em;",
+                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                   data: { bs_toggle: "tooltip", turbo: false },
                   title: t('buttons.show') do %>
-        visibility
+        <span class="material-icons fs-6 lh-1">visibility</span>
       <% end %>
     <% end %>
 
@@ -89,12 +88,11 @@
       <% end %>
       <!-- Save row -->
       <button type="button"
-              class="text-success material-icons me-2"
-              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+              class="btn btn-sm btn-success d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1"
               data-bs-toggle="tooltip"
               title="<%= t('buttons.save') %>"
               data-action="click->submission-row#saveRow">
-        save
+        <span class="material-icons fs-6 lh-1">save</span>
       </button>
 
       <!-- Refresh row -->
@@ -105,12 +103,11 @@
       <% end %>
       <!-- refresh row -->
       <button type="button"
-              class="material-icons me-2"
-              style="font-size: 1.5em; background:none; border:none; cursor:pointer;"
+              class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1"
               data-bs-toggle="tooltip"
               title="<%= t('buttons.refresh') %>"
               data-action="click->submission-row#refreshRow">
-        refresh
+        <span class="material-icons fs-6 lh-1">refresh</span>
       </button>
     <% end %>
 
@@ -119,6 +116,7 @@
       <%= render partial: 'submissions/other_actions',
                   locals: { submission: submission } %>
     <% end %>
+    </div>
   </td>
 
   <!-- Column 6: Correction or download partial -->
