@@ -109,12 +109,18 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
       end
+
+      it "renders available options" do
+        campaign
+        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+        expect(response.body.squish).to include("Solver Test Campaign")
+      end
     end
 
     context "completed campaign" do
       let(:campaign) do
         FactoryBot.create(:registration_campaign, :first_come_first_served,
-                          :completed_after_policies,
+                          :completed,
                           campaignable: seminar,
                           description: "Solver Test Campaign")
       end
@@ -122,6 +128,35 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_campaign_registrations_path(lecture_id: seminar.id)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when no registration options are available" do
+      it "shows a single empty state message" do
+        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+
+        expect(response.body.squish).to include(
+          I18n.t("roster.self_enrollment.no_registration_options")
+        )
+      end
+    end
+
+    context "when the user is already rosterized" do
+      before do
+        tutorial = create(:tutorial, lecture: lecture, title: "Tutorial 2")
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+      end
+
+      it "does not show the empty state message" do
+        get lecture_campaign_registrations_path(lecture_id: lecture.id)
+
+        expect(response.body.squish).to include(
+          I18n.t("registration.user_registration.index.confirmed_cases")
+        )
+        expect(response.body.squish).to include("Tutorial 2")
+        expect(response.body.squish).not_to include(
+          I18n.t("roster.self_enrollment.no_registration_options")
+        )
       end
     end
   end

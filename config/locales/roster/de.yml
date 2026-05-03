@@ -302,12 +302,4 @@ de:
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
     self_enrollment:
-      campaign_enrollment:
-        title: "Einschreibung durch Anmeldeverfahren"
-        description: "Du kannst Dich über das aktive Anmeldeverfahren für diese Veranstaltung einschreiben."
-        no_active_campaign: "Derzeit gibt es kein aktives Anmeldeverfahren für diese Veranstaltung."
-      direct_enrollment:
-        title: "Optionen für Selbsteinschreibung"
-        description: >
-          Du kannst direkt Gruppen beitreten oder verlassen (abhängig von der Konfiguration). Änderungen treten sofort in Kraft. Dies ist separat von Anmeldeverfahren.
-        no_active_self_rosterables: "Derzeit gibt es keine Gruppen, denen Du direkt beitreten oder die Du verlassen kannst."
+      no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."

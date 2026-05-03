@@ -298,12 +298,4 @@ en:
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
     self_enrollment:
-      campaign_enrollment:
-         title: "Enrollment via registration processes"
-         description: "You can register for this lecture through the active registration process."
-         no_active_campaign: "There are currently no active registration process for this lecture."
-      direct_enrollment:
-        title: "Direct Enrollment Options"
-        description: >
-          You can directly join or leave available groups for this lecture (depending on configuration). Changes take effect immediately. This is separate from registration processes.
-        no_active_self_rosterables: "There are currently no groups available for direct joining or leaving."
+      no_registration_options: "There are currently no tutorials or groups available for registration."

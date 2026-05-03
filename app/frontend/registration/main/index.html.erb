@@ -2,6 +2,10 @@
 
 <!-- campaign list -->
 <div class="container-md small-width">
+  <% visible_campaigns = sorted_student_visible_campaigns(@campaigns_details) %>
+  <% direct_enrollment_available = @self_rosterables&.rosterables&.any? %>
+  <% registration_options_available = direct_enrollment_available || visible_campaigns.any? %>
+
   <% if @rosterized_entries.present? %>
     <div class="student-registration-rosterized-notice mb-4">
       <div class="student-registration-rosterized-shell">
@@ -50,53 +54,28 @@
     </div>
   <% end %>
 
-  <!-- Direct enrollment -->
-  <div class="mb-5">
-    <div class="mb-3">
-      <h5 class="fw-semibold">
-        <%= t("roster.self_enrollment.direct_enrollment.title") %>
-      </h5>
-
-      <p class="text-muted small">
-        <%= t("roster.self_enrollment.direct_enrollment.description") %>
-      </p>
-    </div>
-
-    <div class="campaign-list d-flex flex-column gap-4">
-      <% if @self_rosterables&.rosterables&.any? %>
-        <%= turbo_frame_tag "self_roster_options_zone" do %>
-          <%= render partial: 'roster/self_roster/options_zone', 
-      locals: { self_rosterables: @self_rosterables } %>
-        <% end %>
-      <% else %>
-        <p>
-          <%= t("roster.self_enrollment.direct_enrollment.no_active_self_rosterables") %>
-        </p>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <h5 class="fw-semibold">
-      <%= t("roster.self_enrollment.campaign_enrollment.title") %>
-    </h5>
-  </div>
-
-  <% visible_campaigns = sorted_student_visible_campaigns(@campaigns_details) %>
-
   <div class="campaign-list d-flex flex-column gap-4">
+    <% if direct_enrollment_available %>
+      <%= turbo_frame_tag "self_roster_options_zone" do %>
+        <%= render partial: "roster/self_roster/options_zone",
+                   locals: { self_rosterables: @self_rosterables } %>
+      <% end %>
+    <% end %>
+
     <% if visible_campaigns.any? %>
       <% visible_campaigns.each do |campaign_details| %>
         <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
-          <%= render partial: 'registration/main/campaign_card',
+          <%= render partial: "registration/main/campaign_card",
                     locals: {
                       details: campaign_details,
                       campaign: campaign_details.campaign
                     } %>
         <% end %>
       <% end %>
-    <% else %>
-      <%= t("roster.self_enrollment.campaign_enrollment.no_active_campaign") %>
+    <% elsif @rosterized_entries.blank? %>
+      <p class="mb-0">
+        <%= t("roster.self_enrollment.no_registration_options") %>
+      </p>
     <% end %>
   </div>
 </div>
