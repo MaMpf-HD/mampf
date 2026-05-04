@@ -9,10 +9,11 @@
     </div>
   </div>
   <div id="tutorial-table" class="m-3">
-    <%= render partial: 'tutorials/table_wrapper',
-               locals: { assignment: @assignment,
-                         tutorial: @tutorial,
-                         stack: @stack } %>
+    <%= render TutorialGradingTableComponent.new(
+      assignment: @assignment,
+      stack: @stack,
+      tutorial: @tutorial
+    ) %>
   </div>
 </div>
 <% else %>

@@ -1,0 +1,59 @@
+<!-- this equivalent to table file -->
+<% if stack.any? %>
+  <div class="table-overflow">
+    <table
+      class="table table-striped align-middle my-3"
+      data-cy="tutorial-submissions-table"
+    >
+      <thead class="bg-light">
+        <tr>
+          <th class="sticky-col team-col">
+            <%= t('basics.team') %>
+          </th>
+
+          <% if gradding_enabled?(assignment) %>
+            <!-- support point by task -->
+            <% for assessment_task in assignment.assessment.tasks %>
+              <th class="text-center sticky-col task-col">
+                Task <%= assessment_task.position %>
+                <br>
+                <small class="text-muted">(<%= assessment_task.max_points || 0 %> pts)</small>
+              </th>
+            <% end %>
+            <th class="text-center sticky-col total-col">
+              Total Points
+              <br>
+              <small class="text-muted">(<%= assignment.assessment.tasks.map(&:max_points).compact.sum %> pts)</small>
+            </th>
+            <th class="text-center sticky-col status-col">
+              Status
+            </th>
+          <% end %>
+
+          <th class="text-center sticky-col action-col">
+            Actions
+          </th>
+
+          <th class="text-center sticky-col correction-col">
+            <%= t('basics.correction') %>
+
+            <small class="text-muted">
+              (<%= assignment.accepted_file_type %>)
+            </small>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% stack.each do |submission| %>
+          <%= render partial: "tutorials/rows_single",
+                   locals: { submission: submission, assignment: assignment } %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="jumbotron mt-3">
+    <%= t('tutorial.no_submissions_for_assignment') %>
+  </div>
+<% end %>
