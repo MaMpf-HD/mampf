@@ -7,6 +7,7 @@ class CreateStudentPerformanceRecords < ActiveRecord::Migration[8.0]
       t.decimal :points_max_materialized, precision: 10, scale: 2
       t.decimal :percentage_materialized, precision: 5, scale: 2
       t.jsonb :achievements_met_ids, default: []
+      t.jsonb :achievements_ungraded_ids, default: []
       t.datetime :computed_at
 
       t.timestamps
