@@ -68,7 +68,6 @@ module StudentPerformance
         status_map = participations.group_by(&:status)
         reviewed = status_map.fetch("reviewed", [])
         exempt = status_map.fetch("exempt", [])
-        pending_all = status_map.fetch("pending", [])
 
         points_total = reviewed.sum do |p|
           points_lookup.fetch(p.id, BigDecimal("0"))
@@ -80,24 +79,7 @@ module StudentPerformance
         end
         points_max = non_exempt.sum { |a| effective_max(a) }
 
-        participated_ids = participations.to_set(&:assessment_id)
-        no_participation = assessments.count do |a|
-          participated_ids.exclude?(a.id)
-        end
-
-        pending_grading = pending_all.count { |p| p.submitted_at.present? }
-        not_submitted = pending_all.count { |p| p.submitted_at.nil? } +
-                        no_participation
-
-        counts = {
-          total: assessments.size,
-          reviewed: reviewed.size,
-          pending_grading: pending_grading,
-          not_submitted: not_submitted,
-          exempt: exempt.size
-        }
-
-        { points_total: points_total, points_max: points_max, counts: counts }
+        { points_total: points_total, points_max: points_max }
       end
 
       def aggregate_points(user)
@@ -195,13 +177,6 @@ module StudentPerformance
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
           achievements_ungraded_ids: achievements_ungraded_ids,
-          assessments_total_count: stats[:counts][:total],
-          assessments_reviewed_count: stats[:counts][:reviewed],
-          assessments_pending_grading_count:
-            stats[:counts][:pending_grading],
-          assessments_not_submitted_count:
-            stats[:counts][:not_submitted],
-          assessments_exempt_count: stats[:counts][:exempt],
           computed_at: now,
           updated_at: now
         }
