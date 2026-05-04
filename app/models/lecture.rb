@@ -86,6 +86,11 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  has_many :student_performance_records,
+           class_name: "StudentPerformance::Record",
+           dependent: :destroy
+  has_many :achievements, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy

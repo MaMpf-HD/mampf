@@ -20,6 +20,9 @@ module Assessment
 
     scope :submitted, -> { where.not(submitted_at: nil) }
 
+    after_commit :recompute_performance_record,
+                 if: :should_recompute_performance_record?
+
     validates :user_id, uniqueness: { scope: :assessment_id }
 
     def self.tutorial_for(user, lecture)
@@ -38,5 +41,27 @@ module Assessment
         status.to_sym
       end
     end
+
+    private
+
+      def should_recompute_performance_record?
+        achievement_grade_text_changed? ||
+          saved_change_to_status? ||
+          saved_change_to_submitted_at?
+      end
+
+      def achievement_grade_text_changed?
+        saved_change_to_grade_text? &&
+          assessment&.assessable_type == "Achievement"
+      end
+
+      def recompute_performance_record
+        lecture = assessment&.lecture
+        return unless lecture && Flipper.enabled?(:student_performance)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_record_for(user)
+      end
   end
 end
