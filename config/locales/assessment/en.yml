@@ -1,10 +1,44 @@
 en:
   assessment:
     assessments: "Assessments"
+    grading: "Grading"
     tabs:
       assignments: "Assignments"
+      achievements: "Achievements"
+      performance: "Performance"
     subtitle:
       assignments: "Manage homework sheets, grading, and point allocation."
+    achievements:
+      placeholder: "Achievements will be displayed here in a later step."
+      flash:
+        created: "Achievement created successfully."
+        updated: "Achievement updated successfully."
+        destroyed: "Achievement deleted successfully."
+      errors:
+        not_found: "Achievement not found."
+      subtitle: "Define additional criteria students must fulfill beyond points."
+      new: "New Achievement"
+      edit: "Edit Achievement"
+      value_types:
+        boolean: "Yes/No"
+        numeric: "Numeric"
+        percentage: "Percentage"
+      fields:
+        title: "Title"
+        value_type: "Type"
+        threshold: "Threshold"
+        description: "Description"
+      no_achievements_yet: "No achievements defined yet."
+      confirm_delete: "Really delete this achievement?"
+      marking:
+        marked: "marked"
+        met_label: "met"
+        value: "Value"
+        status: "Status"
+        met: "Met"
+        not_met: "Not met"
+        unmarked: "Unmarked"
+        no_participations: "No participations yet."
     tasks: "Tasks"
     submissions: "Submissions"
     points: "Points"

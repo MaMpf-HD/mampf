@@ -10,12 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_000007) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
   enable_extension "pgcrypto"
   enable_extension "unaccent"
+
+  create_table "achievements", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.string "title", null: false
+    t.integer "value_type", default: 0, null: false
+    t.decimal "threshold", precision: 10, scale: 2
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_achievements_on_lecture_id"
+  end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -763,6 +774,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000007) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
+  create_table "student_performance_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "points_total_materialized", precision: 10, scale: 2
+    t.decimal "points_max_materialized", precision: 10, scale: 2
+    t.decimal "percentage_materialized", precision: 5, scale: 2
+    t.jsonb "achievements_met_ids", default: []
+    t.datetime "computed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "assessments_total_count", default: 0, null: false
+    t.integer "assessments_reviewed_count", default: 0, null: false
+    t.integer "assessments_pending_grading_count", default: 0, null: false
+    t.integer "assessments_not_submitted_count", default: 0, null: false
+    t.integer "assessments_exempt_count", default: 0, null: false
+    t.jsonb "achievements_ungraded_ids", default: []
+    t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
+    t.index ["user_id"], name: "index_student_performance_records_on_user_id"
+  end
+
   create_table "subject_translations", force: :cascade do |t|
     t.bigint "subject_id", null: false
     t.string "locale", null: false
@@ -1344,6 +1375,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000007) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "achievements", "lectures"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "annotations", "media"
@@ -1398,6 +1430,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000007) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_performance_records", "lectures"
+  add_foreign_key "student_performance_records", "users"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

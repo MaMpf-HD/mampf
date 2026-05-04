@@ -12,13 +12,13 @@ module Assessment
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
 
-    after_commit :refresh_participation_points_total,
+    after_commit :sync_participation_points_total,
                  on: [:create, :update, :destroy],
                  if: :refresh_participation_points_total?
 
     private
 
-      def refresh_participation_points_total
+      def sync_participation_points_total
         return unless assessment_participation_id
 
         sum = self.class
@@ -31,10 +31,22 @@ module Assessment
           id: assessment_participation_id
         )
         participation&.update!(points_total: sum)
+        recompute_performance_record(participation)
       end
 
       def refresh_participation_points_total?
         destroyed? || saved_change_to_points?
+      end
+
+      def recompute_performance_record(participation)
+        return unless participation&.user
+
+        lecture = participation.assessment&.lecture
+        return unless lecture && Flipper.enabled?(:student_performance)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_record_for(participation.user)
       end
 
       def ensure_task_and_participation_match_assessment

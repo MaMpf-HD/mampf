@@ -1,0 +1,26 @@
+<tr
+  id="<%= dom_id(achievement) %>"
+  data-controller="row-click"
+  data-action="click->row-click#visit"
+  style="cursor: pointer;"
+>
+  <td>
+    <%= link_to achievement.title,
+                lecture_student_performance_achievement_path(lecture,
+                                                            achievement),
+                class: "text-decoration-none",
+                data: { row_link: true, turbo_stream: true } %>
+  </td>
+
+  <td>
+    <%= t("assessment.achievements.value_types.#{achievement.value_type}") %>
+  </td>
+
+  <td>
+    <% if achievement.threshold.present? %>
+      <%= achievement.percentage? ? "#{achievement.threshold}%" : achievement.threshold %>
+    <% else %>
+      &mdash;
+    <% end %>
+  </td>
+</tr>

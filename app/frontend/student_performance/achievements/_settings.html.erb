@@ -1,0 +1,112 @@
+<%= form_with model: achievement,
+              url: lecture_student_performance_achievement_path(lecture,
+                                                               achievement),
+              method: :patch,
+              data: {
+                controller: "achievement-form",
+                action: "turbo:submit-end->achievement-form#resetAfterSave"
+              } do |f| %>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :title,
+                  t("assessment.achievements.fields.title"),
+                  class: "form-label" %>
+
+      <%= f.text_field :title,
+                       class: "form-control",
+                       required: true,
+                       data: {
+                         achievement_form_target: "title",
+                         action: "input->achievement-form#checkForChanges"
+                       } %>
+
+      <% if achievement.errors[:title].any? %>
+        <div class="text-danger small mt-1">
+          <%= achievement.errors[:title].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :value_type,
+                  t("assessment.achievements.fields.value_type"),
+                  class: "form-label" %>
+
+      <%= f.select :value_type,
+                   Achievement.value_types.keys.map { |vt|
+                     [t("assessment.achievements.value_types.#{vt}"), vt]
+                   },
+                   {},
+                   { class: "form-select",
+                     data: {
+                       achievement_form_target: "valueType",
+                       action: "achievement-form#toggle " \
+                               "input->achievement-form#checkForChanges"
+                     } } %>
+    </div>
+
+    <div
+      class="col-md-4"
+      data-achievement-form-target="threshold"
+      style="<%= 'display: none' if achievement.boolean? %>"
+    >
+      <%= f.label :threshold,
+                  t("assessment.achievements.fields.threshold"),
+                  class: "form-label" %>
+
+      <%= f.number_field :threshold,
+                         class: "form-control",
+                         step: "any",
+                         data: {
+                           achievement_form_target: "thresholdInput",
+                           action: "input->achievement-form#checkForChanges"
+                         } %>
+
+      <% if achievement.errors[:threshold].any? %>
+        <div class="text-danger small mt-1">
+          <%= achievement.errors[:threshold].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-12">
+      <%= f.label :description,
+                  t("assessment.achievements.fields.description"),
+                  class: "form-label" %>
+
+      <%= f.text_area :description,
+                      class: "form-control",
+                      rows: 3,
+                      data: {
+                        achievement_form_target: "description",
+                        action: "input->achievement-form#checkForChanges"
+                      } %>
+    </div>
+
+    <div
+      class="col-12 mt-3 text-center d-none"
+      data-achievement-form-target="warning"
+    >
+      <div class="alert alert-warning d-inline-block mb-2" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <%= t("warnings.unsaved_changes") %>
+      </div>
+    </div>
+
+    <div
+      class="col-12 text-center d-none"
+      data-achievement-form-target="submitButton"
+    >
+      <%= f.submit t("buttons.save"),
+                   class: "btn btn-sm btn-primary me-2" %>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-secondary"
+        data-action="click->achievement-form#cancel"
+      >
+        <%= t("buttons.cancel") %>
+      </button>
+    </div>
+  </div>
+<% end %>
