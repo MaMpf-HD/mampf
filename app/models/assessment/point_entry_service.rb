@@ -2,10 +2,18 @@ module Assessment
   class PointEntryService
     # must ensure participation and task valid before calling this method
     def self.enter_points(participation,
-                     task_points, # Hash of task_id => points, points potentially nil and string
-                     grader,
-                     submission)
+                          task_points, # Hash of task_id => points, points potentially nil and string
+                          grader,
+                          submission)
       assessment = participation.assessment
+
+      # check requires_points
+      unless assessment.requires_points?
+        raise(ArgumentError,
+              "Assessment #{assessment.id} does not accept points")
+      end
+
+      # validate task ids belong to the assessment
       valid_task_ids = assessment.tasks.pluck(:id)
 
       ApplicationRecord.transaction do
