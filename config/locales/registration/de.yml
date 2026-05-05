@@ -356,6 +356,12 @@ de:
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
+      violations_table:
+        go_to_certifications: "Im Zulassungs-Dashboard klären"
+        additional_blockers: "Weitere offene Punkte"
+        other_blockers: "Weitere offene Punkte"
+      perf_evidence:
+        no_cert: "Kein Zulassungseintrag"
   activerecord:
     errors:
       models:

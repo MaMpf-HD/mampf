@@ -356,6 +356,12 @@ en:
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
+      violations_table:
+        go_to_certifications: "Resolve in Certifications dashboard"
+        additional_blockers: "Additional blockers"
+        other_blockers: "Other blockers"
+      perf_evidence:
+        no_cert: "No certification record"
   activerecord:
     errors:
       models:
