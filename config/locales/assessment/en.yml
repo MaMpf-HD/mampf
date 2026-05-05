@@ -4,6 +4,7 @@ en:
     grading: "Grading"
     tabs:
       assignments: "Assignments"
+      talks: "Talks"
       achievements: "Achievements"
       performance: "Performance"
     subtitle:
