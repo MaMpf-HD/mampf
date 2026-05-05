@@ -12,7 +12,11 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def assessments_tab_label
-    I18n.t("assessment.tabs.assignments")
+    if lecture.seminar?
+      I18n.t("assessment.tabs.talks")
+    else
+      I18n.t("assessment.tabs.assignments")
+    end
   end
 
   def performance_enabled?
