@@ -161,14 +161,8 @@ Rails.application.routes.draw do
 
   # exam routes
   constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
-    resources :exams, only: [:index, :new, :show, :edit, :create, :update,
-                             :destroy] do
-      member do
-        post "participants", action: :add_participant
-        delete "participants/:user_id", action: :remove_participant,
-                                        as: :remove_participant
-      end
-    end
+        resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                                                         :destroy]
   end
 
   # feedback routes

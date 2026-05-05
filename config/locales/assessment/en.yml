@@ -1,6 +1,13 @@
 en:
   assessment:
     assessments: "Assessments"
+    exams: "Exams"
+    new_exam: "New Exam"
+    no_exams_yet: "No exams yet."
+    exam_created: "Exam created successfully."
+    exam_updated: "Exam updated successfully."
+    exam_destroyed: "Exam deleted successfully."
+    exam_capacity_hint: "Leave blank for unlimited capacity."
     grading: "Grading"
     tabs:
       assignments: "Assignments"

@@ -1,0 +1,9 @@
+<% if exam.persisted? %>
+  <div class="text-end mb-3">
+    <%= button_to t("basics.delete"),
+                  exam_path(exam),
+                  method: :delete,
+                  class: "btn btn-outline-danger btn-sm",
+                  data: { turbo_confirm: t("basics.confirm_delete") } %>
+  </div>
+<% end %>
