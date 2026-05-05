@@ -27,6 +27,12 @@ class AssessmentsOverviewComponent < ViewComponent::Base
     Flipper.enabled?(:student_performance) && !lecture.seminar?
   end
 
+  def certifications_enabled?
+    Flipper.enabled?(:student_performance) &&
+      !lecture.seminar? &&
+      lecture.uses_exam_eligibility?
+  end
+
   def single_tab?
     visible_tabs.size == 1
   end
@@ -35,6 +41,7 @@ class AssessmentsOverviewComponent < ViewComponent::Base
     tabs = [:assessments]
     tabs << :achievements if achievements_enabled?
     tabs << :performance if performance_enabled?
+    tabs << :certifications if certifications_enabled?
     tabs
   end
 

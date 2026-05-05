@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_000009) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -484,6 +484,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000009) do
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0, null: false
     t.date "submission_deletion_date", null: false
+    t.boolean "uses_exam_eligibility", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -774,6 +775,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000009) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
+  create_table "student_performance_certifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "source", default: 0, null: false
+    t.bigint "certified_by_id"
+    t.datetime "certified_at"
+    t.uuid "rule_id"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certified_by_id"], name: "index_certifications_on_certified_by"
+    t.index ["lecture_id", "user_id"], name: "index_certifications_on_lecture_and_user", unique: true
+    t.index ["rule_id"], name: "index_certifications_on_rule"
+    t.index ["user_id"], name: "index_certifications_on_user"
+  end
+
   create_table "student_performance_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "lecture_id", null: false
     t.bigint "user_id", null: false
@@ -787,6 +805,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000009) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
+  end
+
+  create_table "student_performance_rule_achievements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "rule_id", null: false
+    t.bigint "achievement_id", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["achievement_id"], name: "index_rule_achievements_on_achievement"
+    t.index ["rule_id", "achievement_id"], name: "index_rule_achievements_on_rule_and_achievement", unique: true
+  end
+
+  create_table "student_performance_rules", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.decimal "min_percentage", precision: 5, scale: 2
+    t.decimal "min_points_absolute", precision: 10, scale: 2
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_sp_rules_one_active_per_lecture", unique: true, where: "(active = true)"
+    t.index ["lecture_id"], name: "index_student_performance_rules_on_lecture_id"
   end
 
   create_table "subject_translations", force: :cascade do |t|
@@ -1425,8 +1464,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000009) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_performance_certifications", "lectures"
+  add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_certifications", "users"
+  add_foreign_key "student_performance_certifications", "users", column: "certified_by_id"
   add_foreign_key "student_performance_records", "lectures"
   add_foreign_key "student_performance_records", "users"
+  add_foreign_key "student_performance_rule_achievements", "achievements", on_delete: :restrict
+  add_foreign_key "student_performance_rule_achievements", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

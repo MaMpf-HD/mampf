@@ -178,7 +178,9 @@ module StudentPerformance
           else
             redirect_to lecture_student_performance_achievements_path(
               @lecture
-            ), alert: @achievement.errors.full_messages.to_sentence
+            ), alert: I18n.t(
+              "assessment.achievements.errors.referenced_by_rules"
+            )
           end
         end
       end

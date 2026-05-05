@@ -187,6 +187,30 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
                  ))
         end.to change(Achievement, :count).by(-1)
       end
+
+      context "when referenced by a rule" do
+        before do
+          Flipper.enable(:student_performance)
+          rule = create(:student_performance_rule, lecture: lecture)
+          create(:student_performance_rule_achievement,
+                 rule: rule, achievement: achievement)
+        end
+
+        it "does not destroy the achievement" do
+          expect do
+            delete(lecture_student_performance_achievement_path(
+                     lecture, achievement
+                   ))
+          end.not_to change(Achievement, :count)
+        end
+
+        it "returns unprocessable_content for turbo requests" do
+          delete lecture_student_performance_achievement_path(
+            lecture, achievement
+          ), as: :turbo_stream
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+      end
     end
 
     context "as a student" do
