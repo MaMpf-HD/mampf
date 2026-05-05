@@ -120,6 +120,9 @@ en:
     graded_by: "Graded by"
     graded_at: "Graded at"
     statistics: "Statistics"
+    graded_by: "Graded by"
+    graded_at: "Graded at"
+    no_grades_yet: "No grades have been entered yet."
     updated: "Assessment updated successfully."
     requires_submission: "Requires digital submission"
     requires_submission_hint: "Students must upload a file"
@@ -180,6 +183,9 @@ en:
     info:
       talks_created_in_roster: "Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab."
     grade_table:
+      all_graded_by: "All grades by %{grader}."
+      proposed_tooltip: "Proposal from the current grade scheme (not yet applied)."
+      proposed_tooltip_with_current: "Proposal from the current grade scheme (not yet applied). Currently: %{current}."
       pending: "pending"
       reviewed: "reviewed"
       absent: "absent"
