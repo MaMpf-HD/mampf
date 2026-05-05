@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_000016) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -358,6 +358,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000016) do
     t.integer "user_id"
     t.index ["editable_id", "editable_type", "user_id"], name: "polymorphic_many_to_many_idx"
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
+  end
+
+  create_table "exams", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.string "title", null: false
+    t.datetime "date"
+    t.text "location"
+    t.integer "capacity"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
+    t.index ["lecture_id"], name: "index_exams_on_lecture_id"
   end
 
   create_table "feedbacks", force: :cascade do |t|
@@ -1436,6 +1449,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000016) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
+  add_foreign_key "exams", "lectures"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"

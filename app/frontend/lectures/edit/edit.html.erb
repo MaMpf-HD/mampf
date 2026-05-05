@@ -102,6 +102,14 @@
           <% end %>
         </div>
       <% end %>
+
+      <% component.with_tab(name: "exams", label: t("assessment.exams")) do %>
+        <div class="container medium-width lecture-pane">
+          <div id="exams_container">
+            <%= render partial: "exams/list", locals: { lecture: @lecture } %>
+          </div>
+        </div>
+      <% end %>
     <% else %>
       <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
         <div class="container small-width lecture-pane">

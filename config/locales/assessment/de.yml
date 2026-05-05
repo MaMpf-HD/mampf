@@ -1,6 +1,13 @@
 de:
   assessment:
     assessments: "Testate"
+    exams: "Klausuren"
+    new_exam: "Neue Klausur"
+    no_exams_yet: "Noch keine Klausuren angelegt."
+    exam_created: "Klausur erfolgreich erstellt."
+    exam_updated: "Klausur erfolgreich aktualisiert."
+    exam_destroyed: "Klausur erfolgreich gelöscht."
+    exam_capacity_hint: "Leer lassen für unbegrenzte Kapazität."
     tabs:
       assignments: "Hausaufgaben"
       talks: "Vorträge"
