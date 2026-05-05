@@ -23,15 +23,25 @@ class AssessmentDashboardComponent < ViewComponent::Base
   end
 
   def default_tab
-    "settings"
+    if exam? || assignment?
+      "settings"
+    else
+      "grades"
+    end
   end
 
   def subtitle
-    nil
+    return unless exam?
+
+    "#{lecture.title} · #{lecture.term_teacher_info}"
   end
 
   def back_path
-    helpers.assessment_assessments_path(lecture_id: lecture.id)
+    if exam?
+      helpers.exams_path(lecture_id: lecture.id)
+    else
+      helpers.assessment_assessments_path(lecture_id: lecture.id)
+    end
   end
 
   def tab_active?(key)
@@ -45,12 +55,22 @@ class AssessmentDashboardComponent < ViewComponent::Base
 
   private
 
+    def exam?
+      assessable.is_a?(Exam)
+    end
+
     def assignment?
       assessable.is_a?(Assignment)
     end
 
     def build_tabs
       [].tap do |t|
+        if exam?
+          t << settings_tab
+          t << registration_tab if Flipper.enabled?(:registration_campaigns)
+          next t
+        end
+
         t << settings_tab if assignment?
         t << tasks_tab if assessable.is_a?(Assessment::Pointable)
         t << points_tab if assessable.is_a?(Assessment::Pointable)
@@ -66,10 +86,37 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "settings",
         I18n.t("basics.settings"),
+        settings_component
+      )
+    end
+
+    def registration_tab_label
+      helpers.render(partial: "exams/registration_tab_label",
+                     locals: { exam: assessable })
+    end
+
+    def settings_component
+      if exam?
+        PartialTabComponent.new(
+          partial: "exams/settings",
+          locals: { exam: assessable, lecture: lecture }
+        )
+      else
         PartialTabComponent.new(
           partial: "assessment/assessments/settings",
           locals: { assessment: assessment, assessable: assessable,
                     lecture: lecture }
+        )
+      end
+    end
+
+    def registration_tab
+      TabConfig.new(
+        "registration",
+        registration_tab_label,
+        PartialTabComponent.new(
+          partial: "exams/registration",
+          locals: { exam: assessable, lecture: lecture }
         )
       )
     end

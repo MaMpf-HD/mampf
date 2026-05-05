@@ -9,14 +9,67 @@ en:
     exam_destroyed: "Exam deleted successfully."
     exam_not_destructible:
       roster_not_empty: "Cannot delete: Registered participants exist"
+      in_campaign: "Cannot delete: Exam is already part of a registration campaign"
     exam_capacity_hint: "Leave blank for unlimited capacity."
     grading: "Grading"
+    info_bar:
+      participants: "participants"
+      registered: "registered"
+    exam_status:
+      title: "Status"
+      draft: "Draft"
+      registration_open: "Registration open"
+      registration_closed: "Registration closed"
+      finalized: "Finalized"
+      conducted: "Conducted"
+      grading: "Grading"
+      graded: "Graded"
+    registration_deadline_label: "Registration deadline"
+    registration_deadline_hint: "Defaults to three days before the exam if left blank."
+    skip_campaigns_label: "Manage participants manually"
+    skip_campaigns_hint: "Do not create a registration campaign for this exam."
+    settings_tab:
+      registration_hint:
+        inline: "Registration is not open yet - students cannot register. Switch to the Registrations tab to open it."
     registration_tab:
+      skip_campaigns_info: "Registration is managed manually for this exam."
+      no_campaign: "No registration campaign found for this exam."
+      needs_attention_tooltip: "Action needed: registration is not open yet"
+      status:
+        not_open: "Registration not yet open"
+      registered_count:
+        zero: "No registrations yet"
+        one: "%{count} registered"
+        other: "%{count} registered"
+      capacity_label: "Capacity: %{capacity}"
+      filter_label: "Filter participants list"
+      filter_placeholder: "Filter by name or email"
+      no_filter_results: "No matching students"
+      add_form_label: "Add person by email"
+      add_form_hint: "Adds a person directly to the participants list and is not used for filtering."
+      add_placeholder: "Email address"
+      add_button: "Add"
+      add_to_participants_button: "Add to participants list"
+      add_to_participants_tooltip: "Add person to the participants list"
+      add_to_participants_confirm: "This person will be added to the participants list. This manually overrides the previous reason why they were not on the exam roster. Continue?"
+      remove_button: "Remove"
+      remove_tooltip: "Remove person from the participants list"
+      remove_disabled_tooltip: "Cannot remove because grading data already exists"
+      remove_confirm: "This person will be removed from the participants list. Continue?"
       participant_added: "%{name} has been added."
       participant_removed: "%{name} has been removed."
+      remove_blocked: "This person cannot be removed from the participants list because grading data already exists."
       user_not_found: "No user found with this email address."
       already_registered: "This user is already registered."
+      open_review_hint: "Here you can see the current registrations. An editable exam roster for manual changes becomes available later."
+      closed_review_hint: "Here you can see the current registrations. While the editable exam roster is not yet available, you can resolve open policy checks via \"Review & Finalize\". Manual changes are only possible there."
+      post_finalization_hint: "This is the editable exam roster. Here you can add or remove students and review who is currently not on the exam roster."
+      not_on_roster_heading: "Not on the exam roster"
+      certification_not_passed_reason: "Exam eligibility not granted"
       removed_from_roster_reason: "Manually removed from the exam roster"
+      finalized_on: "Finalized on %{date}"
+    registrations_label: "Registrations"
+    roster: "Roster"
     tabs:
       assignments: "Assignments"
       talks: "Talks"
@@ -125,6 +178,9 @@ en:
     point_grid:
       total: "Total"
     statistics_placeholder: "Statistics are not yet available"
+
+  roster:
+    no_participants_yet: "No participants yet."
 
   activerecord:
     errors:

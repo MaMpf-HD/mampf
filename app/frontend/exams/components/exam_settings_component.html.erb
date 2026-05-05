@@ -1,21 +1,11 @@
 <div id="exam-settings" data-cy="exam-settings">
-  <% if show_back_button? %>
-    <div class="mb-3">
-      <%= link_to back_path,
-                  class: "btn btn-sm btn-outline-secondary",
-                  role: "button",
-                  data: { turbo_stream: true } do %>
-        <i class="bi bi-arrow-left"></i> <%= t("back") %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3><%= heading %></h3>
-  </div>
-
-  <% unless exam.new_record? %>
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2 bg-light rounded border text-muted small">
+  <% if show_info_bar? %>
+    <div
+      class="
+        d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
+        <%= info_bar_background_class %> rounded border text-muted small
+      "
+    >
       <span>
         <i class="bi bi-calendar-event me-1"></i>
         <%= display_date %>
@@ -32,8 +22,40 @@
 
       <span>
         <i class="bi bi-people me-1"></i>
-        <%= display_capacity %>
+        <%= participant_count %>
+
+        <% if exam.capacity %>
+          /
+          <%= exam.capacity %>
+        <% end %>
+
+        <%= participant_count_label %>
       </span>
+
+      <% if needs_opening? %>
+        <span class="text-black-50">·</span>
+        <span class="text-warning-emphasis fw-semibold">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          <%= t("assessment.settings_tab.registration_hint.inline") %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if show_back_button? %>
+    <div class="mb-3">
+      <%= link_to back_path,
+                  class: "btn btn-sm btn-outline-secondary",
+                  role: "button",
+                  data: { turbo_stream: true } do %>
+        <i class="bi bi-arrow-left"></i> <%= t("back") %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if show_back_button? %>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3><%= heading %></h3>
     </div>
   <% end %>
 
