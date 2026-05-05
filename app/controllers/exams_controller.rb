@@ -2,7 +2,8 @@ class ExamsController < ApplicationController
   include Flash
 
   before_action :set_lecture, only: [:index, :new]
-  before_action :set_exam, only: [:show, :edit, :update, :destroy]
+  before_action :set_exam, only: [:show, :edit, :update, :destroy,
+                                  :add_participant, :remove_participant]
   authorize_resource except: :index
 
   def current_ability
@@ -106,7 +107,43 @@ class ExamsController < ApplicationController
     ]
   end
 
+  def add_participant
+    authorize! :add_participant, @exam
+    user = participant_user
+
+    if user.nil?
+      flash.now[:error] = t("assessment.registration_tab.user_not_found")
+      return render_registration_response(status: :unprocessable_content)
+    end
+
+    if @exam.exam_roster_entries.exists?(user: user)
+      flash.now[:error] = t("assessment.registration_tab.already_registered")
+      return render_registration_response(status: :unprocessable_content)
+    end
+
+    Rosters::MaintenanceService.new.add_user!(user, @exam, force: true)
+    flash.now[:success] = t("assessment.registration_tab.participant_added",
+                            name: user.tutorial_name.presence || user.email)
+    render_registration_response
+  end
+
+  def remove_participant
+    authorize! :remove_participant, @exam
+    user = User.find(params[:user_id])
+
+    Rosters::MaintenanceService.new.remove_user!(user, @exam)
+    flash.now[:success] = t("assessment.registration_tab.participant_removed",
+                            name: user.tutorial_name.presence || user.email)
+    render_registration_response
+  end
+
   private
+
+    def participant_user
+      return User.find_by(id: params[:user_id]) if params[:user_id].present?
+
+      User.find_by(email: params[:email]&.strip)
+    end
 
     def set_exam
       @exam = Exam.find(params[:id])
@@ -129,5 +166,14 @@ class ExamsController < ApplicationController
     def exam_params
       params.expect(exam: [:title, :date, :location, :capacity,
                            :description, :lecture_id])
+    end
+
+    def render_registration_response(status: :ok)
+      render turbo_stream: [
+        turbo_stream.update("exams_container",
+                            partial: "exams/settings",
+                            locals: { exam: @exam, lecture: @lecture }),
+        stream_flash
+      ], status: status
     end
 end

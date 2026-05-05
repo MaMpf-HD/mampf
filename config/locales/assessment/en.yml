@@ -7,8 +7,16 @@ en:
     exam_created: "Exam created successfully."
     exam_updated: "Exam updated successfully."
     exam_destroyed: "Exam deleted successfully."
+    exam_not_destructible:
+      roster_not_empty: "Cannot delete: Registered participants exist"
     exam_capacity_hint: "Leave blank for unlimited capacity."
     grading: "Grading"
+    registration_tab:
+      participant_added: "%{name} has been added."
+      participant_removed: "%{name} has been removed."
+      user_not_found: "No user found with this email address."
+      already_registered: "This user is already registered."
+      removed_from_roster_reason: "Manually removed from the exam roster"
     tabs:
       assignments: "Assignments"
       talks: "Talks"
