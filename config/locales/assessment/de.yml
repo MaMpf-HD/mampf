@@ -7,7 +7,15 @@ de:
     exam_created: "Klausur erfolgreich erstellt."
     exam_updated: "Klausur erfolgreich aktualisiert."
     exam_destroyed: "Klausur erfolgreich gelöscht."
+    exam_not_destructible:
+      roster_not_empty: "Löschen nicht möglich: Eingetragene Teilnehmende vorhanden"
     exam_capacity_hint: "Leer lassen für unbegrenzte Kapazität."
+    registration_tab:
+      participant_added: "%{name} wurde hinzugefügt."
+      participant_removed: "%{name} wurde entfernt."
+      user_not_found: "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
+      already_registered: "Dieser Benutzer ist bereits eingetragen."
+      removed_from_roster_reason: "Manuell aus der Klausurliste entfernt"
     tabs:
       assignments: "Hausaufgaben"
       talks: "Vorträge"

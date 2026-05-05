@@ -5,7 +5,8 @@ class ExamAbility
     clear_aliased_actions
     return unless user
 
-    can [:index, :new, :show, :create, :edit, :update, :destroy], Exam do |exam|
+    can [:index, :new, :show, :create, :edit, :update, :destroy,
+         :add_participant, :remove_participant], Exam do |exam|
       exam.lecture.present? && user.can_edit?(exam.lecture)
     end
   end
