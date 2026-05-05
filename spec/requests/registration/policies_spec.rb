@@ -17,9 +17,33 @@ RSpec.describe("Registration::Policies", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
+      let!(:same_course_lecture) { create(:lecture, course: lecture.course) }
+      let!(:other_course_lecture) { create(:lecture) }
+
       it "returns http success" do
         get new_registration_campaign_policy_path(campaign)
         expect(response).to have_http_status(:success)
+      end
+
+      it "lists only lectures from the same course for student performance policies" do
+        get new_registration_campaign_policy_path(campaign)
+
+        expect(response.body).to include(lecture.title)
+        expect(response.body).to include(same_course_lecture.title)
+        expect(response.body).not_to include(other_course_lecture.title)
+      end
+
+      it "preselects the current lecture for student performance policies" do
+        get new_registration_campaign_policy_path(campaign)
+
+        expect(response.body).to include('name="registration_policy[lecture_ids][]"')
+        expect(response.body).to include('multiple="multiple"')
+        expect(response.body).to include('class="form-select selectize"')
+        expect(response.body).to include('data-controller="selectize"')
+        expect(response.body).to match(
+          /<option(?=[^>]*value="#{lecture.id}")(?=[^>]*selected="selected")[^>]*>
+          #{Regexp.escape(lecture.title)}/x
+        )
       end
 
       it "prefills allowed domains from env" do
@@ -128,6 +152,23 @@ RSpec.describe("Registration::Policies", type: :request) do
         expect(response).to redirect_to(
           registration_campaign_path(campaign, anchor: "policies-tab")
         )
+      end
+
+      it "creates a student performance policy with multiple lectures" do
+        same_course_lecture = create(:lecture, course: lecture.course)
+
+        expect do
+          post(registration_campaign_policies_path(campaign),
+               params: { registration_policy: {
+                 kind: "student_performance",
+                 phase: "finalization",
+                 lecture_ids: [lecture.id.to_s, same_course_lecture.id.to_s]
+               } })
+        end.to change(Registration::Policy, :count).by(1)
+
+        policy = campaign.registration_policies.order(:created_at).last
+
+        expect(policy.lecture_ids).to eq([lecture.id.to_s, same_course_lecture.id.to_s])
       end
 
       it "fails with invalid attributes" do
@@ -345,6 +386,45 @@ RSpec.describe("Registration::Policies", type: :request) do
         patch move_down_registration_campaign_policy_path(campaign, policy1)
         expect(response).to redirect_to(root_path)
       end
+    end
+  end
+
+  describe "exam campaign context" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_campaign) { exam.registration_campaign }
+    let(:frame_id) { "exam_#{exam.id}_policies" }
+
+    before { sign_in editor }
+
+    it "renders exam-specific partial on create with frame_id" do
+      post registration_campaign_policies_path(exam_campaign),
+           params: {
+             registration_policy: {
+               kind: "institutional_email",
+               phase: "registration",
+               allowed_domains: "example.com"
+             },
+             frame_id: frame_id
+           },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(frame_id)
+    end
+
+    it "renders default partial without frame_id" do
+      post registration_campaign_policies_path(exam_campaign),
+           params: {
+             registration_policy: {
+               kind: "institutional_email",
+               phase: "registration",
+               allowed_domains: "example.com"
+             }
+           },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("campaigns_container")
     end
   end
 end

@@ -15,10 +15,14 @@ class ExamsController < ApplicationController
     set_exam_locale
     @exams = @lecture.exams.order(date: :asc)
 
-    render turbo_stream: turbo_stream.update("exams_container",
-                                             partial: "exams/list",
-                                             locals: { lecture: @lecture,
-                                                       exams: @exams })
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "exams/list",
+                                                 locals: { lecture: @lecture,
+                                                           exams: @exams })
+      end
+    end
   end
 
   def show
@@ -38,23 +42,32 @@ class ExamsController < ApplicationController
   end
 
   def new
-    @exam = Exam.new(lecture: @lecture)
+    @exam = Exam.new
+    @exam.lecture = @lecture
     authorize! :new, @exam
     set_exam_locale
 
-    render turbo_stream: turbo_stream.update("exams_container",
-                                             partial: "exams/settings",
-                                             locals: { exam: @exam,
-                                                       lecture: @lecture })
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "exams/settings",
+                                                 locals: { exam: @exam,
+                                                           lecture: @lecture })
+      end
+    end
   end
 
   def edit
     authorize! :edit, @exam
 
-    render turbo_stream: turbo_stream.update("exams_container",
-                                             partial: "exams/form",
-                                             locals: { exam: @exam,
-                                                       lecture: @lecture })
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("exams_container",
+                                                 partial: "exams/form",
+                                                 locals: { exam: @exam,
+                                                           lecture: @lecture })
+      end
+    end
   end
 
   def create
@@ -63,71 +76,81 @@ class ExamsController < ApplicationController
     authorize! :create, @exam
     set_exam_locale
 
-    if @exam.save
-      @exam.load_registration_deadline
-      flash[:success] = t("assessment.exam_created")
-      @active_tab = "settings"
-      render turbo_stream: [
-        turbo_stream.update("exams_container", build_dashboard_component),
-        stream_flash
-      ]
-    else
-      render turbo_stream: turbo_stream.update("exams_container",
-                                               partial: "exams/settings",
-                                               locals: { exam: @exam,
-                                                         lecture: @lecture }),
-             status: :unprocessable_content
+    respond_to do |format|
+      if @exam.save
+        @exam.load_registration_deadline
+        format.turbo_stream do
+          flash[:success] = t("assessment.exam_created")
+          @active_tab = "settings"
+          streams = [
+            turbo_stream.update("exams_container",
+                                build_dashboard_component),
+            stream_flash
+          ]
+          render turbo_stream: streams
+        end
+      else
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("exams_container",
+                                                   partial: "exams/settings",
+                                                   locals: { exam: @exam,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
     end
   end
 
   def update
     authorize! :update, @exam
-
     reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
-    update_params = exam_update_params(
-      reopen_after_deadline_fix: reopen_after_deadline_fix
-    )
+    update_params = exam_update_params(reopen_after_deadline_fix: reopen_after_deadline_fix)
 
-    if @exam.update(update_params)
-      reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
-      @exam.load_registration_deadline
-      flash[:success] = if reopen_after_deadline_fix
-        t("registration.campaign.reopened")
+    respond_to do |format|
+      if @exam.update(update_params)
+        reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
+        @exam.load_registration_deadline
+        format.turbo_stream do
+          flash[:success] = if reopen_after_deadline_fix
+            t("registration.campaign.reopened")
+          else
+            t("assessment.exam_updated")
+          end
+          if ["settings", "registration"].include?(params[:tab])
+            render turbo_stream: [
+              turbo_stream.update(
+                "exams_container",
+                build_dashboard_component(active_tab: params[:tab])
+              ),
+              stream_flash
+            ]
+          else
+            streams = [
+              turbo_stream.update("exams_container",
+                                  partial: "exams/list",
+                                  locals: { lecture: @lecture,
+                                            exams: @lecture.exams.order(date: :asc) }),
+              stream_flash
+            ]
+            render turbo_stream: streams
+          end
+        end
       else
-        t("assessment.exam_updated")
-      end
-
-      if ["settings", "registration"].include?(params[:tab])
-        render turbo_stream: [
-          turbo_stream.update(
-            "exams_container",
-            build_dashboard_component(active_tab: params[:tab])
-          ),
-          stream_flash
-        ]
-      else
-        render turbo_stream: [
-          turbo_stream.update("exams_container",
-                              partial: "exams/list",
-                              locals: { lecture: @lecture,
-                                        exams: @lecture.exams.order(date: :asc) }),
-          stream_flash
-        ]
-      end
-    else
-      @exam.reopen_after_deadline_fix = reopen_after_deadline_fix
-
-      if ["settings", "registration"].include?(params[:tab])
-        render turbo_stream: turbo_stream.update(
-          "exams_container",
-          build_dashboard_component(active_tab: params[:tab])
-        ), status: :unprocessable_content
-      else
-        render turbo_stream: turbo_stream.update("exams_container",
-                                                 partial: "exams/form",
-                                                 locals: { exam: @exam,
-                                                           lecture: @lecture }),
-               status: :unprocessable_content
+        format.turbo_stream do
+          @exam.reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
+          if ["settings", "registration"].include?(params[:tab])
+            render turbo_stream: turbo_stream.update(
+              "exams_container",
+              build_dashboard_component(active_tab: params[:tab])
+            ), status: :unprocessable_content
+          else
+            render turbo_stream: turbo_stream.update("exams_container",
+                                                     partial: "exams/form",
+                                                     locals: { exam: @exam,
+                                                               lecture: @lecture }),
+                   status: :unprocessable_content
+          end
+        end
       end
     end
   end
@@ -137,18 +160,27 @@ class ExamsController < ApplicationController
 
     if @exam.destructible?
       @exam.destroy
-      flash[:success] = t("assessment.exam_destroyed")
-
-      render turbo_stream: [
-        turbo_stream.update("exams_container",
-                            partial: "exams/list",
-                            locals: { lecture: @lecture,
-                                      exams: @lecture.exams.order(date: :asc) }),
-        stream_flash
-      ]
+      respond_to do |format|
+        format.turbo_stream do
+          flash[:success] = t("assessment.exam_destroyed")
+          render turbo_stream: [
+            turbo_stream.update("exams_container",
+                                partial: "exams/list",
+                                locals: { lecture: @lecture,
+                                          exams: @lecture.exams.order(date: :asc) }),
+            stream_flash
+          ]
+        end
+      end
     else
-      flash[:error] = t("assessment.exam_not_destructible.#{@exam.non_destructible_reason}")
-      render turbo_stream: stream_flash, status: :unprocessable_content
+      respond_to do |format|
+        format.turbo_stream do
+          reason = @exam.non_destructible_reason
+          flash[:error] = t("assessment.exam_not_destructible.#{reason}")
+          render turbo_stream: stream_flash,
+                 status: :unprocessable_content
+        end
+      end
     end
   end
 
@@ -156,20 +188,27 @@ class ExamsController < ApplicationController
     authorize! :add_participant, @exam
     user = participant_user
 
-    if user.nil?
-      flash.now[:error] = t("assessment.registration_tab.user_not_found")
-      return render_registration_response(status: :unprocessable_content)
+    respond_to do |format|
+      format.turbo_stream do
+        if user.nil?
+          flash.now[:error] = t("assessment.registration_tab.user_not_found")
+        else
+          service = Rosters::MaintenanceService.new
+          begin
+            service.add_user!(user, @exam, force: true)
+            flash.now[:success] = t("assessment.registration_tab.participant_added",
+                                    name: user.tutorial_name.presence || user.email)
+          rescue ActiveRecord::RecordInvalid
+            flash.now[:error] = t("assessment.registration_tab.already_registered")
+          end
+        end
+        @active_tab = "registration"
+        render turbo_stream: [
+          turbo_stream.update("exams_container", build_dashboard_component),
+          stream_flash
+        ]
+      end
     end
-
-    if @exam.exam_roster_entries.exists?(user: user)
-      flash.now[:error] = t("assessment.registration_tab.already_registered")
-      return render_registration_response(status: :unprocessable_content)
-    end
-
-    Rosters::MaintenanceService.new.add_user!(user, @exam, force: true)
-    flash.now[:success] = t("assessment.registration_tab.participant_added",
-                            name: user.tutorial_name.presence || user.email)
-    render_registration_response
   end
 
   def remove_participant
@@ -186,7 +225,15 @@ class ExamsController < ApplicationController
       status = :unprocessable_content
     end
 
-    render_registration_response(status: status)
+    respond_to do |format|
+      format.turbo_stream do
+        @active_tab = "registration"
+        render turbo_stream: [
+          turbo_stream.update("exams_container", build_dashboard_component),
+          stream_flash
+        ], status: status
+      end
+    end
   end
 
   private
@@ -240,7 +287,6 @@ class ExamsController < ApplicationController
     def build_dashboard_component(active_tab: @active_tab, task: nil)
       assessment = @exam.respond_to?(:assessment) ? @exam.assessment : nil
       tasks = assessment&.tasks&.order(:position) || []
-
       AssessmentDashboardComponent.new(
         assessable: @exam,
         assessment: assessment,
@@ -251,19 +297,10 @@ class ExamsController < ApplicationController
       )
     end
 
-    def render_registration_response(status: :ok)
-      render turbo_stream: [
-        turbo_stream.update("exams_container",
-                            build_dashboard_component(active_tab: "registration")),
-        stream_flash
-      ], status: status
-    end
-
     def reopen_exam_campaign_after_deadline_fix
       campaign = @exam.registration_campaign
       return unless campaign && !campaign.completed?
 
-      campaign.update!(status: :open,
-                       registration_deadline: @exam.registration_deadline)
+      campaign.reopen!(registration_deadline: @exam.registration_deadline)
     end
 end

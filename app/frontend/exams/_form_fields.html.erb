@@ -1,11 +1,11 @@
 <div class="row mb-3">
   <div class="col-md-2">
-    <%= f.label :title, t("basics.title"), class: "col-form-label" %>
+    <%= f.label :title, t('basics.title'), class: "col-form-label" %>
   </div>
 
   <div class="col-md-9">
     <%= f.text_field :title,
-                     class: "form-control",
+                     class: 'form-control',
                      data: { exams__form_target: "title",
                              action: "input->exams--form#checkForChanges" } %>
 
@@ -15,7 +15,7 @@
 
 <div class="row mb-3">
   <div class="col-md-2">
-    <%= f.label :date, t("basics.date"), class: "col-form-label" %>
+    <%= f.label :date, t('basics.date'), class: "col-form-label" %>
   </div>
 
   <div class="col-md-5">
@@ -49,12 +49,12 @@
 
 <div class="row mb-3">
   <div class="col-md-2">
-    <%= f.label :location, t("basics.location"), class: "col-form-label" %>
+    <%= f.label :location, t('basics.location'), class: "col-form-label" %>
   </div>
 
   <div class="col-md-9">
     <%= f.text_field :location,
-                     class: "form-control",
+                     class: 'form-control',
                      data: { exams__form_target: "location",
                              action: "input->exams--form#checkForChanges" } %>
   </div>
@@ -62,30 +62,30 @@
 
 <div class="row mb-3">
   <div class="col-md-2">
-    <%= f.label :capacity, t("basics.capacity"), class: "col-form-label" %>
+    <%= f.label :capacity, t('basics.capacity'), class: "col-form-label" %>
   </div>
 
   <div class="col-md-4">
     <%= f.number_field :capacity,
-                       class: "form-control w-50",
+                       class: 'form-control w-50',
                        min: 1,
                        data: { exams__form_target: "capacity",
                                action: "input->exams--form#checkForChanges" } %>
 
     <small class="text-muted d-block">
-      <%= t("assessment.exam_capacity_hint") %>
+      <%= t('assessment.exam_capacity_hint') %>
     </small>
   </div>
 </div>
 
 <div class="row mb-3">
   <div class="col-md-2">
-    <%= f.label :description, t("basics.description"), class: "col-form-label" %>
+    <%= f.label :description, t('basics.description'), class: "col-form-label" %>
   </div>
 
   <div class="col-md-9">
     <%= f.text_area :description,
-                    class: "form-control",
+                    class: 'form-control',
                     rows: 3,
                     data: { exams__form_target: "description",
                             action: "input->exams--form#checkForChanges" } %>
@@ -103,8 +103,8 @@
     >
       <div class="col-md-2">
         <%= f.label :registration_deadline,
-                    t("assessment.registration_deadline_label"),
-                    class: "col-form-label" %>
+                  t('assessment.registration_deadline_label'),
+                  class: "col-form-label" %>
       </div>
 
       <div class="col-md-5">
@@ -117,15 +117,12 @@
         >
           <div class="flex-grow-1">
             <%= f.text_field :registration_deadline,
-                             class: "form-control td-input",
-                             data: {
-                               exams__form_target: "registrationDeadline",
-                               td_target: "#exam-deadline-picker",
-                               action: "change->exams--form#checkForChanges"
-                             },
-                             value: exam.registration_deadline.try(:strftime, "%Y-%m-%d %H:%M") ||
-                                    exam.registration_deadline,
-                             autocomplete: "off" %>
+                           class: "form-control td-input",
+                           data: { exams__form_target: "registrationDeadline",
+                                   td_target: "#exam-deadline-picker",
+                                   action: "change->exams--form#checkForChanges" },
+                           value: exam.registration_deadline.try(:strftime, "%Y-%m-%d %H:%M") || exam.registration_deadline,
+                           autocomplete: "off" %>
           </div>
 
           <span
@@ -141,29 +138,26 @@
 
         <% if exam.new_record? %>
           <small class="text-muted d-block">
-            <%= t("assessment.registration_deadline_hint") %>
+            <%= t('assessment.registration_deadline_hint') %>
           </small>
         <% end %>
       </div>
     </div>
   <% end %>
-
   <% if exam.new_record? %>
     <div class="mb-3">
       <div class="form-check">
         <%= f.check_box :skip_campaigns,
-                        class: "form-check-input",
-                        data: {
-                          exams__form_target: "skipCampaigns",
-                          action: "change->exams--form#checkForChanges change->exams--form#toggleDeadline"
-                        } %>
+                        class: 'form-check-input',
+                        data: { exams__form_target: "skipCampaigns",
+                                action: "change->exams--form#checkForChanges change->exams--form#toggleDeadline" } %>
 
         <%= f.label :skip_campaigns,
-                    t("assessment.skip_campaigns_label"),
-                    class: "form-check-label" %>
+                    t('assessment.skip_campaigns_label'),
+                    class: 'form-check-label' %>
 
         <small class="text-muted d-block">
-          <%= t("assessment.skip_campaigns_hint") %>
+          <%= t('assessment.skip_campaigns_hint') %>
         </small>
       </div>
     </div>
@@ -179,16 +173,16 @@
       role="alert"
     >
       <i class="fas fa-exclamation-triangle me-2"></i>
-      <%= t("warnings.unsaved_changes") %>
+      <%= t('warnings.unsaved_changes') %>
     </div>
 
-    <%= f.submit t("buttons.save"),
-                 class: "btn btn-primary me-2 d-none",
+    <%= f.submit t('buttons.save'),
+                 class: 'btn btn-primary me-2',
                  data: { exams__form_target: "submitButton" } %>
 
-    <%= button_tag t("buttons.cancel"),
+    <%= button_tag t('buttons.cancel'),
                    type: "button",
-                   class: "btn btn-secondary d-none",
+                   class: 'btn btn-secondary',
                    data: { exams__form_target: "cancelButton",
                            action: "click->exams--form#cancel" } %>
   </div>

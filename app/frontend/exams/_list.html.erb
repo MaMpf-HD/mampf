@@ -1,14 +1,14 @@
 <div>
   <h3 class="lecture-pane-header">
-    <%= t("assessment.exams") %>
+    <%= t('assessment.exams') %>
   </h3>
 
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= link_to t("assessment.new_exam"),
-                  new_exam_path(lecture_id: lecture.id),
-                  class: "btn btn-sm btn-primary",
-                  id: "newExamButton",
+      <%= link_to t('assessment.new_exam'),
+                  new_exam_path(params: { lecture_id: lecture.id }),
+                  class: 'btn btn-sm btn-primary',
+                  id: 'newExamButton',
                   data: { turbo_stream: true } %>
     </div>
   </div>
@@ -17,16 +17,18 @@
 
   <% if exams.empty? %>
     <div class="text-center text-muted py-4">
-      <%= t("assessment.no_exams_yet") %>
+      <%= t('assessment.no_exams_yet') %>
     </div>
   <% else %>
     <table class="table table-hover">
       <thead>
         <tr>
-          <th><%= t("basics.title") %></th>
-          <th><%= t("basics.date") %></th>
-          <th><%= t("basics.location") %></th>
-          <th><%= t("basics.capacity") %></th>
+          <th><%= t('basics.title') %></th>
+          <th><%= t('assessment.date') %></th>
+          <th><%= t('basics.location') %></th>
+          <th><%= t('basics.capacity') %></th>
+          <th><%= t('roster.participants') %></th>
+          <th><%= t('assessment.exam_status.title') %></th>
         </tr>
       </thead>
 
@@ -46,15 +48,23 @@
             </td>
 
             <td>
-              <%= exam.date ? l(exam.date, format: :short) : t("basics.not_specified") %>
+              <%= exam.date ? l(exam.date, format: :short) : t('basics.not_specified') %>
             </td>
 
             <td>
-              <%= exam.location.presence || t("basics.not_specified") %>
+              <%= exam.location.presence || t('basics.not_specified') %>
             </td>
 
             <td>
-              <%= exam.capacity || t("basics.unlimited") %>
+              <%= exam.capacity || t('basics.unlimited') %>
+            </td>
+
+            <td>
+              <%= exam.roster_entries_count %>
+            </td>
+
+            <td>
+              <%= render "exams/campaign_status", exam: exam %>
             </td>
           </tr>
         <% end %>

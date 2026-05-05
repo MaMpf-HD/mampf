@@ -129,10 +129,14 @@ class ExamRegistrationTabComponent < ViewComponent::Base
 
     def post_finalization_reason_label(registration)
       if registration.rejection_reason_code == "certification_not_passed"
-        return helpers.t("assessment.registration_tab.certification_not_passed_reason")
+        return certification_not_passed_reason_label
       end
 
       registration.localized_rejection_reason_label
+    end
+
+    def certification_not_passed_reason_label
+      helpers.t("assessment.registration_tab.certification_not_passed_reason")
     end
 
     def pre_finalization?

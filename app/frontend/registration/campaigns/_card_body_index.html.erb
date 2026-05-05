@@ -3,7 +3,7 @@
              campaign: new_campaign,
              lecture: lecture %>
 <% else %>
-  <% campaigns = lecture.registration_campaigns.order(created_at: :desc) %>
+  <% campaigns = lecture.registration_campaigns.non_exam.order(created_at: :desc) %>
   <% active_campaigns = campaigns.reject(&:completed?) %>
   <% completed_campaigns = campaigns.select(&:completed?) %>
   <% no_campaign_groups = no_campaign_registerables(lecture) %>

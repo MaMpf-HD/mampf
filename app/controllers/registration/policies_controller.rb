@@ -24,12 +24,7 @@ module Registration
       authorize! :create, @policy
 
       if @policy.save
-        respond_with_flash(:notice, t("registration.policy.created"),
-                           redirect_path: registration_campaign_path(
-                             @campaign, anchor: "policies-tab"
-                           )) do
-          render_campaigns_container
-        end
+        flash_and_update(:notice, t("registration.policy.created"))
       else
         render :new, status: :unprocessable_content
       end
@@ -37,12 +32,7 @@ module Registration
 
     def update
       if @policy.update(policy_params)
-        respond_with_flash(:notice, t("registration.policy.updated"),
-                           redirect_path: registration_campaign_path(
-                             @campaign, anchor: "policies-tab"
-                           )) do
-          render_campaigns_container
-        end
+        flash_and_update(:notice, t("registration.policy.updated"))
       else
         render :edit, status: :unprocessable_content
       end
@@ -50,17 +40,10 @@ module Registration
 
     def destroy
       if @policy.destroy
-        respond_with_flash(:notice, t("registration.policy.destroyed"),
-                           redirect_path: registration_campaign_path(
-                             @campaign, anchor: "policies-tab"
-                           )) do
-          render_campaigns_container
-        end
+        flash_and_update(:notice, t("registration.policy.destroyed"))
       else
         respond_with_flash(:alert, @policy.errors.full_messages.join(", "),
-                           redirect_path: registration_campaign_path(
-                             @campaign, anchor: "policies-tab"
-                           ))
+                           redirect_path: policy_redirect_path)
       end
     end
 
@@ -82,12 +65,7 @@ module Registration
           @campaign.registration_policies.find(id).set_list_position(index + 1)
         end
       end
-      respond_with_flash(:notice, nil,
-                         redirect_path: registration_campaign_path(
-                           @campaign, anchor: "policies-tab"
-                         )) do
-        render_campaigns_container
-      end
+      flash_and_update(:notice, nil)
     end
 
     private
@@ -117,7 +95,9 @@ module Registration
 
       def policy_params
         params.expect(registration_policy: [:kind, :phase, :allowed_domains,
-                                            :prerequisite_campaign_id])
+                                            :prerequisite_campaign_id,
+                                            :lecture_id,
+                                            { lecture_ids: [] }])
       end
 
       def render_campaigns_container
@@ -132,12 +112,60 @@ module Registration
 
       def move(direction)
         @policy.public_send("move_#{direction}")
-        respond_with_flash(:notice, nil,
-                           redirect_path: registration_campaign_path(
-                             @campaign, anchor: "policies-tab"
-                           )) do
+        flash_and_update(:notice, nil)
+      end
+
+      def render_campaigns_container
+        @campaign.reload
+        turbo_stream.update("campaigns_container",
+                            partial: "registration/campaigns/card_body_index",
+                            locals: {
+                              lecture: @campaign.campaignable,
+                              expanded_campaign_id: @campaign.id
+                            })
+      end
+
+      def flash_and_update(flash_type, message)
+        @campaign.reload
+        if exam_campaign_context?
+          flash.now[flash_type] = message if message
+          return render_exam_update("exams/registration")
+        end
+
+        respond_with_flash(flash_type, message,
+                           redirect_path: policy_redirect_path) do
           render_campaigns_container
         end
+      end
+
+      def policy_redirect_path
+        if exam_campaign_context?
+          exam = @campaign.exam
+          return exam_path(exam, tab: "registration") if exam
+        end
+
+        registration_campaign_path(@campaign, anchor: "policies-tab")
+      end
+
+      def target_frame_id
+        params[:frame_id].presence || "campaigns_container"
+      end
+
+      def exam_campaign_context?
+        target_frame_id != "campaigns_container" &&
+          @campaign.exam_campaign?
+      end
+
+      def render_exam_update(partial)
+        exam = @campaign.exam
+        render turbo_stream: [
+          turbo_stream.replace(
+            target_frame_id,
+            partial: partial,
+            locals: { exam: exam, lecture: exam.lecture }
+          ),
+          stream_flash
+        ].compact
       end
   end
 end

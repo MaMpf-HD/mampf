@@ -47,6 +47,13 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    scope :non_exam, lambda {
+      where.not(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -141,7 +148,8 @@ module Registration
     end
 
     def user_registrations_grouped_by_user
-      user_registrations.includes(:user, :registration_item)
+      user_registrations.where.not(status: :rejected)
+                        .includes(:user, :registration_item)
                         .joins(:user)
                         .order("users.name")
                         .group_by(&:user)
@@ -168,6 +176,19 @@ module Registration
 
         update!(status: :completed,
                 allocation_decided_at: allocation_decided_at || Time.current)
+      end
+    end
+
+    def reopen!(registration_deadline: nil)
+      with_lock do
+        return if completed?
+
+        was_processing = processing?
+        attributes = { status: :open }
+        attributes[:registration_deadline] = registration_deadline if registration_deadline.present?
+
+        update!(attributes)
+        reset_allocation_results! if was_processing
       end
     end
 

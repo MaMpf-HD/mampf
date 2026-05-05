@@ -211,6 +211,11 @@ de:
   activerecord:
     errors:
       models:
+        exam:
+          attributes:
+            registration_deadline:
+              must_be_before_exam_date: "muss vor dem Prüfungsdatum liegen"
+              must_be_in_future: "muss in der Zukunft liegen"
         assessment/task:
           attributes:
             base:

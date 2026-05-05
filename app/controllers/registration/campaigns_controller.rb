@@ -13,7 +13,8 @@ module Registration
 
     def index
       authorize! :index, Registration::Campaign.new(campaignable: @lecture)
-      @campaigns = @lecture.registration_campaigns.includes(:registration_items)
+      @campaigns = @lecture.registration_campaigns.non_exam
+                           .includes(:registration_items)
                            .order(created_at: :desc)
 
       respond_to do |format|
@@ -64,6 +65,7 @@ module Registration
 
     def new
       @campaign = @lecture.registration_campaigns.build
+      @campaign.allocation_mode = :first_come_first_served
       authorize! :new, @campaign
 
       respond_to do |format|
@@ -161,17 +163,7 @@ module Registration
         return
       end
 
-      was_processing = @campaign.processing?
-
-      attributes = { status: :open }
-      if params[:registration_deadline].present?
-        attributes[:registration_deadline] = params[:registration_deadline]
-      end
-
-      @campaign.transaction do
-        @campaign.update!(attributes)
-        @campaign.reset_allocation_results! if was_processing
-      end
+      @campaign.reopen!(registration_deadline: params[:registration_deadline])
 
       if exam_campaign_context?
         render_exam_update

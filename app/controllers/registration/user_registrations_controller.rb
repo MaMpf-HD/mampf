@@ -30,7 +30,6 @@ module Registration
           load_allocation_data
           if params[:source] == "allocation_embedded"
             exam = @campaign.exam
-
             if exam
               streams << turbo_stream.replace(
                 Registration::Campaign.exam_workspace_frame_id(exam),

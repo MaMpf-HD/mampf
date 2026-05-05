@@ -40,10 +40,6 @@ class ExamSettingsComponent < ViewComponent::Base
     exam.location.presence || helpers.t("basics.not_specified")
   end
 
-  def display_capacity
-    exam.capacity || helpers.t("basics.unlimited")
-  end
-
   def show_back_button?
     exam.new_record?
   end
@@ -62,12 +58,6 @@ class ExamSettingsComponent < ViewComponent::Base
 
   def back_path
     helpers.exams_path(lecture_id: exam.lecture_id)
-  end
-
-  def heading
-    return helpers.t("assessment.new_exam") if exam.new_record?
-
-    exam.title
   end
 
   private

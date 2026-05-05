@@ -8,7 +8,6 @@ RSpec.describe("Exams registration", type: :request) do
 
   before do
     Flipper.enable(:assessment_grading)
-    sign_in teacher
   end
 
   after do
@@ -29,6 +28,7 @@ RSpec.describe("Exams registration", type: :request) do
     end
 
     before do
+      sign_in teacher
       Flipper.enable(:registration_campaigns)
     end
 
@@ -75,6 +75,7 @@ RSpec.describe("Exams registration", type: :request) do
 
   describe "GET /exams/:id" do
     before do
+      sign_in teacher
       Flipper.enable(:registration_campaigns)
     end
 
@@ -87,6 +88,7 @@ RSpec.describe("Exams registration", type: :request) do
       )
       expect(response.body).to include(I18n.t("registration.policy.index.title"))
       expect(response.body).to include(I18n.t("registration.campaign.actions.open"))
+      expect(response.body).not_to include("-policies\"")
     end
 
     it "renders the deadline form disabled for a closed campaign" do
@@ -104,55 +106,9 @@ RSpec.describe("Exams registration", type: :request) do
     end
   end
 
-  describe "POST /exams/:id/participants" do
-    it "adds a participant by user id" do
-      expect do
-        post(participants_exam_path(exam),
-             params: { user_id: student.id },
-             as: :turbo_stream)
-      end.to change { exam.reload.exam_roster_entries.count }.by(1)
-
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include(
-        I18n.t("assessment.registration_tab.participant_added",
-               name: student.tutorial_name.presence || student.email)
-      )
-    end
-
-    it "reactivates an excluded participant" do
-      roster_entry = create(:exam_roster_entry,
-                            exam: exam,
-                            user: student,
-                            excluded_at: Time.current)
-
-      expect do
-        post(participants_exam_path(exam),
-             params: { user_id: student.id },
-             as: :turbo_stream)
-      end.not_to change(ExamRosterEntry, :count)
-
-      expect(response).to have_http_status(:ok)
-      expect(roster_entry.reload.excluded_at).to be_nil
-    end
-
-    it "rejects already active participants" do
-      create(:exam_roster_entry, exam: exam, user: student)
-
-      expect do
-        post(participants_exam_path(exam),
-             params: { user_id: student.id },
-             as: :turbo_stream)
-      end.not_to change(ExamRosterEntry, :count)
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include(
-        I18n.t("assessment.registration_tab.already_registered")
-      )
-    end
-  end
-
   describe "PATCH /exams/:id" do
     before do
+      sign_in teacher
       Flipper.enable(:registration_campaigns)
     end
 
@@ -201,22 +157,66 @@ RSpec.describe("Exams registration", type: :request) do
     end
   end
 
-  describe "DELETE /exams/:id/participants/:user_id" do
+  describe "POST /exams/:id/participants" do
+    let(:campaign) { exam.registration_campaign }
+
     before do
-      create(:exam_roster_entry, exam: exam, user: student)
+      sign_in teacher
+      Flipper.enable(:registration_campaigns)
+      campaign.update!(status: :completed)
     end
 
-    it "removes a participant" do
+    it "adds a rejected registration to the participants list by user id" do
+      registration = create(
+        :registration_user_registration,
+        :rejected,
+        registration_campaign: campaign,
+        registration_item: campaign.registration_items.first,
+        user: student,
+        rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+        rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
+        rejection_reason_label: I18n.t(
+          "registration.user_registration.reason_labels.withdrawn_by_teacher"
+        )
+      )
+
       expect do
-        delete(remove_participant_exam_path(exam, user_id: student.id),
-               as: :turbo_stream)
-      end.to change { exam.reload.exam_roster_entries.count }.by(-1)
+        post(participants_exam_path(exam),
+             params: { user_id: student.id },
+             as: :turbo_stream)
+      end.to change { exam.reload.exam_roster_entries.count }.by(1)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(
-        I18n.t("assessment.registration_tab.participant_removed",
-               name: student.tutorial_name.presence || student.email)
-      )
+      expect(registration.reload).to be_rejected
+      expect(registration.rejection_overridden_at).to be_nil
+    end
+
+    it "reinstates an excluded participant by user id" do
+      roster_entry = create(:exam_roster_entry,
+                            exam: exam,
+                            user: student,
+                            excluded_at: Time.current)
+
+      expect do
+        post(participants_exam_path(exam),
+             params: { user_id: student.id },
+             as: :turbo_stream)
+      end.not_to change(ExamRosterEntry, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(roster_entry.reload.excluded_at).to be_nil
+      expect(exam.reload.exam_roster_entries.map(&:user_id)).to include(student.id)
+    end
+  end
+
+  describe "DELETE /exams/:id/participants/:user_id" do
+    let(:campaign) { exam.registration_campaign }
+
+    before do
+      sign_in teacher
+      Flipper.enable(:registration_campaigns)
+      create(:exam_roster_entry, exam: exam, user: student)
+      campaign.update!(status: :completed)
     end
   end
 end

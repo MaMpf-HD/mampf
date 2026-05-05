@@ -168,5 +168,17 @@ module Registration
                         turbo_stream: true },
                 class: "btn allocation-action-secondary")
     end
+
+    private
+
+      def utilization_color(percentage)
+        if percentage >= 100
+          "bg-danger"
+        elsif percentage >= 80
+          "bg-warning"
+        else
+          "bg-success"
+        end
+      end
   end
 end
