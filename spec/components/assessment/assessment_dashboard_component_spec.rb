@@ -124,6 +124,48 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     end
   end
 
+  context "with an exam" do
+    let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:assessment) { exam.reload.assessment }
+    let(:assessable) { exam }
+    let(:component) do
+      described_class.new(assessable: exam, assessment: assessment,
+                          lecture: lecture)
+    end
+
+    include_examples "common header"
+    include_examples "visible tab", "settings"
+    include_examples "visible tab", "tasks"
+    include_examples "visible tab", "points"
+    include_examples "visible tab", "statistics"
+    include_examples "hidden tab", "overview"
+    include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "grades"
+
+    describe "#tabs" do
+      it "returns the correct tab keys" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(
+          ["settings", "tasks", "points", "statistics"]
+        )
+      end
+
+      context "when registration_campaigns is enabled" do
+        before { Flipper.enable(:registration_campaigns) }
+        after { Flipper.disable(:registration_campaigns) }
+
+        it "includes the registration tab" do
+          render_inline(component)
+          keys = component.tabs.map(&:key)
+          expect(keys).to eq(
+            ["settings", "registration", "tasks", "points", "statistics"]
+          )
+        end
+      end
+    end
+  end
+
   describe "#dom_prefix" do
     let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
     let(:assignment) { create(:valid_assignment, lecture: lecture) }

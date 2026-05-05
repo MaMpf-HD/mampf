@@ -63,18 +63,17 @@ class AssessmentDashboardComponent < ViewComponent::Base
       assessable.is_a?(Assignment)
     end
 
+    def pointable?
+      assessable.is_a?(Assessment::Pointable)
+    end
+
     def build_tabs
       [].tap do |t|
-        if exam?
-          t << settings_tab
-          t << registration_tab if Flipper.enabled?(:registration_campaigns)
-          next t
-        end
-
-        t << settings_tab if assignment?
-        t << tasks_tab if assessable.is_a?(Assessment::Pointable)
-        t << points_tab if assessable.is_a?(Assessment::Pointable)
-        t << statistics_tab if assignment?
+        t << settings_tab if exam? || assignment?
+        t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
+        t << tasks_tab if pointable?
+        t << points_tab if pointable?
+        t << statistics_tab if exam? || assignment?
       end
     end
 
