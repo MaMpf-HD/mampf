@@ -257,7 +257,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     user = create(:confirmed_user)
     create(:exam_roster_entry, exam: exam, user: user)
     assessment = create(:assessment, :with_points, assessable: exam,
-                                     lecture: lecture)
+                                                   lecture: lecture)
     task = create(:assessment_task, assessment: assessment)
     participation = create(:assessment_participation,
                            assessment: assessment,
@@ -272,10 +272,10 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
 
     document = Nokogiri::HTML.fragment(rendered_content)
     disabled_wrapper = document.at_css(
-      "span[title='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip") }']"
+      "span[title='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip")}']"
     )
     disabled_button = document.at_css(
-      "button[disabled][aria-label='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip") }']"
+      "button[disabled][aria-label='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip")}']"
     )
     remove_path = Rails.application.routes.url_helpers.remove_participant_exam_path(
       exam,

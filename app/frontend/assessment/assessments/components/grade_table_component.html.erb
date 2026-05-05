@@ -108,7 +108,9 @@
           </td>
 
           <% if show_grader_column? %>
-            <td class="text-muted small"><%= grader_display(participation) %></td>
+            <td class="text-muted small">
+              <%= grader_display(participation) %>
+            </td>
           <% end %>
 
           <% if show_graded_at_column? %>
