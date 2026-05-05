@@ -1,0 +1,56 @@
+<%= helpers.vite_stylesheet_tag "registration/allocations/allocation.css" %>
+
+<div id="<%= frame_id %>">
+  <% if exam.skip_campaigns %>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      <%= t("assessment.registration_tab.skip_campaigns_info") %>
+    </div>
+    <%= render "exams/participants_table",
+               entries: participants_entries,
+               editable: true,
+               exam: exam %>
+  <% elsif campaign.nil? %>
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t("assessment.registration_tab.no_campaign") %>
+    </div>
+  <% else %>
+    <%= render "exams/registration_header", **registration_header_locals %>
+    <% if show_deadline_form? %>
+      <%= render "exams/registration_deadline_form", **deadline_form_locals %>
+    <% end %>
+    <div class="row mb-3">
+      <div class="col-md-2">
+        <span class="col-form-label">
+          <%= t("registration.policy.index.title") %>
+        </span>
+      </div>
+
+      <div class="col-md-9">
+        <%= render "registration/policies/inline_badges",
+                   campaign: campaign,
+                   frame_id: frame_id,
+                   embedded: true %>
+      </div>
+    </div>
+    <% if show_allocation_workspace? %>
+      <div
+        id="<%= allocation_workspace_id %>"
+        class="exam-registration-allocation-workspace"
+      ></div>
+    <% end %>
+    <% if show_registrants_table? %>
+      <div class="exam-registration-registrants-shell">
+        <%= render "exams/registrants_table",
+                   exam: exam,
+                   campaign: campaign %>
+      </div>
+    <% elsif show_post_finalization? %>
+      <%= render "exams/registration_post_finalization",
+                 exam: exam,
+                 campaign: campaign,
+                 not_on_roster_entries: not_on_roster_entries %>
+    <% end %>
+  <% end %>
+</div>

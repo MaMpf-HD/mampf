@@ -16,14 +16,24 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update(
-            "campaigns_container",
-            partial: "registration/campaigns/card_body_index",
-            locals: {
-              lecture: @campaign.campaignable,
-              expanded_campaign_id: @campaign.id
-            }
-          )
+          if exam_workspace?
+            render turbo_stream: turbo_stream.update(
+              target_frame_id,
+              partial: "registration/allocations/exam_workspace",
+              locals: { campaign: @campaign, dashboard: @dashboard,
+                        exam: @campaign.exam,
+                        container_id: target_frame_id }
+            )
+          else
+            render turbo_stream: turbo_stream.update(
+              "campaigns_container",
+              partial: "registration/campaigns/card_body_index",
+              locals: {
+                lecture: @campaign.campaignable,
+                expanded_campaign_id: @campaign.id
+              }
+            )
+          end
         end
       end
     end
@@ -49,6 +59,21 @@ module Registration
 
       Registration::AllocationService.new(@campaign).allocate!
       @dashboard = Registration::AllocationDashboard.new(@campaign)
+
+      if exam_workspace?
+        flash[:success] = t("registration.allocation.started")
+        render turbo_stream: [
+          turbo_stream.update(
+            target_frame_id,
+            partial: "registration/allocations/exam_workspace",
+            locals: { campaign: @campaign, dashboard: @dashboard,
+                      exam: @campaign.exam,
+                      container_id: target_frame_id }
+          ),
+          stream_flash
+        ]
+        return
+      end
 
       respond_with_flash(
         :notice,
@@ -147,6 +172,14 @@ module Registration
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
+      end
+
+      def target_frame_id
+        params[:frame_id].presence || "campaigns_container"
+      end
+
+      def exam_workspace?
+        @campaign.exam_workspace_frame_id?(target_frame_id)
       end
   end
 end

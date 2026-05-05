@@ -198,7 +198,7 @@ RSpec.describe("Exams", type: :request) do
       it "renders the exam settings view" do
         get exam_path(exam), as: :turbo_stream
         expect(response.body).to include("exams_container")
-        expect(response.body).to include("data-cy=\"exam-settings\"")
+        expect(response.body).to include("data-cy=\"assessment-dashboard\"")
       end
     end
 

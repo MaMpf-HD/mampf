@@ -1,6 +1,34 @@
 require "rails_helper"
 
 RSpec.describe(Exam, type: :model) do
+  describe "validations" do
+    describe "registration_deadline" do
+      it "is invalid when deadline is in the past on create" do
+        exam = build(:exam, :with_date, registration_deadline: 1.day.ago)
+
+        expect(exam).to be_invalid
+        expect(exam.errors.where(:registration_deadline, :must_be_in_future))
+          .to be_present
+      end
+
+      it "is valid when deadline is in the future on create" do
+        exam = build(:exam, :with_date,
+                     registration_deadline: 3.days.from_now)
+
+        expect(exam).to be_valid
+      end
+
+      it "is invalid when deadline is after the exam date" do
+        exam = build(:exam, date: 1.week.from_now,
+                            registration_deadline: 2.weeks.from_now)
+
+        expect(exam).to be_invalid
+        expect(exam.errors.where(:registration_deadline, :must_be_before_exam_date))
+          .to be_present
+      end
+    end
+  end
+
   describe "roster methods" do
     let(:exam) { create(:exam) }
     let(:user) { create(:confirmed_user) }

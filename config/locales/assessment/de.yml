@@ -9,13 +9,66 @@ de:
     exam_destroyed: "Klausur erfolgreich gelöscht."
     exam_not_destructible:
       roster_not_empty: "Löschen nicht möglich: Eingetragene Teilnehmende vorhanden"
+      in_campaign: "Löschen nicht möglich: Klausur ist bereits Teil einer Anmeldekampagne"
     exam_capacity_hint: "Leer lassen für unbegrenzte Kapazität."
+    info_bar:
+      participants: "Teilnehmende"
+      registered: "angemeldet"
+    exam_status:
+      title: "Status"
+      draft: "Entwurf"
+      registration_open: "Anmeldung offen"
+      registration_closed: "Anmeldung geschlossen"
+      finalized: "Finalisiert"
+      conducted: "Durchgeführt"
+      grading: "Korrektur"
+      graded: "Benotet"
+    registration_deadline_label: "Anmeldeschluss"
+    registration_deadline_hint: "Wenn leer, wird automatisch drei Tage vor dem Klausurtermin gesetzt."
+    skip_campaigns_label: "Teilnehmende manuell verwalten"
+    skip_campaigns_hint: "Für diese Klausur keine Anmeldekampagne anlegen."
+    settings_tab:
+      registration_hint:
+        inline: "Anmeldung ist noch nicht geöffnet - Studierende können sich nicht anmelden. Wechsle in den Tab \"Anmeldungen\", um sie zu öffnen."
     registration_tab:
+      skip_campaigns_info: "Die Anmeldung wird für diese Klausur manuell verwaltet."
+      no_campaign: "Kein Anmeldeverfahren für diese Klausur gefunden."
+      needs_attention_tooltip: "Aktion erforderlich: Anmeldung ist noch nicht geöffnet"
+      status:
+        not_open: "Anmeldung noch nicht geöffnet"
+      registered_count:
+        zero: "Noch keine Anmeldungen"
+        one: "%{count} angemeldet"
+        other: "%{count} angemeldet"
+      capacity_label: "Kapazität: %{capacity}"
+      filter_label: "Teilnahmeliste filtern"
+      filter_placeholder: "Nach Name oder E-Mail filtern"
+      no_filter_results: "Keine passenden Studierenden"
+      add_form_label: "Person per E-Mail hinzufügen"
+      add_form_hint: "Fügt eine Person direkt zur Teilnahmeliste hinzu und dient nicht zum Filtern."
+      add_placeholder: "E-Mail-Adresse"
+      add_button: "Hinzufügen"
+      add_to_participants_button: "Zur Teilnahmeliste hinzufügen"
+      add_to_participants_tooltip: "Person zur Teilnahmeliste hinzufügen"
+      add_to_participants_confirm: "Diese Person wird zur Teilnahmeliste hinzugefügt. Damit wird der bisherige Grund, warum sie nicht auf der Prüfungsliste steht, manuell überschrieben. Fortfahren?"
+      remove_button: "Entfernen"
+      remove_tooltip: "Person aus der Teilnahmeliste entfernen"
+      remove_disabled_tooltip: "Kann nicht entfernt werden, da bereits Bewertungsdaten vorliegen"
+      remove_confirm: "Diese Person wird aus der Teilnahmeliste entfernt. Fortfahren?"
       participant_added: "%{name} wurde hinzugefügt."
       participant_removed: "%{name} wurde entfernt."
+      remove_blocked: "Diese Person kann nicht aus der Teilnahmeliste entfernt werden, da bereits Bewertungsdaten vorliegen."
       user_not_found: "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
       already_registered: "Dieser Benutzer ist bereits eingetragen."
+      open_review_hint: "Hier siehst Du die aktuellen Anmeldungen. Eine bearbeitbare Prüfungsliste für manuelle Änderungen steht erst später zur Verfügung."
+      closed_review_hint: "Hier siehst Du die aktuellen Anmeldungen. Über \"Prüfen & Abschließen\" prüfst Du im nächsten Schritt die Richtlinien und kannst offene Richtlinienfälle bei Bedarf vorläufig ablehnen. Eine bearbeitbare Prüfungsliste für weitere manuelle Änderungen steht erst danach zur Verfügung."
+      post_finalization_hint: "Dies ist die bearbeitbare Prüfungsliste. Hier kannst Du Studierende hinzufügen, entfernen und nachvollziehen, wer aktuell nicht auf der Prüfungsliste steht."
+      not_on_roster_heading: "Nicht auf der Prüfungsliste"
+      certification_not_passed_reason: "Prüfungszulassung nicht erteilt"
       removed_from_roster_reason: "Manuell aus der Klausurliste entfernt"
+      finalized_on: "Finalisiert am %{date}"
+    registrations_label: "Anmeldungen"
+    roster: "Teilnahmeliste"
     tabs:
       assignments: "Hausaufgaben"
       talks: "Vorträge"
@@ -151,6 +204,9 @@ de:
     point_grid:
       total: "Gesamt"
     statistics_placeholder: "Statistiken sind noch nicht verfügbar"
+
+  roster:
+    no_participants_yet: "Noch keine Teilnehmenden vorhanden."
 
   activerecord:
     errors:

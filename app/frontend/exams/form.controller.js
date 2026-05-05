@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["warning", "submitButton", "cancelButton", "title", "date",
-    "location", "capacity", "description"];
+    "location", "capacity", "description", "skipCampaigns", "deadlineGroup",
+    "registrationDeadline"];
 
   connect() {
     this.storeOriginalValues();
@@ -15,6 +16,12 @@ export default class extends Controller {
     this.originalLocation = this.locationTarget.value;
     this.originalCapacity = this.capacityTarget.value;
     this.originalDescription = this.descriptionTarget.value;
+    this.originalSkipCampaigns = this.hasSkipCampaignsTarget
+      ? this.skipCampaignsTarget.checked
+      : false;
+    this.originalDeadline = this.hasRegistrationDeadlineTarget
+      ? this.registrationDeadlineTarget.value
+      : "";
   }
 
   checkForChanges() {
@@ -23,8 +30,13 @@ export default class extends Controller {
     const locationChanged = this.locationTarget.value !== this.originalLocation;
     const capacityChanged = this.capacityTarget.value !== this.originalCapacity;
     const descriptionChanged = this.descriptionTarget.value !== this.originalDescription;
+    const skipCampaignsChanged = this.hasSkipCampaignsTarget
+      && this.skipCampaignsTarget.checked !== this.originalSkipCampaigns;
+    const deadlineChanged = this.hasRegistrationDeadlineTarget
+      && this.registrationDeadlineTarget.value !== this.originalDeadline;
 
-    if (titleChanged || dateChanged || locationChanged || capacityChanged || descriptionChanged) {
+    if (titleChanged || dateChanged || locationChanged || capacityChanged
+      || descriptionChanged || skipCampaignsChanged || deadlineChanged) {
       this.showSubmitElements();
     }
     else {
@@ -50,11 +62,25 @@ export default class extends Controller {
     this.locationTarget.value = this.originalLocation;
     this.capacityTarget.value = this.originalCapacity;
     this.descriptionTarget.value = this.originalDescription;
+    if (this.hasSkipCampaignsTarget) {
+      this.skipCampaignsTarget.checked = this.originalSkipCampaigns;
+    }
+    if (this.hasRegistrationDeadlineTarget) {
+      this.registrationDeadlineTarget.value = this.originalDeadline;
+    }
     this.hideSubmitElements();
   }
 
   resetAfterSave() {
     this.storeOriginalValues();
     this.hideSubmitElements();
+  }
+
+  toggleDeadline() {
+    if (!this.hasDeadlineGroupTarget) return;
+
+    const hidden = this.hasSkipCampaignsTarget
+      && this.skipCampaignsTarget.checked;
+    this.deadlineGroupTarget.style.display = hidden ? "none" : "";
   }
 }
