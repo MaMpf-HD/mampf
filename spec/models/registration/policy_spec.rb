@@ -98,6 +98,35 @@ RSpec.describe(Registration::Policy, type: :model) do
         policy = build(:registration_policy, :institutional_email)
         expect(policy).to be_valid
       end
+
+      it "validates student_performance config" do
+        policy = build(:registration_policy, :student_performance)
+        policy.config = {}
+        expect(policy).not_to be_valid
+        expect(policy.errors[:lecture_ids])
+          .to include(I18n.t("registration.policy.errors.missing_lecture"))
+      end
+
+      it "validates student_performance lecture exists" do
+        policy = build(:registration_policy, :student_performance,
+                       config: { "lecture_ids" => ["99999"] })
+        expect(policy).not_to be_valid
+        expect(policy.errors[:lecture_ids])
+          .to include(I18n.t("registration.policy.errors.lecture_not_found"))
+      end
+
+      it "allows only one student_performance policy per campaign" do
+        campaign = create(:registration_campaign)
+        create(:registration_policy, :student_performance,
+               registration_campaign: campaign)
+
+        policy = build(:registration_policy, :student_performance,
+                       registration_campaign: campaign)
+
+        expect(policy).not_to be_valid
+        expect(policy.errors[:base])
+          .to include(I18n.t("registration.policy.errors.multiple_student_performance"))
+      end
     end
 
     describe "ordering" do
@@ -171,6 +200,15 @@ RSpec.describe(Registration::Policy, type: :model) do
         policy.prerequisite_campaign_id = 123
         expect(policy.config["prerequisite_campaign_id"]).to eq(123)
         expect(policy.prerequisite_campaign_id).to eq(123)
+      end
+
+      it "handles lecture_ids" do
+        policy = build(:registration_policy)
+        policy.lecture_ids = ["1", "2", "", "2"]
+
+        expect(policy.config["lecture_ids"]).to eq(["1", "2"])
+        expect(policy.lecture_ids).to eq(["1", "2"])
+        expect(policy.lecture_id).to eq("1")
       end
     end
 
@@ -288,15 +326,15 @@ RSpec.describe(Registration::Policy, type: :model) do
       describe ".for_phase" do
         let(:campaign) { create(:registration_campaign) }
         let!(:registration_policy) do
-          create(:registration_policy, :student_performance,
+          create(:registration_policy, :prerequisite_campaign,
                  registration_campaign: campaign, phase: :registration)
         end
         let!(:finalization_policy) do
-          create(:registration_policy, :student_performance,
+          create(:registration_policy, :prerequisite_campaign,
                  registration_campaign: campaign, phase: :finalization)
         end
         let!(:both_policy) do
-          create(:registration_policy, :student_performance,
+          create(:registration_policy, :prerequisite_campaign,
                  registration_campaign: campaign, phase: :both)
         end
 

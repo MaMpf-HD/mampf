@@ -89,6 +89,12 @@ class Lecture < ApplicationRecord
   has_many :student_performance_records,
            class_name: "StudentPerformance::Record",
            dependent: :destroy
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification",
+           dependent: :destroy
+  has_many :student_performance_rules,
+           class_name: "StudentPerformance::Rule",
+           dependent: :destroy
   has_many :achievements, dependent: :destroy
 
   # a lecture has many vouchers that can be redeemed to promote
@@ -111,6 +117,10 @@ class Lecture < ApplicationRecord
   validate :absence_of_term, if: :term_independent?
 
   validate :only_one_lecture, if: :term_independent?, on: :create
+
+  validate :exam_eligibility_can_be_disabled, if: lambda {
+    uses_exam_eligibility_changed? && !uses_exam_eligibility?
+  }
 
   validates :submission_max_team_size,
             numericality: { only_integer: true,
@@ -971,6 +981,20 @@ class Lecture < ApplicationRecord
       return false unless course
 
       course.term_independent
+    end
+
+    def exam_eligibility_can_be_disabled
+      if student_performance_certifications.exists? ||
+         student_performance_rules.exists?
+        errors.add(:uses_exam_eligibility,
+                   :has_existing_data)
+        return
+      end
+
+      return unless Registration::Policy.student_performance_for_lecture(id).exists?
+
+      errors.add(:uses_exam_eligibility,
+                 :has_existing_data)
     end
 
     def absence_of_term

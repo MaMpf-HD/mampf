@@ -1,159 +1,164 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-  <div id="lecture-area" data-cy="lecture-area">
-    <!-- Header -->
-    <div class="container small-width">
-      <%= render partial: "lectures/edit/header",
+<div id="lecture-area" data-cy="lecture-area">
+  <!-- Header -->
+  <div class="container small-width">
+    <%= render partial: "lectures/edit/header",
           locals: { lecture: @lecture } %>
-    </div>
-
-    <% active_tab = params[:tab] || (@lecture.sort == "vignettes" ? "vignettes" : "content") %>
-    <% is_vignette_lecture = @lecture.sort == "vignettes" %>
-    <%= render LectureTabsComponent.new(active_tab, is_vignette_lecture) do |component| %>
-
-      <% component.with_tab(name: "content", label: t("content")) do %>
-        <div class="row px-4 py-2">
-          <% if !@lecture.seminar? || @lecture.legacy_seminar %>
-            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
-              <%= render partial: 'lectures/edit/content',
-                         locals: { lecture: @lecture } %>
-            </div>
-          <% else %>
-            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
-              <%= render partial: 'lectures/edit/seminar_content',
-                         locals: { lecture: @lecture } %>
-            </div>
-          <% end %>
-          <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
-            <%= render partial: 'lectures/edit/media',
-                       locals: { media: @media, lecture: @lecture } %>
-          </div>
-        </div>
-      <% end %>
-
-      <% component.with_tab(name: "settings", label: t("basics.preferences")) do %>
-        <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/preferences', locals: { lecture: @lecture } %>
-        </div>
-      <% end %>
-
-      <% show_new_roster = Flipper.enabled?(:roster_maintenance) && !@lecture.legacy_seminar %>
-      <% people_label = show_new_roster ? t('basics.personnel') : "#{t('basics.people')}/#{t('basics.tutorials')}" %>
-
-      <% component.with_tab(name: "people", label: people_label) do %>
-        <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %>
-          <% unless show_new_roster %>
-            <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
-          <% end %>
-          <%= render partial: 'lectures/edit/vouchers', locals: { lecture: @lecture } %>
-        </div>
-      <% end %>
-
-      <% if Flipper.enabled?(:roster_maintenance) %>
-        <% if !@lecture.legacy_seminar %>
-          <% component.with_tab(name: "groups", label: t("roster.tabs.groups")) do %>
-            <div class="container small-width lecture-pane">
-              <%= render partial: 'lectures/edit/roster',
-                         locals: { lecture: @lecture,
-                                   group_type: roster_group_types(@lecture) } %>
-            </div>
-          <% end %>
-
-          <% component.with_tab(name: "participants", label: t("basics.participants")) do %>
-            <div class="container small-width lecture-pane">
-              <%= render partial: 'lectures/edit/participants',
-                         locals: { lecture: @lecture } %>
-            </div>
-          <% end %>
-        <% end %>
-      <% end %>
-
-      <% component.with_tab(name: "orga", label: t("admin.lecture.orga")) do %>
-        <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/organizational_concept',
-                     locals: { lecture: @lecture } %>
-        </div>
-      <% end %>
-
-      <% component.with_tab(name: "communication", label: t("admin.lecture.communication")) do %>
-        <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/announcements',
-                     locals: { lecture: @lecture, announcements: @announcements } %>
-          <%= render partial: 'lectures/edit/forum',
-                     locals: { lecture: @lecture } %>
-          <%= render partial: 'lectures/edit/comments',
-                     locals: { lecture: @lecture } %>
-        </div>
-      <% end %>
-
-      <% if Flipper.enabled?(:assessment_grading) %>
-        <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
-          <div class="container medium-width lecture-pane">
-            <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id, tab: params[:assessment_tab]), loading: "lazy" do %>
-              <div class="text-center my-4">
-                <div class="spinner-border" role="status">
-                  <span class="visually-hidden"><%= t('basics.loading') %></span>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      <% else %>
-        <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
-          <div class="container small-width lecture-pane">
-            <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
-          </div>
-        <% end %>
-      <% end %>
-
-      <% if @lecture.sort == "vignettes" %>
-        <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'vignettes/questionnaires/manage/manage',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'lectures/edit/link_to_lecture',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane">
-            <%= render partial: 'vignettes/completion_message/form',
-                       locals: { lecture: @lecture } %>
-          </div>
-        <% end %>
-      <% end %>
-
-    <% end %>
   </div>
 
-  <!-- Modals -->
-  <%= render partial: 'media/modal' %>
-  <%= render 'vignettes/questionnaires/new/vignette_modal', lecture: @lecture %>
-  <%= render partial: 'sections/content_modal' %>
-  <%= render partial: 'announcements/modal' %>
-  <%= render partial: 'lectures/edit/publish',
-             locals: { lecture: @lecture } %>
-  <%= render partial: 'lectures/import/modal',
-             locals: { lecture: @lecture } %>
+  <% active_tab = params[:tab] || (@lecture.sort == "vignettes" ? "vignettes" : "content") %>
+  <% is_vignette_lecture = @lecture.sort == "vignettes" %>
 
-  <% unless @lecture.stale? %>
-    <%= render partial: 'lectures/edit/user_modal',
-               locals: { lecture: @lecture } %>
+  <%= render LectureTabsComponent.new(active_tab, is_vignette_lecture) do |component| %>
+    <% component.with_tab(name: "content", label: t("content")) do %>
+      <div class="row px-4 py-2">
+        <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
+          <% if !@lecture.seminar? || @lecture.legacy_seminar %>
+            <%= render partial: 'lectures/edit/content',
+                         locals: { lecture: @lecture } %>
+          <% else %>
+            <%= render partial: 'lectures/edit/seminar_content',
+                         locals: { lecture: @lecture } %>
+          <% end %>
+        </div>
+
+        <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
+          <%= render partial: 'lectures/edit/media',
+                       locals: { media: @media, lecture: @lecture } %>
+        </div>
+      </div>
+    <% end %>
+
+    <% component.with_tab(name: "settings", label: t("basics.preferences")) do %>
+      <div class="container small-width lecture-pane">
+        <%= render partial: 'lectures/edit/preferences', locals: { lecture: @lecture } %>
+      </div>
+    <% end %>
+
+    <% show_new_roster = Flipper.enabled?(:roster_maintenance) && !@lecture.legacy_seminar %>
+    <% people_label = show_new_roster ? t('basics.personnel') : "#{t('basics.people')}/#{t('basics.tutorials')}" %>
+
+    <% component.with_tab(name: "people", label: people_label) do %>
+      <div class="container small-width lecture-pane">
+        <%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %>
+
+        <% unless show_new_roster %>
+          <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
+        <% end %>
+
+        <%= render partial: 'lectures/edit/vouchers', locals: { lecture: @lecture } %>
+      </div>
+    <% end %>
+
+    <% if Flipper.enabled?(:roster_maintenance) %>
+      <% if !@lecture.legacy_seminar %>
+        <% component.with_tab(name: "groups", label: t("roster.tabs.groups")) do %>
+          <div class="container small-width lecture-pane">
+            <%= render partial: 'lectures/edit/roster',
+                         locals: { lecture: @lecture,
+                                   group_type: roster_group_types(@lecture) } %>
+          </div>
+        <% end %>
+        <% component.with_tab(name: "participants", label: t("basics.participants")) do %>
+          <div class="container small-width lecture-pane">
+            <%= render partial: 'lectures/edit/participants',
+                         locals: { lecture: @lecture } %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% component.with_tab(name: "orga", label: t("admin.lecture.orga")) do %>
+      <div class="container small-width lecture-pane">
+        <%= render partial: 'lectures/edit/organizational_concept',
+                     locals: { lecture: @lecture } %>
+      </div>
+    <% end %>
+
+    <% component.with_tab(name: "communication", label: t("admin.lecture.communication")) do %>
+      <div class="container small-width lecture-pane">
+        <%= render partial: 'lectures/edit/announcements',
+                     locals: { lecture: @lecture, announcements: @announcements } %>
+
+        <%= render partial: 'lectures/edit/forum',
+                     locals: { lecture: @lecture } %>
+
+        <%= render partial: 'lectures/edit/comments',
+                     locals: { lecture: @lecture } %>
+      </div>
+    <% end %>
+
+    <% if Flipper.enabled?(:assessment_grading) %>
+      <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
+        <div class="container medium-width lecture-pane">
+          <%= turbo_frame_tag "assessment-assessments-frame", src: assessment_assessments_path(lecture_id: @lecture.id, tab: params[:assessment_tab]), loading: "lazy" do %>
+            <div class="text-center my-4">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden"><%= t('basics.loading') %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if @lecture.sort == "vignettes" %>
+      <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
+        <div class="container small-width lecture-pane mb-3">
+          <%= render partial: 'vignettes/questionnaires/manage/manage',
+                       locals: { lecture: @lecture } %>
+        </div>
+
+        <div class="container small-width lecture-pane mb-3">
+          <%= render partial: 'lectures/edit/link_to_lecture',
+                       locals: { lecture: @lecture } %>
+        </div>
+
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'vignettes/completion_message/form',
+                       locals: { lecture: @lecture } %>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
+</div>
 
-  <% if !@lecture.seminar? || @lecture.legacy_seminar %>
-    <%= render partial: 'chapters/modal',
-               locals: { lecture: @lecture } %>
-    <%= render partial: 'sections/modal' %>
-    <%= render partial: 'lessons/modal' %>
-  <% else %>
-    <%= render partial: 'talks/modal',
-               locals: { lecture: @lecture } %>
-  <% end %>
+<!-- Modals -->
+<%= render partial: 'media/modal' %>
+<%= render 'vignettes/questionnaires/new/vignette_modal', lecture: @lecture %>
+<%= render partial: 'sections/content_modal' %>
+<%= render partial: 'announcements/modal' %>
 
-  <% if @lecture.importable_toc? %>
-    <%= render partial: 'lectures/edit/import_toc_modal',
+<%= render partial: 'lectures/edit/publish',
+             locals: { lecture: @lecture } %>
+
+<%= render partial: 'lectures/import/modal',
+             locals: { lecture: @lecture } %>
+
+<% unless @lecture.stale? %>
+  <%= render partial: 'lectures/edit/user_modal',
+               locals: { lecture: @lecture } %>
+<% end %>
+
+<% if !@lecture.seminar? || @lecture.legacy_seminar %>
+  <%= render partial: 'chapters/modal',
+               locals: { lecture: @lecture } %>
+  <%= render partial: 'sections/modal' %>
+  <%= render partial: 'lessons/modal' %>
+<% else %>
+  <%= render partial: 'talks/modal',
+               locals: { lecture: @lecture } %>
+<% end %>
+
+<% if @lecture.importable_toc? %>
+  <%= render partial: 'lectures/edit/import_toc_modal',
               locals: { lecture: @lecture } %>
-  <% end %>
+<% end %>
