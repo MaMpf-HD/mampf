@@ -28,7 +28,8 @@ jobs:
       - name: Build and push docker image to GHCR
         working-directory: docker/development/
         run: |
-          docker buildx build https://raw.githubusercontent.com/docker-hardened-images/catalog/refs/heads/main/image/ruby/debian-13/4.0-dev.yaml \
+          docker buildx build \
+          --file https://raw.githubusercontent.com/docker-hardened-images/catalog/refs/heads/main/image/ruby/debian-13/4.0-dev.yaml \
           --sbom=generator=dhi.io/scout-sbom-indexer:1 --provenance=1 \
           --tag ghcr.io/${{ github.repository }}:mampf-ruby-hardened-4.0-dev \
           --push .
