@@ -23,6 +23,21 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(participation.status).to eq("reviewed")
       expect(participation.graded_at).to be_present
     end
+
+    it "creates a participation with numeric grade" do
+      lecture = FactoryBot.create(:lecture)
+      exam = FactoryBot.create(:exam, lecture: lecture)
+      assessment = exam.ensure_assessment!(
+        requires_points: false,
+        requires_submission: false
+      )
+      participation = FactoryBot.create(:assessment_participation,
+                                        assessment: assessment,
+                                        grade_numeric: 1.7,
+                                        status: :reviewed)
+
+      expect(participation.grade_numeric).to eq(1.7)
+    end
   end
 
   describe "validations" do
@@ -36,6 +51,53 @@ RSpec.describe(Assessment::Participation, type: :model) do
                                                               user: user)
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to be_present
+    end
+
+    context "grade_numeric validation" do
+      let(:lecture) { FactoryBot.create(:lecture) }
+      let(:exam) { FactoryBot.create(:exam, lecture: lecture) }
+      let(:gradable_assessment) do
+        exam.ensure_assessment!(
+          requires_points: false,
+          requires_submission: false
+        )
+      end
+
+      it "accepts valid German grades on gradable assessments" do
+        [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0].each do |grade|
+          participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
+                                           grade_numeric: grade)
+          expect(participation).to be_valid
+        end
+      end
+
+      it "rejects invalid grades" do
+        [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.0].each do |grade|
+          participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
+                                           grade_numeric: grade)
+          expect(participation).not_to be_valid
+          expect(participation.errors[:grade_numeric]).to be_present
+        end
+      end
+
+      it "rejects grade_numeric on non-gradable assessments" do
+        participation = FactoryBot.build(:assessment_participation,
+                                         assessment: assessment,
+                                         grade_numeric: 1.0)
+
+        expect(participation).not_to be_valid
+        expect(participation.errors[:grade_numeric]).to be_present
+      end
+
+      it "allows nil" do
+        participation = FactoryBot.build(:assessment_participation,
+                                         assessment: gradable_assessment,
+                                         grade_numeric: nil)
+
+        expect(participation).to be_valid
+      end
     end
   end
 

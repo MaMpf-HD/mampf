@@ -24,6 +24,12 @@ module Assessment
                  if: :should_recompute_performance_record?
 
     validates :user_id, uniqueness: { scope: :assessment_id }
+    validates :grade_numeric,
+              inclusion: {
+                in: [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0],
+                allow_nil: true
+              }
+    validate :assessment_must_be_gradable, if: -> { grade_numeric.present? }
 
     def self.tutorial_for(user, lecture)
       TutorialMembership.joins(:tutorial)
@@ -62,6 +68,13 @@ module Assessment
         StudentPerformance::ComputationService
           .new(lecture: lecture)
           .compute_and_upsert_record_for(user)
+      end
+
+      def assessment_must_be_gradable
+        return unless assessment&.assessable
+        return if assessment.assessable.is_a?(::Assessment::Gradable)
+
+        errors.add(:grade_numeric, :not_gradable)
       end
   end
 end
