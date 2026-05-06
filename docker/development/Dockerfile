@@ -10,8 +10,7 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
-# https://hub.docker.com/hardened-images/catalog/dhi/ruby/guides
-FROM dhi.io/ruby:4.0.3-debian13-dev
+FROM ghcr.io/mampf-hd/mampf-ruby-hardened:4.0-dev
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
