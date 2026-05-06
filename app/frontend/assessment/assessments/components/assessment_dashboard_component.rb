@@ -77,8 +77,9 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
         t << tasks_tab if pointable?
         t << points_tab if pointable?
-        t << grades_tab if gradable?
-        t << statistics_tab if exam? || assignment?
+        t << grading_tab if gradable? && pointable?
+        t << grades_tab if gradable? && !pointable?
+        t << statistics_tab unless assessable.is_a?(Talk)
       end
     end
 
@@ -144,6 +145,14 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
+    def grading_tab
+      TabConfig.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradingTabComponent.new(assessment: assessment)
+      )
+    end
+
     def grades_tab
       TabConfig.new(
         "grades",
@@ -155,7 +164,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def statistics_tab
       TabConfig.new(
         "statistics",
-        I18n.t("basics.statistics"),
+        I18n.t("assessment.statistics"),
         StatisticsTabComponent.new(assessment: assessment, lecture: lecture)
       )
     end

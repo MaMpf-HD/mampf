@@ -285,7 +285,7 @@ class ExamsController < ApplicationController
     end
 
     def build_dashboard_component(active_tab: @active_tab, task: nil)
-      assessment = @exam.respond_to?(:assessment) ? @exam.assessment : nil
+      assessment = @exam.assessment
       tasks = assessment&.tasks&.order(:position) || []
       AssessmentDashboardComponent.new(
         assessable: @exam,
