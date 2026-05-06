@@ -252,9 +252,9 @@
                 <td class="text-end">
                   <% if entry[:can_defer] %>
                     <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
-                                                                                              user_id: entry[:user_id],
-                                                                                              source: allocation_source,
-                                                                                              reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                                                                                            user_id: entry[:user_id],
+                                                                                            source: allocation_source,
+                                                                                            reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
                                     method: :delete,
                                     class: "btn btn-sm btn-outline-danger py-0 px-2",
                                     data: {
@@ -286,7 +286,7 @@
 
         <span class="small text-muted">
           <%= t("registration.allocation.errors.policy_violation_count",
-                  count: other_entries.size) %>
+                count: other_entries.size) %>
         </span>
       </div>
 
@@ -323,18 +323,18 @@
                 <td class="text-end">
                   <% if entry[:can_defer] %>
                     <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
-                                                                                              user_id: entry[:user_id],
-                                                                                              source: allocation_source,
-                                                                                              reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
-                                    method: :delete,
-                                    class: "btn btn-sm btn-outline-danger py-0 px-2",
-                                    data: {
-                                      turbo_confirm:
-                                        t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
-                                          email: entry[:first][:email])
-                                    },
-                                    form: { class: "d-inline-block mb-0" },
-                                    title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+                                                                                          user_id: entry[:user_id],
+                                                                                          source: allocation_source,
+                                                                                          reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
+                                  method: :delete,
+                                  class: "btn btn-sm btn-outline-danger py-0 px-2",
+                                  data: {
+                                    turbo_confirm:
+                                      t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
+                                        email: entry[:first][:email])
+                                  },
+                                  form: { class: "d-inline-block mb-0" },
+                                  title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
                       <i class="bi bi-slash-circle me-1"></i>
                       <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
                     <% end %>

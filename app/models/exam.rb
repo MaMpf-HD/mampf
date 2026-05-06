@@ -1,6 +1,7 @@
 class Exam < ApplicationRecord
   class ParticipantRemovalNotAllowedError < StandardError; end
 
+  include Assessment::Assessable
   include Registration::Registerable
   include Rosters::Rosterable
 
@@ -94,8 +95,8 @@ class Exam < ApplicationRecord
     end
   end
 
-  def participant_removable?(_user)
-    true
+  def participant_removable?(user)
+    participants_with_grading_data.exclude?(user.id)
   end
 
   def ensure_participant_removable!(user)
@@ -129,6 +130,25 @@ class Exam < ApplicationRecord
   }.freeze
 
   private
+
+    def participants_with_grading_data
+      return [] unless assessment
+
+      @participants_with_grading_data ||= assessment.assessment_participations
+                                                    .includes(:task_points)
+                                                    .filter_map do |participation|
+        participation.user_id if grading_data_for?(participation)
+      end
+    end
+
+    def grading_data_for?(participation)
+      return true if participation.task_points.any?
+      return true if participation.points_total.present?
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
+    end
 
     def registration_deadline_before_exam_date
       return if registration_deadline.blank? || date.blank?

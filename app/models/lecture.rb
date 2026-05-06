@@ -474,6 +474,12 @@ class Lecture < ApplicationRecord
     I18n.t("admin.lecture.#{sort}_short")
   end
 
+  def uses_exam_eligibility?
+    return true unless has_attribute?(:uses_exam_eligibility)
+
+    self[:uses_exam_eligibility]
+  end
+
   # returns whether the lecture is newest among all lectures associated to its
   # course
   def newest?

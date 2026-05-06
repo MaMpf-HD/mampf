@@ -177,16 +177,15 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
       let(:exam) { create(:exam, lecture: lecture) }
       let(:student) { create(:confirmed_user) }
       let(:exam_campaign) do
-        create(:registration_campaign, campaignable: lecture).tap do |campaign|
-          create(:registration_item, registration_campaign: campaign,
-                                     registerable: exam)
+        create(:registration_campaign, campaignable: lecture).tap do |c|
+          create(:registration_item, registration_campaign: c, registerable: exam)
         end
       end
       let(:exam_dashboard) { described_class.new(exam_campaign) }
 
       before do
-        create(:tutorial, lecture: lecture).tap do |tutorial|
-          create(:tutorial_membership, tutorial: tutorial, user: student)
+        create(:tutorial, lecture: lecture).tap do |t|
+          create(:tutorial_membership, tutorial: t, user: student)
         end
       end
 
@@ -226,6 +225,8 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
                                             active: true, phase: :finalization)
       create(:registration_policy, :student_performance, registration_campaign: campaign,
                                                          active: false, phase: :finalization)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         active: true, phase: :registration)
       expect(dashboard.finalization_policies).to eq([policy])
     end
   end

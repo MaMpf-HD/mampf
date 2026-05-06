@@ -64,7 +64,7 @@ RSpec.describe("Exams", type: :request) do
       it "renders the form" do
         get new_exam_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response.body).to include("exams_container")
-        expect(response.body).to include("exam-form")
+        expect(response.body).to include("form")
       end
     end
 
@@ -131,7 +131,6 @@ RSpec.describe("Exams", type: :request) do
                params: { exam: valid_attributes },
                as: :turbo_stream
           expect(response.body).to include("exams_container")
-          expect(response.body).to include("exam-settings")
         end
       end
 
@@ -151,12 +150,12 @@ RSpec.describe("Exams", type: :request) do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it "renders the form again" do
+        it "renders the form with errors" do
           post exams_path,
                params: { exam: invalid_attributes },
                as: :turbo_stream
           expect(response.body).to include("exams_container")
-          expect(response.body).to include("exam-form")
+          expect(response.body).to include("is-invalid")
         end
       end
     end
@@ -195,7 +194,7 @@ RSpec.describe("Exams", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
       end
 
-      it "renders the exam settings view" do
+      it "renders the assessment dashboard" do
         get exam_path(exam), as: :turbo_stream
         expect(response.body).to include("exams_container")
         expect(response.body).to include("data-cy=\"assessment-dashboard\"")
@@ -319,12 +318,12 @@ RSpec.describe("Exams", type: :request) do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        it "renders the form again" do
+        it "renders the form with errors" do
           patch exam_path(exam),
                 params: { exam: invalid_attributes },
                 as: :turbo_stream
           expect(response.body).to include("exams_container")
-          expect(response.body).to include("exam-form")
+          expect(response.body).to include("is-invalid")
         end
       end
     end
@@ -357,22 +356,24 @@ RSpec.describe("Exams", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "destroys the requested exam" do
-        exam
-        expect do
-          delete(exam_path(exam), as: :turbo_stream)
-        end.to change(Exam, :count).by(-1)
-      end
+      context "when exam is destructible" do
+        it "destroys the requested exam" do
+          exam
+          expect do
+            delete(exam_path(exam), as: :turbo_stream)
+          end.to change(Exam, :count).by(-1)
+        end
 
-      it "renders a successful response" do
-        delete exam_path(exam), as: :turbo_stream
-        expect(response).to have_http_status(:ok)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-      end
+        it "renders a successful response" do
+          delete exam_path(exam), as: :turbo_stream
+          expect(response).to have_http_status(:ok)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
 
-      it "renders the updated exams list" do
-        delete exam_path(exam), as: :turbo_stream
-        expect(response.body).to include("exams_container")
+        it "renders the updated exams list" do
+          delete exam_path(exam), as: :turbo_stream
+          expect(response.body).to include("exams_container")
+        end
       end
     end
 

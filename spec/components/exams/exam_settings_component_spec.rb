@@ -14,8 +14,7 @@ RSpec.describe(ExamSettingsComponent, type: :component) do
 
   context "with an existing exam" do
     let(:exam) do
-      create(:exam, :with_capacity,
-             date: 2.weeks.from_now,
+      create(:exam, :with_capacity, :with_date,
              lecture: lecture, location: "Room 101")
     end
 

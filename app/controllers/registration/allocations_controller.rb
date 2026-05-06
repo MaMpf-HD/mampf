@@ -132,12 +132,9 @@ module Registration
               ]
             else
               render turbo_stream: [
-                turbo_stream.update(
-                  target_frame_id,
-                  partial: "registration/allocations/dashboard",
-                  locals: { campaign: @campaign, dashboard: @dashboard,
-                            frame_id: target_frame_id }
-                ),
+                turbo_stream.update(target_frame_id,
+                                    partial: "registration/allocations/dashboard",
+                                    locals: { frame_id: target_frame_id }),
                 stream_flash
               ]
             end
@@ -224,6 +221,11 @@ module Registration
 
       def target_frame_id
         params[:frame_id].presence || "campaigns_container"
+      end
+
+      def exam_campaign_context?
+        target_frame_id != "campaigns_container" &&
+          @campaign.exam_campaign?
       end
 
       def exam_workspace?

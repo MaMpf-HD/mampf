@@ -21,16 +21,16 @@
   </span>
 </div>
 
-<% if grouped.any? %>
-  <div data-controller="exams--registration-list">
-    <input
-      type="text"
-      class="form-control form-control-sm mb-3"
-      placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
-      autocomplete="off"
-      data-action="input->exams--registration-list#filter"
-    >
+<div data-controller="exams--registration-list">
+  <input
+    type="text"
+    class="form-control form-control-sm mb-3"
+    placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+    autocomplete="off"
+    data-action="input->exams--registration-list#filter"
+  >
 
+  <% if grouped.any? %>
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
@@ -53,12 +53,12 @@
         </tbody>
       </table>
     </div>
+  <% end %>
 
-    <div
-      class="small text-muted mt-2 text-center d-none"
-      data-exams--registration-list-target="noResults"
-    >
-      <%= t("assessment.registration_tab.no_filter_results") %>
-    </div>
+  <div
+    class="small text-muted mt-2 text-center d-none"
+    data-exams--registration-list-target="noResults"
+  >
+    <%= t("assessment.registration_tab.no_filter_results") %>
   </div>
-<% end %>
+</div>

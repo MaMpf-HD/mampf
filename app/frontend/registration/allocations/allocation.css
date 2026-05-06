@@ -85,6 +85,26 @@
     border-color: rgba(201, 155, 139, 0.26);
 }
 
+.allocation-action-accent {
+    color: var(--bs-primary-text-emphasis);
+    background: rgba(var(--bs-primary-rgb), 0.08);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+}
+
+.allocation-action-accent:hover,
+.allocation-action-accent:focus {
+    color: var(--bs-primary-text-emphasis);
+    background: rgba(var(--bs-primary-rgb), 0.14);
+    border-color: rgba(var(--bs-primary-rgb), 0.26);
+}
+
+.allocation-action-accent:disabled,
+.allocation-action-accent.disabled {
+    color: var(--bs-primary-text-emphasis);
+    background: rgba(var(--bs-primary-rgb), 0.08);
+    border-color: rgba(var(--bs-primary-rgb), 0.18);
+}
+
 .allocation-status-panel {
     border: 1px solid var(--bs-border-color);
     border-radius: 0.5rem;
@@ -98,9 +118,13 @@
     background: var(--bs-warning-bg-subtle);
 }
 
+.exam-registration-allocation-workspace.is-active + .exam-registration-registrants-shell {
+    display: none;
+}
+
 .allocation-status-panel--danger {
     border-color: var(--bs-danger-border-subtle);
-    background: var(--bs-danger-bg-subtle);
+    background: rgba(var(--bs-danger-rgb), 0.04);
 }
 
 .allocation-count-badge {

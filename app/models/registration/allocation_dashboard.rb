@@ -77,7 +77,7 @@ module Registration
     def performance_lecture
       return @performance_lecture if defined?(@performance_lecture)
 
-      perf_policy = finalization_policies.find { |policy| policy.kind == "student_performance" }
+      perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
       @performance_lecture = perf_policy&.lecture_ids&.then do |lecture_ids|
         Lecture.find_by(id: lecture_ids)
       end

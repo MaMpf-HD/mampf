@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      title: 'Anmeldeverfahren'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
@@ -46,6 +48,8 @@ de:
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
+          mode: "Zuteilungsmodus"
+          opens_at: "Registrierungsbeginn"
           deadline: "Registrierungsende"
           status: "Status"
           registrations: "Anzahl Registrierungen"
@@ -222,10 +226,12 @@ de:
         tutorials: "Tutorien"
         talks: "Vorträge"
         cohorts: "Weitere Gruppen"
+        exams: "Klausuren"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        exam: "Klausur"
         cohort: "Sondergruppe"
         enrollment_group: "Anmeldungsgruppe"
         planning_survey: "Planungsgruppe"
@@ -244,15 +250,15 @@ de:
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
-        propagate_to_lecture: "Studierende erscheinen in der Teilnehmerliste der Veranstaltung"
+        propagate_to_lecture: "Studierende erscheinen in der Teilnahmeliste der Veranstaltung"
       hints:
-        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnehmerliste der Veranstaltung"
+        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnahmeliste der Veranstaltung"
       help:
-        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt."
-        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnahmelisten statt."
+        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnahmeliste der Veranstaltung erscheinen."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktiviere dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
     user_registration:
       forced_assignment: "Zwangszuweisung"
@@ -341,6 +347,7 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        certification_incomplete: "Klausurzulassungen noch nicht für alle registrierten Studierenden abgeschlossen. Bitte zuerst auf dem Leistungs-Tab klären."
         policy_violation: "Zuteilung derzeit nicht möglich. Bitte überprüfe die Details unten."
         policy_violation_title: "Zuteilung derzeit nicht möglich"
         policy_violation_desc: "Für diese Anmeldungen kann mindestens eine Finalisierungsrichtlinie derzeit nicht abschließend geprüft werden. Kläre die Fälle, bevor Du die Zuteilung durchführen kannst."
@@ -349,19 +356,42 @@ de:
         policy_violation_user_title: "Blockierte Studierende:"
         policy_violation_user_desc: "Wenn Du einen Fall jetzt nicht klären kannst, lehne die Anmeldung vorerst ab. Nach der Zuteilung kannst Du betroffene Studierende bei Bedarf manuell in Gruppen aufnehmen."
         policy_violation_next_step_title: "Danach:"
-        policy_violation_next_step_desc: "Sobald die Blocker behoben sind, berechne die Zuteilung erneut."
+        policy_violation_next_step_desc: "Sobald die offenen Fälle geklärt sind, berechne die Zuteilung erneut."
         policy_violation_count:
           one: "Person betroffen"
           other: "Studierende betroffen"
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
+        of_total_points: "der Gesamtpunkte"
+        points_absolute: "Punkte (absolut)"
+        no_rule: "Keine aktive Regel konfiguriert"
       violations_table:
+        override_pass: "Auf bestanden setzen"
+        confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
         go_to_certifications: "Im Zulassungs-Dashboard klären"
         additional_blockers: "Weitere offene Punkte"
         other_blockers: "Weitere offene Punkte"
+      student_performance:
+        unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
       perf_evidence:
+        certified_by: "(von %{name})"
         no_cert: "Kein Zulassungseintrag"
+        pts_abbr: "Pkt."
+        achievements_short: "%{met}/%{total} Krit."
+      cert_incomplete:
+        title: "Klausurzulassungen unvollständig"
+        desc:
+          one: "%{count} registrierter Studierender hat keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+          other: "%{count} registrierte Studierende haben keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+        missing_label:
+          one: "%{count} Studierender noch nicht bearbeitet"
+          other: "%{count} Studierende noch nicht bearbeitet"
+        pending_label:
+          one: "%{count} Studierender mit ausstehender Klausurzulassung"
+          other: "%{count} Studierende mit ausstehenden Klausurzulassungen"
+        go_to_certs: "Zu den Klausurzulassungen"
+        policy_reason: "Dieses Anmeldeverfahren hat eine Finalisierungsrichtlinie, die entschiedene Klausurzulassungen voraussetzt."
   activerecord:
     errors:
       models:

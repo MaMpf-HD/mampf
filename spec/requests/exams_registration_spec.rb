@@ -218,5 +218,31 @@ RSpec.describe("Exams registration", type: :request) do
       create(:exam_roster_entry, exam: exam, user: student)
       campaign.update!(status: :completed)
     end
+
+    it "blocks removal when grading data already exists" do
+      assessment = create(:assessment,
+                          :with_points,
+                          assessable: exam,
+                          lecture: exam.lecture)
+      task = create(:assessment_task, assessment: assessment)
+      participation = create(:assessment_participation,
+                             assessment: assessment,
+                             user: student,
+                             status: :pending,
+                             submitted_at: nil)
+      create(:assessment_task_point,
+             task: task,
+             assessment_participation: participation)
+
+      expect do
+        delete(remove_participant_exam_path(exam, user_id: student.id),
+               as: :turbo_stream)
+      end.not_to(change { exam.reload.exam_roster_entries.count })
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(
+        I18n.t("assessment.registration_tab.remove_blocked")
+      )
+    end
   end
 end

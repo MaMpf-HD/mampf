@@ -34,11 +34,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(response.body).to include(
           %(target="#{Registration::Campaign.exam_workspace_frame_id(exam)}")
         )
-        expect(
-          response.body.scan(
-            /id="#{Registration::Campaign.exam_workspace_frame_id(exam)}"/
-          ).size
-        ).to eq(0)
+        expect(response.body.scan(/id="#{Registration::Campaign.exam_workspace_frame_id(exam)}"/).size)
+          .to eq(0)
         expect(response.body).to include("data-controller=\"dismiss-workspace\"")
       end
     end

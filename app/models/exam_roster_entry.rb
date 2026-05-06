@@ -1,9 +1,7 @@
 class ExamRosterEntry < ApplicationRecord
   belongs_to :exam
   belongs_to :user
-  belongs_to :source_campaign,
-             class_name: "Registration::Campaign",
-             optional: true
+  belongs_to :source_campaign, class_name: "Registration::Campaign", optional: true
 
   scope :active, -> { where(excluded_at: nil) }
   scope :excluded, -> { where.not(excluded_at: nil) }

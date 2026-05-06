@@ -153,6 +153,40 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         result = guard.check
         expect(result.success?).to be(true)
       end
+
+      it "does not block finalization when another selected lecture is already passed" do
+        perf_campaign = create(:registration_campaign, :preference_based,
+                               :with_items, status: :draft)
+        perf_item = perf_campaign.registration_items.first
+        perf_lecture = create(:lecture, :with_organizational_stuff)
+        other_perf_lecture = create(:lecture, :with_organizational_stuff)
+
+        create(:registration_policy, :student_performance,
+               :for_finalization,
+               registration_campaign: perf_campaign,
+               config: {
+                 "lecture_ids" => [perf_lecture.id.to_s, other_perf_lecture.id.to_s]
+               })
+
+        perf_campaign.update!(status: :processing)
+
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: perf_campaign,
+               registration_item: perf_item,
+               user: user)
+
+        create(:student_performance_certification, :pending,
+               lecture: perf_lecture,
+               user: user)
+        create(:student_performance_certification, :passed,
+               lecture: other_perf_lecture,
+               user: user,
+               certified_by: create(:confirmed_user))
+
+        result = described_class.new(perf_campaign).check
+
+        expect(result.success?).to be(true)
+      end
     end
   end
 end
