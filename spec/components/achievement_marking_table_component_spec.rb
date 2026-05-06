@@ -49,9 +49,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
         render_inline(component)
         expect(rendered_content).to include(passed.user.tutorial_name)
         expect(rendered_content).to include(failed.user.tutorial_name)
-        expect(rendered_content).to include(
-          ERB::Util.html_escape(unmarked.user.tutorial_name)
-        )
+        expect(rendered_content).to include(unmarked.user.tutorial_name)
       end
 
       it "shows check icon for pass" do

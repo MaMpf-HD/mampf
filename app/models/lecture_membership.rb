@@ -11,7 +11,7 @@ class LectureMembership < ApplicationRecord
   private
 
     def recompute_performance_record
-      return unless Flipper.enabled?(:student_performance)
+      return unless Flipper.enabled?(:assessment_grading)
 
       StudentPerformance::ComputationService
         .new(lecture: lecture)
@@ -19,7 +19,7 @@ class LectureMembership < ApplicationRecord
     end
 
     def delete_performance_record
-      return unless Flipper.enabled?(:student_performance)
+      return unless Flipper.enabled?(:assessment_grading)
 
       StudentPerformance::Record
         .where(lecture_id: lecture_id, user_id: user_id)

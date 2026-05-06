@@ -270,6 +270,16 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.members).to include(*users)
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
+
+    it "fires LectureMembership callbacks (creates performance records)" do
+      Flipper.enable(:assessment_grading)
+      lecture.ensure_roster_membership!(users.map(&:id))
+
+      expect(StudentPerformance::Record.where(lecture: lecture).count)
+        .to eq(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
   end
 
   describe "#supported_assessable_types" do

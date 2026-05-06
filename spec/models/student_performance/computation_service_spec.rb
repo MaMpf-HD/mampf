@@ -301,6 +301,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
         FactoryBot.create(:assessment_participation, :exempt,
                           assessment: assessment3, user: user)
       end
+
     end
 
     context "when assessment has no participation record" do
@@ -355,6 +356,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
         FactoryBot.create(:assessment_participation, :absent,
                           assessment: assessment2, user: user)
       end
+
     end
   end
 
