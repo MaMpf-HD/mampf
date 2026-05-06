@@ -55,4 +55,11 @@ RSpec.describe(Assessment::Assessable) do
 
     it_behaves_like "an assessable model"
   end
+
+  describe "when included in Talk" do
+    let(:seminar_lecture) { FactoryBot.create(:lecture, sort: "seminar") }
+    let(:assessable) { FactoryBot.create(:talk, lecture: seminar_lecture) }
+
+    it_behaves_like "an assessable model"
+  end
 end

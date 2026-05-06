@@ -101,7 +101,11 @@ module Assessment
         assessable_type = params[:assessable_type]
         assessable_id = params[:assessable_id]
 
-        @assessable = Assignment.find_by(id: assessable_id) if assessable_type == "Assignment"
+        if assessable_type == "Assignment"
+          @assessable = Assignment.find_by(id: assessable_id)
+        elsif assessable_type == "Talk"
+          @assessable = Talk.find_by(id: assessable_id)
+        end
 
         return if @assessable
 

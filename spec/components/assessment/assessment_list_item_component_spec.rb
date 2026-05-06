@@ -139,4 +139,58 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
       expect(component.show_path).to eq("#")
     end
   end
+
+  context "with a talk" do
+    let(:seminar) { create(:lecture, :released_for_all, sort: "seminar", teacher: teacher) }
+    let(:talk) { create(:talk, lecture: seminar, dates: [1.week.from_now]) }
+    let(:speaker) { create(:confirmed_user) }
+    let(:assessment) { talk.reload.assessment }
+    let(:component) { described_class.new(assessable: talk, lecture: seminar) }
+
+    before do
+      create(:speaker_talk_join, talk: talk, speaker: speaker)
+    end
+
+    it "renders the component" do
+      render_inline(component)
+      expect(rendered_content).to include(talk.title)
+    end
+
+    it "returns speaker names" do
+      another_speaker = create(:confirmed_user)
+      create(:speaker_talk_join, talk: talk, speaker: another_speaker)
+      expect(component.speaker_names).to include(speaker.name)
+      expect(component.speaker_names).to include(another_speaker.name)
+    end
+
+    it "returns nil for speaker_names when no speakers" do
+      talk.speakers.destroy_all
+      expect(component.speaker_names).to be_nil
+    end
+
+    it "returns formatted talk date" do
+      expect(component.talk_date).to eq(I18n.l(talk.dates.first, format: :long))
+    end
+
+    it "returns nil for talk_date when no dates" do
+      talk.update!(dates: [])
+      expect(component.talk_date).to be_nil
+    end
+
+    it "returns nil for medium_title" do
+      expect(component.medium_title).to be_nil
+    end
+
+    it "returns nil for file_type" do
+      expect(component.file_type).to be_nil
+    end
+
+    it "returns nil for deadline_display" do
+      expect(component.deadline_display).to be_nil
+    end
+
+    it "returns 0 tasks_count for talk without tasks" do
+      expect(component.tasks_count).to eq(0)
+    end
+  end
 end

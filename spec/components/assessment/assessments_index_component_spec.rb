@@ -21,4 +21,16 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
       expect(rendered_content).to include("Assignment 1")
     end
   end
+
+  context "with a seminar" do
+    let(:seminar) { create(:lecture, sort: "seminar", teacher: teacher) }
+
+    it "includes talks with speakers" do
+      talk = create(:talk, lecture: seminar, title: "Talk 1")
+      create(:speaker_talk_join, talk: talk)
+      component = described_class.new(lecture: seminar)
+      render_inline(component)
+      expect(rendered_content).to include("Talk 1")
+    end
+  end
 end

@@ -77,6 +77,27 @@ class AssessmentListItemComponent < ViewComponent::Base
     assessment&.requires_submission
   end
 
+  def grade_display
+    return nil unless assessable.is_a?(Talk) && assessment
+
+    parts = assessment.assessment_participations.where.not(grade_numeric: nil)
+    return nil if parts.empty?
+
+    parts.map { |p| p.grade_numeric.to_s }.join(", ")
+  end
+
+  def speaker_names
+    return nil unless assessable.is_a?(Talk) && assessable.speakers.any?
+
+    assessable.speakers.map(&:name).join(", ")
+  end
+
+  def talk_date
+    return nil unless assessable.is_a?(Talk) && assessable.dates.any?
+
+    I18n.l(assessable.dates.first, format: :long)
+  end
+
   def edit_path
     return nil unless legacy && assessable.is_a?(Assignment)
 
