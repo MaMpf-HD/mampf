@@ -47,7 +47,7 @@ module Rosters
 
     # Checks if the item can be safely destroyed.
     def destructible?
-      !in_campaign? && roster_empty?
+      non_destructible_reason.nil?
     end
 
     # Checks if the roster is locked for manual modifications.

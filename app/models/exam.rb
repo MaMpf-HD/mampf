@@ -35,12 +35,8 @@ class Exam < ApplicationRecord
                }
   before_destroy :destroy_draft_campaign, prepend: true
 
-  def destructible?
-    non_destructible_reason.nil?
-  end
-
   def non_destructible_reason
-    return :roster_not_empty if exam_roster_entries.exists?
+    return :roster_not_empty unless roster_empty?
 
     campaign = registration_campaign
     return :in_campaign if campaign && !campaign.draft?
@@ -70,10 +66,6 @@ class Exam < ApplicationRecord
     :exam_roster_entries
   end
 
-  def roster_user_id_column
-    :user_id
-  end
-
   def add_user_to_roster!(user, source_campaign = nil)
     roster_entry = all_exam_roster_entries.find_or_initialize_by(user: user)
     roster_entry.source_campaign ||= source_campaign
@@ -83,26 +75,14 @@ class Exam < ApplicationRecord
   end
 
   def remove_user_from_roster!(user)
-    ensure_participant_removable!(user)
-
     roster_entry = all_exam_roster_entries.find_by(user: user)
     return unless roster_entry
 
     if registration_campaign&.completed?
       roster_entry.update!(excluded_at: Time.current)
     else
-      roster_entry.destroy!
+      roster_entry.destroy
     end
-  end
-
-  def participant_removable?(user)
-    participants_with_grading_data.exclude?(user.id)
-  end
-
-  def ensure_participant_removable!(user)
-    return if participant_removable?(user)
-
-    raise(ParticipantRemovalNotAllowedError)
   end
 
   def status_phase
@@ -124,31 +104,10 @@ class Exam < ApplicationRecord
     registration_open: "bg-primary",
     registration_closed: "bg-info",
     finalized: "bg-danger",
-    conducted: "bg-light text-dark border",
-    grading: "bg-white text-primary border border-primary",
-    graded: "bg-primary"
+    conducted: "bg-light text-dark border"
   }.freeze
 
   private
-
-    def participants_with_grading_data
-      return [] unless assessment
-
-      @participants_with_grading_data ||= assessment.assessment_participations
-                                                    .includes(:task_points)
-                                                    .filter_map do |participation|
-        participation.user_id if grading_data_for?(participation)
-      end
-    end
-
-    def grading_data_for?(participation)
-      return true if participation.task_points.any?
-      return true if participation.points_total.present?
-      return true if participation.grade_numeric.present?
-      return true if participation.grade_text.present?
-
-      !participation.pending?
-    end
 
     def registration_deadline_before_exam_date
       return if registration_deadline.blank? || date.blank?

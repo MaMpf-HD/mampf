@@ -194,30 +194,6 @@ RSpec.describe(Exam, type: :model) do
         exam.remove_user_from_roster!(user)
       end.to change(ExamRosterEntry, :count).by(-1)
     end
-
-    it "does not remove participants once grading data exists" do
-      exam.registration_campaign.update!(status: :completed)
-      assessment = create(:assessment,
-                          :with_points,
-                          assessable: exam,
-                          lecture: exam.lecture)
-      task = create(:assessment_task, assessment: assessment)
-      create(:assessment_participation,
-             assessment: assessment,
-             user: user,
-             status: :pending,
-             submitted_at: nil)
-      create(:assessment_task_point,
-             task: task,
-             assessment_participation: assessment.assessment_participations.find_by!(user: user))
-      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
-
-      expect(exam.participant_removable?(user)).to be(false)
-      expect do
-        exam.remove_user_from_roster!(user)
-      end.to raise_error(Exam::ParticipantRemovalNotAllowedError)
-      expect(roster_entry.reload.excluded_at).to be_nil
-    end
   end
 
   describe "#status_phase" do
