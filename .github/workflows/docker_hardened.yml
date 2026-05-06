@@ -4,7 +4,9 @@
 name: Build & Push Ruby Hardened Docker Image
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+  # just temporarily for testing on this branch, TODO: remove this trigger
+  push:
 
 jobs:
   build:
