@@ -1,0 +1,40 @@
+.grade-scheme-summary {
+  --gs-bar-track: #e9ecef;
+  --gs-bar-fill-neutral: var(--bs-secondary-border-subtle);
+  --gs-bar-fill-applied: #adb5bd;
+  --gs-bar-fill-proposed: #ffc107;
+
+  .gs-bar-track {
+    height: 12px;
+    background: var(--gs-bar-track);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+
+  .gs-bar-fill {
+    height: 100%;
+    background: var(--gs-bar-fill-neutral);
+  }
+
+  .gs-bar-fill--applied {
+    background: var(--gs-bar-fill-applied);
+  }
+
+  .gs-bar-fill--proposed {
+    background: var(--gs-bar-fill-proposed);
+  }
+
+  .gs-bar-cell {
+    width: 200px;
+
+    .gs-bar-track {
+      flex: 1;
+      height: 14px;
+    }
+  }
+
+  .gs-fail-boundary > td {
+    border-top: 2px dashed #f1aeb5;
+  }
+}

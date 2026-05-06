@@ -130,6 +130,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000000) do
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end
 
+  create_table "assessment_grade_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.integer "kind", default: 0, null: false
+    t.jsonb "config", default: {}, null: false
+    t.string "version_hash"
+    t.datetime "applied_at"
+    t.bigint "applied_by_id"
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
+    t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
+    t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
+    t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"
+  end
+
   create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "assessment_id", null: false
     t.bigint "user_id", null: false
@@ -514,7 +530,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000000) do
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0, null: false
     t.date "submission_deletion_date", null: false
-    t.boolean "uses_exam_eligibility", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -1447,6 +1462,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000000) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assessment_assessments", "lectures"
+  add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
@@ -1467,9 +1484,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000000) do
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
   add_foreign_key "exam_roster_entries", "exams"
-  add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
-  add_foreign_key "exam_roster_entries", "users"
-  add_foreign_key "exams", "lectures"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
@@ -1498,15 +1512,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000000) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
-  add_foreign_key "student_performance_certifications", "lectures"
   add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
-  add_foreign_key "student_performance_certifications", "users"
-  add_foreign_key "student_performance_certifications", "users", column: "certified_by_id"
   add_foreign_key "student_performance_records", "lectures"
   add_foreign_key "student_performance_records", "users"
-  add_foreign_key "student_performance_rule_achievements", "achievements", on_delete: :restrict
   add_foreign_key "student_performance_rule_achievements", "student_performance_rules", column: "rule_id"
-  add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

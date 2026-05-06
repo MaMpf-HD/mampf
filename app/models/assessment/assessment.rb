@@ -10,6 +10,9 @@ module Assessment
                                          inverse_of: :assessment
     has_many :task_points, through: :assessment_participations,
                            class_name: "Assessment::TaskPoint"
+    has_one :grade_scheme, -> { where(active: true) },
+            class_name: "Assessment::GradeScheme",
+            inverse_of: :assessment
 
     accepts_nested_attributes_for :assessable
 

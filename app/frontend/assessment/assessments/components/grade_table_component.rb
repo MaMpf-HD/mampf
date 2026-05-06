@@ -1,3 +1,4 @@
+# Missing top-level docstring, please formulate one yourself 😁
 class GradeTableComponent < ViewComponent::Base
   include ActionView::Helpers::DateHelper
 
@@ -45,7 +46,7 @@ class GradeTableComponent < ViewComponent::Base
   end
 
   def assignment?
-    assessment.assessable.is_a?(Assignment)
+    assessment.assessable.is_a?(::Assignment)
   end
 
   def talk?
@@ -58,8 +59,8 @@ class GradeTableComponent < ViewComponent::Base
 
   def show_points_column?
     assessable = assessment.assessable
-    assessable.is_a?(Assessment::Pointable) &&
-      assessable.is_a?(Assessment::Gradable)
+    assessable.is_a?(::Assessment::Pointable) &&
+      assessable.is_a?(::Assessment::Gradable)
   end
 
   def show_status_column?
@@ -175,7 +176,7 @@ class GradeTableComponent < ViewComponent::Base
     grader_ids = gradeable_participations.pluck(:grader_id).compact.uniq
     return nil unless grader_ids.size == 1
 
-    gradeable_participations.find { |participation| participation.grader_id.present? }
+    gradeable_participations.find { |p| p.grader_id.present? }
                             &.grader
                             &.tutorial_name
   end

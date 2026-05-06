@@ -142,6 +142,7 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     include_examples "visible tab", "statistics"
     include_examples "hidden tab", "overview"
     include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "grade_scheme"
 
     describe "#tabs" do
       it "returns the correct tab keys" do
@@ -155,14 +156,148 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
         before { Flipper.enable(:registration_campaigns) }
         after { Flipper.disable(:registration_campaigns) }
 
-        it "includes the registration tab" do
-          render_inline(component)
+        it "includes the registration tab only" do
           keys = component.tabs.map(&:key)
           expect(keys).to eq(
-            ["settings", "registration", "tasks", "points", "grades", "statistics"]
+            ["settings", "registration",
+             "tasks", "points", "grades",
+             "statistics"]
+          )
+        end
+
+        it "renders the inline policies section in settings" do
+          render_inline(component)
+
+          expect(rendered_content).to include(
+            I18n.t("registration.policy.index.title")
+          )
+          expect(rendered_content).to include(
+            I18n.t("registration.campaign.actions.open")
+          )
+          expect(rendered_content).not_to include(
+            I18n.t("assessment.info_bar.go_to_registration")
+          )
+          expect(rendered_content).not_to include(
+            "data-bs-target=\"##{component.dom_prefix}-policies\""
           )
         end
       end
+    end
+
+    it "renders GradingTabComponent in the grades pane" do
+      render_inline(component)
+      expect(rendered_content).to include("grading_tab_component")
+    end
+
+    it "renders GradeTableComponent inside the grades pane" do
+      render_inline(component)
+      expect(rendered_content).to include("grade_table_component")
+    end
+
+    it "normalizes a legacy grade_scheme tab key to grades" do
+      legacy = described_class.new(
+        assessable: exam, assessment: assessment, lecture: lecture,
+        active_tab: "grade_scheme"
+      )
+      expect(legacy.active_tab).to eq("grades")
+    end
+
+    describe "#default_tab" do
+      it 'returns "settings"' do
+        expect(component.default_tab).to eq("settings")
+      end
+    end
+
+    describe "#back_path" do
+      it "points to the exams index" do
+        render_inline(component)
+        expected = Rails.application.routes.url_helpers
+                        .exams_path(lecture_id: lecture.id)
+        expect(component.back_path).to eq(expected)
+      end
+    end
+
+    describe "#subtitle" do
+      it "returns lecture title and term info" do
+        render_inline(component)
+        expect(component.subtitle).to eq(
+          "#{lecture.title} · #{lecture.term_teacher_info}"
+        )
+      end
+    end
+
+    it "activates the settings tab by default" do
+      render_inline(component)
+      expect(rendered_content).to match(
+        /nav-link\s+active[^>]*data-bs-target="#[^"]*-settings"/m
+      )
+    end
+  end
+
+  context "with a talk" do
+    let(:seminar) { create(:seminar, teacher: teacher) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:assessment) { talk.reload.assessment }
+    let(:assessable) { talk }
+    let(:component) do
+      described_class.new(assessable: talk, assessment: assessment,
+                          lecture: seminar)
+    end
+
+    include_examples "common header"
+    include_examples "visible tab", "grades"
+    include_examples "hidden tab", "overview"
+    include_examples "hidden tab", "settings"
+    include_examples "hidden tab", "tasks"
+    include_examples "hidden tab", "roster"
+    include_examples "hidden tab", "submissions"
+    include_examples "hidden tab", "points"
+    include_examples "hidden tab", "statistics"
+
+    describe "#tabs" do
+      it "returns the correct tab keys" do
+        keys = component.tabs.map(&:key)
+        expect(keys).to eq(["grades"])
+      end
+    end
+
+    it "renders exactly one tab" do
+      render_inline(component)
+      expect(rendered_content.scan("nav-link").size).to eq(1)
+    end
+
+    it "renders GradeTableComponent in the grades pane" do
+      render_inline(component)
+      expect(rendered_content).to include("grade_table_component")
+    end
+
+    describe "#default_tab" do
+      it 'returns "grades"' do
+        expect(component.default_tab).to eq("grades")
+      end
+    end
+
+    describe "#back_path" do
+      it "points to the assessments index" do
+        render_inline(component)
+        expected = Rails.application.routes.url_helpers
+                        .assessment_assessments_path(lecture_id: seminar.id)
+        expect(component.back_path).to eq(expected)
+      end
+    end
+
+    describe "#subtitle" do
+      it "returns nil" do
+        render_inline(component)
+        expect(component.subtitle).to be_nil
+      end
+    end
+
+    it "activates the grades tab by default" do
+      render_inline(component)
+      expect(rendered_content).to match(
+        /nav-link\s+active[^>]*data-bs-target="#[^"]*-grades"/m
+      )
     end
   end
 
@@ -180,17 +315,15 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       )
     end
 
-    it "generates unique prefixes for different assessments" do
-      other_assignment = create(:valid_assignment, lecture: lecture)
+    it "generates unique prefixes for different assessables" do
+      exam = create(:exam, lecture: lecture)
       comp_a = described_class.new(
         assessable: assignment, assessment: assessment, lecture: lecture
       )
-      comp_b = described_class.new(
-        assessable: other_assignment,
-        assessment: other_assignment.reload.assessment,
-        lecture: lecture
+      comp_e = described_class.new(
+        assessable: exam, assessment: exam.reload.assessment, lecture: lecture
       )
-      expect(comp_a.dom_prefix).not_to eq(comp_b.dom_prefix)
+      expect(comp_a.dom_prefix).not_to eq(comp_e.dom_prefix)
     end
   end
 

@@ -5,18 +5,21 @@ class AssessmentDashboardComponent < ViewComponent::Base
 
   # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
-                 active_tab: nil, tasks: nil, task: nil)
+                 active_tab: nil, tasks: nil, task: nil,
+                 grade_scheme: nil)
     super()
     @assessable = assessable
     @assessment = assessment
     @lecture = lecture
     @tasks = tasks || assessment&.tasks&.order(:position) || []
     @task = task
+    @grade_scheme = grade_scheme
     @active_tab = normalize_tab_key(active_tab) || default_tab
   end
   # rubocop: enable Metrics/ParameterLists
 
-  attr_reader :assessable, :assessment, :lecture, :active_tab, :tasks, :task
+  attr_reader :assessable, :assessment, :lecture, :active_tab, :tasks, :task,
+              :grade_scheme
 
   def tabs
     @tabs ||= build_tabs
@@ -30,18 +33,18 @@ class AssessmentDashboardComponent < ViewComponent::Base
     end
   end
 
-  def subtitle
-    return unless exam?
-
-    "#{lecture.title} · #{lecture.term_teacher_info}"
-  end
-
   def back_path
     if exam?
       helpers.exams_path(lecture_id: lecture.id)
     else
       helpers.assessment_assessments_path(lecture_id: lecture.id)
     end
+  end
+
+  def subtitle
+    return unless exam?
+
+    "#{lecture.title} · #{lecture.term_teacher_info}"
   end
 
   def tab_active?(key)
@@ -84,7 +87,10 @@ class AssessmentDashboardComponent < ViewComponent::Base
     end
 
     def normalize_tab_key(key)
-      key.presence
+      return nil if key.nil?
+      return "grades" if key == "grade_scheme"
+
+      key
     end
 
     def settings_tab
@@ -115,17 +121,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
       end
     end
 
-    def registration_tab
-      TabConfig.new(
-        "registration",
-        registration_tab_label,
-        PartialTabComponent.new(
-          partial: "exams/registration",
-          locals: { exam: assessable, lecture: lecture }
-        )
-      )
-    end
-
     def tasks_tab
       TabConfig.new(
         "tasks",
@@ -145,14 +140,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
-    def grading_tab
-      TabConfig.new(
-        "grades",
-        I18n.t("assessment.grades"),
-        GradingTabComponent.new(assessment: assessment)
-      )
-    end
-
     def grades_tab
       TabConfig.new(
         "grades",
@@ -161,11 +148,36 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
+    def grading_tab
+      TabConfig.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradingTabComponent.new(
+          assessment: assessment,
+          grade_scheme: grade_scheme
+        )
+      )
+    end
+
+    def registration_tab
+      TabConfig.new(
+        "registration",
+        registration_tab_label,
+        PartialTabComponent.new(
+          partial: "exams/registration",
+          locals: { exam: assessable, lecture: lecture }
+        )
+      )
+    end
+
     def statistics_tab
       TabConfig.new(
         "statistics",
         I18n.t("assessment.statistics"),
-        StatisticsTabComponent.new(assessment: assessment, lecture: lecture)
+        StatisticsTabComponent.new(
+          assessment: assessment, lecture: lecture
+        )
+>>>>>>> 4be71b837 (Backport grade schemes)
       )
     end
 end
