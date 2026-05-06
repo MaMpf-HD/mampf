@@ -326,11 +326,11 @@ RSpec.describe(Registration::Policy, type: :model) do
       describe ".for_phase" do
         let(:campaign) { create(:registration_campaign) }
         let!(:registration_policy) do
-          create(:registration_policy, :student_performance,
+          create(:registration_policy, :institutional_email,
                  registration_campaign: campaign, phase: :registration)
         end
         let!(:finalization_policy) do
-          create(:registration_policy, :student_performance,
+          create(:registration_policy, :prerequisite_campaign,
                  registration_campaign: campaign, phase: :finalization)
         end
         let!(:both_policy) do

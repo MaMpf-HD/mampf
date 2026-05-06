@@ -168,7 +168,8 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                  "lecture_ids" => [perf_lecture.id.to_s, other_perf_lecture.id.to_s]
                })
 
-        perf_campaign.update!(status: :processing)
+        perf_campaign.update!(status: :processing,
+                  allocation_decided_at: Time.current)
 
         create(:registration_user_registration, :confirmed,
                registration_campaign: perf_campaign,

@@ -75,6 +75,8 @@ class Exam < ApplicationRecord
   end
 
   def remove_user_from_roster!(user)
+    ensure_participant_removable!(user)
+
     roster_entry = all_exam_roster_entries.find_by(user: user)
     return unless roster_entry
 
@@ -83,6 +85,10 @@ class Exam < ApplicationRecord
     else
       roster_entry.destroy
     end
+  end
+
+  def participant_removable?(user)
+    participants_with_grading_data.exclude?(user.id)
   end
 
   def status_phase
@@ -108,6 +114,31 @@ class Exam < ApplicationRecord
   }.freeze
 
   private
+
+    def ensure_participant_removable!(user)
+      return if participant_removable?(user)
+
+      raise(ParticipantRemovalNotAllowedError)
+    end
+
+    def participants_with_grading_data
+      return [] unless assessment
+
+      @participants_with_grading_data ||= assessment.assessment_participations
+                                                    .includes(:task_points)
+                                                    .filter_map do |participation|
+        participation.user_id if grading_data_for?(participation)
+      end
+    end
+
+    def grading_data_for?(participation)
+      return true if participation.task_points.any?
+      return true if participation.points_total.present?
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
+    end
 
     def registration_deadline_before_exam_date
       return if registration_deadline.blank? || date.blank?
