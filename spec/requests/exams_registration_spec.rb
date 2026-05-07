@@ -88,6 +88,9 @@ RSpec.describe("Exams registration", type: :request) do
       )
       expect(response.body).to include(I18n.t("registration.policy.index.title"))
       expect(response.body).to include(I18n.t("registration.campaign.actions.open"))
+      expect(response.body).not_to include(
+        I18n.t("assessment.info_bar.go_to_registration")
+      )
       expect(response.body).not_to include("-policies\"")
     end
 
@@ -220,10 +223,8 @@ RSpec.describe("Exams registration", type: :request) do
     end
 
     it "blocks removal when grading data already exists" do
-      assessment = create(:assessment,
-                          :with_points,
-                          assessable: exam,
-                          lecture: exam.lecture)
+      assessment = exam.assessment
+      assessment.update!(requires_points: true)
       task = create(:assessment_task, assessment: assessment)
       participation = create(:assessment_participation,
                              assessment: assessment,

@@ -18,8 +18,10 @@ MaMpf needs a formal representation of exams that can:
 We introduce a new `Exam` model that:
 - **Belongs to a `Lecture`**: Each exam is scoped to a specific lecture offering
 - **Implements `Registration::Registerable`**: Acts as a registration target (students register for the exam)
-- **Implements `Roster::Rosterable`**: Manages the list of registered students
+- **Implements `Rosters::Rosterable`**: Manages the list of registered students
 - **Implements `Assessment::Assessable`**: Links to an `Assessment::Assessment` for grading
+
+The concrete roster rows are represented by `ExamRosterEntry`, backed by the `exam_roster_entries` table.
 
 The parent `Lecture` (which implements `Registration::Campaignable`) hosts the registration campaigns. Each exam (Hauptklausur, Nachklausur, etc.) gets its own campaign with that exam as the sole registerable item.
 
@@ -70,7 +72,10 @@ campaign.registration_items.create!(registerable: exam)
 **2. As Rosterable (Student Tracking)**
 ```ruby
 # After allocation, students are materialized into the exam roster
-exam.roster_user_ids # => [101, 102, 103, ...]
+exam.allocated_user_ids # => [101, 102, 103, ...]
+
+# The underlying roster rows live in exam_roster_entries
+exam.exam_roster_entries.active.pluck(:user_id) # => [101, 102, 103, ...]
 ```
 
 **3. As Assessable (Grading Container)**

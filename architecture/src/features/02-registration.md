@@ -905,7 +905,7 @@ Unlike other policies, `student_performance` requires data preparation before th
 ```
 
 ```admonish tip "Freshness vs certification"
-The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
+The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are kept current automatically via `after_commit` callbacks on grading models. This keeps registration fast and deterministic.
 ```
 
 ### Example Implementation
