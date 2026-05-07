@@ -44,12 +44,24 @@ RUN ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     chmod -R a+rX /usr/local/lib/node_modules "${COREPACK_HOME}" && \
     node --version && npm --version && yarn --version
 
-# Install other dependencies
+# Install packages required by MaMpf itself
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
-        bzip2 ca-certificates curl ffmpeg ghostscript git graphviz gzip \
-        imagemagick libarchive-tools libvips42 lsof openssh-client pdftk shared-mime-info \
-        sudo tar unzip wait-for-it wget xz-utils \
+        ffmpeg ghostscript imagemagick libarchive-tools libvips42 lsof \
+        pdftk shared-mime-info wait-for-it \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install packages intended for local development and debugging
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends \
+        bzip2 ca-certificates curl git graphviz gzip jq less \
+        libpam-runtime ncurses-bin ncurses-term openssh-client ripgrep \
+        sudo tar tree unzip wget xz-utils \
+    && /usr/sbin/pam-auth-update --package --force \
+    && test -f /etc/pam.d/common-auth \
+    && test -f /etc/pam.d/common-account \
+    && test -f /etc/pam.d/common-session \
+    && test -f /etc/pam.d/common-session-noninteractive \
     && rm -rf /var/lib/apt/lists/*
 
 # Playwright system dependencies
