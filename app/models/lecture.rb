@@ -95,9 +95,9 @@ class Lecture < ApplicationRecord
   has_many :student_performance_rules,
            class_name: "StudentPerformance::Rule",
            dependent: :destroy
-    has_one :active_performance_rule,
-      -> { where(active: true) },
-      class_name: "StudentPerformance::Rule"
+  has_one :active_performance_rule,
+          -> { where(active: true) },
+          class_name: "StudentPerformance::Rule"
   has_many :achievements, dependent: :destroy
 
   # a lecture has many vouchers that can be redeemed to promote
@@ -122,9 +122,7 @@ class Lecture < ApplicationRecord
   validate :only_one_lecture, if: :term_independent?, on: :create
 
   validate :exam_eligibility_can_be_disabled, if: lambda {
-    has_attribute?(:uses_exam_eligibility) &&
-      will_save_change_to_attribute?(:uses_exam_eligibility) &&
-      !self[:uses_exam_eligibility]
+    uses_exam_eligibility_changed? && !uses_exam_eligibility?
   }
 
   validates :submission_max_team_size,
