@@ -85,6 +85,8 @@ class Lecture < ApplicationRecord
 
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
+
+  # a lecture has many exams (scheduled assessment events)
   has_many :exams, dependent: :destroy
 
   has_many :student_performance_records,
@@ -472,12 +474,6 @@ class Lecture < ApplicationRecord
 
   def sort_localized_short
     I18n.t("admin.lecture.#{sort}_short")
-  end
-
-  def uses_exam_eligibility?
-    return true unless has_attribute?(:uses_exam_eligibility)
-
-    self[:uses_exam_eligibility]
   end
 
   # returns whether the lecture is newest among all lectures associated to its

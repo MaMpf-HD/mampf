@@ -1,6 +1,7 @@
 en:
   roster:
     title: "Participants/Groups"
+    participants: 'Participants'
     status: 'Status'
     group_category:
       tutorial: "Tutorial"
@@ -279,6 +280,7 @@ en:
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
+      cannot_delete: "Cannot be deleted."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
@@ -298,3 +300,5 @@ en:
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
+    no_participants_yet: 'No participants have registered yet.'
+    registered: 'Registered'
