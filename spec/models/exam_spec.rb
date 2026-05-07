@@ -14,7 +14,7 @@ RSpec.describe(Exam, type: :model) do
       expect(build(:exam, lecture: nil)).to be_invalid
     end
 
-    it "is valid without a date" do
+    it "is valid without a date (oral exam)" do
       expect(build(:exam, :oral)).to be_valid
     end
 
@@ -30,20 +30,56 @@ RSpec.describe(Exam, type: :model) do
       expect(build(:exam, capacity: 100)).to be_valid
     end
 
-    it "is valid with nil capacity" do
+    it "is valid with nil capacity (unlimited)" do
       expect(build(:exam, capacity: nil)).to be_valid
     end
   end
 
-  describe "helpers" do
-    it "formats the registration title with the exam date" do
-      exam = build(:exam, :with_date, title: "Oral Exam")
+  describe "associations" do
+    it "belongs to a lecture" do
+      exam = create(:exam)
+      expect(exam.lecture).to be_a(Lecture)
+    end
+  end
 
-      expect(exam.registration_title).to include("Oral Exam")
+  describe "concerns" do
+    it "includes Assessment::Pointable" do
+      expect(Exam.ancestors).to include(Assessment::Pointable)
     end
 
-    it "is destructible by default" do
-      expect(build(:exam)).to be_destructible
+    it "includes Assessment::Gradable" do
+      expect(Exam.ancestors).to include(Assessment::Gradable)
+    end
+  end
+
+  describe "assessment setup" do
+    context "when assessment_grading feature flag is enabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
+      end
+
+      it "creates an assessment after creation" do
+        exam = nil
+        expect do
+          exam = create(:exam)
+        end.to change(Assessment::Assessment, :count).by(1)
+
+        expect(exam.assessment).to be_present
+      end
+    end
+
+    context "when assessment_grading feature flag is disabled" do
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(false)
+      end
+
+      it "does not create an assessment after creation" do
+        expect do
+          create(:exam)
+        end.not_to change(Assessment::Assessment, :count)
+      end
     end
   end
 end

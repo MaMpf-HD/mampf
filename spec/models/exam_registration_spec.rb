@@ -36,7 +36,7 @@ RSpec.describe(Exam, type: :model) do
       end
 
       context "on update with an active campaign" do
-        let(:exam) { create(:exam, date: 2.weeks.from_now) }
+        let(:exam) { create(:exam, :with_date) }
 
         before do
           allow(Flipper).to receive(:enabled?).and_call_original
@@ -194,6 +194,30 @@ RSpec.describe(Exam, type: :model) do
         exam.remove_user_from_roster!(user)
       end.to change(ExamRosterEntry, :count).by(-1)
     end
+
+    it "does not remove participants once grading data exists" do
+      exam.registration_campaign.update!(status: :completed)
+      assessment = create(:assessment,
+                          :with_points,
+                          assessable: exam,
+                          lecture: exam.lecture)
+      task = create(:assessment_task, assessment: assessment)
+      create(:assessment_participation,
+             assessment: assessment,
+             user: user,
+             status: :pending,
+             submitted_at: nil)
+      create(:assessment_task_point,
+             task: task,
+             assessment_participation: assessment.assessment_participations.find_by!(user: user))
+      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
+
+      expect(exam.participant_removable?(user)).to be(false)
+      expect do
+        exam.remove_user_from_roster!(user)
+      end.to raise_error(Exam::ParticipantRemovalNotAllowedError)
+      expect(roster_entry.reload.excluded_at).to be_nil
+    end
   end
 
   describe "#status_phase" do
@@ -214,7 +238,7 @@ RSpec.describe(Exam, type: :model) do
     end
 
     context "with an open campaign" do
-      let(:exam) { create(:exam, date: 2.weeks.from_now, lecture: lecture) }
+      let(:exam) { create(:exam, :with_date, lecture: lecture) }
 
       before do
         allow(Flipper).to receive(:enabled?).and_call_original
@@ -279,6 +303,49 @@ RSpec.describe(Exam, type: :model) do
 
       it "returns :conducted" do
         expect(exam.status_phase).to eq(:conducted)
+      end
+    end
+
+    context "with past date and some grading started" do
+      let(:exam) { create(:exam, date: 1.week.ago, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:assessment_grading).and_return(true)
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
+        user = create(:confirmed_user)
+        exam.assessment.assessment_participations.create!(user: user, status: :reviewed)
+      end
+
+      it "returns :grading" do
+        expect(exam.status_phase).to eq(:grading)
+      end
+    end
+
+    context "with past date and results published" do
+      let(:exam) { create(:exam, date: 1.week.ago, lecture: lecture) }
+
+      before do
+        allow(Flipper).to receive(:enabled?).and_call_original
+        allow(Flipper).to receive(:enabled?)
+          .with(:assessment_grading).and_return(true)
+        allow(Flipper).to receive(:enabled?)
+          .with(:registration_campaigns).and_return(true)
+        # rubocop:disable Rails/SkipsModelValidations
+        exam.registration_campaign
+            .update_column(:status, Registration::Campaign.statuses[:completed])
+        # rubocop:enable Rails/SkipsModelValidations
+        exam.assessment.update!(results_published_at: Time.current)
+      end
+
+      it "returns :graded" do
+        expect(exam.status_phase).to eq(:graded)
       end
     end
 
