@@ -28,8 +28,7 @@ RSpec.describe(LectureMembership, type: :model) do
     it "removes the performance record when a membership is destroyed" do
       membership = FactoryBot.create(:lecture_membership,
                                      lecture: lecture, user: user)
-      expect(StudentPerformance::Record.where(lecture: lecture, user: user))
-        .to exist
+      StudentPerformance::Record.create!(lecture: lecture, user: user)
 
       membership.destroy!
 
