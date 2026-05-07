@@ -46,6 +46,8 @@ de:
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
+          mode: "Zuteilungsmodus"
+          opens_at: "Registrierungsbeginn"
           deadline: "Registrierungsende"
           status: "Status"
           registrations: "Anzahl Registrierungen"

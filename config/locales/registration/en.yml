@@ -66,6 +66,8 @@ en:
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
         preference_based: "Preference-Based"
+      type:
+        exam: "Exam"
       status:
         draft: "Draft"
         open: "Open"
