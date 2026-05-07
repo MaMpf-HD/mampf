@@ -1,10 +1,6 @@
 class Exam < ApplicationRecord
   class ParticipantRemovalNotAllowedError < StandardError; end
 
-  include Assessment::Assessable
-  include Registration::Registerable
-  include Rosters::Rosterable
-
   belongs_to :lecture
   has_many :all_exam_roster_entries,
            class_name: "ExamRosterEntry",
@@ -20,13 +16,19 @@ class Exam < ApplicationRecord
            inverse_of: :exam
   has_many :users, through: :exam_roster_entries
 
+  include Registration::Registerable
+  include Rosters::Rosterable
+  include Assessment::Pointable
+  include Assessment::Gradable
+
   attr_accessor :registration_deadline, :reopen_after_deadline_fix
 
   validates :title, presence: true
-  validates :capacity, numericality: { greater_than: 0 }, allow_nil: true
+  validates :capacity, numericality: { greater_than: 0, allow_nil: true }
   validate :registration_deadline_before_exam_date
   validate :registration_deadline_in_future
 
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
   after_create :create_registration_campaign,
                if: -> { !skip_campaigns && Flipper.enabled?(:registration_campaigns) }
   after_update :update_campaign_deadline,
@@ -42,20 +44,6 @@ class Exam < ApplicationRecord
     return :in_campaign if campaign && !campaign.draft?
 
     nil
-  end
-
-  def registration_campaign
-    Registration::Item.find_by(registerable: self)&.registration_campaign
-  end
-
-  def load_registration_deadline
-    self.registration_deadline = registration_campaign&.registration_deadline
-  end
-
-  def registration_title
-    return title unless date
-
-    "#{title} (#{I18n.l(date, format: :short)})"
   end
 
   def roster_entries
@@ -91,6 +79,26 @@ class Exam < ApplicationRecord
     participants_with_grading_data.exclude?(user.id)
   end
 
+  def ensure_participant_removable!(user)
+    return if participant_removable?(user)
+
+    raise(ParticipantRemovalNotAllowedError)
+  end
+
+  def registration_campaign
+    Registration::Item.find_by(registerable: self)&.registration_campaign
+  end
+
+  def load_registration_deadline
+    self.registration_deadline = registration_campaign&.registration_deadline
+  end
+
+  def registration_title
+    return title unless date
+
+    "#{title} (#{I18n.l(date, format: :short)})"
+  end
+
   def status_phase
     campaign = registration_campaign
 
@@ -100,7 +108,12 @@ class Exam < ApplicationRecord
       return :registration_closed if campaign.closed? || campaign.processing?
     end
 
-    return :conducted if date && date < Date.current
+    if date && date < Date.current
+      return :graded if assessment&.results_published?
+      return :grading if any_grading_started?
+
+      return :conducted
+    end
 
     :finalized
   end
@@ -110,34 +123,15 @@ class Exam < ApplicationRecord
     registration_open: "bg-primary",
     registration_closed: "bg-info",
     finalized: "bg-danger",
-    conducted: "bg-light text-dark border"
+    conducted: "bg-light text-dark border",
+    grading: "bg-white text-primary border border-primary",
+    graded: "bg-primary"
   }.freeze
 
   private
 
-    def ensure_participant_removable!(user)
-      return if participant_removable?(user)
-
-      raise(ParticipantRemovalNotAllowedError)
-    end
-
-    def participants_with_grading_data
-      return [] unless assessment
-
-      @participants_with_grading_data ||= assessment.assessment_participations
-                                                    .includes(:task_points)
-                                                    .filter_map do |participation|
-        participation.user_id if grading_data_for?(participation)
-      end
-    end
-
-    def grading_data_for?(participation)
-      return true if participation.task_points.any?
-      return true if participation.points_total.present?
-      return true if participation.grade_numeric.present?
-      return true if participation.grade_text.present?
-
-      !participation.pending?
+    def setup_assessment
+      ensure_pointbook!(requires_submission: false)
     end
 
     def registration_deadline_before_exam_date
@@ -190,6 +184,30 @@ class Exam < ApplicationRecord
         registerable: self,
         capacity: capacity
       )
+    end
+
+    def any_grading_started?
+      assessment&.assessment_participations
+                &.exists?(status: :reviewed) || false
+    end
+
+    def participants_with_grading_data
+      return [] unless assessment
+
+      @participants_with_grading_data ||= assessment.assessment_participations
+                                                    .includes(:task_points)
+                                                    .filter_map do |participation|
+        participation.user_id if grading_data_for?(participation)
+      end
+    end
+
+    def grading_data_for?(participation)
+      return true if participation.task_points.any?
+      return true if participation.points_total.present?
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
     end
 
     def destroy_draft_campaign
