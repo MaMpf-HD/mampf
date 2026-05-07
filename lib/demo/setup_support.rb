@@ -15,8 +15,10 @@ module Demo
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
     ROSTER_ENABLED_FLAGS = ["roster_maintenance", "registration_campaigns"].freeze
-    ROSTER_DISABLED_FLAGS = ["assessment_grading"].freeze
+    ROSTER_DISABLED_FLAGS = ["assessment_grading", "student_performance"].freeze
     ASSESSMENT_ENABLED_FLAGS = ["assessment_grading"].freeze
+    ASSESSMENT_DISABLED_FLAGS = ["student_performance"].freeze
+    PERFORMANCE_ENABLED_FLAGS = ["assessment_grading", "student_performance"].freeze
     LECTURE_TUTORIAL_CAPACITIES = [10, 8, 8, 6].freeze
     LECTURE_TUTORIAL_TITLES = [
       "Demo Tutorial 1",
@@ -25,6 +27,11 @@ module Demo
       "Demo Tutorial 4"
     ].freeze
     SEMINAR_TALK_TITLES = (1..10).map { |i| "Demo Talk #{i}" }.freeze
+    DEMO_ACHIEVEMENT_ATTRIBUTES = [
+      { title: "Blackboard Talk", value_type: :boolean, threshold: nil },
+      { title: "Homework Points", value_type: :numeric, threshold: 15 },
+      { title: "Attendance Rate", value_type: :percentage, threshold: 80.0 }
+    ].freeze
 
     def verify!
       ensure_non_production!
@@ -58,7 +65,10 @@ module Demo
 
     def setup_assessment!
       ensure_non_production!
-      configure_feature_flags!(enabled: ASSESSMENT_ENABLED_FLAGS)
+      configure_feature_flags!(
+        enabled: ASSESSMENT_ENABLED_FLAGS,
+        disabled: ASSESSMENT_DISABLED_FLAGS
+      )
 
       lecture = nil
       with_quiet_logging do
@@ -79,9 +89,30 @@ module Demo
       puts "=== Demo Assessment Setup Complete ==="
     end
 
+    def setup_performance!
+      ensure_non_production!
+      configure_feature_flags!(enabled: PERFORMANCE_ENABLED_FLAGS)
+
+      lecture = nil
+      with_quiet_logging do
+        lecture = performance_lecture!
+      end
+
+      puts "=== Demo Performance Setup ==="
+      with_quiet_logging do
+        reset_demo_performance!(lecture)
+        create_demo_achievements!(lecture)
+        seed_demo_achievement_grades!(lecture)
+        compute_demo_performance_records!(lecture)
+        print_performance_summary(lecture)
+      end
+      puts "=== Demo Performance Setup Complete ==="
+    end
+
     def setup!
       setup_rosters!
       setup_assessment!
+      setup_performance!
     end
 
     def assessment_lecture!
@@ -89,6 +120,13 @@ module Demo
       return lecture if TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture)).exists?
 
       abort("Lecture 1 has no tutorial roster. Run demo:rosters first.")
+    end
+
+    def performance_lecture!
+      lecture = assessment_lecture!
+      return lecture if demo_assignments(lecture).exists?
+
+      abort("Lecture 1 has no demo assignments. Run demo:assessment first.")
     end
 
     private
@@ -365,8 +403,16 @@ module Demo
         demo_assignment_attributes.map { |attrs| attrs[:title] }
       end
 
+      def demo_achievement_titles
+        DEMO_ACHIEVEMENT_ATTRIBUTES.map { |attrs| attrs[:title] }
+      end
+
       def demo_assignments(lecture)
         lecture.assignments.where(title: demo_assignment_titles).order(:deadline)
+      end
+
+      def demo_achievements(lecture)
+        lecture.achievements.where(title: demo_achievement_titles).order(:title)
       end
 
       def reset_demo_assignments!(lecture)
@@ -390,6 +436,14 @@ module Demo
         end
 
         puts "Reset #{destroyed} demo assignments."
+      end
+
+      def reset_demo_performance!(lecture)
+        lecture.student_performance_records.delete_all
+
+        demo_achievements(lecture).find_each(&:destroy!)
+
+        puts "Reset demo achievements and performance records."
       end
 
       def create_demo_assignments!(lecture)
@@ -545,6 +599,71 @@ module Demo
              "(#{skipped_count} talks without speakers)."
       end
 
+      def create_demo_achievements!(lecture)
+        memberships = TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture))
+                                        .pluck(:user_id, :tutorial_id)
+
+        DEMO_ACHIEVEMENT_ATTRIBUTES.each do |attrs|
+          achievement = lecture.achievements.create!(attrs)
+          achievement.ensure_assessment!(
+            requires_points: false,
+            requires_submission: false
+          )
+
+          assessment = achievement.assessment
+          assessment.assessment_participations.delete_all
+          memberships.each do |user_id, tutorial_id|
+            assessment.assessment_participations.create!(
+              user_id: user_id,
+              tutorial_id: tutorial_id,
+              status: :reviewed
+            )
+          end
+        end
+
+        puts "Created #{DEMO_ACHIEVEMENT_ATTRIBUTES.count} demo achievements."
+      end
+
+      def seed_demo_achievement_grades!(lecture)
+        demo_achievements(lecture).each do |achievement|
+          assessment = achievement.assessment
+          next unless assessment
+
+          seeded = 0
+          skipped = 0
+
+          assessment.assessment_participations.find_each do |participation|
+            if rand < 0.1
+              skipped += 1
+              next
+            end
+
+            participation.update!(
+              grade_text: demo_achievement_grade_text(
+                achievement,
+                student_quality(participation.user_id)
+              )
+            )
+            seeded += 1
+          end
+
+          puts "Seeded #{achievement.title}: #{seeded} graded, #{skipped} ungraded."
+        end
+      end
+
+      def compute_demo_performance_records!(lecture)
+        user_ids = TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture))
+                                     .distinct
+                                     .pluck(:user_id)
+        service = StudentPerformance::ComputationService.new(lecture: lecture)
+
+        User.where(id: user_ids).find_each do |user|
+          service.compute_and_upsert_record_for(user)
+        end
+
+        puts "Computed #{user_ids.count} demo performance records."
+      end
+
       def seed_task_points_for(assessment)
         return unless assessment&.requires_points?
 
@@ -637,6 +756,21 @@ module Demo
         puts ""
       end
 
+      def print_performance_summary(lecture)
+        puts "Performance Summary"
+
+        demo_achievements(lecture).each do |achievement|
+          participations = achievement.assessment.assessment_participations
+          graded = participations.where.not(grade_text: [nil, ""]).count
+          ungraded = participations.where(grade_text: [nil, ""]).count
+
+          puts "#{achievement.title}: #{graded} graded, #{ungraded} ungraded"
+        end
+
+        puts "Records: #{lecture.student_performance_records.count}"
+        puts ""
+      end
+
       def demo_seminar_talks(seminar)
         seminar.talks.where(title: SEMINAR_TALK_TITLES).order(:position)
       end
@@ -693,6 +827,18 @@ module Demo
           rand(0.80..0.95)
         when :occasional
           rand(0.55..0.75)
+        end
+      end
+
+      def demo_achievement_grade_text(achievement, quality)
+        case achievement.value_type
+        when "boolean"
+          quality > 0.5 ? "pass" : "fail"
+        when "numeric"
+          max = (achievement.threshold * 1.5).ceil
+          (quality * max).round.to_s
+        when "percentage"
+          (quality * 100).round(1).to_s
         end
       end
   end

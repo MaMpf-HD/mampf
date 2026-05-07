@@ -14,7 +14,12 @@ namespace :demo do
     Demo::SetupSupport.setup_assessment!
   end
 
-  desc "Create rosters and assessment demo data in one pass"
+  desc "Create demo achievements and performance records"
+  task performance: :environment do
+    Demo::SetupSupport.setup_performance!
+  end
+
+  desc "Create rosters, assessment, and performance demo data in one pass"
   task setup: :environment do
     Demo::SetupSupport.setup!
   end
