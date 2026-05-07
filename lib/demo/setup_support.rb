@@ -73,6 +73,7 @@ module Demo
         seed_demo_participations!(lecture)
         randomize_demo_statuses!(lecture)
         seed_demo_task_points!(lecture)
+        seed_demo_talk_grades!
         print_assessment_summary(lecture)
       end
       puts "=== Demo Assessment Setup Complete ==="
@@ -511,6 +512,39 @@ module Demo
         puts "Seeded task points for reviewed demo participations."
       end
 
+      def seed_demo_talk_grades!
+        seminar = seminar!
+        graded_count = 0
+        skipped_count = 0
+        german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+
+        demo_seminar_talks(seminar).includes(:speakers).each do |talk|
+          talk.ensure_gradebook!
+          assessment = talk.assessment
+
+          if talk.speakers.empty?
+            skipped_count += 1
+            next
+          end
+
+          assessment.assessment_participations.delete_all
+
+          talk.speakers.each do |speaker|
+            assessment.assessment_participations.create!(
+              user: speaker,
+              status: :reviewed,
+              grade_numeric: german_grades.sample,
+              graded_at: Time.current - rand(1..72).hours,
+              grader: seminar.teacher
+            )
+            graded_count += 1
+          end
+        end
+
+        puts "Seeded grades for #{graded_count} demo seminar talk participations " \
+             "(#{skipped_count} talks without speakers)."
+      end
+
       def seed_task_points_for(assessment)
         return unless assessment&.requires_points?
 
@@ -585,6 +619,26 @@ module Demo
         end
 
         puts ""
+
+        seminar = Lecture.find_by(course: Course.find_by(title: SEMINAR_COURSE_TITLE))
+        return unless seminar
+
+        demo_seminar_talks(seminar).each do |talk|
+          next unless talk.assessment
+
+          grades = talk.assessment.assessment_participations
+                       .where.not(grade_numeric: nil)
+                       .pluck(:grade_numeric)
+          next if grades.empty?
+
+          puts "#{talk.title}: #{grades.join(", ")}"
+        end
+
+        puts ""
+      end
+
+      def demo_seminar_talks(seminar)
+        seminar.talks.where(title: SEMINAR_TALK_TITLES).order(:position)
       end
 
       def with_quiet_logging
