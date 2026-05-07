@@ -48,7 +48,7 @@ RUN ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         bzip2 ca-certificates curl ffmpeg ghostscript git graphviz gzip \
-        imagemagick libarchive-tools libvips42 lsof pdftk shared-mime-info \
+        imagemagick libarchive-tools libvips42 lsof openssh-client pdftk shared-mime-info \
         sudo tar unzip wait-for-it wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
