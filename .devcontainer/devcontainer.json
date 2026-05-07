@@ -25,7 +25,9 @@
         "ghcr.io/devcontainers/features/github-cli:1": {
             "version": "latest"
         },
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false
+        },
         "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
         "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
         "ghcr.io/devcontainers/features/desktop-lite:1": {
