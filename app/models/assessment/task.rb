@@ -48,12 +48,13 @@ module Assessment
       end
 
       def recompute_all_performance_records
-        lecture = assessment&.lecture
-        return unless lecture && Flipper.enabled?(:student_performance)
-        return if StudentPerformance::Record.where(lecture_id: lecture.id).none?
+        return unless assessment&.lecture_id
+        return unless Flipper.enabled?(:assessment_grading)
+        return if StudentPerformance::Record
+                  .where(lecture_id: assessment.lecture_id).none?
 
         StudentPerformance::ComputationService
-          .new(lecture: lecture)
+          .new(lecture: assessment.lecture)
           .compute_and_upsert_all_records!
       end
   end

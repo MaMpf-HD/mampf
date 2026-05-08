@@ -12,13 +12,18 @@ module Assessment
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
 
-    after_commit :sync_participation_points_total,
-                 on: [:create, :update, :destroy],
-                 if: :refresh_participation_points_total?
+    after_commit :refresh_participation_points_total, on: :destroy
+    after_commit :recompute_performance_record, on: :destroy
+    after_commit :refresh_participation_points_total,
+                 on: [:create, :update],
+                 if: :saved_change_to_points?
+    after_commit :recompute_performance_record,
+                 on: [:create, :update],
+                 if: :saved_change_to_points?
 
     private
 
-      def sync_participation_points_total
+      def refresh_participation_points_total
         return unless assessment_participation_id
 
         sum = self.class
@@ -26,23 +31,19 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
-
-        participation = ::Assessment::Participation.find_by(
-          id: assessment_participation_id
-        )
-        participation&.update!(points_total: sum)
-        recompute_performance_record(participation)
+        ::Assessment::Participation
+          .where(id: assessment_participation_id)
+          .update_all(points_total: sum)
       end
 
-      def refresh_participation_points_total?
-        destroyed? || saved_change_to_points?
-      end
-
-      def recompute_performance_record(participation)
-        return unless participation&.user
+      def recompute_performance_record
+        participation = ::Assessment::Participation
+                        .includes(:assessment, :user)
+                        .find_by(id: assessment_participation_id)
+        return unless participation
 
         lecture = participation.assessment&.lecture
-        return unless lecture && Flipper.enabled?(:student_performance)
+        return unless lecture && participation.user
 
         StudentPerformance::ComputationService
           .new(lecture: lecture)
