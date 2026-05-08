@@ -37,15 +37,15 @@ module Demo
       ensure_non_production!
       configure_feature_flags!(enabled: ROSTER_ENABLED_FLAGS)
 
-      puts "=== Demo Verification ==="
+      Rails.logger.debug("=== Demo Verification ===")
       LEGACY_TASK_GROUPS.each do |group|
         group.each do |task_name|
-          puts "Running #{task_name}..."
+          Rails.logger.debug { "Running #{task_name}..." }
           invoke_task(task_name)
-          puts ""
+          Rails.logger.debug("")
         end
       end
-      puts "=== Demo Verification Complete ==="
+      Rails.logger.debug("=== Demo Verification Complete ===")
     end
 
     def setup_rosters!
@@ -55,12 +55,12 @@ module Demo
         disabled: ROSTER_DISABLED_FLAGS
       )
 
-      puts "=== Demo Roster Setup ==="
+      Rails.logger.debug("=== Demo Roster Setup ===")
       with_quiet_logging do
         setup_lecture_rosters!
         setup_seminar_rosters!
       end
-      puts "=== Demo Roster Setup Complete ==="
+      Rails.logger.debug("=== Demo Roster Setup Complete ===")
     end
 
     def setup_assessment!
@@ -75,7 +75,7 @@ module Demo
         lecture = assessment_lecture!
       end
 
-      puts "=== Demo Assessment Setup ==="
+      Rails.logger.debug("=== Demo Assessment Setup ===")
       with_quiet_logging do
         reset_demo_assignments!(lecture)
         create_demo_assignments!(lecture)
@@ -86,7 +86,7 @@ module Demo
         seed_demo_talk_grades!
         print_assessment_summary(lecture)
       end
-      puts "=== Demo Assessment Setup Complete ==="
+      Rails.logger.debug("=== Demo Assessment Setup Complete ===")
     end
 
     def setup_performance!
@@ -117,9 +117,11 @@ module Demo
 
     def assessment_lecture!
       lecture = lecture!
-      return lecture if TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture)).exists?
+      return lecture if TutorialMembership.exists?(tutorial_id: demo_tutorial_ids(lecture))
 
+      # rubocop:disable Rails/Exit
       abort("Lecture 1 has no tutorial roster. Run demo:rosters first.")
+      # rubocop:enable Rails/Exit
     end
 
     def performance_lecture!
@@ -131,26 +133,28 @@ module Demo
 
     private
 
+      # rubocop:disable Rails/Exit
       def ensure_non_production!
         abort("Cannot run in production!") if Rails.env.production?
       end
+      # rubocop:enable Rails/Exit
 
       def configure_feature_flags!(enabled:, disabled: [])
-        puts "Configuring feature flags..."
+        Rails.logger.debug("Configuring feature flags...")
         with_quiet_logging do
           enabled.each do |flag|
             ensure_feature_exists!(flag)
             Flipper.enable(flag)
-            puts "  ✓ enabled #{flag}"
+            Rails.logger.debug { "  ✓ enabled #{flag}" }
           end
 
           disabled.each do |flag|
             ensure_feature_exists!(flag)
             Flipper.disable(flag)
-            puts "  ✓ disabled #{flag}"
+            Rails.logger.debug { "  ✓ disabled #{flag}" }
           end
         end
-        puts ""
+        Rails.logger.debug("")
       end
 
       def ensure_feature_exists!(flag)
@@ -165,7 +169,9 @@ module Demo
 
       def lecture!
         lecture = Lecture.find_by(id: 1)
+        # rubocop:disable Rails/Exit
         abort("Lecture 1 not found. Run just seed first.") unless lecture
+        # rubocop:enable Rails/Exit
 
         teacher = teacher!
         lecture.update!(teacher: teacher) if lecture.teacher != teacher
@@ -174,7 +180,9 @@ module Demo
 
       def teacher!
         teacher = User.find_by(email: "teacher@mampf.edu")
+        # rubocop:disable Rails/Exit
         abort("User teacher@mampf.edu not found. Run just seed first.") unless teacher
+        # rubocop:enable Rails/Exit
 
         teacher
       end
@@ -183,7 +191,8 @@ module Demo
         lecture = lecture!
         reset_lecture_rosters!(lecture)
 
-        tutorials = LECTURE_TUTORIAL_TITLES.zip(LECTURE_TUTORIAL_CAPACITIES).map do |title, capacity|
+        tutorials = LECTURE_TUTORIAL_TITLES.zip(LECTURE_TUTORIAL_CAPACITIES)
+                                           .map do |title, capacity|
           tutorial = Tutorial.find_or_initialize_by(lecture: lecture, title: title)
           tutorial.capacity = capacity
           tutorial.skip_campaigns = false if tutorial.respond_to?(:skip_campaigns=)
@@ -217,8 +226,10 @@ module Demo
         campaign.finalize!
 
         memberships = TutorialMembership.where(tutorial_id: tutorials.map(&:id)).count
-        puts "Lecture roster ready: #{memberships} tutorial memberships across 4 tutorials."
-        puts ""
+        Rails.logger.debug do
+          "Lecture roster ready: #{memberships} tutorial memberships across 4 tutorials."
+        end
+        Rails.logger.debug("")
       end
 
       def setup_seminar_rosters!
@@ -266,10 +277,12 @@ module Demo
         Registration::AllocationService.new(campaign).allocate!
         campaign.finalize!
 
-        puts "Seminar roster ready: #{campaign.confirmed_count} allocated, " \
-             "#{campaign.unassigned_users.count} unassigned, " \
-             "#{campaign.rejected_users.count} rejected."
-        puts ""
+        Rails.logger.debug do
+          "Seminar roster ready: #{campaign.confirmed_count} allocated, " \
+            "#{campaign.unassigned_users.count} unassigned, " \
+            "#{campaign.rejected_users.count} rejected."
+        end
+        Rails.logger.debug("")
       end
 
       def seminar!
@@ -310,10 +323,12 @@ module Demo
       def destroy_campaign!(campaign)
         return unless campaign
 
+        # rubocop:disable Rails/SkipsModelValidations
         campaign.update_columns(
           status: Registration::Campaign.statuses[:draft],
           updated_at: Time.current
         )
+        # rubocop:enable Rails/SkipsModelValidations
         campaign.destroy!
       end
 
@@ -336,7 +351,7 @@ module Demo
       end
 
       def build_users(prefix:, count:, domain:, name_prefix:)
-        count.times.map do |i|
+        Array.new(count) do |i|
           email = "#{prefix}_#{i}@#{domain}"
           User.find_by(email: email) || FactoryBot.create(
             :confirmed_user,
@@ -400,7 +415,7 @@ module Demo
       end
 
       def demo_assignment_titles
-        demo_assignment_attributes.map { |attrs| attrs[:title] }
+        demo_assignment_attributes.pluck(:title)
       end
 
       def demo_achievement_titles
@@ -435,7 +450,7 @@ module Demo
           destroyed += 1
         end
 
-        puts "Reset #{destroyed} demo assignments."
+        Rails.logger.debug { "Reset #{destroyed} demo assignments." }
       end
 
       def reset_demo_performance!(lecture)
@@ -455,11 +470,13 @@ module Demo
             deadline: 1.year.from_now,
             accepted_file_type: ".pdf"
           )
+          # rubocop:disable Rails/SkipsModelValidations
           assignment.update_column(:deadline, attrs[:deadline])
+          # rubocop:enable Rails/SkipsModelValidations
           created += 1
         end
 
-        puts "Created #{created} demo assignments for #{lecture.title}."
+        Rails.logger.debug { "Created #{created} demo assignments for #{lecture.title}." }
       end
 
       def create_demo_tasks!(lecture)
@@ -476,7 +493,9 @@ module Demo
           end
         end
 
-        puts "Created tasks for #{demo_assignments(lecture).count} demo assignments."
+        Rails.logger.debug do
+          "Created tasks for #{demo_assignments(lecture).count} demo assignments."
+        end
       end
 
       def seed_demo_participations!(lecture)
@@ -496,7 +515,7 @@ module Demo
           end
         end
 
-        puts "Seeded participations from lecture 1 tutorial memberships."
+        Rails.logger.debug("Seeded participations from lecture 1 tutorial memberships.")
       end
 
       def randomize_demo_statuses!(lecture)
@@ -555,7 +574,7 @@ module Demo
           end
         end
 
-        puts "Randomized participation statuses for lecture 1 demo assignments."
+        Rails.logger.debug("Randomized participation statuses for lecture 1 demo assignments.")
       end
 
       def seed_demo_task_points!(lecture)
@@ -563,7 +582,7 @@ module Demo
           seed_task_points_for(assignment.assessment)
         end
 
-        puts "Seeded task points for reviewed demo participations."
+        Rails.logger.debug("Seeded task points for reviewed demo participations.")
       end
 
       def seed_demo_talk_grades!
@@ -572,7 +591,7 @@ module Demo
         skipped_count = 0
         german_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
 
-        demo_seminar_talks(seminar).includes(:speakers).each do |talk|
+        demo_seminar_talks(seminar).includes(:speakers).find_each do |talk|
           talk.ensure_gradebook!
           assessment = talk.assessment
 
@@ -595,8 +614,10 @@ module Demo
           end
         end
 
-        puts "Seeded grades for #{graded_count} demo seminar talk participations " \
-             "(#{skipped_count} talks without speakers)."
+        Rails.logger.debug do
+          "Seeded grades for #{graded_count} demo seminar talk participations " \
+            "(#{skipped_count} talks without speakers)."
+        end
       end
 
       def create_demo_achievements!(lecture)
@@ -677,8 +698,10 @@ module Demo
         Assessment::TaskPoint.where(
           assessment_participation_id: participation_ids
         ).delete_all
+        # rubocop:disable Rails/SkipsModelValidations
         assessment.assessment_participations.where.not(points_total: nil)
                   .update_all(points_total: nil)
+        # rubocop:enable Rails/SkipsModelValidations
 
         gradeable = assessment.assessment_participations
                               .where(status: :reviewed)
@@ -707,8 +730,11 @@ module Demo
       end
 
       def print_assessment_summary(lecture)
-        puts "Assessment Summary"
-        puts "Assessment                           Revwd   Pendng   No-sub   Absent   Exempt   Points"
+        Rails.logger.debug("Assessment Summary")
+        Rails.logger.debug do
+          "Assessment                           " \
+            "Revwd   Pendng   No-sub   Absent   Exempt   Points"
+        end
 
         demo_assignments(lecture).each do |assignment|
           assessment = assignment.assessment
@@ -725,19 +751,19 @@ module Demo
                    .where(assessment_participation_id: participations.select(:id))
                    .select(:assessment_participation_id).distinct.count
 
-          puts format(
-            "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<pt>s",
-            name: assignment.title.truncate(35),
-            r: reviewed,
-            p: pending_sub,
-            ns: pending_nosub,
-            a: absent,
-            e: exempt,
-            pt: points
-          )
+          Rails.logger.debug(format(
+                               "%-35<name>s %8<r>s %8<p>s %8<ns>s %8<a>s %8<e>s %8<pt>s",
+                               name: assignment.title.truncate(35),
+                               r: reviewed,
+                               p: pending_sub,
+                               ns: pending_nosub,
+                               a: absent,
+                               e: exempt,
+                               pt: points
+                             ))
         end
 
-        puts ""
+        Rails.logger.debug("")
 
         seminar = Lecture.find_by(course: Course.find_by(title: SEMINAR_COURSE_TITLE))
         return unless seminar
@@ -750,10 +776,10 @@ module Demo
                        .pluck(:grade_numeric)
           next if grades.empty?
 
-          puts "#{talk.title}: #{grades.join(", ")}"
+          Rails.logger.debug { "#{talk.title}: #{grades.join(", ")}" }
         end
 
-        puts ""
+        Rails.logger.debug("")
       end
 
       def print_performance_summary(lecture)
