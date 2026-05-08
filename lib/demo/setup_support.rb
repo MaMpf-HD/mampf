@@ -98,7 +98,7 @@ module Demo
         lecture = performance_lecture!
       end
 
-      puts "=== Demo Performance Setup ==="
+      Rails.logger.debug("=== Demo Performance Setup ===")
       with_quiet_logging do
         reset_demo_performance!(lecture)
         create_demo_achievements!(lecture)
@@ -106,7 +106,7 @@ module Demo
         compute_demo_performance_records!(lecture)
         print_performance_summary(lecture)
       end
-      puts "=== Demo Performance Setup Complete ==="
+      Rails.logger.debug("=== Demo Performance Setup Complete ===")
     end
 
     def setup!
@@ -128,7 +128,9 @@ module Demo
       lecture = assessment_lecture!
       return lecture if demo_assignments(lecture).exists?
 
+      # rubocop:disable Rails/Exit
       abort("Lecture 1 has no demo assignments. Run demo:assessment first.")
+      # rubocop:enable Rails/Exit
     end
 
     private
@@ -419,7 +421,7 @@ module Demo
       end
 
       def demo_achievement_titles
-        DEMO_ACHIEVEMENT_ATTRIBUTES.map { |attrs| attrs[:title] }
+        DEMO_ACHIEVEMENT_ATTRIBUTES.pluck(:title)
       end
 
       def demo_assignments(lecture)
@@ -458,7 +460,7 @@ module Demo
 
         demo_achievements(lecture).find_each(&:destroy!)
 
-        puts "Reset demo achievements and performance records."
+        Rails.logger.debug("Reset demo achievements and performance records.")
       end
 
       def create_demo_assignments!(lecture)
@@ -642,7 +644,7 @@ module Demo
           end
         end
 
-        puts "Created #{DEMO_ACHIEVEMENT_ATTRIBUTES.count} demo achievements."
+        Rails.logger.debug { "Created #{DEMO_ACHIEVEMENT_ATTRIBUTES.count} demo achievements." }
       end
 
       def seed_demo_achievement_grades!(lecture)
@@ -668,7 +670,9 @@ module Demo
             seeded += 1
           end
 
-          puts "Seeded #{achievement.title}: #{seeded} graded, #{skipped} ungraded."
+          Rails.logger.debug do
+            "Seeded #{achievement.title}: #{seeded} graded, #{skipped} ungraded."
+          end
         end
       end
 
@@ -682,7 +686,7 @@ module Demo
           service.compute_and_upsert_record_for(user)
         end
 
-        puts "Computed #{user_ids.count} demo performance records."
+        Rails.logger.debug { "Computed #{user_ids.count} demo performance records." }
       end
 
       def seed_task_points_for(assessment)
@@ -783,18 +787,18 @@ module Demo
       end
 
       def print_performance_summary(lecture)
-        puts "Performance Summary"
+        Rails.logger.debug("Performance Summary")
 
         demo_achievements(lecture).each do |achievement|
           participations = achievement.assessment.assessment_participations
           graded = participations.where.not(grade_text: [nil, ""]).count
           ungraded = participations.where(grade_text: [nil, ""]).count
 
-          puts "#{achievement.title}: #{graded} graded, #{ungraded} ungraded"
+          Rails.logger.debug { "#{achievement.title}: #{graded} graded, #{ungraded} ungraded" }
         end
 
-        puts "Records: #{lecture.student_performance_records.count}"
-        puts ""
+        Rails.logger.debug { "Records: #{lecture.student_performance_records.count}" }
+        Rails.logger.debug("")
       end
 
       def demo_seminar_talks(seminar)
