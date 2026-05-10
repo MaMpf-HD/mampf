@@ -253,7 +253,6 @@ class SubmissionsController < ApplicationController
       lecture = assignment&.lecture
 
       if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
-
         permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
       end
       permitted

@@ -73,7 +73,7 @@ class Tutorial < ApplicationRecord
   def rosterized?
     tutorial_memberships.exists? ||
       in_campaign? ||
-      self_materialization_mode_enabled?
+      (!self_materialization_mode.nil? && self_materialization_mode != "disabled")
   end
 
   private

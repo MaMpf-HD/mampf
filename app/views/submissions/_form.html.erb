@@ -8,13 +8,13 @@
         <!-- if roster maintenance is enabled and current lecture has rosterized tutorials, retrieve data automatically-->
         <% if Flipper.enabled?(:roster_maintenance) && lecture.has_rosterized_tutorials? %>
           <% if current_user.tutorial_rosterized(lecture) %>
-            <p class="form-control-plaintext">
+            <p>
               <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
             </p>
           <% else %>
           <!-- if not, require student to enroll first-->
-            <p class="form-control-plaintext">
-              <%= t('assessment.submission.enroll_first') %>
+            <p>
+              <%= t('submission.enroll_first') %>
             </p>
           <% end %>
         <% else %>
