@@ -3,10 +3,6 @@
 # clean up from previous error messages
 $('#submission-tutorial-error').empty()
 # display error message
-<% if @errors[:tutorial].present? %>
-$('#submission-tutorial-error')
-  .append('<%= @errors[:tutorial].join(" ") %>').show()
-<% end %>
 <% if @errors[:manuscript].present? %>
 alert('<%= @errors[:manuscript].join(" ") %>')
 <% end %>

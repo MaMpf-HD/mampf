@@ -70,6 +70,12 @@ class Tutorial < ApplicationRecord
     end
   end
 
+  def rosterized?
+    tutorial_memberships.exists? ||
+      in_campaign? ||
+      self_materialization_mode_enabled?
+  end
+
   private
 
     def enforce_lecture_uniqueness!(user_ids)

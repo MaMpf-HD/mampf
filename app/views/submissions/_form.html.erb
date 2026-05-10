@@ -5,7 +5,21 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <%= f.select :tutorial_id,
+        <!-- if roster maintenance is enabled and current lecture has rosterized tutorials, retrieve data automatically-->
+        <% if Flipper.enabled?(:roster_maintenance) && lecture.has_rosterized_tutorials? %>
+          <% if current_user.tutorial_rosterized(lecture) %>
+            <p class="form-control-plaintext">
+              <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
+            </p>
+          <% else %>
+          <!-- if not, require student to enroll first-->
+            <p class="form-control-plaintext">
+              <%= t('assessment.submission.enroll_first') %>
+            </p>
+          <% end %>
+        <% else %>
+        <!-- if roster maintenance is not enabled or current lecture does not have rosterized tutorials, enable manual selection of tutorial -->
+          <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
                                           submission
@@ -13,6 +27,7 @@
                                            &.id),
                      {},
                      {} %>
+        <% end %>
         <div class="invalid-feedback"
              id="submission-tutorial-error">
         </div>
@@ -81,12 +96,12 @@
         <div class="col-12 submission-initially-hidden"
              id="file-size-correct">
           <i class="fas fa-check"></i>
-            <%=t('submission.correct_file_size')%>
+            <%= t('submission.correct_file_size') %>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="multiple-files-selected">
           <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.multiple_files_selected')%>
+          <%= t('submission.multiple_files_selected') %>
           <div class="col-12"
              id="files-display">
         </div>
@@ -95,31 +110,31 @@
         <div class="col-12 submission-initially-hidden"
              id="file-size-too-big">
           <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.file_size_too_big')%>
+          <%= t('submission.file_size_too_big') %>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="file-size-way-too-big">
           <i class="fas fa-bomb"></i>
-          <%=t('submission.file_size_way_too_big')%>
+          <%= t('submission.file_size_way_too_big') %>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="files-merge">
           <small id="merging-help-text">
-            <%= t("submission.merging_help_html")%>
-            <%= helpdesk(t('submission.merging_info'), true)%>
+            <%= t("submission.merging_help_html") %>
+            <%= helpdesk(t('submission.merging_info'), true) %>
           </small>
           <div class="col-12 my-1">
             <button id="userManuscript-merge-btn"
                     class="btn btn-sm btn-primary"
-                    data-tr-working="<%= t('submission.working')%>"
-                    data-tr-failed="<%= t('submission.merging_failed')%>"
+                    data-tr-working="<%= t('submission.working') %>"
+                    data-tr-failed="<%= t('submission.merging_failed') %>"
             >
               <%= t('submission.merge') %>
             </button>
           </div>
           <div class="col-12">
             <span id="log-merge-btn" class="badge text-dark lecture-tag clickable">
-              <%=t('submission.optimization_log')%>
+              <%= t('submission.optimization_log') %>
             </span>
             <div id="userManuscript-merge-log"
                  class="submission-initially-hidden border bg-light p-2">
@@ -129,21 +144,21 @@
         <div class="col-12 submission-initially-hidden"
              id="file-optimize">
           <small id="optimization-help-text">
-            <%= t("submission.optimization_help_html")%>
-            <%= helpdesk(t('submission.optimization_info'), true)%>
+            <%= t("submission.optimization_help_html") %>
+            <%= helpdesk(t('submission.optimization_info'), true) %>
           </small>
           <div class="col-12 my-1">
             <button id="userManuscript-optimize-btn"
                     class="btn btn-sm btn-primary"
-                    data-tr-working="<%= t('submission.working')%>"
-                    data-tr-failed="<%= t('submission.optimization_failed')%>"
+                    data-tr-working="<%= t('submission.working') %>"
+                    data-tr-failed="<%= t('submission.optimization_failed') %>"
             >
               <%= t('submission.optimize') %>
             </button>
           </div>
           <div class="col-12">
             <span id="log-btn" class="badge text-dark lecture-tag clickable">
-              <%=t('submission.optimization_log')%>
+              <%= t('submission.optimization_log') %>
             </span>
             <div id="userManuscript-optimize-log"
                  class="submission-initially-hidden border bg-light p-2">
@@ -163,30 +178,30 @@
             <button id="userManuscript-uploadButton-call"
                     data-cy="upload-user-submission"
                     data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-upload="<%=t('buttons.upload')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    data-tr-failure="<%= t('submission.upload_failure') %>"
+                    data-tr-upload="<%= t('buttons.upload') %>"
+                    data-tr-post-processing="<%= t('basics.post_processing') %>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent') %>"
                     class="btn btn-sm btn-outline-secondary"
-                    disabled=true>
+                    disabled>
               <%= t('buttons.upload') %>
             </button>
           </div>
           <div class="col-12">
             <small>
-              <%= t('submission.removal_notice_html')%>
+              <%= t('submission.removal_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-not-upload-notice">
-              <%= t('submission.submission_not_upload_notice_html')%>
+              <%= t('submission.submission_not_upload_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-upload-notice">
-              <%= t('submission.submission_upload_notice_html')%>
+              <%= t('submission.submission_upload_notice_html') %>
             </small>
           </div>
         </div>

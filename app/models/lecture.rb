@@ -867,6 +867,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  def has_rosterized_tutorials?
+    tutorials.any? { |t| t.rosterized? }
+  end
+
   private
 
     # used for after save callback
