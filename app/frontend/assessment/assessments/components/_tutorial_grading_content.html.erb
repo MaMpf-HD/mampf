@@ -1,4 +1,3 @@
-<!-- this equivalent to table file -->
 <% if stack.any? %>
   <div class="table-overflow">
     <table
@@ -15,23 +14,31 @@
             <!-- support point by task -->
             <% for assessment_task in assignment.assessment.tasks %>
               <th class="text-center sticky-col task-col">
-                Task <%= assessment_task.position %>
+                <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                 <br>
-                <small class="text-muted">(<%= assessment_task.max_points || 0 %> pts)</small>
+
+                <small class="text-muted">
+                  (<%= assessment_task.max_points || 0 %>
+                  <%= t('assessment.grading_tutorial.max_points') %>)
+                </small>
               </th>
             <% end %>
             <th class="text-center sticky-col total-col">
-              Total Points
+              <%= t('assessment.grading_tutorial.total_points') %>
               <br>
-              <small class="text-muted">(<%= assignment.assessment.tasks.map(&:max_points).compact.sum %> pts)</small>
+
+              <small class="text-muted">
+                (<%= assignment.assessment.tasks.map(&:max_points).compact.sum %>
+                <%= t('assessment.grading_tutorial.max_points') %>)
+              </small>
             </th>
             <th class="text-center sticky-col status-col">
-              Status
+              <%= t('assessment.grading_tutorial.status') %>
             </th>
           <% end %>
 
           <th class="text-center sticky-col action-col">
-            Actions
+            <%= t('assessment.grading_tutorial.actions') %>
           </th>
 
           <th class="text-center sticky-col correction-col">

@@ -24,7 +24,7 @@ module Assessment
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             "grading-table",
-            partial: "tutorials/table",
+            partial: "assessment/assessments/components/tutorial_grading_content",
             locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
           )
         end
