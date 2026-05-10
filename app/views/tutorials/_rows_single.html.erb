@@ -1,0 +1,10 @@
+<tr id="submission-row-<%= submission.id %>"
+    is="turbo-frame"
+    class="submission-row <%= submission_late_color(submission) %>"
+    data-id="<%= submission.id %>"
+    data-controller="submission-row"
+    data-submission-row-id="<%= submission.id %>"
+    data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean">
+      <%= render partial: "tutorials/submission_row",
+                 locals: { submission: submission, assignment: assignment} %>
+</tr>

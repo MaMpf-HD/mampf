@@ -1,4 +1,5 @@
 <% if @assignments.present? %>
+<div data-controller="submission-table">
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
@@ -7,12 +8,14 @@
                          stack: @stack } %>
     </div>
   </div>
-  <div id="tutorial-table">
-    <%= render partial: 'tutorials/table',
-               locals: { assignment: @assignment,
-                         tutorial: @tutorial,
-                         stack: @stack } %>
+  <div id="tutorial-table" class="m-3">
+    <%= render TutorialGradingTableComponent.new(
+      assignment: @assignment,
+      stack: @stack,
+      tutorial: @tutorial
+    ) %>
   </div>
+</div>
 <% else %>
   <div class="jumbotron">
     <%= t('assignment.nothing_yet_in_lecture') %>

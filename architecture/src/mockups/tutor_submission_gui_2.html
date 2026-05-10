@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Roster - Final Exam (Tutor View)</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+      rel="stylesheet" />
+
+  
+  <style>
+    .task-col {
+      width: 90px;
+      min-width: 80px;
+    }
+
+    .task-input-compact {
+      width: 70px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .row-dirty,
+    .row-dirty td {
+        background-color: bisque !important;
+    }
+
+    table.table tbody tr.row-dirty,
+    table.table tbody tr.row-dirty td {
+        background-color: bisque !important;
+    }
+
+    .action-icon:hover { transform: scale(1.2); cursor: pointer;}
+
+    .disabled-action {
+      pointer-events: none !important;
+      opacity: 0.35 !important;
+      filter: grayscale(100%);
+      cursor: default !important;
+    }
+
+  </style>
+    
+  </head>
+
+<body>
+<div class="container-fluid py-4 bg-light">
+
+  <div class="row justify-content-between">
+    <!-- Assignment Selector -->
+    <div class="col-md-4 m-3">
+      <h5 class="form-label fw-semibold mb-1">Assignment</h5>
+      <select class="form-select form-select-sm" id="assignmentSelect">
+        <option value="1">Assignment 1</option>
+        <option value="2">Assignment 2</option>
+        <option value="3">Assignment 3</option>
+      </select>
+    </div>
+
+    <!-- Tutor Info -->
+    <div class="col-md-4 m-3">
+      <h5 class="form-label fw-semibold mb-1">Your Tutorial Groups</h5>
+      <div>
+        <span>Tutorial A (Mon 10:00)</span>
+        <span>Tutorial B (Wed 14:00)</span>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="card">
+    <div class="card-body">
+      <div class="card border-0 mb-3">
+        <div class="card-body py-2">
+          <div class="row align-items-end justify-content-between">
+            <!-- Summary Info -->
+            <div class="col-md-4 m-3">
+              <h5 class="form-label fw-semibold mb-1">Overview</h5>
+              <div class="small text-muted">
+                24 Submissions • 18 Graded • 6 Pending
+              </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 justify-content-end m-3 w-auto">
+              <button class="btn btn-primary btn-sm">
+                <i class="bi bi-download me-1"
+                ></i>
+                Download All Submissions
+              </button>
+
+              <button class="btn btn-success btn-sm" 
+                      onclick="event.stopPropagation(); saveAllChanges()">
+                <i class="bi bi-save me-1"></i>
+                Save All Changes
+              </button>
+
+              <button class="btn btn-outline-secondary btn-sm" 
+                      onclick="event.stopPropagation(); reloadData()">
+                <i class="bi bi-arrow-clockwise me-1"></i>
+                Reload Data
+              </button>
+
+              <button class="btn btn-dark btn-sm">
+                <i class="bi bi-file-earmark-arrow-down me-1"></i>
+                Export Grades
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex">
+
+        <!-- LEFT SIDE: TABLE -->
+        <div class="flex-grow-1 p-3">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+
+              <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle mb-0">
+
+                  <thead id="submissionTableHead" class="table-light">
+                  </thead>
+
+                  <tbody id="submissionTableBody">
+                    <!-- Students will be populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  editedRows = new Set();
+  editedData = []
+  editableColumnMode = true;
+  originalData1 = [
+    { id: 12,
+      submission_group: "Alice Anderson",
+      participants: ["Alice Anderson", "Bob Brown"],
+      tutorial: "Tutorial A (Mon 10:00)",
+      status: "Graded",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: 9.5, comment: "Good work, but check your calculations." },
+        { name: "Task 2", totalPoints: 15, points: 14.0, comment: "Well done!" },
+        { name: "Task 3", totalPoints: 20, points: 18.5, comment: "Excellent solution, but you lost some points for not explaining your reasoning." },
+        { name: "Task 4", totalPoints: 15, points: 13.0, comment: "Correct answer, but you should have shown more steps." }
+      ]
+    },
+    { id: 13,
+      submission_group: "Charlie Clark",
+      participants: ["Charlie Clark"],
+      tutorial: "Tutorial A (Mon 10:00)",
+      status: "Submitted",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: null, comment: null },
+        { name: "Task 2", totalPoints: 15, points: null, comment: null },
+        { name: "Task 3", totalPoints: 20, points: null, comment: null },
+        { name: "Task 4", totalPoints: 15, points: null, comment: null }
+      ]
+    },
+    { id: 14,
+      submission_group: "Dana Davis",
+      participants: ["Dana Davis", "Eve Evans"],
+      tutorial: "Tutorial B (Wed 14:00)",
+      status: "Not Submitted",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: null, comment: null },
+        { name: "Task 2", totalPoints: 15, points: null, comment: null },
+        { name: "Task 3", totalPoints: 20, points: null, comment: null },
+        { name: "Task 4", totalPoints: 15, points: null, comment: null }
+      ]
+    }
+  ]
+
+  originalData2 = [
+    { id: 12,
+      submission_group: "Alice Anderson",
+      participants: ["Alice Anderson", "Bob Brown"],
+      tutorial: "Tutorial A (Mon 10:00)",
+      status: "Graded",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: 9.5, comment: "Good work, but check your calculations." },
+        { name: "Task 2", totalPoints: 15, points: 14.0, comment: "Well done!" },
+        { name: "Task 3", totalPoints: 20, points: 18.5, comment: "Excellent solution, but you lost some points for not explaining your reasoning." },
+        { name: "Task 4", totalPoints: 15, points: 13.0, comment: "Correct answer, but you should have shown more steps." },
+        { name: "Task 5", totalPoints: 10, points: 9.0, comment: "Good effort, but you missed some edge cases." },
+        { name: "Task 6", totalPoints: 5, points: 4.5, comment: "Nice try, but your code doesn't handle invalid input properly." },
+        { name: "Task 7", totalPoints: 10, points: 8.0, comment: "Your approach is correct, but your implementation has some bugs." },
+        { name: "Task 8", totalPoints: 10, points: 10.0, comment: "Perfect solution!" }
+      ]
+    },
+    { id: 13,
+      submission_group: "Charlie Clark",
+      participants: ["Charlie Clark"],
+      tutorial: "Tutorial A (Mon 10:00)",
+      status: "Submitted",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: null, comment: null },
+        { name: "Task 2", totalPoints: 15, points: null, comment: null },
+        { name: "Task 3", totalPoints: 20, points: null, comment: null },
+        { name: "Task 4", totalPoints: 15, points: null, comment: null },
+        { name: "Task 5", totalPoints: 10, points: null, comment: null },
+        { name: "Task 6", totalPoints: 5, points: null, comment: null },
+        { name: "Task 7", totalPoints: 10, points: null, comment: null },
+        { name: "Task 8", totalPoints: 10, points: null, comment: null }
+      ]
+    },
+    { id: 14,
+      submission_group: "Dana Davis",
+      participants: ["Dana Davis", "Eve Evans"],
+      tutorial: "Tutorial B (Wed 14:00)",
+      status: "Not Submitted",
+      tasks: [
+        { name: "Task 1", totalPoints: 10, points: null, comment: null },
+        { name: "Task 2", totalPoints: 15, points: null, comment: null },
+        { name: "Task 3", totalPoints: 20, points: null, comment: null },
+        { name: "Task 4", totalPoints: 15, points: null, comment: null },
+        { name: "Task 5", totalPoints: 10, points: null, comment: null },
+        { name: "Task 6", totalPoints: 5, points: null, comment: null },
+        { name: "Task 7", totalPoints: 10, points: null, comment: null },
+        { name: "Task 8", totalPoints: 10, points: null, comment: null }
+      ]
+    }
+  ]
+  originalData = originalData1;
+  initView();
+
+  const assignmentSelect = document.getElementById("assignmentSelect");
+
+  assignmentSelect.addEventListener("change", (event) => {
+    if (event.target.value === "1") {
+      originalData = originalData1;
+    } else if (event.target.value === "2") {
+      originalData = originalData2;
+    } else {
+      originalData = [];
+    }
+
+    initView();
+  });
+
+  function initView() {
+    renderTable();
+    refreshSummary();
+    if (editableColumnMode) attachEditListeners();
+  }
+
+  function refreshSummary() {
+    editedData = [];
+    editedRows = new Set();
+  }
+
+  function attachEditListeners() {
+    document.querySelectorAll(".grade-input").forEach(input => {
+
+      input.addEventListener("input", function () {
+        const row = this.closest("tr");
+        const id = row.dataset.id;
+
+        markRowAsEdited(id);
+      });
+
+    });
+  }
+  
+
+  function renderTable() {
+    const thead = document.getElementById("submissionTableHead");
+    const sampleRow = originalData[0];
+    if (!sampleRow) return;
+    if (sampleRow.tasks.length > 6) {
+      editableColumnMode = false;
+    } else {
+      editableColumnMode = true;
+    }
+    if (editableColumnMode) {
+      thead.innerHTML = `
+      <tr>
+        <th>Submission Group</th>
+        <th>Tutorial</th>
+        <th>Participants</th>
+        <th>Status</th>
+        ${sampleRow.tasks.map((t, index) => `
+          <th class="text-center task-col">
+            ${t.name}<br><small class="text-muted">(${t.totalPoints || 0} pts)</small>
+          </th>
+        `).join("")}
+        <th class="text-center">Total Points<br><small class="text-muted">(60 pts)</small></th>
+        <th class="text-center">Grade</th>
+        <th class="text-center">Actions</th>
+      </tr>`;
+    } else {
+      thead.innerHTML = `
+      <tr>
+        <th>Submission Group</th>
+        <th>Tutorial</th>
+        <th>Participants</th>
+        <th>Status</th>
+        <th class="text-center">Tasks<br><small class="text-muted">(${sampleRow.tasks.length} tasks hidden)</small></th>
+        <th class="text-center">Total Points<br><small class="text-muted">(60 pts)</small></th>
+        <th class="text-center">Grade</th>
+        <th class="text-center">Actions</th>
+      </tr>`;
+    }
+    
+    const tbody = document.getElementById("submissionTableBody");
+    tbody.innerHTML = "";
+    originalData.forEach(submission => {
+      const row = document.createElement("tr");
+      row.dataset.id = submission.id;
+      row.classList.add("row-clean");
+
+      let tasksHtml = "";
+      if (editableColumnMode) {
+        submission.tasks.forEach((t, index) => {
+        tasksHtml += `
+          <td class="text-center">
+            <input type="number" class="form-control form-control-sm grade-input task-input-compact" data-original="${t.points || ''}" value="${t.points || ''}">
+          </td>`;
+      });
+      } else {
+        tasksHtml = `<td class="text-center">Tasks hidden (too many to display), please use the panel to view and edit tasks.</td>`;
+      }
+      
+
+      row.innerHTML = `
+        <td>${submission.submission_group}</td>
+        <td>${submission.tutorial}</td>
+        <td>
+          <ul class="mb-0">
+            ${submission.participants.map(p => `<li>${p}</li>`).join("")}
+          </ul>
+        </td>
+        <td class="submission-status">
+          <span class="badge rounded-pill text-bg-${greenBadgeClass(submission.status)}">
+            ${submission.status}
+          </span>
+        </td>
+        ${tasksHtml}
+        <td class="text-center font-monospace"><strong class="total">${sum_scores(submission.tasks)}</strong></td>
+        <td class="text-center grade-status">
+          <span class="badge text-bg-${greenBadgeClass(submission.status)}">${submission.status === "Graded" ? get_points(submission.tasks, submission.status) : "N/A"}</span>
+        </td>
+        <td class="text-center">
+          <!-- Download -->
+          <span class="material-symbols-rounded text-primary me-2 action-icon download-icon"
+                title="Download submission"
+                onclick="event.stopPropagation(); downloadSubmissionRow(${submission.id})">
+            download
+          </span>
+
+          <!-- Edit -->
+          <span class="material-symbols-rounded text-dark me-2 action-icon"
+                title="Edit in panel"
+                onclick="event.stopPropagation(); openPanel(${submission.id})">
+            edit
+          </span>
+
+          <!-- Save -->
+          <span class="material-symbols-rounded text-dark me-2 action-icon save-icon"
+                title="Save changes"
+                onclick="event.stopPropagation(); saveCurrentFromTable(${submission.id})">
+            save
+          </span>
+
+          <!-- Reset -->
+          <span class="material-symbols-rounded text-dark action-icon reset-icon"
+                title="Reset changes"
+                onclick="event.stopPropagation(); resetCurrentFromTable(${submission.id})">
+            restart_alt
+          </span>
+
+        </td>
+
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function markRowAsEdited(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    console.log("testing", id);
+    if (!editedRows.has(parseInt(id))) {
+      editedRows.add(parseInt(id));
+      row.classList.add("row-dirty");
+    }
+  }
+
+  function sum_scores(tasks) {
+    let sum = 0;
+    tasks.forEach(t => {
+      sum += parseFloat(t.points) || 0;
+    });
+    return sum.toFixed(1);
+  }
+
+  function get_points(tasks, status) {
+    score = sum_scores(tasks);
+    if (status == "Graded") {
+      percent = (score / 60) * 100;
+      if (percent >= 90) return "1.0";
+      if (percent >= 80) return "1.3";
+      if (percent >= 70) return "1.7";
+      if (percent >= 60) return "2.0";
+      if (percent >= 50) return "2.3";
+      if (percent >= 40) return "2.7";
+      if (percent >= 30) return "3.0";
+      if (percent >= 20) return "3.3";
+      if (percent >= 10) return "3.7";
+      return "5.0";
+    } else {
+      return "N/A";
+    }
+    
+  }
+
+  function downloadSubmissionRow(id) {
+    alert(`Downloading submission for ID ${id}...`);
+  }
+
+  function saveRow(id, needToClosePanel = false) {
+    updateOriginalData(id);
+    renderRow(id);
+    removeTouchedFlag(id);
+    if (needToClosePanel) {
+      closePanel();
+    }
+  }
+
+  function resetRow(id, needToClosePanel = false) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const submissionData = originalData.find(s => s.id == id);
+    if (submissionData) {
+      renderRow(id);
+      removeTouchedFlag(id);
+      if (needToClosePanel) {
+        closePanel();
+      }
+    }
+  }
+
+  function removeTouchedFlag(id) {
+    editedData = editedData.filter(s => s.id !== parseInt(id));
+    editedRows.delete(parseInt(id));
+    row = document.querySelector(`tr[data-id="${id}"]`);
+    if (row) {
+      row.classList.remove("row-dirty");
+    }
+  }
+
+  function updateOriginalData(id) {
+    id = parseInt(id);
+    const dataNew = editedData.find(s => s.id == id)?.tasks;
+    const submissionData = originalData.find(s => s.id == id);
+    if (submissionData) {
+      let allGradded = true;
+      submissionData.tasks.forEach((task, index) => {
+        let newPoints = dataNew[index].score ? parseFloat(dataNew[index].score) : null;
+        task.points = newPoints;
+        if (isNaN(newPoints) || newPoints < 0) {
+          allGradded = false;
+        }
+        if (dataNew[index].commentTouched) {
+          task.comment = dataNew[index].comment;
+          task.commentTouched = false;
+        }
+      });
+      if (allGradded) {
+        submissionData.status = "Graded";
+      } else if (submissionData.status === "Graded") {
+        submissionData.status = "Submitted";
+      }
+    }
+  }
+
+  function greenBadgeClass(status) {
+    return status === "Submitted" || status === "Graded" ? "success" : "secondary";
+  }
+
+  function renderRow(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const submissionData = originalData.find(s => s.id == id);
+    console.log(submissionData);
+    if (submissionData) {
+      row.querySelectorAll(".grade-input").forEach((input, index) => {
+        input.value = submissionData.tasks[index].points || "";
+      });
+      row.querySelector(".total").textContent = sum_scores(submissionData.tasks);
+      row.querySelector(".submission-status .badge").textContent = submissionData.status;
+      let badge = row.querySelector(".submission-status .badge");
+      badge.classList.remove("text-bg-secondary", "text-bg-success", "text-bg-danger", "text-bg-warning");
+      badge.classList.add(`text-bg-${greenBadgeClass(submissionData.status)}`);
+      row.querySelector(".grade-status .badge").textContent = get_points(submissionData.tasks, submissionData.status);
+      badge = row.querySelector(".grade-status .badge");
+      badge.classList.remove("text-bg-secondary", "text-bg-success", "text-bg-danger", "text-bg-warning");
+      badge.classList.add(`text-bg-${greenBadgeClass(submissionData.status)}`);
+    }
+  }
+
+  function buildPanelContent(id) {
+    if (editedRows.has(parseInt(id))) {
+      extractDataFromRow(id)
+    }
+    const submissionOriginal = originalData.find(s => s.id == parseInt(id));
+    const submissionEdited = editedData.find(s => s.id == parseInt(id));
+    const currentTasks = []
+    if (submissionEdited) {
+      for (let task of submissionEdited.tasks) {
+        let originalTask = submissionOriginal.tasks[task.index];
+        if (originalTask) {
+          currentTasks.push({
+            name: originalTask.name,
+            points: task.score !== null ? parseFloat(task.score) : originalTask.points,
+            comment: task.commentTouched ? task.comment : originalTask.comment
+          });
+        }
+      }
+    }
+    const submission = submissionEdited ? {...submissionOriginal, tasks: currentTasks} : submissionOriginal;
+
+    let html = `
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <!-- Header -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Submission <span id="panelId" hidden>${id}</span></h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="closeCurrentFromPanel()">
+              Close
+            </button>
+          </div>
+
+          <!-- Tasks Container -->
+          <div id="panelTasks">
+    `;
+
+    submission.tasks.forEach((t, index) => {
+      html += `
+        <div class="row mb-3 align-items-start">
+          <div class="col-md-2 fw-semibold pt-1">
+            Task ${index + 1}
+          </div>
+          <div class="col-md-2">
+            <input type="number"
+                  class="form-control form-control-sm panel-score-input"
+                  data-index="${index}"
+                  value="${t.points || ''}"
+                  placeholder="Score">
+          </div>
+          <div class="col-md-8">
+            <textarea class="form-control form-control-sm panel-comment-input"
+                      data-index="${index}"
+                      rows="2"
+                      placeholder="Add comment…">${t.comment || ''}</textarea>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+          </div> <!-- /#panelTasks -->
+
+          <!-- Action Buttons -->
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-success btn-sm me-2" onclick="saveCurrentFromPanel()">
+              <i class="bi bi-save me-1"></i> Save
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="resetCurrentFromPanel()">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+            </button>
+          </div>
+        </div> <!-- /card-body -->
+      </div> <!-- /card -->
+    `;
+
+    return html;
+  }
+
+  // Right-side panel logic
+  function openPanel(id) {
+    // Remove existing open panel if any
+    const existingPanel = document.querySelector(".inline-panel-row");
+    if (existingPanel) closePanel();
+
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const colCount = row.children.length;
+
+    const panelRow = document.createElement("tr");
+    panelRow.id = "inline-panel-row";
+
+    panelRow.innerHTML = `
+      <td colspan="${colCount}" class="bg-light p-4">
+        ${buildPanelContent(id)}
+      </td>
+    `;
+
+    row.insertAdjacentElement("afterend", panelRow);
+    attachPanelListeners(panelRow, row, id);
+    disableButtonsWhilePanelOpen(id);
+  }
+
+  function disableButtonsWhilePanelOpen(id) {
+    document.querySelectorAll(`tr[data-id="${id}"] .action-icon`).forEach(btn => {
+      if (btn.classList.contains("download-icon")) return;
+      btn.classList.add("disabled-action");
+    });
+  }
+
+  function enableButtonsAfterPanelClose(id) {
+    document.querySelectorAll(`tr[data-id="${id}"] .action-icon`).forEach(btn => {
+      btn.classList.remove("disabled-action");
+    });
+  }
+
+  function attachPanelListeners(panelRow, mainRow, id) {
+    panelRow.addEventListener("input", (e) => {
+
+      if ( 
+        !e.target.classList.contains("panel-score-input") && 
+        !e.target.classList.contains("panel-comment-input") 
+      ) return;
+
+      if (e.target.classList.contains("panel-score-input")) {
+        const index = e.target.dataset.index;
+        const tableInputs = mainRow.querySelectorAll(".grade-input");
+
+        if (tableInputs[index]) {
+          tableInputs[index].value = e.target.value;
+        }
+      }
+
+      markRowAsEdited(id);
+    });
+
+  }
+
+  function closePanel() {
+    const panel = document.getElementById("inline-panel-row");
+    if (panel) {
+      const id = getIdFromPanel();
+      panel.remove();
+      enableButtonsAfterPanelClose(id);
+    }
+    
+  }
+
+  function saveCurrentFromPanel() {
+    let id = document.getElementById("panelId").textContent;
+    if (!id) return
+    id = parseInt(id)
+    if (editedRows.has(id)) {
+      extractDataFromPanel(id);
+      saveRow(id, true);
+    } else {
+      alert('No changes')
+    }
+  }
+
+  function closeCurrentFromPanel() {
+    const id = getIdFromPanel();
+    if (id && editedRows.has(parseInt(id))) {
+      extractDataFromPanel(id);
+    }
+    closePanel();
+  }
+
+  function resetCurrentFromPanel() {
+    const id = getIdFromPanel();
+    resetRow(id);
+  }
+
+  function getIdFromPanel() {
+    return document.getElementById("panelId").textContent;
+  }
+
+  function saveCurrentFromTable(id) {
+    extractDataFromRow(id);
+    saveRow(id);
+  }
+
+  function resetCurrentFromTable(id) {
+    resetRow(id);
+  }
+
+  function saveAllChanges() {
+    editedRows.forEach(id => {
+      extractDataFromRow(id);
+    });
+    editedData.forEach(s => {
+      saveRow(s.id);
+    });
+    alert("All changes saved!");
+  }
+
+  function reloadData() {
+    if (confirm("Are you sure you want to reload? All unsaved changes will be lost.")) {
+      editedData = [];
+      renderTable();
+      closePanel();
+    }
+  }
+
+  function extractDataFromRow(id) {
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const data = [...row.querySelectorAll(".grade-input")].map(i => i.value);
+    const tasks = [];
+    const edited = editedData.find(s => s.id === parseInt(id))
+    data.forEach((score, index) => {
+      console.log(edited)
+      if (!edited) {
+        tasks.push({
+          index: index,
+          score: parseFloat(score),
+          commentTouched: false
+        });
+      } else {
+        tasks.push({
+          index: index,
+          score: parseFloat(score),
+          commentTouched: true,
+          comment: edited.tasks[index].comment
+        });
+      }
+      
+    });
+    // prevent duplicates
+    editedData = editedData.filter(s => s.id !== parseInt(id));
+    editedData.push({
+      id: parseInt(id),
+      tasks: tasks
+    });
+    return tasks;
+  }
+
+  function extractDataFromPanel(id) {
+    const tasks = [];
+    const panel = document.getElementById("inline-panel-row");
+    const scoreInputs = panel.querySelectorAll(".panel-score-input");
+    scoreInputs.forEach(input => {
+      const index = input.dataset.index;
+
+      const textarea = panel.querySelector(
+        `.panel-comment-input[data-index="${index}"]`
+      );
+
+      tasks.push({
+        index: parseInt(index),
+        score: input.value === "" ? null : parseFloat(input.value),
+        comment: textarea ? textarea.value.trim() : "",
+        commentTouched: true
+      });
+    });
+
+    // prevent duplicates
+    editedData = editedData.filter(s => s.id !== parseInt(id));
+    editedData.push({
+      id: parseInt(id),
+      tasks: tasks
+    });
+    return tasks;
+  }
+</script>
+</body>
+</html>

@@ -18,7 +18,9 @@ class SubmissionAbility
       user.in?(submission.tutorial.tutors)
     end
 
-    can [:show_manuscript, :show_correction], Submission do |submission|
+    can [:show_manuscript, :show_correction,
+         :grade_submission, :grade_multi_submissions, :refresh_grade_submission],
+        Submission do |submission|
       user.in?(submission.users) || user.in?(submission.tutorial.tutors) ||
         user.in?(submission.tutorial.lecture.editors) ||
         user == submission.tutorial.lecture.teacher

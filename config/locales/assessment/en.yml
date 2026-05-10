@@ -24,6 +24,15 @@ en:
       not_submitted: 'not submitted'
       excluded_heading: 'Special Cases'
       reason: 'Reason'
+    grading_tutorial:
+      team: 'Team'
+      task: 'Task'
+      total_points: 'Total Points'
+      status: 'Status'
+      actions: 'Actions'
+      correction: 'Correction'
+      max_points: 'pts'
+      no_submissions: 'No submissions for this assignment.'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
     requires_submission: 'Requires digital submission'
@@ -134,6 +143,9 @@ en:
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
+  
+  submission:
+    enroll_first: 'You need to enroll in a tutorial first to submit to this assignment.'
 
   activerecord:
     errors:

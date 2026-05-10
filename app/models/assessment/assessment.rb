@@ -19,6 +19,10 @@ module Assessment
       results_published_at.present?
     end
 
+    def requires_grades?
+      assessable.is_a?(::Assessment::Gradable)
+    end
+
     validate :lecture_matches_assessable
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {})

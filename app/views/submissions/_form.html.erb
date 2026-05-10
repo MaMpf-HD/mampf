@@ -5,7 +5,21 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <%= f.select :tutorial_id,
+        <!-- if assessment grading is enabled and current assignment is assessable, retrieve data automatically-->
+        <% if Flipper.enabled?(:assessment_grading)%>
+          <%if assignment.assessable? %>
+            <p class="form-control-plaintext">
+              <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
+            </p>
+          <% else %>
+          <!-- if not assessable, require student to enroll first-->
+            <p class="form-control-plaintext">
+              <%= t('assessment.submission.enroll_first') %>
+            </p>
+          <% end %>
+        <% else %>
+        <!-- if assessment grading is not enabled, enable manual selection of tutorial -->
+          <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
                                           submission
@@ -13,9 +27,7 @@
                                            &.id),
                      {},
                      {} %>
-        <div class="invalid-feedback"
-             id="submission-tutorial-error">
-        </div>
+        <% end %>
         <%= f.hidden_field :lecture_id,
                            value: lecture.id %>
         <%= f.hidden_field :assignment_id,

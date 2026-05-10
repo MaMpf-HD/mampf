@@ -24,6 +24,15 @@ de:
       not_submitted: 'nicht abgegeben'
       excluded_heading: 'Sonderfälle'
       reason: 'Grund'
+    grading_tutorial:
+      team: 'Team'
+      task: 'Aufgabe'
+      total_points: 'Gesamtpunkte'
+      status: 'Status'
+      actions: 'Aktionen'
+      correction: 'Korrektur'
+      max_points: 'Pkt'
+      no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe erforderlich'
@@ -134,6 +143,9 @@ de:
       total: 'Gesamt'
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
+
+  submission:
+    enroll_first: 'Sie müssen sich zuerst in einem Tutorium anmelden, um zu dieser Hausaufgabe abgeben zu können.'
 
   activerecord:
     errors:

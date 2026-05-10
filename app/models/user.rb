@@ -660,6 +660,12 @@ class User < ApplicationRecord
     User.where(id: partner_ids - [id])
   end
 
+  def tutorial_rosterized(lecture)
+    tutorial_membership = tutorial_memberships.joins(:tutorial)
+                                              .find_by(tutorials: { lecture_id: lecture.id })
+    tutorial_membership&.tutorial
+  end
+
   def tutor?
     given_tutorials.any?
   end

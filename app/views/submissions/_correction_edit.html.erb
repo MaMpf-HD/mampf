@@ -1,0 +1,28 @@
+<%= form_with url: add_correction_path(submission),
+              scope: 'submission',
+              html: { multipart: true, class: 'correction-upload' } do |f| %>
+
+  <div class="row">
+    <div class="col-12">
+      <%= f.file_field :correction,
+            class: "form-control-file",
+            id: "upload-correction-#{submission.id}" %>
+    </div>
+  </div>
+
+  <input type="hidden"
+          id="upload-correction-hidden-<%= submission.id %>">
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+
+      <%= link_to t('buttons.cancel'),
+                  cancel_edit_correction_path(submission),
+                  class: 'btn btn-sm btn-secondary',
+                  data: { turbo_stream: true } %>
+    </div>
+  </div>
+
+<% end %>

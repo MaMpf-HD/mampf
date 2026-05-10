@@ -35,6 +35,10 @@ module Assessment
                         .pick(:tutorial_id)
     end
 
+    def recompute_points_total!
+      update!(points_total: task_points.sum(:points))
+    end
+
     private
 
       def assessment_must_be_gradable

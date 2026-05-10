@@ -1,7 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new]
+                                          :redeem_code, :join, :cancel_new, :grade_multi_submissions]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
@@ -41,6 +41,7 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    @submission.tutorial_id = tutorial_id_current_user
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
@@ -83,7 +84,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.update(submission_update_params)
+    @submission.tutorial_id = tutorial_id_current_user
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -196,33 +197,50 @@ class SubmissionsController < ApplicationController
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
+    @submission.assign_attributes(correction_params)
 
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    @errors = @submission.check_file_properties_any(
+      @submission.correction&.metadata,
+      :correction
+    )
+
+    if @errors.present?
+      return render partial: "submissions/correction_wrap",
+                    locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    send_correction_upload_email(@submission.users) if @submission.save
+
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def select_tutorial
@@ -233,23 +251,33 @@ class SubmissionsController < ApplicationController
   def cancel_action
   end
 
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
-  end
-
   def accept
     @submission.update(accepted: true)
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
   def reject
     @submission.update(accepted: false)
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   private
+
+    def tutorial_id_current_user
+      rosterized_enabled = Flipper.enabled?(:assessment_grading) && current_user.tutorial_rosterized(@submission.assignment.lecture)
+
+      if rosterized_enabled
+        current_user.tutorial_rosterized(@submission.assignment.lecture)&.id
+      else
+        params[:submission][:tutorial_id]
+      end
+    end
+
+    def correction_params
+      params.expect(submission: [:correction])
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])
@@ -263,12 +291,7 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.expect(submission: [:tutorial_id, :assignment_id])
-    end
-
-    # disallow modification of assignment
-    def submission_update_params
-      params.expect(submission: [:tutorial_id])
+      params.expect(submission: [:assignment_id])
     end
 
     # disallow modification of assignment
@@ -309,10 +332,6 @@ class SubmissionsController < ApplicationController
 
     def invitation_params
       params.expect(submission: [invitee_ids: []])
-    end
-
-    def correction_params
-      params.expect(submission: [:correction])
     end
 
     def move_params
