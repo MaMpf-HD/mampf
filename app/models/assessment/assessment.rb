@@ -32,6 +32,10 @@ module Assessment
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
 
+    def requires_grades?
+      assessable.is_a?(::Assessment::Gradable)
+    end
+
     def seed_participations_from!(user_ids:, tutorial_mapping: {})
       existing = assessment_participations.pluck(:user_id).to_set
       new_user_ids = user_ids.reject { |uid| existing.include?(uid) }
