@@ -1,0 +1,43 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "19090:9090"
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+
+  mimir:
+    image: grafana/mimir
+    volumes:
+      - ../monitoring/mimir.yml:/etc/mimir.yml
+      - mimir-data:/data
+    command: 
+      - "-config.file=/etc/mimir.yml"
+      - "-target=all"
+    ports:
+      - "9009:9009"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "2345:2345"
+    environment:
+      - GF_SERVER_HTTP_PORT=2345
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=mailcatcher:1025
+      - GF_SMTP_FROM_ADDRESS=alerting@mampf.local
+      - GF_SMTP_SKIP_VERIFY=true
+    restart: unless-stopped
+
+volumes:
+  mimir-data:

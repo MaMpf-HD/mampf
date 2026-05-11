@@ -1,0 +1,11 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: Mailcatcher
+      receivers:
+        - uid: my-email-receiver-1
+          type: email
+          settings:
+            addresses: admin@mampf.local
+          disableResolveMessage: false
+    

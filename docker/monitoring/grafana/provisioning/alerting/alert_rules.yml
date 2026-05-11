@@ -1,0 +1,100 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: 1-Minute-Checks
+    folder: Mampf Dashboards
+    interval: 1m # how often to check
+    rules:
+      # CPU Alert
+      - uid: ffebjjkz7c6pse
+        title: CPU in % of Puma Processes
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: mimir
+            model:
+              datasource:
+                type: prometheus
+                uid: mimir
+              expr: sum by (job, role) (ruby_puma_process_cpu_percent)
+              instant: true
+              refId: A
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [80] # limit
+                    type: gte
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: Alerting
+        execErrState: Error
+        for: 1m # time the condition should be true before alerting
+        annotations:
+          summary: 'MaMpf Puma Process: CPU usage is at {{ $values.A.Value }}%'
+          description: 'Warning: The CPU usage is currently at {{ $values.A.Value }}%, which exceeds the configured threshold of 80%. (If there is no usage then the prometheus exporter is not sending any data which leads to this alert.)'
+        notification_settings:
+          receiver: Mailcatcher
+
+      # RAM Alert
+      - uid: mampf_puma_ram_alert
+        title: RAM in % of Puma Processes
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: mimir
+            model:
+              datasource:
+                type: prometheus
+                uid: mimir
+              expr: sum by (job, role) (ruby_puma_process_ram_percent)
+              instant: true
+              refId: A
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: [80]
+                    type: gte
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              refId: C
+              type: threshold
+        noDataState: Alerting
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: 'MaMpf Puma Process: High RAM usage ({{ $values.A.Value }}%)'
+          description: 'Warning: The RAM usage of the Puma process is at {{ $values.A.Value }}%, which exceeds the limit of 80%. (If there is no usage then the prometheus exporter is not sending any data which leads to this alert.)'
+        notification_settings:
+          receiver: Mailcatcher
