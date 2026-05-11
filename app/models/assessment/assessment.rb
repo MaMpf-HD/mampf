@@ -36,8 +36,14 @@ module Assessment
              if: -> { requires_submission_changed? }
 
     after_commit :recompute_all_performance_records,
-                 on: [:destroy, :update],
-                 if: :should_recompute_performance_records?
+                 on: :destroy,
+                 if: -> { assessable_type == "Assignment" }
+    after_commit :recompute_all_performance_records,
+                 on: :update,
+                 if: lambda {
+                   assessable_type == "Assignment" &&
+                     saved_change_to_total_points?
+                 }
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {})
       existing = assessment_participations.pluck(:user_id).to_set
@@ -83,12 +89,6 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
-      end
-
-      def should_recompute_performance_records?
-        return false unless assessable_type == "Assignment"
-
-        destroyed? || saved_change_to_total_points?
       end
 
       def recompute_all_performance_records

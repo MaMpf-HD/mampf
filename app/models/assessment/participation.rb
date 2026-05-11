@@ -50,13 +50,6 @@ module Assessment
 
     private
 
-      def assessment_must_be_gradable
-        return unless assessment&.assessable
-        return if assessment.assessable.is_a?(::Assessment::Gradable)
-
-        errors.add(:grade_numeric, :not_gradable)
-      end
-
       def should_recompute_performance_record?
         achievement_grade_text_changed? ||
           saved_change_to_status? ||
@@ -69,11 +62,11 @@ module Assessment
       end
 
       def recompute_performance_record
-        lecture = assessment&.lecture
-        return unless lecture && Flipper.enabled?(:student_performance)
+        lecture_id = assessment&.lecture_id
+        return unless lecture_id
 
         StudentPerformance::ComputationService
-          .new(lecture: lecture)
+          .new(lecture: assessment.lecture)
           .compute_and_upsert_record_for(user)
       end
 

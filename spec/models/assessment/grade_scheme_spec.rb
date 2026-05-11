@@ -213,6 +213,14 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         expect(scheme.errors[:assessment]).to be_present
       end
 
+      it "is invalid when assessable is only Gradable (Talk)" do
+        talk_assessment = FactoryBot.create(:assessment, :gradable)
+        scheme = FactoryBot.build(:assessment_grade_scheme,
+                                  assessment: talk_assessment)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:assessment]).to be_present
+      end
+
       it "is valid when assessable is both Pointable and Gradable (Exam)" do
         exam_assessment = FactoryBot.create(:assessment, :for_exam)
         scheme = FactoryBot.build(:assessment_grade_scheme,

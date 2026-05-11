@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -530,6 +530,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0, null: false
     t.date "submission_deletion_date", null: false
+    t.boolean "uses_exam_eligibility", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -844,10 +845,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
     t.decimal "points_max_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: []
-    t.jsonb "achievements_ungraded_ids", default: []
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "achievements_ungraded_ids", default: []
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
   end
@@ -1484,6 +1485,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
   add_foreign_key "exam_roster_entries", "exams"
+  add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "exam_roster_entries", "users"
+  add_foreign_key "exams", "lectures"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
@@ -1512,10 +1516,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_performance_certifications", "lectures"
   add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_certifications", "users"
+  add_foreign_key "student_performance_certifications", "users", column: "certified_by_id"
   add_foreign_key "student_performance_records", "lectures"
   add_foreign_key "student_performance_records", "users"
+  add_foreign_key "student_performance_rule_achievements", "achievements", on_delete: :restrict
   add_foreign_key "student_performance_rule_achievements", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

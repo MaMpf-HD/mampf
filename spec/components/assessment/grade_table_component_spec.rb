@@ -200,6 +200,20 @@ RSpec.describe(GradeTableComponent, type: :component) do
         expect(component.show_points_column?).to be(false)
       end
     end
+
+    context "with a talk (gradable only)" do
+      let(:seminar) { create(:seminar) }
+      let(:talk) { create(:talk, lecture: seminar) }
+      let(:assessment) do
+        talk.ensure_gradebook!
+        talk.assessment
+      end
+      let(:component) { described_class.new(assessment: assessment) }
+
+      it "returns false" do
+        expect(component.show_points_column?).to be(false)
+      end
+    end
   end
 
   describe "#points_display" do

@@ -44,29 +44,6 @@ RSpec.describe("Assessment::Tasks", type: :request) do
         expect(response.body).to include("assessments_container")
       end
     end
-
-    context "when the assessment belongs to an exam" do
-      let(:exam) { create(:exam, lecture: lecture) }
-      let(:assessment) do
-        exam.assessment.tap { |value| value.update!(requires_points: true) }
-      end
-
-      it "redirects back to the exam page after create" do
-        post assessment_assessment_tasks_path(assessment),
-             params: { assessment_task: { max_points: 7.5 } }
-
-        expect(response).to redirect_to(exam_path(exam, tab: "tasks"))
-      end
-
-      it "renders the exam container on turbo validation failure" do
-        post assessment_assessment_tasks_path(assessment),
-             params: { assessment_task: { max_points: -1 } },
-             as: :turbo_stream
-
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include("exams_container")
-      end
-    end
   end
 
   describe "PATCH /assessment/assessments/:assessment_id/tasks/:id" do

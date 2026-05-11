@@ -23,7 +23,7 @@
   <% end %>
 
   <% if show_form? %>
-    <%= render ::SchemeFormComponent.new(
+    <%= render SchemeFormComponent.new(
           assessment: assessment,
           grade_scheme: grade_scheme) %>
   <% else %>
