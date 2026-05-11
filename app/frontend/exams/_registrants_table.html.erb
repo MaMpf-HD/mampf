@@ -21,44 +21,46 @@
   </span>
 </div>
 
-<div data-controller="exams--registration-list">
-  <input
-    type="text"
-    class="form-control form-control-sm mb-3"
-    placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
-    autocomplete="off"
-    data-action="input->exams--registration-list#filter"
-  >
+<% if grouped.any? %>
+  <div data-controller="exams--registration-list">
+    <input
+      type="text"
+      class="form-control form-control-sm mb-3"
+      placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+      autocomplete="off"
+      data-action="input->exams--registration-list#filter"
+    >
 
-  <% if grouped.any? %>
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th><%= t("basics.name") %></th>
-            <th><%= t("basics.email") %></th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% grouped.each do |user, _registrations| %>
-            <tr
-              data-exams--registration-list-target="entry"
-              data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
-            >
-              <td><%= user.tutorial_name.presence || user.email %></td>
-              <td class="text-muted"><%= user.email %></td>
+    <% if grouped.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th><%= t("basics.name") %></th>
+              <th><%= t("basics.email") %></th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% end %>
+          </thead>
 
-  <div
-    class="small text-muted mt-2 text-center d-none"
-    data-exams--registration-list-target="noResults"
-  >
-    <%= t("assessment.registration_tab.no_filter_results") %>
+          <tbody>
+            <% grouped.each do |user, _registrations| %>
+              <tr
+                data-exams--registration-list-target="entry"
+                data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
+              >
+                <td><%= user.tutorial_name.presence || user.email %></td>
+                <td class="text-muted"><%= user.email %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <div
+      class="small text-muted mt-2 text-center d-none"
+      data-exams--registration-list-target="noResults"
+    >
+      <%= t("assessment.registration_tab.no_filter_results") %>
+    </div>
   </div>
-</div>
+<% end %>
