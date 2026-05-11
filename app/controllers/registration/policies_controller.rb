@@ -115,16 +115,6 @@ module Registration
         flash_and_update(:notice, nil)
       end
 
-      def render_campaigns_container
-        @campaign.reload
-        turbo_stream.update("campaigns_container",
-                            partial: "registration/campaigns/card_body_index",
-                            locals: {
-                              lecture: @campaign.campaignable,
-                              expanded_campaign_id: @campaign.id
-                            })
-      end
-
       def flash_and_update(flash_type, message)
         @campaign.reload
         if exam_campaign_context?

@@ -150,9 +150,10 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
         "form[action='#{add_path}'] input[name='user_id'][value='#{excluded_user.id}']"
       )
     ).to be_present
+    confirm_msg = I18n.t("assessment.registration_tab.add_to_participants_confirm")
     expect(
       document.at_css(
-        "form[action='#{add_path}'][data-turbo-confirm='#{I18n.t("assessment.registration_tab.add_to_participants_confirm")}']"
+        "form[action='#{add_path}'][data-turbo-confirm='#{confirm_msg}']"
       )
     ).to be_present
   end
@@ -274,7 +275,8 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       "span[title='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip")}']"
     )
     disabled_button = document.at_css(
-      "button[disabled][aria-label='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip")}']"
+      "button[disabled]" \
+      "[aria-label='#{I18n.t("assessment.registration_tab.remove_disabled_tooltip")}']"
     )
     remove_path = Rails.application.routes.url_helpers.remove_participant_exam_path(
       exam,

@@ -169,7 +169,7 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                })
 
         perf_campaign.update!(status: :processing,
-                  allocation_decided_at: Time.current)
+                              allocation_decided_at: Time.current)
 
         create(:registration_user_registration, :confirmed,
                registration_campaign: perf_campaign,
