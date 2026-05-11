@@ -104,6 +104,17 @@ module SubmissionsHelper
     true
   end
 
+  def required_roster_for_submission?
+    Flipper.enabled?(:assessment_grading)
+  end
+
+  def extract_task_points(submission, assessment_task)
+    submission_points = submission.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points || nil
+  end
+
   def submission_late_color(submission)
     return "" unless submission.too_late?
     return "" unless submission.accepted.nil?

@@ -2968,6 +2968,8 @@ de:
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
+    graded: Benote
+    pending: Benotung ausstehend
     accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
@@ -2986,6 +2988,8 @@ de:
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
+    tutorial_not_assigned: >
+      Sie können dieser Abgabe nicht beitreten, da sie keinem Tutorium zugeordnet ist.
     failed_redemption: >
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
     current: Aktuelle Abgabe
@@ -3743,6 +3747,7 @@ de:
     create_cohort: 'Gruppe erstellen'
     edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
+    refresh: 'Aktualisieren'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
     save_changes: "Änderungen speichern"
@@ -3831,6 +3836,7 @@ de:
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
+    refresh: 'Erneuern'
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'

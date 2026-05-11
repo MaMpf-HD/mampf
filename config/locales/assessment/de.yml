@@ -84,6 +84,15 @@ de:
       not_submitted: "nicht abgegeben"
       excluded_heading: "Sonderfälle"
       reason: "Grund"
+    grading_tutorial:
+      team: 'Team'
+      task: 'Aufgabe'
+      total_points: 'Gesamtpunkte'
+      status: 'Status'
+      actions: 'Aktionen'
+      correction: 'Korrektur'
+      max_points: 'Pkt'
+      no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"

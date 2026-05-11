@@ -3,26 +3,27 @@
     <% if !@assignment.active? %>
       <%= link_to t('buttons.upload'),
                   edit_correction_path(submission),
-                  class: 'btn btn-sm btn-outline-secondary mb-2',
-                  remote: true %>
+                  class: "btn btn-sm btn-outline-secondary mb-2",
+                  data: { turbo_stream: true } %>
     <% else %>
       <button class="btn btn-sm btn-outline-secondary mb-2" disabled>
         <%= t('buttons.upload') %>
       </button>
     <% end %>
-    <span class="correction-action-area"
-        data-id="<%= submission.id %>">
+
+    <span class="correction-action-area" data-id="<%= submission.id %>">
       <% if submission.correction %>
         <%= link_to correction_display_mode(submission),
                     show_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
+                    class: "btn btn-sm btn-outline-secondary mb-2",
                     data: { turbo: false } %>
+
         <%= link_to t('buttons.delete'),
                     delete_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { confirm: t('confirmation.generic') },
-                    method: :delete,
-                    remote: true %>
+                    class: "btn btn-sm btn-outline-secondary mb-2",
+                    data: { turbo_method: :delete,
+                            turbo_confirm: t('confirmation.generic'),
+                            turbo_stream: true } %>
       <% end %>
     </span>
   </div>

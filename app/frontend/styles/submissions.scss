@@ -65,3 +65,92 @@
     outline:none;
     box-shadow:none;
 }
+
+/* Highlight dirty submission rows */
+.row-dirty,
+.row-dirty td {
+  background-color: #ffffa5 !important;
+}
+table.table tbody tr.row-dirty,
+table.table tbody tr.row-dirty td {
+    background-color: #ffffa5 !important;
+}
+
+.sticky-col {
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: white;
+}
+
+.team-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  left: 0px;
+  z-index: 2;
+}
+
+.task-col {
+  width: 90px;
+  min-width: 90px;
+}
+
+.correction-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 0px;
+  background-color: white;
+  z-index: 2;
+}
+
+.action-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 200px;
+  background-color: white;
+  z-index: 2;
+
+  padding: 0.5rem;
+}
+
+.action-icon {
+  // font-size: 1.4rem;
+  // display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  // transition: all 0.2s ease;
+  // cursor: pointer;
+}
+
+
+.status-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 400px;
+  background-color: white;
+  z-index: 2;
+}
+
+.total-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 500px;
+  background-color: white;
+  z-index: 2;
+}
+
+.table-overflow {
+  overflow-x: scroll;
+  overflow-y: visible;
+  width: 100%;
+}

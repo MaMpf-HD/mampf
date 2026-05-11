@@ -84,6 +84,15 @@ en:
       not_submitted: "not submitted"
       excluded_heading: "Special Cases"
       reason: "Reason"
+    grading_tutorial:
+      team: 'Team'
+      task: 'Task'
+      total_points: 'Total Points'
+      status: 'Status'
+      actions: 'Actions'
+      correction: 'Correction'
+      max_points: 'pts'
+      no_submissions: 'No submissions for this assignment.'
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"

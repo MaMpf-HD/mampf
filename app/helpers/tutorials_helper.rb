@@ -15,4 +15,36 @@ module TutorialsHelper
   def tutorials_selection(lecture)
     lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
   end
+
+  def gradding_enabled?(assignment)
+    Flipper.enabled?(:assessment_grading) && assignment.assessable?
+  end
+
+  def badge_status_participation_color(status)
+    {
+      pending: "warning",
+      reviewed: "success",
+      exempt: "info",
+      absent: "info"
+    }[status&.to_sym]
+  end
+
+  def tutorials_for_dropdown(user, lecture, current_tutorial)
+    if !user.in?(lecture.tutors)
+      {
+        "All tutorials" => lecture.tutorials - [current_tutorial]
+      }
+
+    elsif user.editor_or_teacher_in?(lecture)
+      {
+        "Own tutorials" => user.tutorials(lecture) - [current_tutorial],
+        "Other tutorials" => lecture.tutorials - user.tutorials(lecture) - [current_tutorial]
+      }.delete_if { |_, list| list.empty? }
+
+    else # user is a tutor
+      {
+        "Your tutorials" => user.tutorials(lecture) - [current_tutorial]
+      }
+    end
+  end
 end

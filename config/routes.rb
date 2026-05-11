@@ -775,6 +775,18 @@ Rails.application.routes.draw do
         to: "submissions#reject",
         as: "reject_submission"
 
+  patch "submissions/:id/grade_submission",
+        to: "assessment/task_points#update_team",
+        as: "grade_submission"
+
+  patch "submissions/:id/refresh_grade_submission",
+        to: "assessment/task_points#refresh",
+        as: "refresh_grade_submission"
+
+  patch "submissions/grade_multi_submissions",
+        to: "assessment/task_points#update_team_multi",
+        as: "grade_multi_submissions"
+
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
       as: "edit_correction"
