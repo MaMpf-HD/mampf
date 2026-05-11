@@ -1,0 +1,29 @@
+{
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "version": "1.2.9",
+      "resolved": "ghcr.io/devcontainers/features/desktop-lite@sha256:d8649bc8ca8e50a52fbee29d281739ea05dc1022905b185434d6bbe9afc8f221",
+      "integrity": "sha256:d8649bc8ca8e50a52fbee29d281739ea05dc1022905b185434d6bbe9afc8f221"
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "1.9.1",
+      "resolved": "ghcr.io/devcontainers/features/docker-outside-of-docker@sha256:dc89605f01ff2f24252c61f7c8ba2a58ccdbc14f2ebf87a7952d9e2b89834850",
+      "integrity": "sha256:dc89605f01ff2f24252c61f7c8ba2a58ccdbc14f2ebf87a7952d9e2b89834850"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "1.1.0",
+      "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671",
+      "integrity": "sha256:d22f50b70ed75339b4eed1ba9ecde3a1791f90e88d37936517e3bace0bbad671"
+    },
+    "ghcr.io/jsburckhardt/devcontainer-features/just:1": {
+      "version": "1.0.0",
+      "resolved": "ghcr.io/jsburckhardt/devcontainer-features/just@sha256:5c90013b36669270be21c69e7d8e5b6148b4b0b34fca9e104a599edf0d7c11af",
+      "integrity": "sha256:5c90013b36669270be21c69e7d8e5b6148b4b0b34fca9e104a599edf0d7c11af"
+    },
+    "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {
+      "version": "2.0.0",
+      "resolved": "ghcr.io/mikaello/devcontainer-features/modern-shell-utils@sha256:60b5be4e306b6b2cc6b266201c1011a0cde28778743b19d07101c9b5fe652163",
+      "integrity": "sha256:60b5be4e306b6b2cc6b266201c1011a0cde28778743b19d07101c9b5fe652163"
+    }
+  }
+}

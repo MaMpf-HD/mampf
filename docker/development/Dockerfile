@@ -1,17 +1,28 @@
 # https://docs.docker.com/build/checks/#fail-build-on-check-violations
 # check=error=true
 
-# First build the PDF compressor Web assembly binary
+# 🎈 Stage for Node.js tooling
+FROM node:24.15-trixie AS node-tooling
+
+ENV YARN_VERSION=1.22.22
+ENV COREPACK_HOME=/usr/local/share/corepack
+
+RUN corepack enable && \
+    corepack prepare "yarn@${YARN_VERSION}" --activate && \
+    yarn --version
+
+# 🎈 Stage for PDF compressor (Web assembly binary)
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
-FROM golang:1.20 AS build-pdfcomprezzor
+FROM golang:1.24-bookworm AS build-pdfcomprezzor
 WORKDIR /go/src
+COPY --from=node-tooling /etc/ssl/certs/ca-certificates.crt \
+    /etc/ssl/certs/ca-certificates.crt
 COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
-RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+RUN cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" .
 
-# Now build the actual MaMpf application
-# https://hub.docker.com/_/ruby/
-FROM ruby:3.4.7-bookworm
+# 🎈 Stage for Ruby and actual MaMpf application
+FROM ghcr.io/mampf-hd/mampf-ruby-hardened:4.0-dev
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
@@ -19,60 +30,58 @@ ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 
-# Install Node.js
-# https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
-# https://stackoverflow.com/a/57546198/
-# Unfortunately, we have to explicitly specify the node version here
-# and cannot use 24.x as we need to put the node binary into the PATH
-# and therefore require the exact version to find the folder
-ENV NODE_VERSION=24.11.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-ENV NVM_DIR=/root/.nvm
-RUN source "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}" && \
-    nvm use "${NODE_VERSION}" && nvm alias default "${NODE_VERSION}"
+# Install Node.js tooling
+ENV COREPACK_HOME=/usr/local/share/corepack
+COPY --from=node-tooling /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-tooling /usr/local/include/node /usr/local/include/node
+COPY --from=node-tooling /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node-tooling /usr/local/share/corepack /usr/local/share/corepack
+RUN ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -sf ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx && \
+    ln -sf ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && \
+    ln -sf ../lib/node_modules/corepack/dist/yarn.js /usr/local/bin/yarn && \
+    ln -sf ../lib/node_modules/corepack/dist/yarnpkg.js /usr/local/bin/yarnpkg && \
+    chmod -R a+rX /usr/local/lib/node_modules "${COREPACK_HOME}" && \
+    node --version && npm --version && yarn --version
 
-ENV NODE_PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/"
-ENV PATH="${NODE_PATH}:${PATH}"
-
-RUN nvm current; node --version
-RUN npm --version
-
-# Install Yarn (see https://yarnpkg.com/getting-started/install)
-# https://github.com/nodejs/corepack#corepack-prepare--nameversion
-ENV YARN_VERSION=1.22.19
-RUN corepack enable
-RUN corepack prepare "yarn@${YARN_VERSION}" --activate
-RUN which yarn; yarn --version
-# even though this is not specified in the corepack documentation, we need to
-# run "set version", otherwise the app user will have an old version of
-# yarn available instead of our specified version
-RUN yarn set version "${YARN_VERSION}"
-
-# Make Node.js tooling available for other users
-# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
-# this command copies the currently active nvm node tooling to /usr/local/
-# so that it can be used by the app user later
-RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/yarn; cp -r $n/{bin,lib,share} /usr/local
-
-# Install other dependencies
+# Install packages required by MaMpf itself
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools wget wait-for-it graphviz libvips42 lsof
+        ffmpeg ghostscript imagemagick libarchive-tools libvips42 lsof \
+        pdftk shared-mime-info wait-for-it \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install packages intended for local development and debugging
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends \
+        bzip2 ca-certificates curl git graphviz gzip jq less \
+        libpam-runtime ncurses-bin ncurses-term openssh-client ripgrep \
+        sudo tar tree unzip wget xz-utils \
+    && /usr/sbin/pam-auth-update --package --force \
+    && test -f /etc/pam.d/common-auth \
+    && test -f /etc/pam.d/common-account \
+    && test -f /etc/pam.d/common-session \
+    && test -f /etc/pam.d/common-session-noninteractive \
+    && rm -rf /var/lib/apt/lists/*
 
 # Playwright system dependencies
-RUN npx playwright install-deps chromium
+RUN npx playwright install-deps chromium && rm -rf /var/lib/apt/lists/*
 
 # Install PostgreSQL client 17 (https://wiki.postgresql.org/wiki/Apt)
-RUN mkdir -p /usr/share/postgresql-common/pgdg \
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && mkdir -p /usr/share/postgresql-common/pgdg \
     && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
     && . /etc/os-release \
     && sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list" \
     && apt-get update \
-    && apt-get install -y postgresql-client-17
+    && apt-get install -y --no-install-recommends postgresql-client-17 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup ImageMagick
-RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+RUN policy_file=$(find /etc -path '*/ImageMagick-*/policy.xml' | head -n 1) \
+    && sed -i '/disable ghostscript format types/,+6d' "$policy_file"
+
+RUN touch /etc/ld.so.cache && /sbin/ldconfig
 
 # 🎈 Users
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user
@@ -88,8 +97,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
     && mkdir -p /workspaces/mampf/public/uploads/ && chown -R $USERNAME /workspaces/mampf/public/uploads/ \
     # [Optional] Add sudo support
-    && apt-get update \
-    && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
@@ -99,7 +106,7 @@ ENTRYPOINT ["/workspaces/mampf/docker/development/init-and-run.sh"]
 USER $USERNAME
 
 # Log Node.js tooling versions
-RUN which node && node --version && which yarn && yarn --version
+RUN command -v node && node --version && command -v yarn && yarn --version
 
 COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/

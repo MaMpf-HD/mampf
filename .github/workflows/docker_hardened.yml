@@ -1,0 +1,35 @@
+# built from https://github.com/docker-hardened-images/catalog/blob/main/image/ruby/debian-13/4.0-dev.yaml
+# commands from https://github.com/docker-hardened-images/catalog/blob/main/image/build/guides.md#basic-usage
+
+name: Build & Push Ruby Hardened Docker Image
+
+on:
+  workflow_dispatch:
+  # just temporarily for testing on this branch, TODO: remove this trigger
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push docker image to GHCR
+        working-directory: docker/development/
+        run: |
+          docker buildx build \
+          --file https://raw.githubusercontent.com/docker-hardened-images/catalog/refs/heads/main/image/ruby/debian-13/4.0-dev.yaml \
+          --sbom=generator=dhi.io/scout-sbom-indexer:1 --provenance=1 \
+          --tag ghcr.io/mampf-hd/mampf-ruby-hardened:4.0-dev \
+          --push .
