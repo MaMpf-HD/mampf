@@ -69,12 +69,15 @@ class VerticesController < ApplicationController
         @quizzables = Medium.where(id: @params_v[:quizzable_ids],
                                    type: ["Question", "Remark"])
         @success = @quizzables.any?
-      else
+      elsif @sort.in?(["Question", "Remark"])
         quizzable = @sort.constantize.create_prefilled(@params_v[:label],
                                                        @quiz.teachable,
                                                        @quiz.editors)
         @success = quizzable.valid?
         @quizzables = [quizzable]
+      else
+        @success = false
+        @quizzables = []
       end
     end
 

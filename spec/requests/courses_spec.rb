@@ -36,4 +36,18 @@ RSpec.describe("Courses", type: :request) do
       end
     end
   end
+
+  describe "XSS protections" do
+    let(:xss_payload) { "<div id='test-xss-xyz123'><script>alert('course-xss')</script></div>" }
+    let!(:xss_course) do
+      create(:course, title: "XSS Course", organizational: true,
+                      organizational_concept: xss_payload)
+    end
+
+    it "escapes or strips script tags from course organizational concept in edit view" do
+      get edit_course_path(xss_course)
+      expect(response).to be_successful
+      expect(response.body).not_to include("<script>alert('course-xss')</script>")
+    end
+  end
 end
