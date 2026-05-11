@@ -34,33 +34,31 @@ en:
       no_achievements_yet: 'No achievements defined yet.'
       confirm_delete: 'Really delete this achievement?'
       marking:
-        marked: "marked"
-        met_label: "met"
-        value: "Value"
-        status: "Status"
-        met: "Met"
-        not_met: "Not met"
-        unmarked: "Unmarked"
-        no_participations: "No participations yet."
-    assignment: "Assignment"
-    assignments: "Assignments"
-    exam: "Exam"
-    exams: "Exams"
-    new_exam: "Create New Exam"
-    talk: "Talk"
-    talks: "Talks"
-    tasks: "Tasks"
-    submissions: "Submissions"
-    points: "Points"
-    grades: "Grades"
-    grade: "Grade"
-    speakers: "Speakers"
-    date: "Date"
-    participants: "Participants"
-    grading: "Grading"
-    graded_by: "Graded by"
-    graded_at: "Graded at"
-    no_grades_yet: "No grades have been entered yet."
+        marked: 'marked'
+        met_label: 'met'
+        value: 'Value'
+        status: 'Status'
+        met: 'Met'
+        not_met: 'Not met'
+        unmarked: 'Unmarked'
+        no_participations: 'No participations yet.'
+    assignment: 'Assignment'
+    assignments: 'Assignments'
+    exam: 'Exam'
+    exams: 'Exams'
+    new_exam: 'Create New Exam'
+    talk: 'Talk'
+    talks: 'Talks'
+    tasks: 'Tasks'
+    submissions: 'Submissions'
+    points: 'Points'
+    grades: 'Grades'
+    grade: 'Grade'
+    participants: 'Participants'
+    grading: 'Grading'
+    graded_by: 'Graded by'
+    graded_at: 'Graded at'
+    no_grades_yet: 'No grades have been entered yet.'
     grade_table:
       absent: 'absent'
       exempt: 'exempt'

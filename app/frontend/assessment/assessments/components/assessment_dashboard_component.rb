@@ -66,23 +66,22 @@ class AssessmentDashboardComponent < ViewComponent::Base
       assessable.is_a?(Assignment)
     end
 
-    def pointable?
-      assessable.is_a?(Assessment::Pointable)
-    end
-
+def pointable?
+  assessable.is_a?(Assessment::Pointable)
+end
     def gradable?
       assessable.is_a?(Assessment::Gradable)
     end
 
     def build_tabs
       [].tap do |t|
-        t << settings_tab if exam? || assignment?
-        t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
-        t << tasks_tab if pointable?
-        t << points_tab if pointable?
-        t << grading_tab if gradable? && pointable?
-        t << grades_tab if gradable? && !pointable?
-        t << statistics_tab unless assessable.is_a?(Talk)
+t << settings_tab if exam? || assignment?
+t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
+t << tasks_tab if pointable?
+t << points_tab if pointable?
+t << grading_tab if gradable? && pointable?
+t << grades_tab if gradable? && !pointable?
+t << statistics_tab unless assessable.is_a?(Talk)
       end
     end
 
@@ -148,36 +147,35 @@ class AssessmentDashboardComponent < ViewComponent::Base
       )
     end
 
-    def grading_tab
-      TabConfig.new(
-        "grades",
-        I18n.t("assessment.grades"),
-        GradingTabComponent.new(
-          assessment: assessment,
-          grade_scheme: grade_scheme
-        )
-      )
-    end
+def grading_tab
+  TabConfig.new(
+    "grades",
+    I18n.t("assessment.grades"),
+    GradingTabComponent.new(
+      assessment: assessment,
+      grade_scheme: grade_scheme
+    )
+  )
+end
 
-    def registration_tab
-      TabConfig.new(
-        "registration",
-        registration_tab_label,
-        PartialTabComponent.new(
-          partial: "exams/registration",
-          locals: { exam: assessable, lecture: lecture }
-        )
-      )
-    end
+def registration_tab
+  TabConfig.new(
+    "registration",
+    registration_tab_label,
+    PartialTabComponent.new(
+      partial: "exams/registration",
+      locals: { exam: assessable, lecture: lecture }
+    )
+  )
+end
 
-    def statistics_tab
-      TabConfig.new(
-        "statistics",
-        I18n.t("assessment.statistics"),
-        StatisticsTabComponent.new(
-          assessment: assessment, lecture: lecture
-        )
->>>>>>> 4be71b837 (Backport grade schemes)
+def statistics_tab
+  TabConfig.new(
+    "statistics",
+    I18n.t("assessment.statistics"),
+    StatisticsTabComponent.new(
+      assessment: assessment, lecture: lecture
+    )
       )
     end
 end

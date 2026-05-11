@@ -34,33 +34,31 @@ de:
       no_achievements_yet: 'Noch keine Zusatzkriterien angelegt.'
       confirm_delete: 'Zusatzkriterium wirklich löschen?'
       marking:
-        marked: "bewertet"
-        met_label: "erfüllt"
-        value: "Wert"
-        status: "Status"
-        met: "Erfüllt"
-        not_met: "Nicht erfüllt"
-        unmarked: "Offen"
-        no_participations: "Noch keine Teilnahmen vorhanden."
-    assignment: "Hausaufgabe"
-    assignments: "Hausaufgaben"
-    exam: "Prüfung"
-    exams: "Prüfungen"
-    new_exam: "Neue Prüfung anlegen"
-    talk: "Vortrag"
-    talks: "Vorträge"
-    tasks: "Aufgaben"
-    submissions: "Abgaben"
-    points: "Punkte"
-    grades: "Noten"
-    grade: "Note"
-    speakers: "Sprecher:innen"
-    date: "Datum"
-    participants: "Teilnehmer"
-    grading: "Bewertung"
-    graded_by: "Bewertet von"
-    graded_at: "Bewertet am"
-    no_grades_yet: "Es wurden noch keine Noten eingetragen."
+        marked: 'bewertet'
+        met_label: 'erfüllt'
+        value: 'Wert'
+        status: 'Status'
+        met: 'Erfüllt'
+        not_met: 'Nicht erfüllt'
+        unmarked: 'Offen'
+        no_participations: 'Noch keine Teilnahmen vorhanden.'
+    assignment: 'Hausaufgabe'
+    assignments: 'Hausaufgaben'
+    exam: 'Prüfung'
+    exams: 'Prüfungen'
+    new_exam: 'Neue Prüfung anlegen'
+    talk: 'Vortrag'
+    talks: 'Vorträge'
+    tasks: 'Aufgaben'
+    submissions: 'Abgaben'
+    points: 'Punkte'
+    grades: 'Noten'
+    grade: 'Note'
+    participants: 'Teilnehmer'
+    grading: 'Bewertung'
+    graded_by: 'Bewertet von'
+    graded_at: 'Bewertet am'
+    no_grades_yet: 'Es wurden noch keine Noten eingetragen.'
     grade_table:
       absent: 'nicht angetreten'
       exempt: 'entschuldigt'

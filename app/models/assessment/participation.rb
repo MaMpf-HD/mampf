@@ -50,6 +50,13 @@ module Assessment
 
     private
 
+      def assessment_must_be_gradable
+        return unless assessment&.assessable
+        return if assessment.assessable.is_a?(::Assessment::Gradable)
+
+        errors.add(:grade_numeric, :not_gradable)
+      end
+
       def should_recompute_performance_record?
         achievement_grade_text_changed? ||
           saved_change_to_status? ||

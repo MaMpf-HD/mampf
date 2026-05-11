@@ -53,9 +53,11 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
           StudentPerformance::Record
             .where(lecture: lecture, user: user)
             .update_all(achievements_met_ids: [achievement.id])
+          # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
@@ -68,9 +70,11 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
           StudentPerformance::Record
             .where(lecture: lecture, user: user)
             .update_all(achievements_met_ids: [])
+          # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
