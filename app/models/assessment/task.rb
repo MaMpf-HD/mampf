@@ -12,10 +12,7 @@ module Assessment
     before_destroy :check_deadline_not_passed, prepend: true
 
     after_commit :recompute_all_performance_records,
-                 on: [:create, :destroy]
-    after_commit :recompute_all_performance_records,
-                 on: :update,
-                 if: :saved_change_to_max_points?
+                 if: :should_recompute_performance_records?
 
     acts_as_list scope: :assessment
 
@@ -45,6 +42,10 @@ module Assessment
         return unless assessment&.assessable.is_a?(Assignment)
 
         throw(:abort) if assessment.assessable.past_deadline?
+      end
+
+      def should_recompute_performance_records?
+        destroyed? || previously_new_record? || saved_change_to_max_points?
       end
 
       def recompute_all_performance_records

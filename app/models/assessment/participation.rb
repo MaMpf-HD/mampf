@@ -57,8 +57,6 @@ module Assessment
         errors.add(:grade_numeric, :not_gradable)
       end
 
-    private
-
       def should_recompute_performance_record?
         achievement_grade_text_changed? ||
           saved_change_to_status? ||
