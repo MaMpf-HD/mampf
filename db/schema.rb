@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_000021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -128,6 +128,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
     t.datetime "updated_at", null: false
     t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
+  end
+
+  create_table "assessment_grade_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.integer "kind", default: 0, null: false
+    t.jsonb "config", default: {}, null: false
+    t.string "version_hash"
+    t.datetime "applied_at"
+    t.bigint "applied_by_id"
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
+    t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
+    t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
+    t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"
   end
 
   create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -829,10 +845,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
     t.decimal "points_max_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: []
-    t.jsonb "achievements_ungraded_ids", default: []
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "achievements_ungraded_ids", default: []
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
   end
@@ -1447,6 +1463,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_000019) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assessment_assessments", "lectures"
+  add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"

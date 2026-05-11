@@ -244,8 +244,6 @@ namespace :assessment do
 
   desc "Run full assessment playground setup"
   task setup: :environment do
-    ensure_student_performance_feature!
-
     old_level = ActiveRecord::Base.logger&.level
     ActiveRecord::Base.logger&.level = :warn
 
@@ -519,15 +517,5 @@ namespace :assessment do
     when :dropout then rand(0.80..0.95)
     when :occasional then rand(0.55..0.75)
     end
-  end
-
-  def ensure_assessment_grading_feature!
-    Flipper.add(:assessment_grading)
-    Flipper.enable(:assessment_grading)
-  end
-
-  def ensure_student_performance_feature!
-    Flipper.add(:student_performance)
-    Flipper.enable(:student_performance)
   end
 end

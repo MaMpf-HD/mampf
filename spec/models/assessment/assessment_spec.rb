@@ -102,4 +102,55 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment.results_published?).to be(true)
     end
   end
+
+  describe "performance record recomputation" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    let(:assignment) { FactoryBot.create(:assignment, :with_lecture) }
+
+    it "does not recompute on assignment assessment create (no participations yet)" do
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .not_to receive(:compute_and_upsert_all_records!)
+      FactoryBot.create(:assessment,
+                        assessable: assignment,
+                        lecture: assignment.lecture)
+    end
+
+    it "recomputes on assignment assessment destroy" do
+      assessment = FactoryBot.create(:assessment,
+                                     assessable: assignment,
+                                     lecture: assignment.lecture)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .to receive(:compute_and_upsert_all_records!)
+      assessment.destroy!
+    end
+
+    it "recomputes when total_points changes on an assignment assessment" do
+      assessment = FactoryBot.create(:assessment,
+                                     assessable: assignment,
+                                     lecture: assignment.lecture)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .to receive(:compute_and_upsert_all_records!)
+      assessment.update!(total_points: 100)
+    end
+
+    it "does not recompute on non-assignment assessable type" do
+      talk_assessment = FactoryBot.create(:assessment, :gradable)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .not_to receive(:compute_and_upsert_all_records!)
+      talk_assessment.update!(total_points: 100)
+    end
+
+    it "does not recompute when total_points is unchanged" do
+      assessment = FactoryBot.create(:assessment,
+                                     assessable: assignment,
+                                     lecture: assignment.lecture,
+                                     total_points: 50)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .not_to receive(:compute_and_upsert_all_records!)
+      assessment.update!(requires_submission: false)
+    end
+  end
 end

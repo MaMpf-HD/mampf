@@ -9,7 +9,7 @@ class PointGridComponent < ViewComponent::Base
   attr_reader :assessment
 
   def show_tutorial_column?
-    true
+    !assessment.assessable.is_a?(Talk)
   end
 
   def tasks
@@ -17,13 +17,14 @@ class PointGridComponent < ViewComponent::Base
   end
 
   def scoring_participations
-    @scoring_participations ||= participations.where(status: [:pending, :reviewed])
-                                              .where.not(submitted_at: nil)
+    @scoring_participations ||=
+      participations.where(status: [:pending, :reviewed])
+                    .where.not(submitted_at: nil)
   end
 
   def not_submitted_participations
-    @not_submitted_participations ||= participations.where(status: :pending,
-                                                           submitted_at: nil)
+    @not_submitted_participations ||=
+      participations.where(status: :pending, submitted_at: nil)
   end
 
   def absent_participations
@@ -35,8 +36,9 @@ class PointGridComponent < ViewComponent::Base
   end
 
   def excluded_participations
-    @excluded_participations ||= not_submitted_participations +
-                                 participations.where(status: [:absent, :exempt]).to_a
+    @excluded_participations ||=
+      not_submitted_participations +
+      participations.where(status: [:absent, :exempt]).to_a
   end
 
   def any_scoring?
@@ -44,7 +46,8 @@ class PointGridComponent < ViewComponent::Base
   end
 
   def any_excluded?
-    not_submitted_participations.any? || absent_participations.any? || exempt_participations.any?
+    not_submitted_participations.any? ||
+      absent_participations.any? || exempt_participations.any?
   end
 
   def status_label(participation)
@@ -57,18 +60,20 @@ class PointGridComponent < ViewComponent::Base
 
   def task_points_map(participation)
     @task_points_maps ||= {}
-    @task_points_maps[participation.id] ||= participation.task_points.index_by(&:task_id)
+    @task_points_maps[participation.id] ||=
+      participation.task_points.index_by(&:task_id)
   end
 
   def points_for(participation, task)
-    task_points_map(participation)[task.id]&.points
+    tp = task_points_map(participation)[task.id]
+    tp&.points
   end
 
   def points_display(participation, task)
-    points = points_for(participation, task)
-    return "—" if points.nil?
+    pts = points_for(participation, task)
+    return "—" if pts.nil?
 
-    format_points(points)
+    format_points(pts)
   end
 
   def total_display(participation)

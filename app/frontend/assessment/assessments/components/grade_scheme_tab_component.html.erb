@@ -1,0 +1,164 @@
+<div data-cy="grade-scheme-tab">
+  <% if pending_participations? %>
+    <div class="alert alert-info d-flex align-items-center mb-3">
+      <i class="bi bi-info-circle me-2"></i>
+
+      <div>
+        <strong><%= t("assessment.grade_scheme.pending_title") %></strong>
+
+        <%= t("assessment.grade_scheme.pending_message",
+              reviewed: reviewed_count,
+              pending: pending_count,
+              total: total_count) %>
+
+        <% if absent_count.positive? || exempt_count.positive? %>
+          <span class="text-muted">
+            (<%= t("assessment.grade_scheme.pending_breakdown",
+                   absent: absent_count,
+                   exempt: exempt_count) %>)
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if show_form? %>
+    <%= render SchemeFormComponent.new(
+          assessment: assessment,
+          grade_scheme: grade_scheme) %>
+  <% else %>
+    <% case phase %>
+    <% when :no_scheme %>
+      <% if reviewed_count.positive? %>
+        <%= render DistributionAnalysisComponent.new(
+              assessment: assessment,
+              grade_scheme: assessment.grade_scheme) %>
+      <% end %>
+      <div class="text-center py-2">
+        <%= link_to new_scheme_path,
+                  class: "btn btn-outline-primary",
+                  data: { turbo_stream: true } do %>
+          <i class="bi bi-plus-lg me-2"></i>
+          <%= t("assessment.grade_scheme.create_button") %>
+        <% end %>
+      </div>
+    <% when :draft %>
+      <div class="alert alert-warning py-2 px-3 mb-2 small lh-sm">
+        <i class="bi bi-pencil-square me-1"></i>
+
+        <span class="fw-semibold">
+          <%= t("assessment.grade_scheme.draft_title") %>
+        </span>
+
+        <%= t("assessment.grade_scheme.draft_message") %>
+
+        <div class="mt-1">
+          <i class="bi bi-arrow-right me-1"></i>
+
+          <%= t("assessment.grade_scheme.draft_change_count",
+                count: draft_change_count) %>
+        </div>
+
+        <% if graded_count.positive? %>
+          <div class="text-danger mt-1">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+
+            <%= t("assessment.grade_scheme.draft_overwrite_warning",
+                  count: graded_count) %>
+          </div>
+        <% end %>
+      </div>
+      <div class="d-flex gap-2 flex-wrap mb-3">
+        <%= link_to edit_scheme_path,
+                  class: "btn btn-sm btn-outline-secondary",
+                  data: { turbo_stream: true } do %>
+          <i class="bi bi-pencil me-1"></i>
+          <%= t("assessment.grade_scheme.edit_button") %>
+        <% end %>
+
+        <%= button_to apply_scheme_path,
+                    method: :patch,
+                    class: "btn btn-sm btn-success",
+                    data: { turbo_confirm:
+                      t("assessment.grade_scheme.apply_confirm") } do %>
+          <i class="bi bi-check-lg me-1"></i>
+          <%= t("assessment.grade_scheme.apply_button") %>
+        <% end %>
+
+        <%= button_to discard_scheme_path,
+                    method: :delete,
+                    class: "btn btn-sm btn-outline-danger ms-auto",
+                    data: { turbo_confirm:
+                      t("assessment.grade_scheme.discard_confirm") } do %>
+          <i class="bi bi-trash me-1"></i>
+          <%= t("assessment.grade_scheme.discard_button") %>
+        <% end %>
+      </div>
+      <%= render "assessment/assessments/components/grade_scheme_summary_with_distribution",
+                assessment: assessment,
+                reviewed_count: reviewed_count,
+                markers_caption:
+                  t("assessment.distribution.markers_caption_proposed") %>
+    <% when :applied %>
+      <div
+        class="
+          d-flex flex-column flex-xxl-row
+          justify-content-between align-items-stretch align-items-xxl-center
+          gap-2 mb-3
+        "
+      >
+        <div class="d-flex align-items-center text-muted small mb-0 flex-grow-1">
+          <i class="bi bi-check-circle text-success me-2"></i>
+
+          <div>
+            <span class="fw-semibold text-success">
+              <%= t("assessment.grade_scheme.applied_title") %>
+            </span>
+
+            <%= t("assessment.grade_scheme.applied_message",
+                time: helpers.l(
+                  assessment.grade_scheme.applied_at.in_time_zone,
+                  format: :long
+                ),
+                count: graded_count) %>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 flex-shrink-0">
+          <%= link_to new_scheme_path,
+                      class: "btn btn-sm btn-outline-primary",
+                      data: { turbo_stream: true } do %>
+            <i class="bi bi-pencil me-1"></i>
+            <%= t("assessment.grade_scheme.revise_button") %>
+          <% end %>
+
+          <%= button_to apply_scheme_path,
+                        method: :patch,
+                        class: "btn btn-sm btn-outline-success",
+                        data: { turbo_confirm:
+                          t("assessment.grade_scheme.reapply_confirm") } do %>
+            <i class="bi bi-arrow-repeat me-1"></i>
+            <%= t("assessment.grade_scheme.reapply_button") %>
+
+            <% if ungraded_reviewed_count.positive? %>
+              <span class="badge bg-warning text-dark ms-1">
+                <%= ungraded_reviewed_count %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <% if ungraded_reviewed_count.positive? %>
+        <div class="alert alert-warning py-2 mb-3">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+
+          <%= t("assessment.grade_scheme.ungraded_warning",
+                count: ungraded_reviewed_count) %>
+        </div>
+      <% end %>
+      <%= render "assessment/assessments/components/grade_scheme_summary_with_distribution",
+                assessment: assessment,
+                reviewed_count: reviewed_count %>
+    <% end %>
+  <% end %>
+</div>

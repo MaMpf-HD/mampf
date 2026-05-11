@@ -27,6 +27,7 @@ services:
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3000
+      - REDIS_URL=redis://redis:6379/1
     ports:
       - 3036:3036 # Vite server
     labels:
@@ -39,6 +40,7 @@ services:
       - RAILS_ENV=test
       - NODE_ENV=test
       - MAMPF_PORT=3145
+      - REDIS_URL=redis://redis:6379/2
     ports:
       - 3145:3145 # Rails app for Cypress tests (no nginx used here)
       - 3037:3037 # Vite server
