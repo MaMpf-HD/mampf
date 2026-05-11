@@ -1,33 +1,26 @@
 namespace :demo do
-  desc "Enable feature flags and create all demo campaigns with registrations"
+  desc "Run the legacy registration and roster demo flow"
+  task verify: :environment do
+    Demo::SetupSupport.verify!
+  end
+
+  desc "Create finalized lecture and seminar rosters for the assessment demo"
+  task rosters: :environment do
+    Demo::SetupSupport.setup_rosters!
+  end
+
+  desc "Create demo assignments, tasks, participations, statuses, and points"
+  task assessment: :environment do
+    Demo::SetupSupport.setup_assessment!
+  end
+
+  desc "Create demo achievements and performance records"
+  task performance: :environment do
+    Demo::SetupSupport.setup_performance!
+  end
+
+  desc "Create rosters, assessment, and performance demo data in one pass"
   task setup: :environment do
-    abort "Cannot run in production!" if Rails.env.production?
-
-    puts "=== Demo Setup ==="
-    puts ""
-
-    puts "Enabling feature flags..."
-    Flipper.enable(:roster_maintenance)
-    Flipper.enable(:registration_campaigns)
-    puts "  ✓ roster_maintenance"
-    puts "  ✓ registration_campaigns"
-    puts ""
-
-    tasks = [
-      ["solver:create_campaign", "solver:create_registrations"],
-      ["solver:create_mixed_fcfs_campaign", "solver:create_mixed_fcfs_registrations"],
-      ["solver:create_two_stage_campaign"]
-    ]
-
-    tasks.each do |group|
-      group.each do |task_name|
-        puts "Running #{task_name}..."
-        Rake::Task[task_name].invoke
-        Rake::Task[task_name].reenable
-        puts ""
-      end
-    end
-
-    puts "=== Demo setup complete ==="
+    Demo::SetupSupport.setup!
   end
 end

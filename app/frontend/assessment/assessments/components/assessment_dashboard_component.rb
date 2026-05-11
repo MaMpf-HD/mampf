@@ -63,6 +63,10 @@ class AssessmentDashboardComponent < ViewComponent::Base
       assessable.is_a?(Assignment)
     end
 
+    def gradable?
+      assessable.is_a?(Assessment::Gradable)
+    end
+
     def build_tabs
       [].tap do |t|
         if exam?
@@ -74,6 +78,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << settings_tab if assignment?
         t << tasks_tab if assessable.is_a?(Assessment::Pointable)
         t << points_tab if assessable.is_a?(Assessment::Pointable)
+        t << grades_tab if gradable? && !assessable.is_a?(Assessment::Pointable)
         t << statistics_tab if assignment?
       end
     end
@@ -137,6 +142,14 @@ class AssessmentDashboardComponent < ViewComponent::Base
         "points",
         I18n.t("assessment.points"),
         PointGridComponent.new(assessment: assessment)
+      )
+    end
+
+    def grades_tab
+      TabConfig.new(
+        "grades",
+        I18n.t("assessment.grades"),
+        GradeTableComponent.new(assessment: assessment)
       )
     end
 

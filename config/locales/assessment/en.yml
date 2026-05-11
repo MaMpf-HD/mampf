@@ -75,6 +75,7 @@ en:
       talks: "Talks"
       achievements: "Achievements"
       performance: "Performance"
+      certifications: "Exam Eligibility"
     subtitle:
       assignments: "Manage homework sheets, grading, and point allocation."
     achievements:
@@ -85,6 +86,7 @@ en:
         destroyed: "Achievement deleted successfully."
       errors:
         not_found: "Achievement not found."
+        referenced_by_rules: "Cannot delete: Achievement is referenced by a rule."
       subtitle: "Define additional criteria students must fulfill beyond points."
       new: "New Achievement"
       edit: "Edit Achievement"
@@ -167,6 +169,8 @@ en:
     legacy_items_subtitle: "These assignments were created before the assessment system. They can be edited using the legacy interface."
     legacy_assignments: "Assignments (legacy system without grading)"
     legacy_assignments_info: "These assignments were created with the old system. They can be edited via the old interface."
+    legacy_talks: "Talks (no grading)"
+    legacy_talks_info: "These talks were created before the grading feature was added."
     legacy_description: "Created before assessment system"
     no_talks_yet: "No talks created yet."
     no_talks_with_speakers_yet: "All talks have no speakers assigned yet."

@@ -1,0 +1,80 @@
+<% if any_displayed? %>
+  <table class="table table-hover table-sm align-middle">
+    <thead>
+      <tr>
+        <th><%= t("basics.name") %></th>
+
+        <% if show_tutorial_column? %>
+          <th><%= t("basics.tutorial") %></th>
+        <% end %>
+
+        <th class="text-center" style="width: 1%; white-space: nowrap;">
+          <%= t("assessment.grade") %>
+        </th>
+
+        <% if show_grader_column? %>
+          <th><%= t("assessment.graded_by") %></th>
+        <% end %>
+
+        <th><%= t("assessment.graded_at") %></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% displayed_participations.each do |participation| %>
+        <tr class="<%= 'table-light text-muted' if participation.exempt? %>">
+          <td>
+            <% if participation.absent? %>
+              <i
+                class="bi bi-person-x text-danger me-1"
+                data-bs-toggle="tooltip"
+                title="<%= status_label(participation) %>"
+              ></i>
+            <% elsif participation.exempt? %>
+              <i
+                class="bi bi-person-dash text-secondary me-1"
+                data-bs-toggle="tooltip"
+                title="<%= status_label(participation) %>"
+              ></i>
+            <% end %>
+
+            <%= participation.user.tutorial_name %>
+          </td>
+
+          <% if show_tutorial_column? %>
+            <td><%= participation.tutorial&.title %></td>
+          <% end %>
+
+          <td class="text-center" style="white-space: nowrap;">
+            <% if participation.absent? %>
+              <%= absent_grade_display(participation) %>
+            <% elsif participation.exempt? %>
+              <span class="text-muted">&mdash;</span>
+            <% else %>
+              <%= grade_display(participation) %>
+            <% end %>
+          </td>
+
+          <% if show_grader_column? %>
+            <td class="text-muted small">
+              <%= grader_display(participation) %>
+            </td>
+          <% end %>
+
+          <td class="text-muted small">
+            <% if graded_at_relative(participation) %>
+              <span title="<%= graded_at_full(participation) %>">
+                <%= graded_at_relative(participation) %>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="text-center text-muted py-3">
+    <i class="bi bi-mortarboard me-1"></i>
+    <%= t("assessment.no_grades_yet") %>
+  </div>
+<% end %>
