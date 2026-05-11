@@ -11,7 +11,7 @@
           </h4>
         </div>
         <div class="card-body" id="organizationalCardBody">
-          <%= lecture.organizational_concept&.html_safe %>
+          <%= sanitize(lecture.organizational_concept) %>
         </div>
       </div>
     </div>
