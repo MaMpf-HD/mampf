@@ -862,6 +862,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  def has_rosterized_tutorials?
+    tutorials.any? { |t| t.rosterized? }
+  end
+
   private
 
     def initialize_submission_deletion_date

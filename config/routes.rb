@@ -759,14 +759,6 @@ Rails.application.routes.draw do
       to: "submissions#show_correction",
       as: "show_correction"
 
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
   get "submissions/:id/cancel_action",
       to: "submissions#cancel_action",
       as: "cancel_submission_action"

@@ -134,6 +134,23 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#has_rosterized_tutorials?" do
+    let(:lecture) { create(:lecture) }
+
+    it "returns true if any tutorial is rosterized" do
+      tut1 = create(:tutorial, lecture: lecture, self_materialization_mode: "add_and_remove")
+      tut2 = create(:tutorial, lecture: lecture, self_materialization_mode: "disabled")
+      allow(tut1).to receive(:rosterized?).and_return(true)
+      allow(tut2).to receive(:rosterized?).and_return(false)
+      expect(lecture.has_rosterized_tutorials?).to eq(true)
+    end
+
+    it "returns false if no tutorials are rosterized" do
+      allow_any_instance_of(Tutorial).to receive(:rosterized?).and_return(false)
+      expect(lecture.has_rosterized_tutorials?).to eq(false)
+    end
+  end
+
   describe "#active_voucher_of_role" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:role) { :tutor }
