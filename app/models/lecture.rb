@@ -86,6 +86,9 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  # a lecture has many exams (scheduled assessment events)
+  has_many :exams, dependent: :destroy
+
   has_many :student_performance_records,
            class_name: "StudentPerformance::Record",
            dependent: :destroy

@@ -143,17 +143,22 @@ module Assessment
         flash[:notice] = notice if notice
         flash[:alert] = alert if alert
 
-        redirect_to assessment_assessment_path(
-          @assessment,
-          assessable_type: assessable.class.name,
-          assessable_id: assessable.id,
-          tab: tab
-        )
+        if assessable.is_a?(Exam)
+          redirect_to exam_path(assessable, tab: tab)
+        else
+          redirect_to assessment_assessment_path(
+            @assessment,
+            assessable_type: assessable.class.name,
+            assessable_id: assessable.id,
+            tab: tab
+          )
+        end
       end
 
       def dashboard_turbo_args(tab:, task: nil)
         assessable = @assessment.assessable
         tasks = @assessment.tasks.order(:position)
+        container = assessable.is_a?(Exam) ? "exams_container" : "assessments_container"
         component = AssessmentDashboardComponent.new(
           assessable: assessable,
           assessment: @assessment,
@@ -162,7 +167,7 @@ module Assessment
           tasks: tasks,
           task: task
         )
-        ["assessments_container", component]
+        [container, component]
       end
   end
 end

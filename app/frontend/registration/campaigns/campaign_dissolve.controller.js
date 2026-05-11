@@ -6,18 +6,21 @@ export default class extends Controller {
   };
 
   submit(event) {
-    if (this.confirmed) return; // base condition to prevent loops
-
-    event.preventDefault();
-
-    if (!confirm(this.confirmMessageValue)) return;
-
-    const card = this.element.closest(".registration-campaign-card");
-    if (!card) {
-      this.resume();
+    if (this.confirmed) {
+      this.confirmed = false;
       return;
     }
 
+    if (!confirm(this.confirmMessageValue)) {
+      event.preventDefault();
+      return;
+    }
+
+    const card = this.element.closest(".registration-campaign-card");
+
+    if (!card) return;
+
+    event.preventDefault();
     card.classList.add("campaign-dissolving");
 
     const reduced = window.matchMedia(

@@ -4,7 +4,7 @@
 A "roster" is a list of names of people belonging to a particular group, team, or event.
 
 - **Common Examples:** A class roster (a list of all students in a class), a team roster (a list of all players on a sports team), or a duty roster (a schedule showing who is working at what time).
-- **In this context:** It refers to the official list of students enrolled in a tutorial or the list of speakers assigned to a seminar talk.
+- **In this context:** It refers to the official list of students enrolled in a tutorial, the list of speakers assigned to a seminar talk, or the list of participants assigned to an exam.
 ```
 
 ## The Core Concept: Lecture Roster as Superset
@@ -196,9 +196,10 @@ end
 ```
 
 ### Usage Scenarios
-- `Tutorial`, `Talk`, `Cohort`, and `Lecture` all include `Rosters::Rosterable`.
+- `Tutorial`, `Talk`, `Cohort`, `Exam`, and `Lecture` all include `Rosters::Rosterable`.
 - `Tutorial`, `Cohort`, and `Lecture` use the default `user_id` roster column and mainly implement `roster_entries`.
 - `Talk` overrides `roster_user_id_column` to `:speaker_id` and `roster_association_name` to `:speaker_talk_joins`.
+- `Exam` uses `exam_roster_entries` and custom add/remove behavior to support post-finalization exclusions.
 
 ---
 
@@ -415,6 +416,30 @@ end
 
 ---
 
+### Exam (Rosterable Implementation)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+An exam-specific participant roster, backed by `exam_roster_entries`.
+```
+
+#### Rosterable Implementation
+The `Exam` model includes the `Rosters::Rosterable` concern.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_entries` | Returns the active `exam_roster_entries` relation. |
+| `roster_association_name` | Uses `:exam_roster_entries` for loaded-count optimizations. |
+| `add_user_to_roster!` | Reuses an existing `ExamRosterEntry` when possible and clears `excluded_at`. |
+| `remove_user_from_roster!` | Hard-removes entries before finalization and soft-excludes them after finalization. |
+
+#### Behavioral Notes
+- The concrete roster row model is `ExamRosterEntry`.
+- The backing table is `exam_roster_entries`.
+- `excluded_at` marks entries that were manually removed from the final exam roster while preserving auditability.
+
+---
+
 ### Lecture (Enhanced)
 **_The Central Roster Hub_**
 
@@ -477,6 +502,11 @@ This diagram shows the concrete database relationships for the `Rosters::Rostera
 erDiagram
     LECTURE ||--o{ LECTURE_MEMBERSHIP : "has (existing)"
     LECTURE_MEMBERSHIP }o--|| USER : "links to"
+
+  LECTURE ||--o{ EXAM : "has many"
+  EXAM ||--o{ EXAM_ROSTER_ENTRY : "has"
+  EXAM_ROSTER_ENTRY }o--|| USER : "links to"
+  EXAM_ROSTER_ENTRY }o--|| REGISTRATION_CAMPAIGN : "source_campaign_id"
 
     LECTURE ||--o{ TUTORIAL : "has many"
     TUTORIAL ||--o{ TUTORIAL_MEMBERSHIP : "has (existing)"
@@ -581,11 +611,12 @@ app/
 The roster system currently uses the following join tables:
 
 - `lecture_memberships` - Join table for lecture roster membership
+- `exam_roster_entries` - Join table for exam participant rosters
 - `tutorial_memberships` - Join table for tutorial student rosters
 - `speaker_talk_joins` - Join table for talk speaker assignments
 - `cohort_memberships` - Join table for cohort student memberships
 
-All four tables now include an optional `source_campaign_id` foreign key for campaign tracking.
+All five tables now include an optional `source_campaign_id` foreign key for campaign tracking.
 
 ```admonish note
 The `Rosters::Rosterable` concern provides a uniform interface over these different join tables through `roster_entries`, `roster_user_id_column`, and shared materialization helpers.

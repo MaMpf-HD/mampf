@@ -45,9 +45,15 @@ module Rosters
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
-    # Checks if the item can be safely destroyed.
+    def non_destructible_reason
+      return :roster_not_empty unless roster_empty?
+      return :in_campaign if in_campaign?
+
+      nil
+    end
+
     def destructible?
-      !in_campaign? && roster_empty?
+      non_destructible_reason.nil?
     end
 
     # Checks if the roster is locked for manual modifications.
@@ -263,14 +269,19 @@ module Rosters
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_campaign?
-          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
-          throw(:abort)
+        reason = non_destructible_reason
+        return unless reason
+
+        msg = case reason
+              when :roster_not_empty
+                I18n.t("roster.errors.cannot_delete_not_empty")
+              when :in_campaign
+                I18n.t("roster.errors.cannot_delete_in_campaign")
+              else
+                I18n.t("roster.errors.cannot_delete",
+                       default: "Cannot delete: #{reason}")
         end
-
-        return if roster_empty?
-
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+        errors.add(:base, msg)
         throw(:abort)
       end
 

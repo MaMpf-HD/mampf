@@ -1,6 +1,8 @@
 en:
   registration:
     campaign:
+      title: 'Registration Campaign'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Registration process is already finalized."
       created: "Registration process created successfully."
@@ -224,10 +226,12 @@ en:
         tutorials: "Tutorials"
         talks: "Talks"
         cohorts: "Other Groups"
+        exams: "Exams"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        exam: "Exam"
         cohort: "Special Group"
         enrollment_group: "Enrollment Group"
         planning_survey: "Planning Group"
@@ -343,6 +347,7 @@ en:
       errors:
         already_completed: "Registration process is already completed."
         wrong_status: "Registration process has wrong status for this action."
+        certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Allocation currently not possible. Please review the details below."
         policy_violation_title: "Allocation currently not possible"
         policy_violation_desc: "At least one finalization policy cannot currently be assessed conclusively for these registrations. Resolve the cases before you finalize the allocation."
@@ -358,6 +363,35 @@ en:
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
+        of_total_points: "of total points"
+        points_absolute: "points (absolute)"
+        no_rule: "No active rule configured"
+      violations_table:
+        override_pass: "Override to passed"
+        confirm_override_pass: "Mark this student as eligible? This creates a manual certification override and cannot be undone without going to the Certifications dashboard."
+        go_to_certifications: "Resolve in Certifications dashboard"
+        additional_blockers: "Additional blockers"
+        other_blockers: "Other blockers"
+      student_performance:
+        unfulfilled: "Some registered students do not have a passed certification. These will fail the exam eligibility policy on finalization."
+      perf_evidence:
+        certified_by: "(by %{name})"
+        no_cert: "No certification record"
+        pts_abbr: "pts"
+        achievements_short: "%{met}/%{total} crit."
+      cert_incomplete:
+        title: "Certifications Incomplete"
+        desc:
+          one: "%{count} registered student does not have a decided performance certificate. Certifications must be resolved before finalization."
+          other: "%{count} registered students do not have decided performance certificates. Certifications must be resolved before finalization."
+        missing_label:
+          one: "%{count} student not yet certified"
+          other: "%{count} students not yet certified"
+        pending_label:
+          one: "%{count} student with pending certificate"
+          other: "%{count} students with pending certificates"
+        go_to_certs: "Go to Certifications"
+        policy_reason: "This registration campaign has a finalization policy that requires decided certifications."
   activerecord:
     errors:
       models:
@@ -389,6 +423,8 @@ en:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration process is no longer in draft mode."
               registerable_not_managed_by_campaign: "The item is locked for registration processes."
+              cannot_add_exam_to_non_exam_campaign: "Exams cannot be added to campaigns that already contain tutorials, talks, or other groups."
+              cannot_add_non_exam_to_exam_campaign: "Tutorials, talks, and other groups cannot be added to exam campaigns."
         registration/user_registration:
           attributes:
             registration_item:

@@ -74,6 +74,9 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 
+import DismissWorkspaceController from "~/registration/allocations/dismiss_workspace.controller.js";
+window.Stimulus.register("dismiss-workspace", DismissWorkspaceController);
+
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
@@ -85,6 +88,15 @@ window.Stimulus.register("assessments--settings", SettingsController);
 
 import PointsPrecisionController from "~/assessment/points_precision.controller.js";
 window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
+
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
+import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
+window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
+
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);

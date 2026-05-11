@@ -29,13 +29,27 @@ module Registration
         if ["allocation", "allocation_embedded"].include?(params[:source])
           load_allocation_data
           if params[:source] == "allocation_embedded"
-            streams << turbo_stream.replace("allocation-dashboard",
-                                            partial: "registration/allocations/dashboard",
-                                            locals: {
-                                              campaign: @campaign,
-                                              dashboard: @dashboard,
-                                              embedded: true
-                                            })
+            exam = @campaign.exam
+            if exam
+              streams << turbo_stream.replace(
+                Registration::Campaign.exam_workspace_frame_id(exam),
+                partial: "registration/allocations/exam_workspace",
+                locals: {
+                  campaign: @campaign,
+                  dashboard: @dashboard,
+                  exam: exam,
+                  container_id: Registration::Campaign.exam_workspace_frame_id(exam)
+                }
+              )
+            else
+              streams << turbo_stream.replace("allocation-dashboard",
+                                              partial: "registration/allocations/dashboard",
+                                              locals: {
+                                                campaign: @campaign,
+                                                dashboard: @dashboard,
+                                                embedded: true
+                                              })
+            end
             streams << turbo_stream.replace(
               helpers.campaign_actions_id(@campaign),
               partial: "registration/campaigns/card_body_actions",

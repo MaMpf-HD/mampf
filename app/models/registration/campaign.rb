@@ -47,6 +47,13 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    scope :non_exam, lambda {
+      where.not(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -84,6 +91,23 @@ module Registration
 
     def can_be_deleted?
       draft?
+    end
+
+    def exam_campaign?
+      registration_items.where.not(registerable_type: "Exam").none? &&
+        registration_items.where(registerable_type: "Exam").any?
+    end
+
+    def exam
+      registration_items.find_by(registerable_type: "Exam")&.registerable
+    end
+
+    def self.exam_workspace_frame_id(exam)
+      "exam_#{exam.id}_allocation_workspace"
+    end
+
+    def exam_workspace_frame_id?(frame_id)
+      exam_campaign? && frame_id == self.class.exam_workspace_frame_id(exam)
     end
 
     def total_registrations_count
@@ -124,7 +148,8 @@ module Registration
     end
 
     def user_registrations_grouped_by_user
-      user_registrations.includes(:user, :registration_item)
+      user_registrations.where.not(status: :rejected)
+                        .includes(:user, :registration_item)
                         .joins(:user)
                         .order("users.name")
                         .group_by(&:user)
@@ -151,6 +176,19 @@ module Registration
 
         update!(status: :completed,
                 allocation_decided_at: allocation_decided_at || Time.current)
+      end
+    end
+
+    def reopen!(registration_deadline: nil)
+      with_lock do
+        return if completed?
+
+        was_processing = processing?
+        attributes = { status: :open }
+        attributes[:registration_deadline] = registration_deadline if registration_deadline.present?
+
+        update!(attributes)
+        reset_allocation_results! if was_processing
       end
     end
 
