@@ -520,6 +520,7 @@ namespace :assessment do
     when :occasional then rand(0.55..0.75)
     end
   end
+
   def ensure_assessment_grading_feature!
     Flipper.add(:assessment_grading)
     Flipper.enable(:assessment_grading)
