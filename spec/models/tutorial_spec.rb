@@ -124,4 +124,27 @@ RSpec.describe(Tutorial, type: :model) do
       expect(TutorTutorialJoin.where(tutorial: tutorial, tutor: tutor).count).to eq(1)
     end
   end
+
+  describe "#rosterized?" do
+    let(:tutorial) { create(:tutorial) }
+
+    it "returns true if tutorial has any memberships" do
+      create(:tutorial_membership, tutorial: tutorial)
+      expect(tutorial.rosterized?).to eq(true)
+    end
+
+    it "returns true if tutorial is in a campaign" do
+      allow(tutorial).to receive(:in_campaign?).and_return(true)
+      expect(tutorial.rosterized?).to eq(true)
+    end
+
+    it "returns true if self_materialization_mode is set and not 'disabled'" do
+      tutorial.self_materialization_mode = "add_and_remove"
+      expect(tutorial.rosterized?).to eq(true)
+    end
+
+    it "returns false if none of the above applies" do
+      expect(tutorial.rosterized?).to eq(false)
+    end
+  end
 end

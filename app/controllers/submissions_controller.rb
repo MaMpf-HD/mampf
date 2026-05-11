@@ -264,9 +264,8 @@ class SubmissionsController < ApplicationController
       lecture = @submission.assignment.lecture
       if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
         permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
-      else
-        params.expect(submission: [:tutorial_id])
       end
+      permitted
     end
 
     # disallow modification of assignment
