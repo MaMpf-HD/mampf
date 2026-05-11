@@ -49,6 +49,12 @@ module Assessment
       update!(points_total: task_points.sum(:points))
     end
 
+    def check_if_all_scored!
+      if !task_points.where(points: nil).exists?
+        update!(status: :reviewed)
+      end
+    end
+
     private
 
       def assessment_must_be_gradable

@@ -5,50 +5,59 @@ module Assessment
 
     def update_team_multi
       scorer = current_user
-      submissions = JSON.parse(params[:submissions])
 
-      submissions.each do |entry|
-        submission = Submission.find(entry["id"])
-        SubmissionGraderService.score_tasks!(
-          submission,
-          entry["task_points"],
-          scorer
-        )
-      end
-      sample_submission = Submission.find_by(id: submissions.first["id"])
-      @tutorial = sample_submission.tutorial
-      @assignment = sample_submission.assignment
-      @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                          &.order(:last_modification_by_users_at)
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "grading-table",
-            partial: "assessment/assessments/components/tutorial_grading_content",
-            locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
+      case params[:type]
+      when "Tutorial"
+        submissions = JSON.parse(params[:submissions])
+
+        submissions.each do |entry|
+          submission = Submission.find(entry["id"])
+          SubmissionGraderService.score_tasks!(
+            submission,
+            entry["task_points"],
+            scorer
           )
+        end
+        sample_submission = Submission.find_by(id: submissions.first["id"])
+        @tutorial = sample_submission.tutorial
+        @assignment = sample_submission.assignment
+        @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
+                            &.order(:last_modification_by_users_at)
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "grading-table",
+              partial: "assessment/assessments/components/tutorial_grading_content",
+              locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
+            )
+          end
         end
       end
     end
 
     def update_team
-      submission = Submission.find_by(id: params[:id])
       scorer = current_user
       task_points = JSON.parse(params[:task_points] || "{}")
-      SubmissionGraderService.score_tasks!(
-        submission,
-        task_points,
-        scorer
-      )
-      @submission = submission.reload
-      @assignment = @submission.assignment
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "submission-row-#{@submission.id}",
-            partial: "tutorials/rows_single",
-            locals: { submission: @submission, assignment: @assignment }
-          )
+      t = params[:type]
+
+      case params[:type]
+      when "Tutorial"
+        submission = Submission.find_by(id: params[:id])
+        SubmissionGraderService.score_tasks!(
+          submission,
+          task_points,
+          scorer
+        )
+        @submission = submission.reload
+        @assignment = @submission.assignment
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "submission-row-#{@submission.id}",
+              partial: "tutorials/rows_single",
+              locals: { submission: @submission, assignment: @assignment }
+            )
+          end
         end
       end
     end
@@ -59,19 +68,21 @@ module Assessment
       rerender_submission_row
     end
 
-    def rerender_submission_row
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "submission-row-#{@submission.id}",
-            partial: "tutorials/rows_single",
-            locals: { submission: @submission, assignment: @assignment }
-          )
-        end
-      end
-    end
+    
 
     private
+
+      def rerender_submission_row
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "submission-row-#{@submission.id}",
+              partial: "tutorials/rows_single",
+              locals: { submission: @submission, assignment: @assignment }
+            )
+          end
+        end
+      end
 
       def current_ability
         @current_ability ||= AssessmentAbility.new(current_user)

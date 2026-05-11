@@ -229,6 +229,7 @@ class SubmissionsController < ApplicationController
     if @errors.present?
       return render partial: "submissions/correction_wrap",
                     locals: { submission: @submission }
+    end
 
     send_correction_upload_email(@submission.users) if @submission.save
 
@@ -256,6 +257,18 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+    def rerender_submission_row
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            partial: "tutorials/rows_single",
+            locals: { submission: @submission, assignment: @assignment }
+          )
+        end
+      end
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])

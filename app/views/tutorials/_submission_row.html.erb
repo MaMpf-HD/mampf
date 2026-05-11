@@ -33,6 +33,7 @@
             name="task_points[<%= assignment_task.id %>]"
             value="<%= extract_task_points(submission, assignment_task) %>"
             step="0.5"
+            min="0"
             data-submission-row-target="input"
             data-task-id="<%= assignment_task.id %>"
             data-action="change->submission-row#markDirty input->submission-row#markDirty"
@@ -80,7 +81,7 @@
   <!--Save and refresh -->
   <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment) %>
     <!-- Hidden form for this row to submit-->
-    <%= form_with url: grade_submission_path(submission),
+    <%= form_with url: grade_submission_tutorial_path(submission, type: "Tutorial"),
                   method: :patch,
                   data: { turbo: true, submission_row_target: "form" },
                   html: { style: "display:none;" } do %>
@@ -96,7 +97,7 @@
     </button>
 
     <!-- Refresh row -->
-    <%= form_with url: refresh_grade_submission_path(submission),
+    <%= form_with url: refresh_grade_submission_tutorial_path(submission, type: "Tutorial"),
                   method: :patch,
                   data: { turbo: true, submission_row_target: "refreshForm" },
                   html: { style: "display:none;" } do %>

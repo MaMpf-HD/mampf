@@ -28,13 +28,15 @@ module Assessment
             task_id: task_id
           )
 
-          tp.points = points&.to_f
+          value = points.presence&.to_f
+          tp.points = value
           tp.grader = grader
           tp.submission_id = submission&.id
           tp.save!
         end
 
         participation.recompute_points_total!
+        participation.check_if_all_scored!
       end
 
       participation
