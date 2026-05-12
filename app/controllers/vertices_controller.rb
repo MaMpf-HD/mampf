@@ -1,10 +1,5 @@
 # VerticesController
 class VerticesController < ApplicationController
-  ALLOWED_VERTEX_TYPES = {
-    "Question" => Question,
-    "Remark" => Remark
-  }.freeze
-
   before_action :set_values
   # NOTE: that we do not use cancancan's authorization methods in the actions
   # as we could not get it to work here
@@ -75,9 +70,13 @@ class VerticesController < ApplicationController
                                    type: ["Question", "Remark"])
         @success = @quizzables.any?
       elsif @sort.in?(["Question", "Remark"])
-        quizzable = ALLOWED_VERTEX_TYPES[@sort].create_prefilled(@params_v[:label],
-                                                                 @quiz.teachable,
-                                                                 @quiz.editors)
+        allowed_types = {
+          "Question" => Question,
+          "Remark" => Remark
+        }
+        quizzable = allowed_types[@sort].create_prefilled(@params_v[:label],
+                                                          @quiz.teachable,
+                                                          @quiz.editors)
         @success = quizzable.valid?
         @quizzables = [quizzable]
       else
