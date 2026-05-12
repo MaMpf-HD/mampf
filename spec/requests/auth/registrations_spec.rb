@@ -42,7 +42,7 @@ RSpec.describe("Auth registrations", type: :request) do
       end.not_to change(User, :count)
 
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
       expect(response.body).to include(I18n.t("devise.registrations.user.captcha_error"))
     end
 

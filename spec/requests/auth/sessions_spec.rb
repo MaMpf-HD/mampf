@@ -38,7 +38,7 @@ RSpec.describe("Auth sessions", type: :request) do
            as: :turbo_stream
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
       expect(response.body).to include(I18n.t("devise.failure.invalid"))
     end
   end
