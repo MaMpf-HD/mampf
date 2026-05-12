@@ -258,10 +258,9 @@ module Vignettes
     private
 
       def set_questionnaire
-        if Questionnaire.exists?(params[:id])
-          @questionnaire = Questionnaire.find(params[:id])
-          return
-        end
+        @questionnaire = Questionnaire.find_by(id: params[:id])
+
+        return if @questionnaire
 
         redirect_to :root, alert: t("vignettes.not_found")
       end
