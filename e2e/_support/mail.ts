@@ -21,16 +21,31 @@ function toRelativeAppUrl(url: string): string {
   return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
 }
 
+async function mailLinkFor(
+  context: APIRequestContext,
+  recipient: string,
+  pathFragment: string,
+): Promise<string> {
+  const mail = await latestMail(context, recipient);
+  const url = mail.urls.find(candidate => candidate.includes(pathFragment));
+
+  if (!url) {
+    throw new Error(`No ${pathFragment} URL found in mail for ${recipient}`);
+  }
+
+  return toRelativeAppUrl(url);
+}
+
 export async function confirmationLinkFor(
   context: APIRequestContext,
   recipient: string,
 ): Promise<string> {
-  const mail = await latestMail(context, recipient);
-  const url = mail.urls.find(candidate => candidate.includes("/users/confirmation"));
+  return await mailLinkFor(context, recipient, "/users/confirmation");
+}
 
-  if (!url) {
-    throw new Error(`No confirmation URL found in mail for ${recipient}`);
-  }
-
-  return toRelativeAppUrl(url);
+export async function resetPasswordLinkFor(
+  context: APIRequestContext,
+  recipient: string,
+): Promise<string> {
+  return await mailLinkFor(context, recipient, "/users/password/edit");
 }

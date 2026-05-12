@@ -1,9 +1,18 @@
 import { expect, test } from "./_support/fixtures";
+import { confirmationLinkFor } from "./_support/mail";
 import { MediumCommentsPage } from "./page-objects/comments_page";
 import { LecturePage } from "./page-objects/lecture_page";
 import { ProfilePage } from "./page-objects/profile_page";
 import { SubmissionsPage } from "./page-objects/submissions_page";
 import { TutorialsPage } from "./page-objects/tutorials_page";
+
+async function login(page: import("@playwright/test").Page, email: string,
+  password: string) {
+  await page.goto("/users/sign_in?locale=en");
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Login" }).click();
+}
 
 test.describe("Account settings", () => {
   test("can change user name & reflects it in user comments",
@@ -76,6 +85,36 @@ test.describe("Account settings", () => {
       await expect(page.getByText("anzeigename")).toBeVisible();
       await expect(page.getByText("benachrichtigt")).toBeVisible();
       await expect(page.getByText("möchte verknüpfte")).toBeVisible();
+    });
+
+  test("can change the email address and confirm it",
+    async ({ student: { page, user }, request }) => {
+      const profilePage = new ProfilePage(page);
+      const newEmail = `updated_${Date.now()}@example.com`;
+
+      await profilePage.goto();
+      await page.getByRole("link", { name: "Change login data" }).click();
+      await expect(page).toHaveURL(/\/users\/edit/);
+
+      await page.locator("#user_email").fill(newEmail);
+      await page.getByLabel("Current password", { exact: true }).fill(user.password);
+      await page.getByRole("button", { name: "Update" }).click();
+
+      await expect(page.getByRole("alert")).toBeVisible();
+
+      const confirmationLink = await confirmationLinkFor(request, newEmail);
+      await page.goto(confirmationLink);
+
+      await expect(page).toHaveURL(/\/profile\/edit/);
+
+      await page.goto("/users/sign_out?locale=en");
+
+      await login(page, user.email, user.password);
+      await expect(page).toHaveURL(/\/users\/sign_in/);
+      await expect(page.getByRole("alert")).toBeVisible();
+
+      await login(page, newEmail, user.password);
+      await expect(page).toHaveURL(/\/main\/start/);
     });
 });
 
