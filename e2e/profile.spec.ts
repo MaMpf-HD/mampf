@@ -5,14 +5,7 @@ import { LecturePage } from "./page-objects/lecture_page";
 import { ProfilePage } from "./page-objects/profile_page";
 import { SubmissionsPage } from "./page-objects/submissions_page";
 import { TutorialsPage } from "./page-objects/tutorials_page";
-
-async function login(page: import("@playwright/test").Page, email: string,
-  password: string) {
-  await page.goto("/users/sign_in?locale=en");
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByRole("button", { name: "Login" }).click();
-}
+import { LoginPage } from "./page-objects/login_page";
 
 test.describe("Account settings", () => {
   test("can change user name & reflects it in user comments",
@@ -110,11 +103,14 @@ test.describe("Account settings", () => {
       await page.locator('a[title="Logout"]').click();
       await expect(page).not.toHaveURL(/\/profile\/edit/);
 
-      await login(page, user.email, user.password);
+      const loginPage = new LoginPage(page);
+      await loginPage.goto();
+      await loginPage.login(user.email, user.password);
       await expect(page).toHaveURL(/\/users\/sign_in/);
       await expect(page.getByRole("alert")).toBeVisible();
 
-      await login(page, newEmail, user.password);
+      await loginPage.goto();
+      await loginPage.login(newEmail, user.password);
       await expect(page).toHaveURL(/\/main\/start/);
     });
 });

@@ -2,14 +2,7 @@ import { expect, test } from "./_support/fixtures";
 import { User } from "./_support/auth";
 import { callBackend } from "./_support/backend";
 import { resetPasswordLinkFor } from "./_support/mail";
-
-async function login(page: import("@playwright/test").Page, email: string,
-  password: string) {
-  await page.goto("/users/sign_in?locale=en");
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByRole("button", { name: "Login" }).click();
-}
+import { LoginPage } from "./page-objects/login_page";
 
 test("can reset the password via the mailed reset link", async ({ page, request }) => {
   const user = await callBackend(request, "user_creator_playwright",
@@ -34,10 +27,13 @@ test("can reset the password via the mailed reset link", async ({ page, request 
   await page.locator('a[title="Logout"]').click();
   await expect(page).not.toHaveURL(/\/main\/start/);
 
-  await login(page, user.email, user.password);
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(user.email, user.password);
   await expect(page).toHaveURL(/\/users\/sign_in/);
   await expect(page.getByRole("alert")).toBeVisible();
 
-  await login(page, user.email, newPassword);
+  await loginPage.goto();
+  await loginPage.login(user.email, newPassword);
   await expect(page).toHaveURL(/\/main\/start/);
 });
