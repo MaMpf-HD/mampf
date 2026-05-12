@@ -1,5 +1,4 @@
 require "cgi"
-require "uri"
 
 module DeviseMailTokenHelper
   def devise_mail_token(mail, param_name)
