@@ -24,7 +24,7 @@ test("can reset the password via the mailed reset link", async ({ page, request 
 
   await expect(page).toHaveURL(/\/main\/start/);
 
-  await page.locator('a[title="Logout"]').click();
+  await page.getByTitle("Logout").click();
   await expect(page).not.toHaveURL(/\/main\/start/);
 
   const loginPage = new LoginPage(page);

@@ -100,7 +100,7 @@ test.describe("Account settings", () => {
 
       await expect(page).toHaveURL(/\/profile\/edit/);
 
-      await page.locator('a[title="Logout"]').click();
+      await page.getByTitle("Logout").click();
       await expect(page).not.toHaveURL(/\/profile\/edit/);
 
       const loginPage = new LoginPage(page);
