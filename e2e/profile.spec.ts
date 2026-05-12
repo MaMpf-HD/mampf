@@ -107,7 +107,8 @@ test.describe("Account settings", () => {
 
       await expect(page).toHaveURL(/\/profile\/edit/);
 
-      await page.goto("/users/sign_out?locale=en");
+      await page.locator('a[title="Logout"]').click();
+      await expect(page).not.toHaveURL(/\/profile\/edit/);
 
       await login(page, user.email, user.password);
       await expect(page).toHaveURL(/\/users\/sign_in/);

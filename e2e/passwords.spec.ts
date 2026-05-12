@@ -31,7 +31,8 @@ test("can reset the password via the mailed reset link", async ({ page, request 
 
   await expect(page).toHaveURL(/\/main\/start/);
 
-  await page.goto("/users/sign_out?locale=en");
+  await page.locator('a[title="Logout"]').click();
+  await expect(page).not.toHaveURL(/\/main\/start/);
 
   await login(page, user.email, user.password);
   await expect(page).toHaveURL(/\/users\/sign_in/);

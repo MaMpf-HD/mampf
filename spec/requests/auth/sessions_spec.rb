@@ -58,14 +58,5 @@ RSpec.describe("Auth sessions", type: :request) do
       get news_path
       expect(response).to redirect_to(new_user_session_path)
     end
-
-    it "signs users out via GET" do
-      get destroy_user_session_path
-
-      expect(response).to redirect_to(root_path)
-
-      get news_path
-      expect(response).to redirect_to(new_user_session_path)
-    end
   end
 end
