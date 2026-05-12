@@ -1,6 +1,13 @@
 # Solution class
 # plain old ruby class, no active record involved
 class Solution
+  ALLOWED_TYPES = {
+    "MampfExpression" => MampfExpression,
+    "MampfMatrix" => MampfMatrix,
+    "MampfTuple" => MampfTuple,
+    "MampfSet" => MampfSet
+  }.freeze
+
   attr_reader :content
   attr_accessor :explanation
 
@@ -42,16 +49,9 @@ class Solution
   end
 
   def self.from_hash(solution_type, content)
-    allowed_types = {
-      "MampfExpression" => MampfExpression,
-      "MampfMatrix" => MampfMatrix,
-      "MampfTuple" => MampfTuple,
-      "MampfSet" => MampfSet
-    }
+    return unless ALLOWED_TYPES.key?(solution_type)
 
-    return unless allowed_types.key?(solution_type)
-
-    solution = Solution.new(allowed_types[solution_type].from_hash(content))
+    solution = Solution.new(ALLOWED_TYPES[solution_type].from_hash(content))
     solution.explanation = content[:explanation]
     solution
   end

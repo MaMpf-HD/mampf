@@ -1,5 +1,12 @@
 # Referrals controller
 class ReferralsController < ApplicationController
+  ALLOWED_TEACHABLE_TYPES = {
+    "Course" => Course,
+    "Lecture" => Lecture,
+    "Lesson" => Lesson,
+    "Talk" => Talk
+  }.freeze
+
   before_action :set_referral, only: [:update, :edit, :destroy]
   before_action :set_basics, only: [:update, :create]
   authorize_resource except: [:create, :list_items]
@@ -60,17 +67,10 @@ class ReferralsController < ApplicationController
     authorize! :list_items, Referral.new
     teachable_id = params[:teachable_id].to_s.split("-")
 
-    allowed_types = {
-      "Course" => Course,
-      "Lecture" => Lecture,
-      "Lesson" => Lesson,
-      "Talk" => Talk
-    }
-
     if teachable_id[0] == "external"
       result = Item.where(medium: nil).pluck(:description, :id)
-    elsif allowed_types.key?(teachable_id[0])
-      @teachable = allowed_types[teachable_id[0]].find_by(id: teachable_id[1])
+    elsif ALLOWED_TEACHABLE_TYPES.key?(teachable_id[0])
+      @teachable = ALLOWED_TEACHABLE_TYPES[teachable_id[0]].find_by(id: teachable_id[1])
       result = @teachable&.media_items_with_inheritance
     end
     result ||= Item.none

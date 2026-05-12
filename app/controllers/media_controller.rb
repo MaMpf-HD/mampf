@@ -1,5 +1,12 @@
 # MediaController
 class MediaController < ApplicationController
+  ALLOWED_TEACHABLE_TYPES = {
+    "Course" => Course,
+    "Lecture" => Lecture,
+    "Lesson" => Lesson,
+    "Talk" => Talk
+  }.freeze
+
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
@@ -568,16 +575,10 @@ class MediaController < ApplicationController
     end
 
     def set_teachable
-      allowed_types = {
-        "Course" => Course,
-        "Lecture" => Lecture,
-        "Lesson" => Lesson,
-        "Talk" => Talk
-      }
-
-      return unless params[:teachable_id].present? && allowed_types.key?(params[:teachable_type])
-
-      @teachable = allowed_types[params[:teachable_type]].find_by(id: params[:teachable_id])
+      if params[:teachable_id].present? && ALLOWED_TEACHABLE_TYPES.key?(params[:teachable_type])
+        @teachable = ALLOWED_TEACHABLE_TYPES[params[:teachable_type]]
+                     .find_by(id: params[:teachable_id])
+      end
     end
 
     def detach_components

@@ -3,6 +3,11 @@
 class QuizGraph
   include ActiveModel::Model
 
+  ALLOWED_VERTEX_TYPES = {
+    "Question" => Question,
+    "Remark" => Remark
+  }.freeze
+
   attr_accessor :vertices, :edges, :root, :default_table, :hide_solution
 
   def self.load(text)
@@ -110,15 +115,10 @@ class QuizGraph
   def quizzable(id)
     return unless id.in?(@vertices.keys)
 
-    allowed_types = {
-      "Question" => Question,
-      "Remark" => Remark
-    }
-
     type = @vertices[id][:type]
-    return unless allowed_types.key?(type)
+    return unless ALLOWED_VERTEX_TYPES.key?(type)
 
-    allowed_types[type].find_by(id: @vertices[id][:id])
+    ALLOWED_VERTEX_TYPES[type].find_by(id: @vertices[id][:id])
   end
 
   def visible?(id)
