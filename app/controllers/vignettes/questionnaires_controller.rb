@@ -274,7 +274,7 @@ module Vignettes
           return
         end
 
-        return unless @lecture.sort != "vignettes"
+        return if @lecture.sort == "vignettes"
 
         redirect_to :root, alert: t("vignettes.not_vignettes_lecture")
       end
