@@ -3,6 +3,8 @@ module Assessment
     belongs_to :assessable, polymorphic: true
     belongs_to :lecture
 
+    delegate :grading_open?, to: :assessable, allow_nil: true
+
     has_many :tasks, dependent: :destroy, class_name: "Assessment::Task",
                      inverse_of: :assessment
     has_many :assessment_participations, dependent: :destroy,

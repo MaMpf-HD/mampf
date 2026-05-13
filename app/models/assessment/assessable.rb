@@ -15,5 +15,11 @@ module Assessment
       a.save! if a.changed?
       a
     end
+
+    # By default, grading is always open unless the specific assessable
+    # (like Assignment) overrides this.
+    def grading_open?
+      true
+    end
   end
 end

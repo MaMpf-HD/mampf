@@ -29,6 +29,7 @@ FactoryBot.define do
     end
 
     trait :reviewed do
+      association :assessment, factory: [:assessment, :for_expired_assignment]
       status { :reviewed }
       submitted_at { 2.days.ago }
       graded_at { 1.day.ago }

@@ -110,9 +110,14 @@ en:
           attributes:
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
               assessment_mismatch: "Task and participation must belong to the same assessment"
         assessment/assessment:
           attributes:

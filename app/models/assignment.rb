@@ -66,6 +66,7 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
+  alias grading_open? totally_expired?
 
   def in_grace_period?
     semiactive? && !active?

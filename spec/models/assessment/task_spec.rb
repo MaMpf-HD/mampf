@@ -59,7 +59,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "#points_entered?" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "returns false when no task points exist" do
       expect(task.points_entered?).to be(false)
@@ -82,7 +83,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "destruction" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "can be destroyed when no points have been entered" do
       expect(task.destroy).to be_truthy

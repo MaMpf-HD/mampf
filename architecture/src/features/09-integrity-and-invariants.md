@@ -66,6 +66,16 @@ Background job periodically checks:
 
 ## 3. Assessments & Grading
 
+### Grading Lifecycle Strictness & Clean Slate Policy
+
+To prevent ambiguous states and stale feedback during grading, the following business rules are enforced:
+
+**1. No Early Grading:**
+Grading values cannot be entered or modified as long as the assessable remains active (e.g., an `Assignment` within its deadline or grace period). Standard models use the polymorphic `Assessment::Assessable#grading_open?` interface to define when the assessment is locked for submissions but open for grading. Modifying any grading attribute (or updating the status away from `:pending`) explicitly raises an `:early_grading_not_allowed` error.
+
+**2. Clean Slate on Submission Update:**
+When a student uploads a new submission file (either originally or when a teacher extends a deadline, making an expired assignment active again), `SubmissionsController#sync_assessment_participations` triggers a "clean slate" reset. This forcibly reverts their participation to `:pending`, clears total points, explicit numeric/text grades, grading metadata (`graded_at`, `grader_id`), and entirely deletes all internal `TaskPoint` entries. This explicitly guarantees a tutor's previous evaluations aren't accidentally carried over to the overriding new manuscript.
+
 ### Database Constraints
 
 ```ruby

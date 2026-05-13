@@ -110,9 +110,14 @@ de:
           attributes:
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
               assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
         assessment/assessment:
           attributes:
