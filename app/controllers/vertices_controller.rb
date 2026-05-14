@@ -70,9 +70,13 @@ class VerticesController < ApplicationController
                                    type: ["Question", "Remark"])
         @success = @quizzables.any?
       elsif @sort.in?(["Question", "Remark"])
-        quizzable = @sort.constantize.create_prefilled(@params_v[:label],
-                                                       @quiz.teachable,
-                                                       @quiz.editors)
+        allowed_types = {
+          "Question" => Question,
+          "Remark" => Remark
+        }
+        quizzable = allowed_types[@sort].create_prefilled(@params_v[:label],
+                                                          @quiz.teachable,
+                                                          @quiz.editors)
         @success = quizzable.valid?
         @quizzables = [quizzable]
       else
