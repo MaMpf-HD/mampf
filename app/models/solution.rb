@@ -42,10 +42,16 @@ class Solution
   end
 
   def self.from_hash(solution_type, content)
-    return unless solution_type.in?(["MampfExpression", "MampfMatrix",
-                                     "MampfTuple", "MampfSet"])
+    allowed_types = {
+      "MampfExpression" => MampfExpression,
+      "MampfMatrix" => MampfMatrix,
+      "MampfTuple" => MampfTuple,
+      "MampfSet" => MampfSet
+    }
 
-    solution = Solution.new(solution_type.constantize.from_hash(content))
+    return unless allowed_types.key?(solution_type)
+
+    solution = Solution.new(allowed_types[solution_type].from_hash(content))
     solution.explanation = content[:explanation]
     solution
   end
