@@ -61,9 +61,9 @@ class ReferralsController < ApplicationController
     teachable_id = params[:teachable_id].to_s.split("-")
     if teachable_id[0] == "external"
       result = Item.where(medium: nil).pluck(:description, :id)
-    else
+    elsif teachable_id[0].in?(["Course", "Lecture", "Lesson", "Talk"])
       @teachable = teachable_id[0].constantize.find_by(id: teachable_id[1])
-      result = @teachable.media_items_with_inheritance
+      result = @teachable&.media_items_with_inheritance
     end
     result ||= Item.none
     render json: result.map { |i| { value: i.second, text: i.first } }

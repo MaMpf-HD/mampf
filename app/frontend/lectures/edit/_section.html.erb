@@ -20,7 +20,7 @@
     </div>
     <% unless section.details.blank? %>
       <div class="col-12 mt-2">
-          <%= section.details.html_safe %>
+          <%= sanitize(section.details) %>
       </div>
     <% end %>
     <div class="col-12 mt-2">

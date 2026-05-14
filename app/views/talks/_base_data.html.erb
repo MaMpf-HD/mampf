@@ -16,7 +16,7 @@
       <%= t('basics.details') %>:
       <%= helpdesk(t('admin.talk.info.details_info'), false) %>
     </strong>
-    <%= talk.details&.html_safe %>
+    <%= sanitize(talk.details) %>
   </p>
 <% end %>
 <% unless assemble %>

@@ -2,7 +2,7 @@
   <% content.each_with_index do |c,i| %>
     <% if c.present? %>
       <p>
-        <%= c&.html_safe %>
+        <%= sanitize(c) %>
       </p>
     <% end %>
     <% unless i == content.length - 1 %>
@@ -44,7 +44,7 @@
           </div>
         </div>
       </li>
-    <% end%>
+    <% end %>
   </ul>
 <% end %>
 <% if (content.nil? || (content - ['']).blank?) && !items.any? %>
