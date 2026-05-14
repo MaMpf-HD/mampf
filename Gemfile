@@ -11,7 +11,7 @@ gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"
 gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
-gem "altcha-rails", "~> 0.0.6"
+gem "altcha-rails", "~> 0.1.0"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
 gem "bootstrap_form", "~> 5.4"
@@ -43,7 +43,7 @@ gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 7.2"
 gem "rack", "~> 3.1"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.3"
 gem "rails-i18n", "~> 8.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
@@ -66,16 +66,16 @@ gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
 # for now, pin vite_ruby, see https://github.com/ElMassimo/vite_ruby/issues/592
-gem "vite_ruby", "3.9.2"
+gem "vite_ruby", "3.10.2"
 
 group :development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
-  gem "rubocop", "1.81.7", require: false
+  gem "rubocop", "1.86.2", require: false
   gem "rubocop-performance", "~> 1.21", require: false
-  gem "rubocop-rails", "2.34.3", require: false
+  gem "rubocop-rails", "2.35.0", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
