@@ -13,7 +13,7 @@ module Assessment
 
     def set_grade!(user:, value: nil, grade_numeric: nil, grade_text: nil, grader: nil)
       a = assessment || raise("No gradebook; call ensure_gradebook! first")
-      part = a.assessment_participations.find_or_create_by!(user_id: user.id)
+      part = a.assessment_participations.create_or_find_by!(user_id: user.id)
 
       grade_attrs = {}
 
