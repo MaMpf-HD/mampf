@@ -1,3 +1,6 @@
+# Provides an overview of the grading status for a given assessment and lecture.
+# Calculates the number of expected submissions, how many have been submitted,
+# how many are missing, and provides information about the deadline.
 class GradingOverviewComponent < ViewComponent::Base
   include ApplicationHelper
 

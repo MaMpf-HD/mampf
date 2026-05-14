@@ -1,3 +1,5 @@
+# Provides support methods for setting up demo data related to registration campaigns,
+# tutorial memberships, assessments, and grading.
 module Demo
   module SetupSupport
     extend self

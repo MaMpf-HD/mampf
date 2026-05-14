@@ -1,3 +1,5 @@
+# Represents a student's participation in an assessment. It tracks the student's
+# submission status, grade, and other relevant information.
 module Assessment
   class Participation < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
