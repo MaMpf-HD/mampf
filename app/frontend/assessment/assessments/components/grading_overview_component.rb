@@ -54,7 +54,7 @@ class GradingOverviewComponent < ViewComponent::Base
   end
 
   def progress_bar_color
-    progress_percentage == 100 ? :success : :secondary
+    total_expected.positive? && submitted_count >= total_expected ? :success : :secondary
   end
 
   def total_expected
@@ -90,6 +90,10 @@ class GradingOverviewComponent < ViewComponent::Base
 
     def missing
       total - submitted
+    end
+
+    def progress_bar_color
+      total.positive? && submitted >= total ? :success : :secondary
     end
 
     def progress_percentage
