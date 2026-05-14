@@ -9,12 +9,7 @@ namespace :demo do
     Demo::SetupSupport.setup_rosters!
   end
 
-  desc "Create demo assignments, tasks, participations, statuses, and points"
-  task assessment: :environment do
-    Demo::SetupSupport.setup_assessment!
-  end
-
-  desc "Create rosters and assessment demo data in one pass"
+  desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!
   end
