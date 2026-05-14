@@ -1,4 +1,4 @@
-FROM cypress/included:15.5.0
+FROM cypress/included:15.15.0
 
 COPY --chmod=0755 "./docker/cypress/open-cypress-interactive.sh" "/workspaces/mampf/open-cypress-interactive.sh"
 
