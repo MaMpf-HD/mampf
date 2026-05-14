@@ -49,6 +49,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "regular-dependencies"
+    patterns: ["*"]
     commit-message:
       prefix: "deps: "
     rebase-strategy: "disabled"
@@ -62,6 +63,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "regular-dependencies"
+    patterns: ["*"]
     commit-message:
       prefix: "deps: "
     rebase-strategy: "disabled"
@@ -74,6 +76,7 @@ updates:
   - package-ecosystem: "docker"
     target-branch: "security"
     multi-ecosystem-group: "regular-infrastructure"
+    patterns: ["*"]
     directories:
       - "/docker/**/*"
     commit-message:
@@ -89,6 +92,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "regular-infrastructure"
+    patterns: ["*"]
     commit-message:
       prefix: "deps (infra): "
     rebase-strategy: "disabled"
@@ -109,6 +113,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "major-dependencies"
+    patterns: ["*"]
     commit-message:
       prefix: "deps (major): "
     rebase-strategy: "disabled"
@@ -120,6 +125,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "major-dependencies"
+    patterns: ["*"]
     commit-message:
       prefix: "deps (major): "
     rebase-strategy: "disabled"
@@ -130,6 +136,7 @@ updates:
   - package-ecosystem: "docker"
     target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
+    patterns: ["*"]
     directories:
       - "/docker/**/*"
     commit-message:
@@ -143,6 +150,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
+    ppatterns: ["*"]
     commit-message:
       prefix: "deps (infra, major): "
     rebase-strategy: "disabled"
