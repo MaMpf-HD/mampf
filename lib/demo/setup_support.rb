@@ -72,20 +72,24 @@ module Demo
 
       def configure_feature_flags!(enabled:, disabled: [])
         Rails.logger.debug("Configuring feature flags...")
+        puts "Configuring feature flags..."
         with_quiet_logging do
           enabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.enable
             Rails.logger.debug { "  ✓ enabled #{flag}" }
+            puts "  enabled #{flag}"
           end
 
           disabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.disable
             Rails.logger.debug { "  ✓ disabled #{flag}" }
+            puts "  disabled #{flag}"
           end
         end
         Rails.logger.debug("")
+        puts ""
       end
 
       def ensure_feature_exists!(flag)
