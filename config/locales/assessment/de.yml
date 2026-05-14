@@ -98,6 +98,8 @@ de:
     legacy_items_subtitle: "Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden."
     legacy_assignments: "Hausaufgaben (altes System ohne Bewertungsfunktion)"
     legacy_assignments_info: "Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden."
+    legacy_talks: "Vorträge (ohne Bewertung)"
+    legacy_talks_info: "Diese Vorträge wurden erstellt, bevor die Bewertungsfunktion hinzugefügt wurde."
     legacy_description: "Erstellt vor dem Bewertungssystem"
     no_talks_yet: "Noch keine Vorträge erstellt."
     no_talks_with_speakers_yet: "Alle Vorträge haben noch keine Sprecher zugewiesen."
@@ -144,9 +146,14 @@ de:
           attributes:
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
               assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
         assessment/assessment:
           attributes:

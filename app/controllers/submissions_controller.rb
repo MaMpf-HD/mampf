@@ -485,7 +485,14 @@ class SubmissionsController < ApplicationController
       target_users.each do |user|
         participation = assessment.assessment_participations
                                   .find_or_initialize_by(user: user)
-        participation.status ||= :pending
+        participation.status = :pending
+        participation.grade_numeric = nil
+        participation.grade_text = nil
+        participation.points_total = nil
+        participation.graded_at = nil
+        participation.grader_id = nil
+        participation.task_points.destroy_all if participation.persisted?
+
         participation.submitted_at = Time.current
         participation.tutorial_id ||=
           Assessment::Participation.tutorial_for(user, lecture)

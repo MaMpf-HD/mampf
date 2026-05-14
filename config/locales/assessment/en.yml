@@ -99,6 +99,8 @@ en:
     legacy_items_subtitle: "These assignments were created before the assessment system. They can be edited using the legacy interface."
     legacy_assignments: "Assignments (legacy system without grading)"
     legacy_assignments_info: "These assignments were created with the old system. They can be edited via the old interface."
+    legacy_talks: "Talks (no grading)"
+    legacy_talks_info: "These talks were created before the grading feature was added."
     legacy_description: "Created before assessment system"
     no_talks_yet: "No talks created yet."
     no_talks_with_speakers_yet: "All talks have no speakers assigned yet."
@@ -145,9 +147,14 @@ en:
           attributes:
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
               assessment_mismatch: "Task and participation must belong to the same assessment"
         assessment/assessment:
           attributes:

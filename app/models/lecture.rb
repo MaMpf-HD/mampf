@@ -805,13 +805,23 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    user_ids.uniq.each do |uid|
-      LectureMembership.transaction(requires_new: true) do
-        LectureMembership.create!(user_id: uid, lecture_id: id)
-      end
-    rescue ActiveRecord::RecordNotUnique
-      next
+    # Efficiently insert missing memberships (ignoring duplicates)
+    # Note: Requires a unique index on [:user_id, :lecture_id]
+    attributes = user_ids.map do |uid|
+      { user_id: uid, lecture_id: id }
     end
+
+    return if attributes.empty?
+
+    # Rails handles timestamps automatically.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
+    # created_at/updated_at for existing members.
+    # rubocop:disable Rails/SkipsModelValidations
+    LectureMembership.insert_all(
+      attributes,
+      unique_by: [:user_id, :lecture_id]
+    )
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def eligible_as_tutors

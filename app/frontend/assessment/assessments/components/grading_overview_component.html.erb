@@ -80,7 +80,7 @@
 
             <td>
               <%= progress_bar(stat.submitted, stat.total,
-                               classification: stat.progress_percentage == 100 ? :success : :secondary,
+                               classification: stat.progress_bar_color,
                                height: "16px",
                                label: "#{stat.progress_percentage}%",
                                container_class: "progress") %>

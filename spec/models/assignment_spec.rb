@@ -164,6 +164,8 @@ RSpec.describe(Assignment, type: :model) do
     end
 
     context "when assignment has grading data but no submissions" do
+      let(:assignment) { FactoryBot.create(:assignment, :expired, lecture: lecture) }
+
       before do
         Flipper.enable(:assessment_grading)
         assignment.reload

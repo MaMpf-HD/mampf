@@ -11,12 +11,19 @@ module Assessment
     validates :points, numericality: { greater_than_or_equal_to: 0 },
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
+    validate :grading_lifecycle_must_be_open
 
     after_commit :refresh_participation_points_total,
                  :recompute_performance_record,
                  if: :should_recompute_points?
 
     private
+
+      def grading_lifecycle_must_be_open
+        return if assessment_participation&.assessment&.grading_open?
+
+        errors.add(:base, :early_grading_not_allowed)
+      end
 
       def should_recompute_points?
         destroyed? || previously_new_record? || saved_change_to_points?

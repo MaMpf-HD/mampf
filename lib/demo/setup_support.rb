@@ -2,7 +2,7 @@ module Demo
   module SetupSupport
     extend self
 
-    LEGACY_TASK_GROUPS = [
+    LEGACY_SOLVER_TASK_GROUPS = [
       ["solver:create_campaign", "solver:create_registrations"],
       [
         "solver:create_mixed_fcfs_campaign",
@@ -15,7 +15,7 @@ module Demo
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
     ROSTER_ENABLED_FLAGS = ["roster_maintenance", "registration_campaigns"].freeze
-    ROSTER_DISABLED_FLAGS = ["assessment_grading", "student_performance"].freeze
+    ROSTER_DISABLED_FLAGS = ["assessment_grading"].freeze
     ASSESSMENT_ENABLED_FLAGS = ["assessment_grading"].freeze
     ASSESSMENT_DISABLED_FLAGS = ["student_performance"].freeze
     PERFORMANCE_ENABLED_FLAGS = ["assessment_grading", "student_performance"].freeze
@@ -33,19 +33,29 @@ module Demo
       { title: "Attendance Rate", value_type: :percentage, threshold: 80.0 }
     ].freeze
 
-    def verify!
+    def set_relevant_feature_flags!
       ensure_non_production!
-      configure_feature_flags!(enabled: ROSTER_ENABLED_FLAGS)
+      configure_feature_flags!(
+        enabled: (ROSTER_ENABLED_FLAGS + PERFORMANCE_ENABLED_FLAGS).uniq
+      )
+    end
 
-      Rails.logger.debug("=== Demo Verification ===")
-      LEGACY_TASK_GROUPS.each do |group|
+    def setup_legacy_solver_playground!
+      set_relevant_feature_flags!
+
+      Rails.logger.debug("=== Legacy Solver Playground Setup ===")
+      LEGACY_SOLVER_TASK_GROUPS.each do |group|
         group.each do |task_name|
           Rails.logger.debug { "Running #{task_name}..." }
           invoke_task(task_name)
           Rails.logger.debug("")
         end
       end
-      Rails.logger.debug("=== Demo Verification Complete ===")
+      Rails.logger.debug("=== Legacy Solver Playground Setup Complete ===")
+    end
+
+    def verify!
+      setup_legacy_solver_playground!
     end
 
     def setup_rosters!
@@ -89,6 +99,12 @@ module Demo
       Rails.logger.debug("=== Demo Assessment Setup Complete ===")
     end
 
+    def setup!
+      setup_rosters!
+      setup_assessment!
+      setup_performance!
+    end
+
     def setup_performance!
       ensure_non_production!
       configure_feature_flags!(enabled: PERFORMANCE_ENABLED_FLAGS)
@@ -109,19 +125,11 @@ module Demo
       Rails.logger.debug("=== Demo Performance Setup Complete ===")
     end
 
-    def setup!
-      setup_rosters!
-      setup_assessment!
-      setup_performance!
-    end
-
     def assessment_lecture!
       lecture = lecture!
       return lecture if TutorialMembership.exists?(tutorial_id: demo_tutorial_ids(lecture))
 
-      # rubocop:disable Rails/Exit
-      abort("Lecture 1 has no tutorial roster. Run demo:rosters first.")
-      # rubocop:enable Rails/Exit
+      raise("Lecture 1 has no tutorial roster. Run demo:rosters first.")
     end
 
     def performance_lecture!
@@ -142,25 +150,33 @@ module Demo
       # rubocop:enable Rails/Exit
 
       def configure_feature_flags!(enabled:, disabled: [])
+        messages = []
+
         Rails.logger.debug("Configuring feature flags...")
         with_quiet_logging do
           enabled.each do |flag|
-            ensure_feature_exists!(flag)
-            Flipper.enable(flag)
-            Rails.logger.debug { "  ✓ enabled #{flag}" }
+            feature = ensure_feature_exists!(flag)
+            feature.enable
+            messages << "  enabled #{flag}"
           end
 
           disabled.each do |flag|
-            ensure_feature_exists!(flag)
-            Flipper.disable(flag)
-            Rails.logger.debug { "  ✓ disabled #{flag}" }
+            feature = ensure_feature_exists!(flag)
+            feature.disable
+            messages << "  disabled #{flag}"
           end
+        end
+
+        messages.each do |message|
+          Rails.logger.debug(message)
         end
         Rails.logger.debug("")
       end
 
       def ensure_feature_exists!(flag)
-        Flipper.add(flag)
+        feature_name = flag.to_s
+        Flipper::Adapters::ActiveRecord::Feature.find_or_create_by!(key: feature_name)
+        Flipper[feature_name]
       end
 
       def invoke_task(task_name)
@@ -805,14 +821,6 @@ module Demo
         seminar.talks.where(title: SEMINAR_TALK_TITLES).order(:position)
       end
 
-      def with_quiet_logging
-        old_level = ActiveRecord::Base.logger&.level
-        ActiveRecord::Base.logger&.level = :warn
-        yield
-      ensure
-        ActiveRecord::Base.logger&.level = old_level
-      end
-
       def student_profile(user_id)
         bucket = user_id.hash.abs % 100
         if bucket < 15
@@ -857,18 +865,6 @@ module Demo
           rand(0.80..0.95)
         when :occasional
           rand(0.55..0.75)
-        end
-      end
-
-      def demo_achievement_grade_text(achievement, quality)
-        case achievement.value_type
-        when "boolean"
-          quality > 0.5 ? "pass" : "fail"
-        when "numeric"
-          max = (achievement.threshold * 1.5).ceil
-          (quality * max).round.to_s
-        when "percentage"
-          (quality * 100).round(1).to_s
         end
       end
   end

@@ -85,6 +85,33 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "XSS protections" do
+    let(:xss_payload) { "<div id='test-xss-xyz123'><script>alert('lecture-xss')</script></div>" }
+    let!(:xss_course) { create(:course, title: "XSS Course") }
+    let!(:xss_lecture) do
+      create(:lecture, course: xss_course, teacher: user, organizational: true,
+                       organizational_concept: xss_payload)
+    end
+    let!(:xss_chapter) { create(:chapter, lecture: xss_lecture, details: xss_payload) }
+    let!(:xss_section) { create(:section, chapter: xss_chapter, details: xss_payload) }
+
+    before do
+      create(:lecture_user_join, user: user, lecture: xss_lecture)
+    end
+
+    it "escapes or strips script tags from lecture organizational concept, chapters, and sections in edit view" do # rubocop:disable Layout/LineLength
+      get edit_lecture_path(xss_lecture)
+      expect(response).to be_successful
+      expect(response.body).not_to include("<script>alert('lecture-xss')</script>")
+    end
+
+    it "escapes or strips script tags in show view" do
+      get lecture_path(xss_lecture)
+      expect(response).to be_successful
+      expect(response.body).not_to include("<script>alert('lecture-xss')</script>")
+    end
+  end
+
   describe "PATCH /lectures/:id" do
     let(:teacher) { create(:confirmed_user) }
     let(:lecture) { create(:lecture, teacher: teacher) }

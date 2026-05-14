@@ -25,7 +25,7 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
 
   describe "validations" do
     context "when task and participation belong to same assessment" do
-      let(:assessment) { FactoryBot.create(:assessment, requires_points: true) }
+      let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
       let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
       let(:participation) { FactoryBot.create(:assessment_participation, assessment: assessment) }
 
@@ -38,8 +38,8 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
     end
 
     context "when task and participation belong to different assessments" do
-      let(:assessment1) { FactoryBot.create(:assessment, requires_points: true) }
-      let(:assessment2) { FactoryBot.create(:assessment, requires_points: true) }
+      let(:assessment1) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+      let(:assessment2) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
       let(:task) { FactoryBot.create(:assessment_task, assessment: assessment1) }
       let(:participation) { FactoryBot.create(:assessment_participation, assessment: assessment2) }
 

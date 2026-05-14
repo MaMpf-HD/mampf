@@ -35,6 +35,11 @@ FactoryBot.define do
       lecture { assessable.lecture }
     end
 
+    trait :for_expired_assignment do
+      association :assessable, factory: [:assignment, :expired, :with_lecture]
+      lecture { assessable.lecture }
+    end
+
     trait :for_exam do
       association :assessable, factory: :exam
       lecture { assessable.lecture }
