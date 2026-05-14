@@ -1,30 +1,113 @@
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates#enabling-dependabot-version-updates
-# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/optimizing-pr-creation-version-updates
+# Docs:
+# https://docs.github.com/en/code-security/dependabot
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
+# https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/automating-dependabot-with-github-actions#approve-a-pull-request
 
 version: 2
-updates:
-  - package-ecosystem: "bundler"
-    directory: "/"
-    <<: &updater_defaults
-    target-branch: "security"
+
+multi-ecosystem-groups:
+  regular-dependencies:
     schedule:
       interval: "cron"
-      # every Monday and Thursday at 00:00
-      cronjob: "0 0 * * 1,4" 
+      # Every Monday and Thursday at 00:00
+      cronjob: "0 0 * * 1,4"
+
+  regular-infrastructure:
+    schedule:
+      interval: "cron"
+      # Every Monday and Thursday at 00:00
+      cronjob: "0 0 * * 1,4"
+
+  major-dependencies:
+    schedule:
+      interval: "cron"
+      # Every 20 days at 00:00
+      cronjob: "0 0 */20 * *"
+
+  major-infrastructure:
+    schedule:
+      interval: "cron"
+      # Every 20 days at 00:00
+      cronjob: "0 0 */20 * *"
+
+updates:
+  ##############################################################################
+  # REGULAR UPDATES
+  # - security updates
+  # - patch updates
+  # - minor updates
+  #
+  # Auto-merge candidate after CI succeeds.
+  ##############################################################################
+
+  - &regular_defaults
+    package-ecosystem: "bundler"
+    directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "regular-dependencies"
     commit-message:
       prefix: "deps: "
-    open-pull-requests-limit: 0
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
-  - <<: *updater_defaults
+  - <<: *regular_defaults
     package-ecosystem: "npm"
     directory: "/"
 
-  - <<: *updater_defaults
+  - <<: *regular_defaults
     package-ecosystem: "docker"
+    multi-ecosystem-group: "regular-infrastructure"
     directories:
       - "/docker/**/*"
+    commit-message:
+      prefix: "deps (infra): "
 
-  - <<: *updater_defaults
+  - <<: *regular_defaults
     package-ecosystem: "github-actions"
+    multi-ecosystem-group: "regular-infrastructure"
     directory: "/"
+    commit-message:
+      prefix: "deps (infra): "
+
+
+  ##############################################################################
+  # MAJOR VERSION UPDATES
+  #
+  # Manual review recommended
+  ##############################################################################
+
+  - &major_defaults
+    package-ecosystem: "bundler"
+    directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "major-dependencies"
+    commit-message:
+      prefix: "deps (major): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    allow:
+      - dependency-type: "all"
+
+  - <<: *major_defaults
+    package-ecosystem: "npm"
+    directory: "/"
+
+  - <<: *major_defaults
+    package-ecosystem: "docker"
+    multi-ecosystem-group: "major-infrastructure"
+    directories:
+      - "/docker/**/*"
+    commit-message:
+      prefix: "deps (infra, major): "
+
+  - <<: *major_defaults
+    package-ecosystem: "github-actions"
+    multi-ecosystem-group: "major-infrastructure"
+    directory: "/"
+    commit-message:
+      prefix: "deps (infra, major): "
