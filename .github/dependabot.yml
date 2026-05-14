@@ -10,14 +10,14 @@ multi-ecosystem-groups:
   regular-dependencies:
     schedule:
       interval: "cron"
-      # Every Monday and Thursday at 00:00
-      cronjob: "0 0 * * 1,4"
+      # Every Monday at 00:00
+      cronjob: "0 0 * * 1"
 
   regular-infrastructure:
     schedule:
       interval: "cron"
-      # Every Monday and Thursday at 00:00
-      cronjob: "0 0 * * 1,4"
+      # Every Monday at 00:00
+      cronjob: "0 0 * * 1"
 
   major-dependencies:
     schedule:
