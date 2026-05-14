@@ -45,8 +45,7 @@ updates:
   # Auto-merge candidate after CI succeeds.
   ##############################################################################
 
-  - &regular_defaults
-    package-ecosystem: "bundler"
+  - package-ecosystem: "bundler"
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "regular-dependencies"
@@ -59,24 +58,45 @@ updates:
         update-types:
           - "version-update:semver-major"
 
-  - <<: *regular_defaults
-    package-ecosystem: "npm"
+  - package-ecosystem: "npm"
     directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "regular-dependencies"
+    commit-message:
+      prefix: "deps: "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
-  - <<: *regular_defaults
-    package-ecosystem: "docker"
+  - package-ecosystem: "docker"
+    target-branch: "security"
     multi-ecosystem-group: "regular-infrastructure"
     directories:
       - "/docker/**/*"
     commit-message:
       prefix: "deps (infra): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
-  - <<: *regular_defaults
-    package-ecosystem: "github-actions"
-    multi-ecosystem-group: "regular-infrastructure"
+  - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "regular-infrastructure"
     commit-message:
       prefix: "deps (infra): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
 
   ##############################################################################
@@ -85,8 +105,7 @@ updates:
   # Manual review recommended
   ##############################################################################
 
-  - &major_defaults
-    package-ecosystem: "bundler"
+  - package-ecosystem: "bundler"
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "major-dependencies"
@@ -97,21 +116,36 @@ updates:
     allow:
       - dependency-type: "all"
 
-  - <<: *major_defaults
-    package-ecosystem: "npm"
+  - package-ecosystem: "npm"
     directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "major-dependencies"
+    commit-message:
+      prefix: "deps (major): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    allow:
+      - dependency-type: "all"
 
-  - <<: *major_defaults
-    package-ecosystem: "docker"
+  - package-ecosystem: "docker"
+    target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
     directories:
       - "/docker/**/*"
     commit-message:
       prefix: "deps (infra, major): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    allow:
+      - dependency-type: "all"
 
-  - <<: *major_defaults
-    package-ecosystem: "github-actions"
-    multi-ecosystem-group: "major-infrastructure"
+  - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "security"
+    multi-ecosystem-group: "major-infrastructure"
     commit-message:
       prefix: "deps (infra, major): "
+    rebase-strategy: "disabled"
+    open-pull-requests-limit: 2
+    allow:
+      - dependency-type: "all"
