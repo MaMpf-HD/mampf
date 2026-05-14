@@ -6,37 +6,25 @@ version: 2
 updates:
   - package-ecosystem: "bundler"
     directory: "/"
-    target-branch: "next"
+    <<: &updater_defaults
+    target-branch: "security"
     schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
+      interval: "cron"
+      # every Monday and Thursday at 00:00
+      cronjob: "0 0 * * 1,4" 
+    commit-message:
+      prefix: "deps: "
     open-pull-requests-limit: 0
 
-  - package-ecosystem: "npm"
+  - <<: *updater_defaults
+    package-ecosystem: "npm"
     directory: "/"
-    target-branch: "next"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-    open-pull-requests-limit: 0
 
-  - package-ecosystem: "docker"
+  - <<: *updater_defaults
+    package-ecosystem: "docker"
     directories:
       - "/docker/**/*"
-    target-branch: "next"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-    open-pull-requests-limit: 0
 
-  - package-ecosystem: "github-actions"
+  - <<: *updater_defaults
+    package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "next"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "dependencies"
-    open-pull-requests-limit: 0
