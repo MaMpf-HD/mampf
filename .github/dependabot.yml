@@ -8,6 +8,10 @@ version: 2
 
 multi-ecosystem-groups:
   regular-dependencies:
+    target-branch: "security"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "deps: "
     schedule:
       interval: "cron"
       # Every Monday at 09:00
@@ -15,6 +19,10 @@ multi-ecosystem-groups:
       timezone: "Europe/Berlin"
 
   regular-infrastructure:
+    target-branch: "security"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "deps (infra): "
     schedule:
       interval: "cron"
       # Every Monday at 09:00
@@ -22,6 +30,10 @@ multi-ecosystem-groups:
       timezone: "Europe/Berlin"
 
   major-dependencies:
+    target-branch: "security"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "deps (major): "
     schedule:
       interval: "cron"
       # Every 20 days at 09:00
@@ -29,6 +41,10 @@ multi-ecosystem-groups:
       timezone: "Europe/Berlin"
 
   major-infrastructure:
+    target-branch: "security"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "deps (infra, major): "
     schedule:
       interval: "cron"
       # Every 20 days at 09:00
@@ -47,13 +63,9 @@ updates:
 
   - package-ecosystem: "bundler"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "regular-dependencies"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps: "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     ignore:
       - dependency-name: "*"
         update-types:
@@ -61,28 +73,20 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "regular-dependencies"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps: "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     ignore:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
 
   - package-ecosystem: "docker"
-    target-branch: "security"
     multi-ecosystem-group: "regular-infrastructure"
     patterns: ["*"]
     directories:
       - "/docker/**/*"
-    commit-message:
-      prefix: "deps (infra): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     ignore:
       - dependency-name: "*"
         update-types:
@@ -90,13 +94,9 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "regular-infrastructure"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps (infra): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     ignore:
       - dependency-name: "*"
         update-types:
@@ -111,49 +111,33 @@ updates:
 
   - package-ecosystem: "bundler"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "major-dependencies"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps (major): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     allow:
       - dependency-type: "all"
 
   - package-ecosystem: "npm"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "major-dependencies"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps (major): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     allow:
       - dependency-type: "all"
 
   - package-ecosystem: "docker"
-    target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
     patterns: ["*"]
     directories:
       - "/docker/**/*"
-    commit-message:
-      prefix: "deps (infra, major): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     allow:
       - dependency-type: "all"
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
     patterns: ["*"]
-    commit-message:
-      prefix: "deps (infra, major): "
     rebase-strategy: "disabled"
-    open-pull-requests-limit: 2
     allow:
       - dependency-type: "all"
