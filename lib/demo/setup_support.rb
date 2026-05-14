@@ -5,7 +5,7 @@ module Demo
     extend self
     extend SetupSupportAssessment if defined?(SetupSupportAssessment)
 
-    LEGACY_TASK_GROUPS = [
+    LEGACY_SOLVER_TASK_GROUPS = [
       ["solver:create_campaign", "solver:create_registrations"],
       [
         "solver:create_mixed_fcfs_campaign",
@@ -18,7 +18,6 @@ module Demo
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
     ROSTER_ENABLED_FLAGS = ["roster_maintenance", "registration_campaigns"].freeze
-    ROSTER_DISABLED_FLAGS = ["assessment_grading"].freeze
     LECTURE_TUTORIAL_CAPACITIES = [10, 8, 8, 6].freeze
     LECTURE_TUTORIAL_TITLES = [
       "Demo Tutorial 1",
@@ -28,27 +27,31 @@ module Demo
     ].freeze
     SEMINAR_TALK_TITLES = (1..10).map { |i| "Demo Talk #{i}" }.freeze
 
-    def verify!
+    def set_relevant_feature_flags!
       ensure_non_production!
       configure_feature_flags!(enabled: ROSTER_ENABLED_FLAGS)
+    end
 
-      Rails.logger.debug("=== Demo Verification ===")
-      LEGACY_TASK_GROUPS.each do |group|
+    def setup_legacy_solver_playground!
+      set_relevant_feature_flags!
+
+      Rails.logger.debug("=== Legacy Solver Playground Setup ===")
+      LEGACY_SOLVER_TASK_GROUPS.each do |group|
         group.each do |task_name|
           Rails.logger.debug { "Running #{task_name}..." }
           invoke_task(task_name)
           Rails.logger.debug("")
         end
       end
-      Rails.logger.debug("=== Demo Verification Complete ===")
+      Rails.logger.debug("=== Legacy Solver Playground Setup Complete ===")
+    end
+
+    def verify!
+      setup_legacy_solver_playground!
     end
 
     def setup_rosters!
-      ensure_non_production!
-      configure_feature_flags!(
-        enabled: ROSTER_ENABLED_FLAGS,
-        disabled: ROSTER_DISABLED_FLAGS
-      )
+      set_relevant_feature_flags!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
       with_quiet_logging do
@@ -73,24 +76,30 @@ module Demo
 
       def configure_feature_flags!(enabled:, disabled: [])
         Rails.logger.debug("Configuring feature flags...")
+        puts "Configuring feature flags..."
         with_quiet_logging do
           enabled.each do |flag|
-            ensure_feature_exists!(flag)
-            Flipper.enable(flag)
+            feature = ensure_feature_exists!(flag)
+            feature.enable
             Rails.logger.debug { "  ✓ enabled #{flag}" }
+            puts "  enabled #{flag}"
           end
 
           disabled.each do |flag|
-            ensure_feature_exists!(flag)
-            Flipper.disable(flag)
+            feature = ensure_feature_exists!(flag)
+            feature.disable
             Rails.logger.debug { "  ✓ disabled #{flag}" }
+            puts "  disabled #{flag}"
           end
         end
         Rails.logger.debug("")
+        puts ""
       end
 
       def ensure_feature_exists!(flag)
-        Flipper.add(flag)
+        feature_name = flag.to_s
+        Flipper::Adapters::ActiveRecord::Feature.find_or_create_by!(key: feature_name)
+        Flipper[feature_name]
       end
 
       def invoke_task(task_name)
