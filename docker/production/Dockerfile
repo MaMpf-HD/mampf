@@ -1,6 +1,6 @@
 # First build the PDF compressor Web assembly binary
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
-FROM golang:1.20 AS build-pdfcomprezzor
+FROM golang:1.26 AS build-pdfcomprezzor
 WORKDIR /go/src
 COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
@@ -8,7 +8,7 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.4.7-bookworm
+FROM ruby:4.0.0-bookworm
 
 ENV RAILS_ENV=production
 
