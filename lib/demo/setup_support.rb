@@ -105,23 +105,27 @@ module Demo
       # rubocop:enable Rails/Exit
 
       def configure_feature_flags!(enabled:, disabled: [])
-        puts "Configuring feature flags..."
+        messages = []
+
+        Rails.logger.debug("Configuring feature flags...")
         with_quiet_logging do
           enabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.enable
-            Rails.logger.debug { "  ✓ enabled #{flag}" }
-            puts "  enabled #{flag}"
+            messages << "  enabled #{flag}"
           end
 
           disabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.disable
-            Rails.logger.debug { "  ✓ disabled #{flag}" }
-            puts "  disabled #{flag}"
+            messages << "  disabled #{flag}"
           end
         end
-        puts ""
+
+        messages.each do |message|
+          Rails.logger.debug(message)
+        end
+        Rails.logger.debug("")
       end
 
       def ensure_feature_exists!(flag)
