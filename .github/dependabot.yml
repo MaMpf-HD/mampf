@@ -150,7 +150,7 @@ updates:
     directory: "/"
     target-branch: "security"
     multi-ecosystem-group: "major-infrastructure"
-    ppatterns: ["*"]
+    patterns: ["*"]
     commit-message:
       prefix: "deps (infra, major): "
     rebase-strategy: "disabled"
