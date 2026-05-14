@@ -1,8 +1,10 @@
 namespace :demo do
-  desc "Run the legacy registration and roster demo flow"
-  task verify: :environment do
-    Demo::SetupSupport.verify!
+  desc "Run the legacy solver playground flow"
+  task legacy_solver_playground: :environment do
+    Demo::SetupSupport.setup_legacy_solver_playground!
   end
+
+  task verify: :legacy_solver_playground
 
   desc "Create finalized lecture and seminar rosters for the assessment demo"
   task rosters: :environment do

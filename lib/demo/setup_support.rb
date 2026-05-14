@@ -2,7 +2,7 @@ module Demo
   module SetupSupport
     extend self
 
-    LEGACY_TASK_GROUPS = [
+    LEGACY_SOLVER_TASK_GROUPS = [
       ["solver:create_campaign", "solver:create_registrations"],
       [
         "solver:create_mixed_fcfs_campaign",
@@ -25,19 +25,23 @@ module Demo
     ].freeze
     SEMINAR_TALK_TITLES = (1..10).map { |i| "Demo Talk #{i}" }.freeze
 
-    def verify!
+    def setup_legacy_solver_playground!
       ensure_non_production!
       configure_feature_flags!(enabled: ROSTER_ENABLED_FLAGS)
 
-      Rails.logger.debug("=== Demo Verification ===")
-      LEGACY_TASK_GROUPS.each do |group|
+      Rails.logger.debug("=== Legacy Solver Playground Setup ===")
+      LEGACY_SOLVER_TASK_GROUPS.each do |group|
         group.each do |task_name|
           Rails.logger.debug { "Running #{task_name}..." }
           invoke_task(task_name)
           Rails.logger.debug("")
         end
       end
-      Rails.logger.debug("=== Demo Verification Complete ===")
+      Rails.logger.debug("=== Legacy Solver Playground Setup Complete ===")
+    end
+
+    def verify!
+      setup_legacy_solver_playground!
     end
 
     def setup_rosters!
