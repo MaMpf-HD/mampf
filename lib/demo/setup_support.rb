@@ -93,7 +93,7 @@ module Demo
       lecture = lecture!
       return lecture if TutorialMembership.exists?(tutorial_id: demo_tutorial_ids(lecture))
 
-      abort("Lecture 1 has no tutorial roster. Run demo:rosters first.")
+      raise("Lecture 1 has no tutorial roster. Run demo:rosters first.")
     end
 
     private
@@ -427,7 +427,9 @@ module Demo
             deadline: 1.year.from_now,
             accepted_file_type: ".pdf"
           )
+          # rubocop:disable Rails/SkipsModelValidations
           assignment.update_column(:deadline, attrs[:deadline])
+          # rubocop:enable Rails/SkipsModelValidations
           created += 1
         end
 
@@ -588,8 +590,10 @@ module Demo
         Assessment::TaskPoint.where(
           assessment_participation_id: participation_ids
         ).delete_all
+        # rubocop:disable Rails/SkipsModelValidations
         assessment.assessment_participations.where.not(points_total: nil)
                   .update_all(points_total: nil)
+        # rubocop:enable Rails/SkipsModelValidations
 
         gradeable = assessment.assessment_participations
                               .where(status: :reviewed)
