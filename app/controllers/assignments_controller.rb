@@ -84,8 +84,8 @@ class AssignmentsController < ApplicationController
     set_assignment_locale
     @lecture = @assignment.lecture
     remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
+                                    .joins(:assessment)
                                     .includes(:assessment)
-                                    .select(&:assessment)
 
     if @assignment.destroy
       respond_to do |format|
