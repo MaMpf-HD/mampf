@@ -1,4 +1,6 @@
 module Assessment
+  # Provides shared functionality for models that can be graded and tracked in
+  # the assessment system.
   module Gradable
     extend ActiveSupport::Concern
     include ::Assessment::Assessable

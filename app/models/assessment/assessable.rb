@@ -1,4 +1,5 @@
 module Assessment
+  # Represents the common interface for any model that can be assessed.
   module Assessable
     extend ActiveSupport::Concern
 
