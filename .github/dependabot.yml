@@ -10,26 +10,30 @@ multi-ecosystem-groups:
   regular-dependencies:
     schedule:
       interval: "cron"
-      # Every Monday at 00:00
-      cronjob: "0 0 * * 1"
+      # Every Monday at 09:00
+      cronjob: "0 9 * * 1"
+      timezone: "Europe/Berlin"
 
   regular-infrastructure:
     schedule:
       interval: "cron"
-      # Every Monday at 00:00
-      cronjob: "0 0 * * 1"
+      # Every Monday at 09:00
+      cronjob: "0 9 * * 1"
+      timezone: "Europe/Berlin"
 
   major-dependencies:
     schedule:
       interval: "cron"
-      # Every 20 days at 00:00
-      cronjob: "0 0 */20 * *"
+      # Every 20 days at 09:00
+      cronjob: "0 9 */20 * *"
+      timezone: "Europe/Berlin"
 
   major-infrastructure:
     schedule:
       interval: "cron"
-      # Every 20 days at 00:00
-      cronjob: "0 0 */20 * *"
+      # Every 20 days at 09:00
+      cronjob: "0 9 */20 * *"
+      timezone: "Europe/Berlin"
 
 updates:
   ##############################################################################
