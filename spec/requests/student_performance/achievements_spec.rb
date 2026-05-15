@@ -188,6 +188,12 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+        expect(response.body).to include(
+          %(data-achievement-form-has-errors-value="true")
+        )
+        expect(response.body).to include(
+          %(data-achievement-form-original-threshold-value="80.0")
+        )
       end
 
       it "renders validation errors only through invalid-feedback" do

@@ -93,6 +93,8 @@ module StudentPerformance
     end
 
     def update
+      original_achievement = @achievement.dup
+
       if @achievement.update(achievement_params)
         respond_to do |format|
           format.turbo_stream do
@@ -123,7 +125,8 @@ module StudentPerformance
               "assessments_container",
               ::AchievementDashboardComponent.new(
                 achievement: @achievement,
-                lecture: @lecture
+                lecture: @lecture,
+                original_achievement: original_achievement
               )
             ), status: :unprocessable_content
           end

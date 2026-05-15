@@ -1,14 +1,28 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static values = {
+    originalTitle: String,
+    originalValueType: String,
+    originalThreshold: String,
+    originalDescription: String,
+    hasErrors: Boolean,
+  };
+
   static targets = ["threshold", "title", "valueType", "thresholdInput",
     "description", "submitButton", "warning"];
 
   connect() {
     this.toggle();
     if (this.hasTitleTarget) {
-      this.storeOriginalValues();
-      this.hideSubmitElements();
+      this.restoreOriginalValues();
+
+      if (this.hasErrorsValue && this.hasErrorsValue) {
+        this.showSubmitElements();
+      }
+      else {
+        this.hideSubmitElements();
+      }
     }
   }
 
@@ -17,6 +31,18 @@ export default class extends Controller {
     this.originalValueType = this.valueTypeTarget.value;
     this.originalThreshold = this.thresholdInputTarget.value;
     this.originalDescription = this.descriptionTarget.value;
+
+    this.originalTitleValue = this.originalTitle;
+    this.originalValueTypeValue = this.originalValueType;
+    this.originalThresholdValue = this.originalThreshold;
+    this.originalDescriptionValue = this.originalDescription;
+  }
+
+  restoreOriginalValues() {
+    this.originalTitle = this.originalTitleValue;
+    this.originalValueType = this.originalValueTypeValue;
+    this.originalThreshold = this.originalThresholdValue;
+    this.originalDescription = this.originalDescriptionValue;
   }
 
   toggle() {
@@ -68,6 +94,7 @@ export default class extends Controller {
       return;
     }
 
+    this.hasErrorsValue = false;
     this.storeOriginalValues();
     this.hideSubmitElements();
   }
