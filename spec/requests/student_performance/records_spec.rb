@@ -105,6 +105,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).to include(member.tutorial_name)
           expect(response.body).not_to include(non_member.tutorial_name)
         end
+
+        it "ignores tutorial_ids from other lectures" do
+          other_lecture = FactoryBot.create(:lecture)
+          other_tutorial = FactoryBot.create(:tutorial, lecture: other_lecture)
+          FactoryBot.create(:tutorial_membership,
+                            tutorial: other_tutorial, user: member)
+
+          get lecture_student_performance_records_path(
+            lecture, tutorial_id: other_tutorial.id
+          )
+
+          expect(response.body).to include(member.tutorial_name)
+          expect(response.body).to include(non_member.tutorial_name)
+        end
       end
 
       context "with pagination" do
