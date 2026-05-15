@@ -181,5 +181,18 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       expect(component.met?(above)).to be(true)
       expect(component.met?(below)).to be(false)
     end
+
+    context "with a blank threshold in memory" do
+      before do
+        achievement.threshold = nil
+      end
+
+      it "renders undecidable statuses without raising" do
+        render_inline(component)
+
+        expect(rendered_content).to include("bi-question-circle")
+        expect(component.value_display(above)).to eq("85.0% / —")
+      end
+    end
   end
 end

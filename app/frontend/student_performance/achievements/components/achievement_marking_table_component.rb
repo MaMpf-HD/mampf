@@ -18,14 +18,19 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     case achievement.value_type
     when "numeric"
+      return "#{participation.grade_text.to_i} / \u2014" if threshold.blank?
+
       "#{participation.grade_text.to_i} / #{threshold.to_i}"
     when "percentage"
+      return "#{format_percentage(participation.grade_text.to_f)} / \u2014" if threshold.blank?
+
       "#{format_percentage(participation.grade_text.to_f)} / #{format_percentage(threshold)}"
     end
   end
 
   def met?(participation)
     return false if participation.grade_text.blank?
+    return false if threshold.blank? && !boolean?
 
     case achievement.value_type
     when "boolean"
@@ -38,6 +43,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def status_badge(participation)
+    return :unmarked if threshold.blank? && !boolean?
     return :unmarked if participation.grade_text.blank?
 
     met?(participation) ? :met : :not_met

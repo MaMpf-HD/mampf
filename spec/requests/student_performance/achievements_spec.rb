@@ -145,6 +145,18 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
+      let!(:assessment) do
+        achievement.ensure_assessment!(
+          requires_points: false, requires_submission: false
+        )
+      end
+
+      let!(:participation) do
+        create(:assessment_participation,
+               assessment: assessment,
+               grade_text: "85.0")
+      end
+
       it "updates the achievement" do
         patch lecture_student_performance_achievement_path(lecture, achievement),
               params: { achievement: { title: "Updated Title" } }
@@ -158,6 +170,34 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
           lecture_student_performance_achievements_path(lecture)
         )
         expect(flash[:alert]).to be_present
+      end
+
+      it "returns an unprocessable turbo response for blank threshold" do
+        achievement.update!(value_type: :percentage, threshold: 80.0)
+
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: {
+                achievement: {
+                  title: achievement.title,
+                  value_type: "percentage",
+                  threshold: "",
+                  description: achievement.description
+                }
+              },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      end
+
+      it "renders validation errors only through invalid-feedback" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("invalid-feedback")
+        expect(response.body).not_to include("text-danger small mt-1")
       end
     end
 

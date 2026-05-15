@@ -35,12 +35,6 @@
           <%= f.text_field :title,
                            class: "form-control",
                            required: true %>
-
-          <% if achievement.errors[:title].any? %>
-            <div class="text-danger small mt-1">
-              <%= achievement.errors[:title].first %>
-            </div>
-          <% end %>
         </div>
 
         <div class="col-md-4">
@@ -76,12 +70,6 @@
                              data: {
                                achievement_form_target: "thresholdInput"
                              } %>
-
-          <% if achievement.errors[:threshold].any? %>
-            <div class="text-danger small mt-1">
-              <%= achievement.errors[:threshold].first %>
-            </div>
-          <% end %>
         </div>
 
         <div class="col-12">

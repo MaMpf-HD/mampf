@@ -19,12 +19,6 @@
                          achievement_form_target: "title",
                          action: "input->achievement-form#checkForChanges"
                        } %>
-
-      <% if achievement.errors[:title].any? %>
-        <div class="text-danger small mt-1">
-          <%= achievement.errors[:title].first %>
-        </div>
-      <% end %>
     </div>
 
     <div class="col-md-4">
@@ -61,12 +55,6 @@
                            achievement_form_target: "thresholdInput",
                            action: "input->achievement-form#checkForChanges"
                          } %>
-
-      <% if achievement.errors[:threshold].any? %>
-        <div class="text-danger small mt-1">
-          <%= achievement.errors[:threshold].first %>
-        </div>
-      <% end %>
     </div>
 
     <div class="col-12">
