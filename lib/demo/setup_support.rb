@@ -185,6 +185,40 @@ module Demo
         Rake::Task[task_name].reenable
       end
 
+      def with_quiet_logging
+        detached_flipper_log_subscriber = false
+        old_logger = ActiveRecord::Base.logger
+
+        detached_flipper_log_subscriber = detach_flipper_log_subscriber if quiet_logging_depth.zero?
+
+        self.quiet_logging_depth += 1
+        ActiveRecord::Base.logger = nil
+        yield
+      ensure
+        self.quiet_logging_depth -= 1 if quiet_logging_depth.positive?
+        ActiveRecord::Base.logger = old_logger
+
+        if detached_flipper_log_subscriber && quiet_logging_depth.zero?
+          Flipper::Instrumentation::LogSubscriber.attach
+        end
+      end
+
+      attr_writer :quiet_logging_depth
+
+      def quiet_logging_depth
+        @quiet_logging_depth ||= 0
+      end
+
+      def detach_flipper_log_subscriber
+        return false unless defined?(Flipper::Instrumentation::LogSubscriber)
+        return false unless Rails.application.config.flipper.log
+        return false unless Rails.application.config.flipper.instrumenter ==
+                            ActiveSupport::Notifications
+
+        Flipper::Instrumentation::LogSubscriber.detach
+        true
+      end
+
       def lecture!
         lecture = Lecture.find_by(id: 1)
         # rubocop:disable Rails/Exit
@@ -850,6 +884,18 @@ module Demo
           rng.rand(0.55..0.85)
         when :occasional
           rng.rand(0.40..0.70)
+        end
+      end
+
+      def demo_achievement_grade_text(achievement, quality)
+        case achievement.value_type.to_s
+        when "boolean"
+          quality > 0.5 ? "pass" : "fail"
+        when "numeric"
+          max = (achievement.threshold * 1.5).ceil
+          (quality * max).round.to_s
+        when "percentage"
+          (quality * 100).round(1).to_s
         end
       end
 
