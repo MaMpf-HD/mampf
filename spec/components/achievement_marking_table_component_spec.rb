@@ -55,11 +55,25 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       it "shows check icon for pass" do
         render_inline(component)
         expect(rendered_content).to include("bi-check-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.met")}")
+        )
       end
 
       it "shows x icon for fail" do
         render_inline(component)
         expect(rendered_content).to include("bi-x-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.not_met")}")
+        )
+      end
+
+      it "shows accessible label for unmarked status" do
+        render_inline(component)
+        expect(rendered_content).to include("bi-question-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.unmarked")}")
+        )
       end
 
       it "does not show the value column" do
