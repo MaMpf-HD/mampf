@@ -50,6 +50,7 @@ module Assessment
 
         lecture = participation.assessment&.lecture
         return unless lecture && participation.user
+        return unless Flipper.enabled?(:assessment_grading)
 
         StudentPerformance::ComputationService
           .new(lecture: lecture)

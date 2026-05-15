@@ -143,4 +143,31 @@ RSpec.describe(Assessment::Task, type: :model) do
       end
     end
   end
+
+  describe "performance record recomputation" do
+    let(:task) { FactoryBot.create(:assessment_task) }
+    let!(:record) do
+      FactoryBot.create(:student_performance_record,
+                        lecture: task.assessment.lecture)
+    end
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_all_records!: true)
+    end
+
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: task.assessment.lecture)
+        .and_return(service)
+    end
+
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      task.send(:recompute_all_performance_records)
+
+      expect(service).not_to have_received(:compute_and_upsert_all_records!)
+    end
+  end
 end

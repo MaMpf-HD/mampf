@@ -90,7 +90,7 @@ module Assessment
 
       def recompute_performance_record
         lecture = assessment&.lecture
-        return unless lecture && Flipper.enabled?(:student_performance)
+        return unless lecture && Flipper.enabled?(:assessment_grading)
 
         StudentPerformance::ComputationService
           .new(lecture: lecture)
