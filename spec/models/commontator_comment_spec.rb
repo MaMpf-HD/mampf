@@ -28,8 +28,12 @@ RSpec.describe(Commontator::Comment, type: :model) do
       validator.is_a?(ActiveRecord::Validations::UniquenessValidator) &&
         validator.options[:scope] == CommontatorCommentPatch::CUSTOM_UNIQUENESS_SCOPE
     end
+    presence_validators = described_class.validators_on(:body).select do |validator|
+      validator.is_a?(ActiveModel::Validations::PresenceValidator)
+    end
 
     expect(uniqueness_validators.size).to eq(1)
+    expect(presence_validators.size).to eq(1)
 
     parent = described_class.create!(
       creator: creator,
