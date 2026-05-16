@@ -325,6 +325,29 @@ Rails.application.config.to_prepare do
   end
 
   if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
+    validators = Commontator::Comment._validators[:body].select do |candidate|
+      candidate.attributes == [:body] &&
+        (
+          candidate.is_a?(ActiveModel::Validations::PresenceValidator) ||
+          (
+            candidate.is_a?(ActiveRecord::Validations::UniquenessValidator) &&
+              candidate.options[:scope] == [
+                :creator_type, :creator_id, :thread_id, :deleted_at
+              ]
+          )
+        )
+    end
+
+    validators.each do |validator|
+      Commontator::Comment._validators[:body].delete(validator)
+      Commontator::Comment.skip_callback(
+        :validate,
+        :before,
+        validator,
+        raise: false
+      )
+    end
+
     Commontator::Comment.include(Extensions::Commontator::Comment)
   end
 end
