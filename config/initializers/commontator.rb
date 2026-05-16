@@ -378,7 +378,10 @@ Rails.application.config.to_prepare do
   # production Dockerfile.
   db_adapter = ENV.fetch("DATABASE_ADAPTER", nil)
   if db_adapter == "nulldb"
-    Rails.logger.info("DATABASE_ADAPTER env var is #{db_adapter}. Skipping Commontator comment patch.")
+    Rails.logger.info(
+      "DATABASE_ADAPTER env var is #{db_adapter}. " \
+      "Skipping Commontator comment patch."
+    )
     next
   end
 
