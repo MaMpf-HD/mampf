@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe(Commontator::Comment, type: :model) do
   let(:creator) { FactoryBot.create(:confirmed_user) }
+  let(:other_creator) { FactoryBot.create(:confirmed_user) }
   let(:medium) { FactoryBot.create(:lecture_medium) }
   let(:thread) { medium.commontator_thread }
   let(:double_posted_error) do
@@ -86,6 +87,29 @@ RSpec.describe(Commontator::Comment, type: :model) do
     expect(duplicate_reply).to be_invalid
     expect(duplicate_reply.errors[:body]).to include(double_posted_error)
     expect(other_parent_reply).to be_valid
+  end
+
+  it "allows a different creator to post the same reply under the same parent" do
+    parent = described_class.create!(
+      creator: creator,
+      thread: thread,
+      body: "Parent"
+    )
+    described_class.create!(
+      creator: creator,
+      thread: thread,
+      parent: parent,
+      body: "Yes"
+    )
+
+    other_creator_reply = described_class.new(
+      creator: other_creator,
+      thread: thread,
+      parent: parent,
+      body: "Yes"
+    )
+
+    expect(other_creator_reply).to be_valid
   end
 
   it "rejects duplicate top-level comments in the same thread" do
