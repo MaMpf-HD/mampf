@@ -315,28 +315,18 @@ Commontator.configure do |config|
   config.mentions_enabled = false
 end
 
-Rails.application.config.to_prepare do
-  # Load the Commontator extensions only if we are not in the assets:precompile
-  # step where no db connection is available. See the production Dockerfile.
-  db_adapter = ENV.fetch("DATABASE_ADAPTER", nil)
-  if db_adapter == "nulldb"
-    Rails.logger.info("DATABASE_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
-    next
-  end
+module CommontatorCommentPatch
+  module_function
 
-  if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
-    validators = Commontator::Comment._validators[:body].select do |candidate|
-      candidate.attributes == [:body] &&
-        (
-          candidate.is_a?(ActiveModel::Validations::PresenceValidator) ||
-          (
-            candidate.is_a?(ActiveRecord::Validations::UniquenessValidator) &&
-              candidate.options[:scope] == [
-                :creator_type, :creator_id, :thread_id, :deleted_at
-              ]
-          )
-        )
-    end
+  ORIGINAL_UNIQUENESS_SCOPE = [
+    :creator_type, :creator_id, :thread_id, :deleted_at
+  ].freeze
+  CUSTOM_UNIQUENESS_SCOPE = [
+    :creator_type, :creator_id, :thread_id, :parent_id, :deleted_at
+  ].freeze
+
+  def apply!
+    return unless ActiveRecord::Base.connection.table_exists?(:thredded_topics)
 
     validators.each do |validator|
       Commontator::Comment._validators[:body].delete(validator)
@@ -348,6 +338,43 @@ Rails.application.config.to_prepare do
       )
     end
 
+    Commontator::Comment.validates(:body, presence: true)
+    Commontator::Comment.validates(:body, uniqueness: {
+                                     scope: CUSTOM_UNIQUENESS_SCOPE,
+                                     message: :double_posted
+                                   })
+
+    return if Commontator::Comment.reflect_on_association(:annotation) &&
+              Commontator::Comment.method_defined?(:medium)
+
     Commontator::Comment.include(Extensions::Commontator::Comment)
   end
+
+  def validators
+    Commontator::Comment._validators[:body].select do |candidate|
+      candidate.attributes == [:body] &&
+        (
+          candidate.is_a?(ActiveModel::Validations::PresenceValidator) ||
+          removable_uniqueness_validator?(candidate)
+        )
+    end
+  end
+
+  def removable_uniqueness_validator?(candidate)
+    return false unless candidate.is_a?(ActiveRecord::Validations::UniquenessValidator)
+
+    [ORIGINAL_UNIQUENESS_SCOPE, CUSTOM_UNIQUENESS_SCOPE].include?(candidate.options[:scope])
+  end
+end
+
+Rails.application.config.to_prepare do
+  # Load the Commontator extensions only if we are not in the assets:precompile
+  # step where no db connection is available. See the production Dockerfile.
+  db_adapter = ENV.fetch("DATABASE_ADAPTER", nil)
+  if db_adapter == "nulldb"
+    Rails.logger.info("DATABASE_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
+    next
+  end
+
+  CommontatorCommentPatch.apply!
 end
