@@ -344,10 +344,15 @@ module CommontatorCommentPatch
                                      message: :double_posted
                                    })
 
-    return if Commontator::Comment.reflect_on_association(:annotation) &&
-              Commontator::Comment.method_defined?(:medium)
+    unless Commontator::Comment.reflect_on_association(:annotation)
+      Commontator::Comment.has_one(:annotation, foreign_key: :public_comment_id)
+    end
 
-    Commontator::Comment.include(Extensions::Commontator::Comment)
+    Commontator::Comment.class_eval do
+      def medium
+        thread.commontable
+      end
+    end
   end
 
   def validators
