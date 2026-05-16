@@ -34,7 +34,8 @@ RSpec.describe(Commontator::Comment, type: :model) do
 
     expect(uniqueness_validators.size).to eq(1)
     expect(presence_validators.size).to eq(1)
-    expect(described_class.reflect_on_association(:annotation)&.foreign_key).to eq("public_comment_id")
+    expect(described_class.reflect_on_association(:annotation)&.foreign_key)
+      .to eq("public_comment_id")
     expect(described_class.new(thread: thread).medium).to eq(medium)
 
     parent = described_class.create!(
