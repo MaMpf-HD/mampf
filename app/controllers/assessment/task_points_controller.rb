@@ -25,10 +25,16 @@ module Assessment
                             &.order(:last_modification_by_users_at)
         respond_to do |format|
           format.turbo_stream do
+            component = TutorialGradingTableComponent.new(
+              assignment: @assignment,
+              tutorial: @tutorial,
+              stack: @stack
+            )
             render turbo_stream: turbo_stream.replace(
               "grading-table",
               partial: "assessment/assessments/components/tutorial_grading_content",
-              locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack }
+              locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack,
+                        component: component }
             )
           end
         end
@@ -67,8 +73,6 @@ module Assessment
       @assignment = @submission.assignment
       rerender_submission_row
     end
-
-    
 
     private
 

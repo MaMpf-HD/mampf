@@ -3196,6 +3196,10 @@ de:
   tutorial:
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    no_submissions: >
+      Keine Abgaben eingereicht
+    no_submission: >
+      Keine Abgabe
     destruction_info:
       <i>
       Hinweis.

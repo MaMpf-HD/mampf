@@ -2959,6 +2959,10 @@ en:
   tutorial:
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
+    no_submissions: >
+      No submissions
+    no_submission: >
+      No submission
     destruction_info: >
       <i>
       Note.

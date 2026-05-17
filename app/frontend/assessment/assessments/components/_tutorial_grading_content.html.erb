@@ -1,3 +1,4 @@
+<%# ── ZONE 1: has submission ── %>
 <% if stack.any? %>
   <div class="table-overflow">
     <table
@@ -62,5 +63,46 @@
 <% else %>
   <div class="jumbotron mt-3">
     <%= t('tutorial.no_submissions_for_assignment') %>
+  </div>
+<% end %>
+
+<%# ── ZONE 2: on roster, no submission ── %>
+<% if component.has_non_submitters? %>
+  <h5 class="mt-4 mb-3">
+    <%= t('tutorial.no_submissions') %>
+  </h5>
+  <div>
+    <table
+      class="table table-striped align-middle my-3"
+      data-cy="tutorial-non-submissions-table"
+    >
+      <thead class="bg-light">
+        <tr>
+          <th class="sticky-col team-col">
+            <%= t('basics.user') %>
+          </th>
+
+          <th class="text-center sticky-col action-col">
+            <%= t('basics.status') %>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% component.non_submitters.each do |user| %>
+          <tr>
+            <td class="sticky-col team-col">
+              <%= link_to user.tutorial_name, user_path(user) %>
+            </td>
+
+            <td class="text-center sticky-col action-col">
+              <span class="badge bg-warning">
+                <%= t('tutorial.no_submission') %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 <% end %>
