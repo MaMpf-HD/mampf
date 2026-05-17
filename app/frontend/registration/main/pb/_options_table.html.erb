@@ -14,11 +14,14 @@
 
       <%= render partial: "registration/main/group_tile",
                  locals: {
+                   registerable: item.registerable,
+                   item: item,
                    tile_title: item.registerable.title,
                    tile_type: item_display_type(item),
                    tile_metadata_rows: metadata_rows,
                    tile_variant_class: "tutorial-gtile--campaign",
                    tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                   tile_column_class: "registration-group-tile-col--student",
                    tile_actions_content: capture do
                      concat(content_tag(
                        :div,

@@ -1,82 +1,20 @@
-<% tile_variant_class = local_assigns.fetch(
-    :tile_variant_class,
-    "tutorial-gtile--campaign"
-  )
-  tile_top_bar_class = local_assigns.fetch(
-    :tile_top_bar_class,
-    "tutorial-gtile-top-bar--campaign"
-  )
-  tile_status_content = local_assigns[:tile_status_content]
-  tile_footer_content = local_assigns[:tile_footer_content]
-  tile_actions_content = local_assigns[:tile_actions_content] %>
-
-<div class="col registration-group-tile-col registration-group-tile-col--student">
-  <div class="card h-100 tutorial-gtile tutorial-gtile--student <%= tile_variant_class %>">
-    <div class="tutorial-gtile-top-bar <%= tile_top_bar_class %>"></div>
-
-    <div class="card-body d-flex flex-column">
-      <div
-        class="
-          d-flex justify-content-between align-items-start
-          student-registration-tile-header mb-2
-        "
-      >
-        <div class="flex-grow-1">
-          <div class="tutorial-gtile-type"><%= tile_type %></div>
-
-          <h6 class="tutorial-gtile-name mt-1" title="<%= tile_title %>">
-            <%= tile_title %>
-          </h6>
-        </div>
-
-        <% if tile_status_content.present? %>
-          <div
-            class="
-              student-registration-tile-status d-flex flex-column gap-1
-              align-items-end
-            "
-          >
-            <%= tile_status_content %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="student-registration-tile-meta small flex-grow-1">
-        <% tile_metadata_rows.each do |row| %>
-          <% if row[:icon].present? %>
-            <div class="text-muted <%= row[:class_name] %>">
-              <i class="bi <%= row[:icon] %> me-1"></i>
-              <%= row[:value] %>
-            </div>
-          <% elsif row[:label].present? %>
-            <div class="d-flex gap-1 <%= row[:class_name] %>">
-              <span class="fw-medium"><%= row[:label] %>:</span>
-              <span><%= row[:value] %></span>
-            </div>
-          <% else %>
-            <div class="small text-muted <%= row[:class_name] %>">
-              <%= row[:value] %>
-            </div>
-          <% end %>
-        <% end %>
-
-        <% if tile_footer_content.present? %>
-          <div class="student-registration-tile-footer small text-muted">
-            <%= tile_footer_content %>
-          </div>
-        <% end %>
-      </div>
-
-      <% if tile_actions_content.present? %>
-        <div
-          class="
-            tutorial-gtile-actions mt-3 pt-2 border-top d-flex gap-2
-            justify-content-end
-          "
-        >
-          <%= tile_actions_content %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
+<%= render GroupTileComponent.new(
+      registerable: local_assigns.fetch(:registerable),
+      item: local_assigns[:item],
+      student_tile: true,
+      tile_title: tile_title,
+      tile_type: tile_type,
+      tile_metadata_rows: tile_metadata_rows,
+      tile_variant_class: local_assigns.fetch(
+        :tile_variant_class,
+        "tutorial-gtile--campaign"
+      ),
+      tile_top_bar_class: local_assigns.fetch(
+        :tile_top_bar_class,
+        "tutorial-gtile-top-bar--campaign"
+      ),
+      tile_status_content: local_assigns[:tile_status_content],
+      tile_footer_content: local_assigns[:tile_footer_content],
+      tile_actions_content: local_assigns[:tile_actions_content],
+      tile_column_class: local_assigns[:tile_column_class]
+    ) %>

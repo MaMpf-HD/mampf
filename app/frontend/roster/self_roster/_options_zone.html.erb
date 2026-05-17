@@ -2,7 +2,7 @@
   class="
     row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
     row-cols-xxl-5
-    student-registration-tile-grid m-0
+    student-registration-tile-grid
   "
 >
   <% self_rosterables.rosterables.each do |rosterable| %>
@@ -22,32 +22,13 @@
 
     <%= render partial: "registration/main/group_tile",
                locals: {
+                 registerable: rosterable,
                  tile_title: rosterable.title,
                  tile_type: rosterable_display_type(rosterable),
                  tile_metadata_rows: metadata_rows,
-                 tile_variant_class: "tutorial-gtile--self-enrollment",
-                 tile_top_bar_class: "tutorial-gtile-top-bar--self-enrollment",
-                 tile_status_content: capture do
-                   if !rosterable.user_allocated?(current_user)
-                     if rosterable.allow_self_add?(current_user)
-                       concat(content_tag(
-                         :span,
-                         t("basics.available"),
-                         class: "badge bg-light-blue-lighten-4 text-dark fw-medium small"
-                       ))
-                     end
-                   else
-                     concat(content_tag(
-                       :span,
-                       t("registration.user_registration.registered"),
-                       class: "badge text-bg-success fw-medium small"
-                     ))
-                   end
-                 end,
-                 tile_footer_content: content_tag(
-                   :span,
-                   t("roster.self_materialization.modes.#{rosterable.self_materialization_mode}")
-                 ),
+                 tile_variant_class: "tutorial-gtile--campaign",
+                 tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                 tile_column_class: "registration-group-tile-col--student",
                  tile_actions_content: capture do
                    if rosterable.user_allocated?(current_user)
                      if rosterable.allow_self_remove?(current_user)
@@ -64,6 +45,12 @@
                        path_self_add,
                        method: :post,
                        class: "btn btn-primary btn-sm"
+                     ))
+                   elsif rosterable.full?
+                     concat(content_tag(
+                       :span,
+                       t("basics.full"),
+                       class: "text-muted small fw-semibold"
                      ))
                    end
                  end

@@ -17,6 +17,8 @@
 
           <%= render partial: "registration/main/group_tile",
                      locals: {
+                       registerable: item.registerable,
+                       item: item,
                        tile_title: item.registerable.title,
                        tile_type: item_display_type(item),
                        tile_metadata_rows: metadata_rows,
@@ -25,6 +27,7 @@
                          "tutorial-gtile--full": item_full
                        ),
                        tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                       tile_column_class: "registration-group-tile-col--student",
                        tile_actions_content: capture do
                          if item.user_registered?(current_user)
                            concat(button_to(
