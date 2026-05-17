@@ -9,7 +9,7 @@ export class CampaignRegistrationPage {
 
   constructor(page: Page, lectureId: string | number) {
     this.page = page;
-    this.link = `lectures/${lectureId}/campaign_registrations`;
+    this.link = `/lectures/${lectureId}/registration`;
   }
 
   async goto() {

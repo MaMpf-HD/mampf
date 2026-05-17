@@ -20,7 +20,7 @@ Müsli is a system previously used to handle tutorial groups for lectures & to a
 ## Testing
 
 - RSpec (Ruby). Always run specs with: `VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec ...`. NEVER EVER run specs with: `bundle exec rspec ...` alone, this will wipe the development database.
-- Cypress (JS)
+- We used Cypress for frontend testing, but are currently migrating to Playwright. For Playwright tests, make sure to use page.locator() as little as possible, and rather rely on the page.getBy*() methods, e.g. page.getByRole(), page.getByText(), etc. This will make the tests more robust and less prone to breakage when we change the UI.
 
 ## Linting
 
