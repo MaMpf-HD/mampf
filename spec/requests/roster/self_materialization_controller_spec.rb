@@ -29,6 +29,11 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
 
       expect(service).to have_received(:self_add!)
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include(
+        I18n.t("roster.messages.user_added",
+               user: user.info,
+               group: tutorial.title)
+      )
     end
 
     context "when RosterLockedError" do
@@ -85,6 +90,27 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response.body).to include(I18n.t("roster.errors.capacity_exceeded"))
       end
     end
+
+    context "when UserAlreadyInBundleError" do
+      let(:conflicting_group) { create(:tutorial, lecture: lecture, title: "Mo 14-16") }
+
+      before do
+        allow(service).to receive(:self_add!).and_raise(
+          Rosters::UserAlreadyInBundleError.new(conflicting_group)
+        )
+      end
+
+      it "returns a fully interpolated conflict error flash" do
+        post self_add_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          I18n.t("roster.errors.user_already_in_bundle",
+                 user: user.info,
+                 group: conflicting_group.title)
+        )
+      end
+    end
   end
 
   describe "DELETE /tutorials/:id/roster/self_remove" do
@@ -94,6 +120,9 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       delete self_remove_tutorial_path(tutorial), as: :turbo_stream
       expect(response).to have_http_status(:ok)
       expect(service).to have_received(:self_remove!)
+      expect(response.body).to include(
+        I18n.t("roster.messages.user_removed", user: user.info)
+      )
     end
 
     context "when RosterLockedError" do

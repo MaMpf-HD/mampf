@@ -8,6 +8,7 @@ module Roster
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
+                           user: roster_message_user,
                            group: e.conflicting_group.title))
     end
 
@@ -44,13 +45,16 @@ module Roster
     def self_add
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_add!
-      respond_with_success(t("roster.messages.user_added"))
+      respond_with_success(t("roster.messages.user_added",
+                             user: roster_message_user,
+                             group: @rosterable.title))
     end
 
     def self_remove
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_remove!
-      respond_with_success(t("roster.messages.user_removed"))
+      respond_with_success(t("roster.messages.user_removed",
+                             user: roster_message_user))
     end
 
     private
@@ -104,6 +108,10 @@ module Roster
       def use_lecture_locale
         locale = @lecture&.locale_with_inheritance || I18n.default_locale
         I18n.locale = locale
+      end
+
+      def roster_message_user
+        current_user.info
       end
   end
 end
