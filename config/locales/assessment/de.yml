@@ -6,6 +6,7 @@ de:
       talks: "Vorträge"
       achievements: "Zusatzkriterien"
       performance: "Leistungen"
+      certifications: "Prüfungszulassungen"
     subtitle:
       assignments: "Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten."
     achievements:
@@ -17,6 +18,7 @@ de:
       errors:
         destroy_failed: "Löschen des Zusatzkriteriums fehlgeschlagen."
         not_found: "Zusatzkriterium nicht gefunden."
+        referenced_by_rules: "Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert."
       subtitle: "Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen."
       new: "Neues Zusatzkriterium"
       edit: "Zusatzkriterium bearbeiten"

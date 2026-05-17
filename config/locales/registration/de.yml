@@ -66,6 +66,8 @@ de:
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
         preference_based: "Präferenzbasiert"
+      type:
+        exam: "Klausur"
       status:
         draft: "Entwurf"
         open: "Offen"
@@ -168,10 +170,17 @@ de:
         prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
         prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
+        certification_not_passed: "Prüfungszulassung nicht erteilt"
+        missing_lecture: "Es muss mindestens eine Veranstaltung ausgewählt werden."
+        lecture_not_found: "Mindestens eine ausgewählte Veranstaltung existiert nicht."
+        lecture_exam_eligibility_disabled: >-
+          Prüfungszulassung deaktiviert für: %{titles}
+        multiple_student_performance: "Es ist nur eine Richtlinie für Studierendenleistung erlaubt."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
         lecture_id: "Veranstaltung"
+        lecture_ids: "Veranstaltungen"
       hints:
         allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
         select_prerequisite: "— Anmeldeverfahren auswählen —"
@@ -291,13 +300,13 @@ de:
         current_registration_state: "Aktueller Registrierungsstand"
         current_group_occupancy: "Aktuelle Belegung der Gruppen"
         workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene oder abgelehnte Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnahmelisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
         finalization_status:
           blocked_title: "Finalisierung derzeit nicht möglich"
           blocked_desc:
-            one: "Es gibt %{count} Blocker. Diese Anmeldung muss zuerst geklärt werden."
-            other: "Es gibt %{count} Blocker. Diese Anmeldungen müssen zuerst geklärt werden."
+            one: "Es gibt %{count} offenen Fall. Diese Anmeldung muss zuerst geklärt werden."
+            other: "Es gibt %{count} offene Fälle. Diese Anmeldungen müssen zuerst geklärt werden."
           auto_rejections_title: "Automatische Ablehnungen"
           auto_rejections_desc:
             one: "Beim Zuteilen wird voraussichtlich %{count} Anmeldung aufgrund einer Finalisierungsrichtlinie automatisch abgelehnt; nachträgliches manuelles Hinzufügen bleibt möglich."
