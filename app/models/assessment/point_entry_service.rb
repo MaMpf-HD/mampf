@@ -28,6 +28,9 @@ module Assessment
             task_id: task_id
           )
 
+          # validate points is a number if present, allow nil for unscoring
+          validate_points(points, task_id)
+
           value = points.presence&.to_f
           tp.points = value
           tp.grader = grader
@@ -40,6 +43,22 @@ module Assessment
       end
 
       participation
+    end
+
+    private_class_method
+
+    def self.validate_points(points, task_id)
+      return if points.nil?
+
+      if points.is_a?(String)
+        begin
+          Float(points)
+        rescue ArgumentError
+          raise(ArgumentError, "Invalid points value for task #{task_id}")
+        end
+      elsif !points.is_a?(Numeric)
+        raise(ArgumentError, "Invalid points value for task #{task_id}")
+      end
     end
   end
 end

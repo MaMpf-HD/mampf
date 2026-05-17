@@ -23,7 +23,7 @@ module Assessment
         @assignment = sample_submission.assignment
         @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                             &.order(:last_modification_by_users_at)
-        @non_submitters = []
+        @non_submitters = @assignment.non_submitters(@tutorial)
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(

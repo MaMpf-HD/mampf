@@ -34,6 +34,7 @@
             value="<%= extract_task_points(submission, assignment_task) %>"
             step="0.5"
             min="0"
+            max="<%= assignment_task.max_points %>"
             data-submission-row-target="input"
             data-task-id="<%= assignment_task.id %>"
             data-action="change->submission-row#markDirty input->submission-row#markDirty"
