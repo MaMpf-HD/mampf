@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, type: :service) do
+RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) do
   let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
   let(:teacher) { FactoryBot.create(:confirmed_user) }
 
@@ -12,8 +12,8 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
     end
     let(:item) { campaign.registration_items.first }
     let(:item2) { campaign.registration_items.second }
-    let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::SimpleItemPreference.new(item2.id, 1) }
-    let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::SimpleItemPreference.new(item.id, 2) }
+    let(:pref_from_fe) { UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item2.id, 1) }
+    let(:pref_from_fe2) { UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item.id, 2) }
     let(:pref_items) { [pref_from_fe, pref_from_fe2] }
 
     it "creates a pending registration when validations pass" do
@@ -87,8 +87,8 @@ RSpec.describe(Registration::UserRegistration::LecturePreferenceEditService, typ
                         registration_campaign: campaign,
                         registerable: cohort)
     end
-    let(:pref_from_fe) { Registration::UserRegistration::PreferencesHandler::SimpleItemPreference.new(item2.id, 1) }
-    let(:pref_from_fe2) { Registration::UserRegistration::PreferencesHandler::SimpleItemPreference.new(item.id, 2) }
+    let(:pref_from_fe) { UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item2.id, 1) }
+    let(:pref_from_fe2) { UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item.id, 2) }
     let(:pref_items) { [pref_from_fe, pref_from_fe2] }
 
     before do

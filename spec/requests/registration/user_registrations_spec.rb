@@ -86,7 +86,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:user) { create(:confirmed_user) }
   let(:lecture) { create(:lecture) }
   let(:seminar) { create(:lecture, :is_seminar) }
-  let(:stub_success) { Registration::UserRegistration::Handler::Result.new(true, []) }
+  let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
   let(:stub_succeed_items) { [item] }
 
   before do
@@ -166,8 +166,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     let(:item) { campaign.registration_items.first }
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
-        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
-        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
           .with(campaign, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!).and_return(stub_success)
@@ -191,8 +191,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "withdraws the registration" do
-        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
-        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
           .with(campaign, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!).and_return(stub_success)
@@ -214,22 +214,22 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     let(:item) { campaign.registration_items.first }
 
     describe "preference actions" do
-      let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
+      let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
 
       describe "POST #add" do
         it "saves the selected preference rank" do
-          pref_items = [Registration::UserRegistration::PreferencesHandler::SimpleItemPreference
+          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
             .new(item.id, 1)]
           edit_service = instance_double(
-            Registration::UserRegistration::LecturePreferenceEditService
+            UserRegistrations::LecturePreferenceEditService
           )
 
-          expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
+          expect(UserRegistrations::PreferencesHandler).to receive(:new)
             .and_return(service_double)
           expect(service_double).to receive(:pref_item_build_with_rank)
             .with(campaign, user, item.id.to_s, "1")
             .and_return(pref_items)
-          expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
+          expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
             .with(campaign, user)
             .and_return(edit_service)
           expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
@@ -248,8 +248,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     let(:item) { campaign.registration_items.first }
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
-        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
-        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
           .with(campaign, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!).and_return(stub_success)
@@ -273,8 +273,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "withdraws the registration" do
-        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
-        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
           .with(campaign, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!).and_return(stub_success)
@@ -297,22 +297,22 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     let(:item) { campaign.registration_items.first }
 
     describe "preference actions" do
-      let(:service_double) { instance_double(Registration::UserRegistration::PreferencesHandler) }
+      let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
 
       describe "POST #add" do
         it "saves the selected preference rank" do
-          pref_items = [Registration::UserRegistration::PreferencesHandler::SimpleItemPreference
+          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
             .new(item.id, 1)]
           edit_service = instance_double(
-            Registration::UserRegistration::LecturePreferenceEditService
+            UserRegistrations::LecturePreferenceEditService
           )
 
-          expect(Registration::UserRegistration::PreferencesHandler).to receive(:new)
+          expect(UserRegistrations::PreferencesHandler).to receive(:new)
             .and_return(service_double)
           expect(service_double).to receive(:pref_item_build_with_rank)
             .with(campaign, user, item.id.to_s, "1")
             .and_return(pref_items)
-          expect(Registration::UserRegistration::LecturePreferenceEditService).to receive(:new)
+          expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
             .with(campaign, user)
             .and_return(edit_service)
           expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)

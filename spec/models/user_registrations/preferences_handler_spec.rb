@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::UserRegistration::PreferencesHandler, type: :service) do
+RSpec.describe(UserRegistrations::PreferencesHandler, type: :service) do
   let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
   let(:lecture) { FactoryBot.create(:lecture) }
 

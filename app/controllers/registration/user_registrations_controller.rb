@@ -26,7 +26,7 @@ module Registration
     end
 
     def index
-      @campaigns_details = UserRegistrations::LectureCampaignsService
+      @campaigns_details = ::UserRegistrations::LectureCampaignsService
                            .new(@lecture, current_user)
                            .call
       @rosterized_entries = Rosters::StudentMaterializedResultResolver
@@ -39,7 +39,7 @@ module Registration
     end
 
     def create
-      result = Registration::UserRegistration::LectureFcfsEditService
+      result = ::UserRegistrations::LectureFcfsEditService
                .new(@campaign, current_user).register!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages." \
@@ -47,7 +47,7 @@ module Registration
     end
 
     def destroy
-      result = Registration::UserRegistration::LectureFcfsEditService
+      result = ::UserRegistrations::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages.withdrawn"))
@@ -55,10 +55,10 @@ module Registration
 
     def add
       @campaign = @item.registration_campaign
-      pref_items = UserRegistration::PreferencesHandler
+      pref_items = ::UserRegistrations::PreferencesHandler
                    .new.pref_item_build_with_rank(@campaign, current_user,
                                                   params[:item_id], params[:rank])
-      result = Registration::UserRegistration::LecturePreferenceEditService
+      result = ::UserRegistrations::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
       respond_to_student_registration(
         result,
@@ -73,9 +73,9 @@ module Registration
           flash.now[:notice] = success_message
           respond_to do |format|
             format.turbo_stream do
-              @details = Registration::UserRegistrations::CampaignDetailsService.new(@campaign,
-                                                                                     current_user)
-                                                                                .call
+              @details = ::UserRegistrations::CampaignDetailsService
+                         .new(@campaign, current_user)
+                         .call
               render turbo_stream: [
                 turbo_stream.replace("flash-messages", partial: "flash/messages"),
                 turbo_stream.update(

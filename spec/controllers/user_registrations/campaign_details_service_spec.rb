@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::UserRegistrations::CampaignDetailsService, type: :service) do
+RSpec.describe(UserRegistrations::CampaignDetailsService, type: :service) do
   let(:user)     { create(:confirmed_user) }
   let(:teacher)  { create(:confirmed_user) }
   let(:lecture)  { create(:lecture, teacher: teacher) }

@@ -10,6 +10,7 @@
       <% metadata_rows = item_tile_metadata_rows(item) + [{
            value: item_capacity_row(item)
          }] %>
+
       <% selected_rank = preference_rank_for(item, item_preferences) %>
 
       <%= render partial: "registration/main/group_tile",
@@ -27,7 +28,7 @@
                        :div,
                        class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
                      ) do
-                       ranks = 1..Registration::UserRegistration::PreferencesHandler::MAX_PREFERENCES
+                       ranks = 1..UserRegistrations::PreferencesHandler::MAX_PREFERENCES
                        safe_join(ranks.map do |rank|
                          button_to(
                            t("registration.user_registration.preference_rank_options.#{rank}"),

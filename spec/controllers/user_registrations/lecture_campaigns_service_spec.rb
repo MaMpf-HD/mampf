@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::UserRegistrations::LectureCampaignsService, type: :service) do
+RSpec.describe(UserRegistrations::LectureCampaignsService, type: :service) do
   let(:user)    { create(:confirmed_user) }
   let(:lecture) { create(:lecture) }
 
@@ -20,23 +20,23 @@ RSpec.describe(Registration::UserRegistrations::LectureCampaignsService, type: :
 
   describe "#call" do
     it "returns details for all non-draft campaigns" do
-      details_open      = instance_double(Registration::UserRegistrations::CampaignDetailsService::Result)
-      details_completed = instance_double(Registration::UserRegistrations::CampaignDetailsService::Result)
+      details_open      = instance_double(UserRegistrations::CampaignDetailsService::Result)
+      details_completed = instance_double(UserRegistrations::CampaignDetailsService::Result)
 
-      expect(Registration::UserRegistrations::CampaignDetailsService)
+      expect(UserRegistrations::CampaignDetailsService)
         .to receive(:new)
         .with(campaign_open, user)
-        .and_return(instance_double(Registration::UserRegistrations::CampaignDetailsService,
+        .and_return(instance_double(UserRegistrations::CampaignDetailsService,
                                     call: details_open))
 
-      expect(Registration::UserRegistrations::CampaignDetailsService)
+      expect(UserRegistrations::CampaignDetailsService)
         .to receive(:new)
         .with(campaign_completed, user)
-        .and_return(instance_double(Registration::UserRegistrations::CampaignDetailsService,
+        .and_return(instance_double(UserRegistrations::CampaignDetailsService,
                                     call: details_completed))
 
       # Draft campaign must NOT be processed
-      expect(Registration::UserRegistrations::CampaignDetailsService)
+      expect(UserRegistrations::CampaignDetailsService)
         .not_to receive(:new)
         .with(campaign_draft, anything)
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :service) do
+RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
   let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
   let(:lecture) { FactoryBot.create(:lecture) }
   let(:seminar) { FactoryBot.create(:seminar) }
