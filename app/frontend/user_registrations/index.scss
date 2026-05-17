@@ -1,0 +1,256 @@
+@import "../roster/roster_campaigns";
+@import "../registration/group_tiles";
+
+.student-registration-rosterized-notice {
+  border: 1px solid rgba(71, 104, 84, 0.2);
+  border-radius: var(--bs-border-radius);
+  background: #d9e7dd;
+}
+
+.student-registration-rosterized-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-radius: var(--bs-border-radius);
+  background: linear-gradient(180deg, #edf4ef, #e2ece5);
+  color: #1d3227;
+  box-shadow: 0 12px 24px rgba(34, 62, 98, 0.08);
+}
+
+.student-registration-rosterized-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #557361;
+}
+
+.student-registration-rosterized-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.student-registration-rosterized-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1rem 1rem;
+  border: 1px solid rgba(71, 104, 84, 0.12);
+  border-radius: var(--bs-border-radius);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 249, 245, 0.84));
+  text-align: center;
+  justify-content: center;
+}
+
+.student-registration-rosterized-type {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5b7b68;
+}
+
+.student-registration-rosterized-title {
+  max-width: 42rem;
+  font-weight: 700;
+  color: #173025;
+}
+
+.student-registration-rosterized-description {
+  max-width: 44rem;
+  color: #567060;
+}
+
+.student-registration-rosterized-meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.student-registration-rosterized-meta-pill {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(71, 104, 84, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #20352a;
+  line-height: 1;
+  white-space: nowrap;
+
+  .bi {
+    flex: none;
+    font-size: 1.05rem;
+    color: #4f7a63;
+  }
+}
+
+.student-registration-rosterized-meta-copy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.42rem;
+  min-height: 1rem;
+}
+
+.student-registration-rosterized-meta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5a7565;
+  line-height: 1;
+  transform: translateY(-0.04em);
+}
+
+.student-registration-rosterized-meta-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1f3429;
+  line-height: 1;
+}
+
+.student-registration-rosterized-unknown {
+  display: inline-grid;
+  place-items: center;
+  cursor: help;
+  line-height: 1.05;
+}
+
+@media (min-width: 768px) {
+  .student-registration-rosterized-shell {
+    padding: 1.1rem;
+  }
+
+  .student-registration-rosterized-entry {
+    padding: 1.05rem 1.15rem;
+  }
+}
+
+.student-registration-campaign-card {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.student-registration-campaign-notices {
+  position: relative;
+  z-index: 0;
+}
+
+.student-registration-campaign-notice {
+  position: relative;
+  z-index: 0;
+  border: 1px solid;
+}
+
+.student-registration-campaign-notice:last-child {
+  border-bottom: none;
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+}
+
+.student-registration-campaign-notice--readonly {
+  border-color: #d7b55f;
+  background: linear-gradient(135deg, #fff7dd, #ffe7ad);
+  color: #6c4b00;
+}
+
+.student-registration-campaign-notice--ineligible {
+  border-color: #d39a6d;
+  background: linear-gradient(135deg, #fff1e4, #ffd9bc);
+  color: #733917;
+}
+
+.student-registration-campaign-notice-title {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.student-registration-campaign-notice-body {
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.student-registration-campaign-card--with-notice {
+  margin-top: -0.75rem;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  .registration-campaign-card-header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+.student-registration-campaign-card--inactive {
+  border-color: #d7dee6;
+  background: linear-gradient(180deg, #fcfdfe, #f5f7f9);
+
+  .registration-campaign-card-header {
+    background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+  }
+
+  .card-body {
+    pointer-events: none;
+  }
+
+  .registration-group-tile-col {
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tutorial-gtile,
+  .tutorial-gtile:hover,
+  .tutorial-gtile:focus-within,
+  .tutorial-gtile--student.tutorial-gtile--full:hover,
+  .tutorial-gtile--student.tutorial-gtile--full:focus-within {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.student-registration-tile-grid {
+  row-gap: 1rem;
+}
+
+.student-registration-tile-header {
+  gap: 0.75rem;
+}
+
+.student-registration-tile-status {
+  min-height: 1.5rem;
+  min-width: fit-content;
+}
+
+.student-registration-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.student-registration-tile-footer {
+  margin-top: 0.75rem;
+}
+
+.student-registration-rank-button {
+  min-width: 2.75rem;
+}
+
+.student-registration-rank-actions > form {
+  margin-bottom: 0;
+}
+
+.tutorial-gtile--student .tutorial-gtile-actions > form {
+  margin-bottom: 0;
+}
+
+.tutorial-gtile--student.tutorial-gtile--full:hover,
+.tutorial-gtile--student.tutorial-gtile--full:focus-within {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}

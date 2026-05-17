@@ -1,0 +1,38 @@
+<%= vite_stylesheet_tag "user_registrations/index.scss" %>
+
+<!-- campaign list -->
+<div class="container-md small-width">
+  <% visible_campaigns = sorted_student_visible_campaigns(@campaigns_details) %>
+  <% direct_enrollment_available = @self_rosterables&.rosterables&.any? %>
+  <% registration_options_available = direct_enrollment_available || visible_campaigns.any? %>
+
+  <div id="student_registration_rosterized_entries">
+    <%= render partial: "user_registrations/rosterized_entries",
+               locals: { rosterized_entries: @rosterized_entries } %>
+  </div>
+
+  <div class="campaign-list d-flex flex-column gap-4">
+    <% if direct_enrollment_available %>
+      <%= turbo_frame_tag "self_materialization_zone" do %>
+        <%= render partial: "user_registrations/self_materialization_zone",
+                   locals: { self_rosterables: @self_rosterables } %>
+      <% end %>
+    <% end %>
+
+    <% if visible_campaigns.any? %>
+      <% visible_campaigns.each do |campaign_details| %>
+        <%= turbo_frame_tag dom_id(campaign_details.campaign, :main_student_registration_campaign) do %>
+          <%= render partial: "user_registrations/campaign_card",
+                    locals: {
+                      details: campaign_details,
+                      campaign: campaign_details.campaign
+                    } %>
+        <% end %>
+      <% end %>
+    <% elsif @rosterized_entries.blank? %>
+      <p class="mb-0">
+        <%= t("roster.self_enrollment.no_registration_options") %>
+      </p>
+    <% end %>
+  </div>
+</div>

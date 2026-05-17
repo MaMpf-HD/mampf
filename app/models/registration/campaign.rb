@@ -69,8 +69,33 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    def open_for_withdrawals?
+      open_for_registrations?
+    end
+
+    def only_planning_cohort?
+      registration_items.exists? &&
+        registration_items.size == 1 &&
+        registration_items.first.registerable_type == "Cohort" &&
+        registration_items.first.registerable.propagate_to_lecture == false
+    end
+
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_last_updated(user)
+      user_registrations.where(user_id: user.id).maximum(:updated_at)
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registration_confirmed_for_group_type?(user, group_type)
+      user_registrations.joins(:registration_item)
+                        .where(user_id: user.id, status: :confirmed)
+                        .exists?(registration_items: { registerable_type: group_type })
     end
 
     def can_be_deleted?
@@ -305,7 +330,9 @@ module Registration
           return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
         end
 
-        klass = type.constantize
+        klass = Rosters::Rosterable.class_for(type)
+        return [] unless klass
+
         scope = fetch_scope_for_type(klass, type)
         fetch_ids_from_scope(klass, scope)
       end

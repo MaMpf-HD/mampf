@@ -81,3 +81,246 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
   end
 end
+
+RSpec.describe("Registration::UserRegistrations", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture) }
+  let(:seminar) { create(:lecture, :is_seminar) }
+  let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
+  let(:stub_succeed_items) { [item] }
+
+  before do
+    Flipper.enable(:registration_campaigns)
+    sign_in user
+  end
+
+  describe "GET lectures/:lecture_id/campaign_registrations" do
+    context "open + fcfs tutorial campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign,
+                          :first_come_first_served,
+                          :open,
+                          :with_policies,
+                          campaignable: lecture,
+                          description: "Solver Test Campaign")
+      end
+      it "return success response" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "renders available options" do
+        campaign
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+        expect(response.body.squish).to include("Solver Test Campaign")
+      end
+    end
+
+    context "completed campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign, :first_come_first_served,
+                          :completed,
+                          campaignable: seminar,
+                          description: "Solver Test Campaign")
+      end
+      it "return success response" do
+        get lecture_user_registrations_path(lecture_id: seminar.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when no registration options are available" do
+      it "shows a single empty state message" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response.body.squish).to include(
+          I18n.t("roster.self_enrollment.no_registration_options")
+        )
+      end
+    end
+
+    context "when the user is already rosterized" do
+      before do
+        tutorial = create(:tutorial, lecture: lecture, title: "Tutorial 2")
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+      end
+
+      it "does not show the empty state message" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response.body.squish).to include(
+          I18n.t("registration.user_registration.index.confirmed_cases")
+        )
+        expect(response.body.squish).to include("Tutorial 2")
+        expect(response.body.squish).not_to include(
+          I18n.t("roster.self_enrollment.no_registration_options")
+        )
+      end
+    end
+  end
+
+  context "fcfs tutorial campaign" do
+    let(:campaign) { create(:registration_campaign, :open, :first_come_first_served) }
+    let(:item) { campaign.registration_items.first }
+    describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
+      it "creates a registration and redirects" do
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+          .with(campaign, an_instance_of(User))
+          .and_return(service_double)
+        expect(service_double).to receive(:register!).and_return(stub_success)
+        post register_item_path(campaign_id: campaign.id, item_id: item.id)
+
+        expect(response).to have_http_status(:found)
+        follow_redirect!
+        expect(response.body).to include(I18n.t("registration.user_registration.messages." \
+                                                "registration_success"))
+      end
+    end
+
+    describe "DELETE campaign_registrations/:campaign_id/items/:item_id/withdraw" do
+      before do
+        Registration::UserRegistration.create!(
+          registration_campaign: campaign,
+          registration_item: item,
+          user: user,
+          status: :confirmed
+        )
+      end
+
+      it "withdraws the registration" do
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+          .with(campaign, user)
+          .and_return(service_double)
+        expect(service_double).to receive(:withdraw!).and_return(stub_success)
+        delete withdraw_item_path(campaign_id: campaign.id, item_id: item.id)
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+  end
+
+  context "preference based tutorial campaign" do
+    let(:campaign) do
+      FactoryBot.create(
+        :registration_campaign,
+        :open,
+        :preference_based
+      )
+    end
+    let(:item) { campaign.registration_items.first }
+
+    describe "preference actions" do
+      let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
+
+      describe "POST #add" do
+        it "saves the selected preference rank" do
+          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
+            .new(item.id, 1)]
+          edit_service = instance_double(
+            UserRegistrations::LecturePreferenceEditService
+          )
+
+          expect(UserRegistrations::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(:pref_item_build_with_rank)
+            .with(campaign, user, item.id.to_s, "1")
+            .and_return(pref_items)
+          expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
+            .with(campaign, user)
+            .and_return(edit_service)
+          expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
+
+          post add_preference_path(item), params: { rank: 1 }
+          expect(response).to have_http_status(:found)
+        end
+      end
+    end
+  end
+
+  context "fcfs talk campaign" do
+    let(:campaign) do
+      create(:registration_campaign, :open, :first_come_first_served, campaignable: seminar)
+    end
+    let(:item) { campaign.registration_items.first }
+    describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
+      it "creates a registration and redirects" do
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+          .with(campaign, an_instance_of(User))
+          .and_return(service_double)
+        expect(service_double).to receive(:register!).and_return(stub_success)
+        post register_item_path(campaign_id: campaign.id, item_id: item.id)
+
+        expect(response).to have_http_status(:found)
+        follow_redirect!
+        expect(response.body).to include(I18n.t("registration.user_registration.messages." \
+                                                "registration_success"))
+      end
+    end
+
+    describe "DELETE campaign_registrations/:campaign_id/items/:item_id/withdraw" do
+      before do
+        Registration::UserRegistration.create!(
+          registration_campaign: campaign,
+          registration_item: item,
+          user: user,
+          status: :confirmed
+        )
+      end
+
+      it "withdraws the registration" do
+        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
+        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+          .with(campaign, user)
+          .and_return(service_double)
+        expect(service_double).to receive(:withdraw!).and_return(stub_success)
+        delete withdraw_item_path(campaign_id: campaign.id, item_id: item.id)
+
+        expect(response).to have_http_status(:found)
+      end
+    end
+  end
+
+  context "preference based tutorial campaign" do
+    let(:campaign) do
+      FactoryBot.create(
+        :registration_campaign,
+        :open,
+        :preference_based,
+        campaignable: seminar
+      )
+    end
+    let(:item) { campaign.registration_items.first }
+
+    describe "preference actions" do
+      let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
+
+      describe "POST #add" do
+        it "saves the selected preference rank" do
+          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
+            .new(item.id, 1)]
+          edit_service = instance_double(
+            UserRegistrations::LecturePreferenceEditService
+          )
+
+          expect(UserRegistrations::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(:pref_item_build_with_rank)
+            .with(campaign, user, item.id.to_s, "1")
+            .and_return(pref_items)
+          expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
+            .with(campaign, user)
+            .and_return(edit_service)
+          expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
+
+          post add_preference_path(item), params: { rank: 1 }
+          expect(response).to have_http_status(:found)
+        end
+      end
+    end
+  end
+end

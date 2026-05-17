@@ -20,6 +20,8 @@ module Registration
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
 
+    before_validation :set_exclusive_assignment
+
     validates :status, presence: true
 
     validate :ensure_item_belongs_to_campaign, if: :registration_item
@@ -45,17 +47,25 @@ module Registration
               absence: true,
               if: -> { registration_campaign.first_come_first_served? }
 
-    # FCFS campaigns: one row per user+campaign
-    # There is also a DB index to enforce it at the database level (see the schema).
-    validates :user_id,
-              uniqueness: {
-                scope: :registration_campaign_id
-              },
-              if: -> { registration_campaign.first_come_first_served? }
-
     after_create :increment_confirmed_counter
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
+
+    # FCFS campaigns: one row per user+campaign for tutorial + talk items
+    # (exclusive_assignment == true)
+    validates :user_id,
+              uniqueness: {
+                scope: :registration_campaign_id,
+                conditions: -> { where(exclusive_assignment: true, preference_rank: nil) }
+              },
+              if: -> { exclusive_assignment && preference_rank.nil? }
+
+    # FCFS campaigns: one row per user + campaign + item
+    validates :user_id,
+              uniqueness: {
+                scope: [:registration_campaign_id, :registration_item_id]
+              },
+              if: -> { registration_campaign.first_come_first_served? }
 
     private
 
@@ -94,6 +104,12 @@ module Registration
         return if registration_item.registration_campaign_id == registration_campaign_id
 
         errors.add(:registration_item, :must_belong_to_same_campaign)
+      end
+
+      def set_exclusive_assignment
+        self.exclusive_assignment =
+          registration_campaign&.first_come_first_served? &&
+          registration_item&.exclusive_assignment?
       end
   end
 end

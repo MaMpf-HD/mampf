@@ -73,3 +73,8 @@ export const test = base.extend<MaMpfFixtures>({
     await use(new FactoryBot(request));
   },
 });
+
+test.beforeEach(async ({ request }) => {
+  // Clean database before every test (brutal, but effective for good test isolation)
+  await callBackend(request, "database_cleaner", {});
+});

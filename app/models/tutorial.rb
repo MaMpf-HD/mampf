@@ -70,6 +70,10 @@ class Tutorial < ApplicationRecord
     end
   end
 
+  def exclusive_assignment?
+    true
+  end
+
   private
 
     def enforce_lecture_uniqueness!(user_ids)

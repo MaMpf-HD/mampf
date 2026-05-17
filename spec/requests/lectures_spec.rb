@@ -85,6 +85,33 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/script" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    before do
+      Flipper.enable(:registration_campaigns)
+      create(:lecture_medium,
+             teachable: lecture,
+             sort: "Script",
+             released: "all",
+             released_at: Time.zone.now,
+             description: "Lecture script")
+    end
+
+    it "renders the registration sidebar entry" do
+      get lecture_script_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      enrollment_label = I18n.with_locale(lecture.locale_with_inheritance) do
+        I18n.t("categories.enrollment.singular")
+      end
+
+      expect(response.body).to include(enrollment_label)
+      expect(response.body).to include(lecture_user_registrations_path(lecture))
+    end
+  end
+
   describe "XSS protections" do
     let(:xss_payload) { "<div id='test-xss-xyz123'><script>alert('lecture-xss')</script></div>" }
     let!(:xss_course) { create(:course, title: "XSS Course") }
