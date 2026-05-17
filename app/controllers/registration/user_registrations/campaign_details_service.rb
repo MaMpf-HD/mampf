@@ -1,5 +1,5 @@
 module Registration
-  class Campaign
+  module UserRegistrations
     class CampaignDetailsService
       Result = Struct.new(:campaign, :campaignable_host,
                           :eligibility, :items, :item_preferences,

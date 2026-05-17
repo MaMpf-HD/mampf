@@ -1,5 +1,5 @@
 module Registration
-  class Campaign
+  module UserRegistrations
     class LectureCampaignsService
       def initialize(lecture, user)
         @lecture = lecture

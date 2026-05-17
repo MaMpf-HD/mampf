@@ -2,6 +2,7 @@ module Roster
   # For students to add/remove themselves from tutorial/talk/cohort rosters
   # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
+    helper ::UserRegistrationsHelper, ::EligibilityHelper
     before_action :set_rosterable, only: [:self_add, :self_remove]
     before_action :use_user_locale
     before_action :authorize_lecture

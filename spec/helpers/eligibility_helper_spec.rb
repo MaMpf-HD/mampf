@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::EligibilityHelper, type: :helper) do
+RSpec.describe(EligibilityHelper, type: :helper) do
   around do |example|
     I18n.with_locale(:en) { example.run }
   end

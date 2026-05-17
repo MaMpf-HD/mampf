@@ -1,6 +1,7 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    helper UserRegistrationsHelper, ItemsHelper, CampaignsHelper
+    helper ::UserRegistrationsHelper, ::EligibilityHelper,
+           ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
     before_action :set_campaign, only: [:create, :destroy, :destroy_for_user]
     before_action :set_locale
@@ -25,7 +26,7 @@ module Registration
     end
 
     def index
-      @campaigns_details = Campaign::LectureCampaignsService
+      @campaigns_details = UserRegistrations::LectureCampaignsService
                            .new(@lecture, current_user)
                            .call
       @rosterized_entries = Rosters::StudentMaterializedResultResolver
@@ -72,9 +73,9 @@ module Registration
           flash.now[:notice] = success_message
           respond_to do |format|
             format.turbo_stream do
-              @details = Registration::Campaign::CampaignDetailsService.new(@campaign,
-                                                                            current_user)
-                                                                       .call
+              @details = Registration::UserRegistrations::CampaignDetailsService.new(@campaign,
+                                                                                     current_user)
+                                                                                .call
               render turbo_stream: [
                 turbo_stream.replace("flash-messages", partial: "flash/messages"),
                 turbo_stream.update(
