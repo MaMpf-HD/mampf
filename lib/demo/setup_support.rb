@@ -2,15 +2,6 @@ module Demo
   module SetupSupport
     extend self
 
-    LEGACY_SOLVER_TASK_GROUPS = [
-      ["solver:create_campaign", "solver:create_registrations"],
-      [
-        "solver:create_mixed_fcfs_campaign",
-        "solver:create_mixed_fcfs_registrations"
-      ],
-      ["solver:create_two_stage_campaign"]
-    ].freeze
-
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
@@ -25,36 +16,22 @@ module Demo
     ].freeze
     SEMINAR_TALK_TITLES = (1..10).map { |i| "Demo Talk #{i}" }.freeze
 
-    def set_relevant_feature_flags!
+    def setup_flags!
       ensure_non_production!
       configure_feature_flags!(
         enabled: ROSTER_ENABLED_FLAGS + ASSESSMENT_ENABLED_FLAGS
       )
     end
 
-    def setup_legacy_solver_playground!
-      set_relevant_feature_flags!
-
-      Rails.logger.debug("=== Legacy Solver Playground Setup ===")
-      LEGACY_SOLVER_TASK_GROUPS.each do |group|
-        group.each do |task_name|
-          Rails.logger.debug { "Running #{task_name}..." }
-          invoke_task(task_name)
-          Rails.logger.debug("")
-        end
-      end
-      Rails.logger.debug("=== Legacy Solver Playground Setup Complete ===")
-    end
-
-    def verify!
-      setup_legacy_solver_playground!
+    def setup_campaigns!
+      Demo::CampaignSetupSupport.setup!
     end
 
     def setup_rosters!
-      set_relevant_feature_flags!
+      setup_flags!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
-      with_quiet_logging do
+      Demo::QuietLoggingSupport.with_quiet_logging do
         setup_lecture_rosters!
         setup_seminar_rosters!
       end
@@ -71,12 +48,12 @@ module Demo
       configure_feature_flags!(enabled: ASSESSMENT_ENABLED_FLAGS)
 
       lecture = nil
-      with_quiet_logging do
+      Demo::QuietLoggingSupport.with_quiet_logging do
         lecture = assessment_lecture!
       end
 
       Rails.logger.debug("=== Demo Assessment Setup ===")
-      with_quiet_logging do
+      Demo::QuietLoggingSupport.with_quiet_logging do
         reset_demo_assignments!(lecture)
         create_demo_assignments!(lecture)
         create_demo_tasks!(lecture)
@@ -108,7 +85,7 @@ module Demo
         messages = []
 
         Rails.logger.debug("Configuring feature flags...")
-        with_quiet_logging do
+        Demo::QuietLoggingSupport.with_quiet_logging do
           enabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.enable
@@ -132,12 +109,6 @@ module Demo
         feature_name = flag.to_s
         Flipper::Adapters::ActiveRecord::Feature.find_or_create_by!(key: feature_name)
         Flipper[feature_name]
-      end
-
-      def invoke_task(task_name)
-        Rake::Task[task_name].invoke
-      ensure
-        Rake::Task[task_name].reenable
       end
 
       def lecture!
@@ -723,14 +694,6 @@ module Demo
         when :occasional
           rand(0.55..0.75)
         end
-      end
-
-      def with_quiet_logging
-        old_level = ActiveRecord::Base.logger&.level
-        ActiveRecord::Base.logger&.level = :warn
-        yield
-      ensure
-        ActiveRecord::Base.logger&.level = old_level
       end
   end
 end
