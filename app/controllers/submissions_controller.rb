@@ -220,18 +220,7 @@ class SubmissionsController < ApplicationController
     render :add_correction
   end
 
-  def select_tutorial
-    @tutorial = @submission.tutorial
-    @lecture = @submission.assignment.lecture
-  end
-
   def cancel_action
-  end
-
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
   end
 
   def accept
@@ -258,12 +247,25 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.expect(submission: [:tutorial_id, :assignment_id])
+      permitted = params.expect(submission: [:tutorial_id, :assignment_id])
+      assignment_id = params[:submission][:assignment_id]
+      assignment = Assignment.find_by(id: assignment_id)
+      lecture = assignment&.lecture
+
+      if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
+        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+      end
+      permitted
     end
 
     # disallow modification of assignment
     def submission_update_params
-      params.expect(submission: [:tutorial_id])
+      permitted = params.expect(submission: [:tutorial_id])
+      lecture = @submission.assignment.lecture
+      if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
+        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+      end
+      permitted
     end
 
     # disallow modification of assignment
