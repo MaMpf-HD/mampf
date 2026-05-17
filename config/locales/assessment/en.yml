@@ -16,6 +16,7 @@ en:
         updated: "Achievement updated successfully."
         destroyed: "Achievement deleted successfully."
       errors:
+        destroy_failed: "Failed to delete achievement."
         not_found: "Achievement not found."
       subtitle: "Define additional criteria students must fulfill beyond points."
       new: "New Achievement"

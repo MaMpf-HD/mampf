@@ -15,6 +15,7 @@ de:
         updated: "Zusatzkriterium erfolgreich aktualisiert."
         destroyed: "Zusatzkriterium erfolgreich gelöscht."
       errors:
+        destroy_failed: "Löschen des Zusatzkriteriums fehlgeschlagen."
         not_found: "Zusatzkriterium nicht gefunden."
       subtitle: "Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen."
       new: "Neues Zusatzkriterium"

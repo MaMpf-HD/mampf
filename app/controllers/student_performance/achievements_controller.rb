@@ -159,7 +159,7 @@ module StudentPerformance
             ]
           else
             flash.now[:alert] = I18n.t(
-              "assessment.achievements.errors.referenced_by_rules"
+              "assessment.achievements.errors.destroy_failed"
             )
             @achievement.errors.clear
             render turbo_stream: [
