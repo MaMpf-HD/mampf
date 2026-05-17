@@ -23,11 +23,11 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def performance_enabled?
-    Flipper.enabled?(:student_performance) && !lecture.seminar?
+    student_performance_enabled?
   end
 
   def achievements_enabled?
-    Flipper.enabled?(:student_performance) && !lecture.seminar?
+    student_performance_enabled?
   end
 
   def single_tab?
@@ -42,6 +42,10 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   private
+
+    def student_performance_enabled?
+      Flipper.enabled?(:student_performance) && !lecture.seminar?
+    end
 
     def resolve_tab(tab)
       key = tab&.to_sym

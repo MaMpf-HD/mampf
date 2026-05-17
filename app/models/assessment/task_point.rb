@@ -44,7 +44,7 @@ module Assessment
 
       def recompute_performance_record
         participation = ::Assessment::Participation
-                        .includes(:assessment, :user)
+                        .includes({ assessment: :lecture }, :user)
                         .find_by(id: assessment_participation_id)
         return unless participation
 

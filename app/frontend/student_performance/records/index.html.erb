@@ -21,7 +21,7 @@
           <% @lecture.tutorials.each do |tutorial| %>
             <option
               value="<%= tutorial.id %>"
-              <% if params[:tutorial_id].to_s == tutorial.id.to_s %>
+              <% if params[:tutorial_id] == tutorial.id.to_s %>
                 selected
               <% end %>
             >
@@ -86,7 +86,7 @@
                 class="text-center small"
                 title="<%= achievement.title %>"
               >
-                <%= truncate(achievement.title, length: 12) %>
+                <%= truncate(achievement.title, length: 24) %>
               </th>
             <% end %>
 

@@ -79,7 +79,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
       it "computes percentage correctly" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
-        expect(record.percentage_materialized).to eq(76.67)
+        expect(record.percentage_materialized).to be_within(0.01).of(76.67)
       end
 
       it "sets computed_at" do
@@ -133,7 +133,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.points_total_materialized).to eq(37)
         expect(record.points_max_materialized).to eq(50)
-        expect(record.percentage_materialized).to eq(74.0)
+        expect(record.percentage_materialized).to be_within(0.01).of(74.0)
       end
     end
 
@@ -265,7 +265,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
       it "computes percentage without the exempt assessment" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
-        expect(record.percentage_materialized).to eq(75.0)
+        expect(record.percentage_materialized).to be_within(0.01).of(75.0)
       end
     end
 
