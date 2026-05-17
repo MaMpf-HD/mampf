@@ -16,9 +16,9 @@ module Rosters
       rosterables.concat(@lecture.talks)
       rosterables.concat(@lecture.tutorials)
       rosterables.concat(@lecture.cohorts)
-      # filter rosterables that allow self add or self remove
+      # show joinable rosterables and rosterables the user can still leave
       rosterables.select do |rosterable|
-        rosterable.config_allow_self_add? || rosterable.config_allow_self_remove?
+        rosterable.config_allow_self_add? || rosterable.allow_self_remove?(@user)
       end
     end
   end
