@@ -297,7 +297,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.points_max_materialized).to eq(30)
       end
     end
-
   end
 
   describe "#compute_and_upsert_all_records!" do
