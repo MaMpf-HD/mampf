@@ -52,8 +52,6 @@ module Assessment
       def recompute_all_performance_records
         return unless assessment&.lecture_id
         return unless Flipper.enabled?(:assessment_grading)
-        return if StudentPerformance::Record
-                  .where(lecture_id: assessment.lecture_id).none?
 
         StudentPerformance::ComputationService
           .new(lecture: assessment.lecture)
