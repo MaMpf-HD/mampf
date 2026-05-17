@@ -781,7 +781,7 @@ Rails.application.routes.draw do
         defaults: { type: "Tutorial" }
 
   patch "submissions/grade_multi_submissions",
-        to: "task_points#update_team_multi",
+        to: "assessment/task_points#update_team_multi",
         as: "grade_multi_submissions_tutorial",
         defaults: { type: "Tutorial" }
 
