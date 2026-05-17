@@ -779,16 +779,16 @@ Rails.application.routes.draw do
         to: "assessment/task_points#update_team",
         as: "grade_submission_tutorial",
         defaults: { type: "Tutorial" }
-  
-  patch "submissions/grade_multi_submissions",
-      to: "task_points#update_team_multi",
-      as: "grade_multi_submissions_tutorial",
-      defaults: { type: "Tutorial" }
 
-patch "submissions/:id/refresh_grade_submission",
-      to: "assessment/task_points#refresh",
-      as: "refresh_grade_submission_tutorial",
-      defaults: { type: "Tutorial" }
+  patch "submissions/grade_multi_submissions",
+        to: "task_points#update_team_multi",
+        as: "grade_multi_submissions_tutorial",
+        defaults: { type: "Tutorial" }
+
+  patch "submissions/:id/refresh_grade_submission",
+        to: "assessment/task_points#refresh",
+        as: "refresh_grade_submission_tutorial",
+        defaults: { type: "Tutorial" }
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",

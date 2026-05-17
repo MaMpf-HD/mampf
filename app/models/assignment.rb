@@ -47,6 +47,14 @@ class Assignment < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
+  def non_submitters(tutorial)
+    tutorial.tutorial_memberships
+            .joins(:user)
+            .order("users.name")
+            .map(&:user)
+            .reject { |u| u.in?(submitters) }
+  end
+
   def past_deadline?
     deadline.present? && deadline < Time.zone.now
   end

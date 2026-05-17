@@ -23,18 +23,14 @@ module Assessment
         @assignment = sample_submission.assignment
         @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                             &.order(:last_modification_by_users_at)
+        @non_submitters = []
         respond_to do |format|
           format.turbo_stream do
-            component = TutorialGradingTableComponent.new(
-              assignment: @assignment,
-              tutorial: @tutorial,
-              stack: @stack
-            )
             render turbo_stream: turbo_stream.replace(
               "grading-table",
               partial: "assessment/assessments/components/tutorial_grading_content",
-              locals: { assignment: @assignment, tutorial: @tutorial, stack: @stack,
-                        component: component }
+              locals: { assignment: @assignment, tutorial: @tutorial,
+                        stack: @stack, non_submitters: @non_submitters }
             )
           end
         end

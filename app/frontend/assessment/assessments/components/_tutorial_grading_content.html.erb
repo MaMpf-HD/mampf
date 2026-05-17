@@ -67,7 +67,7 @@
 <% end %>
 
 <%# ── ZONE 2: on roster, no submission ── %>
-<% if component.has_non_submitters? %>
+<% if non_submitters.present? %>
   <h5 class="mt-4 mb-3">
     <%= t('tutorial.no_submissions') %>
   </h5>
@@ -89,7 +89,7 @@
       </thead>
 
       <tbody>
-        <% component.non_submitters.each do |user| %>
+        <% non_submitters.each do |user| %>
           <tr>
             <td class="sticky-col team-col">
               <%= link_to user.tutorial_name, user_path(user) %>
