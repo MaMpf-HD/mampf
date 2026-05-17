@@ -1,38 +1,23 @@
-<div style="width: min(100%, 30rem);">
-  <div class="row justify-content-start align-items-center">
-    <div class="fw-bold text-dark w-auto">
-      <%= t('registration.user_registration.eligibility_title') %>
-    </div>
+<% failed_policies = failed_eligibility_policies(eligibility) %>
 
-    <p class="mb-1 w-auto">
-      <% pass = eligibility.all? { |policy| policy[:outcome][:pass] } %>
-      <%= eligibility_badge(pass) %>
-    </p>
+<div
+  class="
+    p-3 pb-4 rounded
+    student-registration-campaign-notice
+    student-registration-campaign-notice--ineligible
+  "
+>
+  <div class="student-registration-campaign-notice-title">
+    <%= t("registration.user_registration.ineligible_notice.title") %>
   </div>
 
-  <ul class="list-group list-group-flush">
-    <% eligibility.each do |policy| %>
-      <li
-        class="
-          list-group-item d-flex justify-content-between align-items-center
-          pt-1 pb-1
-        "
-      >
-        <div>
-          <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
+  <p class="student-registration-campaign-notice-body mb-2">
+    <%= t("registration.user_registration.ineligible_notice.description") %>
+  </p>
 
-          <% policy_info = get_policy_config_info(policy) %>
-
-          <small class="text-muted">
-            <% if get_details_render_type_policy_kind(policy[:kind]) == 'text' %>
-              <%= policy_info %>
-            <% end %>
-          </small>
-        </div>
-
-        <% info = get_outcome_info(policy[:outcome]) %>
-        <span class="<%= info[:badge_class] %>"><%= t(info[:text]) %></span>
-      </li>
+  <ul class="student-registration-campaign-notice-body mb-0 ps-3">
+    <% failed_policies.each do |policy| %>
+      <li class="mb-1"><%= eligibility_failure_message(policy) %></li>
     <% end %>
   </ul>
 </div>

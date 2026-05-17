@@ -139,37 +139,79 @@
   overflow: hidden;
 }
 
-.student-registration-campaign-readonly-notice {
+.student-registration-campaign-notices {
   position: relative;
   z-index: 0;
-  margin-bottom: -0.95rem;
-  padding: 0.9rem 1rem 1.65rem;
-  border: 1px solid #d7b55f;
+}
+
+.student-registration-campaign-notice {
+  position: relative;
+  z-index: 0;
+  border: 1px solid;
+}
+
+.student-registration-campaign-notice:last-child {
   border-bottom: none;
   border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+}
+
+.student-registration-campaign-notice--readonly {
+  border-color: #d7b55f;
   background: linear-gradient(135deg, #fff7dd, #ffe7ad);
   color: #6c4b00;
 }
 
-.student-registration-campaign-readonly-title {
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-  color: #5a3f00;
+.student-registration-campaign-notice--ineligible {
+  border-color: #d39a6d;
+  background: linear-gradient(135deg, #fff1e4, #ffd9bc);
+  color: #733917;
 }
 
-.student-registration-campaign-card--readonly {
-  border-color: #d7dee6;
+.student-registration-campaign-notice-title {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.student-registration-campaign-notice-body {
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.student-registration-campaign-card--with-notice {
+  margin-top: -0.75rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 
   .registration-campaign-card-header {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+  }
+}
+
+.student-registration-campaign-card--inactive {
+  border-color: #d7dee6;
+  background: linear-gradient(180deg, #fcfdfe, #f5f7f9);
+
+  .registration-campaign-card-header {
     background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+  }
+
+  .card-body {
+    pointer-events: none;
   }
 
   .registration-group-tile-col {
     pointer-events: none;
+    z-index: 0;
+  }
+
+  .tutorial-gtile,
+  .tutorial-gtile:hover,
+  .tutorial-gtile:focus-within,
+  .tutorial-gtile--student.tutorial-gtile--full:hover,
+  .tutorial-gtile--student.tutorial-gtile--full:focus-within {
+    transform: none;
+    box-shadow: none;
   }
 }
 

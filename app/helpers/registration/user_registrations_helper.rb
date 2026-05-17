@@ -12,34 +12,6 @@ module Registration
       MODE_MAP.fetch(mode, MODE_MAP[-1])
     end
 
-    # Examples of policy config:
-    # student_performance -> config: { certification_status: :pending }
-    # institutional_email	-> config:	{ allowed_domains: ["uni-heidelberg.de "] }
-    # prerequisite_campaign	-> config:	{ prerequisite_campaign: name }
-    #
-    # Notice config here is JSON object, so keys are string types
-    # policy here is also hash, not policy object
-    def get_policy_config_info(policy)
-      case policy[:kind]
-      when "student_performance"
-        cert_status = policy[:config]["certification_status"]
-        cert_status.capitalize
-      when "institutional_email"
-        domains = Array(policy[:config]["allowed_domains"])
-        domains.join(", ")
-      when "prerequisite_campaign"
-        policy[:config]["prerequisite_campaign"]
-      else
-        "No configuration available"
-      end
-    end
-
-    def get_details_render_type_policy_kind(kind)
-      return "badge" if kind == "student_performance"
-
-      "text"
-    end
-
     def single_mode?(registerable_type)
       regist_type = registerable_type.downcase
       ["lecture"].include?(regist_type)
@@ -85,31 +57,6 @@ module Registration
       return "" if time.nil?
 
       l(time, format: :student_registration)
-    end
-
-    OUTCOME_MAP = {
-      true => { text: "basics.passed",
-                badge_class: "badge rounded-pill w-auto text-bg-success" },
-      false => { text: "basics.failed",
-                 badge_class: "badge rounded-pill w-auto text-bg-danger" }
-    }.freeze
-
-    def get_outcome_info(outcome)
-      OUTCOME_MAP[outcome[:pass]]
-    end
-
-    def eligibility_badge(pass)
-      if pass
-        content_tag(:span, I18n.t("registration.user_registration.eligible"),
-                    class: "badge rounded-pill w-auto text-bg-success")
-      else
-        content_tag(:span, I18n.t("registration.user_registration.not_eligible"),
-                    class: "badge rounded-pill w-auto text-bg-warning")
-      end
-    end
-
-    def eligible_for_registration?(eligibility)
-      eligibility.all? { |policy| policy[:outcome][:pass] }
     end
 
     def student_registration_campaign_title(campaign)

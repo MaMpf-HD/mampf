@@ -3,16 +3,35 @@
 <% item_preferences = details.item_preferences %>
 <% readonly = student_registration_readonly?(campaign) %>
 
-<div>
-  <% if readonly %>
-    <div class="student-registration-campaign-readonly-notice">
-      <div class="student-registration-campaign-readonly-title">
-        <%= t("registration.user_registration.readonly_notice.title") %>
-      </div>
+<% ineligible = student_registration_ineligible?(campaign, eligibility) %>
+<% main_disabled = readonly || ineligible %>
+<% notices_present = readonly || ineligible %>
 
-      <p class="mb-0 small">
-        <%= t("registration.user_registration.readonly_notice.description") %>
-      </p>
+<div>
+  <% if notices_present %>
+    <div class="student-registration-campaign-notices d-flex flex-column gap-2">
+      <% if readonly %>
+        <div
+          class="
+            p-3 rounded <%= "pb-4" unless ineligible %>
+            student-registration-campaign-notice
+            student-registration-campaign-notice--readonly
+          "
+        >
+          <div class="student-registration-campaign-notice-title">
+            <%= t("registration.user_registration.readonly_notice.title") %>
+          </div>
+
+          <p class="student-registration-campaign-notice-body mb-0">
+            <%= t("registration.user_registration.readonly_notice.description") %>
+          </p>
+        </div>
+      <% end %>
+
+      <% if ineligible %>
+        <%= render partial: "registration/main/eligibility",
+                   locals: { eligibility: eligibility } %>
+      <% end %>
     </div>
   <% end %>
 
@@ -20,7 +39,8 @@
     class="
       card campaign-section registration-campaign-card
       student-registration-campaign-card
-      <%= "student-registration-campaign-card--readonly" if readonly %>
+      <%= "student-registration-campaign-card--with-notice" if notices_present %>
+      <%= "student-registration-campaign-card--inactive" if main_disabled %>
     "
   >
     <div class="card-header registration-campaign-card-header">
@@ -58,15 +78,7 @@
         </div>
       <% end %>
 
-      <% if campaign.status != "completed" &&
-            !eligible_for_registration?(eligibility) %>
-        <div class="mb-3">
-          <%= render partial: 'registration/main/eligibility',
-                     locals: { eligibility: eligibility } %>
-        </div>
-      <% end %>
-
-      <% unless readonly %>
+      <% unless main_disabled %>
         <div class="student-registration-campaign-instruction fw-semibold mb-3">
           <%= student_registration_instruction(campaign) %>
         </div>

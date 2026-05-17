@@ -285,9 +285,20 @@ en:
       register_now: "Register now"
       withdraw: "Withdraw"
       closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+      ineligible_notice:
+        title: "Registration unavailable"
+        description: "You cannot register for this campaign right now for the following reasons:"
       readonly_notice:
         title: "Registration closed"
         description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
+      eligibility_failures:
+        institutional_email_mismatch_html: "Your email address does not match the required institutional domain (%{domains}). Go to your %{profile} and update it."
+        institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
+        prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. Contact the course administration if you think this is incorrect."
+        prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."
+        prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
+        student_performance_failed: "Your student performance status does not match the required status %{status}. Please contact the course administration if you think this is incorrect."
+        generic_html: "You do not currently meet the %{requirement} requirement. Please contact the course administration if you need help."
       withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"

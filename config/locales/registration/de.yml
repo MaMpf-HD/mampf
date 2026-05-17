@@ -285,9 +285,20 @@ de:
       register_now: "Jetzt registrieren"
       withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
+      ineligible_notice:
+        title: "Anmeldung derzeit nicht möglich"
+        description: "Du kannst Dich für dieses Anmeldeverfahren derzeit aus folgenden Gründen nicht anmelden:"
       readonly_notice:
         title: "Anmeldung geschlossen"
         description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die Zuteilung finalisiert. Änderungen sind nicht mehr möglich."
+      eligibility_failures:
+        institutional_email_mismatch_html: "Deine E-Mail-Adresse hat nicht die erforderliche institutionelle Domain (%{domains}). Gehe in Dein %{profile} und passe sie dort an."
+        institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_not_met: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren %{campaign}, bevor Du Dich hier anmelden kannst. Wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
+        prerequisite_campaign_not_found: "Das erforderliche vorausgesetzte Anmeldeverfahren %{campaign} ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
+        student_performance_failed: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status %{status}. Bitte wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
+        generic_html: "Du erfüllst die Voraussetzung %{requirement} derzeit nicht. Bitte wende Dich an die Kursverwaltung, wenn Du Hilfe brauchst."
       withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
