@@ -55,7 +55,7 @@ module Registration
         end
 
         def persistent_target_rank(rank)
-          [[rank.to_i, 1].max, MAX_PREFERENCES].min
+          rank.to_i.clamp(1, MAX_PREFERENCES)
         end
 
         def next_available_rank(used_ranks)
