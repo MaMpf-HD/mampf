@@ -13,9 +13,12 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
 
-    def add_user!(user, rosterable, force: false)
+    def add_user!(user, rosterable, force: false, source_campaign_id: nil)
       rosterable.with_lock do
-        add_user_without_lock!(user, rosterable, force: force)
+        add_user_without_lock!(user,
+                               rosterable,
+                               force: force,
+                               source_campaign_id: source_campaign_id)
       end
     end
 
@@ -38,7 +41,7 @@ module Rosters
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)
       end
 
-      def add_user_without_lock!(user, rosterable, force: false)
+      def add_user_without_lock!(user, rosterable, force: false, source_campaign_id: nil)
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
@@ -50,7 +53,9 @@ module Rosters
 
         membership = rosterable.add_user_to_roster!(user)
         propagate_to_lecture!(user, rosterable)
-        update_registration_materialization(user, rosterable)
+        update_registration_materialization(user,
+                                            rosterable,
+                                            source_campaign_id: source_campaign_id)
         membership
       end
 
@@ -84,13 +89,26 @@ module Rosters
         rosterable.roster_entries.count < rosterable.capacity
       end
 
-      def update_registration_materialization(user, rosterable)
+      def update_registration_materialization(user, rosterable, source_campaign_id: nil)
+        now = Time.current
+
         Registration::Item.where(registerable: rosterable).find_each do |item|
           # rubocop:disable Rails/SkipsModelValidations
           item.user_registrations.where(user: user)
-              .update_all(materialized_at: Time.current)
+              .update_all(materialized_at: now)
           # rubocop:enable Rails/SkipsModelValidations
         end
+
+        return if source_campaign_id.blank?
+
+        # rubocop:disable Rails/SkipsModelValidations
+        Registration::UserRegistration.rejected
+                                      .where(user: user,
+                                             registration_campaign_id: source_campaign_id,
+                                             rejection_overridden_at: nil)
+                                      .update_all(rejection_overridden_at: now,
+                                                  updated_at: now)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       def ensure_uniqueness!(user, rosterable)

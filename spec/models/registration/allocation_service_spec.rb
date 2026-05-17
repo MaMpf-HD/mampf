@@ -163,6 +163,102 @@ RSpec.describe(Registration::AllocationService) do
 
         expect(campaign.reload).to be_processing
         expect(campaign.last_allocation_calculated_at).to be_present
+        expect(campaign.allocation_decided_at).to be_present
+      end
+
+      it "auto-rejects deterministic violators before the solver runs" do
+        create(:registration_policy,
+               :institutional_email,
+               :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+
+        valid_user = create(:confirmed_user, email: "valid@uni.edu")
+        invalid_user = create(:confirmed_user, email: "invalid@other.test")
+
+        valid_registration = create(:registration_user_registration,
+                                    user: valid_user,
+                                    registration_item: item1,
+                                    registration_campaign: campaign,
+                                    preference_rank: 1,
+                                    status: :pending)
+        invalid_registration = create(:registration_user_registration,
+                                      user: invalid_user,
+                                      registration_item: item2,
+                                      registration_campaign: campaign,
+                                      preference_rank: 1,
+                                      status: :pending)
+
+        allow(Registration::Solvers::MinCostFlow).to receive(:new)
+          .with(campaign)
+          .and_wrap_original do |_method, passed_campaign|
+            expect(passed_campaign.user_registrations.where(status: :rejected).pluck(:user_id))
+              .to include(invalid_user.id)
+            solver_double
+          end
+        allow(solver_double).to receive(:run).and_return({ valid_user.id => item1.id })
+
+        service.allocate!
+
+        expect(valid_registration.reload).to be_confirmed
+        expect(invalid_registration.reload).to be_rejected
+        expect(invalid_registration.rejection_reason_type).to eq("policy")
+        expect(invalid_registration.rejection_reason_code)
+          .to eq("institutional_email_mismatch")
+      end
+
+      it "re-applies auto-rejection reasons on recalculation" do
+        create(:registration_policy,
+               :institutional_email,
+               :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+
+        invalid_user = create(:confirmed_user, email: "invalid@other.test")
+        invalid_registration = create(:registration_user_registration,
+                                      user: invalid_user,
+                                      registration_item: item2,
+                                      registration_campaign: campaign,
+                                      preference_rank: 1,
+                                      status: :pending)
+
+        allow(solver_double).to receive(:run).and_return({}, {})
+
+        service.allocate!
+
+        expect(invalid_registration.reload).to be_rejected
+        expect(invalid_registration.rejection_reason_code)
+          .to eq("institutional_email_mismatch")
+        expect(invalid_registration.rejection_reason_label).to be_present
+
+        service.allocate!
+
+        expect(invalid_registration.reload).to be_rejected
+        expect(invalid_registration.rejection_reason_code)
+          .to eq("institutional_email_mismatch")
+        expect(invalid_registration.rejection_reason_label).to be_present
+      end
+
+      it "raises when blockers are present before allocation" do
+        policy = build(:registration_policy,
+                       :institutional_email,
+                       :for_finalization,
+                       registration_campaign: campaign,
+                       config: { "allowed_domains" => "" })
+        policy.save!(validate: false)
+
+        create(:registration_user_registration,
+               user: create(:confirmed_user, email: "student@other.test"),
+               registration_item: item1,
+               registration_campaign: campaign,
+               preference_rank: 1,
+               status: :pending)
+
+        expect do
+          service.allocate!
+        end.to raise_error(Registration::AllocationService::BlockedError)
+
+        expect(campaign.reload.allocation_decided_at).to be_nil
       end
     end
 
@@ -205,6 +301,19 @@ RSpec.describe(Registration::AllocationService) do
         service.allocate!
 
         expect(Registration::UserRegistration.where(user: user3, preference_rank: nil)).to exist
+      end
+
+      it "resets previous confirmations before recalculating the allocation" do
+        registration = create(:registration_user_registration,
+                              user: user1,
+                              registration_item: item1,
+                              registration_campaign: campaign,
+                              preference_rank: 1,
+                              status: :confirmed)
+
+        service.allocate!
+
+        expect(registration.reload).to be_pending
       end
     end
 

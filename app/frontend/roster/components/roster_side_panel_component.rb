@@ -5,13 +5,13 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(registerable: nil, students: [], read_only: false,
-                 is_unassigned: false, campaign: nil, item: nil,
+                 panel_kind: nil, campaign: nil, item: nil,
                  allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
     @students = students
     @read_only = read_only
-    @is_unassigned = is_unassigned
+    @panel_kind = panel_kind&.to_sym
     @campaign = campaign
     @item = item
     @allocated = allocated
@@ -24,7 +24,19 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def unassigned?
-    @is_unassigned
+    @panel_kind == :unassigned
+  end
+
+  def rejected?
+    @panel_kind == :rejected
+  end
+
+  def panel_mode?
+    @panel_kind.present?
+  end
+
+  def campaign_panel?
+    panel_mode? && campaign.present?
   end
 
   def allocated?
@@ -82,18 +94,28 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def panel_title
-    if unassigned?
+    case @panel_kind
+    when :rejected
+      t("registration.user_registration.index.rejected_title",
+        default: "Rejected Registrations")
+    when :unassigned
       t("roster.candidates.title")
-    elsif allocated?
-      t("registration.user_registration.index.allocated_title",
-        default: "Allocated Students")
-    elsif read_only? && preference_based_campaign?
-      t("registration.user_registration.index.first_choice_title",
-        default: "1st Choice Registrations")
-    elsif read_only?
-      t("registration.user_registration.index.title",
-        default: "Registrations")
     else
+      if allocated?
+        return t("registration.user_registration.index.allocated_title",
+                 default: "Allocated Students")
+      end
+
+      if read_only? && preference_based_campaign?
+        return t("registration.user_registration.index.first_choice_title",
+                 default: "1st Choice Registrations")
+      end
+
+      if read_only?
+        return t("registration.user_registration.index.title",
+                 default: "Registrations")
+      end
+
       t("roster.details.participants")
     end
   end
@@ -156,35 +178,27 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def drag_controller?
-    !read_only? && (draggable_unassigned? || registerable.present?)
+    !read_only? && (campaign_panel? || (registerable.present? && !panel_mode?))
   end
 
   def drag_source_type
-    if draggable_unassigned?
-      "unassigned"
-    else
-      registerable.class.name.downcase
-    end
+    campaign_panel? ? @panel_kind.to_s : registerable.class.name.downcase
   end
 
   def drag_source_id
-    if draggable_unassigned?
-      campaign.id
-    else
-      registerable.id
-    end
+    campaign_panel? ? campaign.id : registerable.id
   end
 
   def show_add_form?
-    registerable.present? && !read_only? && !unassigned?
+    registerable.present? && !read_only? && !panel_mode?
   end
 
   def show_remove_button?
-    !read_only? && !unassigned?
+    registerable.present? && !read_only? && !panel_mode?
   end
 
   def show_campaign_wishes?(student)
-    unassigned? && campaign.present? && relevant_registrations(student).any?
+    campaign_panel? && relevant_registrations(student).any?
   end
 
   def campaign_wishes(student)
@@ -192,6 +206,46 @@ class RosterSidePanelComponent < ViewComponent::Base
       .sort_by { |r| r.preference_rank || 999 }
       .map { |r| r.registration_item.registerable.title }
       .join(", ")
+  end
+
+  def show_rejection_reasons?(student)
+    rejected? && rejection_reasons(student).present?
+  end
+
+  def rejection_reasons(student)
+    relevant_registrations(student)
+      .select { |r| rejected_registration?(r) }
+      .filter_map do |registration|
+        Registration::UserRegistration.localized_rejection_reason_label(
+          reason_code: registration.rejection_reason_code,
+          reason_label: registration.rejection_reason_label
+        )
+      end
+      .uniq
+      .join(", ")
+  end
+
+  def campaign_panel_count_label
+    case @panel_kind
+    when :rejected
+      t("roster.candidates.rejected_short", default: "rejected")
+    when :unassigned
+      t("roster.candidates.short_title", default: "unplaced")
+    else
+      t("registration.item.columns.registrations",
+        default: "Registrations")
+    end
+  end
+
+  def campaign_panel_description
+    return unless campaign_panel? && campaign.completed?
+
+    case @panel_kind
+    when :rejected
+      t("roster.candidates.rejected_description")
+    when :unassigned
+      t("roster.candidates.completed_description")
+    end
   end
 
   def student_display_name(student)
@@ -210,13 +264,15 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   private
 
-    def draggable_unassigned?
-      unassigned? && campaign.present?
-    end
-
     def relevant_registrations(student)
       student.user_registrations.select do |r|
         r.registration_campaign_id == campaign.id
       end
+    end
+
+    def rejected_registration?(registration)
+      return registration.rejected? if registration.respond_to?(:rejected?)
+
+      registration.respond_to?(:status) && registration.status.to_s == "rejected"
     end
 end

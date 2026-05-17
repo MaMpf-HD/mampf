@@ -3,6 +3,12 @@
 <% partial_locals = { dashboard: dashboard, campaign: campaign, allocation_source: allocation_source } %>
 
 <div class="<%= embedded ? "" : "container mt-4" %>" id="allocation-dashboard">
+  <% unless campaign.completed? %>
+    <%= render "registration/allocations/finalization_status",
+               dashboard: dashboard,
+               campaign: campaign %>
+  <% end %>
+
   <%= render "registration/allocations/policy_violations_alert", **partial_locals %>
   <%= render "registration/allocations/conflicting_registrations_alert", **partial_locals %>
 
@@ -18,6 +24,12 @@
     </div>
   <% end %>
 
+  <h6 class="text-muted fw-semibold small text-uppercase mb-2">
+    <%= t(dashboard.current_registration_state? ?
+          "registration.allocation.dashboard.current_registration_state" :
+          "registration.allocation.dashboard.title") %>
+  </h6>
+
   <%= render "registration/allocations/stats_summary",
              dashboard: dashboard, campaign: campaign %>
 
@@ -27,6 +39,11 @@
   <%= render "registration/allocations/item_capacities_table",
              **partial_locals %>
 
-  <%= render "registration/allocations/unassigned_students",
+  <%= render "registration/allocations/rejected_students",
              dashboard: dashboard %>
+
+  <% if !dashboard.current_registration_state? || dashboard.unassigned_students.any? %>
+    <%= render "registration/allocations/unassigned_students",
+               dashboard: dashboard %>
+  <% end %>
 </div>

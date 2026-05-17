@@ -66,11 +66,11 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
   describe "#rank_color" do
     it "maps correctly" do
-      expect(helper.rank_color(:forced)).to eq(:danger)
-      expect(helper.rank_color(1)).to eq(:success)
-      expect(helper.rank_color(2)).to eq(:primary)
-      expect(helper.rank_color(3)).to eq(:secondary)
-      expect(helper.rank_color(99)).to eq(:secondary)
+      expect(helper.rank_color(:forced)).to eq(:allocation_forced)
+      expect(helper.rank_color(1)).to eq(:allocation_first)
+      expect(helper.rank_color(2)).to eq(:allocation_second)
+      expect(helper.rank_color(3)).to eq(:allocation_other)
+      expect(helper.rank_color(99)).to eq(:allocation_other)
     end
   end
 
@@ -133,7 +133,7 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     describe "#finalize_campaign_button" do
       it "returns a button form" do
         html = helper.finalize_campaign_button(campaign, size: "btn-sm", disabled: true)
-        expect(html).to include("btn btn-danger btn-sm\" disabled=\"disabled\"")
+        expect(html).to include("btn allocation-action-primary btn-sm\" disabled=\"disabled\"")
         expect(html).to include(I18n.t("registration.campaign.actions.finalize"))
       end
     end
@@ -142,7 +142,7 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       it "returns allocate button if no previous calculation" do
         campaign.last_allocation_calculated_at = nil
         html = helper.allocate_campaign_button(campaign, size: "btn-lg")
-        expect(html).to include("btn btn-primary btn-lg")
+        expect(html).to include("btn btn-outline-primary btn-lg")
         expect(html).to include(I18n.t("registration.campaign.actions.allocate"))
         expect(html).not_to include("turbo-confirm")
       end

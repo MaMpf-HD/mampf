@@ -27,12 +27,12 @@
                         turbo_confirm: campaign_close_confirmation(campaign),
                         turbo_stream: true
                       },
-                      class: "btn btn-warning w-100" %>
+                      class: "btn allocation-action-secondary w-100" %>
       <% elsif campaign.closed? %>
         <div data-controller="collapse">
           <button
             type="button"
-            class="btn btn-success"
+            class="btn allocation-action-secondary"
             data-action="collapse#toggle"
           >
             <i class="bi bi-arrow-counterclockwise"></i>
@@ -58,7 +58,7 @@
         <div data-controller="collapse">
           <button
             type="button"
-            class="btn btn-success"
+            class="btn allocation-action-secondary"
             data-action="collapse#toggle"
           >
             <i class="bi bi-arrow-counterclockwise"></i>

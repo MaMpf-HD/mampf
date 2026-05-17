@@ -63,6 +63,119 @@ RSpec.describe("Registration::Allocations", type: :request) do
         expect(response.body).to include(tutorial.title)
       end
     end
+
+    context "with configuration blockers" do
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+
+      before do
+        sign_in editor
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               user: blocked_student)
+
+        policy = build(:registration_policy,
+                       :institutional_email,
+                       :for_finalization,
+                       registration_campaign: campaign,
+                       config: { "allowed_domains" => "" })
+        policy.save!(validate: false)
+      end
+
+      it "tells the teacher to contact admins" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_config_desc"))
+        expect(response.body).not_to include("force the finalization")
+      end
+    end
+
+    context "with user blockers" do
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+      let(:guard_result) do
+        Registration::FinalizationGuard::Result.new(
+          success?: false,
+          error_code: :policy_violation,
+          error_message: "blocked",
+          data: [
+            {
+              user_id: blocked_student.id,
+              registration_id: registration.id,
+              name: blocked_student.name,
+              email: blocked_student.email,
+              policy: "student_performance",
+              classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER,
+              blocker_kind: Registration::ScreeningService::BLOCKER_KIND_USER
+            }
+          ]
+        )
+      end
+      let!(:registration) do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               user: blocked_student)
+      end
+
+      before do
+        sign_in editor
+        allow_any_instance_of(Registration::AllocationDashboard)
+          .to receive(:guard_result)
+          .and_return(guard_result)
+      end
+
+      it "offers a visible reject-for-now action" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("registration.user_registration.actions.defer_due_to_blocker"))
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.errors.policy_violation_user_desc"))
+      end
+    end
+
+    context "with projected FCFS auto rejections" do
+      let!(:campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:blocked_student) { create(:confirmed_user, email: "blocked@example.com") }
+      let!(:item) do
+        create(:registration_item, registration_campaign: campaign)
+      end
+
+      before do
+        sign_in editor
+
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: blocked_student)
+      end
+
+      it "shows the automatic rejections warning" do
+        get registration_campaign_allocation_path(campaign)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(
+          I18n.t(
+            "registration.allocation.dashboard.finalization_status.auto_rejections_title"
+          )
+        )
+        expect(response.body).to include(
+          I18n.t(
+            "registration.allocation.dashboard.finalization_status.auto_rejections_desc",
+            count: 1
+          )
+        )
+      end
+    end
   end
 
   describe "POST /campaigns/:campaign_id/allocation" do
@@ -83,6 +196,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
           expect(flash[:notice]).to be_present
           expect(flash[:notice]).to include("calculated")
+        end
+
+        it "redirects back to the dashboard when allocation is blocked by policies" do
+          screening_result = Registration::ScreeningService::Result.new(
+            violations: [
+              {
+                classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
+              }
+            ]
+          )
+
+          allow_any_instance_of(Registration::AllocationService)
+            .to receive(:allocate!)
+            .and_raise(Registration::AllocationService::BlockedError.new(screening_result))
+
+          post registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.policy_violation"))
         end
       end
 
@@ -162,7 +294,44 @@ RSpec.describe("Registration::Allocations", type: :request) do
           campaign.reload
           expect(campaign).to be_completed
           expect(response).to redirect_to(registration_campaign_path(campaign))
-          expect(flash[:notice]).to be_present
+          expect(flash[:notice]).to eq(I18n.t("registration.campaign.finalized"))
+        end
+
+        it "includes only nonzero queue summaries" do
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:open_rejected_count).and_return(5)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive_message_chain(:unassigned_users, :count).and_return(3)
+
+          patch finalize_registration_campaign_allocation_path(campaign)
+
+          expect(flash[:notice]).to eq(
+            [
+              I18n.t("registration.campaign.finalized"),
+              I18n.t("registration.campaign.finalization_summary.rejected", count: 5),
+              I18n.t("registration.campaign.finalization_summary.unassigned", count: 3),
+              I18n.t("registration.campaign.finalization_summary.manual_addition")
+            ].join(" ")
+          )
+        end
+
+        it "redirects back to the dashboard when finalization is blocked under lock" do
+          screening_result = Registration::ScreeningService::Result.new(
+            violations: [
+              {
+                classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
+              }
+            ]
+          )
+
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:finalize!)
+            .and_raise(Registration::Campaign::FinalizationBlockedError.new(screening_result))
+
+          patch finalize_registration_campaign_allocation_path(campaign)
+
+          expect(response).to redirect_to(registration_campaign_allocation_path(campaign))
+          expect(flash[:alert]).to eq(I18n.t("registration.allocation.errors.policy_violation"))
         end
       end
 
