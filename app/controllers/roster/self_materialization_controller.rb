@@ -88,8 +88,8 @@ module Roster
                 }
               ),
               turbo_stream.update(
-                "self_roster_options_zone",
-                partial: "roster/self_roster/options_zone",
+                "self_materialization_zone",
+                partial: "registration/main/self_materialization_zone",
                 locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
               )
             ]

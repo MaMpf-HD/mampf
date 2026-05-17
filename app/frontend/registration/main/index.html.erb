@@ -13,8 +13,8 @@
 
   <div class="campaign-list d-flex flex-column gap-4">
     <% if direct_enrollment_available %>
-      <%= turbo_frame_tag "self_roster_options_zone" do %>
-        <%= render partial: "roster/self_roster/options_zone",
+      <%= turbo_frame_tag "self_materialization_zone" do %>
+        <%= render partial: "registration/main/self_materialization_zone",
                    locals: { self_rosterables: @self_rosterables } %>
       <% end %>
     <% end %>
