@@ -38,7 +38,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when user has participations with task points" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture)
@@ -90,8 +92,12 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "with multiple assessments" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -138,7 +144,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when called twice (upsert)" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment, lecture: lecture)
       end
@@ -175,7 +183,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when assessment has total_points override" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture, total_points: 50)
@@ -191,7 +201,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when participation is pending" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture)
@@ -224,8 +236,12 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when participation is exempt" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -270,8 +286,12 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when assessment has no participation record" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -301,7 +321,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
 
   describe "#compute_and_upsert_all_records!" do
     let(:user2) { FactoryBot.create(:confirmed_user) }
-    let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+    let(:assignment) do
+      FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+    end
     let(:assessment) do
       FactoryBot.create(:assessment, :with_points, assessable: assignment, lecture: lecture)
     end

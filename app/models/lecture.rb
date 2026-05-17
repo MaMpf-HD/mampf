@@ -805,23 +805,33 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    # Efficiently insert missing memberships (ignoring duplicates)
-    # Note: Requires a unique index on [:user_id, :lecture_id]
-    attributes = user_ids.map do |uid|
+    # Efficiently insert missing memberships without touching existing rows.
+    # Note: Requires a unique index on [:user_id, :lecture_id].
+    existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
+    new_user_ids = user_ids.uniq - existing_user_ids
+
+    attributes = new_user_ids.map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
     return if attributes.empty?
 
     # Rails handles timestamps automatically.
-    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
-    # created_at/updated_at for existing members.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset
+    # of created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
     LectureMembership.insert_all(
       attributes,
       unique_by: [:user_id, :lecture_id]
     )
     # rubocop:enable Rails/SkipsModelValidations
+
+    return unless Flipper.enabled?(:assessment_grading)
+
+    service = StudentPerformance::ComputationService.new(lecture: self)
+    User.where(id: new_user_ids).find_each do |user|
+      service.compute_and_upsert_record_for(user)
+    end
   end
 
   def eligible_as_tutors

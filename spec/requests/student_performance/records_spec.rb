@@ -73,7 +73,10 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           # rubocop:disable Rails/SkipsModelValidations
           StudentPerformance::Record
             .where(lecture: lecture, user: user)
-            .update_all(achievements_met_ids: [])
+            .update_all(
+              achievements_met_ids: [],
+              achievements_ungraded_ids: []
+            )
           # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
