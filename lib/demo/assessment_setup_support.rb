@@ -78,7 +78,9 @@ module Demo
             deadline: 1.year.from_now,
             accepted_file_type: ".pdf"
           )
-          assignment.update!(deadline: attrs[:deadline])
+          # rubocop:disable Rails/SkipsModelValidations
+          assignment.update_column(:deadline, attrs[:deadline])
+          # rubocop:enable Rails/SkipsModelValidations
           created += 1
         end
 
@@ -307,7 +309,9 @@ module Demo
 
         Rails.logger.debug("")
 
-        seminar = Lecture.find_by(course: Course.find_by(title: SEMINAR_COURSE_TITLE))
+        seminar = Lecture.find_by(
+          course: Course.find_by(title: Demo::SetupSupport::SEMINAR_COURSE_TITLE)
+        )
         return unless seminar
 
         demo_seminar_talks(seminar).each do |talk|
@@ -325,7 +329,9 @@ module Demo
       end
 
       def demo_seminar_talks(seminar)
-        seminar.talks.where(title: SEMINAR_TALK_TITLES).order(:position)
+        seminar.talks.where(
+          title: Demo::SetupSupport::SEMINAR_TALK_TITLES
+        ).order(:position)
       end
 
       def student_profile(user_id)
