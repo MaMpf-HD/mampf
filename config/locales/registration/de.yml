@@ -270,7 +270,7 @@ de:
       course_code: "Kurscode"
       campaign_main: "Anmeldeverfahren"
       eligibility_title: "Berechtigung"
-      fcfs_instruction: "Wähle eine Option."
+      fcfs_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
       preference_instruction: "Ordne bis zu drei Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
       preference_rank_options:
         "1": "1."

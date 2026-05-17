@@ -270,7 +270,8 @@ en:
       course_code: "Course code"
       campaign_main: "Registration process"
       eligibility_title: "Eligibility"
-      fcfs_instruction: "Select one option."
+      fcfs_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      fcfs_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
       preference_instruction: "Rank up to three options. Allocation is calculated after the deadline."
       preference_rank_options:
         "1": "1st"
