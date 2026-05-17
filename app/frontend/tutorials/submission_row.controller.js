@@ -50,6 +50,7 @@ export default class extends Controller {
         bubbles: true,
         detail: {
           id: this.element.dataset.submissionRowId,
+          target: "submission",
           task_points: this.extractTasksPoints(this.inputTargets),
         },
       });
@@ -61,7 +62,38 @@ export default class extends Controller {
       this.dispatch("clean", {
         prefix: false,
         bubbles: true,
-        detail: { id: this.element.dataset.submissionRowId },
+        detail: { id: this.element.dataset.submissionRowId,
+          target: "submission" },
+      });
+
+      if (this.hasSaveTarget) this.saveTarget.disabled = true;
+    }
+  }
+
+  markDirtyUser() {
+    const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
+
+    if (dirty) {
+      this.element.classList.add("row-dirty");
+      this.dispatch("dirty", {
+        prefix: false,
+        bubbles: true,
+        detail: {
+          id: this.element.dataset.userRowId,
+          target: "user",
+          task_points: this.extractTasksPoints(this.inputTargets),
+        },
+      });
+      if (this.hasSaveTarget) this.saveTarget.disabled = false;
+      this.calculateTotalPoints();
+    }
+    else {
+      this.element.classList.remove("row-dirty");
+      this.dispatch("clean", {
+        prefix: false,
+        bubbles: true,
+        detail: { id: this.element.dataset.userRowId,
+          target: "user" },
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;

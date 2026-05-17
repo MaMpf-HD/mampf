@@ -82,7 +82,7 @@
   <!--Save and refresh -->
   <% if current_user.in?(submission.tutorial.tutors) && gradding_enabled?(assignment) %>
     <!-- Hidden form for this row to submit-->
-    <%= form_with url: grade_submission_tutorial_path(submission, type: "Tutorial"),
+    <%= form_with url: point_submission_tutorial_path(submission, type: "Tutorial"),
                   method: :patch,
                   data: { turbo: true, submission_row_target: "form" },
                   html: { style: "display:none;" } do %>
@@ -98,10 +98,11 @@
     </button>
 
     <!-- Refresh row -->
-    <%= form_with url: refresh_grade_submission_tutorial_path(submission, type: "Tutorial"),
+    <%= form_with url: refresh_point_submission_tutorial_path(submission, type: "Tutorial"),
                   method: :patch,
                   data: { turbo: true, submission_row_target: "refreshForm" },
                   html: { style: "display:none;" } do %>
+      <input type="hidden" name="task_points" data-submission-row-target="payload">
     <% end %>
     <!-- refresh row -->
     <button type="button"

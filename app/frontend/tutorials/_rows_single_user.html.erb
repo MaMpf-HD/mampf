@@ -1,0 +1,9 @@
+<tr id="user-row-<%= user.id %>"
+    is="turbo-frame"
+    data-id="<%= user.id %>"
+    data-controller="submission-row"
+    data-user-row-id="<%= user.id %>"
+    data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean">
+      <%= render partial: "tutorials/user_row",
+                 locals: { user: user, assignment: assignment, tutorial: tutorial } %>
+</tr>

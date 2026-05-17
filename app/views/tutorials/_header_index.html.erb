@@ -103,10 +103,12 @@
           Save All Changes
         </button>
 
-        <%= form_with url: grade_multi_submissions_tutorial_path,
+        <%= form_with url: point_multi_submissions_tutorial_path,
                       method: :patch,
                       data: { turbo: true, submission_table_target: "form" } do %>
           <input type="hidden" name="submissions" data-submission-table-target="payload">
+          <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
+          <input type="hidden" name="tutorial_id" value="<%= @tutorial.id %>">
         <% end %>
       <% end %>
     </div>

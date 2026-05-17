@@ -20,6 +20,10 @@ class User < ApplicationRecord
   has_many :cohort_memberships, dependent: :destroy
   has_many :cohorts, through: :cohort_memberships
 
+  has_many :assessment_participations, dependent: :destroy,
+                                      class_name: "Assessment::Participation",
+                                      inverse_of: :user
+
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :favorite_lectures, -> { distinct },
@@ -662,6 +666,10 @@ class User < ApplicationRecord
     tutorial_membership = tutorial_memberships.joins(:tutorial)
                                               .find_by(tutorials: { lecture_id: lecture.id })
     tutorial_membership&.tutorial
+  end
+
+  def assessment_participation_in_assignment(assignment)
+    assessment_participations.where(assessment: assignment.assessment)&.first
   end
 
   def tutor?

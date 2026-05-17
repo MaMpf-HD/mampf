@@ -1,6 +1,6 @@
 module Assessment
   class TaskPointsController < ApplicationController
-    before_action :set_assessment
+    before_action :set_assessment, except: [:mark_as_participated, :update_user]
     before_action :set_locale
 
     def update_team_multi
@@ -8,39 +8,41 @@ module Assessment
 
       case params[:type]
       when "Tutorial"
-        submissions = JSON.parse(params[:submissions])
+        records = JSON.parse(params[:submissions])
+        @tutorial = Tutorial.find_by(param["tutorial_id"])
+        @assignment = Assignment.find_by(param["assignment_id"])
 
-        submissions.each do |entry|
-          submission = Submission.find(entry["id"])
-          SubmissionGraderService.score_tasks!(
-            submission,
+        records.each do |entry|
+          if entry["target"] == "submission"
+            submission = Submission.find(entry["id"])
+            SubmissionGraderService.score_tasks!(
+              submission,
+              entry["task_points"],
+              scorer
+            )
+          end
+
+          next unless entry["target"] == "user"
+
+          user = User.find(entry["id"])
+          SubmissionGraderService.score_tasks_by_user!(
+            user,
+            @assignment,
             entry["task_points"],
             scorer
           )
         end
-        sample_submission = Submission.find_by(id: submissions.first["id"])
-        @tutorial = sample_submission.tutorial
-        @assignment = sample_submission.assignment
+
         @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                             &.order(:last_modification_by_users_at)
         @non_submitters = @assignment.non_submitters(@tutorial)
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "grading-table",
-              partial: "tutorials/tutorial_grading_content",
-              locals: { assignment: @assignment, tutorial: @tutorial,
-                        stack: @stack, non_submitters: @non_submitters }
-            )
-          end
-        end
+        rerender_submission_table
       end
     end
 
     def update_team
       scorer = current_user
       task_points = JSON.parse(params[:task_points] || "{}")
-      t = params[:type]
 
       case params[:type]
       when "Tutorial"
@@ -52,15 +54,26 @@ module Assessment
         )
         @submission = submission.reload
         @assignment = @submission.assignment
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "submission-row-#{@submission.id}",
-              partial: "tutorials/rows_single",
-              locals: { submission: @submission, assignment: @assignment }
-            )
-          end
-        end
+        @tutorial = @submission.tutorial
+        rerender_submission_row
+      end
+    end
+
+    def update_user
+      scorer = current_user
+      task_points = JSON.parse(params[:task_points] || "{}")
+      @assignment = Assignment.find_by(id: params[:assignment_id])
+      @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+
+      case params[:type]
+      when "Tutorial"
+        participation = Participation.find_by(id: params[:id])
+        SubmissionGraderService.score_tasks_by_participation!(
+          participation,
+          task_points,
+          scorer
+        )
+        head :ok
       end
     end
 
@@ -68,6 +81,19 @@ module Assessment
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission.assignment
       rerender_submission_row
+    end
+
+    def mark_as_participated
+      user = User.find_by(id: params[:user_id])
+      @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+      @assignment = Assignment.find_by(id: params[:assignment_id])
+      @assessment = @assignment.assessment
+      SubmissionGraderService.init_participation(@assessment, user)
+
+      @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
+                          &.order(:last_modification_by_users_at)
+      @non_submitters = @assignment.non_submitters(@tutorial)
+      rerender_submission_table
     end
 
     private
@@ -78,7 +104,20 @@ module Assessment
             render turbo_stream: turbo_stream.replace(
               "submission-row-#{@submission.id}",
               partial: "tutorials/rows_single",
-              locals: { submission: @submission, assignment: @assignment }
+              locals: { submission: @submission, assignment: @assignment, tutorial: @tutorial }
+            )
+          end
+        end
+      end
+
+      def rerender_submission_table
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "grading-table",
+              partial: "tutorials/tutorial_grading_content",
+              locals: { assignment: @assignment, tutorial: @tutorial,
+                        stack: @stack, non_submitters: @non_submitters }
             )
           end
         end

@@ -4,7 +4,7 @@ module Assessment
     def self.enter_points(participation,
                           task_points, # Hash of task_id => points, points potentially nil and string
                           grader,
-                          submission)
+                          submission = nil)
       assessment = participation.assessment
 
       # check requires_points
@@ -49,6 +49,7 @@ module Assessment
 
     def self.validate_points(points, task_id)
       return if points.nil?
+      return if points.is_a?(String) && points.empty?
 
       if points.is_a?(String)
         begin

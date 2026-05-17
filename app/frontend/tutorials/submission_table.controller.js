@@ -8,13 +8,15 @@ export default class extends Controller {
   }
 
   rowDirty(event) {
-    this.newValues = this.newValues.filter(value => value.id !== event.detail.id);
+    this.newValues = this.newValues.filter(
+      value => value.id !== event.detail.id && value.target !== event.detail.target);
     this.newValues.push(event.detail);
     this.updateBulkState();
   }
 
   rowClean(event) {
-    this.newValues = this.newValues.filter(value => value.id !== event.detail.id);
+    this.newValues = this.newValues.filter(
+      value => value.id !== event.detail.id && value.target !== event.detail.target);
     this.updateBulkState();
   }
 

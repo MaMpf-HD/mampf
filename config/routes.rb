@@ -775,19 +775,28 @@ Rails.application.routes.draw do
         to: "submissions#reject",
         as: "reject_submission"
 
-  patch "submissions/:id/grade_submission",
+  patch "submissions/mark_as_participated",
+        to: "assessment/task_points#mark_as_participated",
+        as: "mark_user_as_participated"
+
+  patch "submissions/:id/point_submission",
         to: "assessment/task_points#update_team",
-        as: "grade_submission_tutorial",
+        as: "point_submission_tutorial",
         defaults: { type: "Tutorial" }
 
-  patch "submissions/grade_multi_submissions",
+  patch "submissions/:id/point_user",
+        to: "assessment/task_points#update_user",
+        as: "point_user_tutorial",
+        defaults: { type: "Tutorial" }
+
+  patch "submissions/point_multi_submissions",
         to: "assessment/task_points#update_team_multi",
-        as: "grade_multi_submissions_tutorial",
+        as: "point_multi_submissions_tutorial",
         defaults: { type: "Tutorial" }
 
-  patch "submissions/:id/refresh_grade_submission",
+  patch "submissions/:id/refresh_point_submission",
         to: "assessment/task_points#refresh",
-        as: "refresh_grade_submission_tutorial",
+        as: "refresh_point_submission_tutorial",
         defaults: { type: "Tutorial" }
 
   get "submissions/:id/edit_correction",

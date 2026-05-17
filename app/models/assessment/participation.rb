@@ -50,9 +50,13 @@ module Assessment
     end
 
     def check_if_all_scored!
-      if !task_points.where(points: nil).exists?
-        update!(status: :reviewed)
-      end
+      return if task_points.where(points: nil).exists?
+
+      update!(status: :reviewed)
+    end
+
+    def graded_tasks_points
+      TaskPoint.where(assessment_participation: self).distinct(:task_id)
     end
 
     private

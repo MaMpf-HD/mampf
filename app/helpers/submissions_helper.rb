@@ -115,6 +115,13 @@ module SubmissionsHelper
     end&.points || nil
   end
 
+  def extract_task_points_participation(participation, assessment_task)
+    submission_points = participation.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points || nil
+  end
+
   def submission_late_color(submission)
     return "" unless submission.too_late?
     return "" unless submission.accepted.nil?

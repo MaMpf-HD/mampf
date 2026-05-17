@@ -55,7 +55,11 @@
       <tbody>
         <% stack.each do |submission| %>
           <%= render partial: "tutorials/rows_single",
-                   locals: { submission: submission, assignment: assignment } %>
+                   locals: { submission: submission, assignment: assignment, tutorial: tutorial } %>
+        <% end %>
+        <% non_submitters.each do |user| %>
+          <%= render partial: "tutorials/rows_single_user",
+                   locals: { user: user, assignment: assignment, tutorial: tutorial } %>
         <% end %>
       </tbody>
     </table>
@@ -85,6 +89,10 @@
           <th class="text-center sticky-col action-col">
             <%= t('basics.status') %>
           </th>
+
+          <th>
+            Actions
+          </th>
         </tr>
       </thead>
 
@@ -99,6 +107,17 @@
               <span class="badge bg-warning">
                 <%= t('tutorial.no_submission') %>
               </span>
+            </td>
+
+            <td>
+              <%= link_to "Mark as participated",
+                      mark_user_as_participated_path(
+                        user_id: user.id,
+                        tutorial_id: tutorial.id,
+                        assignment_id: assignment.id
+                      ),
+                      method: :patch %>
+
             </td>
           </tr>
         <% end %>
