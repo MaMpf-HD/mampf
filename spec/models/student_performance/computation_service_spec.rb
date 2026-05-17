@@ -269,40 +269,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
-    context "assessment counts" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment3) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-
-      let(:assessment1) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment1,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment2) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment2,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment3) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment3,
-                                                     lecture: lecture)
-      end
-
-      before do
-        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment3, max_points: 10)
-
-        FactoryBot.create(:assessment_participation, :reviewed,
-                          assessment: assessment1, user: user)
-        FactoryBot.create(:assessment_participation, :pending,
-                          assessment: assessment2, user: user)
-        FactoryBot.create(:assessment_participation, :exempt,
-                          assessment: assessment3, user: user)
-      end
-    end
-
     context "when assessment has no participation record" do
       let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
       let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
@@ -332,30 +298,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
-    context "when participation is absent" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-
-      let(:assessment1) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment1,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment2) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment2,
-                                                     lecture: lecture)
-      end
-
-      before do
-        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 20)
-
-        FactoryBot.create(:assessment_participation, :reviewed,
-                          assessment: assessment1, user: user)
-        FactoryBot.create(:assessment_participation, :absent,
-                          assessment: assessment2, user: user)
-      end
-    end
   end
 
   describe "#compute_and_upsert_all_records!" do
