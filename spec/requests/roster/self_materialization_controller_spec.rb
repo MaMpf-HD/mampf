@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe("Roster::SelfMaterializationController", type: :request) do
-  let(:user)     { create(:confirmed_user) }
+  let(:user)     { create(:confirmed_user_en) }
   let(:lecture)  { create(:lecture) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let(:service)  { instance_double(Rosters::SelfMaterializationService) }
@@ -108,6 +108,37 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           I18n.t("roster.errors.user_already_in_bundle",
                  user: user.info,
                  group: conflicting_group.title)
+        )
+      end
+    end
+
+    context "when rendering the updated registration page state" do
+      let(:tutorial) do
+        create(:tutorial,
+               lecture: lecture,
+               skip_campaigns: true,
+               self_materialization_mode: :add_and_remove,
+               title: "Ti")
+      end
+
+      before do
+        allow(lecture).to receive(:locale_with_inheritance).and_return("de")
+        allow(Rosters::SelfMaterializationService).to receive(:new).and_call_original
+      end
+
+      it "uses the user locale and updates the confirmed registrations section" do
+        post self_add_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("target=\"student_registration_rosterized_entries\"")
+        expect(response.body).to include(
+          I18n.t("registration.user_registration.index.confirmed_cases", locale: :en)
+        )
+        expect(response.body).to include(
+          I18n.t("registration.user_registration.withdraw", locale: :en)
+        )
+        expect(response.body).not_to include(
+          I18n.t("registration.user_registration.withdraw", locale: :de)
         )
       end
     end

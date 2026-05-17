@@ -3,7 +3,7 @@ module Roster
   # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
     before_action :set_rosterable, only: [:self_add, :self_remove]
-    before_action :use_lecture_locale
+    before_action :use_user_locale
     before_action :authorize_lecture
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
@@ -79,6 +79,15 @@ module Roster
             render turbo_stream: [
               stream_flash,
               turbo_stream.update(
+                "student_registration_rosterized_entries",
+                partial: "registration/main/rosterized_entries",
+                locals: {
+                  rosterized_entries: Rosters::StudentMaterializedResultResolver
+                                       .new(current_user)
+                                       .all_rosterized_for_lecture(@lecture)
+                }
+              ),
+              turbo_stream.update(
                 "self_roster_options_zone",
                 partial: "roster/self_roster/options_zone",
                 locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
@@ -105,8 +114,8 @@ module Roster
         redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
       end
 
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
+      def use_user_locale
+        locale = current_user&.locale.presence || I18n.default_locale
         I18n.locale = locale
       end
 
