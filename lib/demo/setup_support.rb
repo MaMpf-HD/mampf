@@ -28,7 +28,7 @@ module Demo
       setup_flags!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
-      with_quiet_logging do
+      Demo::QuietLoggingSupport.with_quiet_logging do
         setup_lecture_rosters!
         setup_seminar_rosters!
       end
@@ -51,7 +51,7 @@ module Demo
         messages = []
 
         Rails.logger.debug("Configuring feature flags...")
-        with_quiet_logging do
+        Demo::QuietLoggingSupport.with_quiet_logging do
           enabled.each do |flag|
             feature = ensure_feature_exists!(flag)
             feature.enable
@@ -315,14 +315,6 @@ module Demo
 
       def demo_tutorial_ids(lecture)
         demo_tutorials(lecture).pluck(:id)
-      end
-
-      def with_quiet_logging
-        old_level = ActiveRecord::Base.logger&.level
-        ActiveRecord::Base.logger&.level = :warn
-        yield
-      ensure
-        ActiveRecord::Base.logger&.level = old_level
       end
   end
 end

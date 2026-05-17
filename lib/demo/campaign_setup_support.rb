@@ -11,11 +11,13 @@ module Demo
 
     def setup!
       Demo::SetupSupport.setup_flags!
-      setup_preference_campaign!
-      seed_preference_campaign_registrations!
-      setup_mixed_fcfs_campaign!
-      seed_mixed_fcfs_campaign_registrations!
-      setup_two_stage_campaign!
+      Demo::QuietLoggingSupport.with_quiet_logging do
+        setup_preference_campaign!
+        seed_preference_campaign_registrations!
+        setup_mixed_fcfs_campaign!
+        seed_mixed_fcfs_campaign_registrations!
+        setup_two_stage_campaign!
+      end
     end
 
     def setup_preference_campaign!
