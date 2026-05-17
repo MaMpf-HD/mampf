@@ -53,6 +53,7 @@ search:
 ## Do not consider these keys missing:
 ignore_missing:
   - "layouts.devise_mailer.reason"
+  - "datetime.distance_in_words.*"
 
 ## Consider these keys used:
 ignore_unused:
