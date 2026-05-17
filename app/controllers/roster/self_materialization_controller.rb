@@ -99,12 +99,12 @@ module Roster
       end
 
       def set_rosterable
-        unless Rosters::Rosterable::TYPES.include?(params[:type])
+        klass = Rosters::Rosterable.class_for(params[:type])
+        unless klass
           redirect_to root_path, alert: t("roster.errors.invalid_type")
           return
         end
 
-        klass = params[:type].constantize
         param_key = "#{params[:type].underscore}_id"
         id = params[param_key] || params[:id]
         @rosterable = klass.find_by(id: id)

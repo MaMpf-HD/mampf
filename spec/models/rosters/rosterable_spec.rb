@@ -1,6 +1,19 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
+  describe ".class_for" do
+    it "returns the explicitly allowed class for a valid type" do
+      expect(described_class.class_for("Tutorial")).to eq(Tutorial)
+      expect(described_class.class_for("Talk")).to eq(Talk)
+      expect(described_class.class_for("Cohort")).to eq(Cohort)
+      expect(described_class.class_for("Lecture")).to eq(Lecture)
+    end
+
+    it "returns nil for an invalid type" do
+      expect(described_class.class_for("User")).to be_nil
+    end
+  end
+
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 

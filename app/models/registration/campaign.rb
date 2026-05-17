@@ -330,7 +330,9 @@ module Registration
           return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
         end
 
-        klass = type.constantize
+        klass = Rosters::Rosterable.class_for(type)
+        return [] unless klass
+
         scope = fetch_scope_for_type(klass, type)
         fetch_ids_from_scope(klass, scope)
       end

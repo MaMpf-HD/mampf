@@ -5,7 +5,18 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
+    TYPE_CLASS_MAP = {
+      "Tutorial" => -> { Tutorial },
+      "Talk" => -> { Talk },
+      "Cohort" => -> { Cohort },
+      "Lecture" => -> { Lecture }
+    }.freeze
+
+    TYPES = TYPE_CLASS_MAP.keys.freeze
+
+    def self.class_for(type)
+      TYPE_CLASS_MAP[type]&.call
+    end
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
