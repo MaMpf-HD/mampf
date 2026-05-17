@@ -34,7 +34,7 @@ module Registration
                             .all_rosterized_for_lecture(@lecture)
       @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user)
                                                          .call
-      render template: "registration/main/index",
+      render template: "user_registrations/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
 
@@ -80,7 +80,7 @@ module Registration
                 turbo_stream.replace("flash-messages", partial: "flash/messages"),
                 turbo_stream.update(
                   view_context.dom_id(@campaign, :main_student_registration_campaign),
-                  partial: "registration/main/campaign_card",
+                  partial: "user_registrations/campaign_card",
                   locals: { details: @details, campaign: @campaign }
                 )
               ]

@@ -29,7 +29,7 @@
       <% end %>
 
       <% if ineligible %>
-        <%= render partial: "registration/main/eligibility",
+        <%= render partial: "user_registrations/eligibility",
                    locals: { eligibility: eligibility } %>
       <% end %>
     </div>
@@ -85,11 +85,11 @@
       <% end %>
 
       <% if campaign.first_come_first_served? %>
-        <%= render partial: 'registration/main/fcfs/select_fcfs',
+        <%= render partial: 'user_registrations/fcfs/select_fcfs',
                      locals: { campaign: campaign,
                                items: items } %>
       <% else %>
-        <%= render partial: 'registration/main/pb/select_preference',
+        <%= render partial: 'user_registrations/pb/select_preference',
                      locals: { campaign: campaign,
                                item_preferences: item_preferences,
                                items: items } %>

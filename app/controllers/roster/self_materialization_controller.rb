@@ -81,7 +81,7 @@ module Roster
               stream_flash,
               turbo_stream.update(
                 "student_registration_rosterized_entries",
-                partial: "registration/main/rosterized_entries",
+                partial: "user_registrations/rosterized_entries",
                 locals: {
                   rosterized_entries: Rosters::StudentMaterializedResultResolver
                                        .new(current_user)
@@ -90,7 +90,7 @@ module Roster
               ),
               turbo_stream.update(
                 "self_materialization_zone",
-                partial: "registration/main/self_materialization_zone",
+                partial: "user_registrations/self_materialization_zone",
                 locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
               )
             ]

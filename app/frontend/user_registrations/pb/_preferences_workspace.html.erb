@@ -1,7 +1,7 @@
 <% item_preferences = Array(item_preferences).select { |pref| pref.respond_to?(:item) } %>
 
 <div>
-  <%= render partial: "registration/main/pb/options_table",
+  <%= render partial: "user_registrations/pb/options_table",
              locals: { campaign: campaign,
                        item_preferences: item_preferences,
                        items: items } %>

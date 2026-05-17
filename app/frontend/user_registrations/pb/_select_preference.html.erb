@@ -1,6 +1,6 @@
 <div data-test="multi-item-preference">
   <%= turbo_frame_tag dom_id(campaign, :preferences_workspace) do %>
-    <%= render partial: "registration/main/pb/preferences_workspace",
+    <%= render partial: "user_registrations/pb/preferences_workspace",
                locals: { campaign: campaign,
                          item_preferences: item_preferences,
                          items: items } %>

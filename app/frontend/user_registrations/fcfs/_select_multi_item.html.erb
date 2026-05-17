@@ -15,7 +15,7 @@
 
           <% item_full = !item.still_has_capacity? && !item.user_registered?(current_user) %>
 
-          <%= render partial: "registration/main/group_tile",
+          <%= render partial: "user_registrations/group_tile",
                      locals: {
                        registerable: item.registerable,
                        item: item,
