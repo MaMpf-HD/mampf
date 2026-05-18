@@ -18,15 +18,16 @@ RSpec.describe(Commontator::Comment, type: :model) do
 
   it "reapplies the body validators idempotently" do
     described_class.validates(:body, uniqueness: {
-                                scope: CommontatorCommentPatch::CUSTOM_UNIQUENESS_SCOPE,
+                                scope: Extensions::Commontator::CommentPatch::CUSTOM_UNIQUENESS_SCOPE,
                                 message: :double_posted
                               })
 
-    CommontatorCommentPatch.apply!
+    Extensions::Commontator::CommentPatch.apply!
 
     uniqueness_validators = described_class.validators_on(:body).select do |validator|
       validator.is_a?(ActiveRecord::Validations::UniquenessValidator) &&
-        validator.options[:scope] == CommontatorCommentPatch::CUSTOM_UNIQUENESS_SCOPE
+        validator.options[:scope] ==
+          Extensions::Commontator::CommentPatch::CUSTOM_UNIQUENESS_SCOPE
     end
     presence_validators = described_class.validators_on(:body).select do |validator|
       validator.is_a?(ActiveModel::Validations::PresenceValidator)
