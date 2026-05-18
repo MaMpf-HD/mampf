@@ -158,10 +158,9 @@ module StudentPerformance
               stream_flash
             ]
           else
-            flash.now[:alert] = I18n.t(
-              "assessment.achievements.errors.destroy_failed"
-            )
-            @achievement.errors.clear
+            flash.now[:alert] =
+              @achievement.errors.full_messages.to_sentence.presence ||
+              I18n.t("assessment.achievements.errors.destroy_failed")
             render turbo_stream: [
               turbo_stream.update(
                 "assessments_container",

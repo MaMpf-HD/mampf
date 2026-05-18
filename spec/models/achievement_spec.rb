@@ -226,6 +226,14 @@ RSpec.describe(Achievement, type: :model) do
       achievement.update!(value_type: :percentage, threshold: 75)
     end
 
+    it "recomputes records synchronously when destroyed" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .to receive(:compute_and_upsert_all_records!)
+      achievement.destroy!
+    end
+
     it "does not recompute when only title changes" do
       achievement = FactoryBot.create(:achievement, :numeric,
                                       lecture: lecture, threshold: 10)

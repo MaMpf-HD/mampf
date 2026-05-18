@@ -20,6 +20,7 @@ class Achievement < ApplicationRecord
 
   after_update_commit :invalidate_performance_records,
                       if: :threshold_or_type_changed?
+  after_destroy_commit :invalidate_performance_records
 
   def student_met_threshold?(user)
     return false unless assessment

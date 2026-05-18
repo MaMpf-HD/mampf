@@ -233,6 +233,21 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
                  ))
         end.to change(Achievement, :count).by(-1)
       end
+
+      it "keeps the destroy error in turbo responses" do
+        allow_any_instance_of(Achievement).to receive(:destroy) do |record|
+          record.errors.add(:base, "Achievement is still in use")
+          false
+        end
+
+        delete lecture_student_performance_achievement_path(
+          lecture, achievement
+        ), as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        assert_flash_error
+        expect(response.body).to include("Achievement is still in use")
+      end
     end
 
     context "as a student" do
