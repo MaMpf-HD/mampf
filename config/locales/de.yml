@@ -2944,7 +2944,7 @@ de:
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
-    file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
+    file_size_way_too_big: Die Dateigröße überschreitet das Limit. Bitte verkleinere sie außerhalb von MaMpf und lade die kleinere Datei hoch.
     optimization_help_html: >
       <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
       im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir

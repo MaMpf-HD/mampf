@@ -83,7 +83,6 @@
     //////////////////////////////////////
     "files.exclude": {
         "node_modules/": true,
-        "pdfcomprezzor/": true,
         "coverage/": true,
         ".docker/": true
     },
@@ -164,7 +163,6 @@
         "mampftest",
         "pagy",
         "Pagy",
-        "pdfcomprezzor",
         "pgadmin",
         "preseed",
         "preseeds",

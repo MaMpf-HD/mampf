@@ -30,7 +30,6 @@ else
 fi
 
 rm -f tmp/pids/server.pid
-cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
 
 echo ""
 echo ""
