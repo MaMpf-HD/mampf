@@ -4,26 +4,29 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
 
-    def add_user!(user, rosterable, force: false, source_campaign_id: nil)
+    def add_user!(user, rosterable, force: false, source_campaign_id: nil, notify: true)
       rosterable.with_lock do
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
                                source_campaign_id: source_campaign_id)
       end
+      RosterNotificationMailer.added(user, rosterable) if notify
     end
 
-    def remove_user!(user, rosterable)
+    def remove_user!(user, rosterable, notify: true)
       rosterable.with_lock do
         remove_user_without_lock!(user, rosterable)
       end
+      RosterNotificationMailer.removed(user, rosterable) if notify
     end
 
-    def move_user!(user, from_rosterable, to_rosterable, force: false)
+    def move_user!(user, from_rosterable, to_rosterable, force: false, notify: true)
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        remove_user_without_lock!(user, from_rosterable)
-        add_user_without_lock!(user, to_rosterable, force: force)
+        remove_user_without_lock!(user, from_rosterable, notify: false)
+        add_user_without_lock!(user, to_rosterable, force: force, notify: false)
       end
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if notify
     end
 
     private
